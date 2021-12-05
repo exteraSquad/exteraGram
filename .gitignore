@@ -1,6 +1,10 @@
 .idea/
 .gradle/
+.cxx/
 build/
 obj/
 *.iml
 local.properties
+API_KEYS
+*.hprof
+TMessagesProj/.externalNativeBuild/

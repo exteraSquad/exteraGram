@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- exteraGram bringup -->
+    <string name="exteraAppName">exteraGram α</string>
+    <string name="exteraAppNameBeta">exteraGram β</string>
+    <string name="exteraDebugMenu">слова излишни ¯\\_(ツ)_/¯</string>
+    <!-- Main -->
+    <string name="exteraPreferences">extera Preferences</string>
+    <!-- Categories -->
+    <string name="exteraCategories">Категории</string>
+    <string name="exteraAppearance">Внешний вид</string>
+    <string name="exteraSecurity">Безопасность</string>
+    <string name="exteraChats">Чаты</string>
+    <!-- Chats -->
+    <string name="exteraStickerSize">Размер стикера</string>
+    <string name="exteraStickerTime">Убрать время под стикерами</string>
+    <string name="exteraMedia">Медиа</string>
+    <string name="exteraHQVoiceMessage">HQ качество голосовых сообщений</string>
+    <string name="exteraHQRestartRequired">Перезапустите приложение, чтобы изменения вступили в силу.</string>
+    <string name="exteraRearVideoMessages">Задняя камера в видеосообщениях</string>
+    <!-- Appearance -->
+	<string name="exteraGeneral">Основное</string>
+    <string name="exteraHideAllChats">Скрытие вкладки \"Все чаты\" </string>
+    <string name="exteraSB">Прозрачный статусбар</string>
+    <string name="exteraSBdesc">Работает только с Android 6 и выше</string>
+    <string name="exteraFonts">Шрифты</string>
+    <string name="exteraSystemEmoji">Использовать системные эмодзи</string>
+    <string name="exteraSystemFont">Использовать системный шрифт</string>
+    <string name="exteraFontDesc">Может вызывать баги, использовать НА СВОЙ СТРАХ И РИСК!\nПерезапустите приложение, чтобы изменения вступили в силу.</string>
+    <!-- TEST APPEARANCE -->
+    <string name="exteraMutualContact">взаимный контакт</string>
+    <string name="exteraTESTFEATURE">тестовые плюшки</string>
+    <string name="exteraDrawer">Боковое меню</string>
+    <string name="exteraAttention">ВНИМАНИЕ!</string>
+    <string name="exteraDrawerRR">ЭТОТ ПУНКТ МОЖЕТ БЫТЬ ИЗМЕНЕН ИЛИ УДАЛЕН В БУДУЩЕМ!\nПерезапустите приложение, чтобы изменения вступили в силу.</string>
+    <string name="exteraNewGroup">Создать группу</string>
+    <string name="exteraNewSecretChat">Создать секретный чат</string>
+    <string name="exteraNewChannel">Создать канал</string>
+    <string name="exteraContacts">Контакты</string>
+    <string name="exteraCalls">Звонки</string>
+    <string name="exteraPeopleNearby">Люди рядом</string>
+    <string name="exteraPeopleNearbyDesc">Может не показываться, если выключен GPS</string>
+    <string name="exteraSavedMessages">Избранное</string>
+    <string name="exteraInviteFriends">Пригласить друзей</string>
+    <string name="exteraTelegramFeatures">Возможности Telegram</string>
+    <!-- Privacy -->
+    <string name="exteraPrivacy">Конфиденциальность</string>
+    <string name="exteraHideProxySponsor">Скрыть спонсора прокси</string>
+    <string name="exteraPreviousClientCleaner">Удалить старый кэш с папки Telegram</string>
+    <string name="exteraRemovedSuccessfully">Успешно!</string>
+    <!-- About exteraGram -->
+    <string name="AboutExtera">Об exteraGram</string>
+    <string name="AboutExteraDesc">Экспериментальный клиент Telegram основанный на официальном исходном коде Telegram!</string>
+    <string name="exteraChannel">Канал в Telegram</string>
+    <string name="exteraChat">Чат в Telegram</string>
+    <string name="exteraWebsite">Участники exteraSquad</string>
+    <string name="exteraGithub">Исходный код exteraGram</string>
+    <string name="languageEnglish">Английский</string>
+    <string name="languageRussian">Русский</string>
+</resources> 

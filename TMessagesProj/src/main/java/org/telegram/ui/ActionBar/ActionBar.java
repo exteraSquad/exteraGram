@@ -705,7 +705,7 @@ public class ActionBar extends FrameLayout {
             animators.add(ObjectAnimator.ofFloat(actionModeTop, View.ALPHA, 0.0f));
         }
         if (SharedConfig.noStatusBar) {
-            if (AndroidUtilities.computePerceivedBrightness(actionBarColor) < 0.721f) {
+            if (AndroidUtilities.computePerceivedBrightness(actionBarColor == 0 ? Theme.getColor(Theme.key_actionBarDefault) : actionBarColor) < 0.721f) {
                 AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
             } else {
                 AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);
@@ -804,6 +804,18 @@ public class ActionBar extends FrameLayout {
                 ((MenuDrawable) drawable).setBackColor(color);
             }
         }
+    }
+
+    public void setActionBarOverrideColor(int color, boolean updateLight) {
+        this.actionBarColor = color;
+        if (SharedConfig.noStatusBar && updateLight) {
+            if (AndroidUtilities.computePerceivedBrightness(color) < 0.721f) {
+                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
+            } else {
+                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);
+            }
+        }
+
     }
 
     public boolean isActionModeShowed() {
@@ -1428,7 +1440,7 @@ public class ActionBar extends FrameLayout {
         super.onDetachedFromWindow();
         ellipsizeSpanAnimator.onDetachedFromWindow();
         if (SharedConfig.noStatusBar && actionModeVisible) {
-            if (AndroidUtilities.computePerceivedBrightness(actionBarColor) < 0.721f) {
+            if (AndroidUtilities.computePerceivedBrightness(actionBarColor == 0 ? Theme.getColor(Theme.key_actionBarDefault) : actionBarColor) < 0.721f) {
                 AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
             } else {
                 AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);

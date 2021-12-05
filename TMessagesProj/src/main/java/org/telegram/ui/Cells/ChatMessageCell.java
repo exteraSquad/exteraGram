@@ -146,6 +146,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
+import com.exterasquad.messenger.ExteraConfig;
+
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate, DownloadController.FileDownloadProgressListener, TextSelectionHelper.SelectableView {
 
     public RadialProgress2 getRadialProgress() {
@@ -5102,6 +5104,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             photoHeight = (int) maxHeight;
                         }
                     }
+                    float modifier = ExteraConfig.INSTANCE.getStickerSize() / 100f;
+                    photoWidth = (int) (photoWidth * modifier);
+                    photoHeight = (int) (photoHeight * modifier);
+                    maxWidth = (int) (maxWidth * modifier);
+                    maxHeight = (int) (maxHeight * modifier);
                     Object parentObject = messageObject;
                     int w = (int) (photoWidth / AndroidUtilities.density);
                     int h = (int) (photoHeight / AndroidUtilities.density);
@@ -10457,7 +10464,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if ((!autoPlayingMedia || !MediaController.getInstance().isPlayingMessageAndReadyToDraw(currentMessageObject) || isRoundVideo) && !transitionParams.animateBackgroundBoundsInner) {
             drawOverlays(canvas);
         }
-        if ((drawTime || !mediaBackground) && !forceNotDrawTime && !transitionParams.animateBackgroundBoundsInner && !(enterTransitionInPorgress && !currentMessageObject.isVoice())) {
+        if ((drawTime || !mediaBackground) && !forceNotDrawTime && !transitionParams.animateBackgroundBoundsInner && !(enterTransitionInPorgress && !currentMessageObject.isVoice()) && (!currentMessageObject.isAnyKindOfSticker() || !ExteraConfig.INSTANCE.getHideStickerTime())) {
             drawTime(canvas, 1f, false);
         }
 

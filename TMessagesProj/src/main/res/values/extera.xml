@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- exteraGram bringup -->
+    <string name="exteraAppName">exteraGram α</string>
+    <string name="exteraAppNameBeta">exteraGram β</string>
+    <string name="exteraDebugMenu">words are superfluous ¯\\_(ツ)_/¯</string>
+    <!-- Main -->
+    <string name="exteraPreferences">extera Preferences</string>
+    <!-- Categories -->
+    <string name="exteraCategories">Categories</string>
+    <string name="exteraAppearance">Appearance</string>
+    <string name="exteraSecurity">Security</string>
+    <string name="exteraChats">Chats</string>
+    <!-- Chats -->
+    <string name="exteraStickerSize">Sticker Size</string>
+    <string name="exteraStickerTime">Hide time under stickers</string>
+    <string name="exteraMedia">Media</string>
+    <string name="exteraHQVoiceMessage">HQ Voice Messages</string>
+    <string name="exteraHQRestartRequired">Restart the app to take effect.</string>
+    <string name="exteraRearVideoMessages">Rear Camera in Video Messages</string>
+    <!-- Appearance -->
+    <string name="exteraGeneral">General</string>
+    <string name="exteraHideAllChats">Hide \"All Chats\" Tab</string>
+    <string name="exteraSB">Transparent Statusbar</string>
+    <string name="exteraSBdesc">only for Android 6+</string>
+    <string name="exteraFonts">Fonts</string>
+    <string name="exteraSystemEmoji">Use System Emoji</string>
+    <string name="exteraSystemFont">Use System Font</string>
+    <string name="exteraFontDesc">Causes various bugs, use AT YOUR OWN RISK!\nRestart the app to take effect.</string>
+    <!-- TEST APPEARANCE -->
+    <string name="exteraMutualContact">mutual contact</string>
+    <string name="exteraTESTFEATURE">test feature</string>
+    <string name="exteraDrawer">Drawer</string>
+    <string name="exteraAttention">ATTENTION!</string>
+    <string name="exteraDrawerRR">THIS ITEM MAY BE CHANGED OR REMOVED IN THE FUTURE!\nRestart the app to take effect.</string>
+    <string name="exteraNewGroup">New Group</string>
+    <string name="exteraNewSecretChat">New Secret Chat</string>
+    <string name="exteraNewChannel">New Channel</string>
+    <string name="exteraContacts">Contacts</string>
+    <string name="exteraCalls">Calls</string>
+    <string name="exteraPeopleNearby">People Nearby</string>
+    <string name="exteraPeopleNearbyDesc">May not be displayed if GPS is disabled.</string>
+    <string name="exteraSavedMessages">Saved Messages</string>
+    <string name="exteraInviteFriends">Invite Friends</string>
+    <string name="exteraTelegramFeatures">Telegram Features</string>
+    <!-- Privacy -->
+    <string name="exteraPrivacy">Privacy</string>
+    <string name="exteraHideProxySponsor">Hide Proxy Sponsor</string>
+    <string name="exteraPreviousClientCleaner">Remove old cache from Telegram folder</string>
+    <string name="exteraRemovedSuccessfully">Removed successfully!</string>
+    <!-- About exteraGram -->
+    <string name="AboutExtera">About exteraGram</string>
+    <string name="AboutExteraDesc">Experimental Telegram client based on official Telegram sources!</string>
+    <string name="exteraChannel">Telegram Channel</string>
+    <string name="exteraChat">Telegram Chat</string>
+    <string name="exteraWebsite">exteraSquad Members</string>
+    <string name="exteraGithub">exteraGram\'s Source Code</string>
+    <string name="languageEnglish">English</string>
+    <string name="languageRussian">Russian</string>
+</resources>

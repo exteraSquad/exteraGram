@@ -904,7 +904,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkStatusBar) {
                 int color = Theme.getColor(Theme.key_actionBarDefault, null, true);
-                AndroidUtilities.setLightStatusBar(getWindow(), color == Color.WHITE);
+                AndroidUtilities.setLightStatusBar(getWindow(), AndroidUtilities.computePerceivedBrightness(color) >= 0.721f);
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && checkNavigationBar) {
                 final Window window = getWindow();

@@ -155,6 +155,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.exterasquad.messenger.ExteraConfig;
+
 public class AndroidUtilities {
 
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();
@@ -1318,6 +1320,18 @@ public class AndroidUtilities {
 
     public static Typeface getTypeface(String assetPath) {
         synchronized (typefaceCache) {
+            if (ExteraConfig.INSTANCE.getUseSystemFont()) {
+                if (assetPath.contains("medium") && assetPath.contains("italic")) {
+                    return Typeface.create((Typeface) null, Typeface.BOLD_ITALIC);
+                }
+                if (assetPath.contains("medium")) {
+                    return Typeface.create((Typeface) null, Typeface.BOLD);
+                }
+                if (assetPath.contains("italic")) {
+                    return Typeface.create((Typeface) null, Typeface.ITALIC);
+                }
+                return Typeface.create((Typeface) null, Typeface.NORMAL);
+            }
             if (!typefaceCache.containsKey(assetPath)) {
                 try {
                     Typeface t;

@@ -66,6 +66,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
+import com.exterasquad.messenger.ExteraConfig;
+
 public class MessagesController extends BaseController implements NotificationCenter.NotificationCenterDelegate {
 
     private ConcurrentHashMap<Long, TLRPC.Chat> chats = new ConcurrentHashMap<>(100, 1.0f, 2);
@@ -5602,6 +5604,11 @@ public class MessagesController extends BaseController implements NotificationCe
                 noDialog = true;
             } else if (response instanceof TLRPC.TL_help_promoData) {
                 TLRPC.TL_help_promoData res = (TLRPC.TL_help_promoData) response;
+
+                if (ExteraConfig.INSTANCE.getHideProxySponsor()) {
+                    noDialog = true;
+                    return;
+                }
 
                 long did;
                 if (res.peer.user_id != 0) {
