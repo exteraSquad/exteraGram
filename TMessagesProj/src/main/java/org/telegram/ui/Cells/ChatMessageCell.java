@@ -2371,7 +2371,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
     private boolean checkTextSelection(MotionEvent event) {
         TextSelectionHelper.ChatListTextSelectionHelper textSelectionHelper = delegate.getTextSelectionHelper();
-        if (textSelectionHelper == null) {
+        if (textSelectionHelper == null || MessagesController.getInstance(currentAccount).isChatNoForwards(currentMessageObject.getChatId())) {
             return false;
         }
         boolean hasTextBlocks = currentMessageObject.textLayoutBlocks != null && !currentMessageObject.textLayoutBlocks.isEmpty();
@@ -2436,7 +2436,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     }
 
     private void updateSelectionTextPosition() {
-        if (getDelegate().getTextSelectionHelper() != null && getDelegate().getTextSelectionHelper().isSelected(currentMessageObject)) {
+        if (getDelegate() != null && getDelegate().getTextSelectionHelper() != null && getDelegate().getTextSelectionHelper().isSelected(currentMessageObject)) {
             int textSelectionType = getDelegate().getTextSelectionHelper().getTextSelectionType(this);
             if (textSelectionType == TextSelectionHelper.ChatListTextSelectionHelper.TYPE_DESCRIPTION) {
                 int linkX;
@@ -2971,7 +2971,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
         DownloadController.getInstance(currentAccount).removeLoadingFileObserver(this);
 
-        if (getDelegate().getTextSelectionHelper() != null) {
+        if (getDelegate() != null && getDelegate().getTextSelectionHelper() != null) {
             getDelegate().getTextSelectionHelper().onChatMessageCellDetached(this);
         }
 
@@ -3055,7 +3055,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             animatingDrawVideoImageButtonProgress = (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO || documentAttachType == DOCUMENT_ATTACH_TYPE_GIF) && drawVideoSize ? 1.0f : 0.0f;
         }
 
-        if (getDelegate().getTextSelectionHelper() != null) {
+        if (getDelegate() != null && getDelegate().getTextSelectionHelper() != null) {
             getDelegate().getTextSelectionHelper().onChatMessageCellAttached(this);
         }
 
@@ -3179,9 +3179,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             drawVideoSize = false;
             canStreamVideo = false;
             animatingNoSound = 0;
-            drawSideButton = !isRepliesChat && checkNeedDrawShareButton(messageObject) && (currentPosition == null || currentPosition.last) ? 1 : 0;
-            if (isPinnedChat || drawSideButton == 1 && messageObject.messageOwner.fwd_from != null && !messageObject.isOutOwner() && messageObject.messageOwner.fwd_from.saved_from_peer != null && messageObject.getDialogId() == UserConfig.getInstance(currentAccount).getClientUserId()) {
-                drawSideButton = 2;
+            if (MessagesController.getInstance(currentAccount).isChatNoForwards(messageObject.getChatId())) {
+                drawSideButton = 0;
+            } else {
+                drawSideButton = !isRepliesChat && checkNeedDrawShareButton(messageObject) && (currentPosition == null || currentPosition.last) ? 1 : 0;
+                if (isPinnedChat || drawSideButton == 1 && messageObject.messageOwner.fwd_from != null && !messageObject.isOutOwner() && messageObject.messageOwner.fwd_from.saved_from_peer != null && messageObject.getDialogId() == UserConfig.getInstance(currentAccount).getClientUserId()) {
+                    drawSideButton = 2;
+                }
             }
             replyNameLayout = null;
             adminLayout = null;
@@ -8125,7 +8129,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     canvas.drawPath(urlPath.get(b), Theme.chat_urlPaint);
                 }
             }
-            if (delegate.getTextSelectionHelper() != null && getDelegate().getTextSelectionHelper().isSelected(currentMessageObject)) {
+            if (delegate != null && delegate.getTextSelectionHelper() != null && getDelegate().getTextSelectionHelper().isSelected(currentMessageObject)) {
                 delegate.getTextSelectionHelper().drawDescription(currentMessageObject.isOutOwner(), descriptionLayout, canvas);
             }
             descriptionLayout.draw(canvas);
@@ -8153,7 +8157,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 imageDrawn = true;
                 drawTime = true;
             } else {
-                if (delegate == null || delegate.getPinchToZoomHelper() == null || !delegate.getPinchToZoomHelper().isInOverlayModeFor(this)) {
+                if (delegate == null || delegate.getPinchToZoomHelper() == null || !delegate.getPinchToZoomHelper().isInOverlayModeFor(this) && drawInstantViewType != 11) {
                     if (alpha != 1f) {
                         photoImage.setAlpha(alpha);
                         imageDrawn = photoImage.draw(canvas);
@@ -11112,7 +11116,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         Theme.chat_namePaint.setColor(getThemedColor(AvatarDrawable.getNameColorNameForId(currentUser.id)));
                     }
                 } else if (currentChat != null) {
-                    if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {
+                    if (currentMessageObject.isOutOwner() && ChatObject.isChannel(currentChat)) {
+                        if (currentBackgroundDrawable != null && currentBackgroundDrawable.hasGradient()) {
+                            Theme.chat_namePaint.setColor(getThemedColor(Theme.key_chat_messageTextOut));
+                        } else {
+                            Theme.chat_namePaint.setColor(getThemedColor(Theme.key_chat_outForwardedNameText));
+                        }
+                    } else if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {
                         Theme.chat_namePaint.setColor(Theme.changeColorAccent(getThemedColor(AvatarDrawable.getNameColorNameForId(5))));
                     } else if (currentMessageObject.isOutOwner()) {
                         Theme.chat_namePaint.setColor(getThemedColor(Theme.key_chat_outForwardedNameText));
@@ -11851,7 +11861,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
         if (!selectionOnly) {
             try {
-                if (getDelegate().getTextSelectionHelper() != null && getDelegate().getTextSelectionHelper().isSelected(currentMessageObject)) {
+                if (getDelegate() != null && getDelegate().getTextSelectionHelper() != null && getDelegate().getTextSelectionHelper().isSelected(currentMessageObject)) {
                     getDelegate().getTextSelectionHelper().drawCaption(currentMessageObject.isOutOwner(), captionLayout, canvas);
                 }
                 Emoji.emojiDrawingYOffset = -transitionYOffsetForDrawables;
