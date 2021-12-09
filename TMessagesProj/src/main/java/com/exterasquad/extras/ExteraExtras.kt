@@ -6,7 +6,7 @@ import org.telegram.messenger.SharedConfig
 
 object ExteraExtras {
 
-    var exteraVersion = "8.3.0"
+    var exteraVersion = "8.3.1"
     var exteraCodename = "cattus"
     @JvmField
     var currentAccountBitmap: BitmapDrawable? = null
