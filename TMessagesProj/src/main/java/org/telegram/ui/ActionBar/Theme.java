@@ -128,7 +128,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.core.graphics.ColorUtils;
 
-import com.exterasquad.extras.MaterialYouDynamicColor;
+import com.exteragram.extras.MaterialYouDynamicColor;
 
 public class Theme {
 

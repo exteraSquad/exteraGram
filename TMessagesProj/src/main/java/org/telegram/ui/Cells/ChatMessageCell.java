@@ -146,7 +146,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
-import com.exterasquad.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraConfig;
 
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate, DownloadController.FileDownloadProgressListener, TextSelectionHelper.SelectableView {
 

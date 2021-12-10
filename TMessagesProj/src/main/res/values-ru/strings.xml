@@ -4,29 +4,42 @@
     <string name="exteraAppName">exteraGram α</string>
     <string name="exteraAppNameBeta">exteraGram β</string>
     <string name="exteraDebugMenu">слова излишни ¯\\_(ツ)_/¯</string>
+
     <!-- Main -->
     <string name="exteraPreferences">extera Preferences</string>
+    <string name="exteraRestartRequired">Перезапустите приложение, чтобы изменения вступили в силу.</string>
+    
     <!-- Categories -->
     <string name="exteraCategories">Категории</string>
     <string name="exteraAppearance">Внешний вид</string>
     <string name="exteraSecurity">Безопасность</string>
     <string name="exteraChats">Чаты</string>
+    
     <!-- Chats -->
     <string name="exteraStickerSize">Размер стикера</string>
     <string name="exteraStickerTime">Убрать время под стикерами</string>
     <string name="exteraMedia">Медиа</string>
     <string name="exteraHQVoiceMessage">HQ качество голосовых сообщений</string>
-    <string name="exteraHQRestartRequired">Перезапустите приложение, чтобы изменения вступили в силу.</string>
     <string name="exteraRearVideoMessages">Задняя камера в видеосообщениях</string>
+    <string name="exteraArchiveOnPull">Открытие архива при вытягивании</string>
+    <string name="exteraHideKeyboardOnScroll">Скрытие клавиатуры при прокрутке</string>
+    
     <!-- Appearance -->
 	<string name="exteraGeneral">Основное</string>
+    <string name="exteraApplication">Приложение</string>
+    <string name="exteraAppIcon">Иконка приложения</string>
+    <string name="exteraDefaultIcon">Обычная иконка</string>
+    <string name="exteraMaterialYouIcon">Material You</string>
     <string name="exteraHideAllChats">Скрытие вкладки \"Все чаты\" </string>
     <string name="exteraSB">Прозрачный статусбар</string>
     <string name="exteraSBdesc">Работает только с Android 6 и выше</string>
+    <string name="exteraHidePhoneNumber">Скрыть номер телефона</string>
+    <!-- Causes various bugs. I wants to remove this features. -->
     <string name="exteraFonts">Шрифты</string>
     <string name="exteraSystemEmoji">Использовать системные эмодзи</string>
     <string name="exteraSystemFont">Использовать системный шрифт</string>
     <string name="exteraFontDesc">Может вызывать баги, использовать НА СВОЙ СТРАХ И РИСК!\nПерезапустите приложение, чтобы изменения вступили в силу.</string>
+    
     <!-- TEST APPEARANCE -->
     <string name="exteraMutualContact">взаимный контакт</string>
     <string name="exteraTESTFEATURE">тестовые плюшки</string>
@@ -43,11 +56,13 @@
     <string name="exteraSavedMessages">Избранное</string>
     <string name="exteraInviteFriends">Пригласить друзей</string>
     <string name="exteraTelegramFeatures">Возможности Telegram</string>
+    
     <!-- Privacy -->
     <string name="exteraPrivacy">Конфиденциальность</string>
     <string name="exteraHideProxySponsor">Скрыть спонсора прокси</string>
     <string name="exteraPreviousClientCleaner">Удалить старый кэш с папки Telegram</string>
     <string name="exteraRemovedSuccessfully">Успешно!</string>
+    
     <!-- About exteraGram -->
     <string name="AboutExtera">Об exteraGram</string>
     <string name="AboutExteraDesc">Экспериментальный клиент Telegram основанный на официальном исходном коде Telegram!</string>

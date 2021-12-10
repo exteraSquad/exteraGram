@@ -17,6 +17,8 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -317,7 +319,9 @@ public class ProfileSearchCell extends BaseCell {
             nameString = nameString2.replace('\n', ' ');
         }
         if (nameString.length() == 0) {
-            if (user != null && user.phone != null && user.phone.length() != 0) {
+            if (ExteraConfig.INSTANCE.getHidePhoneNumber()) {
+                nameString = LocaleController.getString("MobileHidden", R.string.MobileHidden);
+            } else if (user != null && user.phone != null && user.phone.length() != 0) {
                 nameString = PhoneFormat.getInstance().format("+" + user.phone);
             } else {
                 nameString = LocaleController.getString("HiddenName", R.string.HiddenName);

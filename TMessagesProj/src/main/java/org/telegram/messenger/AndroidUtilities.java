@@ -152,7 +152,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.exterasquad.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraConfig;
 
 public class AndroidUtilities {
 

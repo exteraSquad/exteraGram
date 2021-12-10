@@ -29,8 +29,8 @@ import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
 
-import com.exterasquad.messenger.preferences.BasePreferencesEntry;
-import com.exterasquad.messenger.prefviews.StickerSliderCell;
+import com.exteragram.messenger.preferences.BasePreferencesEntry;
+import com.exteragram.messenger.prefviews.StickerSliderCell;
 
 import ua.itaysonlab.tgkit.preference.TGKitCategory;
 import ua.itaysonlab.tgkit.preference.TGKitPreference;

@@ -34,7 +34,7 @@ import java.util.Collections;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exterasquad.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraConfig;
 
 public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
 

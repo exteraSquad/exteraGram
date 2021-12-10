@@ -182,9 +182,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.exterasquad.messenger.ExteraConfig;
-import com.exterasquad.messenger.ExteraPreferencesNav;
-import com.exterasquad.extras.ExteraExtras;
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraPreferencesNav;
+import com.exteragram.extras.ExteraExtras;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate {
 
@@ -5536,7 +5536,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     setAvatarSectionRow = rowCount++;
                 }
                 numberSectionRow = rowCount++;
-                numberRow = rowCount++;
+                numberRow = ExteraConfig.INSTANCE.getHidePhoneNumber() ? -1 : rowCount++;
                 setUsernameRow = rowCount++;
                 bioRow = rowCount++;
 
