@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- exteraGram bringup -->
-    <string name="exteraAppName">exteraGram α</string>
-    <string name="exteraAppNameBeta">exteraGram β</string>
     <string name="exteraDebugMenu">слова излишни ¯\\_(ツ)_/¯</string>
 
     <!-- Main -->
@@ -30,19 +28,19 @@
     <string name="exteraAppIcon">Иконка приложения</string>
     <string name="exteraDefaultIcon">Обычная иконка</string>
     <string name="exteraMaterialYouIcon">Material You</string>
-    <string name="exteraHideAllChats">Скрытие вкладки \"Все чаты\" </string>
+    <string name="exteraHideAllChats">Скрытие вкладки \"Все чаты\"</string>
+    <string name="exteraChatsOnTitle">"Чаты" вместо "exteraGram"</string>
     <string name="exteraSB">Прозрачный статусбар</string>
     <string name="exteraSBdesc">Работает только с Android 6 и выше</string>
     <string name="exteraHidePhoneNumber">Скрыть номер телефона</string>
+    <string name="exteraShowID">Показывать ID в профилях</string>
     <!-- Causes various bugs. I wants to remove this features. -->
     <string name="exteraFonts">Шрифты</string>
     <string name="exteraSystemEmoji">Использовать системные эмодзи</string>
     <string name="exteraSystemFont">Использовать системный шрифт</string>
     <string name="exteraFontDesc">Может вызывать баги, использовать НА СВОЙ СТРАХ И РИСК!\nПерезапустите приложение, чтобы изменения вступили в силу.</string>
     
-    <!-- TEST APPEARANCE -->
-    <string name="exteraMutualContact">взаимный контакт</string>
-    <string name="exteraTESTFEATURE">тестовые плюшки</string>
+    <!-- Drawer -->
     <string name="exteraDrawer">Боковое меню</string>
     <string name="exteraAttention">ВНИМАНИЕ!</string>
     <string name="exteraDrawerRR">ЭТОТ ПУНКТ МОЖЕТ БЫТЬ ИЗМЕНЕН ИЛИ УДАЛЕН В БУДУЩЕМ!\nПерезапустите приложение, чтобы изменения вступили в силу.</string>
@@ -72,4 +70,8 @@
     <string name="exteraGithub">Исходный код exteraGram</string>
     <string name="languageEnglish">Английский</string>
     <string name="languageRussian">Русский</string>
+
+    <!-- Non selectable -->
+    <string name="exteraMutualContact">взаимный контакт</string>
+    <string name="exteraTESTFEATURE">тестовые плюшки</string>
 </resources> 

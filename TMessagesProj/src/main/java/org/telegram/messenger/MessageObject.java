@@ -1648,12 +1648,13 @@ public class MessageObject {
             message = new TLRPC.TL_message();
             message.out = false;
             message.unread = false;
-            message.from_id = new TLRPC.TL_peerUser();
-            message.from_id.user_id = event.user_id;
+            //* message.from_id = new TLRPC.TL_peerUser();
+            //* message.from_id.user_id = event.user_id;
             message.peer_id = peer_id;
             message.date = event.date;
             TLRPC.Message newMessage = ((TLRPC.TL_channelAdminLogEventActionEditMessage) event.action).new_message;
             TLRPC.Message oldMessage = ((TLRPC.TL_channelAdminLogEventActionEditMessage) event.action).prev_message;
+            message.from_id = newMessage.from_id;
             if (newMessage.media != null && !(newMessage.media instanceof TLRPC.TL_messageMediaEmpty) && !(newMessage.media instanceof TLRPC.TL_messageMediaWebPage)/* && TextUtils.isEmpty(newMessage.message)*/) {
                 boolean changedCaption;
                 boolean changedMedia;
@@ -5829,7 +5830,7 @@ public class MessageObject {
             if (message.out && message instanceof TLRPC.TL_messageService) {
                 return message.id != 1 && ChatObject.canUserDoAdminAction(chat, ChatObject.ACTION_DELETE_MESSAGES);
             }
-            return inScheduleMode || message.id != 1 && (chat.creator || chat.admin_rights != null && (chat.admin_rights.delete_messages || message.out && (chat.megagroup || chat.admin_rights.post_messages)) || chat.megagroup && message.out && message.from_id instanceof TLRPC.TL_peerUser);
+            return inScheduleMode || message.id != 1 && (chat.creator || chat.admin_rights != null && (chat.admin_rights.delete_messages || message.out && (chat.megagroup || chat.admin_rights.post_messages)) || chat.megagroup && message.out && (message.from_id instanceof TLRPC.TL_peerUser || message.from_id instanceof TLRPC.TL_peerChannel));
         }
         return inScheduleMode || isOut(message) || !ChatObject.isChannel(chat);
     }

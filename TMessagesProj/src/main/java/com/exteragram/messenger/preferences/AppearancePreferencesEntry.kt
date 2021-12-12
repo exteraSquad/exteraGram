@@ -46,6 +46,16 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
+                title = LocaleController.getString("exteraChatsOnTitle", R.string.exteraChatsOnTitle)
+                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
+
+                contract({
+                    return@contract ExteraConfig.chatsOnTitle
+                }) {
+                    ExteraConfig.chatsOnTitle = it
+                }
+            }
+            switch {
                 title = LocaleController.getString("exteraSB", R.string.exteraSB)
                 summary = LocaleController.getString("exteraSBdesc", R.string.exteraSBdesc)
 
@@ -71,7 +81,16 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                     ExteraConfig.hidePhoneNumber = it
                 }
             }
+            switch {
+                title = LocaleController.getString("exteraShowID", R.string.exteraShowID)
+                contract({
+                    return@contract ExteraConfig.showID
+                }) {
+                    ExteraConfig.showID = it
+                }
+            }
         }
+
 
         category(LocaleController.getString("exteraFonts", R.string.exteraFonts)) {
             textDetail {

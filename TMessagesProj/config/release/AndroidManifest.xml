@@ -19,6 +19,7 @@
 
     <application
         android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/exteraAppName"
         android:theme="@style/Theme.TMessages.Start"
         android:name=".ApplicationLoader"
@@ -29,6 +30,19 @@
         tools:replace="android:supportsRtl">
 
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
+
+        <activity-alias
+            android:name=".defaulticon"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <service
             android:name=".GcmPushListenerService">

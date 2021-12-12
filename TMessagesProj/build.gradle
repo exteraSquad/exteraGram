@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.google.gms.google-services'
 
 repositories {
     mavenCentral()
@@ -48,7 +49,7 @@ dependencies {
 }
 
 //return an api key from a properties file.
-def getAppId(){
+def getAppID(){
     Properties properties = new Properties()
     properties.load(new FileInputStream("./API_KEYS"))
     return properties.get("APP_ID")
@@ -92,57 +93,8 @@ android {
             debuggable true
             jniDebuggable true
             applicationIdSuffix ".beta"
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
-            multiDexEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            ndk.debugSymbolLevel = 'FULL'
-        }
-
-        /*debugAsan {
-            debuggable true
-            jniDebuggable true
-            signingConfig signingConfigs.debug
-            applicationIdSuffix ".beta"
-            minifyEnabled true
-            multiDexEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            packagingOptions {
-                doNotStrip "**.so"
-            }
-
-            sourceSets {
-                main {
-                    jniLibs {
-                        srcDir {
-                            'jniLibs'
-                        }
-                    }
-                    resources {
-                        srcDir {
-                            'jniRes'
-                        }
-                    }
-                }
-            }
-        }*/
-
-        HA {
-            debuggable false
-            jniDebuggable false
-            applicationIdSuffix ".beta"
-            minifyEnabled true
-            multiDexEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            ndk.debugSymbolLevel = 'FULL'
-        }
-
-        standalone {
-            debuggable false
-            jniDebuggable false
-            applicationIdSuffix ".web"
-            minifyEnabled true
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
@@ -160,19 +112,7 @@ android {
     }
 
     sourceSets.debug {
-        manifest.srcFile 'config/debug/AndroidManifest.xml'
-    }
-
-    /*sourceSets.debugAsan {
-        manifest.srcFile 'config/debug/AndroidManifest.xml'
-    }*/
-
-    sourceSets.HA {
-        manifest.srcFile 'config/debug/AndroidManifest.xml'
-    }
-
-    sourceSets.standalone {
-        manifest.srcFile 'config/release/AndroidManifest.xml'
+        manifest.srcFile 'config/debug/AndroidManifest_SDK23.xml'
     }
 
     sourceSets.release {
@@ -198,42 +138,12 @@ android {
                 abiVersionCode = 2
             }
         }
-        armv7_SDK23 {
-            ndk {
-                abiFilters "armeabi-v7a"
-            }
-            sourceSets.debug {
-                manifest.srcFile 'config/debug/AndroidManifest_SDK23.xml'
-            }
-            sourceSets.release {
-                manifest.srcFile 'config/release/AndroidManifest_SDK23.xml'
-            }
-            minSdkVersion 23
-            ext {
-                abiVersionCode = 3
-            }
-        }
-        x86_SDK23 {
-            ndk {
-                abiFilters "x86"
-            }
-            sourceSets.debug {
-                manifest.srcFile 'config/debug/AndroidManifest_SDK23.xml'
-            }
-            sourceSets.release {
-                manifest.srcFile 'config/release/AndroidManifest_SDK23.xml'
-            }
-            minSdkVersion 23
-            ext {
-                abiVersionCode = 4
-            }
-        }
         arm64 {
             ndk {
                 abiFilters "arm64-v8a"
             }
             ext {
-                abiVersionCode = 5
+                abiVersionCode = 3
             }
         }
         x64 {
@@ -241,54 +151,29 @@ android {
                 abiFilters "x86_64"
             }
             ext {
-                abiVersionCode = 6
-            }
-        }
-        arm64_SDK23 {
-            ndk {
-                abiFilters "arm64-v8a"
-            }
-            sourceSets.debug {
-                manifest.srcFile 'config/debug/AndroidManifest_SDK23.xml'
-            }
-            sourceSets.release {
-                manifest.srcFile 'config/release/AndroidManifest_SDK23.xml'
-            }
-            minSdkVersion 23
-            ext {
-                abiVersionCode = 7
-            }
-        }
-        x64_SDK23 {
-            ndk {
-                abiFilters "x86_64"
-            }
-            sourceSets.debug {
-                manifest.srcFile 'config/debug/AndroidManifest_SDK23.xml'
-            }
-            sourceSets.release {
-                manifest.srcFile 'config/release/AndroidManifest_SDK23.xml'
-            }
-            minSdkVersion 23
-            ext {
-                abiVersionCode = 8
+                abiVersionCode = 4
             }
         }
         afat {
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            }
-            sourceSets.debug {
-                manifest.srcFile 'config/debug/AndroidManifest_SDK23.xml'
+                abiFilters "armeabi-v7a"
             }
             sourceSets.release {
                 manifest.srcFile 'config/release/AndroidManifest_SDK23.xml'
             }
-            sourceSets.standalone {
-                manifest.srcFile 'config/release/AndroidManifest_standalone.xml'
+            ext {
+                abiVersionCode = 5
+            }
+        }
+        beta {
+            ndk {
+                abiFilters "armeabi-v7a"
+            }
+            sourceSets.debug {
+                manifest.srcFile 'config/debug/AndroidManifest_SDK23.xml'
             }
             ext {
-                abiVersionCode = 9
+                abiVersionCode = 6
             }
         }
     }
@@ -297,16 +182,21 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def date = new Date();
+            def buildtype = variant.productFlavors[0].name
+            if (variant.productFlavors[0].name != "beta")
+                buildtype = "release";
+
+            def date = new Date()
             def formattedDate = date.format('ddMMyyyy')
-            outputFileName = ("exteragram-release-" + formattedDate + ".apk")
+
+            outputFileName = "exteragram-${buildtype}-${formattedDate}.apk"
             output.versionCodeOverride = defaultConfig.versionCode * 10 + variant.productFlavors.get(0).abiVersionCode
         }
     }
 
     variantFilter { variant ->
         def names = variant.flavors*.name
-        if (variant.buildType.name != "release" && !names.contains("afat")) {
+        if (variant.buildType.name != "release" && !names.contains("beta")) {
             setIgnore(true)
         }
     }
@@ -318,7 +208,7 @@ android {
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
         //obtain your own keys at https://core.telegram.org/api/obtaining_api_id
-        buildConfigField 'int', 'APP_ID', getAppId()
+        buildConfigField 'int', 'APP_ID', getAppID()
         buildConfigField 'String', 'APP_HASH', getAppHash()
 
         externalNativeBuild {
@@ -328,6 +218,6 @@ android {
             }
         }
     }
+    dependenciesInfo.includeInApk false
 }
 
-apply plugin: 'com.google.gms.google-services'

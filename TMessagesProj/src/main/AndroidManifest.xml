@@ -74,7 +74,6 @@
     <application
         android:name=".ApplicationLoader"
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
         android:hardwareAccelerated="@bool/useHardwareAcceleration"
         android:largeHeap="true"
         android:theme="@style/Theme.TMessages.Start"
@@ -165,19 +164,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="vnd.android.cursor.item/vnd.org.telegram.messenger.android.call"/>
                 <data android:mimeType="vnd.android.cursor.item/vnd.org.telegram.messenger.android.call.video"/>
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".defaulticon"
-            android:enabled="true"
-            android:icon="@mipmap/ic_launcher"
-            android:targetActivity="org.telegram.ui.LaunchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
         </activity-alias>
 
