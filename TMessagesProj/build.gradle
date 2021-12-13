@@ -183,9 +183,9 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def buildtype = variant.productFlavors[0].name
-            if (variant.productFlavors[0].name != "beta")
+            if (variant.productFlavors[0].name != "beta") {
                 buildtype = "release";
-
+            }
             def date = new Date()
             def formattedDate = date.format('ddMMyyyy')
 
@@ -197,6 +197,9 @@ android {
     variantFilter { variant ->
         def names = variant.flavors*.name
         if (variant.buildType.name != "release" && !names.contains("beta")) {
+            setIgnore(true)
+        }
+        if (variant.buildType.name != "debug" && names.contains("beta")) {
             setIgnore(true)
         }
     }
