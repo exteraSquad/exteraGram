@@ -19,22 +19,27 @@
     <string name="exteraMedia">Медиа</string>
     <string name="exteraHQVoiceMessage">HQ качество голосовых сообщений</string>
     <string name="exteraRearVideoMessages">Задняя камера в видеосообщениях</string>
+    <string name="exteraPauseOnMinimize">Автопауза</string>
+    <string name="exteraPauseOnMinimizeDesc">Приостанавливает воспроизведение видео, когда устройство заблокировано или exteraGram свернут.</string>
+    <!-- Chats (category) -->
     <string name="exteraArchiveOnPull">Открытие архива при вытягивании</string>
     <string name="exteraIncludeArchivedChatsInForwards">Добавить архивированные чаты для пересыланий</string>
     <string name="exteraHideKeyboardOnScroll">Скрытие клавиатуры при прокрутке</string>
+    <string name="exteraUnlimitedPinnedChats">Неограниченные закрепленные чаты</string>
+    <string name="exteraUnlimitedPinnedChatsDesc">Позволяет закрепить неограниченное количество чатов, отключив синхронизацию.</string>
+    <string name="exteraRecentStickers">Неограниченные недавние стикеры</string>
     
     <!-- Appearance -->
 	<string name="exteraGeneral">Основное</string>
     <string name="exteraApplication">Приложение</string>
     <string name="exteraAppIcon">Иконка приложения</string>
-    <string name="exteraDefaultIcon">Обычная иконка</string>
-    <string name="exteraMaterialYouIcon">Material You</string>
     <string name="exteraHideAllChats">Скрытие вкладки \"Все чаты\"</string>
     <string name="exteraChatsOnTitle">"Чаты" вместо "exteraGram"</string>
     <string name="exteraSB">Прозрачный статусбар</string>
     <string name="exteraSBdesc">Работает только с Android 6 и выше</string>
     <string name="exteraHidePhoneNumber">Скрыть номер телефона</string>
     <string name="exteraShowID">Показывать ID в профилях</string>
+    <string name="exteraForceTabletMode">Включить режим планшета</string>
     <!-- Causes various bugs. I wants to remove this features. -->
     <string name="exteraFonts">Шрифты</string>
     <string name="exteraSystemEmoji">Использовать системные эмодзи</string>
@@ -72,7 +77,18 @@
     <string name="languageEnglish">Английский</string>
     <string name="languageRussian">Русский</string>
 
-    <!-- Non selectable -->
+    <!-- Mutual contact -->
     <string name="exteraMutualContact">взаимный контакт</string>
-    <string name="exteraTESTFEATURE">тестовые плюшки</string>
+
+    <!-- Icons -->
+    <string name="exteraDefaultIcon">Обычная иконка</string>
+    <string name="exteraMaterialYouIcon">Material You</string>
+    <string name="yandexIcon">Иконка в стиле Яндекс.Алисы</string>
+    <string name="asscatchemIcon">Иконка от \@asscatchem</string>
+    <string name="itsv1edsIcon">Иконка от \@itsv1eds</string>
+    <string name="the8055uIcon">Иконка от \@the8055u</string>
+    <string name="ghoulghoulchanIcon">Иконка от \@ghoulghoulchan</string>
+
+    <!-- Experimental -->
+    <string name="exteraExperimental">Experimental</string>
 </resources> 

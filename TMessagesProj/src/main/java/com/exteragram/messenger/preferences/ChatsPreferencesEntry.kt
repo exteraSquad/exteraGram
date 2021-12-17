@@ -53,15 +53,22 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString(
-                    "exteraRearVideoMessages",
-                    R.string.exteraRearVideoMessages
-                )
+                title = LocaleController.getString("exteraRearVideoMessages", R.string.exteraRearVideoMessages)
 
                 contract({
                     return@contract ExteraConfig.rearVideoMessages
                 }) {
                     ExteraConfig.rearVideoMessages = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("exteraPauseOnMinimize", R.string.exteraPauseOnMinimize)
+                summary = LocaleController.getString("exteraPauseOnMinimizeDesc", R.string.exteraPauseOnMinimizeDesc)
+
+                contract({
+                    return@contract ExteraConfig.pauseOnMinimize
+                }) {
+                    ExteraConfig.pauseOnMinimize = it
                 }
             }
         }
@@ -92,6 +99,25 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                     return@contract ExteraConfig.hideKeyboardOnScroll
                 }) {
                     ExteraConfig.hideKeyboardOnScroll = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("exteraUnlimitedPinnedChats", R.string.exteraUnlimitedPinnedChats)
+                summary = LocaleController.getString("exteraUnlimitedPinnedChatsDesc", R.string.exteraUnlimitedPinnedChatsDesc)
+
+                contract({
+                    return@contract ExteraConfig.unlimitedPinnedChats
+                }) {
+                    ExteraConfig.unlimitedPinnedChats = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("exteraRecentStickers", R.string.exteraRecentStickers)
+
+                contract({
+                    return@contract ExteraConfig.recentStickers
+                }) {
+                    ExteraConfig.recentStickers = it
                 }
             }
         }

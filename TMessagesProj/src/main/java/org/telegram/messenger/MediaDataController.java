@@ -271,7 +271,7 @@ public class MediaDataController extends BaseController {
 
     public ArrayList<TLRPC.Document> getRecentStickers(int type) {
         ArrayList<TLRPC.Document> arrayList = recentStickers[type];
-        return new ArrayList<>(arrayList.subList(0, Math.min(arrayList.size(), 20)));
+        return new ArrayList<>(arrayList.subList(0, Math.min(arrayList.size(), com.exteragram.messenger.ExteraConfig.INSTANCE.getRecentStickers() ? Integer.MAX_VALUE : 20)));
     }
 
     public ArrayList<TLRPC.Document> getRecentStickersNoCopy(int type) {

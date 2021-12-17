@@ -1317,17 +1317,23 @@ public class AndroidUtilities {
 
     public static Typeface getTypeface(String assetPath) {
         synchronized (typefaceCache) {
-            if (ExteraConfig.INSTANCE.getUseSystemFont()) {
+            if (ExteraConfig.INSTANCE.getUseSystemFont() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 if (assetPath.contains("medium") && assetPath.contains("italic")) {
-                    return Typeface.create((Typeface) null, Typeface.BOLD_ITALIC);
+                    return Typeface.create("sans-serif-medium", Typeface.ITALIC);
                 }
                 if (assetPath.contains("medium")) {
-                    return Typeface.create((Typeface) null, Typeface.BOLD);
+                    return Typeface.create("sans-serif-medium", Typeface.NORMAL);
                 }
                 if (assetPath.contains("italic")) {
                     return Typeface.create((Typeface) null, Typeface.ITALIC);
                 }
-                return Typeface.create((Typeface) null, Typeface.NORMAL);
+                if (assetPath.contains("mono")) {
+                    return Typeface.MONOSPACE;
+                }
+                if (assetPath.contains("mw_bold")) {
+                    return Typeface.create("serif", Typeface.BOLD);
+                }
+                //return Typeface.create((Typeface) null, Typeface.NORMAL);
             }
             if (!typefaceCache.containsKey(assetPath)) {
                 try {
@@ -1793,7 +1799,9 @@ public class AndroidUtilities {
     }
 
     public static boolean isTablet() {
-        if (isTablet == null) {
+        if (ExteraConfig.INSTANCE.getForceTabletMode()) {
+            isTablet = true;
+        } else if (isTablet == null) {
             isTablet = ApplicationLoader.applicationContext != null && ApplicationLoader.applicationContext.getResources().getBoolean(R.bool.isTablet);
         }
         return isTablet;
@@ -2307,7 +2315,7 @@ public class AndroidUtilities {
         }
         File storageDir = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "exteraGram");
             if (!storageDir.mkdirs()) {
                 if (!storageDir.exists()) {
                     if (BuildVars.LOGS_ENABLED) {

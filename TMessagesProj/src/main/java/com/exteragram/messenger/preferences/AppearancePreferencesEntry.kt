@@ -21,11 +21,21 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 contractIcons({
                     return@contractIcons listOf(
                         Triple(0, LocaleController.getString("exteraDefaultIcon", R.string.exteraDefaultIcon), R.mipmap.ic_launcher),
-                        Triple(1, LocaleController.getString("exteraMaterialYouIcon", R.string.exteraMaterialYouIcon), R.mipmap.ic_launcher_materialyou)
+                        Triple(1, LocaleController.getString("exteraMaterialYouIcon", R.string.exteraMaterialYouIcon), R.mipmap.ic_launcher_materialyou),
+                        Triple(2, LocaleController.getString("yandexIcon", R.string.yandexIcon), R.mipmap.ic_launcher_alisa),
+                        Triple(3, LocaleController.getString("the8055uIcon", R.string.the8055uIcon), R.mipmap.ic_launcher_the8055u),
+                        Triple(4, LocaleController.getString("itsv1edsIcon", R.string.itsv1edsIcon), R.mipmap.ic_launcher_itsv1eds),
+                        Triple(5, LocaleController.getString("asscatchemIcon", R.string.asscatchemIcon), R.mipmap.ic_launcher_asscatchem),
+                        Triple(6, LocaleController.getString("ghoulghoulchanIcon", R.string.ghoulghoulchanIcon), R.mipmap.ic_launcher_ghoulghoulchan)
                     )
                 }, {
                     return@contractIcons when (ExteraConfig.appIcon) {
                         1 -> LocaleController.getString("exteraMaterialYouIcon", R.string.exteraMaterialYouIcon)
+                        2 -> LocaleController.getString("yandexIcon", R.string.yandexIcon)
+                        3 -> LocaleController.getString("the8055uIcon", R.string.the8055uIcon)
+                        4 -> LocaleController.getString("itsv1edsIcon", R.string.itsv1edsIcon)
+                        5 -> LocaleController.getString("asscatchemIcon", R.string.asscatchemIcon)
+                        6 -> LocaleController.getString("ghoulghoulchanIcon", R.string.ghoulghoulchanIcon)
                         else -> LocaleController.getString("exteraDefaultIcon", R.string.exteraDefaultIcon)
                     }
                 }) {
@@ -83,10 +93,21 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
             }
             switch {
                 title = LocaleController.getString("exteraShowID", R.string.exteraShowID)
+
                 contract({
                     return@contract ExteraConfig.showID
                 }) {
                     ExteraConfig.showID = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("exteraForceTabletMode", R.string.exteraForceTabletMode)
+                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
+
+                contract({
+                    return@contract ExteraConfig.forceTabletMode
+                }) {
+                    ExteraConfig.forceTabletMode = it
                 }
             }
         }

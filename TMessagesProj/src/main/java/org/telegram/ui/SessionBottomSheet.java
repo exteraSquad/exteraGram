@@ -341,6 +341,10 @@ public class SessionBottomSheet extends BottomSheet {
         } else if (platform.contains("macos")) {
             iconId = R.raw.mac_30;
             colorKey = Theme.key_avatar_backgroundCyan;
+        } else if (session.app_name.contains("exteraGram")) {
+            animation = false;
+            iconId = R.drawable.notification;
+            colorKey = Theme.key_avatar_backgroundRed;
         } else if (platform.contains("android")) {
             iconId = R.raw.android_30;
             colorKey = Theme.key_avatar_backgroundGreen;

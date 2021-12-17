@@ -15,7 +15,7 @@ import android.os.Build;
 public class BuildVars {
 
     public static boolean DEBUG_PRIVATE_VERSION = false;
-    public static boolean DEBUG_VERSION = false;
+    public static boolean DEBUG_VERSION = BuildConfig.BUILD_TYPE.equals("debug");
     public static boolean LOGS_ENABLED = false;
     public static boolean USE_CLOUD_STRINGS = true;
     public static boolean CHECK_UPDATES = false;
@@ -29,16 +29,17 @@ public class BuildVars {
     public static String PLAYSTORE_APP_URL = "https://t.me/exteragram";
 
     static {
-        if (ApplicationLoader.applicationContext != null) {
+        if (!DEBUG_PRIVATE_VERSION && ApplicationLoader.applicationContext != null) {
             SharedPreferences sharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Context.MODE_PRIVATE);
-            LOGS_ENABLED = DEBUG_VERSION || sharedPreferences.getBoolean("logsEnabled", false);
+            LOGS_ENABLED = DEBUG_VERSION = sharedPreferences.getBoolean("logsEnabled", DEBUG_VERSION);
         }
     }
 
     public static boolean isStandaloneApp() {
         return true;
     }
+
     public static boolean isBetaApp() {
-        return false;
+        return BuildConfig.BUILD_TYPE.equals("debug");
     }
 }

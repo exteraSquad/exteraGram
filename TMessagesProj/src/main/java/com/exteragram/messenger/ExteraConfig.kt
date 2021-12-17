@@ -21,6 +21,7 @@ object ExteraConfig {
     var includeArchivedChatsInForwards by sharedPreferences.boolean("IncludeArchivedChatsInForwards", true)
     var hideKeyboardOnScroll by sharedPreferences.boolean("HideKeyboardOnScroll", true)
     var showID by sharedPreferences.boolean("ShowID", false)
+    var forceTabletMode by sharedPreferences.boolean("ForceTabletMode", false)
     // Fonts
     var useSystemFont by sharedPreferences.boolean("useSystemFont", false)
     // Drawer
@@ -41,6 +42,11 @@ object ExteraConfig {
     // Media
     var HQVoiceMessage by sharedPreferences.boolean("HQVoiceMessage", true)
     var rearVideoMessages by sharedPreferences.boolean("rearVideoMessages", false)
+    // Test features
+    var unlimitedPinnedChats by sharedPreferences.boolean("unlimitedPinnedChats", false)
+    var pauseOnMinimize by sharedPreferences.boolean("pauseOnMinimize", false)
+    var hideSendAsPeer by sharedPreferences.boolean("hideSendAsPeer", false)
+    var recentStickers by sharedPreferences.boolean("recentStickers", false)
 
     // Security
     var hideProxySponsor by sharedPreferences.boolean("hideProxySponsor", true)
