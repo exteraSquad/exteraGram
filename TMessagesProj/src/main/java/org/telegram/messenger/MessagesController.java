@@ -10772,20 +10772,20 @@ public class MessagesController extends BaseController implements NotificationCe
                 } else {
                     newTaskId = taskId;
                 }
-
-                getConnectionsManager().sendRequest(req, (response, error) -> {
-                    if (newTaskId != 0) {
-                        getMessagesStorage().removePendingTask(newTaskId);
-                    }
-                });
+                if (ExteraConfig.INSTANCE.getUnlimitedPinnedChats()) {
+                    getConnectionsManager().sendRequest(req, (response, error) -> {
+                        if (newTaskId != 0) {
+                            getMessagesStorage().removePendingTask(newTaskId);
+                        }
+                    });
+                }
             }
         }
         getMessagesStorage().setDialogPinned(dialogId, dialog.pinnedNum);
         return true;
     }
-
     public void loadPinnedDialogs(final int folderId, long newDialogId, ArrayList<Long> order) {
-        if (loadingPinnedDialogs.indexOfKey(folderId) >= 0 || getUserConfig().isPinnedDialogsLoaded(folderId)) {
+        if (!ExteraConfig.INSTANCE.getUnlimitedPinnedChats() || loadingPinnedDialogs.indexOfKey(folderId) >= 0 || getUserConfig().isPinnedDialogsLoaded(folderId)) {
             return;
         }
         loadingPinnedDialogs.put(folderId, 1);

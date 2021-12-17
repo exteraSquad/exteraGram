@@ -21,21 +21,26 @@
     <string name="exteraMedia">Media</string>
     <string name="exteraHQVoiceMessage">HQ Voice Messages</string>
     <string name="exteraRearVideoMessages">Rear Camera in Video Messages</string>
+    <string name="exteraPauseOnMinimize">Autopause</string>
+    <string name="exteraPauseOnMinimizeDesc">Pauses a video playback when device is locked or exteraGram is minimized.</string>
+    <!-- Chats (category) -->
     <string name="exteraArchiveOnPull">Open Archive on Pulldown</string>
     <string name="exteraHideKeyboardOnScroll">Hide Keyboard on Scrolling</string>
+    <string name="exteraUnlimitedPinnedChats">Unlimited pinned chats</string>
+    <string name="exteraUnlimitedPinnedChatsDesc">Pin unlimited chats by turn synching off.</string>
+    <string name="exteraRecentStickers">Unlimited recent stickers</string>
 
     <!-- Appearance -->
     <string name="exteraGeneral">General</string>
     <string name="exteraApplication">Application</string>
     <string name="exteraAppIcon">Application Icon</string>
-    <string name="exteraDefaultIcon">Default</string>
-    <string name="exteraMaterialYouIcon">Material You</string>
     <string name="exteraHideAllChats">Hide \"All Chats\" Tab</string>
     <string name="exteraChatsOnTitle">"Chats" instead of "exteraGram"</string>
     <string name="exteraSB">Transparent Statusbar</string>
     <string name="exteraSBdesc">only for Android 6+</string>
     <string name="exteraHidePhoneNumber">Hide Phone Number</string>
     <string name="exteraShowID">Show ID in Profile</string>
+    <string name="exteraForceTabletMode">Force Tablet Mode</string>
     <!-- Causes various bugs. I wants to remove this features. -->
     <string name="exteraFonts">Fonts</string>
     <string name="exteraSystemEmoji">Use System Emoji</string>
@@ -73,7 +78,18 @@
     <string name="languageEnglish">English</string>
     <string name="languageRussian">Russian</string>
 
-    <!-- Non selectable -->
+    <!-- Mutual contact -->
     <string name="exteraMutualContact">mutual contact</string>
-    <string name="exteraTESTFEATURE">test features</string>
+
+    <!-- Icons -->
+    <string name="exteraDefaultIcon">Default Icon</string>
+    <string name="exteraMaterialYouIcon">Material You</string>
+    <string name="yandexIcon">Yandex.Alisa\'s Themed Icon</string>
+    <string name="asscatchemIcon">\@asscatchem\'s Themed Icon</string>
+    <string name="itsv1edsIcon">\@itsv1eds\'s Themed Icon</string>
+    <string name="the8055uIcon">\@the8055u\'s Themed Icon</string>
+    <string name="ghoulghoulchanIcon">\@ghoulghoulchan\'s Themed Icon</string>
+
+    <!-- Experimental -->
+    <string name="exteraExperimental">Experimental</string>
 </resources>

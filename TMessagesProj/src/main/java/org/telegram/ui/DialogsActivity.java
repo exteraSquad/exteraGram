@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -2108,10 +2109,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             if (folderId != 0) {
                 actionBar.setTitle(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
-            } else if (!ExteraConfig.INSTANCE.getChatsOnTitle()) {
-                actionBar.setTitle(LocaleController.getString("exteraAppName", R.string.exteraAppName));
             } else {
-                actionBar.setTitle(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort));
+                if (BuildVars.DEBUG_VERSION && !ExteraConfig.INSTANCE.getChatsOnTitle()) {
+                    actionBar.setTitle(LocaleController.getString("AppNameBeta", R.string.AppNameBeta));
+                } else if (!ExteraConfig.INSTANCE.getChatsOnTitle()) {
+                    actionBar.setTitle(LocaleController.getString("AppName", R.string.AppName));
+                } else {
+                    actionBar.setTitle(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort));
+                }
             }
             if (folderId == 0) {
                 actionBar.setSupportsHolidayImage(true);
@@ -5342,7 +5347,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             int maxPinnedCount;
             if (containsFilter) {
                 maxPinnedCount = 100 - filter.alwaysShow.size();
-            } else if (folderId != 0 || filter != null) {
+            } else if (folderId != 0 || filter != null || ExteraConfig.INSTANCE.getUnlimitedPinnedChats()) {
                 maxPinnedCount = getMessagesController().maxFolderPinnedDialogsCount;
             } else {
                 maxPinnedCount = getMessagesController().maxPinnedDialogsCount;

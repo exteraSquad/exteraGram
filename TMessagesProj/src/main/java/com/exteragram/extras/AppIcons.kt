@@ -9,6 +9,11 @@ object AppIcons {
     enum class Icon(val mf: String) {
         DEFAULT("defaulticon"),
         MATERIALYOU("materialyouicon"),
+        YANDEXALISA("yandexalisaicon"),
+        THE8055U("the8055uicon"),
+        ITSV1EDS("itsv1edsicon"),
+        ASSCATCHEM("asscatchemicon"),
+        GHOULGHOULCHAN("ghoulghoulchanicon"),
     }
 
     fun setIcon(variant: Int) {

@@ -94,18 +94,21 @@ android {
             jniDebuggable true
             applicationIdSuffix ".beta"
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             multiDexEnabled true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
+            buildConfigField 'boolean', 'DEBUG_VERSION', 'true'
         }
 
         release {
             debuggable false
             jniDebuggable false
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             multiDexEnabled true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
         }

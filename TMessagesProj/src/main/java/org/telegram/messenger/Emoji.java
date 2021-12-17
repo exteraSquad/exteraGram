@@ -321,14 +321,15 @@ public class Emoji {
     }
 
     public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, int size, boolean createNew, int[] emojiOnly) {
-        if (SharedConfig.useSystemEmoji || cs == null || cs.length() == 0) {
-            return cs;
-        }
+        if (cs == null || cs.length() == 0) return cs;
         Spannable s;
         if (!createNew && cs instanceof Spannable) {
             s = (Spannable) cs;
         } else {
             s = Spannable.Factory.getInstance().newSpannable(cs.toString());
+        }
+        if (SharedConfig.useSystemEmoji) {
+            return s;
         }
         long buf = 0;
         int emojiCount = 0;
