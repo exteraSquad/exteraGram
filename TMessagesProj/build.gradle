@@ -49,15 +49,27 @@ dependencies {
 }
 
 //return an api key from a properties file.
-def getAppID(){
+static def getAppID() {
     Properties properties = new Properties()
     properties.load(new FileInputStream("./API_KEYS"))
+
     return properties.get("APP_ID")
 }
-def getAppHash(){
+
+static def getAppHash() {
     Properties properties = new Properties()
     properties.load(new FileInputStream("./API_KEYS"))
+
     return "\"" + properties.get("APP_HASH") + "\""
+}
+
+static def getNativeCoreCount() {
+    Properties properties = new Properties()
+    properties.load(new FileInputStream("./local.properties"))
+
+    println("Using ${properties.getProperty("native.build.cores", "16")} cores for native build")
+
+    return "-j=" + properties.getProperty("native.build.cores", "16")
 }
 
 android {
@@ -217,7 +229,7 @@ android {
         externalNativeBuild {
             cmake {
                 version '3.10.2'
-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-16', "-j=16"
+                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-16', getNativeCoreCount()
             }
         }
     }
