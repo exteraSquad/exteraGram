@@ -14458,7 +14458,7 @@ public class MessagesController extends BaseController implements NotificationCe
                         }
                     }
                 }
-                if (canAddToForward && d.folder_id == 0) {
+                if (canAddToForward && (d.folder_id == 0 || (d.folder_id == 1 && ExteraConfig.INSTANCE.getIncludeArchivedChatsInForwards()))) {
                     if (d.id == selfId) {
                         dialogsForward.add(0, d);
                         selfAdded = true;

@@ -18,6 +18,7 @@ object ExteraConfig {
     var hideAllChats by sharedPreferences.boolean("hideAllChats", false)
     var hidePhoneNumber by sharedPreferences.boolean("hidePhoneNumber", true)
     var archiveOnPull by sharedPreferences.boolean("ArchiveOnPull", true)
+    var includeArchivedChatsInForwards by sharedPreferences.boolean("IncludeArchivedChatsInForwards", true)
     var hideKeyboardOnScroll by sharedPreferences.boolean("HideKeyboardOnScroll", true)
     var showID by sharedPreferences.boolean("ShowID", false)
     // Fonts

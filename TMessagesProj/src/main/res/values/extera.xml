@@ -22,6 +22,7 @@
     <string name="exteraHQVoiceMessage">HQ Voice Messages</string>
     <string name="exteraRearVideoMessages">Rear Camera in Video Messages</string>
     <string name="exteraArchiveOnPull">Open Archive on Pulldown</string>
+    <string name="exteraIncludeArchivedChatsInForwards">Include archived chats for forwards</string>
     <string name="exteraHideKeyboardOnScroll">Hide Keyboard on Scrolling</string>
 
     <!-- Appearance -->

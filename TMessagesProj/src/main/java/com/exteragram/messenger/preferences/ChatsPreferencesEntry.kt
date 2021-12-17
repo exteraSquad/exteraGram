@@ -76,6 +76,16 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
+                title = LocaleController.getString("exteraIncludeArchivedChatsInForwards", R.string.exteraIncludeArchivedChatsInForwards)
+                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
+
+                contract({
+                    return@contract ExteraConfig.includeArchivedChatsInForwards
+                }) {
+                    ExteraConfig.includeArchivedChatsInForwards = it
+                }
+            }
+            switch {
                 title = LocaleController.getString("exteraHideKeyboardOnScroll", R.string.exteraHideKeyboardOnScroll)
 
                 contract({
