@@ -25,6 +25,7 @@
     <string name="exteraPauseOnMinimizeDesc">Pauses a video playback when device is locked or exteraGram is minimized.</string>
     <!-- Chats (category) -->
     <string name="exteraArchiveOnPull">Open Archive on Pulldown</string>
+    <string name="exteraIncludeArchivedChatsInForwards">Include archived chats for forwards</string>
     <string name="exteraHideKeyboardOnScroll">Hide Keyboard on Scrolling</string>
     <string name="exteraUnlimitedPinnedChats">Unlimited pinned chats</string>
     <string name="exteraUnlimitedPinnedChatsDesc">Pin unlimited chats by turn synching off.</string>

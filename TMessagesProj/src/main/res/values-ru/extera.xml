@@ -23,6 +23,7 @@
     <string name="exteraPauseOnMinimizeDesc">Приостанавливает воспроизведение видео, когда устройство заблокировано или exteraGram свернут.</string>
     <!-- Chats (category) -->
     <string name="exteraArchiveOnPull">Открытие архива при вытягивании</string>
+    <string name="exteraIncludeArchivedChatsInForwards">Добавить архивированные чаты для пересыланий</string>
     <string name="exteraHideKeyboardOnScroll">Скрытие клавиатуры при прокрутке</string>
     <string name="exteraUnlimitedPinnedChats">Неограниченные закрепленные чаты</string>
     <string name="exteraUnlimitedPinnedChatsDesc">Позволяет закрепить неограниченное количество чатов, отключив синхронизацию.</string>
