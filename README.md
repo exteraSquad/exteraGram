@@ -13,12 +13,13 @@ Experimental Telegram client based on [official Telegram sources](https://github
 - [Telegram](https://github.com/DrKLO/Telegram)
 - [Catogram](https://github.com/Catogram/Catogram)
 
-## Importing API hash and key
-- You should get **YOUR OWN API KEY AND HASH** here: https://core.telegram.org/api/obtaining_api_id and create a file called `API_KEYS` in the source root directory. 
+## Importing API hash and keys
+- You should get **YOUR OWN API KEY AND HASH** here: https://core.telegram.org/api/obtaining_api_id and create a file called `API_KEYS` in the source root directory. Also you should get **YOUR OWN MAPS API KEY** here: https://console.cloud.google.com/google/maps-apis/credentials and add it to this file.
 The contents should look like this:
 ```
-APP_ID = 12345
-APP_HASH = aaaaaaaabbbb
+APP_ID = 123456
+APP_HASH = abcdef0123456789 (32 chars)
+MAPS_V2_API = abcdef01234567-abcdef012345678910111213
 ```
 - **exteraGram** can be built with **Android Studio** or from the command line with **Gradle**:
 ```
