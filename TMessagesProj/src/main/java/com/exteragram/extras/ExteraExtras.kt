@@ -5,7 +5,7 @@ import org.telegram.messenger.SharedConfig
 
 object ExteraExtras {
 
-    var exteraVersion = "8.4.1"
+    var exteraVersion = "8.4.2"
     var exteraCodename = "cattus"
 
     @JvmStatic
