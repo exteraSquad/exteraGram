@@ -98,9 +98,9 @@ public class MessageObject {
     public CharSequence caption;
     public MessageObject replyMessageObject;
     public int type = 1000;
-    public boolean reactionsVisibleOnScreen;
     public long reactionsLastCheckTime;
     public String customName;
+    public boolean reactionsChanged;
     private int isRoundVideoCached;
     public long eventId;
     public int contentType;
@@ -6277,6 +6277,7 @@ public class MessageObject {
                     }
                 }
             }
+            reactionsChanged = true;
             return false;
         }
 
@@ -6310,6 +6311,7 @@ public class MessageObject {
             action.user_id = UserConfig.getInstance(currentAccount).getClientUserId();
             action.reaction = reaction;
         }
+        reactionsChanged = true;
         return true;
     }
 }
