@@ -147,7 +147,7 @@ public class LoginActivity extends BaseFragment {
     private boolean checkPermissions = true;
     private boolean checkShowPermissions = true;
     private boolean newAccount;
-    private boolean syncContacts = true;
+    private boolean syncContacts = false;
     private boolean testBackend = false;
 
     private int scrollHeight;
@@ -1444,7 +1444,7 @@ public class LoginActivity extends BaseFragment {
                         }
                         CheckBoxCell cell = (CheckBoxCell) v;
                         syncContacts = !syncContacts;
-                        cell.setChecked(syncContacts, true);
+                        cell.setChecked(syncContacts, false);
                         try {
                             if (visibleToast != null) {
                                 visibleToast.cancel();
@@ -1922,7 +1922,7 @@ public class LoginActivity extends BaseFragment {
             super.onShow();
             fillNumber();
             if (checkBoxCell != null) {
-                checkBoxCell.setChecked(syncContacts, false);
+                checkBoxCell.setChecked(syncContacts, true);
             }
             AndroidUtilities.runOnUIThread(() -> {
                 if (phoneField != null) {

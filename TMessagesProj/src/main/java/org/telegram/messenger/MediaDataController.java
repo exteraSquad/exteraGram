@@ -74,6 +74,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.exteragram.messenger.ExteraConfig;
+
 @SuppressWarnings("unchecked")
 public class MediaDataController extends BaseController {
     private static Pattern BOLD_PATTERN = Pattern.compile("\\*\\*(.+?)\\*\\*"),
@@ -418,7 +420,7 @@ public class MediaDataController extends BaseController {
 
     public ArrayList<TLRPC.Document> getRecentStickers(int type) {
         ArrayList<TLRPC.Document> arrayList = recentStickers[type];
-        return new ArrayList<>(arrayList.subList(0, Math.min(arrayList.size(), com.exteragram.messenger.ExteraConfig.INSTANCE.getRecentStickers() ? Integer.MAX_VALUE : 20)));
+        return new ArrayList<>(arrayList.subList(0, Math.min(arrayList.size(), ExteraConfig.INSTANCE.getUnlimitedRecentStickers() ? Integer.MAX_VALUE : 20)));
     }
 
     public ArrayList<TLRPC.Document> getRecentStickersNoCopy(int type) {

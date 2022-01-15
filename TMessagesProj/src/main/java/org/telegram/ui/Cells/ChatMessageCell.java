@@ -7312,7 +7312,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
                 @Override
                 public int getOpacity() {
-                    return PixelFormat.TRANSPARENT;
+                    /* return PixelFormat.TRANSPARENT; */
+                    return PixelFormat.OPAQUE;
                 }
             };
             ColorStateList colorStateList = new ColorStateList(
@@ -14596,6 +14597,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         sb.append(LocaleController.formatString("AccDescrMusicInfo", R.string.AccDescrMusicInfo, currentMessageObject.getMusicAuthor(), currentMessageObject.getMusicTitle()));
                         sb.append(", ");
                         sb.append(LocaleController.formatDuration(currentMessageObject.getDuration()));
+                        sb.append(", ");
+                        sb.append(AndroidUtilities.formatFileSize(documentAttach.size));
                     } else if (currentMessageObject.isVoice() || isRoundVideo) {
                         sb.append(", ");
                         sb.append(LocaleController.formatDuration(currentMessageObject.getDuration()));

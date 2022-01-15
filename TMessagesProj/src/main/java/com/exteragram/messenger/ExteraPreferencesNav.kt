@@ -9,5 +9,4 @@ object ExteraPreferencesNav {
 
     fun createAppearance() = TGKitSettingsFragment(AppearancePreferencesEntry())
     fun createChats() = TGKitSettingsFragment(ChatsPreferencesEntry())
-    fun createSecurity() = TGKitSettingsFragment(SecurityPreferencesEntry())
 }

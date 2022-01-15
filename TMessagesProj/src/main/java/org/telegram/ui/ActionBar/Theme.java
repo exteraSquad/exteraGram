@@ -9405,7 +9405,7 @@ public class Theme {
     @TargetApi(21)
     @SuppressLint("DiscouragedPrivateApi")
     public static void setRippleDrawableForceSoftware(RippleDrawable drawable) {
-        if (drawable == null) {
+        /* if (drawable == null) {
             return;
         }
         try {
@@ -9413,7 +9413,7 @@ public class Theme {
             method.invoke(drawable, true);
         } catch (Throwable ignore) {
 
-        }
+        } */
     }
 
     public static void setSelectorDrawableColor(Drawable drawable, int color, boolean selected) {

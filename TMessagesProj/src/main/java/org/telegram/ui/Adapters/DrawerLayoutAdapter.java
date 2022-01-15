@@ -244,6 +244,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         int newChannelIcon;
         int contactsIcon;
         int callsIcon;
+        int archiveIcon;
         int savedIcon;
         int settingsIcon;
         int inviteIcon;
@@ -255,6 +256,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             newChannelIcon = R.drawable.menu_channel_ny;
             contactsIcon = R.drawable.menu_contacts_ny;
             callsIcon = R.drawable.menu_calls_ny;
+            archiveIcon = R.drawable.msg_archive;
             savedIcon = R.drawable.menu_bookmarks_ny;
             settingsIcon = R.drawable.menu_settings_ny;
             inviteIcon = R.drawable.menu_invite_ny;
@@ -266,6 +268,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             newChannelIcon = R.drawable.menu_broadcast_14;
             contactsIcon = R.drawable.menu_contacts_14;
             callsIcon = R.drawable.menu_calls_14;
+            archiveIcon = R.drawable.msg_archive;
             savedIcon = R.drawable.menu_bookmarks_14;
             settingsIcon = R.drawable.menu_settings_14;
             inviteIcon = R.drawable.menu_secret_ny;
@@ -277,6 +280,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             newChannelIcon = R.drawable.menu_broadcast_hw;
             contactsIcon = R.drawable.menu_contacts_hw;
             callsIcon = R.drawable.menu_calls_hw;
+            archiveIcon = R.drawable.msg_archive;
             savedIcon = R.drawable.menu_bookmarks_hw;
             settingsIcon = R.drawable.menu_settings_hw;
             inviteIcon = R.drawable.menu_invite_hw;
@@ -288,6 +292,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             newChannelIcon = R.drawable.menu_broadcast;
             contactsIcon = R.drawable.menu_contacts;
             callsIcon = R.drawable.menu_calls;
+            archiveIcon = R.drawable.msg_archive;
             savedIcon = R.drawable.menu_saved;
             settingsIcon = R.drawable.menu_settings;
             inviteIcon = R.drawable.menu_invite;
@@ -313,6 +318,9 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             if (ExteraConfig.INSTANCE.getPeopleNearby()) {
                 items.add(new Item(12, LocaleController.getString("PeopleNearby", R.string.PeopleNearby), peopleNearbyIcon));
             }
+        }
+        if (ExteraConfig.INSTANCE.getArchivedChats()) {
+            items.add(new Item(14, LocaleController.getString("ArchivedChats", R.string.ArchivedChats), archiveIcon));
         }
         if (ExteraConfig.INSTANCE.getSavedMessages()) {
             items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));

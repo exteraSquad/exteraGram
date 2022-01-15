@@ -11,43 +11,42 @@ object ExteraConfig {
     private val sharedPreferences: SharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE)
 
     // Appearance
-    // Icon
+    // Application
     var appIcon by sharedPreferences.int("appIcon", 0)
-    var chatsOnTitle by sharedPreferences.boolean("chatsOnTitle", true)
+    var useSystemFonts by sharedPreferences.boolean("useSystemFont", false)
     // General
     var hideAllChats by sharedPreferences.boolean("hideAllChats", false)
+    var hideProxySponsor by sharedPreferences.boolean("hideProxySponsor", true)
     var hidePhoneNumber by sharedPreferences.boolean("hidePhoneNumber", true)
-    var archiveOnPull by sharedPreferences.boolean("ArchiveOnPull", true)
-    var includeArchivedChatsInForwards by sharedPreferences.boolean("IncludeArchivedChatsInForwards", true)
-    var hideKeyboardOnScroll by sharedPreferences.boolean("HideKeyboardOnScroll", true)
-    var showID by sharedPreferences.boolean("ShowID", false)
-    var forceTabletMode by sharedPreferences.boolean("ForceTabletMode", false)
-    // Fonts
-    var useSystemFont by sharedPreferences.boolean("useSystemFont", false)
+    var showID by sharedPreferences.boolean("showID", false)
+    var chatsOnTitle by sharedPreferences.boolean("chatsOnTitle", true)
+    var forceTabletMode by sharedPreferences.boolean("forceTabletMode", false)
     // Drawer
     var newGroup by sharedPreferences.boolean("newGroup", true)
     var newSecretChat by sharedPreferences.boolean("newSecretChat", false)
     var newChannel by sharedPreferences.boolean("newChannel", false)
-    var Contacts by sharedPreferences.boolean("Contacts", true)
-    var Calls by sharedPreferences.boolean("Calls", false)
+    var contacts by sharedPreferences.boolean("contacts", true)
+    var calls by sharedPreferences.boolean("calls", false)
     var peopleNearby by sharedPreferences.boolean("peoplesNearby", false)
-    var savedMessages by sharedPreferences.boolean("SavedMessages", true)
-    var inviteFriends by sharedPreferences.boolean("InviteFriends", true)
-    var telegramFeatures by sharedPreferences.boolean("TelegramFeatures", false)
+    var archivedChats by sharedPreferences.boolean("archivedChats", true)
+    var savedMessages by sharedPreferences.boolean("savedMessages", true)
+    var inviteFriends by sharedPreferences.boolean("inviteFriends", true)
+    var telegramFeatures by sharedPreferences.boolean("telegramFeatures", false)
 
     // Chats
-    // Sticker Size
-    var StickerSize by sharedPreferences.int("StickerSize", 100)
+    // Stickers
+    var stickerSize by sharedPreferences.int("stickerSize", 100)
     var hideStickerTime by sharedPreferences.boolean("hideStickerTime", false)
+    // General
+    var hideSendAsChannel by sharedPreferences.boolean("hideSendAsChannel", false)
+    var includeArchivedChatsInForwards by sharedPreferences.boolean("includeArchivedChatsInForwards", true)
+    var hideKeyboardOnScroll by sharedPreferences.boolean("hideKeyboardOnScroll", false)
+    var archiveOnPull by sharedPreferences.boolean("archiveOnPull", true)
+    var unlimitedRecentStickers by sharedPreferences.boolean("unlimitedRecentStickers", false)
+    var unlimitedPinnedChats by sharedPreferences.boolean("unlimitedPinnedChats", false)
     // Media
     var HQVoiceMessage by sharedPreferences.boolean("HQVoiceMessage", true)
     var rearVideoMessages by sharedPreferences.boolean("rearVideoMessages", false)
-    // Test features
-    var unlimitedPinnedChats by sharedPreferences.boolean("unlimitedPinnedChats", false)
-    var pauseOnMinimize by sharedPreferences.boolean("pauseOnMinimize", false)
-    var hideSendAsPeer by sharedPreferences.boolean("hideSendAsPeer", false)
-    var recentStickers by sharedPreferences.boolean("recentStickers", false)
-
-    // Security
-    var hideProxySponsor by sharedPreferences.boolean("hideProxySponsor", true)
+    var autopause by sharedPreferences.boolean("pauseOnMinimize", false)
+    var disablePlayback by sharedPreferences.boolean("disablePlayback", false)
 }

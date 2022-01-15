@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.provider.Browser
-import org.telegram.messenger.BuildVars
 import org.telegram.messenger.LocaleController
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.LaunchActivity
@@ -22,71 +21,62 @@ import android.app.assist.AssistContent
 import org.telegram.messenger.R
 import java.lang.String
 
-
 class MainPreferencesEntry : BasePreferencesEntry {
-    override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("exteraPreferences", R.string.exteraPreferences)) {
-        category(LocaleController.getString("exteraCategories", R.string.exteraCategories)) {
+    override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("Preferences", R.string.Preferences)) {
+        category(LocaleController.getString("AboutExtera", R.string.AboutExtera)) {
+            textDetail {
+                title = "exteraGram | v" + ExteraExtras.exteraVersion + " (" + ExteraExtras.exteraCodename + ")"
+                detail = LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription)
+            }
+
             textIcon {
-                title = LocaleController.getString("exteraAppearance", R.string.exteraAppearance)
+                title = LocaleController.getString("Website", R.string.Website)
+                listener = TGKitTextIconRow.TGTIListener {
+                    goToWebsite(it)
+                }
+            }
+
+            textIcon {
+                title = LocaleController.getString("Github", R.string.Github)
+                listener = TGKitTextIconRow.TGTIListener {
+                    goToGithub(it)
+                }
+            }
+
+            textIcon {
+                title = LocaleController.getString("Channel", R.string.Channel)
+                listener = TGKitTextIconRow.TGTIListener {
+                    goToChannel(it)
+                }
+            }
+            textIcon {
+                title = LocaleController.getString("Chat", R.string.Chat)
+                value = LocaleController.getString("languageRussian", R.string.languageRussian)
+                listener = TGKitTextIconRow.TGTIListener {
+                    goToRUChat(it)
+                }
+            }
+            textIcon {
+                title = LocaleController.getString("Chat", R.string.Chat)
+                value = LocaleController.getString("languageEnglish", R.string.languageEnglish)
+                listener = TGKitTextIconRow.TGTIListener {
+                    goToENChat(it)
+                }
+            }
+        }
+        category(LocaleController.getString("Categories", R.string.Categories)) {
+            textIcon {
+                title = LocaleController.getString("Appearance", R.string.Appearance)
                 icon = R.drawable.msg_theme
                 listener = TGKitTextIconRow.TGTIListener {
                     it.presentFragment(ExteraPreferencesNav.createAppearance())
                 }
             }
             textIcon {
-                title = LocaleController.getString("exteraChats", R.string.exteraChats)
+                title = LocaleController.getString("Chats", R.string.Chats)
                 icon = R.drawable.menu_chats
                 listener = TGKitTextIconRow.TGTIListener {
                     it.presentFragment(ExteraPreferencesNav.createChats())
-                }
-            }
-            textIcon {
-                title = LocaleController.getString("exteraSecurity", R.string.exteraSecurity)
-                icon = R.drawable.menu_secret
-                listener = TGKitTextIconRow.TGTIListener {
-                    it.presentFragment(ExteraPreferencesNav.createSecurity())
-                }
-            }
-
-            category(LocaleController.getString("AboutExtera", R.string.AboutExtera)) {
-                textDetail {
-                    title = "exteraGram | v" + ExteraExtras.exteraVersion + " (" + ExteraExtras.exteraCodename + ")"
-                    detail = LocaleController.getString("AboutExteraDesc", R.string.AboutExteraDesc)
-                }
-
-                textIcon {
-                    title = LocaleController.getString("exteraWebsite", R.string.exteraWebsite)
-                    listener = TGKitTextIconRow.TGTIListener {
-                        goToWebsite(it)
-                    }
-                }
-
-                textIcon {
-                    title = LocaleController.getString("exteraGithub", R.string.exteraGithub)
-                    listener = TGKitTextIconRow.TGTIListener {
-                        goToGithub(it)
-                    }
-                }
-
-                textIcon {
-                    title = LocaleController.getString("exteraChannel", R.string.exteraChannel)
-                    listener = TGKitTextIconRow.TGTIListener {
-                        goToChannel(it)
-                    }
-                }
-                textIcon {
-                    title = LocaleController.getString("exteraChat", R.string.exteraChat)
-                    value = LocaleController.getString("languageRussian", R.string.languageRussian)
-                    listener = TGKitTextIconRow.TGTIListener {
-                        goToRUChat(it)
-                    }
-                }
-                textIcon {
-                    title = LocaleController.getString("exteraChat", R.string.exteraChat)
-                    value = LocaleController.getString("languageEnglish", R.string.languageEnglish)
-                    listener = TGKitTextIconRow.TGTIListener {
-                        goToENChat(it)
-                    }
                 }
             }
         }
@@ -141,6 +131,5 @@ class MainPreferencesEntry : BasePreferencesEntry {
                 )
             }
         }
-
     }
 }

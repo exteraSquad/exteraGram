@@ -147,6 +147,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.exteragram.messenger.ExteraConfig;
+
 public class ChatActivityEnterView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate, StickersAlert.StickersAlertDelegate {
 
     public interface ChatActivityEnterViewDelegate {
@@ -2468,6 +2470,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
         }
 
         senderSelectView = new SenderSelectView(getContext());
+        senderSelectView.setContentDescription(LocaleController.getString("SendMessageAsTitle", R.string.SendMessageAsTitle));
         senderSelectView.setOnClickListener(v -> {
             if (getTranslationY() != 0) {
                 onEmojiSearchClosed = () -> senderSelectView.callOnClick();
@@ -2625,6 +2628,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
                                 avatar.setAvatar(chat);
                             }
                             avatar.setSelected(chatFull.default_send_as != null && chatFull.default_send_as.channel_id == peer.channel_id, false);
+                            holder.itemView.setSelected(chatFull.default_send_as != null && chatFull.default_send_as.channel_id == peer.channel_id);
                         } else {
                             TLRPC.User user = controller.getUser(peerId);
                             if (user != null) {
@@ -2633,6 +2637,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
                                 avatar.setAvatar(user);
                             }
                             avatar.setSelected(chatFull.default_send_as != null && chatFull.default_send_as.user_id == peer.user_id, false);
+                            holder.itemView.setSelected(chatFull.default_send_as != null && chatFull.default_send_as.channel_id == peer.channel_id);
                         }
                     }
 
@@ -6844,7 +6849,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
             }
         }
         boolean wasVisible = senderSelectView.getVisibility() == View.VISIBLE;
-        boolean isVisible = delegate.getSendAsPeers() != null && defPeer != null && delegate.getSendAsPeers().peers.size() > 1 && !isEditingMessage() && !isRecordingAudioVideo();
+        boolean isVisible = delegate.getSendAsPeers() != null && defPeer != null && delegate.getSendAsPeers().peers.size() > 1 && !isEditingMessage() && !isRecordingAudioVideo() && !ExteraConfig.INSTANCE.getHideSendAsChannel();
         int pad = AndroidUtilities.dp(2);
         MarginLayoutParams params = (MarginLayoutParams) senderSelectView.getLayoutParams();
         float sA = isVisible ? 0 : 1;

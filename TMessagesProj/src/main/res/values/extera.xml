@@ -1,96 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- exteraGram bringup -->
+    <!-- exteraGram's Main Strings -->
     <string name="exteraAppName">exteraGram</string>
     <string name="exteraAppNameBeta">exteraGram β</string>
-    <string name="exteraDebugMenu">words are superfluous ¯\\_(ツ)_/¯</string>
-
-    <!-- Main -->
-    <string name="exteraPreferences">extera Preferences</string>
-    <string name="exteraRestartRequired">Restart the app to take effect.</string>
-
-    <!-- Categories -->
-    <string name="exteraCategories">Categories</string>
-    <string name="exteraAppearance">Appearance</string>
-    <string name="exteraSecurity">Security</string>
-    <string name="exteraChats">Chats</string>
-
-    <!-- Chats -->
-    <string name="exteraStickerSize">Sticker Size</string>
-    <string name="exteraStickerTime">Hide time under stickers</string>
-    <string name="exteraMedia">Media</string>
-    <string name="exteraHQVoiceMessage">HQ Voice Messages</string>
-    <string name="exteraRearVideoMessages">Rear Camera in Video Messages</string>
-    <string name="exteraPauseOnMinimize">Autopause</string>
-    <string name="exteraPauseOnMinimizeDesc">Pauses a video playback when device is locked or exteraGram is minimized.</string>
-    <!-- Chats (category) -->
-    <string name="exteraArchiveOnPull">Open Archive on Pulldown</string>
-    <string name="exteraIncludeArchivedChatsInForwards">Include archived chats for forwards</string>
-    <string name="exteraHideKeyboardOnScroll">Hide Keyboard on Scrolling</string>
-    <string name="exteraUnlimitedPinnedChats">Unlimited pinned chats</string>
-    <string name="exteraUnlimitedPinnedChatsDesc">Pin unlimited chats by turn synching off.</string>
-    <string name="exteraRecentStickers">Unlimited recent stickers</string>
-
-    <!-- Appearance -->
-    <string name="exteraGeneral">General</string>
-    <string name="exteraApplication">Application</string>
-    <string name="exteraAppIcon">Application Icon</string>
-    <string name="exteraHideAllChats">Hide \"All Chats\" Tab</string>
-    <string name="exteraChatsOnTitle">"Chats" instead of "exteraGram"</string>
-    <string name="exteraSB">Transparent Statusbar</string>
-    <string name="exteraSBdesc">only for Android 6+</string>
-    <string name="exteraHidePhoneNumber">Hide Phone Number</string>
-    <string name="exteraShowID">Show ID in Profile</string>
-    <string name="exteraForceTabletMode">Force Tablet Mode</string>
-    <!-- Causes various bugs. I wants to remove this features. -->
-    <string name="exteraFonts">Fonts</string>
-    <string name="exteraSystemEmoji">Use System Emoji</string>
-    <string name="exteraSystemFont">Use System Font</string>
-    <string name="exteraFontDesc">Causes various bugs, use AT YOUR OWN RISK!\nRestart the app to take effect.</string>
-
-    <!-- Drawer -->
-    <string name="exteraDrawer">Drawer</string>
-    <string name="exteraAttention">ATTENTION!</string>
-    <string name="exteraDrawerRR">THIS ITEM MAY BE CHANGED OR REMOVED IN THE FUTURE!\nRestart the app to take effect.</string>
-    <string name="exteraNewGroup">New Group</string>
-    <string name="exteraNewSecretChat">New Secret Chat</string>
-    <string name="exteraNewChannel">New Channel</string>
-    <string name="exteraContacts">Contacts</string>
-    <string name="exteraCalls">Calls</string>
-    <string name="exteraPeopleNearby">People Nearby</string>
-    <string name="exteraPeopleNearbyDesc">May not be displayed if GPS is disabled.</string>
-    <string name="exteraSavedMessages">Saved Messages</string>
-    <string name="exteraInviteFriends">Invite Friends</string>
-    <string name="exteraTelegramFeatures">Telegram Features</string>
-
-    <!-- Privacy -->
-    <string name="exteraPrivacy">Privacy</string>
-    <string name="exteraHideProxySponsor">Hide Proxy Sponsor</string>
-    <string name="exteraPreviousClientCleaner">Remove old cache from Telegram folder</string>
-    <string name="exteraRemovedSuccessfully">Removed successfully!</string>
-
-    <!-- About exteraGram -->
+    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
+    <string name="MutualContact">mutual contact</string>
+    
+    <!-- Main Menu (about) -->
     <string name="AboutExtera">About exteraGram</string>
-    <string name="AboutExteraDesc">Experimental Telegram client based on official Telegram sources!</string>
-    <string name="exteraChannel">Telegram Channel</string>
-    <string name="exteraChat">Telegram Chat</string>
-    <string name="exteraWebsite">exteraSquad Members</string>
-    <string name="exteraGithub">exteraGram\'s Source Code</string>
+    <string name="AboutExteraDescription">Experimental Telegram client based on official Telegram sources!</string>
+    <string name="Website">exteraSquad Members</string>
+    <string name="Github">exteraGram\'s Source Code</string>
+    <string name="Channel">Telegram Channel</string>
+    <string name="Chat">Telegram Chat</string>
     <string name="languageEnglish">English</string>
     <string name="languageRussian">Russian</string>
 
-    <!-- Mutual contact -->
-    <string name="exteraMutualContact">mutual contact</string>
+    <string name="Preferences">extera Preferences</string>
+    <string name="RestartRequired">Restart the app to take effect.</string>
 
-    <!-- Icons -->
-    <string name="exteraDefaultIcon">Default Icon</string>
-    <string name="exteraMaterialYouIcon">Material You</string>
+    <string name="Categories">Categories</string>
+    <string name="Chats">Chats</string>
+    <string name="Experimental">Experimental</string>
+
+    <!-- Appearance -->
+    <string name="AppIcon">Application Icon</string>
+    <string name="DefaultIcon">Default Icon</string>
+    <string name="MaterialYouIcon">Material You</string>
     <string name="yandexIcon">Yandex.Alisa\'s Themed Icon</string>
     <string name="asscatchemIcon">\@asscatchem\'s Themed Icon</string>
     <string name="itsv1edsIcon">\@itsv1eds\'s Themed Icon</string>
     <string name="the8055uIcon">\@the8055u\'s Themed Icon</string>
     <string name="ghoulghoulchanIcon">\@ghoulghoulchan\'s Themed Icon</string>
+    <string name="SystemFonts">Use System Fonts</string>
+    <string name="SystemEmoji">Use System Emoji</string>
 
-    <!-- Experimental -->
-    <string name="exteraExperimental">Experimental</string>
+    <string name="HideAllChats">Hide \"All Chats\" Tab</string>
+    <string name="HidePhoneNumber">Hide Phone Number</string>
+    <string name="HideProxySponsor">Hide Proxy Sponsor</string>
+    <string name="ChatsOnTitle">\"Chats\" instead of \"exteraGram\"</string>
+    <string name="ShowID">Show ID in Profile</string>
+    <string name="SB">Transparent Statusbar</string>
+    <string name="SBDescription">only for Android 6+</string>
+    <string name="ForceTabletMode">Force Tablet Mode</string>
+
+    <string name="Drawer">Drawer</string>
+    <string name="Attention">ATTENTION!</string>
+    <string name="DrawerRR">THIS ITEM MAY BE CHANGED OR REMOVED IN THE FUTURE!\nRestart the app to take effect.</string>
+    <string name="PeopleNearbyDescription">May not be displayed if GPS is disabled.</string>
+
+    <!-- Chats -->
+    <string name="StickerSize">Stickers size</string>
+    <string name="StickerTime">Hide time under stickers</string>
+
+    <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
+    <string name="HideKeyboardOnScroll">Hide Keyboard on Scrolling</string>
+    <string name="ArchiveOnPull">Open Archive on Pulldown</string>
+    <string name="IncludeArchivedChatsInForwards">Include archived chats for forwards</string>
+    <string name="UnlimitedPinnedChats">Unlimited pinned chats</string>
+    <string name="UnlimitedPinnedChatsDescription">Pin unlimited chats by turn synching off.</string>
+    <string name="UnlimitedRecentStickers">Unlimited recent stickers</string>
+
+    <string name="Media">Media</string>
+    <string name="HQVoiceMessage">HQ Voice Messages</string>
+    <string name="RearVideoMessages">Rear Camera in Video Messages</string>
+    <string name="Autopause">Autopause</string>
+    <string name="AutopauseDescription">Pauses a video playback when device is locked or exteraGram is minimized</string>
+    <string name="DisablePlayback">Disable playback</string>
+    <string name="DisablePlaybackDescription">Disables playback when volume button is pressed</string>
+    
+    <string name="ConfirmCall">Confirm call</string>
+    <string name="CallTo">Call to **%1$s**?</string>
 </resources>

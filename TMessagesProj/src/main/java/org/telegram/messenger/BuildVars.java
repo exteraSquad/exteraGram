@@ -26,7 +26,7 @@ public class BuildVars {
     public static int APP_ID = BuildConfig.APP_ID; //obtain your own APP_ID at https://core.telegram.org/api/obtaining_api_id
     public static String APP_HASH = BuildConfig.APP_HASH; //obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
     public static String SMS_HASH = "w0lkcmTZkKh";
-    public static String PLAYSTORE_APP_URL = "https://t.me/exteragram";
+    public static String PLAYSTORE_APP_URL = "https://github.com/exteraSquad/exteraGram/releases/latest";
 
     static {
         if (!DEBUG_PRIVATE_VERSION && ApplicationLoader.applicationContext != null) {

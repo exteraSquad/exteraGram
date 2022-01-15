@@ -1669,7 +1669,7 @@ public class CameraView extends FrameLayout implements TextureView.SurfaceTextur
                 for (int a = 0; a < 3; a++) {
                     buffers.add(new InstantCameraView.AudioBufferInfo());
                 }
-                audioRecorder = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, 48000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+                audioRecorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT, 48000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
                 audioRecorder.startRecording();
                 if (BuildVars.LOGS_ENABLED) {
                     FileLog.d("CameraView " + "initied audio record with channels " + audioRecorder.getChannelCount() + " sample rate = " + audioRecorder.getSampleRate() + " bufferSize = " + bufferSize);

@@ -8,16 +8,16 @@ import ua.itaysonlab.tgkit.ktx.*
 import ua.itaysonlab.tgkit.preference.types.TGKitSliderPreference.TGSLContract
 
 class ChatsPreferencesEntry : BasePreferencesEntry {
-    override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("exteraChats", R.string.exteraChats)) {
-        category(LocaleController.getString("exteraStickerSize", R.string.exteraStickerSize)) {
+    override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("Chats", R.string.Chats)) {
+        category(LocaleController.getString("StickerSize", R.string.StickerSize)) {
             slider {
                 contract = object : TGSLContract {
                     override fun setValue(value: Int) {
-                        ExteraConfig.StickerSize = value
+                        ExteraConfig.stickerSize = value
                     }
 
                     override fun getPreferenceValue(): Int {
-                        return ExteraConfig.StickerSize
+                        return ExteraConfig.stickerSize
                     }
 
                     override fun getMin(): Int {
@@ -30,7 +30,7 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraStickerTime", R.string.exteraStickerTime)
+                title = LocaleController.getString("StickerTime", R.string.StickerTime)
 
                 contract({
                     return@contract ExteraConfig.hideStickerTime
@@ -39,61 +39,18 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                 }
             }
         }
-
-
-        category(LocaleController.getString("exteraMedia", R.string.exteraMedia)) {
+        category(LocaleController.getString("General", R.string.General)) {
             switch {
-                title = LocaleController.getString("exteraHQVoiceMessage", R.string.exteraHQVoiceMessage)
-                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
+                title = LocaleController.getString("HideSendAsChannel", R.string.HideSendAsChannel)
 
                 contract({
-                    return@contract ExteraConfig.HQVoiceMessage
+                    return@contract ExteraConfig.hideSendAsChannel
                 }) {
-                    ExteraConfig.HQVoiceMessage = it
+                    ExteraConfig.hideSendAsChannel = it
                 }
             }
             switch {
-                title = LocaleController.getString("exteraRearVideoMessages", R.string.exteraRearVideoMessages)
-
-                contract({
-                    return@contract ExteraConfig.rearVideoMessages
-                }) {
-                    ExteraConfig.rearVideoMessages = it
-                }
-            }
-            switch {
-                title = LocaleController.getString("exteraPauseOnMinimize", R.string.exteraPauseOnMinimize)
-                summary = LocaleController.getString("exteraPauseOnMinimizeDesc", R.string.exteraPauseOnMinimizeDesc)
-
-                contract({
-                    return@contract ExteraConfig.pauseOnMinimize
-                }) {
-                    ExteraConfig.pauseOnMinimize = it
-                }
-            }
-        }
-        category(LocaleController.getString("exteraChats", R.string.exteraChats)) {
-            switch {
-                title = LocaleController.getString("exteraArchiveOnPull", R.string.exteraArchiveOnPull)
-
-                contract({
-                    return@contract ExteraConfig.archiveOnPull
-                }) {
-                    ExteraConfig.archiveOnPull = it
-                }
-            }
-            switch {
-                title = LocaleController.getString("exteraIncludeArchivedChatsInForwards", R.string.exteraIncludeArchivedChatsInForwards)
-                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
-
-                contract({
-                    return@contract ExteraConfig.includeArchivedChatsInForwards
-                }) {
-                    ExteraConfig.includeArchivedChatsInForwards = it
-                }
-            }
-            switch {
-                title = LocaleController.getString("exteraHideKeyboardOnScroll", R.string.exteraHideKeyboardOnScroll)
+                title = LocaleController.getString("HideKeyboardOnScroll", R.string.HideKeyboardOnScroll)
 
                 contract({
                     return@contract ExteraConfig.hideKeyboardOnScroll
@@ -102,8 +59,26 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraUnlimitedPinnedChats", R.string.exteraUnlimitedPinnedChats)
-                summary = LocaleController.getString("exteraUnlimitedPinnedChatsDesc", R.string.exteraUnlimitedPinnedChatsDesc)
+                title = LocaleController.getString("ArchiveOnPull", R.string.ArchiveOnPull)
+
+                contract({
+                    return@contract ExteraConfig.archiveOnPull
+                }) {
+                    ExteraConfig.archiveOnPull = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("IncludeArchivedChatsInForwards", R.string.IncludeArchivedChatsInForwards)
+
+                contract({
+                    return@contract ExteraConfig.includeArchivedChatsInForwards
+                }) {
+                    ExteraConfig.includeArchivedChatsInForwards = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("UnlimitedPinnedChats", R.string.UnlimitedPinnedChats)
+                summary = LocaleController.getString("UnlimitedPinnedChatsDescription", R.string.UnlimitedPinnedChatsDescription)
 
                 contract({
                     return@contract ExteraConfig.unlimitedPinnedChats
@@ -112,12 +87,53 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraRecentStickers", R.string.exteraRecentStickers)
+                title = LocaleController.getString("UnlimitedRecentStickers", R.string.UnlimitedRecentStickers)
 
                 contract({
-                    return@contract ExteraConfig.recentStickers
+                    return@contract ExteraConfig.unlimitedRecentStickers
                 }) {
-                    ExteraConfig.recentStickers = it
+                    ExteraConfig.unlimitedRecentStickers = it
+                }
+            }
+        }
+        category(LocaleController.getString("Media", R.string.Media)) {
+            switch {
+                title = LocaleController.getString("HQVoiceMessage", R.string.HQVoiceMessage)
+                summary = LocaleController.getString("RestartRequired", R.string.RestartRequired)
+
+                contract({
+                    return@contract ExteraConfig.HQVoiceMessage
+                }) {
+                    ExteraConfig.HQVoiceMessage = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("RearVideoMessages", R.string.RearVideoMessages)
+
+                contract({
+                    return@contract ExteraConfig.rearVideoMessages
+                }) {
+                    ExteraConfig.rearVideoMessages = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("Autopause", R.string.Autopause)
+                summary = LocaleController.getString("AutopauseDescription", R.string.AutopauseDescription)
+
+                contract({
+                    return@contract ExteraConfig.autopause
+                }) {
+                    ExteraConfig.autopause = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("DisablePlayback", R.string.DisablePlayback)
+                summary = LocaleController.getString("DisablePlaybackDescription", R.string.DisablePlaybackDescription)
+
+                contract({
+                    return@contract ExteraConfig.disablePlayback
+                }) {
+                    ExteraConfig.disablePlayback = it
                 }
             }
         }

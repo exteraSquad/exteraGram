@@ -13041,7 +13041,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         if (photoPaintView != null) {
             photoPaintView.onResume();
         }
-        if (pauseOnMinimize && ExteraConfig.INSTANCE.getPauseOnMinimize() && videoPlayer != null && !videoPlayer.isPlaying()) {
+        if (pauseOnMinimize && ExteraConfig.INSTANCE.getAutopause() && videoPlayer != null && !videoPlayer.isPlaying()) {
             pauseOnMinimize = false;
             videoPlayer.play();
         }
@@ -13065,7 +13065,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         if (videoPlayer != null && playerLooping) {
             videoPlayer.setLooping(false);
         }
-        if (ExteraConfig.INSTANCE.getPauseOnMinimize() && videoPlayer != null && videoPlayer.isPlaying()) {
+        if (ExteraConfig.INSTANCE.getAutopause() && videoPlayer != null && videoPlayer.isPlaying()) {
             pauseOnMinimize = true;
             videoPlayer.pause();
         }

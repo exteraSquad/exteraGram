@@ -13,15 +13,15 @@ import com.exteragram.extras.AppIcons
 import ua.itaysonlab.tgkit.ktx.*
 
 class AppearancePreferencesEntry : BasePreferencesEntry {
-    override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("exteraAppearance", R.string.exteraAppearance)) {
-        category(LocaleController.getString("exteraApplication", R.string.exteraApplication)) {
+    override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("Appearance", R.string.Appearance)) {
+        category(LocaleController.getString("Application", R.string.Application)) {
             list {
-                title = LocaleController.getString("exteraAppIcon", R.string.exteraAppIcon)
+                title = LocaleController.getString("AppIcon", R.string.AppIcon)
 
                 contractIcons({
                     return@contractIcons listOf(
-                        Triple(0, LocaleController.getString("exteraDefaultIcon", R.string.exteraDefaultIcon), R.mipmap.ic_launcher),
-                        Triple(1, LocaleController.getString("exteraMaterialYouIcon", R.string.exteraMaterialYouIcon), R.mipmap.ic_launcher_materialyou),
+                        Triple(0, LocaleController.getString("DefaultIcon", R.string.DefaultIcon), R.mipmap.ic_launcher),
+                        Triple(1, LocaleController.getString("MaterialYouIcon", R.string.MaterialYouIcon), R.mipmap.ic_launcher_materialyou),
                         Triple(2, LocaleController.getString("yandexIcon", R.string.yandexIcon), R.mipmap.ic_launcher_alisa),
                         Triple(3, LocaleController.getString("the8055uIcon", R.string.the8055uIcon), R.mipmap.ic_launcher_the8055u),
                         Triple(4, LocaleController.getString("itsv1edsIcon", R.string.itsv1edsIcon), R.mipmap.ic_launcher_itsv1eds),
@@ -30,24 +30,42 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                     )
                 }, {
                     return@contractIcons when (ExteraConfig.appIcon) {
-                        1 -> LocaleController.getString("exteraMaterialYouIcon", R.string.exteraMaterialYouIcon)
+                        1 -> LocaleController.getString("MaterialYouIcon", R.string.MaterialYouIcon)
                         2 -> LocaleController.getString("yandexIcon", R.string.yandexIcon)
                         3 -> LocaleController.getString("the8055uIcon", R.string.the8055uIcon)
                         4 -> LocaleController.getString("itsv1edsIcon", R.string.itsv1edsIcon)
                         5 -> LocaleController.getString("asscatchemIcon", R.string.asscatchemIcon)
                         6 -> LocaleController.getString("ghoulghoulchanIcon", R.string.ghoulghoulchanIcon)
-                        else -> LocaleController.getString("exteraDefaultIcon", R.string.exteraDefaultIcon)
+                        else -> LocaleController.getString("DefaultIcon", R.string.DefaultIcon)
                     }
                 }) {
                     ExteraConfig.appIcon = it
                     AppIcons.setIcon(it)
                 }
             }
+            switch {
+                title = LocaleController.getString("SystemFonts", R.string.SystemFonts)
+
+                contract({
+                    return@contract ExteraConfig.useSystemFonts
+                }) {
+                    ExteraConfig.useSystemFonts = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("SystemEmoji", R.string.SystemEmoji)
+
+                contract({
+                    return@contract SharedConfig.useSystemEmoji
+                }) {
+                    SharedConfig.toggleSystemEmoji()
+                }
+            }
         }
 
-        category(LocaleController.getString("exteraGeneral", R.string.exteraGeneral)) {
+        category(LocaleController.getString("General", R.string.General)) {
             switch {
-                title = LocaleController.getString("exteraHideAllChats", R.string.exteraHideAllChats)
+                title = LocaleController.getString("HideAllChats", R.string.HideAllChats)
 
                 contract({
                     return@contract ExteraConfig.hideAllChats
@@ -56,8 +74,27 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraChatsOnTitle", R.string.exteraChatsOnTitle)
-                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
+                title = LocaleController.getString("HideProxySponsor", R.string.HideProxySponsor)
+
+                contract({
+                    return@contract ExteraConfig.hideProxySponsor
+                }) {
+                    ExteraConfig.hideProxySponsor = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("HidePhoneNumber", R.string.HidePhoneNumber)
+                summary = LocaleController.getString("RestartRequired", R.string.RestartRequired)
+
+                contract({
+                    return@contract ExteraConfig.hidePhoneNumber
+                }) {
+                    ExteraConfig.hidePhoneNumber = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("ChatsOnTitle", R.string.ChatsOnTitle)
+                summary = LocaleController.getString("RestartRequired", R.string.RestartRequired)
 
                 contract({
                     return@contract ExteraConfig.chatsOnTitle
@@ -66,8 +103,17 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraSB", R.string.exteraSB)
-                summary = LocaleController.getString("exteraSBdesc", R.string.exteraSBdesc)
+                title = LocaleController.getString("ShowID", R.string.ShowID)
+
+                contract({
+                    return@contract ExteraConfig.showID
+                }) {
+                    ExteraConfig.showID = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("SB", R.string.SB)
+                summary = LocaleController.getString("SBDescription", R.string.SBDescription)
 
                 contract({
                     return@contract SharedConfig.noStatusBar
@@ -82,27 +128,8 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraHidePhoneNumber", R.string.exteraHidePhoneNumber)
-                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
-
-                contract({
-                    return@contract ExteraConfig.hidePhoneNumber
-                }) {
-                    ExteraConfig.hidePhoneNumber = it
-                }
-            }
-            switch {
-                title = LocaleController.getString("exteraShowID", R.string.exteraShowID)
-
-                contract({
-                    return@contract ExteraConfig.showID
-                }) {
-                    ExteraConfig.showID = it
-                }
-            }
-            switch {
-                title = LocaleController.getString("exteraForceTabletMode", R.string.exteraForceTabletMode)
-                summary = LocaleController.getString("exteraRestartRequired", R.string.exteraRestartRequired)
+                title = LocaleController.getString("ForceTabletMode", R.string.ForceTabletMode)
+                summary = LocaleController.getString("RestartRequired", R.string.RestartRequired)
 
                 contract({
                     return@contract ExteraConfig.forceTabletMode
@@ -111,40 +138,13 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
         }
-
-
-        category(LocaleController.getString("exteraFonts", R.string.exteraFonts)) {
+        category(LocaleController.getString("Drawer", R.string.Drawer)) {
             textDetail {
-                title = LocaleController.getString("exteraAttention", R.string.exteraAttention)
-                detail = LocaleController.getString("exteraFontDesc", R.string.exteraFontDesc)
+                title = LocaleController.getString("Attention", R.string.Attention)
+                detail = LocaleController.getString("DrawerRR", R.string.DrawerRR)
             }
             switch {
-                title = LocaleController.getString("exteraSystemEmoji", R.string.exteraSystemEmoji)
-
-                contract({
-                    return@contract SharedConfig.useSystemEmoji
-                }) {
-                    SharedConfig.toggleSystemEmoji()
-                }
-            }
-            switch {
-                title = LocaleController.getString("exteraSystemFont", R.string.exteraSystemFont)
-
-                contract({
-                    return@contract ExteraConfig.useSystemFont
-                }) {
-                    ExteraConfig.useSystemFont = it
-                }
-            }
-        }
-
-        category(LocaleController.getString("exteraDrawer", R.string.exteraDrawer)) {
-            textDetail {
-                title = LocaleController.getString("exteraAttention", R.string.exteraAttention)
-                detail = LocaleController.getString("exteraDrawerRR", R.string.exteraDrawerRR)
-            }
-            switch {
-                title = LocaleController.getString("exteraNewGroup", R.string.exteraNewGroup)
+                title = LocaleController.getString("NewGroup", R.string.NewGroup)
 
                 contract({
                     return@contract ExteraConfig.newGroup
@@ -153,7 +153,7 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraNewSecretChat", R.string.exteraNewSecretChat)
+                title = LocaleController.getString("NewSecretChat", R.string.NewSecretChat)
 
                 contract({
                     return@contract ExteraConfig.newSecretChat
@@ -162,7 +162,7 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraNewChannel", R.string.exteraNewChannel)
+                title = LocaleController.getString("NewChannel", R.string.NewChannel)
 
                 contract({
                     return@contract ExteraConfig.newChannel
@@ -171,26 +171,26 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraContacts", R.string.exteraContacts)
+                title = LocaleController.getString("Contacts", R.string.Contacts)
 
                 contract({
-                    return@contract ExteraConfig.Contacts
+                    return@contract ExteraConfig.contacts
                 }) {
-                    ExteraConfig.Contacts = it
+                    ExteraConfig.contacts = it
                 }
             }
             switch {
-                title = LocaleController.getString("exteraCalls", R.string.exteraCalls)
+                title = LocaleController.getString("Calls", R.string.Calls)
 
                 contract({
-                    return@contract ExteraConfig.Calls
+                    return@contract ExteraConfig.calls
                 }) {
-                    ExteraConfig.Calls = it
+                    ExteraConfig.calls = it
                 }
             }
             switch {
-                title = LocaleController.getString("exteraPeopleNearby", R.string.exteraPeopleNearby)
-                summary = LocaleController.getString("exteraPeopleNearbyDesc", R.string.exteraPeopleNearbyDesc)
+                title = LocaleController.getString("PeopleNearby", R.string.PeopleNearby)
+                summary = LocaleController.getString("PeopleNearbyDescription", R.string.PeopleNearbyDescription)
 
                 contract({
                     return@contract ExteraConfig.peopleNearby
@@ -199,7 +199,16 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraSavedMessages", R.string.exteraSavedMessages)
+                title = LocaleController.getString("ArchivedChats", R.string.ArchivedChats)
+
+                contract({
+                    return@contract ExteraConfig.archivedChats
+                }) {
+                    ExteraConfig.archivedChats = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("SavedMessages", R.string.SavedMessages)
 
                 contract({
                     return@contract ExteraConfig.savedMessages
@@ -208,7 +217,7 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraInviteFriends", R.string.exteraInviteFriends)
+                title = LocaleController.getString("InviteFriends", R.string.InviteFriends)
 
                 contract({
                     return@contract ExteraConfig.inviteFriends
@@ -217,7 +226,7 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
-                title = LocaleController.getString("exteraTelegramFeatures", R.string.exteraTelegramFeatures)
+                title = LocaleController.getString("TelegramFeatures", R.string.TelegramFeatures)
 
                 contract({
                     return@contract ExteraConfig.telegramFeatures

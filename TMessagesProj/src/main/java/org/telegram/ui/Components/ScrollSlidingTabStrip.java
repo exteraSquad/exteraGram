@@ -288,6 +288,7 @@ public class ScrollSlidingTabStrip extends HorizontalScrollView {
             imageView.setImageDrawable(drawable);
             imageView.setScaleType(ImageView.ScaleType.CENTER);
             tab.setOnClickListener(v -> delegate.onPageSelected((Integer) v.getTag(R.id.index_tag)));
+            tab.setBackground(Theme.getSelectorDrawable(false));
             tab.addView(imageView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
             textView = new TextView(getContext());
@@ -320,6 +321,7 @@ public class ScrollSlidingTabStrip extends HorizontalScrollView {
             tab.setImageDrawable(drawable);
             tab.setScaleType(ImageView.ScaleType.CENTER);
             tab.setOnClickListener(v -> delegate.onPageSelected((Integer) v.getTag(R.id.index_tag)));
+            tab.setBackground(Theme.getSelectorDrawable(false));
             tabsContainer.addView(tab, position);
         }
         tab.setTag(R.id.index_tag, position);
@@ -341,6 +343,7 @@ public class ScrollSlidingTabStrip extends HorizontalScrollView {
             tab.iconView.setImageDrawable(drawable);
             tab.setFocusable(true);
             tab.setOnClickListener(v -> delegate.onPageSelected((Integer) v.getTag(R.id.index_tag)));
+            tab.setBackground(Theme.getSelectorDrawable(false));
             tab.setExpanded(expanded);
             tab.updateExpandProgress(expandProgress);
             tabsContainer.addView(tab, position);
@@ -365,6 +368,7 @@ public class ScrollSlidingTabStrip extends HorizontalScrollView {
             tab = stickerTabView;
             tab.setFocusable(true);
             tab.setOnClickListener(v -> delegate.onPageSelected((Integer) v.getTag(R.id.index_tag)));
+            tab.setBackground(Theme.getSelectorDrawable(false));
             tabsContainer.addView(tab, position);
             stickerTabView.setRoundImage();
 
@@ -398,6 +402,7 @@ public class ScrollSlidingTabStrip extends HorizontalScrollView {
             tab = new StickerTabView(getContext(), StickerTabView.EMOJI_TYPE);
             tab.setFocusable(true);
             tab.setOnClickListener(v -> delegate.onPageSelected((Integer) v.getTag(R.id.index_tag)));
+            tab.setBackground(Theme.getSelectorDrawable(false));
 
             tab.setExpanded(expanded);
             tab.updateExpandProgress(expandProgress);
@@ -425,6 +430,7 @@ public class ScrollSlidingTabStrip extends HorizontalScrollView {
             tab = new StickerTabView(getContext(), StickerTabView.STICKER_TYPE);
             tab.setFocusable(true);
             tab.setOnClickListener(v -> delegate.onPageSelected((Integer) v.getTag(R.id.index_tag)));
+            tab.setBackground(Theme.getSelectorDrawable(false));
 
             tab.setExpanded(expanded);
             tab.updateExpandProgress(expandProgress);

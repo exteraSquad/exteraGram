@@ -1320,7 +1320,7 @@ public class AndroidUtilities {
 
     public static Typeface getTypeface(String assetPath) {
         synchronized (typefaceCache) {
-            if (ExteraConfig.INSTANCE.getUseSystemFont() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (ExteraConfig.INSTANCE.getUseSystemFonts() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 if (assetPath.contains("medium") && assetPath.contains("italic")) {
                     return Typeface.create("sans-serif-medium", Typeface.ITALIC);
                 }
