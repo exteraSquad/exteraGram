@@ -568,7 +568,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     public void setCaption(CharSequence caption) {
-        hasCaptionForAllMedia = !TextUtils.isEmpty(caption);
+        hasCaptionForAllMedia = true;//!TextUtils.isEmpty(caption);
         captionForAllMedia = caption;
     }
 
@@ -1907,6 +1907,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         public boolean validateGroupId(long groupId) {
             return true;
         }
+
+        @Override
+        public void onApplyCaption(CharSequence caption) {
+
+        }
     }
 
     public interface PhotoViewerProvider {
@@ -1943,6 +1948,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         void onCaptionChanged(CharSequence caption);
         boolean closeKeyboard();
         boolean validateGroupId(long groupId);
+        void onApplyCaption(CharSequence caption);
     }
 
     private class FrameLayoutDrawer extends SizeNotifierFrameLayoutPhoto {
@@ -6760,6 +6766,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
             if (captionEditText.getFieldCharSequence().length() != 0 && !placeProvider.isPhotoChecked(currentIndex)) {
                 setPhotoChecked();
+            }
+            if (placeProvider != null) {
+                placeProvider.onApplyCaption(caption);
             }
             setCurrentCaption(null, result[0], false);
         }

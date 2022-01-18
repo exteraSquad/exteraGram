@@ -107,6 +107,7 @@ public class SharedConfig {
     public static boolean saveStreamMedia = true;
     public static boolean smoothKeyboard = true;
     public static boolean pauseMusicOnRecord = true;
+    public static boolean chatBlur = false;
     public static boolean noiseSupression;
     public static boolean noStatusBar;
     public static boolean sortContactsByName;
@@ -357,6 +358,7 @@ public class SharedConfig {
             saveStreamMedia = preferences.getBoolean("saveStreamMedia", true);
             smoothKeyboard = preferences.getBoolean("smoothKeyboard2", true);
             pauseMusicOnRecord = preferences.getBoolean("pauseMusicOnRecord", false);
+            chatBlur = preferences.getBoolean("chatBlur", false);
             streamAllVideo = preferences.getBoolean("streamAllVideo", BuildVars.DEBUG_VERSION);
             streamMkv = preferences.getBoolean("streamMkv", false);
             suggestStickers = preferences.getInt("suggestStickers", 0);
@@ -389,7 +391,7 @@ public class SharedConfig {
             mediaColumnsCount = preferences.getInt("mediaColumnsCount", 3);
             fastScrollHintCount = preferences.getInt("fastScrollHintCount", 3);
             dontAskManageStorage = preferences.getBoolean("dontAskManageStorage", false);
-            drawSnowInChat = preferences.getBoolean("drawSnowInChat", BuildVars.DEBUG_VERSION);
+            drawSnowInChat = preferences.getBoolean("drawSnowInChat", false);
 
             preferences = ApplicationLoader.applicationContext.getSharedPreferences("Notifications", Activity.MODE_PRIVATE);
             showNotificationsForAllAccounts = preferences.getBoolean("AllAccounts", true);
@@ -949,6 +951,14 @@ public class SharedConfig {
         editor.commit();
     }
 
+    public static void toggleDebugChatBlur() {
+        chatBlur = !chatBlur;
+        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("chatBlur", chatBlur);
+        editor.commit();
+    }
+
     public static void toggleInappCamera() {
         inappCamera = !inappCamera;
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
@@ -1201,5 +1211,12 @@ public class SharedConfig {
     public static void setDontAskManageStorage(boolean b) {
         dontAskManageStorage = b;
         ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE).edit().putBoolean("dontAskManageStorage", dontAskManageStorage).apply();
+    }
+
+    public static boolean canBlurChat() {
+        return BuildVars.DEBUG_VERSION && getDevicePerformanceClass() == PERFORMANCE_CLASS_HIGH;
+    }
+    public static boolean chatBlurEnabled() {
+        return canBlurChat() && chatBlur;
     }
 }
