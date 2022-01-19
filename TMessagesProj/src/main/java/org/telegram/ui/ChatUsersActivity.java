@@ -171,6 +171,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
     private boolean needOpenSearch;
 
     private boolean searching;
+    private boolean showRecentActions = true;
 
     private int selectedSlowmode;
     private int initialSlowmode;
@@ -415,6 +416,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
         needOpenSearch = arguments.getBoolean("open_search");
         selectType = arguments.getInt("selectType");
         currentChat = getMessagesController().getChat(chatId);
+        showRecentActions = arguments.getBoolean("showRecentActions", true);
         if (currentChat != null && currentChat.default_banned_rights != null) {
             defaultBannedRights.view_messages = currentChat.default_banned_rights.view_messages;
             defaultBannedRights.send_stickers = currentChat.default_banned_rights.send_stickers;
@@ -565,7 +567,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
             }
         } else if (type == TYPE_ADMIN) {
             if (ChatObject.isChannel(currentChat) && currentChat.megagroup && !currentChat.gigagroup && (info == null || info.participants_count <= 200)) {
-                recentActionsRow = rowCount++;
+                if (showRecentActions = true) recentActionsRow = rowCount++;
                 addNewSectionRow = rowCount++;
             }
 

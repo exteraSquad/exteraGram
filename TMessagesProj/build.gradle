@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:19.0.1'
     implementation 'com.google.android.gms:play-services-wallet:19.1.0'
     implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
-    implementation 'com.stripe:stripe-android:19.1.0'
+    implementation 'com.stripe:stripe-android:2.0.2'
     implementation 'com.google.mlkit:language-id:17.0.2'
     implementation files('libs/libgsaverification-client.aar')
 
@@ -216,7 +216,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 30
         versionName "8.4.4"
 
@@ -230,7 +230,7 @@ android {
         externalNativeBuild {
             cmake {
                 version '3.10.2'
-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-19'
+                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21'
             }
         }
     }

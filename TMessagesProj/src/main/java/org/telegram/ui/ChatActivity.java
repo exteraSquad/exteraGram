@@ -1244,6 +1244,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     private final static int search = 40;
 
+    private final static int tobeginning = 58;
+
     private final static int id_chat_compose_panel = 1000;
 
     RecyclerListView.OnItemLongClickListenerExtended onItemLongClickListener = new RecyclerListView.OnItemLongClickListenerExtended() {
@@ -2372,6 +2374,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                 } else if (id == change_colors) {
                     showChatThemeBottomSheet();
+                } else if (id == tobeginning) {
+                    jumpToDate();
                 }
             }
         });
@@ -2702,6 +2706,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
             if (currentUser == null || !currentUser.self) {
                 muteItem = headerItem.addSubItem(mute, R.drawable.msg_mute, null, themeDelegate);
+            }
+            if (currentChat != null) {
+                headerItem.addSubItem(tobeginning, R.drawable.ic_arrowup, LocaleController.getString("ToBeginning", R.string.ToBeginning));
             }
             if (ChatObject.isChannel(currentChat) && !currentChat.creator) {
                 if (!ChatObject.isNotInChat(currentChat)) {
@@ -9292,6 +9299,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
         }
         return groupedMessages;
+    }
+
+    private void jumpToDate() {
+        jumpToDate(2);
     }
 
     public void jumpToDate(int date) {

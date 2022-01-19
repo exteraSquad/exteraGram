@@ -342,6 +342,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private final static int start_secret_chat = 20;
     private final static int gallery_menu_save = 21;
     private final static int view_discussion = 22;
+    private final static int view_admins = 23;
 
     private final static int edit_name = 30;
     private final static int logout = 31;
@@ -1875,6 +1876,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     args.putLong("chat_id", chatId);
                     args.putLong("user_id", userId);
                     presentFragment(new QrActivity(args));
+                } else if (id == view_admins) {
+                    Bundle args = new Bundle();
+                    args.putLong("chat_id", currentChat.id);
+                    args.putInt("type", ChatUsersActivity.TYPE_ADMIN);
+                    args.putBoolean("showRecentActions", false);
+                    ChatUsersActivity fragment = new ChatUsersActivity(args);
+                    presentFragment(fragment);
                 }
             }
         });
@@ -6199,6 +6207,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     editItemVisible = true;
                 }
                 if (chatInfo != null) {
+                    if (chat.megagroup && !ChatObject.hasAdminRights(chat)) {
+                        otherItem.addSubItem(view_admins, R.drawable.menu_nearby, LocaleController.getString("ChannelAdministrators", R.string.ChannelAdministrators));
+                    }
                     if (ChatObject.canManageCalls(chat) && chatInfo.call == null) {
                         otherItem.addSubItem(call_item, R.drawable.msg_voicechat, chat.megagroup && !chat.gigagroup ? LocaleController.getString("StartVoipChat", R.string.StartVoipChat) : LocaleController.getString("StartVoipChannel", R.string.StartVoipChannel));
                         hasVoiceChatItem = true;
@@ -7024,7 +7035,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 }
                                 break;
                         }
-                        cell.setText("exteraGram | v" + ExteraExtras.INSTANCE.getExteraVersion() + " (" + ExteraExtras.INSTANCE.getExteraCodename() + ")");
+                        if (BuildVars.isBetaApp()) {
+                            cell.setText("exteraGram β | v" + BuildConfig.VERSION_NAME);
+                        } else {
+                            cell.setText("exteraGram | v" + BuildConfig.VERSION_NAME);
+                        }
                     } catch (Exception e) {
                         FileLog.e(e);
                     }

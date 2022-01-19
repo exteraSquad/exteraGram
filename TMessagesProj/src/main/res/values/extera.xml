@@ -68,6 +68,9 @@
     <string name="AutopauseDescription">Pauses a video playback when device is locked or exteraGram is minimized</string>
     <string name="DisablePlayback">Disable playback</string>
     <string name="DisablePlaybackDescription">Disables playback when volume button is pressed</string>
+
+    <!-- Chat Activity -->
+    <string name="ToBeginning">To beginning</string>
     
     <string name="ConfirmCall">Confirm call</string>
     <string name="CallTo">Call to **%1$s**?</string>

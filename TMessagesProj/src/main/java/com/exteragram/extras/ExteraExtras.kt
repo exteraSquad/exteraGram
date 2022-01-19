@@ -4,10 +4,6 @@ import androidx.annotation.ColorInt
 import org.telegram.messenger.SharedConfig
 
 object ExteraExtras {
-
-    var exteraVersion = "8.4.2"
-    var exteraCodename = "cattus"
-
     @JvmStatic
     @get:ColorInt
     val lightStatusbarColor: Int

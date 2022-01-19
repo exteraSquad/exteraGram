@@ -68,7 +68,10 @@
     <string name="AutopauseDescription">Останавливает видео, когда девайс блокируется или exteraGram сворачивается</string>
     <string name="DisablePlayback">Отключить проигрывание</string>
     <string name="DisablePlaybackDescription">Отключает проигрывание, когда кнопка громкости нажата</string>
-    
+
+    <!-- Chat Activity -->
+    <string name="ToBeginning">В начало</string>
+
     <string name="ConfirmCall">Подтверждение звонка</string>
     <string name="CallTo">Позвонить **%1$s**?</string>
 </resources>

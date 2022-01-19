@@ -685,9 +685,12 @@ public class SharedConfig {
                     days = 7;
                 } else if (keepMedia == 1) {
                     days = 30;
+                } else if (keepMedia == 4) {
+                    days = 1;
                 } else {
                     days = 3;
                 }
+
                 long currentTime = time - 60 * 60 * 24 * days;
                 final SparseArray<File> paths = ImageLoader.getInstance().createMediaPaths();
                 for (int a = 0; a < paths.size(); a++) {
@@ -1214,7 +1217,7 @@ public class SharedConfig {
     }
 
     public static boolean canBlurChat() {
-        return BuildVars.DEBUG_VERSION && getDevicePerformanceClass() == PERFORMANCE_CLASS_HIGH;
+        return true;
     }
     public static boolean chatBlurEnabled() {
         return canBlurChat() && chatBlur;

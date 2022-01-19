@@ -2115,7 +2115,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 } else {
                     actionBar.setTitle(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort));
                 }
-            }
             if (folderId == 0) {
                 actionBar.setSupportsHolidayImage(true);
             }
@@ -2124,8 +2123,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             actionBar.setAddToContainer(false);
             actionBar.setCastShadows(false);
             actionBar.setClipContent(true);
-        }
-        actionBar.setTitleActionRunnable(() -> {
+        } actionBar.setTitleActionRunnable(() -> {
             if (initialDialogsType != 10) {
                 hideFloatingButton(false);
             }

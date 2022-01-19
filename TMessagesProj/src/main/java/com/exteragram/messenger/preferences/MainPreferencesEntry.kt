@@ -12,12 +12,13 @@ import ua.itaysonlab.tgkit.ktx.category
 import ua.itaysonlab.tgkit.ktx.textDetail
 import ua.itaysonlab.tgkit.ktx.textIcon
 import ua.itaysonlab.tgkit.ktx.tgKitScreen
-import com.exteragram.extras.ExteraExtras
 import ua.itaysonlab.tgkit.preference.types.TGKitTextIconRow
 
 import android.os.Build
 
 import android.app.assist.AssistContent
+import org.telegram.messenger.BuildConfig
+import org.telegram.messenger.BuildVars
 import org.telegram.messenger.R
 import java.lang.String
 
@@ -25,7 +26,11 @@ class MainPreferencesEntry : BasePreferencesEntry {
     override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("Preferences", R.string.Preferences)) {
         category(LocaleController.getString("AboutExtera", R.string.AboutExtera)) {
             textDetail {
-                title = "exteraGram | v" + ExteraExtras.exteraVersion + " (" + ExteraExtras.exteraCodename + ")"
+                if (BuildVars.isBetaApp()) {
+                    title = "exteraGram β | v" + BuildConfig.VERSION_NAME
+                } else {
+                    title = "exteraGram | v" + BuildConfig.VERSION_NAME
+                }
                 detail = LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription)
             }
 
