@@ -20,11 +20,11 @@ public class BuildVars {
     public static boolean USE_CLOUD_STRINGS = true;
     public static boolean CHECK_UPDATES = false;
     public static boolean NO_SCOPED_STORAGE = Build.VERSION.SDK_INT <= 29;
-    public static int BUILD_VERSION = 2538;
-    public static String BUILD_VERSION_STRING = "8.4.4";
+    public static int BUILD_VERSION = 2547;
+    public static String BUILD_VERSION_STRING = "8.5.0";
 
-    public static int APP_ID = BuildConfig.APP_ID; //obtain your own APP_ID at https://core.telegram.org/api/obtaining_api_id
-    public static String APP_HASH = BuildConfig.APP_HASH; //obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
+    public static int APP_ID = BuildConfig.APP_ID; // Obtain your own APP_ID at https://core.telegram.org/api/obtaining_api_id
+    public static String APP_HASH = BuildConfig.APP_HASH; // Obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
     public static String SMS_HASH = "w0lkcmTZkKh";
     public static String PLAYSTORE_APP_URL = "https://github.com/exteraSquad/exteraGram/releases/latest";
 
