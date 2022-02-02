@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- exteraGram's Main Strings -->
-    <string name="exteraAppName">exteraGram</string>
-    <string name="exteraAppNameBeta">exteraGram β</string>
-    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
     <string name="MutualContact">взаємний контакт</string>
+    <string name="ToBeginning">На початок</string>
     
     <!-- Main Menu (about) -->
     <string name="AboutExtera">Про exteraGram</string>
@@ -24,14 +22,6 @@
     <string name="Experimental">Експериментально</string>
 
     <!-- Appearance -->
-    <string name="AppIcon">Іконка засосунку</string>
-    <string name="DefaultIcon">Стандартна іконка</string>
-    <string name="MaterialYouIcon">Material You</string>
-    <string name="yandexIcon">Іконка \"Яндекс.Аліса\"</string>
-    <string name="asscatchemIcon">\Іконка від \@asscatchem</string>
-    <string name="itsv1edsIcon">Іконка від \@itsv1eds</string>
-    <string name="the8055uIcon">Іконка від \@the8055u</string>
-    <string name="ghoulghoulchanIcon">Іконка від \@ghoulghoulchan</string>
     <string name="SystemFonts">Використовувати системний шрифт</string>
     <string name="SystemEmoji">Використовувати системні емодзі</string>
 
@@ -68,9 +58,6 @@
     <string name="AutopauseDescription">Ставити відео на паузу, коли девайс заблоковано або exteraGram згорнуто</string>
     <string name="DisablePlayback">Вимнкути програвання</string>
     <string name="DisablePlaybackDescription">Вимикає програвання при натисканні кнопки гучності</string>
-
-    <!-- Chat Activity -->
-    <string name="ToBeginning">На початок</string>
 
     <string name="ConfirmCall">Підтвердження виклику</string>
     <string name="CallTo">Подзвонити **%1$s**?</string>

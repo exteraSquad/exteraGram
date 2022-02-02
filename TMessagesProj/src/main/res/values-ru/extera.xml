@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- exteraGram's Main Strings -->
-    <string name="exteraAppName">exteraGram</string>
-    <string name="exteraAppNameBeta">exteraGram β</string>
-    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
     <string name="MutualContact">взаимный контакт</string>
-    
+    <string name="ToBeginning">В начало</string>
+
     <!-- Main Menu (about) -->
     <string name="AboutExtera">Об exteraGram</string>
     <string name="AboutExteraDescription">Экспериментальный Telegram-клиент, основанный на официальном исходном коде Telegram!</string>
@@ -24,14 +22,6 @@
     <string name="Experimental">Экспериментальное</string>
 
     <!-- Appearance -->
-    <string name="AppIcon">Иконка приложения</string>
-    <string name="DefaultIcon">Обычная иконка</string>
-    <string name="MaterialYouIcon">Material You</string>
-    <string name="yandexIcon">Иконка \"Яндекс.Алиса\"</string>
-    <string name="asscatchemIcon">Иконка от \@asscatchem</string>
-    <string name="itsv1edsIcon">Иконка от \@itsv1eds</string>
-    <string name="the8055uIcon">Иконка от \@the8055u</string>
-    <string name="ghoulghoulchanIcon">Иконка от \@ghoulghoulchan</string>
     <string name="SystemFonts">Использовать системные шрифты</string>
     <string name="SystemEmoji">Использовать системные эмодзи</string>
 
@@ -68,9 +58,6 @@
     <string name="AutopauseDescription">Останавливает видео, когда девайс блокируется или exteraGram сворачивается</string>
     <string name="DisablePlayback">Отключить проигрывание</string>
     <string name="DisablePlaybackDescription">Отключает проигрывание, когда кнопка громкости нажата</string>
-
-    <!-- Chat Activity -->
-    <string name="ToBeginning">В начало</string>
 
     <string name="ConfirmCall">Подтверждение звонка</string>
     <string name="CallTo">Позвонить **%1$s**?</string>

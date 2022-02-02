@@ -5,6 +5,7 @@
     <string name="exteraAppNameBeta">exteraGram β</string>
     <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
     <string name="MutualContact">mutual contact</string>
+    <string name="ToBeginning">To beginning</string>
     
     <!-- Main Menu (about) -->
     <string name="AboutExtera">About exteraGram</string>
@@ -24,14 +25,6 @@
     <string name="Experimental">Experimental</string>
 
     <!-- Appearance -->
-    <string name="AppIcon">Application Icon</string>
-    <string name="DefaultIcon">Default Icon</string>
-    <string name="MaterialYouIcon">Material You</string>
-    <string name="yandexIcon">Yandex.Alisa\'s Themed Icon</string>
-    <string name="asscatchemIcon">\@asscatchem\'s Themed Icon</string>
-    <string name="itsv1edsIcon">\@itsv1eds\'s Themed Icon</string>
-    <string name="the8055uIcon">\@the8055u\'s Themed Icon</string>
-    <string name="ghoulghoulchanIcon">\@ghoulghoulchan\'s Themed Icon</string>
     <string name="SystemFonts">Use System Fonts</string>
     <string name="SystemEmoji">Use System Emoji</string>
 
@@ -68,9 +61,6 @@
     <string name="AutopauseDescription">Pauses a video playback when device is locked or exteraGram is minimized</string>
     <string name="DisablePlayback">Disable playback</string>
     <string name="DisablePlaybackDescription">Disables playback when volume button is pressed</string>
-
-    <!-- Chat Activity -->
-    <string name="ToBeginning">To beginning</string>
     
     <string name="ConfirmCall">Confirm call</string>
     <string name="CallTo">Call to **%1$s**?</string>
