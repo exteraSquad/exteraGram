@@ -30,27 +30,6 @@
 
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="@string/MAPS_V2_API" />
 
-        <activity-alias
-            android:name=".defaulticon"
-            android:enabled="true"
-            android:icon="@mipmap/ic_launcher_beta"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <service
-            android:name=".GcmPushListenerService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
         <uses-library android:name="com.google.android.maps" android:required="false"/>
 
         <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />

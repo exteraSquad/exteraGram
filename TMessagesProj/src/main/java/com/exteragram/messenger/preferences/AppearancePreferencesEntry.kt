@@ -9,40 +9,11 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import com.exteragram.messenger.ExteraConfig
 import com.exteragram.extras.ExteraExtras
-import com.exteragram.extras.AppIcons
 import ua.itaysonlab.tgkit.ktx.*
 
 class AppearancePreferencesEntry : BasePreferencesEntry {
     override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("Appearance", R.string.Appearance)) {
         category(LocaleController.getString("Application", R.string.Application)) {
-            list {
-                title = LocaleController.getString("AppIcon", R.string.AppIcon)
-
-                contractIcons({
-                    return@contractIcons listOf(
-                        Triple(0, LocaleController.getString("DefaultIcon", R.string.DefaultIcon), R.mipmap.ic_launcher),
-                        Triple(1, LocaleController.getString("MaterialYouIcon", R.string.MaterialYouIcon), R.mipmap.ic_launcher_materialyou),
-                        Triple(2, LocaleController.getString("yandexIcon", R.string.yandexIcon), R.mipmap.ic_launcher_alisa),
-                        Triple(3, LocaleController.getString("the8055uIcon", R.string.the8055uIcon), R.mipmap.ic_launcher_the8055u),
-                        Triple(4, LocaleController.getString("itsv1edsIcon", R.string.itsv1edsIcon), R.mipmap.ic_launcher_itsv1eds),
-                        Triple(5, LocaleController.getString("asscatchemIcon", R.string.asscatchemIcon), R.mipmap.ic_launcher_asscatchem),
-                        Triple(6, LocaleController.getString("ghoulghoulchanIcon", R.string.ghoulghoulchanIcon), R.mipmap.ic_launcher_ghoulghoulchan)
-                    )
-                }, {
-                    return@contractIcons when (ExteraConfig.appIcon) {
-                        1 -> LocaleController.getString("MaterialYouIcon", R.string.MaterialYouIcon)
-                        2 -> LocaleController.getString("yandexIcon", R.string.yandexIcon)
-                        3 -> LocaleController.getString("the8055uIcon", R.string.the8055uIcon)
-                        4 -> LocaleController.getString("itsv1edsIcon", R.string.itsv1edsIcon)
-                        5 -> LocaleController.getString("asscatchemIcon", R.string.asscatchemIcon)
-                        6 -> LocaleController.getString("ghoulghoulchanIcon", R.string.ghoulghoulchanIcon)
-                        else -> LocaleController.getString("DefaultIcon", R.string.DefaultIcon)
-                    }
-                }) {
-                    ExteraConfig.appIcon = it
-                    AppIcons.setIcon(it)
-                }
-            }
             switch {
                 title = LocaleController.getString("SystemFonts", R.string.SystemFonts)
 

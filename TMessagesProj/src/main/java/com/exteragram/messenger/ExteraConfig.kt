@@ -12,7 +12,6 @@ object ExteraConfig {
 
     // Appearance
     // Application
-    var appIcon by sharedPreferences.int("appIcon", 0)
     var useSystemFonts by sharedPreferences.boolean("useSystemFont", false)
     // General
     var hideAllChats by sharedPreferences.boolean("hideAllChats", false)

@@ -82,7 +82,6 @@
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
         android:allowAudioPlaybackCapture="true"
-        android:exported="true"
         tools:replace="android:supportsRtl">
 
         <activity
@@ -167,90 +166,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="vnd.android.cursor.item/vnd.org.telegram.messenger.android.call"/>
                 <data android:mimeType="vnd.android.cursor.item/vnd.org.telegram.messenger.android.call.video"/>
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".materialyouicon"
-            android:enabled="false"
-            android:icon="@mipmap/ic_launcher_materialyou"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".yandexalisaicon"
-            android:enabled="false"
-            android:icon="@mipmap/ic_launcher_alisa"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".asscatchemicon"
-            android:enabled="false"
-            android:icon="@mipmap/ic_launcher_asscatchem"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".itsv1edsicon"
-            android:enabled="false"
-            android:icon="@mipmap/ic_launcher_itsv1eds"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".the8055uicon"
-            android:enabled="false"
-            android:icon="@mipmap/ic_launcher_the8055u"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".ghoulghoulchanicon"
-            android:enabled="false"
-            android:icon="@mipmap/ic_launcher_ghoulghoulchan"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
         </activity-alias>
 
@@ -548,8 +463,7 @@
 <!--            android:exported="false" />-->
         <service android:name=".FilesMigrationService" android:exported="false"/>
 
-        <service
-            android:name=".GcmPushListenerService" android:exported="false">
+        <service android:name=".GcmPushListenerService" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
