@@ -1219,6 +1219,7 @@ public class SharedConfig {
     public static boolean canBlurChat() {
         return true;
     }
+
     public static boolean chatBlurEnabled() {
         return canBlurChat() && chatBlur;
     }

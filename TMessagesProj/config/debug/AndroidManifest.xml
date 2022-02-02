@@ -34,7 +34,8 @@
             android:name=".defaulticon"
             android:enabled="true"
             android:icon="@mipmap/ic_launcher_beta"
-            android:targetActivity="org.telegram.ui.LaunchActivity">
+            android:targetActivity="org.telegram.ui.LaunchActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,7 +59,8 @@
         <receiver
             tools:replace="android:enabled"
             android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.measurement.UPLOAD" />
             </intent-filter>
@@ -68,7 +70,7 @@
             tools:replace="android:enabled"
             android:name="com.google.android.gms.measurement.AppMeasurementService"
             android:enabled="false"
-            android:exported="false" />
+            android:exported="false"/>
 
     </application>
 
