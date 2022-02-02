@@ -373,7 +373,7 @@ public class SizeNotifierFrameLayout extends FrameLayout {
     }
 
     private void checkSnowflake(Canvas canvas) {
-        if (SharedConfig.drawSnowInChat || Theme.canStartHolidayAnimation()) {
+        if (Theme.canStartHolidayAnimation()) {
             if (snowflakesEffect == null) {
                 snowflakesEffect = new SnowflakesEffect(1);
             }
