@@ -189,7 +189,7 @@ android {
         }
     }
 
-    defaultConfig.versionCode = 2547
+    defaultConfig.versionCode = 2551
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
@@ -218,7 +218,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
-        versionName "8.5.0"
+        versionName "8.5.1"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
         //obtain your own keys at https://core.telegram.org/api/obtaining_api_id
@@ -236,4 +236,3 @@ android {
     }
     dependenciesInfo.includeInApk false
 }
-
