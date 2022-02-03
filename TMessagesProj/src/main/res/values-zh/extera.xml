@@ -2,7 +2,6 @@
 <resources>
     <!-- exteraGram's Main Strings -->
     <string name="MutualContact">双向联系人</string>
-    <string name="ToBeginning">В начало</string>
 
     <!-- Main Menu (about) -->
     <string name="AboutExtera">关于 exteraGram</string>

@@ -2522,7 +2522,7 @@ public class NotificationsController extends BaseController {
         try {
             Intent intent = new Intent(ApplicationLoader.applicationContext, NotificationRepeat.class);
             intent.putExtra("currentAccount", currentAccount);
-            PendingIntent pintent = PendingIntent.getService(ApplicationLoader.applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pintent = PendingIntent.getService(ApplicationLoader.applicationContext, 0, intent, PendingIntent.FLAG_MUTABLE);
             SharedPreferences preferences = getAccountInstance().getNotificationsSettings();
             int minutes = preferences.getInt("repeat_messages", 60);
             if (minutes > 0 && personalCount > 0) {
@@ -3690,7 +3690,7 @@ public class NotificationsController extends BaseController {
             Intent dismissIntent = new Intent(ApplicationLoader.applicationContext, NotificationDismissReceiver.class);
             dismissIntent.putExtra("messageDate", lastMessageObject.messageOwner.date);
             dismissIntent.putExtra("currentAccount", currentAccount);
-            mBuilder.setDeleteIntent(PendingIntent.getBroadcast(ApplicationLoader.applicationContext, 1, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+            mBuilder.setDeleteIntent(PendingIntent.getBroadcast(ApplicationLoader.applicationContext, 1, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
 
             if (photoPath != null) {
                 BitmapDrawable img = ImageLoader.getInstance().getImageFromMemory(photoPath, null, "50_50");
@@ -4103,7 +4103,7 @@ public class NotificationsController extends BaseController {
                 replyIntent.putExtra("dialog_id", dialogId);
                 replyIntent.putExtra("max_id", maxId);
                 replyIntent.putExtra("currentAccount", currentAccount);
-                PendingIntent replyPendingIntent = PendingIntent.getBroadcast(ApplicationLoader.applicationContext, internalId, replyIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent replyPendingIntent = PendingIntent.getBroadcast(ApplicationLoader.applicationContext, internalId, replyIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
                 RemoteInput remoteInputWear = new RemoteInput.Builder(EXTRA_VOICE_REPLY).setLabel(LocaleController.getString("Reply", R.string.Reply)).build();
                 String replyToString;
                 if (DialogObject.isChatDialog(dialogId)) {
