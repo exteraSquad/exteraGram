@@ -99,8 +99,6 @@ import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.util.Log;
-
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -1967,7 +1965,7 @@ public class ChatActivityEnterView extends ChatBlurredFrameLayout implements Not
             }
 
             private void editPhoto(Uri uri, String mime) {
-                final File file = AndroidUtilities.generatePicturePath(fragment.isSecretChat(), MimeTypeMap.getSingleton().getExtensionFromMimeType(mime));
+                final File file = AndroidUtilities.generatePicturePath(fragment != null && fragment.isSecretChat(), MimeTypeMap.getSingleton().getExtensionFromMimeType(mime));
                 Utilities.globalQueue.postRunnable(() -> {
                     try {
                         InputStream in = context.getContentResolver().openInputStream(uri);
@@ -6574,6 +6572,10 @@ public class ChatActivityEnterView extends ChatBlurredFrameLayout implements Not
 
     public View getAudioVideoButtonContainer() {
         return audioVideoButtonContainer;
+    }
+
+    public View getEmojiButton() {
+        return emojiButton[0];
     }
 
     public EmojiView getEmojiView() {

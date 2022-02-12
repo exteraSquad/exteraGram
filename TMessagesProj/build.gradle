@@ -189,7 +189,7 @@ android {
         }
     }
 
-    defaultConfig.versionCode = 2551
+    defaultConfig.versionCode = 2563
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
@@ -218,13 +218,13 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
-        versionName "8.5.1"
+        versionName "8.5.2"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
-        //obtain your own keys at https://core.telegram.org/api/obtaining_api_id
+        // Obtain your own keys at https://core.telegram.org/api/obtaining_api_id
         buildConfigField 'int', 'APP_ID', getAppID()
         buildConfigField 'String', 'APP_HASH', getAppHash()
-        //obtain your own key at https://console.cloud.google.com/google/maps-apis/credentials
+        // Obtain your own key at https://console.cloud.google.com/google/maps-apis/credentials
         resValue 'string', 'MAPS_V2_API', getMapsAPI()
 
         externalNativeBuild {
