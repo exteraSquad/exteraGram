@@ -7261,7 +7261,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             detailCell.setContentDescriptionValueFirst(true);
                             currentBio = userInfo != null ? userInfo.about : null;
                         } else {
-                            detailCell.setTextAndValue(LocaleController.getString("UserBio", R.string.UserBio), LocaleController.getString("UserBioDetail", R.string.UserBioDetail), false);
+                            detailCell.setTextAndValue(LocaleController.getString("UserBio", R.string.UserBio), LocaleController.getString("UserBioDetail", R.string.UserBioDetail), true);
                             detailCell.setContentDescriptionValueFirst(false);
                             currentBio = null;
                         }

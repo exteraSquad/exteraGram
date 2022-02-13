@@ -20,7 +20,7 @@ import android.app.assist.AssistContent
 import org.telegram.messenger.BuildConfig
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.R
-import java.lang.String
+import kotlin.String
 
 class MainPreferencesEntry : BasePreferencesEntry {
     override fun getPreferences(bf: BaseFragment) = tgKitScreen(LocaleController.getString("Preferences", R.string.Preferences)) {
