@@ -299,42 +299,20 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             helpIcon = R.drawable.menu_help;
             peopleNearbyIcon = R.drawable.menu_nearby;
         }
-        if (ExteraConfig.INSTANCE.getNewGroup()) {
-            items.add(new Item(2, LocaleController.getString("NewGroup", R.string.NewGroup), newGroupIcon));
-        }
-        if (ExteraConfig.INSTANCE.getNewSecretChat()) {
-            items.add(new Item(3, LocaleController.getString("NewSecretChat", R.string.NewSecretChat), newSecretIcon));
-        }
-        if (ExteraConfig.INSTANCE.getNewChannel()) {
-            items.add(new Item(4, LocaleController.getString("NewChannel", R.string.NewChannel), newChannelIcon));
-        }
-        if (ExteraConfig.INSTANCE.getContacts()) {
-            items.add(new Item(6, LocaleController.getString("Contacts", R.string.Contacts), contactsIcon));
-        }
-        if (ExteraConfig.INSTANCE.getCalls()) {
-            items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
-        }
+        if (ExteraConfig.INSTANCE.getNewGroup()) items.add(new Item(2, LocaleController.getString("NewGroup", R.string.NewGroup), newGroupIcon));
+        if (ExteraConfig.INSTANCE.getNewSecretChat()) items.add(new Item(3, LocaleController.getString("NewSecretChat", R.string.NewSecretChat), newSecretIcon));
+        if (ExteraConfig.INSTANCE.getNewChannel()) items.add(new Item(4, LocaleController.getString("NewChannel", R.string.NewChannel), newChannelIcon));
+        if (ExteraConfig.INSTANCE.getContacts()) items.add(new Item(6, LocaleController.getString("Contacts", R.string.Contacts), contactsIcon));
+        if (ExteraConfig.INSTANCE.getCalls()) items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
         if (hasGps) {
-            if (ExteraConfig.INSTANCE.getPeopleNearby()) {
-                items.add(new Item(12, LocaleController.getString("PeopleNearby", R.string.PeopleNearby), peopleNearbyIcon));
-            }
+            if (ExteraConfig.INSTANCE.getPeopleNearby()) items.add(new Item(12, LocaleController.getString("PeopleNearby", R.string.PeopleNearby), peopleNearbyIcon));
         }
-        if (ExteraConfig.INSTANCE.getArchivedChats()) {
-            items.add(new Item(14, LocaleController.getString("ArchivedChats", R.string.ArchivedChats), archiveIcon));
-        }
-        if (ExteraConfig.INSTANCE.getSavedMessages()) {
-            items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
-        }
+        if (ExteraConfig.INSTANCE.getArchivedChats()) items.add(new Item(14, LocaleController.getString("ArchivedChats", R.string.ArchivedChats), archiveIcon));
+        if (ExteraConfig.INSTANCE.getSavedMessages()) items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
         items.add(new Item(8, LocaleController.getString("Settings", R.string.Settings), settingsIcon));
-        if (ExteraConfig.INSTANCE.getInviteFriends() || ExteraConfig.INSTANCE.getTelegramFeatures()) {
-            items.add(null);
-        }
-        if (ExteraConfig.INSTANCE.getInviteFriends()) {
-            items.add(new Item(7, LocaleController.getString("InviteFriends", R.string.InviteFriends), inviteIcon));
-        }
-        if (ExteraConfig.INSTANCE.getTelegramFeatures()) {
-            items.add(new Item(13, LocaleController.getString("TelegramFeatures", R.string.TelegramFeatures), helpIcon));
-        }
+        if (ExteraConfig.INSTANCE.getInviteFriends() || ExteraConfig.INSTANCE.getTelegramFeatures()) items.add(null);
+        if (ExteraConfig.INSTANCE.getInviteFriends()) items.add(new Item(7, LocaleController.getString("InviteFriends", R.string.InviteFriends), inviteIcon));
+        if (ExteraConfig.INSTANCE.getTelegramFeatures()) items.add(new Item(13, LocaleController.getString("TelegramFeatures", R.string.TelegramFeatures), helpIcon));
     }
 
     public int getId(int position) {
