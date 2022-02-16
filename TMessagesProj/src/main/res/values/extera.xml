@@ -48,6 +48,8 @@
 
     <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
     <string name="HideKeyboardOnScroll">Hide Keyboard on Scrolling</string>
+    <string name="DateOfForwardedMsg">Show date of forwarded message</string>
+    <string name="ShowSeconds">Show seconds in timestamps</string>
     <string name="ArchiveOnPull">Open Archive on Pulldown</string>
     <string name="IncludeArchivedChatsInForwards">Include archived chats for forwards</string>
     <string name="UnlimitedPinnedChats">Unlimited pinned chats</string>

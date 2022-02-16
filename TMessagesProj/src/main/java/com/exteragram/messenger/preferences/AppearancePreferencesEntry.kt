@@ -8,7 +8,6 @@ import org.telegram.messenger.SharedConfig
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import com.exteragram.messenger.ExteraConfig
-import com.exteragram.extras.ExteraExtras
 import ua.itaysonlab.tgkit.ktx.*
 
 class AppearancePreferencesEntry : BasePreferencesEntry {
@@ -90,12 +89,6 @@ class AppearancePreferencesEntry : BasePreferencesEntry {
                     return@contract SharedConfig.noStatusBar
                 }) {
                     SharedConfig.toggleNoStatusBar()
-                    bf.parentActivity.window.statusBarColor = if (Theme.getColor(
-                            Theme.key_actionBarDefault,
-                            null,
-                            true
-                        ) == Color.WHITE
-                    ) ExteraExtras.lightStatusbarColor else ExteraExtras.darkStatusbarColor
                 }
             }
             switch {

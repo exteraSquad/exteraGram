@@ -184,7 +184,6 @@ import java.util.zip.ZipOutputStream;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraPreferencesNav;
-import com.exteragram.extras.ExteraExtras;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate {
 

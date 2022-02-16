@@ -1,24 +1,15 @@
 package com.exteragram.extras
 
-import androidx.annotation.ColorInt
-import org.telegram.messenger.SharedConfig
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessageObject
+
+import com.exteragram.messenger.ExteraConfig
 
 object ExteraExtras {
     @JvmStatic
-    @get:ColorInt
-    val lightStatusbarColor: Int
-        get() = if (SharedConfig.noStatusBar) {
-            0x00000000
-        } else {
-            0x0f000000
-        }
-
-    @JvmStatic
-    @get:ColorInt
-    val darkStatusbarColor: Int
-        get() = if (SharedConfig.noStatusBar) {
-            0x00000000
-        } else {
-            0x33000000
-        }
+    fun showForwardDate(obj: MessageObject, orig: CharSequence): String {
+        if (!ExteraConfig.dateOfForwardedMsg) {
+            return orig.toString()
+        } else return "$orig • ${LocaleController.formatDate(obj.messageOwner.fwd_from.date.toLong())}"
+    }
 }

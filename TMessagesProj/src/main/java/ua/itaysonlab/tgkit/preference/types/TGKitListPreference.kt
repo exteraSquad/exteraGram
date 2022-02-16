@@ -15,7 +15,7 @@ class TGKitListPreference : TGKitPreference() {
         return TGPType.LIST
     }
 
-    fun callActionHueta(bf: BaseFragment, pr: Activity, view: View, x: Float, y: Float, ti: TempInterface) {
+    fun callAction(bf: BaseFragment, pr: Activity, view: View, x: Float, y: Float, ti: TempInterface) {
         var selected: Int = 0
         val titleArray = mutableListOf<String>()
         val idArray = mutableListOf<Int>()

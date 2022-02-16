@@ -59,6 +59,24 @@ class ChatsPreferencesEntry : BasePreferencesEntry {
                 }
             }
             switch {
+                title = LocaleController.getString("DateOfForwardedMsg", R.string.DateOfForwardedMsg)
+
+                contract({
+                    return@contract ExteraConfig.dateOfForwardedMsg
+                }) {
+                    ExteraConfig.dateOfForwardedMsg = it
+                }
+            }
+            switch {
+                title = LocaleController.getString("ShowSeconds", R.string.ShowSeconds)
+
+                contract({
+                    return@contract ExteraConfig.showSeconds
+                }) {
+                    ExteraConfig.showSeconds = it
+                }
+            }
+            switch {
                 title = LocaleController.getString("ArchiveOnPull", R.string.ArchiveOnPull)
 
                 contract({

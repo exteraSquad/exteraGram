@@ -41,6 +41,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import com.exteragram.messenger.ExteraConfig;
+
 public class LocaleController {
 
     static final int QUANTITY_OTHER = 0x0000;
@@ -1663,6 +1665,7 @@ public class LocaleController {
             format = defaultFormat;
         }
         FastDateFormat formatter;
+        if (ExteraConfig.INSTANCE.getShowSeconds()) format = format.replace(":mm", ":mm:ss");
         try {
             formatter = FastDateFormat.getInstance(format, locale);
         } catch (Exception e) {

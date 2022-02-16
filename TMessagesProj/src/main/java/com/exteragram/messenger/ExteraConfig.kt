@@ -41,6 +41,8 @@ object ExteraConfig {
     var includeArchivedChatsInForwards by sharedPreferences.boolean("includeArchivedChatsInForwards", true)
     var hideKeyboardOnScroll by sharedPreferences.boolean("hideKeyboardOnScroll", false)
     var archiveOnPull by sharedPreferences.boolean("archiveOnPull", true)
+    var dateOfForwardedMsg by sharedPreferences.boolean("dateOfForwardedMsg", false)
+    var showSeconds by sharedPreferences.boolean("showSeconds", false)
     var unlimitedRecentStickers by sharedPreferences.boolean("unlimitedRecentStickers", false)
     var unlimitedPinnedChats by sharedPreferences.boolean("unlimitedPinnedChats", false)
     // Media

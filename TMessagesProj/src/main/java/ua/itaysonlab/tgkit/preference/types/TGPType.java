@@ -8,8 +8,8 @@ public enum TGPType {
     TEXT_DETAIL(4, true),
     TEXT_ICON(5, true),
     SLIDER(6, true),
-    LIST(7, true),
-    HINT(8, true);
+    HINT(8, true),
+    LIST(9, true);
 
     public int adapterType;
     public boolean enabled;

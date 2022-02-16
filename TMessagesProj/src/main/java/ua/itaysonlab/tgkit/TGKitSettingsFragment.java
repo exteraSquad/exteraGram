@@ -119,9 +119,9 @@ public class TGKitSettingsFragment extends BaseFragment {
                 if (preference.listener != null) preference.listener.onClick(this);
             } else if (pref instanceof TGKitListPreference) {
                 TGKitListPreference preference = ((TGKitListPreference) pref);
-                preference.callActionHueta(this, getParentActivity(), view, x, y, () -> {
-                    if (view instanceof TextDetailSettingsCell)
-                        ((TextDetailSettingsCell) view).setTextAndValue(preference.title, preference.getContract().getValue(), preference.getDivider());
+                preference.callAction(this, getParentActivity(), view, x, y, () -> {
+                    if (view instanceof TextSettingsCell)
+                        ((TextSettingsCell) view).setTextAndValue(preference.title, preference.getContract().getValue(), preference.getDivider());
                 });
             }
         });
@@ -246,6 +246,14 @@ public class TGKitSettingsFragment extends BaseFragment {
                 }
                 case 8: {
                     ((TextInfoPrivacyCell) holder.itemView).setText(positions.get(position).title);
+                    break;
+                }
+                case 9: {
+                    TextSettingsCell settingsCell = (TextSettingsCell) holder.itemView;
+                    TGKitListPreference pref = (TGKitListPreference) positions.get(position);
+                    settingsCell.setCanDisable(false);
+                    settingsCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+                    settingsCell.setTextAndValue(pref.title, pref.getContract().getValue(), pref.getDivider());
                 }
             }
         }
@@ -257,10 +265,12 @@ public class TGKitSettingsFragment extends BaseFragment {
                 int position = holder.getAdapterPosition();
                 TextCheckCell checkCell = (TextCheckCell) holder.itemView;
                 checkCell.setChecked(((TGKitSwitchPreference) positions.get(position)).contract.getPreferenceValue());
-            } else if (viewType == 7) {
+            } else if (viewType == 9) {
                 int position = holder.getAdapterPosition();
-                TextDetailSettingsCell checkCell = (TextDetailSettingsCell) holder.itemView;
+                TextSettingsCell checkCell = (TextSettingsCell) holder.itemView;
                 TGKitListPreference pref = ((TGKitListPreference) positions.get(position));
+                checkCell.setCanDisable(false);
+                checkCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                 checkCell.setTextAndValue(pref.title, pref.getContract().getValue(), pref.getDivider());
             }
         }
@@ -281,6 +291,7 @@ public class TGKitSettingsFragment extends BaseFragment {
                 case 0:
                     view = new ShadowSectionCell(mContext);
                     break;
+                case 9:
                 case 1:
                     view = new TextSettingsCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
