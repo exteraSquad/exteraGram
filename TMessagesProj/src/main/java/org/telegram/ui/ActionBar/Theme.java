@@ -2280,8 +2280,9 @@ public class Theme {
             accentsByThemeId = new LongSparseArray<>();
 
             for (int a = 0; a < accent.length; a++) {
+                boolean Monet = a >= accent.length - 2;
                 ThemeAccent themeAccent = new ThemeAccent();
-                themeAccent.id = ids != null ? ids[a] : a;
+                themeAccent.id = Monet ? (999) : (ids != null ? ids[a] : a);
                 if (isHome(themeAccent)) {
                     themeAccent.isDefault = true;
                 }
@@ -2328,7 +2329,7 @@ public class Theme {
                     themeAccent.patternSlug = patternSlugs[a];
                 }
                 themeAccentsMap.put(themeAccent.id, themeAccent);
-                themeAccents.add(themeAccent);
+                if (!Monet) themeAccents.add(themeAccent);
             }
             accentBaseColor = themeAccentsMap.get(0).accentColor;
         }

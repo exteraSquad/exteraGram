@@ -45,6 +45,8 @@
 
     <string name="HideSendAsChannel">Скрыть кнопку \"Отправки от имени канала\"</string>
     <string name="HideKeyboardOnScroll">Скрыть клавиатуру при пролистывании</string>
+    <string name="DateOfForwardedMsg">Показывать дату в пересланном сообщении</string>
+    <string name="ShowSeconds">Показывать секунды в сообщении</string>
     <string name="ArchiveOnPull">Открыть архив при вытягивании</string>
     <string name="IncludeArchivedChatsInForwards">Добавить архивирование чаты для пересылки</string>
     <string name="UnlimitedPinnedChats">Неограниченные закреплённые чаты</string>
