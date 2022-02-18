@@ -48,7 +48,6 @@ dependencies {
 
 }
 
-//return an api key from a properties file.
 static def getAppID() {
     Properties properties = new Properties()
     properties.load(new FileInputStream("./API_KEYS"))
@@ -63,7 +62,7 @@ static def getAppHash() {
     return "\"" + properties.get("APP_HASH") + "\""
 }
 
-static def getMapsAPI() {
+static def getGoogleMapsAPI() {
     Properties properties = new Properties()
     properties.load(new FileInputStream("./API_KEYS"))
 
@@ -96,6 +95,22 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
 
         coreLibraryDesugaringEnabled true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("config/extera.jks")
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+
+        debug {
+            storeFile file("config/extera.jks")
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
     }
 
     buildTypes {
@@ -193,14 +208,14 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def buildtype = variant.productFlavors[0].name
+            def buildType = variant.productFlavors[0].name
             if (variant.productFlavors[0].name != "beta") {
-                buildtype = "release";
+                buildType = "release"
             }
             def date = new Date()
             def formattedDate = date.format('ddMMyyyy')
 
-            outputFileName = "exteragram-${buildtype}-${formattedDate}.apk"
+            outputFileName = "exteragram-${buildType}-${formattedDate}.apk"
             output.versionCodeOverride = defaultConfig.versionCode * 10 + variant.productFlavors.get(0).abiVersionCode
         }
     }
@@ -221,11 +236,13 @@ android {
         versionName "8.5.2"
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
-        // Obtain your own keys at https://core.telegram.org/api/obtaining_api_id
+
+        // Obtain your own keys at:
+        // Telegram: https://core.telegram.org/api/obtaining_api_id
         buildConfigField 'int', 'APP_ID', getAppID()
         buildConfigField 'String', 'APP_HASH', getAppHash()
-        // Obtain your own key at https://console.cloud.google.com/google/maps-apis/credentials
-        resValue 'string', 'MAPS_V2_API', getMapsAPI()
+        // Google Console: https://console.cloud.google.com/google/maps-apis/credentials
+        resValue 'string', 'MAPS_V2_API', getGoogleMapsAPI()
 
         externalNativeBuild {
             cmake {
