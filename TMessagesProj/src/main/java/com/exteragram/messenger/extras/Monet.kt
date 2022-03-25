@@ -6,7 +6,6 @@ import android.os.Build
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.content.ContextCompat
 import com.google.android.material.color.MaterialColors
 
 object Monet {
@@ -15,14 +14,7 @@ object Monet {
     @ColorInt
     @JvmStatic
     fun getAccentColor(ctx: Context): Int {
-        return when {
-            Build.VERSION.SDK_INT >= 31 -> {
-                ContextCompat.getColor(ctx, android.R.color.system_accent1_200)
-            }
-            else -> {
-                reqAttrFromDevice(ctx, android.R.attr.colorAccent, default, 29)
-            }
-        }
+        return reqAttrFromDevice(ctx, android.R.attr.colorAccent, default, 29)
     }
 
     @ColorInt
