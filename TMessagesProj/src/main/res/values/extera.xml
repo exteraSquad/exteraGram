@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- exteraGram's Main Strings -->
+    <string name="exteraAppName">exteraGram</string>
+    <string name="exteraAppNameBeta">exteraGram β</string>
+    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
+    <string name="MutualContact">mutual contact</string>
+    <string name="ToBeginning">To beginning</string>
+    <string name="SaveMessage">Save message</string>
+
+    <!-- Main Menu (about) -->
+    <string name="Links">Links</string>
+    <string name="AboutExteraDescription">Experimental Telegram client based on official Telegram sources!</string>
+    <string name="SourceCode">Source code</string>
+    <string name="Channel">Channel</string>
+    <string name="Chats">Chats</string>
+
+    <string name="Preferences">exteraGram Preferences</string>
+    <string name="RestartRequired">Restart the app to take effect.</string>
+
+    <string name="Categories">Categories</string>
+
+    <!-- Appearance -->
+    <string name="UseSystemFonts">Use system fonts</string>
+    <string name="UseSystemEmoji">Use system emoji</string>
+    <string name="TransparentStatusBar">Transparent status bar</string>
+    <string name="BlurForAllThemes">Blur for all themes</string>
+
+    <string name="HideAllChats">Hide \"All Chats\" tab</string>
+    <string name="HideProxySponsor">Hide proxy sponsor</string>
+    <string name="HidePhoneNumber">Hide phone number</string>
+    <string name="ShowID">Show ID in Profile</string>
+    <string name="ChatsOnTitle">\"Chats\" instead of \"exteraGram\"</string>
+    <string name="DisableVibration">Disable vibration</string>
+    <string name="ForceTabletMode">Force tablet mode</string>
+
+    <!-- Chats -->
+    <string name="StickerSize">Stickers size</string>
+    <string name="StickerTime">Hide time under stickers</string>
+    <string name="UnlimitedRecentStickers">Unlimited recent stickers</string>
+
+    <string name="StickerSizeDialogMessageReplyTo">meowmeow</string>
+    <string name="StickerSizeDialogMessage">woah, he is so cute!</string>
+
+    <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
+    <string name="HideKeyboardOnScroll">Hide keyboard on scrolling</string>
+    <string name="DisableReactions">Disable reactions</string>
+    <string name="ArchiveOnPull">Open archive on pulldown</string>
+    <string name="DateOfForwardedMsg">Show date of forwarded message</string>
+
+    <string name="Media">Media</string>
+    <string name="RearVideoMessages">Rear camera in video messages</string>
+    <string name="DisableCamera">Disable instant camera</string>
+    <string name="DisableProximityEvents">Disable proximity events</string>
+    <string name="PauseOnMinimize">Autopause</string>
+    <string name="POMDescription">Pauses a video playback when device is locked or exteraGram is minimized</string>
+    <string name="DisablePlayback">Disable playback</string>
+    <string name="DPDescription">Disables playback when volume button is pressed</string>
+
+    <!-- Drawer -->
+    <string name="Drawer">Drawer</string>
+    <string name="DrawerElements">Drawer elements</string>
+    <string name="DrawerOptions">Drawer options</string>
+    <string name="DrawerIconPack">Icon pack</string>
+    <string name="NewYear">New Year</string>
+    <string name="ValentinesDay">Valentine\'s Day</string>
+    <string name="Halloween">Halloween</string>
+
+    <!-- Other -->
+    <string name="GenerateMonetTheme">Generate Monet Theme</string>
+    <string name="DarkMonetTheme">Dark</string>
+    <string name="LightMonetTheme">Light</string>
+    <string name="GMTDescription">This option will generate a theme based on system colors\n\nAfter clicking on the button, select the chat where to save the theme</string>
+
+    <string name="EnterID">Enter the ID</string>
+    <string name="TrackSaved">Track Saved</string>
+    <string name="ChannelToSaveDescription">Enter the ID of the channel/chat/user where the tracks will be saved</string>
+
+    <string name="ConfirmCall">Confirm call</string>
+    <string name="CallTo">Call to **%1$s**?</string>
+</resources>
