@@ -1,0 +1,42 @@
+name: compile
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.github/**'
+      - '!.github/workflows/build.yml'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Gradle Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install NDK
+        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Chmod Gradle
+        run: chmod +x gradlew
+      - name: Fix SDK 31.0.0
+        run: |
+          [ ! -f $ANDROID_HOME/build-tools/31.0.0/dx ] && cp $ANDROID_HOME/build-tools/30.0.3/dx $ANDROID_HOME/build-tools/31.0.0/dx
+          [ ! -f $ANDROID_HOME/build-tools/31.0.0/lib/dx.jar ] && cp $ANDROID_HOME/build-tools/30.0.3/lib/dx.jar $ANDROID_HOME/build-tools/31.0.0/lib/dx.jar
+      - name: Build
+        run: |
+          export commit="${{ github.event.head_commit.message }}"
+          export commit_author="${{ github.actor }}"
+          export commit_sha="${{ github.sha }}"
+          export run_num="${{ github.run_number }}"
+          bash build.sh
+          
