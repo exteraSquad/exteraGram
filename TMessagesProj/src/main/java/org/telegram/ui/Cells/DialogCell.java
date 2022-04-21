@@ -705,7 +705,7 @@ public class DialogCell extends BaseCell {
                         nameLeft = AndroidUtilities.dp(18);
                     }
                 }
-            } else {
+            } else if (customDialog.type == 2) {
                 drawVerified = customDialog.verified;
                 if (SharedConfig.drawDialogIcons && customDialog.type == 1) {
                     drawNameGroup = true;
