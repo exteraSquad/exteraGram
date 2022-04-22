@@ -2800,7 +2800,6 @@ public class Theme {
     public static Drawable dialogs_botDrawable;
     public static Drawable dialogs_muteDrawable;
     public static Drawable dialogs_verifiedDrawable;
-    public static Drawable dialogs_outlineArrowDrawable;
     public static ScamDrawable dialogs_scamDrawable;
     public static ScamDrawable dialogs_fakeDrawable;
     public static Drawable dialogs_verifiedCheckDrawable;
@@ -2833,7 +2832,7 @@ public class Theme {
     public static TextPaint profile_aboutTextPaint;
     public static Drawable profile_verifiedDrawable;
     public static Drawable profile_verifiedCheckDrawable;
-    public static Drawable profile_outlineArrowDrawable;
+    public static Drawable profile_outlineArrow;
 
     public static Paint chat_docBackPaint;
     public static Paint chat_deleteProgressPaint;
@@ -8297,7 +8296,6 @@ public class Theme {
             dialogs_verifiedDrawable = resources.getDrawable(R.drawable.verified_area).mutate();
             dialogs_scamDrawable = new ScamDrawable(11, 0);
             dialogs_fakeDrawable = new ScamDrawable(11, 1);
-            dialogs_outlineArrowDrawable = resources.getDrawable(R.drawable.ic_outline_arrow).mutate();
             dialogs_verifiedCheckDrawable = resources.getDrawable(R.drawable.verified_check).mutate();
             dialogs_mentionDrawable = resources.getDrawable(R.drawable.mentionchatslist);
             dialogs_reactionsMentionDrawable = resources.getDrawable(R.drawable.reactionchatslist);
@@ -8383,7 +8381,6 @@ public class Theme {
         setDrawableColorByKey(dialogs_holidayDrawable, key_actionBarDefaultTitle);
         setDrawableColorByKey(dialogs_scamDrawable, key_chats_draft);
         setDrawableColorByKey(dialogs_fakeDrawable, key_chats_draft);
-        setDrawableColorByKey(dialogs_outlineArrowDrawable, key_chats_verifiedBackground);
     }
 
     public static void destroyResources() {
@@ -8403,10 +8400,6 @@ public class Theme {
         }
         if (profile_verifiedDrawable != null) {
             profile_verifiedDrawable = null;
-            createProfileResources(context);
-        }
-        if (profile_outlineArrowDrawable != null) {
-            profile_outlineArrowDrawable = null;
             createProfileResources(context);
         }
     }
@@ -9267,14 +9260,14 @@ public class Theme {
     }
 
     public static void createProfileResources(Context context) {
-        if (profile_verifiedDrawable == null || profile_outlineArrowDrawable == null) {
+        if (profile_verifiedDrawable == null) {
             profile_aboutTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 
             Resources resources = context.getResources();
 
             profile_verifiedDrawable = resources.getDrawable(R.drawable.verified_area).mutate();
             profile_verifiedCheckDrawable = resources.getDrawable(R.drawable.verified_check).mutate();
-            profile_outlineArrowDrawable = resources.getDrawable(R.drawable.ic_outline_arrow).mutate();
+            profile_outlineArrow = resources.getDrawable(R.drawable.ic_outline_arrow).mutate();
 
             applyProfileTheme();
         }
@@ -9303,14 +9296,13 @@ public class Theme {
     }
 
     public static void applyProfileTheme() {
-        if (profile_verifiedDrawable == null || profile_outlineArrowDrawable == null) {
+        if (profile_verifiedDrawable == null) {
             return;
         }
 
         profile_aboutTextPaint.setColor(getColor(key_windowBackgroundWhiteBlackText));
         profile_aboutTextPaint.linkColor = getColor(key_windowBackgroundWhiteLinkText);
 
-        setDrawableColorByKey(profile_outlineArrowDrawable, key_profile_verifiedBackground);
         setDrawableColorByKey(profile_verifiedDrawable, key_profile_verifiedBackground);
         setDrawableColorByKey(profile_verifiedCheckDrawable, key_profile_verifiedCheck);
     }
