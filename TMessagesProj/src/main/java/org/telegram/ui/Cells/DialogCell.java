@@ -290,7 +290,6 @@ public class DialogCell extends BaseCell {
     private StaticLayout mentionLayout;
 
     private boolean drawVerified;
-
     private int drawScam;
 
     private boolean isSelected;
