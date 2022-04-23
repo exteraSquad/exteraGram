@@ -7,7 +7,7 @@ doc="https://api.telegram.org/bot$token/sendDocument?chat_id=$chat_id"
 
 send_msg() { curl -s -X POST "$msg" -d "parse_mode=html" -d text="$1"; }
 send_build() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text"; }
-build_failed() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="Build failed ✓"; }
+build_failed() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text_failed"; }
 
 build() {
     start=$(date +"%s")
@@ -19,6 +19,17 @@ build() {
 build
 apk=$(find TMessagesProj/build/outputs/apk -name '*.apk')
 zip -q9 apk.zip $apk
+
+text_failed="
+<b>Build failed ✓</b>
+<b> </b>
+<b>Commit:</b> <code>$commit</code>
+<b>Author:</b> <code>$commit_author</code>
+<b>SHA:</b> <code>$commit_sha</code>
+
+<b>Run Number:</b> <code>$run_num</code>
+<b>Build Time:</b> <code>$(($bt / 60)):$(($bt % 60))</code>
+"
 
 text="
 <b>Commit:</b> <code>$commit</code>
