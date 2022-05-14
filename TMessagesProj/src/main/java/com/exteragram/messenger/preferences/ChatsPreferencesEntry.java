@@ -49,7 +49,6 @@ public class ChatsPreferencesEntry extends BaseFragment {
 
     private int stickerSizeHeaderRow;
     private int stickerSizeRow;
-    private int stickerSizeDividerRow;
 
     private int stickersHeaderRow;
     private int hideStickerTimeRow;
@@ -324,7 +323,6 @@ public class ChatsPreferencesEntry extends BaseFragment {
 
         stickerSizeHeaderRow = rowCount++;
         stickerSizeRow = rowCount++;
-        stickerSizeDividerRow = rowCount++;
 
         stickersHeaderRow = rowCount++;
         hideStickerTimeRow = rowCount++;
@@ -468,7 +466,7 @@ public class ChatsPreferencesEntry extends BaseFragment {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == stickerSizeDividerRow || position == stickersDividerRow || position == chatDividerRow || position == mediaDividerRow) {
+            if (position == stickersDividerRow || position == chatDividerRow || position == mediaDividerRow) {
                 return 1;
             } else if (position == stickerSizeHeaderRow || position == stickersHeaderRow || position == chatHeaderRow || position == mediaHeaderRow) {
                 return 2;
