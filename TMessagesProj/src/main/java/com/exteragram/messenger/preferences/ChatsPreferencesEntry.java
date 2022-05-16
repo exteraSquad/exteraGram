@@ -252,21 +252,18 @@ public class ChatsPreferencesEntry extends BaseFragment {
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(ExteraConfig.disableReactions);
                 }
-
                 parentLayout.rebuildAllFragmentViews(false, false);
             } else if (position == disableGreetingStickerRow) {
                 ExteraConfig.toggleDisableGreetingSticker();
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(ExteraConfig.disableGreetingSticker);
                 }
-
                 parentLayout.rebuildAllFragmentViews(false, false);
             } else if (position == disableJumpToNextChannelRow) {
                 ExteraConfig.toggleDisableJumpToNextChannel();
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(ExteraConfig.disableJumpToNextChannel);
                 }
-
                 parentLayout.rebuildAllFragmentViews(false, false);
             } else if (position == archiveOnPullRow) {
                 ExteraConfig.toggleArchiveOnPull();

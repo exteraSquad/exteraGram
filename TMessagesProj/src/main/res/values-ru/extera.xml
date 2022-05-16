@@ -11,6 +11,7 @@
     <string name="SourceCode">Исходный код</string>
     <string name="Channel">Канал в Telegram</string>
     <string name="Chats">Чаты</string>
+    <string name="Crowdin">Перевод</string>
 
     <string name="Preferences">Настройки exteraGram</string>
     <string name="RestartRequired">Перезагрузите приложение, чтобы изменения вступили в силу.</string>

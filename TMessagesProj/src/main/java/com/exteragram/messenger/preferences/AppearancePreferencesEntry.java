@@ -104,42 +104,29 @@ public class AppearancePreferencesEntry extends BaseFragment {
             if (position == useSystemFontsRow) {
                 ExteraConfig.toggleUseSystemFonts();
                 AndroidUtilities.clearTypefaceCache();
-
                 Parcelable recyclerViewState = null;
-                if (listView.getLayoutManager() != null) {
-                    recyclerViewState = listView.getLayoutManager().onSaveInstanceState();
-                }
-
-                AlertDialog progressDialog = new AlertDialog(context, 3);
-                progressDialog.show();
-                AndroidUtilities.runOnUIThread(progressDialog::dismiss, 2000);
-
+                if (listView.getLayoutManager() != null) recyclerViewState = listView.getLayoutManager().onSaveInstanceState();
                 parentLayout.rebuildAllFragmentViews(true, true);
                 listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+                AlertDialog progressDialog = new AlertDialog(context, 3);
+                progressDialog.show();
+                AndroidUtilities.runOnUIThread(progressDialog::dismiss, 400);
             } else if (position == useSystemEmojiRow) {
                 SharedConfig.toggleUseSystemEmoji();
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(SharedConfig.useSystemEmoji);
                 }
-
-                AlertDialog progressDialog = new AlertDialog(context, 3);
-                progressDialog.show();
-                AndroidUtilities.runOnUIThread(progressDialog::dismiss, 500);
-
                 parentLayout.rebuildAllFragmentViews(false, false);
             } else if (position == transparentStatusBarRow) {
                 SharedConfig.toggleNoStatusBar();
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(SharedConfig.noStatusBar);
                 }
-
                 int color = Theme.getColor(Theme.key_actionBarDefault, null, true);
                 int alpha = ColorUtils.calculateLuminance(color) > 0.7f ? 0x0f : 0x33;
-
                 if (statusBarColorAnimate != null && statusBarColorAnimate.isRunning()) {
                     statusBarColorAnimate.end();
                 }
-
                 statusBarColorAnimate = SharedConfig.noStatusBar ? ValueAnimator.ofInt(alpha, 0) : ValueAnimator.ofInt(0, alpha);
                 statusBarColorAnimate.setDuration(200);
                 statusBarColorAnimate.addUpdateListener(animation -> getParentActivity().getWindow().setStatusBarColor(ColorUtils.setAlphaComponent(0, (int) animation.getAnimatedValue())));
@@ -154,12 +141,7 @@ public class AppearancePreferencesEntry extends BaseFragment {
                 ExteraConfig.toggleHideAllChats();
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(ExteraConfig.hideAllChats);
-                }
-
-                AlertDialog progressDialog = new AlertDialog(context, 3);
-                progressDialog.show();
-                AndroidUtilities.runOnUIThread(progressDialog::dismiss, 500);
-
+                } 
                 parentLayout.rebuildAllFragmentViews(false, false);
             } else if (position == hidePhoneNumberRow) {
                 ExteraConfig.toggleHidePhoneNumber();
@@ -179,11 +161,6 @@ public class AppearancePreferencesEntry extends BaseFragment {
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(ExteraConfig.chatsOnTitle);
                 }
-
-                AlertDialog progressDialog = new AlertDialog(context, 3);
-                progressDialog.show();
-                AndroidUtilities.runOnUIThread(progressDialog::dismiss, 500);
-
                 parentLayout.rebuildAllFragmentViews(false, false);
             } else if (position == disableVibrationRow) {
                 ExteraConfig.toggleDisableVibration();
@@ -202,13 +179,25 @@ public class AppearancePreferencesEntry extends BaseFragment {
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(ExteraConfig.centerTitle);
                 }
-                parentLayout.rebuildAllFragmentViews(false, false);
+                Parcelable recyclerViewState = null;
+                if (listView.getLayoutManager() != null) recyclerViewState = listView.getLayoutManager().onSaveInstanceState();
+                parentLayout.rebuildAllFragmentViews(true, true);
+                AlertDialog progressDialog = new AlertDialog(context, 3);
+                progressDialog.show();
+                AndroidUtilities.runOnUIThread(progressDialog::dismiss, 400);
+                listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
             } else if (position == newSwitchStyleRow) {
                 ExteraConfig.toggleNewSwitchStyle();
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(ExteraConfig.newSwitchStyle);
                 }
-                parentLayout.rebuildAllFragmentViews(false, false);
+                Parcelable recyclerViewState = null;
+                if (listView.getLayoutManager() != null) recyclerViewState = listView.getLayoutManager().onSaveInstanceState();
+                parentLayout.rebuildAllFragmentViews(true, true);
+                AlertDialog progressDialog = new AlertDialog(context, 3);
+                progressDialog.show();
+                AndroidUtilities.runOnUIThread(progressDialog::dismiss, 400);
+                listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
             }
         });
         restartTooltip = new UndoView(context);
