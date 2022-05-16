@@ -1,12 +1,12 @@
 #!/bin/bash
 
 chat_id="963080346"
+ci_id="-1001172503281"
 token="5192489829:AAEp_-6uGF4jhHpi-YTexmAPeADA4CwAUiQ"
-msg="https://api.telegram.org/bot$token/sendMessage?chat_id=$chat_id"
 doc="https://api.telegram.org/bot$token/sendDocument?chat_id=$chat_id"
+doc_ci="https://api.telegram.org/bot$token/sendDocument?chat_id=$ci_id"
 
-send_msg() { curl -s -X POST "$msg" -d "parse_mode=html" -d text="$1"; }
-send_build() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text"; }
+send_build() { curl -F document=@"$1" "$doc_ci" -F "parse_mode=html" -F caption="$text"; }
 build_failed() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text_failed"; }
 
 build() {
@@ -18,7 +18,7 @@ build() {
 
 build
 apk=$(find TMessagesProj/build/outputs/apk -name '*.apk')
-zip -q9 apk.zip $apk
+# zip -q9 apk.zip $apk
 
 text_failed="
 <b>Build failed ✓</b>
@@ -42,7 +42,7 @@ text="
 "
 
 if [[ -f $apk ]]; then
-    until [[ $(send_build "apk.zip" | grep -o '"ok":true') = '"ok":true' ]]; do sleep 5; done
+    until [[ $(send_build "$apk" | grep -o '"ok":true') = '"ok":true' ]]; do sleep 5; done
 else
     build_failed log.txt
     exit 1
