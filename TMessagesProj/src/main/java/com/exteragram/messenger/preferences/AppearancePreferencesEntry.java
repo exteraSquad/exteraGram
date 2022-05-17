@@ -55,7 +55,6 @@ public class AppearancePreferencesEntry extends BaseFragment {
     private int chatsOnTitleRow;
     private int disableVibrationRow;
     private int forceTabletModeRow;
-    private int generalDividerRow;
 
     private UndoView restartTooltip;
 
@@ -226,7 +225,6 @@ public class AppearancePreferencesEntry extends BaseFragment {
         chatsOnTitleRow = rowCount++;
         disableVibrationRow = rowCount++;
         forceTabletModeRow = rowCount++;
-        generalDividerRow = rowCount++;
 
         if (listAdapter != null && notify) {
             listAdapter.notifyDataSetChanged();
@@ -282,7 +280,7 @@ public class AppearancePreferencesEntry extends BaseFragment {
                     } else if (position == centerTitleRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("CenterTitle", R.string.CenterTitle), ExteraConfig.centerTitle, true);
                     } else if (position == newSwitchStyleRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("NewSwitchStyle", R.string.NewSwitchStyle), ExteraConfig.newSwitchStyle, true);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("NewSwitchStyle", R.string.NewSwitchStyle), ExteraConfig.newSwitchStyle, false);
                     } else if (position == hideAllChatsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideAllChats", R.string.HideAllChats), ExteraConfig.hideAllChats, true);
                     } else if (position == hidePhoneNumberRow) {
@@ -329,7 +327,7 @@ public class AppearancePreferencesEntry extends BaseFragment {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == applicationDividerRow || position == generalDividerRow) {
+            if (position == applicationDividerRow) {
                 return 1;
             } else if (position == applicationHeaderRow || position == generalHeaderRow) {
                 return 2;
