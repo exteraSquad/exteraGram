@@ -46,6 +46,7 @@ public class AppearancePreferencesEntry extends BaseFragment {
     private int blurForAllThemesRow;
     private int centerTitleRow;
     private int newSwitchStyleRow;
+    private int transparentNavBarRow;
     private int applicationDividerRow;
 
     private int generalHeaderRow;
@@ -197,6 +198,15 @@ public class AppearancePreferencesEntry extends BaseFragment {
                 progressDialog.show();
                 AndroidUtilities.runOnUIThread(progressDialog::dismiss, 400);
                 listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+            } else if (position == transparentNavBarRow) {
+                ExteraConfig.toggleTransparentNavBar();
+                if (view instanceof TextCheckCell) {
+                    ((TextCheckCell) view).setChecked(ExteraConfig.newSwitchStyle);
+                }
+                Parcelable recyclerViewState = null;
+                if (listView.getLayoutManager() != null) recyclerViewState = listView.getLayoutManager().onSaveInstanceState();
+                parentLayout.rebuildAllFragmentViews(true, true);
+                listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
             }
         });
         restartTooltip = new UndoView(context);
@@ -216,6 +226,7 @@ public class AppearancePreferencesEntry extends BaseFragment {
         blurForAllThemesRow = rowCount++;
         centerTitleRow = rowCount++;
         newSwitchStyleRow = rowCount++;
+        transparentNavBarRow = rowCount++;
         applicationDividerRow = rowCount++;
 
         generalHeaderRow = rowCount++;
@@ -280,7 +291,9 @@ public class AppearancePreferencesEntry extends BaseFragment {
                     } else if (position == centerTitleRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("CenterTitle", R.string.CenterTitle), ExteraConfig.centerTitle, true);
                     } else if (position == newSwitchStyleRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("NewSwitchStyle", R.string.NewSwitchStyle), ExteraConfig.newSwitchStyle, false);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("NewSwitchStyle", R.string.NewSwitchStyle), ExteraConfig.newSwitchStyle, true);
+                    } else if (position == transparentNavBarRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("TransparentNavBar", R.string.TransparentNavBar), ExteraConfig.transparentNavBar, false);
                     } else if (position == hideAllChatsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideAllChats", R.string.HideAllChats), ExteraConfig.hideAllChats, true);
                     } else if (position == hidePhoneNumberRow) {
@@ -331,7 +344,7 @@ public class AppearancePreferencesEntry extends BaseFragment {
                 return 1;
             } else if (position == applicationHeaderRow || position == generalHeaderRow) {
                 return 2;
-            } else if (position == useSystemFontsRow || position == useSystemEmojiRow || position == transparentStatusBarRow ||
+            } else if (position == useSystemFontsRow || position == useSystemEmojiRow || position == transparentStatusBarRow || position == transparentNavBarRow ||
                        position == blurForAllThemesRow || position == centerTitleRow || position == newSwitchStyleRow || position == hideAllChatsRow ||
                        position == hidePhoneNumberRow || position == showIDRow || position == chatsOnTitleRow || position == disableVibrationRow || position == forceTabletModeRow) {
                 return 3;
