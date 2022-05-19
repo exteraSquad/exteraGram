@@ -6,7 +6,7 @@ token="5192489829:AAEp_-6uGF4jhHpi-YTexmAPeADA4CwAUiQ"
 doc="https://api.telegram.org/bot$token/sendDocument?chat_id=$chat_id"
 doc_ci="https://api.telegram.org/bot$token/sendDocument?chat_id=$ci_id"
 
-send_build() { curl -F document=@"$1" "$doc_ci" -F "parse_mode=html" -F caption="$text"; }
+send_build() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text"; }
 build_failed() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text_failed"; }
 
 build() {
