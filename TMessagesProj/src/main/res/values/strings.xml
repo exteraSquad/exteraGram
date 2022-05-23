@@ -2745,7 +2745,7 @@
     <string name="GpsDisabledAlertText">Please enable your GPS to access location-based features.</string>
     <string name="MakeMyselfVisible">Make Myself Visible</string>
     <string name="MakeMyselfVisibleTitle">Show Your Profile?</string>
-    <string name="MakeMyselfVisibleInfo">Users nearby will be able to view your profile and send you messages. This may help you find new friends, but could also attract excessive attention. You can stop sharing your profile at any time.\n\nYour phone number will remain hidden.</string>
+    <string name="MakeMyselfVisibleInfo">Users nearby will be able to view your profile and send you messages. This may help you find new friends, but could also attract excessive attention. This feature requires periodically collecting your location data in the background, even when the app is not in use. You can stop sharing your profile at any time.\n\nYour phone number will remain hidden.</string>
     <string name="StopShowingMe">Stop Showing Me</string>
     <string name="PeopleNearby">People Nearby</string>
     <string name="AddPeopleNearby">Add People Nearby</string>
