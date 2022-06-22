@@ -1,24 +1,25 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 chat_id="963080346"
-ci_id="-1001172503281"
+ci_id="-1763622832"
 token="5192489829:AAEp_-6uGF4jhHpi-YTexmAPeADA4CwAUiQ"
 doc="https://api.telegram.org/bot$token/sendDocument?chat_id=$chat_id"
-doc_ci="https://api.telegram.org/bot$token/sendDocument?chat_id=$ci_id"
+doc_ci="https://api.telegram.org/bot$token/sendDocument?chat_id=$chat_id"
+arm="assembleArm64Release"
 
 send_build() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text"; }
 build_failed() { curl -F document=@"$1" "$doc" -F "parse_mode=html" -F caption="$text_failed"; }
 
 build() {
     start=$(date +"%s")
-    ./gradlew assembleBetaDebug 2>&1 | tee -a log.txt
+    ./gradlew $arm 2>&1 | tee -a log.txt
     end=$(date +"%s")
     bt=$(($end - $start))
 }
 
 build
 apk=$(find TMessagesProj/build/outputs/apk -name '*.apk')
-zip -r -q9 apk.zip $apk
+# zip -q9 apk.zip $apk
 
 text_failed="
 <b>Build failed ✓</b>
@@ -39,10 +40,11 @@ text="
 <b>Run Number:</b> <code>$run_num</code>
 <b>Build Time:</b> <code>$(($bt / 60)):$(($bt % 60))</code>
 <b>MD5</b>: <code>$(md5sum $apk | cut -d' ' -f1)</code>
+<b>Architecture</b>: <code>$arm</code>
 "
 
 if [[ -f $apk ]]; then
-    until [[ $(send_build "apk.zip" | grep -o '"ok":true') = '"ok":true' ]]; do sleep 5; done
+    until [[ $(send_build "$apk" | grep -o '"ok":true') = '"ok":true' ]]; do sleep 5; done
 else
     build_failed log.txt
     exit 1
