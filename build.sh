@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 chat_id="963080346"
 ci_id="-1001172503281"
@@ -18,7 +18,7 @@ build() {
 
 build
 apk=$(find TMessagesProj/build/outputs/apk -name '*.apk')
-# zip -q9 apk.zip $apk
+zip -r -q9 apk.zip $apk
 
 text_failed="
 <b>Build failed ✓</b>
@@ -42,7 +42,7 @@ text="
 "
 
 if [[ -f $apk ]]; then
-    until [[ $(send_build "$apk" | grep -o '"ok":true') = '"ok":true' ]]; do sleep 5; done
+    until [[ $(send_build "apk.zip" | grep -o '"ok":true') = '"ok":true' ]]; do sleep 5; done
 else
     build_failed log.txt
     exit 1
