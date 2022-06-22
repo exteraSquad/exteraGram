@@ -3,7 +3,7 @@
     <!-- exteraGram's Main Strings -->
     <string name="exteraAppName">exteraGram</string>
     <string name="exteraAppNameBeta">exteraGram β</string>
-    <string name="exteraDebugMenu">¯\_(ツ)_/¯</string>
+    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
     <string name="MutualContact">mutual contact</string>
     <string name="ToBeginning">To beginning</string>
     <string name="SaveMessage">Save message</string>
@@ -97,4 +97,6 @@
 
     <string name="formatterDay24HSec">HH:mm:ss</string>
     <string name="formatterDay12HSec">h:mm:ss a</string>
+
+    <string name="AppIconMonet">Monet</string>
 </resources>
