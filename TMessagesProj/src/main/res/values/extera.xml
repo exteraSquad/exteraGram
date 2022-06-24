@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- exteraGram's Main Strings -->
-    <string name="exteraAppName">exteraGram</string>
-    <string name="exteraAppNameBeta">exteraGram β</string>
-    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
+    <string name="exteraAppName" translatable="false">exteraGram</string>
+    <string name="exteraAppNameBeta" translatable="false">exteraGram β</string>
+    <string name="exteraDebugMenu" translatable="false">¯\\_(ツ)_/¯</string>
+    <string name="UpdateExteraGram">This message is not supported on your version of exteraGram. Update the app to view: https://github.com/exteraSquad/exteraGram/releases/latest</string>
     <string name="MutualContact">mutual contact</string>
     <string name="ToBeginning">To beginning</string>
     <string name="SaveMessage">Save message</string>
@@ -95,8 +96,13 @@
     <string name="ConfirmCall">Confirm call</string>
     <string name="CallTo">Call to **%1$s**?</string>
 
-    <string name="formatterDay24HSec">HH:mm:ss</string>
-    <string name="formatterDay12HSec">h:mm:ss a</string>
+    <string name="formatterDay24HSec" translatable="false">HH:mm:ss</string>
+    <string name="formatterDay12HSec" translatable="false">h:mm:ss a</string>
 
+    <string name="AppIconInverted">Inverted</string>
     <string name="AppIconMonet">Monet</string>
+    <string name="AppIconGradient">Gradient</string>
+    <string name="AppIconPixel">Pixel</string>
+    <string name="AppIconGoogle">Google</string>
+    <string name="AppIconRed">RedEbalo</string>
 </resources>

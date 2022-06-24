@@ -19,6 +19,8 @@ import org.telegram.ui.LauncherIconController;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.exteragram.messenger.ExteraUtils;
+
 public class PremiumAppIconsPreviewView extends FrameLayout implements PagerHeaderView {
     private List<LauncherIconController.LauncherIcon> icons = new ArrayList<>();
     private AppIconsSelectorCell.AdaptiveIconImageView topIcon, bottomLeftIcon, bottomRightIcon;
@@ -28,6 +30,8 @@ public class PremiumAppIconsPreviewView extends FrameLayout implements PagerHead
         super(context);
 
         for (LauncherIconController.LauncherIcon icon : LauncherIconController.LauncherIcon.values()) {
+            if (icon == LauncherIconController.LauncherIcon.MONET) continue;
+            if (icon == LauncherIconController.LauncherIcon.RED && !ExteraUtils.checkSubFor(1178248235)) continue;
             icons.add(icon);
             if (icons.size() == 3) {
                 break;

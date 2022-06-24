@@ -4510,10 +4510,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
         ActionBarMenu menu = actionBar.createMenu();
 
-        masksItem = menu.addItem(gallery_menu_masks, R.drawable.msg_mask);
-        masksItem.setContentDescription(LocaleController.getString("Masks", R.string.Masks));
         pipItem = menu.addItem(gallery_menu_pip, R.drawable.ic_goinline);
         pipItem.setContentDescription(LocaleController.getString("AccDescrPipMode", R.string.AccDescrPipMode));
+        masksItem = menu.addItem(gallery_menu_masks, R.drawable.msg_mask);
+        masksItem.setContentDescription(LocaleController.getString("Masks", R.string.Masks));
         sendItem = menu.addItem(gallery_menu_send, R.drawable.msg_forward);
         sendItem.setContentDescription(LocaleController.getString("Forward", R.string.Forward));
         shareItem = menu.addItem(gallery_menu_share2, R.drawable.share);
@@ -7510,7 +7510,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (aspectRatioFrameLayout.getVisibility() != View.VISIBLE) {
                 aspectRatioFrameLayout.setVisibility(View.VISIBLE);
             }
-            if ((!pipItem.isEnabled() && pipItem.getVisibility() == View.VISIBLE) || menuItem.isSubItemVisible(gallery_menu_pip2)) {
+            if (!pipItem.isEnabled() && (pipItem.getVisibility() == View.VISIBLE || menuItem.isSubItemVisible(gallery_menu_pip2))) {
                 pipAvailable = true;
                 pipItem.setEnabled(true);
                 if (!ExteraConfig.centerTitle) pipItem.animate().alpha(1.0f).setDuration(175).withEndAction(null).start();
@@ -10362,12 +10362,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         slideshowMessageId = 0;
         nameOverride = null;
         dateOverride = 0;
+
         menuItem.hideSubItem(gallery_menu_showall);
         menuItem.hideSubItem(gallery_menu_showinchat);
         menuItem.hideSubItem(gallery_menu_share);
         menuItem.hideSubItem(gallery_menu_openin);
         menuItem.hideSubItem(gallery_menu_savegif);
         menuItem.hideSubItem(gallery_menu_masks2);
+        menuItem.hideSubItem(gallery_menu_pip2);
         menuItem.hideSubItem(gallery_menu_edit_avatar);
         menuItem.hideSubItem(gallery_menu_set_as_main);
         menuItem.hideSubItem(gallery_menu_delete);
