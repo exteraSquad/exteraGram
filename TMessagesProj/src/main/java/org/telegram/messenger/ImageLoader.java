@@ -2103,7 +2103,8 @@ public class ImageLoader {
                 }
 
                 File publicMediaDir = null;
-                if (Build.VERSION.SDK_INT >= 30) {
+                // because exteraGram's minapi 21 have all required methods
+                if (Build.VERSION.SDK_INT >= 21) {
                     File newPath;
                     try {
                         if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
@@ -2116,8 +2117,6 @@ public class ImageLoader {
                     }
                     newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
                     telegramPath = new File(newPath, "exteraGram");
-                } else {
-                    telegramPath = new File(path, "exteraGram");
                 }
                 telegramPath.mkdirs();
 
@@ -2190,7 +2189,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File normalNamesPath = new File(telegramPath, "Telegram Files");
+                        File normalNamesPath = new File(telegramPath, "exteraGram Files");
                         normalNamesPath.mkdir();
                         if (normalNamesPath.isDirectory() && canMoveFiles(cachePath, normalNamesPath, FileLoader.MEDIA_DIR_FILES)) {
                             AndroidUtilities.createEmptyFile(new File(normalNamesPath, ".nomedia"));
@@ -2205,7 +2204,7 @@ public class ImageLoader {
                 }
                 if (publicMediaDir != null && publicMediaDir.isDirectory()) {
                     try {
-                        File imagePath = new File(publicMediaDir, "Telegram Images");
+                        File imagePath = new File(publicMediaDir, "exteraGram Images");
                         imagePath.mkdir();
                         if (imagePath.isDirectory() && canMoveFiles(cachePath, imagePath, FileLoader.MEDIA_DIR_IMAGE)) {
                             mediaDirs.put(FileLoader.MEDIA_DIR_IMAGE_PUBLIC, imagePath);
@@ -2218,7 +2217,7 @@ public class ImageLoader {
                     }
 
                     try {
-                        File videoPath = new File(publicMediaDir, "Telegram Video");
+                        File videoPath = new File(publicMediaDir, "exteraGram Video");
                         videoPath.mkdir();
                         if (videoPath.isDirectory() && canMoveFiles(cachePath, videoPath, FileLoader.MEDIA_DIR_VIDEO)) {
                             mediaDirs.put(FileLoader.MEDIA_DIR_VIDEO_PUBLIC, videoPath);
