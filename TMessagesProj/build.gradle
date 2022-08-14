@@ -26,7 +26,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'com.google.android.gms:play-services-measurement:21.1.0'
 
-    compileOnly 'org.checkerframework:checker-qual:3.21.3'
+    compileOnly 'org.checkerframework:checker-qual:3.24.0'
     compileOnly 'org.checkerframework:checker-compat-qual:2.5.5'
     implementation 'com.google.firebase:firebase-messaging:23.0.7'
     implementation 'com.google.firebase:firebase-config:21.1.1'
@@ -38,13 +38,13 @@ dependencies {
     implementation 'com.google.android.gms:play-services-wearable:17.1.0'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.google.android.gms:play-services-wallet:19.1.0'
-    implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
-    implementation 'com.stripe:stripe-android:2.0.2'
+    implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
+    implementation 'com.stripe:stripe-android:20.8.0'
     implementation 'com.google.mlkit:language-id:17.0.4'
     implementation 'com.android.billingclient:billing:5.0.0'
     implementation files('libs/libgsaverification-client.aar')
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
 }
