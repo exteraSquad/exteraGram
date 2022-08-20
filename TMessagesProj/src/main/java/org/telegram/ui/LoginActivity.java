@@ -2107,6 +2107,14 @@ public class LoginActivity extends BaseFragment {
                                 }
                             }
                         }
+                        CountrySelectActivity.Country countryWithCode = new CountrySelectActivity.Country();
+                        String test_code = "999";
+                        countryWithCode.name = "Test Backend";
+                        countryWithCode.code = test_code;
+                        countryWithCode.shortname = "EX";
+                        countriesArray.add(countryWithCode);
+                        codesMap.put(test_code, countryWithCode);
+                        phoneFormatMap.put(test_code, Collections.singletonList("66 X XXXX"));
                     }
                 });
             }, ConnectionsManager.RequestFlagWithoutLogin | ConnectionsManager.RequestFlagFailOnServerErrors);
@@ -2430,12 +2438,17 @@ public class LoginActivity extends BaseFragment {
             }
             String phone = PhoneFormat.stripExceptNumbers("" + codeField.getText() + phoneField.getText());
             if (activityMode == MODE_LOGIN) {
+                if (!testBackend && "999".equals(codeField.getText().toString())) {
+                    testBackend = true;
+                    if (testBackendCheckBox != null) {
+                        testBackendCheckBox.setChecked(true, true);
+                    }
+                }
                 boolean testBackend = getConnectionsManager().isTestBackend();
                 if (testBackend != LoginActivity.this.testBackend) {
                     getConnectionsManager().switchBackend(false);
                     testBackend = LoginActivity.this.testBackend;
                 }
-
                 if (getParentActivity() instanceof LaunchActivity) {
                     for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
                         UserConfig userConfig = UserConfig.getInstance(a);
