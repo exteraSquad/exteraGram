@@ -260,3 +260,5 @@ android {
 
     dependenciesInfo.includeInApk false
 }
+
+apply plugin: 'com.google.gms.google-services'
