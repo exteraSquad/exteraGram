@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- exteraGram's Main Strings -->
-    <string name="exteraAppName">exteraGram</string>
-    <string name="exteraAppNameBeta">exteraGram β</string>
-    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
     <string name="MutualContact">相互の連絡先</string>
     <string name="ToBeginning">始めるまで</string>
     <string name="SaveMessage">保存用メッセージに追加</string>
     <!-- Main Menu (about) -->
-    <string name="Folders">フォルダー</string>
     <string name="exteraPrivacy">exteraGramプライバシーポリシーとFAQ</string>
-    <string name="exteraPrivacyPolicyUrl">https://extera.codes/privacy</string>
     <string name="Links">リンク</string>
     <string name="AboutExteraDescription">公式のTelegramのソースに基づいて実験的なTelegramクライアント！</string>
     <string name="Channel">チャンネル</string>
@@ -83,6 +78,4 @@
     <string name="ChannelToSaveDescription">トラックを保存するチャンネル/チャット/ユーザーのIDを入力してください</string>
     <string name="ConfirmCall">通話の確認</string>
     <string name="CallTo">**%1$s**に電話しますか？</string>
-    <string name="formatterDay24HSec">HH:mm:ss</string>
-    <string name="formatterDay12HSec">h:mm:ss a</string>
 </resources>

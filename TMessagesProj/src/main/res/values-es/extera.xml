@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- exteraGram's Main Strings -->
-    <string name="exteraAppName">exteraGram</string>
-    <string name="exteraAppNameBeta">exteraGram β</string>
-    <string name="exteraDebugMenu">¯\\_(ツ)_/¯</string>
     <string name="MutualContact">contacto mutuo</string>
     <string name="ToBeginning">Saltar al inicio</string>
     <string name="SaveMessage">Guardar mensaje</string>
     <!-- Main Menu (about) -->
-    <string name="Folders">Carpetas</string>
     <string name="exteraPrivacy">Política de privacidad de OutaGram y FAQ</string>
-    <string name="exteraPrivacyPolicyUrl">https://extera.codes/privacy</string>
     <string name="Links">Enlaces</string>
     <string name="AboutExteraDescription">¡Cliente experimental de Telegram basado en fuentes oficiales de Telegram!</string>
     <string name="Channel">Canal</string>
@@ -83,6 +78,4 @@
     <string name="ChannelToSaveDescription">Ingrese el ID del canal/chat/usuario donde se guardarán las pistas</string>
     <string name="ConfirmCall">Confirmar llamada</string>
     <string name="CallTo">¿Llamar a **%1$s**?</string>
-    <string name="formatterDay24HSec">HH:mm:ss</string>
-    <string name="formatterDay12HSec">h:mm:ss a</string>
 </resources>
