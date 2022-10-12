@@ -24,7 +24,6 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -39,12 +38,11 @@ import java.util.Locale;
 
 public class Emoji {
 
-    private static HashMap<CharSequence, DrawableInfo> rects = new HashMap<>();
-    private static int drawImgSize;
-    private static int bigImgSize;
-    private static boolean inited = false;
-    private static Paint placeholderPaint;
-    private static int[] emojiCounts = new int[]{
+    private static final HashMap<CharSequence, DrawableInfo> rects = new HashMap<>();
+    private static final int drawImgSize;
+    private static final int bigImgSize;
+    private static final Paint placeholderPaint;
+    private static final int[] emojiCounts = new int[]{
         EmojiData.data[0].length,
         EmojiData.data[1].length,
         EmojiData.data[2].length,
@@ -54,14 +52,14 @@ public class Emoji {
         EmojiData.data[6].length,
         EmojiData.data[7].length
     };
-    private static Bitmap[][] emojiBmp = new Bitmap[8][];
-    private static boolean[][] loadingEmoji = new boolean[8][];
+    private static final Bitmap[][] emojiBmp = new Bitmap[8][];
+    private static final boolean[][] loadingEmoji = new boolean[8][];
 
     public static HashMap<String, Integer> emojiUseHistory = new HashMap<>();
     public static ArrayList<String> recentEmoji = new ArrayList<>();
     public static HashMap<String, String> emojiColor = new HashMap<>();
     private static boolean recentEmojiLoaded;
-    private static Runnable invalidateUiRunnable = () -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded);
+    private static final Runnable invalidateUiRunnable = () -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded);
     public static float emojiDrawingYOffset;
     public static boolean emojiDrawingUseAlpha = true;
 
@@ -76,7 +74,6 @@ public class Emoji {
         }
 
         for (int j = 0; j < EmojiData.data.length; j++) {
-            int position;
             for (int i = 0; i < EmojiData.data[j].length; i++) {
                 rects.put(EmojiData.data[j][i], new DrawableInfo((byte) j, (short) i, i));
             }
@@ -234,12 +231,12 @@ public class Emoji {
     }
 
     public static class EmojiDrawable extends Drawable {
-        private DrawableInfo info;
+        private final DrawableInfo info;
         private boolean fullSize = false;
-        private static Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-        private static Rect rect = new Rect();
+        private static final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        private static final Rect rect = new Rect();
         public int placeholderColor = 0x10000000;
-        private static TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private static final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 
         public EmojiDrawable(DrawableInfo i) {
             info = i;
@@ -326,15 +323,6 @@ public class Emoji {
         }
     }
 
-    private static boolean inArray(char c, char[] a) {
-        for (char cc : a) {
-            if (cc == c) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static class EmojiSpanRange {
         public EmojiSpanRange(int start, int end, CharSequence code) {
             this.start = start;
@@ -415,7 +403,6 @@ public class Emoji {
                     emojiCode.setLength(0);
                     startIndex = -1;
                     startLength = 0;
-                    doneEmoji = false;
                 } else if (c != 0xfe0f && c != '\n' && c != ' ' && c != '\t') {
                     notOnlyEmoji = true;
                 }
@@ -525,8 +512,7 @@ public class Emoji {
                 EmojiSpanRange emojiRange = emojis.get(i);
                 if (animatedEmojiSpans != null) {
                     boolean hasAnimated = false;
-                    for (int j = 0; j < animatedEmojiSpans.length; ++j) {
-                        AnimatedEmojiSpan animatedSpan = animatedEmojiSpans[j];
+                    for (AnimatedEmojiSpan animatedSpan : animatedEmojiSpans) {
                         if (animatedSpan != null && s.getSpanStart(animatedSpan) == emojiRange.start && s.getSpanEnd(animatedSpan) == emojiRange.end) {
                             hasAnimated = true;
                             break;
@@ -593,13 +579,11 @@ public class Emoji {
 
                 return sz;
             } else {
-                if (fm != null) {
-                    fm.ascent = fontMetrics.ascent;
-                    fm.descent = fontMetrics.descent;
+                fm.ascent = fontMetrics.ascent;
+                fm.descent = fontMetrics.descent;
 
-                    fm.top = fontMetrics.top;
-                    fm.bottom = fontMetrics.bottom;
-                }
+                fm.top = fontMetrics.top;
+                fm.bottom = fontMetrics.bottom;
                 if (getDrawable() != null) {
                     getDrawable().setBounds(0, 0, size, size);
                 }
@@ -695,12 +679,12 @@ public class Emoji {
             stringBuilder.append("=");
             stringBuilder.append(entry.getValue());
         }
-        preferences.edit().putString("emojis2", stringBuilder.toString()).commit();
+        preferences.edit().putString("emojis2", stringBuilder.toString()).apply();
     }
 
     public static void clearRecentEmoji() {
         SharedPreferences preferences = MessagesController.getGlobalEmojiSettings();
-        preferences.edit().putBoolean("filled_default", true).commit();
+        preferences.edit().putBoolean("filled_default", true).apply();
         emojiUseHistory.clear();
         recentEmoji.clear();
         saveRecentEmoji();
@@ -737,7 +721,7 @@ public class Emoji {
                         }
                     }
                 }
-                preferences.edit().remove("emojis").commit();
+                preferences.edit().remove("emojis").apply();
                 saveRecentEmoji();
             } else {
                 str = preferences.getString("emojis2", "");
@@ -761,7 +745,7 @@ public class Emoji {
                     for (int i = 0; i < newRecent.length; i++) {
                         emojiUseHistory.put(newRecent[i], newRecent.length - i);
                     }
-                    preferences.edit().putBoolean("filled_default", true).commit();
+                    preferences.edit().putBoolean("filled_default", true).apply();
                     saveRecentEmoji();
                 }
             }
@@ -774,8 +758,7 @@ public class Emoji {
             str = preferences.getString("color", "");
             if (str != null && str.length() > 0) {
                 String[] args = str.split(",");
-                for (int a = 0; a < args.length; a++) {
-                    String arg = args[a];
+                for (String arg : args) {
                     String[] args2 = arg.split("=");
                     emojiColor.put(args2[0], args2[1]);
                 }
@@ -796,6 +779,6 @@ public class Emoji {
             stringBuilder.append("=");
             stringBuilder.append(entry.getValue());
         }
-        preferences.edit().putString("color", stringBuilder.toString()).commit();
+        preferences.edit().putString("color", stringBuilder.toString()).apply();
     }
 }

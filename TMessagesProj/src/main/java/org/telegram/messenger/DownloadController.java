@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.util.Pair;
 import android.util.SparseArray;
 
+import androidx.annotation.NonNull;
 import androidx.collection.LongSparseArray;
 
 import org.telegram.SQLite.SQLiteCursor;
@@ -57,24 +58,24 @@ public class DownloadController extends BaseController implements NotificationCe
     public static final int PRESET_SIZE_NUM_AUDIO = 3;
 
     private int lastCheckMask = 0;
-    private ArrayList<DownloadObject> photoDownloadQueue = new ArrayList<>();
-    private ArrayList<DownloadObject> audioDownloadQueue = new ArrayList<>();
-    private ArrayList<DownloadObject> documentDownloadQueue = new ArrayList<>();
-    private ArrayList<DownloadObject> videoDownloadQueue = new ArrayList<>();
-    private HashMap<String, DownloadObject> downloadQueueKeys = new HashMap<>();
-    private HashMap<Pair<Long, Integer>, DownloadObject> downloadQueuePairs = new HashMap<>();
+    private final ArrayList<DownloadObject> photoDownloadQueue = new ArrayList<>();
+    private final ArrayList<DownloadObject> audioDownloadQueue = new ArrayList<>();
+    private final ArrayList<DownloadObject> documentDownloadQueue = new ArrayList<>();
+    private final ArrayList<DownloadObject> videoDownloadQueue = new ArrayList<>();
+    private final HashMap<String, DownloadObject> downloadQueueKeys = new HashMap<>();
+    private final HashMap<Pair<Long, Integer>, DownloadObject> downloadQueuePairs = new HashMap<>();
 
-    private HashMap<String, ArrayList<WeakReference<FileDownloadProgressListener>>> loadingFileObservers = new HashMap<>();
-    private HashMap<String, ArrayList<MessageObject>> loadingFileMessagesObservers = new HashMap<>();
-    private SparseArray<String> observersByTag = new SparseArray<>();
+    private final HashMap<String, ArrayList<WeakReference<FileDownloadProgressListener>>> loadingFileObservers = new HashMap<>();
+    private final HashMap<String, ArrayList<MessageObject>> loadingFileMessagesObservers = new HashMap<>();
+    private final SparseArray<String> observersByTag = new SparseArray<>();
     private boolean listenerInProgress = false;
-    private HashMap<String, FileDownloadProgressListener> addLaterArray = new HashMap<>();
-    private ArrayList<FileDownloadProgressListener> deleteLaterArray = new ArrayList<>();
+    private final HashMap<String, FileDownloadProgressListener> addLaterArray = new HashMap<>();
+    private final ArrayList<FileDownloadProgressListener> deleteLaterArray = new ArrayList<>();
     private int lastTag = 0;
 
     private boolean loadingAutoDownloadConfig;
 
-    private LongSparseArray<Long> typingTimes = new LongSparseArray<>();
+    private final LongSparseArray<Long> typingTimes = new LongSparseArray<>();
 
     public final ArrayList<MessageObject> downloadingFiles = new ArrayList<>();
     public final ArrayList<MessageObject> recentDownloadingFiles = new ArrayList<>();
@@ -171,6 +172,7 @@ public class DownloadController extends BaseController implements NotificationCe
             }
         }
 
+        @NonNull
         @Override
         public String toString() {
             return mask[0] + "_" + mask[1] + "_" + mask[2] + "_" + mask[3] +
@@ -200,8 +202,8 @@ public class DownloadController extends BaseController implements NotificationCe
         }
 
         public boolean isEnabled() {
-            for (int a = 0; a < mask.length; a++) {
-                if (mask[a] != 0) {
+            for (int i : mask) {
+                if (i != 0) {
                     return true;
                 }
             }
@@ -219,7 +221,7 @@ public class DownloadController extends BaseController implements NotificationCe
     public int currentWifiPreset;
     public int currentRoamingPreset;
     
-    private static volatile DownloadController[] Instance = new DownloadController[UserConfig.MAX_ACCOUNT_COUNT];
+    private static final DownloadController[] Instance = new DownloadController[UserConfig.MAX_ACCOUNT_COUNT];
 
     public static DownloadController getInstance(int num) {
         DownloadController localInstance = Instance[num];
@@ -252,7 +254,7 @@ public class DownloadController extends BaseController implements NotificationCe
             currentWifiPreset = preferences.getInt("currentWifiPreset", 3);
             currentRoamingPreset = preferences.getInt("currentRoamingPreset", 3);
             if (!newConfig) {
-                preferences.edit().putBoolean("newConfig", true).commit();
+                preferences.edit().putBoolean("newConfig", true).apply();
             }
         } else {
             int[] mobileDataDownloadMask = new int[4];
@@ -295,7 +297,7 @@ public class DownloadController extends BaseController implements NotificationCe
             editor.putInt("currentMobilePreset", currentMobilePreset = 3);
             editor.putInt("currentWifiPreset", currentWifiPreset = 3);
             editor.putInt("currentRoamingPreset", currentRoamingPreset = 3);
-            editor.commit();
+            editor.apply();
         }
 
         AndroidUtilities.runOnUIThread(() -> {
@@ -362,10 +364,7 @@ public class DownloadController extends BaseController implements NotificationCe
                 editor.putString("preset0", lowPreset.toString());
                 editor.putString("preset1", mediumPreset.toString());
                 editor.putString("preset2", highPreset.toString());
-                editor.commit();
-                String str1 = lowPreset.toString();
-                String str2 = mediumPreset.toString();
-                String str3 = highPreset.toString();
+                editor.apply();
                 checkAutodownloadSettings();
             }
         }));
@@ -1073,7 +1072,6 @@ public class DownloadController extends BaseController implements NotificationCe
                                     typingTimes.put(dialogId, System.currentTimeMillis());
                                 }
                             } else {
-                                TLRPC.Document document = delayedMessage.obj.getDocument();
                                 if (lastTime == null || lastTime + 4000 < System.currentTimeMillis()) {
                                     if (delayedMessage.obj.isRoundVideo()) {
                                         getMessagesController().sendTyping(dialogId, topMessageId, 8, 0);
@@ -1194,9 +1192,7 @@ public class DownloadController extends BaseController implements NotificationCe
                         cursor.dispose();
 
                         cursor = getMessagesStorage().getDatabase().queryFinalized("SELECT state FROM downloading_documents WHERE state = 1");
-                        if (cursor.next()) {
-                            int state = cursor.intValue(0);
-                        }
+                        cursor.next();
                         cursor.dispose();
 
                         int limitDownloadsDocuments = 100;
@@ -1265,12 +1261,9 @@ public class DownloadController extends BaseController implements NotificationCe
         });
     }
 
-    Runnable clearUnviewedDownloadsRunnale = new Runnable() {
-        @Override
-        public void run() {
-            clearUnviewedDownloads();
-            getNotificationCenter().postNotificationName(NotificationCenter.onDownloadingFilesChanged);
-        }
+    Runnable clearUnviewedDownloadsRunnale = () -> {
+        clearUnviewedDownloads();
+        getNotificationCenter().postNotificationName(NotificationCenter.onDownloadingFilesChanged);
     };
     private void putToUnviewedDownloads(MessageObject parentObject) {
         unviewedDownloads.put(parentObject.getId(), parentObject);
@@ -1296,7 +1289,7 @@ public class DownloadController extends BaseController implements NotificationCe
         return unviewedDownloads.size() > 0;
     }
 
-    private class DownloadingDocumentEntry {
+    private static class DownloadingDocumentEntry {
         long id;
         int hash;
     }
@@ -1389,7 +1382,6 @@ public class DownloadController extends BaseController implements NotificationCe
                 for (int j = 0; j < downloadingFiles.size(); j++) {
                     if (messageObjects.get(i).getId() == downloadingFiles.get(j).getId() && downloadingFiles.get(j).getDialogId() == messageObjects.get(i).getDialogId()) {
                         downloadingFiles.remove(j);
-                        found = true;
                         break;
                     }
                 }

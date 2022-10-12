@@ -127,9 +127,9 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == chatsRow) {
                         textCell.setTextAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), R.drawable.msg_discussion, true);
                     } else if (position == channelRow) {
-                        textCell.setTextAndValueAndIcon(LocaleController.getString("Channel", R.string.Channel), "@exteragram", R.drawable.msg_channel, true);
+                        textCell.setTextAndValueAndIcon(LocaleController.getString("Channel", R.string.Channel), "@exteraGram", R.drawable.msg_channel, true);
                     } else if (position == groupRow) {
-                        textCell.setTextAndValueAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), "@exterachat", R.drawable.msg_markunread, true);
+                        textCell.setTextAndValueAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), "@exteraChat", R.drawable.msg_ask_question, true);
                     } else if (position == crowdinRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Crowdin", R.string.Crowdin), "Crowdin", R.drawable.msg_translate, true);
                     } else if (position == sourceCodeRow) {
