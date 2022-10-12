@@ -269,6 +269,7 @@ public class Utilities {
         for (int a = offset1; a < arr1.length; a++) {
             if (arr1[a + offset1] != arr2[a + offset2]) {
                 result = false;
+                break;
             }
         }
         return result;
@@ -329,8 +330,8 @@ public class Utilities {
     public static byte[] computeSHA256(byte[]... args) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            for (int a = 0; a < args.length; a++) {
-                md.update(args[a], 0, args[a].length);
+            for (byte[] arg : args) {
+                md.update(arg, 0, arg.length);
             }
             return md.digest();
         } catch (Exception e) {
@@ -425,8 +426,8 @@ public class Utilities {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
             byte[] array = md.digest(AndroidUtilities.getStringBytes(md5));
             StringBuilder sb = new StringBuilder();
-            for (int a = 0; a < array.length; a++) {
-                sb.append(Integer.toHexString((array[a] & 0xFF) | 0x100).substring(1, 3));
+            for (byte b : array) {
+                sb.append(Integer.toHexString((b & 0xFF) | 0x100).substring(1, 3));
             }
             return sb.toString();
         } catch (java.security.NoSuchAlgorithmException e) {
@@ -461,7 +462,7 @@ public class Utilities {
         return sb.toString();
     }
 
-    public static interface Callback<T> {
-        public void run(T arg);
+    public interface Callback<T> {
+        void run(T arg);
     }
 }

@@ -84,7 +84,7 @@ public class BasePermissionsActivity extends Activity {
             } else if (!cameraGranted) {
                 showPermissionErrorAlert(R.raw.permission_request_camera, LocaleController.getString("PermissionNoCameraWithHint", R.string.PermissionNoCameraWithHint));
             } else {
-                if (SharedConfig.inappCamera) {
+                if (SharedConfig.inAppCamera) {
                     CameraController.getInstance().initCamera(null);
                 }
                 return false;

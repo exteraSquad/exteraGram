@@ -74,7 +74,7 @@ public class ActionBar extends FrameLayout {
 
     private ImageView backButtonImageView;
     private Drawable backButtonDrawable;
-    private SimpleTextView[] titleTextView = new SimpleTextView[2];
+    private final SimpleTextView[] titleTextView = new SimpleTextView[2];
     private SimpleTextView subtitleTextView;
     private SimpleTextView additionalSubtitleTextView;
     private View actionModeTop;
@@ -85,7 +85,7 @@ public class ActionBar extends FrameLayout {
     private ActionBarMenu actionMode;
     private String actionModeTag;
     private boolean ignoreLayoutRequest;
-    private boolean occupyStatusBar = Build.VERSION.SDK_INT >= 21;
+    private boolean occupyStatusBar = true;
     private boolean actionModeVisible;
     private boolean addToContainer = true;
     private boolean clipContent;
@@ -112,7 +112,7 @@ public class ActionBar extends FrameLayout {
     private Drawable lastRightDrawable;
     private OnClickListener rightDrawableOnClickListener;
     private CharSequence lastOverlayTitle;
-    private Object[] overlayTitleToSet = new Object[3];
+    private final Object[] overlayTitleToSet = new Object[3];
     private Runnable lastRunnable;
     private boolean titleOverlayShown;
     private Runnable titleActionRunnable;
@@ -123,7 +123,6 @@ public class ActionBar extends FrameLayout {
     protected int itemsActionModeBackgroundColor;
     protected int itemsColor;
     protected int itemsActionModeColor;
-    private boolean isBackOverlayVisible;
     protected BaseFragment parentFragment;
     public ActionBarMenuOnItemClick actionBarMenuOnItemClick;
     private int titleColorToSet = 0;
@@ -231,14 +230,12 @@ public class ActionBar extends FrameLayout {
                 if (snowflakesEffect == null) {
                     fireworksEffect = null;
                     snowflakesEffect = new SnowflakesEffect(0);
-                    titleTextView[0].invalidate();
-                    invalidate();
                 } else {
                     snowflakesEffect = null;
                     fireworksEffect = new FireworksEffect();
-                    titleTextView[0].invalidate();
-                    invalidate();
                 }
+                titleTextView[0].invalidate();
+                invalidate();
             }
         }
         return interceptTouchEventListener != null && interceptTouchEventListener.onTouch(this, ev) || super.onInterceptTouchEvent(ev);
@@ -519,10 +516,7 @@ public class ActionBar extends FrameLayout {
     }
 
     public boolean actionModeIsExist(String tag) {
-        if (actionMode != null && ((actionModeTag == null && tag == null) || (actionModeTag != null && actionModeTag.equals(tag)))) {
-            return true;
-        }
-        return false;
+        return actionMode != null && ((actionModeTag == null && tag == null) || (actionModeTag != null && actionModeTag.equals(tag)));
     }
 
     public ActionBarMenu createActionMode(boolean needTop, String tag) {
@@ -614,9 +608,9 @@ public class ActionBar extends FrameLayout {
             ArrayList<Animator> animators = new ArrayList<>();
             animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
             if (hidingViews != null) {
-                for (int a = 0; a < hidingViews.length; a++) {
-                    if (hidingViews[a] != null) {
-                        animators.add(ObjectAnimator.ofFloat(hidingViews[a], View.ALPHA, 1.0f, 0.0f));
+                for (View hidingView : hidingViews) {
+                    if (hidingView != null) {
+                        animators.add(ObjectAnimator.ofFloat(hidingView, View.ALPHA, 1.0f, 0.0f));
                     }
                 }
             }
@@ -634,11 +628,7 @@ public class ActionBar extends FrameLayout {
                 animators.add(ObjectAnimator.ofFloat(actionModeTop, View.ALPHA, 0.0f, 1.0f));
             }
             if (SharedConfig.noStatusBar) {
-                if (ColorUtils.calculateLuminance(actionModeColor) < 0.7f) {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
-                } else {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);
-                }
+                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionModeColor) < 0.7f));
             }
             if (actionModeAnimation != null) {
                 actionModeAnimation.cancel();
@@ -698,9 +688,9 @@ public class ActionBar extends FrameLayout {
         } else {
             actionMode.setAlpha(1.0f);
             if (hidingViews != null) {
-                for (int a = 0; a < hidingViews.length; a++) {
-                    if (hidingViews[a] != null) {
-                        hidingViews[a].setAlpha(0.0f);
+                for (View hidingView : hidingViews) {
+                    if (hidingView != null) {
+                        hidingView.setAlpha(0.0f);
                     }
                 }
             }
@@ -718,11 +708,7 @@ public class ActionBar extends FrameLayout {
                 actionModeTop.setAlpha(1.0f);
             }
             if (SharedConfig.noStatusBar) {
-                if (ColorUtils.calculateLuminance(actionModeColor) < 0.7f) {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
-                } else {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);
-                }
+                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionModeColor) < 0.7f));
             }
             actionMode.setVisibility(VISIBLE);
             if (occupyStatusBar && actionModeTop != null && !SharedConfig.noStatusBar) {
@@ -765,10 +751,10 @@ public class ActionBar extends FrameLayout {
         ArrayList<Animator> animators = new ArrayList<>();
         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
         if (actionModeHidingViews != null) {
-            for (int a = 0; a < actionModeHidingViews.length; a++) {
-                if (actionModeHidingViews[a] != null) {
-                    actionModeHidingViews[a].setVisibility(VISIBLE);
-                    animators.add(ObjectAnimator.ofFloat(actionModeHidingViews[a], View.ALPHA, 1.0f));
+            for (View actionModeHidingView : actionModeHidingViews) {
+                if (actionModeHidingView != null) {
+                    actionModeHidingView.setVisibility(VISIBLE);
+                    animators.add(ObjectAnimator.ofFloat(actionModeHidingView, View.ALPHA, 1.0f));
                 }
             }
         }
@@ -786,11 +772,7 @@ public class ActionBar extends FrameLayout {
             if (actionBarColor == 0) {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
             } else {
-                if (ColorUtils.calculateLuminance(actionBarColor) < 0.7f) {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
-                } else {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);
-                }
+                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionBarColor) < 0.7f));
             }
         }
         if (actionModeAnimation != null) {
@@ -1050,7 +1032,6 @@ public class ActionBar extends FrameLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
         int actionBarHeight = getCurrentActionBarHeight();
         int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
 
@@ -1198,7 +1179,7 @@ public class ActionBar extends FrameLayout {
             }
         }
         if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
-            int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - AndroidUtilities.dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 1 : 1);
+            int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - AndroidUtilities.dp(1);
             if (ExteraConfig.centerTitle) {
                 subtitleTextView.layout(getMeasuredWidth() / 2 - subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop, getMeasuredWidth() / 2 + subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop + subtitleTextView.getTextHeight());
             } else {
@@ -1207,7 +1188,7 @@ public class ActionBar extends FrameLayout {
         }
 
         if (additionalSubtitleTextView != null && additionalSubtitleTextView.getVisibility() != GONE) {
-            int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubtitleTextView.getTextHeight()) / 2 - AndroidUtilities.dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 1 : 1);
+            int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubtitleTextView.getTextHeight()) / 2 - AndroidUtilities.dp(1);
             if (ExteraConfig.centerTitle) {
                 additionalSubtitleTextView.layout(getMeasuredWidth() / 2 - additionalSubtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop, getMeasuredWidth() / 2 + additionalSubtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
             } else {
@@ -1547,11 +1528,7 @@ public class ActionBar extends FrameLayout {
         super.onAttachedToWindow();
         ellipsizeSpanAnimator.onAttachedToWindow();
         if (SharedConfig.noStatusBar && actionModeVisible) {
-            if (ColorUtils.calculateLuminance(actionModeColor) < 0.7f) {
-                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
-            } else {
-                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);
-            }
+            AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionModeColor) < 0.7f));
         }
     }
 
@@ -1563,11 +1540,7 @@ public class ActionBar extends FrameLayout {
             if (actionBarColor == 0) {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
             } else {
-                if (ColorUtils.calculateLuminance(actionBarColor) < 0.7f) {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), false);
-                } else {
-                    AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), true);
-                }
+                AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionBarColor) < 0.7f));
             }
         }
     }
@@ -1581,69 +1554,67 @@ public class ActionBar extends FrameLayout {
     }
 
     public void beginDelayedTransition() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TransitionSet transitionSet = new TransitionSet();
-            transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
-            transitionSet.addTransition(new Fade());
-            transitionSet.addTransition(new ChangeBounds() {
+        TransitionSet transitionSet = new TransitionSet();
+        transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
+        transitionSet.addTransition(new Fade());
+        transitionSet.addTransition(new ChangeBounds() {
 
 
-                public void captureStartValues(TransitionValues transitionValues) {
-                    super.captureStartValues(transitionValues);
-                    if (transitionValues.view instanceof SimpleTextView) {
-                        float textSize = ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
-                        transitionValues.values.put("text_size", textSize);
-                    }
+            public void captureStartValues(TransitionValues transitionValues) {
+                super.captureStartValues(transitionValues);
+                if (transitionValues.view instanceof SimpleTextView) {
+                    float textSize = ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
+                    transitionValues.values.put("text_size", textSize);
                 }
+            }
 
-                public void captureEndValues(TransitionValues transitionValues) {
-                    super.captureEndValues(transitionValues);
-                    if (transitionValues.view instanceof SimpleTextView) {
-                        float textSize= ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
-                        transitionValues.values.put("text_size", textSize);
-                    }
+            public void captureEndValues(TransitionValues transitionValues) {
+                super.captureEndValues(transitionValues);
+                if (transitionValues.view instanceof SimpleTextView) {
+                    float textSize= ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
+                    transitionValues.values.put("text_size", textSize);
                 }
+            }
 
-                @Override
-                public Animator createAnimator(ViewGroup sceneRoot, TransitionValues startValues, TransitionValues endValues) {
-                    if (startValues != null && startValues.view instanceof SimpleTextView) {
-                        AnimatorSet animatorSet = new AnimatorSet();
-                        if (startValues != null && endValues != null) {
-                            Animator animator = super.createAnimator(sceneRoot, startValues, endValues);
-                            float s = (float) startValues.values.get("text_size") / (float) endValues.values.get("text_size");
-                            startValues.view.setScaleX(s);
-                            startValues.view.setScaleY(s);
-                            if (animator != null) {
-                                animatorSet.playTogether(animator);
-                            }
+            @Override
+            public Animator createAnimator(ViewGroup sceneRoot, TransitionValues startValues, TransitionValues endValues) {
+                if (startValues != null && startValues.view instanceof SimpleTextView) {
+                    AnimatorSet animatorSet = new AnimatorSet();
+                    if (endValues != null) {
+                        Animator animator = super.createAnimator(sceneRoot, startValues, endValues);
+                        float s = (float) startValues.values.get("text_size") / (float) endValues.values.get("text_size");
+                        startValues.view.setScaleX(s);
+                        startValues.view.setScaleY(s);
+                        if (animator != null) {
+                            animatorSet.playTogether(animator);
                         }
-                        animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_X, 1f));
-                        animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_Y, 1f));
-                        animatorSet.addListener(new AnimatorListenerAdapter() {
-
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-                                super.onAnimationStart(animation);
-                                startValues.view.setLayerType(LAYER_TYPE_HARDWARE, null);
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                startValues.view.setLayerType(LAYER_TYPE_NONE, null);
-                            }
-                        });
-                        return animatorSet;
-                    } else {
-                        return super.createAnimator(sceneRoot, startValues, endValues);
                     }
+                    animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_X, 1f));
+                    animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_Y, 1f));
+                    animatorSet.addListener(new AnimatorListenerAdapter() {
+
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            super.onAnimationStart(animation);
+                            startValues.view.setLayerType(LAYER_TYPE_HARDWARE, null);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            startValues.view.setLayerType(LAYER_TYPE_NONE, null);
+                        }
+                    });
+                    return animatorSet;
+                } else {
+                    return super.createAnimator(sceneRoot, startValues, endValues);
                 }
-            });
-            centerScale = false;
-            transitionSet.setDuration(220);
-            transitionSet.setInterpolator(CubicBezierInterpolator.DEFAULT);
-            TransitionManager.beginDelayedTransition(this, transitionSet);
-        }
+            }
+        });
+        centerScale = false;
+        transitionSet.setDuration(220);
+        transitionSet.setInterpolator(CubicBezierInterpolator.DEFAULT);
+        TransitionManager.beginDelayedTransition(this, transitionSet);
     }
 
     private int getThemedColor(String key) {

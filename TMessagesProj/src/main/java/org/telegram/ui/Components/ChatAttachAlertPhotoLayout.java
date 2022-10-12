@@ -82,7 +82,6 @@ import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.BasePermissionsActivity;
 import org.telegram.ui.Cells.PhotoAttachCameraCell;
 import org.telegram.ui.Cells.PhotoAttachPermissionCell;
 import org.telegram.ui.Cells.PhotoAttachPhotoCell;
@@ -697,7 +696,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                     PhotoViewer.getInstance().setCaption(parentAlert.getCommentTextView().getText());
                 }
             } else {
-                if (SharedConfig.inappCamera && !ExteraConfig.disableCamera) {
+                if (SharedConfig.inAppCamera && !ExteraConfig.disableCamera) {
                     openCamera(true);
                 } else {
                     if (parentAlert.delegate != null) {
@@ -1649,7 +1648,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
         }
         boolean old = deviceHasGoodCamera;
         boolean old2 = noCameraPermissions;
-        if (!SharedConfig.inappCamera || ExteraConfig.disableCamera) {
+        if (!SharedConfig.inAppCamera || ExteraConfig.disableCamera) {
             deviceHasGoodCamera = false;
         } else {
             if (Build.VERSION.SDK_INT >= 23) {

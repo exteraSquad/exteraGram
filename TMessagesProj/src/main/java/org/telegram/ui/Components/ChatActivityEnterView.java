@@ -4418,7 +4418,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 hasRecordVideo = false;
             }
         }
-        if (!SharedConfig.inappCamera) {
+        if (!SharedConfig.inAppCamera) {
             hasRecordVideo = false;
         }
         if (hasRecordVideo) {
