@@ -592,7 +592,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             if (child == actionBar && parentLayout != null) {
                 int y = (int) (actionBar.getY() + getActionBarFullHeight());
-                parentLayout.drawHeaderShadow(canvas, (int) (255 * (1f - searchAnimationProgress)), y);
+                parentLayout.drawHeaderShadow(canvas, y);
                 /*if (searchAnimationProgress > 0) {
                     if (searchAnimationProgress < 1) {
                         int a = Theme.dividerPaint.getAlpha();

@@ -13,7 +13,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -223,7 +222,6 @@ public class ActionBarLayout extends FrameLayout {
                 canvas.drawRect(0, getMeasuredHeight() - fragmentPanTranslationOffset - 3, getMeasuredWidth(), getMeasuredHeight(), backgroundPaint);
             }
             super.onDraw(canvas);
-            canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
         }
 
         public void setFragmentPanTranslationOffset(int fragmentPanTranslationOffset) {
@@ -459,10 +457,6 @@ public class ActionBarLayout extends FrameLayout {
         }
     }
 
-    public void drawHeaderShadow(Canvas canvas, int y) {
-        drawHeaderShadow(canvas, 255, y);
-    }
-
     public void setInBubbleMode(boolean value) {
         inBubbleMode = value;
     }
@@ -471,7 +465,7 @@ public class ActionBarLayout extends FrameLayout {
         return inBubbleMode;
     }
 
-    public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
+    public void drawHeaderShadow(Canvas canvas, int y) {
         canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
     }
 

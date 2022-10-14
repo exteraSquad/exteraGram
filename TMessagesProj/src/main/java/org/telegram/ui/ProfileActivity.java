@@ -747,7 +747,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
 
             if (parentLayout != null) {
-                parentLayout.drawHeaderShadow(canvas, (int) (headerShadowAlpha * 255), (int) v);
+                parentLayout.drawHeaderShadow(canvas, (int) v);
             }
         }
     }
