@@ -2084,7 +2084,6 @@ public final class Util {
     outSize.y = mode.getPhysicalHeight();
   }
 
-  @TargetApi(17)
   private static void getDisplaySizeV17(Display display, Point outSize) {
     display.getRealSize(outSize);
   }
@@ -2105,7 +2104,6 @@ public final class Util {
     return Util.split(config.getLocales().toLanguageTags(), ",");
   }
 
-  @TargetApi(21)
   private static String getLocaleLanguageTagV21(Locale locale) {
     return locale.toLanguageTag();
   }

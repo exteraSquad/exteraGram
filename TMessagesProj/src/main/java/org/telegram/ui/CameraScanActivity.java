@@ -93,7 +93,6 @@ import java.util.ArrayList;
 
 import com.exteragram.messenger.extras.PermissionUtils;
 
-@TargetApi(18)
 public class CameraScanActivity extends BaseFragment {
 
     private TextView titleTextView;

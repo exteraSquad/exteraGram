@@ -1072,35 +1072,6 @@ public class ImageLoader {
                 boolean canDeleteFile = true;
                 boolean useNativeWebpLoader = false;
 
-                if (Build.VERSION.SDK_INT < 19) {
-                    RandomAccessFile randomAccessFile = null;
-                    try {
-                        randomAccessFile = new RandomAccessFile(cacheFileFinal, "r");
-                        byte[] bytes;
-                        if (cacheImage.type == ImageReceiver.TYPE_THUMB) {
-                            bytes = headerThumb;
-                        } else {
-                            bytes = header;
-                        }
-                        randomAccessFile.readFully(bytes, 0, bytes.length);
-                        String str = new String(bytes).toLowerCase();
-                        str = str.toLowerCase();
-                        if (str.startsWith("riff") && str.endsWith("webp")) {
-                            useNativeWebpLoader = true;
-                        }
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    } finally {
-                        if (randomAccessFile != null) {
-                            try {
-                                randomAccessFile.close();
-                            } catch (Exception e) {
-                                FileLog.e(e);
-                            }
-                        }
-                    }
-                }
-
                 String mediaThumbPath = null;
                 if (cacheImage.imageLocation.path != null) {
                     String location = cacheImage.imageLocation.path;
@@ -1126,10 +1097,6 @@ public class ImageLoader {
 
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inSampleSize = 1;
-
-                if (Build.VERSION.SDK_INT < 21) {
-                    opts.inPurgeable = true;
-                }
 
                 float w_filter = 0;
                 float h_filter = 0;
@@ -1361,7 +1328,7 @@ public class ImageLoader {
                         if (mediaId != null) {
                             delay = 0;
                         }
-                        if (delay != 0 && lastCacheOutTime != 0 && lastCacheOutTime > SystemClock.elapsedRealtime() - delay && Build.VERSION.SDK_INT < 21) {
+                        if (delay != 0 && lastCacheOutTime != 0 && lastCacheOutTime > SystemClock.elapsedRealtime() - delay) {
                             Thread.sleep(delay);
                         }
                         lastCacheOutTime = SystemClock.elapsedRealtime();
@@ -2161,7 +2128,7 @@ public class ImageLoader {
         try {
             if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
                 File path = Environment.getExternalStorageDirectory();
-                if (Build.VERSION.SDK_INT >= 19 && !TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
+                if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
                     ArrayList<File> dirs = AndroidUtilities.getRootDirs();
                     if (dirs != null) {
                         for (int a = 0, N = dirs.size(); a < N; a++) {
@@ -2176,23 +2143,21 @@ public class ImageLoader {
 
                 File publicMediaDir = null;
                 // because exteraGram's minapi 21 have all required methods
-                if (Build.VERSION.SDK_INT >= 21) {
-                    File newPath;
-                    try {
-                        if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
-                            publicMediaDir = ApplicationLoader.applicationContext.getExternalMediaDirs()[0];
-                            publicMediaDir = new File(publicMediaDir, "exteraGram");
-                            publicMediaDir.mkdirs();
-                        }
-                    } catch (Exception e) {
-                        FileLog.e(e);
+                File newPath;
+                try {
+                    if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
+                        publicMediaDir = ApplicationLoader.applicationContext.getExternalMediaDirs()[0];
+                        publicMediaDir = new File(publicMediaDir, "exteraGram");
+                        publicMediaDir.mkdirs();
                     }
-                    newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
-                    telegramPath = new File(newPath, "exteraGram");
+                } catch (Exception e) {
+                    FileLog.e(e);
                 }
+                newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
+                telegramPath = new File(newPath, "exteraGram");
                 telegramPath.mkdirs();
 
-                if (Build.VERSION.SDK_INT >= 19 && !telegramPath.isDirectory()) {
+                if (!telegramPath.isDirectory()) {
                     ArrayList<File> dirs = AndroidUtilities.getDataDirs();
                     for (int a = 0, N = dirs.size(); a < N; a++) {
                         File dir = dirs.get(a);
@@ -3579,7 +3544,7 @@ public class ImageLoader {
             }
             bmOptions.inSampleSize = sample;
         }
-        bmOptions.inPurgeable = Build.VERSION.SDK_INT < 21;
+        bmOptions.inPurgeable = false;
 
         Matrix matrix = null;
         try {

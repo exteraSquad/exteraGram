@@ -162,7 +162,7 @@ public class TranscribeButton {
         if (action == MotionEvent.ACTION_DOWN) {
             pressed = true;
         }
-        if (pressed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && selectorDrawable instanceof RippleDrawable) {
+        if (pressed && selectorDrawable instanceof RippleDrawable) {
             selectorDrawable.setHotspot(x, y);
             selectorDrawable.setState(pressedState);
             parent.invalidate();
@@ -182,7 +182,7 @@ public class TranscribeButton {
             setOpen(false, true);
             setLoading(false, true);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && selectorDrawable instanceof RippleDrawable) {
+        if (selectorDrawable instanceof RippleDrawable) {
             selectorDrawable.setState(StateSet.NOTHING);
             parent.invalidate();
         }

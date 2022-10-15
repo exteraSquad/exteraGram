@@ -675,7 +675,6 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             super(context);
         }
 
-        @TargetApi(21)
         @Override
         public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
             WindowInsets oldInsets = (WindowInsets) lastInsets;
@@ -701,7 +700,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             int widthSize = View.MeasureSpec.getSize(widthMeasureSpec);
             int heightSize = View.MeasureSpec.getSize(heightMeasureSpec);
-            if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
+            if (lastInsets != null) {
                 setMeasuredDimension(widthSize, heightSize);
                 WindowInsets insets = (WindowInsets) lastInsets;
                 if (AndroidUtilities.incorrectDisplaySizeFix) {
@@ -726,7 +725,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             } else {
                 setMeasuredDimension(widthSize, heightSize);
             }
-            menuButton.setAdditionalYOffset(-(currentHeaderHeight - AndroidUtilities.dp(56)) / 2 + (Build.VERSION.SDK_INT < 21 ? AndroidUtilities.statusBarHeight : 0));
+            menuButton.setAdditionalYOffset(-(currentHeaderHeight - AndroidUtilities.dp(56)) / 2 + 0);
             keyboardVisible = heightSize < AndroidUtilities.displaySize.y - AndroidUtilities.dp(100);
             containerView.measure(View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(heightSize, View.MeasureSpec.EXACTLY));
             fullscreenVideoContainer.measure(View.MeasureSpec.makeMeasureSpec(widthSize, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(heightSize, View.MeasureSpec.EXACTLY));
@@ -777,7 +776,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             }
             int x;
             int y = 0;
-            if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
+            if (lastInsets != null) {
                 WindowInsets insets = (WindowInsets) lastInsets;
                 x = insets.getSystemWindowInsetLeft();
 
@@ -1027,7 +1026,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         @Override
         protected void dispatchDraw(Canvas canvas) {
             super.dispatchDraw(canvas);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || lastInsets == null) {
+            if (lastInsets == null) {
                 if (bWidth != 0 && bHeight != 0) {
                     blackPaint.setAlpha((int) (255 * windowView.getAlpha()));
                     if (bX == 0 && bY == 0) {
@@ -1044,7 +1043,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             int w = getMeasuredWidth();
             int h = getMeasuredHeight();
             canvas.drawRect(innerTranslationX, 0, w, h, backgroundPaint);
-            if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
+            if (lastInsets != null) {
                 WindowInsets insets = (WindowInsets) lastInsets;
                 canvas.drawRect(innerTranslationX, 0, w, insets.getSystemWindowInsetTop(), statusBarPaint);
                 if (hasCutout) {
@@ -1554,9 +1553,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             listView[0].setVisibility(View.VISIBLE);
             int index = order == 1 ? 0 : 1;
             listView[index].setBackgroundColor(backgroundPaint.getColor());
-            if (Build.VERSION.SDK_INT >= 18) {
-                listView[index].setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            }
+            listView[index].setLayerType(View.LAYER_TYPE_HARDWARE, null);
             if (order == 1) {
                 pageSwitchAnimation.playTogether(ObjectAnimator.ofFloat(listView[0], View.TRANSLATION_X, AndroidUtilities.dp(56), 0),
                         ObjectAnimator.ofFloat(listView[0], View.ALPHA, 0.0f, 1.0f));
@@ -1575,9 +1572,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                     textSelectionHelper.setParentView(listView[0]);
                     textSelectionHelper.layoutManager = layoutManager[0];
                     listView[index].setBackgroundDrawable(null);
-                    if (Build.VERSION.SDK_INT >= 18) {
-                        listView[index].setLayerType(View.LAYER_TYPE_NONE, null);
-                    }
+                    listView[index].setLayerType(View.LAYER_TYPE_NONE, null);
                     pageSwitchAnimation = null;
                 }
             });
@@ -3047,16 +3042,14 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         };
         windowView.addView(containerView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
         //containerView.setFitsSystemWindows(true);
-        if (Build.VERSION.SDK_INT >= 21) {
-            windowView.setFitsSystemWindows(true);
-            containerView.setOnApplyWindowInsetsListener((v, insets) -> {
-                if (Build.VERSION.SDK_INT >= 30) {
-                    return WindowInsets.CONSUMED;
-                } else {
-                    return insets.consumeSystemWindowInsets();
-                }
-            });
-        }
+        windowView.setFitsSystemWindows(true);
+        containerView.setOnApplyWindowInsetsListener((v, insets) -> {
+            if (Build.VERSION.SDK_INT >= 30) {
+                return WindowInsets.CONSUMED;
+            } else {
+                return insets.consumeSystemWindowInsets();
+            }
+        });
 
         fullscreenVideoContainer = new FrameLayout(activity);
         fullscreenVideoContainer.setBackgroundColor(0xff000000);
@@ -3336,9 +3329,6 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         searchContainer = new FrameLayout(parentActivity);
         searchContainer.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
         searchContainer.setVisibility(View.INVISIBLE);
-        if (Build.VERSION.SDK_INT < 21) {
-            searchContainer.setAlpha(0.0f);
-        }
         headerView.addView(searchContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 56));
 
         searchField = new EditTextBoldCursor(parentActivity) {
@@ -3663,13 +3653,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         }
         windowLayoutParams.systemUiVisibility = uiFlags;
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                    WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                    WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-            if (Build.VERSION.SDK_INT >= 28) {
-                windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-            }
+        windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+        if (Build.VERSION.SDK_INT >= 28) {
+            windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
 
         textSelectionHelper = new TextSelectionHelper.ArticleTextSelectionHelper();
@@ -3738,26 +3726,22 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                 updateWindowLayoutParamsForSearch();
             }
             ArrayList<Animator> animators = new ArrayList<>();
-            if (Build.VERSION.SDK_INT >= 21) {
-                if (show) {
-                    searchContainer.setAlpha(1.0f);
-                }
-                int x = menuContainer.getLeft() + menuContainer.getMeasuredWidth() / 2;
-                int y = menuContainer.getTop() + menuContainer.getMeasuredHeight() / 2;
-                float rad = (float) Math.sqrt(x * x + y * y);
-                Animator animator = ViewAnimationUtils.createCircularReveal(searchContainer, x, y, show ? 0 : rad, show ? rad : 0);
-                animators.add(animator);
-                animator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        if (!show) {
-                            searchContainer.setAlpha(0.0f);
-                        }
-                    }
-                });
-            } else {
-                animators.add(ObjectAnimator.ofFloat(searchContainer, View.ALPHA, show ? 1.0f : 0.0f));
+            if (show) {
+                searchContainer.setAlpha(1.0f);
             }
+            int x = menuContainer.getLeft() + menuContainer.getMeasuredWidth() / 2;
+            int y = menuContainer.getTop() + menuContainer.getMeasuredHeight() / 2;
+            float rad = (float) Math.sqrt(x * x + y * y);
+            Animator animator = ViewAnimationUtils.createCircularReveal(searchContainer, x, y, show ? 0 : rad, show ? rad : 0);
+            animators.add(animator);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (!show) {
+                        searchContainer.setAlpha(0.0f);
+                    }
+                }
+            });
             if (!show) {
                 animators.add(ObjectAnimator.ofFloat(searchPanel, View.ALPHA, 0.0f));
             }
@@ -4041,7 +4025,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         titleTextView.setTranslationY((maxHeight - currentHeaderHeight) / 2);
         headerView.setTranslationY(currentHeaderHeight - maxHeight);
         searchShadow.setTranslationY(currentHeaderHeight - maxHeight);
-        menuButton.setAdditionalYOffset(-(currentHeaderHeight - maxHeight) / 2 + (Build.VERSION.SDK_INT < 21 ? AndroidUtilities.statusBarHeight : 0));
+        menuButton.setAdditionalYOffset(-(currentHeaderHeight - maxHeight) / 2 + 0);
         textSelectionHelper.setTopOffset(currentHeaderHeight);
         for (int i = 0; i < listView.length; i++) {
             listView[i].setTopGlowOffset(currentHeaderHeight);
@@ -4203,13 +4187,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                 }
             }
             try {
-                if (Build.VERSION.SDK_INT >= 21) {
-                    windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                            WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
-                            WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
-                    if (Build.VERSION.SDK_INT >= 28) {
-                        windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-                    }
+                windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                        WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+                if (Build.VERSION.SDK_INT >= 28) {
+                    windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
                 }
                 //windowLayoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
                 windowView.setFocusable(false);
@@ -4240,9 +4222,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             if (containerView == null || windowView == null) {
                 return;
             }
-            if (Build.VERSION.SDK_INT >= 18) {
-                containerView.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
+            containerView.setLayerType(View.LAYER_TYPE_NONE, null);
             animationInProgress = 0;
             AndroidUtilities.hideKeyboard(parentActivity.getCurrentFocus());
         };
@@ -4266,9 +4246,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             allowAnimationIndex = NotificationCenter.getInstance(currentAccount).setAnimationInProgress(allowAnimationIndex, new int[]{NotificationCenter.dialogsNeedReload, NotificationCenter.closeChats});
             animatorSet.start();
         });
-        if (Build.VERSION.SDK_INT >= 18) {
-            containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+        containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         return true;
     }
 
@@ -4358,7 +4336,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(
                 ObjectAnimator.ofFloat(containerView, View.TRANSLATION_X, containerView.getMeasuredWidth() - AndroidUtilities.dp(56)),
-                ObjectAnimator.ofFloat(containerView, View.TRANSLATION_Y, ActionBar.getCurrentActionBarHeight() + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0)),
+                ObjectAnimator.ofFloat(containerView, View.TRANSLATION_Y, ActionBar.getCurrentActionBarHeight() + AndroidUtilities.statusBarHeight),
                 ObjectAnimator.ofFloat(windowView, View.ALPHA, 0.0f),
                 ObjectAnimator.ofFloat(listView[0], View.ALPHA, 0.0f),
                 ObjectAnimator.ofFloat(listView[0], View.TRANSLATION_Y, -AndroidUtilities.dp(56)),
@@ -4377,9 +4355,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             if (containerView == null) {
                 return;
             }
-            if (Build.VERSION.SDK_INT >= 18) {
-                containerView.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
+            containerView.setLayerType(View.LAYER_TYPE_NONE, null);
             animationInProgress = 0;
 
             //windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
@@ -4402,9 +4378,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             }
         });
         transitionAnimationStartTime = System.currentTimeMillis();
-        if (Build.VERSION.SDK_INT >= 18) {
-            containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+        containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         backDrawable.setRotation(1, true);
         animatorSet.start();
     }
@@ -4440,9 +4414,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             if (containerView == null) {
                 return;
             }
-            if (Build.VERSION.SDK_INT >= 18) {
-                containerView.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
+            containerView.setLayerType(View.LAYER_TYPE_NONE, null);
             animationInProgress = 0;
             //onClosed();
         };
@@ -4458,9 +4430,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             }
         });
         transitionAnimationStartTime = System.currentTimeMillis();
-        if (Build.VERSION.SDK_INT >= 18) {
-            containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+        containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         backDrawable.setRotation(0, true);
         animatorSet.start();
     }
@@ -4591,9 +4561,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             if (containerView == null) {
                 return;
             }
-            if (Build.VERSION.SDK_INT >= 18) {
-                containerView.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
+            containerView.setLayerType(View.LAYER_TYPE_NONE, null);
             animationInProgress = 0;
             onClosed();
         };
@@ -4609,9 +4577,7 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             }
         });
         transitionAnimationStartTime = System.currentTimeMillis();
-        if (Build.VERSION.SDK_INT >= 18) {
-            containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+        containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         animatorSet.start();
     }
 
@@ -7182,16 +7148,12 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
             webView.getSettings().setDomStorageEnabled(true);
 
             webView.getSettings().setAllowContentAccess(true);
-            if (Build.VERSION.SDK_INT >= 17) {
-                webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-                webView.addJavascriptInterface(new TelegramWebviewProxy(), "TelegramWebviewProxy");
-            }
+            webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+            webView.addJavascriptInterface(new TelegramWebviewProxy(), "TelegramWebviewProxy");
 
-            if (Build.VERSION.SDK_INT >= 21) {
-                webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-                CookieManager cookieManager = CookieManager.getInstance();
-                cookieManager.setAcceptThirdPartyCookies(webView, true);
-            }
+            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setAcceptThirdPartyCookies(webView, true);
 
             webView.setWebChromeClient(new WebChromeClient() {
 

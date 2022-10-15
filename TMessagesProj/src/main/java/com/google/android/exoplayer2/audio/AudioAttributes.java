@@ -118,7 +118,6 @@ public final class AudioAttributes {
    *
    * <p>Field {@link AudioAttributes#allowedCapturePolicy} is ignored for API levels prior to 29.
    */
-  @TargetApi(21)
   public android.media.AudioAttributes getAudioAttributesV21() {
     if (audioAttributesV21 == null) {
       android.media.AudioAttributes.Builder builder =

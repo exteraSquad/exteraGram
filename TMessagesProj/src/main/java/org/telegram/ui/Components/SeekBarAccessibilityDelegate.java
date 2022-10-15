@@ -79,13 +79,11 @@ public abstract class SeekBarAccessibilityDelegate extends View.AccessibilityDel
         if (!TextUtils.isEmpty(contentDescription)) {
             info.setText(contentDescription);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (canScrollBackward(host)) {
-                info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD);
-            }
-            if (canScrollForward(host)) {
-                info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD);
-            }
+        if (canScrollBackward(host)) {
+            info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_BACKWARD);
+        }
+        if (canScrollForward(host)) {
+            info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_FORWARD);
         }
     }
 

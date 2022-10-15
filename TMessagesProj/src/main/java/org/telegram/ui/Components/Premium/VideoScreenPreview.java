@@ -256,9 +256,7 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
 
         float horizontalPadding = (measuredWidth - w) / 2f;
         roundRadius = size * 0.0671f;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            aspectRatioFrameLayout.invalidateOutline();
-        }
+        aspectRatioFrameLayout.invalidateOutline();
         if (fromTop) {
             AndroidUtilities.rectTmp.set(horizontalPadding, 0, measuredWidth - horizontalPadding, h);
         } else {

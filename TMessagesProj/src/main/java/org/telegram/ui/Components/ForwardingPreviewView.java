@@ -140,17 +140,14 @@ public class ForwardingPreviewView extends FrameLayout {
         chatPreviewContainer.setBackgroundImage(resourcesProvider.getWallpaperDrawable(), resourcesProvider.isWallpaperMotion());
         chatPreviewContainer.setOccupyStatusBar(false);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            chatPreviewContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, (int) (currentTopOffset + 1), view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(6));
-                }
-            });
-            chatPreviewContainer.setClipToOutline(true);
-            chatPreviewContainer.setElevation(AndroidUtilities.dp(4));
-        }
+        chatPreviewContainer.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, (int) (currentTopOffset + 1), view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(6));
+            }
+        });
+        chatPreviewContainer.setClipToOutline(true);
+        chatPreviewContainer.setElevation(AndroidUtilities.dp(4));
 
         actionBar = new ActionBar(context, resourcesProvider);
         actionBar.setBackgroundColor(getThemedColor(Theme.key_actionBarDefault));
@@ -956,16 +953,12 @@ public class ForwardingPreviewView extends FrameLayout {
     private void setOffset(float yOffset, int chatTopOffset) {
         if (isLandscapeMode) {
             actionBar.setTranslationY(0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                chatPreviewContainer.invalidateOutline();
-            }
+            chatPreviewContainer.invalidateOutline();
             chatPreviewContainer.setTranslationY(0);
             menuScrollView.setTranslationY(0);
         } else {
             actionBar.setTranslationY(chatTopOffset);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                chatPreviewContainer.invalidateOutline();
-            }
+            chatPreviewContainer.invalidateOutline();
             chatPreviewContainer.setTranslationY(yOffset);
             menuScrollView.setTranslationY(yOffset + chatPreviewContainer.getMeasuredHeight() - AndroidUtilities.dp(2));
         }

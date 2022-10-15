@@ -67,12 +67,7 @@ public class WebRtcAudioTrack {
   }
 
   private static int getDefaultUsageAttribute() {
-    if (Build.VERSION.SDK_INT >= 21) {
-      return AudioAttributes.USAGE_VOICE_COMMUNICATION;
-    } else {
-      // Not used on SDKs lower than 21.
-      return 0;
-    }
+    return AudioAttributes.USAGE_VOICE_COMMUNICATION;
   }
 
   private final long nativeAudioTrack;
@@ -200,11 +195,7 @@ public class WebRtcAudioTrack {
     }
 
     private int writeBytes(AudioTrack audioTrack, ByteBuffer byteBuffer, int sizeInBytes) {
-      if (Build.VERSION.SDK_INT >= 21) {
-        return audioTrack.write(byteBuffer, sizeInBytes, AudioTrack.WRITE_BLOCKING);
-      } else {
-        return audioTrack.write(byteBuffer.array(), byteBuffer.arrayOffset(), sizeInBytes);
-      }
+      return audioTrack.write(byteBuffer, sizeInBytes, AudioTrack.WRITE_BLOCKING);
     }
 
     // Stops the inner thread loop which results in calling AudioTrack.stop().
@@ -268,19 +259,13 @@ public class WebRtcAudioTrack {
       // Create an AudioTrack object and initialize its associated audio buffer.
       // The size of this buffer determines how long an AudioTrack can play
       // before running out of data.
-      if (Build.VERSION.SDK_INT >= 21) {
-        // If we are on API level 21 or higher, it is possible to use a special AudioTrack
-        // constructor that uses AudioAttributes and AudioFormat as input. It allows us to
-        // supersede the notion of stream types for defining the behavior of audio playback,
-        // and to allow certain platforms or routing policies to use this information for more
-        // refined volume or routing decisions.
-        audioTrack = createAudioTrackOnLollipopOrHigher(
-            sampleRate, channelConfig, minBufferSizeInBytes);
-      } else {
-        // Use default constructor for API levels below 21.
-        audioTrack =
-            createAudioTrackOnLowerThanLollipop(sampleRate, channelConfig, minBufferSizeInBytes);
-      }
+      // If we are on API level 21 or higher, it is possible to use a special AudioTrack
+      // constructor that uses AudioAttributes and AudioFormat as input. It allows us to
+      // supersede the notion of stream types for defining the behavior of audio playback,
+      // and to allow certain platforms or routing policies to use this information for more
+      // refined volume or routing decisions.
+      audioTrack = createAudioTrackOnLollipopOrHigher(
+          sampleRate, channelConfig, minBufferSizeInBytes);
     } catch (IllegalArgumentException e) {
       reportWebRtcAudioTrackInitError(e.getMessage());
       releaseAudioResources();
@@ -373,8 +358,6 @@ public class WebRtcAudioTrack {
   }
 
   private boolean isVolumeFixed() {
-    if (Build.VERSION.SDK_INT < 21)
-      return false;
     return audioManager.isVolumeFixed();
   }
 
@@ -398,7 +381,6 @@ public class WebRtcAudioTrack {
   // Creates and AudioTrack instance using AudioAttributes and AudioFormat as input.
   // It allows certain platforms or routing policies to use this information for more
   // refined volume or routing decisions.
-  @TargetApi(21)
   private static AudioTrack createAudioTrackOnLollipopOrHigher(
       int sampleRateInHz, int channelConfig, int bufferSizeInBytes) {
     Logging.d(TAG, "createAudioTrackOnLollipopOrHigher");

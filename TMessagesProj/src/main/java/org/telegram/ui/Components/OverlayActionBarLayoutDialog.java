@@ -65,7 +65,7 @@ public class OverlayActionBarLayoutDialog extends Dialog implements ActionBarLay
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
         window.setWindowAnimations(R.style.DialogNoAnimation);
@@ -87,12 +87,10 @@ public class OverlayActionBarLayoutDialog extends Dialog implements ActionBarLay
         }
 
         frameLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            frameLayout.setOnApplyWindowInsetsListener((v, insets) -> {
-                v.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
-                return insets;
-            });
-        }
+        frameLayout.setOnApplyWindowInsetsListener((v, insets) -> {
+            v.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+            return insets;
+        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int color = Theme.getColor(Theme.key_windowBackgroundWhite, null, true);

@@ -184,9 +184,7 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
             emojiIconDrawable.setIcon(R.drawable.input_smile, false);
             addView(emojiButton, LayoutHelper.createFrame(48, 48, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 0));
         }
-        if (Build.VERSION.SDK_INT >= 21) {
-            emojiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
-        }
+        emojiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
         emojiButton.setOnClickListener(view -> {
             if (!emojiButton.isEnabled() || (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress())) {
                 return;

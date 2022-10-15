@@ -70,9 +70,7 @@ public class StickerSetNameCell extends FrameLayout {
         textView.setSingleLine(true);
         if (emoji) {
             textView.setGravity(Gravity.CENTER);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-            }
+            textView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         }
         if (supportRtl) {
             lp = LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT,  Gravity.START | Gravity.TOP, emoji ? 5 : 17, emoji ? 10 : 2, emoji ? 15 : 57, 0);

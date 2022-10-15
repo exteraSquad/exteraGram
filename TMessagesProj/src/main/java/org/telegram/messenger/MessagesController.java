@@ -14461,7 +14461,7 @@ public class MessagesController extends BaseController implements NotificationCe
                                 continue;
                             }
                             boolean notificationsDisabled = false;
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !NotificationManagerCompat.from(ApplicationLoader.applicationContext).areNotificationsEnabled()) {
+                            if (!NotificationManagerCompat.from(ApplicationLoader.applicationContext).areNotificationsEnabled()) {
                                 notificationsDisabled = true;
                                 if (ApplicationLoader.mainInterfacePaused || !ApplicationLoader.isScreenOn) {
                                     if (BuildVars.LOGS_ENABLED) {

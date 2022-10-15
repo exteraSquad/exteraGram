@@ -29,7 +29,6 @@ import com.google.android.exoplayer2.util.Util;
 import java.util.Arrays;
 
 /** Represents the set of audio formats that a device is capable of playing. */
-@TargetApi(21)
 public final class AudioCapabilities {
 
   private static final int DEFAULT_MAX_CHANNEL_COUNT = 8;

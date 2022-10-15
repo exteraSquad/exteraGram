@@ -214,7 +214,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 imageView.getLocationInWindow(coords);
                 PhotoViewer.PlaceProviderObject object = new PhotoViewer.PlaceProviderObject();
                 object.viewX = coords[0];
-                object.viewY = coords[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight);
+                object.viewY = coords[1] - 0;
                 object.parentView = listView;
                 object.imageReceiver = imageView.getImageReceiver();
                 object.thumb = object.imageReceiver.getBitmapSafe();
@@ -1040,32 +1040,23 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
 
             writeButton = new ImageView(context);
             writeButtonDrawable = ExteraUtils.drawFab(true);
-            if (Build.VERSION.SDK_INT < 21) {
-                Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow_profile).mutate();
-                shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-                CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, writeButtonDrawable, 0, 0);
-                combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                writeButtonDrawable = combinedDrawable;
-            }
             writeButton.setBackgroundDrawable(writeButtonDrawable);
             writeButton.setImageResource(R.drawable.attach_send);
             writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             writeButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));
             writeButton.setScaleType(ImageView.ScaleType.CENTER);
-            if (Build.VERSION.SDK_INT >= 21) {
-                writeButton.setOutlineProvider(new ViewOutlineProvider() {
-                    @SuppressLint("NewApi")
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        if (ExteraConfig.squareFab) {
-                            outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
-                        } else {
-                            outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                        }
+            writeButton.setOutlineProvider(new ViewOutlineProvider() {
+                @SuppressLint("NewApi")
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    if (ExteraConfig.squareFab) {
+                        outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
+                    } else {
+                        outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
                     }
-                });
-            }
-            writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, Gravity.LEFT | Gravity.TOP, Build.VERSION.SDK_INT >= 21 ? 2 : 0, 0, 0, 0));
+                }
+            });
+            writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(56, 56, Gravity.LEFT | Gravity.TOP, 2, 0, 0, 0));
             writeButton.setOnClickListener(v -> {
                 if (chatActivity != null && chatActivity.isInScheduleMode()) {
                     AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), chatActivity.getDialogId(), this::sendSelectedPhotos);

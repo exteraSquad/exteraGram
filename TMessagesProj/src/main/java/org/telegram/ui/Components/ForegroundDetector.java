@@ -77,7 +77,7 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
     }
 
     public boolean isWasInBackground(boolean reset) {
-        if (reset && Build.VERSION.SDK_INT >= 21 && (SystemClock.elapsedRealtime() - enterBackgroundTime < 200)) {
+        if (reset && SystemClock.elapsedRealtime() - enterBackgroundTime < 200) {
             wasInBackground = false;
         }
         return wasInBackground;

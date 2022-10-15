@@ -455,7 +455,7 @@ public class AlertDialog extends Dialog implements Drawable.Callback {
                 drawBackground = false;
             }
         }
-        containerView.setFitsSystemWindows(Build.VERSION.SDK_INT >= 21);
+        containerView.setFitsSystemWindows(true);
         setContentView(containerView);
 
         final boolean hasButtons = positiveButtonText != null || negativeButtonText != null || neutralButtonText != null;

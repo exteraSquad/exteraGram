@@ -554,7 +554,7 @@ public class ProximitySheet extends FrameLayout {
         }
         containerView.setVisibility(View.VISIBLE);
 
-        if (Build.VERSION.SDK_INT >= 20 && useHardwareLayer) {
+        if (useHardwareLayer) {
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
         containerView.setTranslationY(containerView.getMeasuredHeight());

@@ -642,13 +642,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                         sampleStep = (float) len / 2 / (float) newPart;
                         for (int i = 0; i < len / 2; i++) {
                             short peak = buffer.getShort();
-                            if (Build.VERSION.SDK_INT < 21) {
-                                if (peak > 2500) {
-                                    sum += peak * peak;
-                                }
-                            } else {
-                                sum += peak * peak;
-                            }
+                            sum += peak * peak;
                             if (i == (int) nextNum && currentNum < recordSamples.length) {
                                 recordSamples[currentNum] = peak;
                                 nextNum += sampleStep;

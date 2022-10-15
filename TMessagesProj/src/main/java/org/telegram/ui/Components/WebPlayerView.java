@@ -118,7 +118,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
 
     private boolean isStream;
 
-    private boolean allowInlineAnimation = Build.VERSION.SDK_INT >= 21;
+    private boolean allowInlineAnimation = true;
 
     private static final int AUDIO_NO_FOCUS_NO_DUCK = 0;
     private static final int AUDIO_NO_FOCUS_CAN_DUCK = 1;
@@ -784,29 +784,14 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
                             }
                         }
                         if (!TextUtils.isEmpty(functionCode)) {
-                            if (Build.VERSION.SDK_INT >= 21) {
-                                functionCode += functionName + "('" + sig.substring(3) + "');";
-                            } else {
-                                functionCode += "window." + interfaceName + ".returnResultToJava(" + functionName + "('" + sig.substring(3) + "'));";
-                            }
+                            functionCode += functionName + "('" + sig.substring(3) + "');";
                             final String functionCodeFinal = functionCode;
                             try {
                                 AndroidUtilities.runOnUIThread(() -> {
-                                    if (Build.VERSION.SDK_INT >= 21) {
-                                        webView.evaluateJavascript(functionCodeFinal, value -> {
-                                            result[0] = result[0].replace(sig, "/signature/" + value.substring(1, value.length() - 1));
-                                            countDownLatch.countDown();
-                                        });
-                                    } else {
-                                        try {
-                                            String javascript = "<script>" + functionCodeFinal + "</script>";
-                                            byte[] data = javascript.getBytes("UTF-8");
-                                            final String base64 = Base64.encodeToString(data, Base64.DEFAULT);
-                                            webView.loadUrl("data:text/html;charset=utf-8;base64," + base64);
-                                        } catch (Exception e) {
-                                            FileLog.e(e);
-                                        }
-                                    }
+                                    webView.evaluateJavascript(functionCodeFinal, value -> {
+                                        result[0] = result[0].replace(sig, "/signature/" + value.substring(1, value.length() - 1));
+                                        countDownLatch.countDown();
+                                    });
                                 });
                                 countDownLatch.await();
                                 encrypted = false;

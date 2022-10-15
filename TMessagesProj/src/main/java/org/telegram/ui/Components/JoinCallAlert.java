@@ -392,9 +392,7 @@ public class JoinCallAlert extends BottomSheet {
                 @Override
                 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                     int height = MeasureSpec.getSize(heightMeasureSpec);
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        height -= AndroidUtilities.statusBarHeight;
-                    }
+                    height -= AndroidUtilities.statusBarHeight;
                     measureChildWithMargins(messageTextView, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     int h = messageTextView.getMeasuredHeight();
                     ((LayoutParams) listView.getLayoutParams()).topMargin = AndroidUtilities.dp(65) + h;

@@ -1022,7 +1022,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			stopSelf();
 			return;
 		}
-		if (Build.VERSION.SDK_INT >= 19 && XiaomiUtilities.isMIUI() && !XiaomiUtilities.isCustomPermissionGranted(XiaomiUtilities.OP_SHOW_WHEN_LOCKED)) {
+		if (XiaomiUtilities.isMIUI() && !XiaomiUtilities.isCustomPermissionGranted(XiaomiUtilities.OP_SHOW_WHEN_LOCKED)) {
 			if (((KeyguardManager) getSystemService(KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode()) {
 				if (BuildVars.LOGS_ENABLED) {
 					FileLog.e("MIUI: no permission to show when locked but the screen is locked. ¯\\_(ツ)_/¯");
@@ -2318,15 +2318,13 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			nprefs.edit().putStringSet("calls_access_hashes", hashes).commit();
 
 			boolean sysAecAvailable = false, sysNsAvailable = false;
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-				try {
-					sysAecAvailable = AcousticEchoCanceler.isAvailable();
-				} catch (Exception ignored) {
-				}
-				try {
-					sysNsAvailable = NoiseSuppressor.isAvailable();
-				} catch (Exception ignored) {
-				}
+			try {
+				sysAecAvailable = AcousticEchoCanceler.isAvailable();
+			} catch (Exception ignored) {
+			}
+			try {
+				sysNsAvailable = NoiseSuppressor.isAvailable();
+			} catch (Exception ignored) {
 			}
 
 			final SharedPreferences preferences = MessagesController.getGlobalMainSettings();
@@ -2877,13 +2875,11 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			}
 		}
 		builder.setPriority(Notification.PRIORITY_MAX);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			builder.setShowWhen(false);
-		}
+		builder.setShowWhen(false);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			builder.setColor(0xff282e31);
 			builder.setColorized(true);
-		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		} else {
 			builder.setColor(0xff2ca5e0);
 		}
 		if (Build.VERSION.SDK_INT >= 31) {
@@ -3319,7 +3315,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			FileLog.d("starting ringing for call " + privateCall.id);
 		}
 		dispatchStateChanged(STATE_WAITING_INCOMING);
-		if (!notificationsDisabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		if (!notificationsDisabled) {
 			showIncomingNotification(ContactsController.formatName(user.first_name, user.last_name), null, user, privateCall.video, 0);
 			if (BuildVars.LOGS_ENABLED) {
 				FileLog.d("Showing incoming call notification");
@@ -3452,7 +3448,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 		}
 		try {
 			AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER) != null) {
+			if (am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER) != null) {
 				int outFramesPerBuffer = Integer.parseInt(am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER));
 				Instance.setBufferSize(outFramesPerBuffer);
 			} else {
@@ -3527,9 +3523,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 	}
 
 	private void loadResources() {
-		if (Build.VERSION.SDK_INT >= 21) {
-			WebRtcAudioTrack.setAudioTrackUsageAttribute(AudioAttributes.USAGE_VOICE_COMMUNICATION);
-		}
+		WebRtcAudioTrack.setAudioTrackUsageAttribute(AudioAttributes.USAGE_VOICE_COMMUNICATION);
 		Utilities.globalQueue.postRunnable(() -> {
 			soundPool = new SoundPool(1, AudioManager.STREAM_VOICE_CALL, 0);
 			spConnectingId = soundPool.load(this, R.raw.voip_connecting, 1);
@@ -3588,10 +3582,8 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			FileLog.d("configureDeviceForCall, route to set = " + audioRouteToSet);
 		}
 
-		if (Build.VERSION.SDK_INT >= 21) {
-			WebRtcAudioTrack.setAudioTrackUsageAttribute(hasRtmpStream() ? AudioAttributes.USAGE_MEDIA : AudioAttributes.USAGE_VOICE_COMMUNICATION);
-			WebRtcAudioTrack.setAudioStreamType(hasRtmpStream() ? AudioManager.USE_DEFAULT_STREAM_TYPE : AudioManager.STREAM_VOICE_CALL);
-		}
+		WebRtcAudioTrack.setAudioTrackUsageAttribute(hasRtmpStream() ? AudioAttributes.USAGE_MEDIA : AudioAttributes.USAGE_VOICE_COMMUNICATION);
+		WebRtcAudioTrack.setAudioStreamType(hasRtmpStream() ? AudioManager.USE_DEFAULT_STREAM_TYPE : AudioManager.STREAM_VOICE_CALL);
 
 		needPlayEndSound = true;
 		AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -3978,7 +3970,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 				}
 			}
 			builder.setChannelId("incoming_calls3" + chanIndex);
-		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		} else {
 			builder.setSound(soundProviderUri, AudioManager.STREAM_RING);
 		}
 		Intent endIntent = new Intent(this, VoIPActionsReceiver.class);
@@ -4002,19 +3994,15 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 		PendingIntent answerPendingIntent = PendingIntent.getBroadcast(this, 0, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 		if (Build.VERSION.SDK_INT < 31) builder.addAction(R.drawable.ic_call, answerTitle, answerPendingIntent);
 		builder.setPriority(Notification.PRIORITY_MAX);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			builder.setShowWhen(false);
-		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			builder.setColor(0xff2ca5e0);
-			builder.setVibrate(new long[0]);
-			builder.setCategory(Notification.CATEGORY_CALL);
-			builder.setFullScreenIntent(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE), true);
-			if (userOrChat instanceof TLRPC.User) {
-				TLRPC.User user = (TLRPC.User) userOrChat;
-				if (!TextUtils.isEmpty(user.phone)) {
-					builder.addPerson("tel:" + user.phone);
-				}
+		builder.setShowWhen(false);
+		builder.setColor(0xff2ca5e0);
+		builder.setVibrate(new long[0]);
+		builder.setCategory(Notification.CATEGORY_CALL);
+		builder.setFullScreenIntent(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE), true);
+		if (userOrChat instanceof TLRPC.User) {
+			TLRPC.User user = (TLRPC.User) userOrChat;
+			if (!TextUtils.isEmpty(user.phone)) {
+				builder.addPerson("tel:" + user.phone);
 			}
 		}
 		Bitmap avatar = getRoundAvatarBitmap(userOrChat);

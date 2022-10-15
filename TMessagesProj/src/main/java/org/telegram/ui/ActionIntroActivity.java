@@ -792,7 +792,7 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 LocationManager lm = (LocationManager) ApplicationLoader.applicationContext.getSystemService(Context.LOCATION_SERVICE);
                 enabled = lm.isLocationEnabled();
-            } else if (Build.VERSION.SDK_INT >= 19) {
+            } else {
                 try {
                     int mode = Settings.Secure.getInt(ApplicationLoader.applicationContext.getContentResolver(), Settings.Secure.LOCATION_MODE, Settings.Secure.LOCATION_MODE_OFF);
                     enabled = (mode != Settings.Secure.LOCATION_MODE_OFF);

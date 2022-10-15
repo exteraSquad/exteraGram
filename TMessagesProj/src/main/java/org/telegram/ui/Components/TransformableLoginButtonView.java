@@ -149,9 +149,7 @@ public class TransformableLoginButtonView extends View {
 
         if (rippleDrawable != null) {
             rippleDrawable.setBounds(0, 0, getWidth(), getHeight());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                rippleDrawable.setHotspotBounds(0, 0, getWidth(), getHeight());
-            }
+            rippleDrawable.setHotspotBounds(0, 0, getWidth(), getHeight());
             rippleDrawable.draw(canvas);
         }
     }
@@ -176,7 +174,7 @@ public class TransformableLoginButtonView extends View {
     @Override
     public void drawableHotspotChanged(float x, float y) {
         super.drawableHotspotChanged(x, y);
-        if (rippleDrawable != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (rippleDrawable != null) {
             rippleDrawable.setHotspot(x, y);
         }
     }

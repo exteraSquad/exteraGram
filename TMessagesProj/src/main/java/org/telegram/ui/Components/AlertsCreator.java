@@ -4402,7 +4402,6 @@ public class AlertsCreator {
         return builder.create();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static AlertDialog.Builder createBackgroundLocationPermissionDialog(Activity activity, TLRPC.User selfUser, Runnable cancelRunnable, Theme.ResourcesProvider resourcesProvider) {
         if (activity == null || Build.VERSION.SDK_INT < 29) {
             return null;
@@ -4449,15 +4448,13 @@ public class AlertsCreator {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         String svg = RLottieDrawable.readRes(null, R.raw.gigagroup);
         FrameLayout frameLayout = new FrameLayout(activity);
-        if (Build.VERSION.SDK_INT >= 21) {
-            frameLayout.setClipToOutline(true);
-            frameLayout.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight() + AndroidUtilities.dp(6), AndroidUtilities.dp(6));
-                }
-            });
-        }
+        frameLayout.setClipToOutline(true);
+        frameLayout.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight() + AndroidUtilities.dp(6), AndroidUtilities.dp(6));
+            }
+        });
         float aspectRatio = 372f / 936f;
         View background = new View(activity);
         background.setBackground(new BitmapDrawable(SvgHelper.getBitmap(svg, AndroidUtilities.dp(320), AndroidUtilities.dp(320 * aspectRatio), false)));
@@ -4472,7 +4469,6 @@ public class AlertsCreator {
         return builder;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static AlertDialog.Builder createDrawOverlayPermissionDialog(Activity activity, DialogInterface.OnClickListener onCancel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         String svg = RLottieDrawable.readRes(null, R.raw.pip_video_request);
@@ -4512,7 +4508,6 @@ public class AlertsCreator {
         return builder;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static AlertDialog.Builder createDrawOverlayGroupCallPermissionDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         String svg = RLottieDrawable.readRes(null, R.raw.pip_voice_request);
@@ -5797,11 +5792,7 @@ public class AlertsCreator {
     public static ActionBarPopupWindow showPopupMenu(ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout, View anchorView, int offsetX, int offsetY) {
         Rect rect = new Rect();
         ActionBarPopupWindow popupWindow = new ActionBarPopupWindow(popupLayout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
-        if (Build.VERSION.SDK_INT >= 19) {
-            popupWindow.setAnimationStyle(0);
-        } else {
-            popupWindow.setAnimationStyle(R.style.PopupAnimation);
-        }
+        popupWindow.setAnimationStyle(0);
 
         popupWindow.setAnimationEnabled(true);
 

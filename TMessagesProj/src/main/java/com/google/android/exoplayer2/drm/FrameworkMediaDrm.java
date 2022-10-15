@@ -46,7 +46,6 @@ import java.util.UUID;
 
 /** An {@link ExoMediaDrm} implementation that wraps the framework {@link MediaDrm}. */
 @TargetApi(23)
-@RequiresApi(18)
 public final class FrameworkMediaDrm implements ExoMediaDrm<FrameworkMediaCrypto> {
 
   private static final String TAG = "FrameworkMediaDrm";

@@ -49,12 +49,10 @@ public final class TraceUtil {
     }
   }
 
-  @TargetApi(18)
   private static void beginSectionV18(String sectionName) {
     android.os.Trace.beginSection(sectionName);
   }
 
-  @TargetApi(18)
   private static void endSectionV18() {
     android.os.Trace.endSection();
   }

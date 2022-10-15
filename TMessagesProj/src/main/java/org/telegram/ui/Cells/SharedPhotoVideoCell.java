@@ -136,9 +136,7 @@ public class SharedPhotoVideoCell extends FrameLayout {
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                selector.drawableHotspotChanged(event.getX(), event.getY());
-            }
+            selector.drawableHotspotChanged(event.getX(), event.getY());
             return super.onTouchEvent(event);
         }
 

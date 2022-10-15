@@ -61,7 +61,6 @@ public class MediaCodecVideoConvertor {
         return endPresentationTime;
     }
 
-    @TargetApi(18)
     private boolean convertVideoInternal(String videoPath, File cacheFile,
                                          int rotationValue, boolean isSecret,
                                          int originalWidth, int originalHeight,
@@ -150,9 +149,6 @@ public class MediaCodecVideoConvertor {
 
                     ByteBuffer[] encoderOutputBuffers = null;
                     ByteBuffer[] encoderInputBuffers = null;
-                    if (Build.VERSION.SDK_INT < 21) {
-                        encoderOutputBuffers = encoder.getOutputBuffers();
-                    }
 
                     boolean firstEncode = true;
 
@@ -169,9 +165,6 @@ public class MediaCodecVideoConvertor {
                             if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                                 encoderOutputAvailable = false;
                             } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                                if (Build.VERSION.SDK_INT < 21) {
-                                    encoderOutputBuffers = encoder.getOutputBuffers();
-                                }
                             } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                                 MediaFormat newFormat = encoder.getOutputFormat();
                                 if (BuildVars.LOGS_ENABLED) {
@@ -189,11 +182,7 @@ public class MediaCodecVideoConvertor {
                                 throw new RuntimeException("unexpected result from encoder.dequeueOutputBuffer: " + encoderStatus);
                             } else {
                                 ByteBuffer encodedData;
-                                if (Build.VERSION.SDK_INT < 21) {
-                                    encodedData = encoderOutputBuffers[encoderStatus];
-                                } else {
-                                    encodedData = encoder.getOutputBuffer(encoderStatus);
-                                }
+                                encodedData = encoder.getOutputBuffer(encoderStatus);
                                 if (encodedData == null) {
                                     throw new RuntimeException("encoderOutputBuffer " + encoderStatus + " was null");
                                 }
@@ -418,10 +407,6 @@ public class MediaCodecVideoConvertor {
                             ByteBuffer[] decoderInputBuffers = null;
                             ByteBuffer[] encoderOutputBuffers = null;
                             ByteBuffer[] encoderInputBuffers = null;
-                            if (Build.VERSION.SDK_INT < 21) {
-                                decoderInputBuffers = decoder.getInputBuffers();
-                                encoderOutputBuffers = encoder.getOutputBuffers();
-                            }
 
                             int maxBufferSize = 0;
                             if (audioIndex >= 0) {
@@ -490,11 +475,7 @@ public class MediaCodecVideoConvertor {
                                         int inputBufIndex = decoder.dequeueInputBuffer(MEDIACODEC_TIMEOUT_DEFAULT);
                                         if (inputBufIndex >= 0) {
                                             ByteBuffer inputBuf;
-                                            if (Build.VERSION.SDK_INT < 21) {
-                                                inputBuf = decoderInputBuffers[inputBufIndex];
-                                            } else {
-                                                inputBuf = decoder.getInputBuffer(inputBufIndex);
-                                            }
+                                            inputBuf = decoder.getInputBuffer(inputBufIndex);
                                             int chunkSize = extractor.readSampleData(inputBuf, 0);
                                             if (chunkSize < 0) {
                                                 decoder.queueInputBuffer(inputBufIndex, 0, 0, 0L, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
@@ -513,10 +494,6 @@ public class MediaCodecVideoConvertor {
                                             }
                                         }
                                         info.size = extractor.readSampleData(audioBuffer, 0);
-                                        if (Build.VERSION.SDK_INT < 21) {
-                                            audioBuffer.position(0);
-                                            audioBuffer.limit(info.size);
-                                        }
                                         if (info.size >= 0) {
                                             info.presentationTimeUs = extractor.getSampleTime();
                                             extractor.advance();
@@ -557,9 +534,6 @@ public class MediaCodecVideoConvertor {
                                     if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                                         encoderOutputAvailable = false;
                                     } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                                        if (Build.VERSION.SDK_INT < 21) {
-                                            encoderOutputBuffers = encoder.getOutputBuffers();
-                                        }
                                     } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                                         MediaFormat newFormat = encoder.getOutputFormat();
                                         if (videoTrackIndex == -5 && newFormat != null) {
@@ -574,11 +548,7 @@ public class MediaCodecVideoConvertor {
                                         throw new RuntimeException("unexpected result from encoder.dequeueOutputBuffer: " + encoderStatus);
                                     } else {
                                         ByteBuffer encodedData;
-                                        if (Build.VERSION.SDK_INT < 21) {
-                                            encodedData = encoderOutputBuffers[encoderStatus];
-                                        } else {
-                                            encodedData = encoder.getOutputBuffer(encoderStatus);
-                                        }
+                                        encodedData = encoder.getOutputBuffer(encoderStatus);
                                         if (encodedData == null) {
                                             throw new RuntimeException("encoderOutputBuffer " + encoderStatus + " was null");
                                         }
@@ -891,10 +861,6 @@ public class MediaCodecVideoConvertor {
                     muxerTrackIndex = -1;
                 }
                 if (muxerTrackIndex != -1) {
-                    if (Build.VERSION.SDK_INT < 21) {
-                        buffer.position(0);
-                        buffer.limit(info.size);
-                    }
                     if (index != audioTrackIndex) {
                         byte[] array = buffer.array();
                         if (array != null) {

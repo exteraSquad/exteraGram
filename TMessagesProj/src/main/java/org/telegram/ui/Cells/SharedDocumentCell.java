@@ -517,7 +517,7 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
     }
 
     public void updateFileExistIcon(boolean animated) {
-        if (animated && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (animated) {
             TransitionSet transition = new TransitionSet();
             ChangeBounds changeBounds = new ChangeBounds();
             changeBounds.setDuration(150);

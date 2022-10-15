@@ -767,11 +767,7 @@ public class DataAutoDownloadActivity extends BaseFragment {
                             view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                             view.setText(null);
                             view.setFixedSize(12);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-                            } else {
-                                view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-                            }
+                            view.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
                         }
                         break;
                     }

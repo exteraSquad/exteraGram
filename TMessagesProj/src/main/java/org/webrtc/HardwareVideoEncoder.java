@@ -31,7 +31,6 @@ import org.webrtc.ThreadUtils.ThreadChecker;
  *
  * @note This class is only supported on Android Kitkat and above.
  */
-@TargetApi(19)
 @SuppressWarnings("deprecation") // Cannot support API level 19 without using deprecated methods.
 class HardwareVideoEncoder implements VideoEncoder {
   private static final String TAG = "HardwareVideoEncoder";

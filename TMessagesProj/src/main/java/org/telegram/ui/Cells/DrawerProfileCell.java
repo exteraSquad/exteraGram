@@ -188,10 +188,8 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         sunDrawable.commitApplyLayerColors();
         darkThemeView.setScaleType(ImageView.ScaleType.CENTER);
         darkThemeView.setAnimation(sunDrawable);
-        if (Build.VERSION.SDK_INT >= 21) {
-            darkThemeView.setBackgroundDrawable(Theme.createSelectorDrawable(darkThemeBackgroundColor = Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17)));
-            Theme.setRippleDrawableForceSoftware((RippleDrawable) darkThemeView.getBackground());
-        }
+        darkThemeView.setBackgroundDrawable(Theme.createSelectorDrawable(darkThemeBackgroundColor = Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17)));
+        Theme.setRippleDrawableForceSoftware((RippleDrawable) darkThemeView.getBackground());
         darkThemeView.setOnClickListener(v -> {
             if (switchingTheme) {
                 return;
@@ -467,16 +465,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(148) + AndroidUtilities.statusBarHeight, MeasureSpec.EXACTLY));
-        } else {
-            try {
-                super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(148), MeasureSpec.EXACTLY));
-            } catch (Exception e) {
-                setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), AndroidUtilities.dp(148));
-                FileLog.e(e);
-            }
-        }
+        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(148) + AndroidUtilities.statusBarHeight, MeasureSpec.EXACTLY));
     }
 
     @Override

@@ -855,11 +855,7 @@ public class Theme {
             }
             if (gradientShader == null) {
                 Drawable background = getBackgroundDrawable();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    if (background.getAlpha() != alpha) {
-                        background.setAlpha(alpha);
-                    }
-                } else {
+                if (background.getAlpha() != alpha) {
                     background.setAlpha(alpha);
                 }
             }
@@ -5663,20 +5659,6 @@ public class Theme {
         StateListDrawable stateListDrawable = new StateListDrawable() {
             @Override
             public boolean selectDrawable(int index) {
-                if (Build.VERSION.SDK_INT < 21) {
-                    Drawable drawable = Theme.getStateDrawable(this, index);
-                    ColorFilter colorFilter = null;
-                    if (drawable instanceof BitmapDrawable) {
-                        colorFilter = ((BitmapDrawable) drawable).getPaint().getColorFilter();
-                    } else if (drawable instanceof NinePatchDrawable) {
-                        colorFilter = ((NinePatchDrawable) drawable).getPaint().getColorFilter();
-                    }
-                    boolean result = super.selectDrawable(index);
-                    if (colorFilter != null) {
-                        drawable.setColorFilter(colorFilter);
-                    }
-                    return result;
-                }
                 return super.selectDrawable(index);
             }
         };
@@ -5700,20 +5682,6 @@ public class Theme {
         StateListDrawable stateListDrawable = new StateListDrawable() {
             @Override
             public boolean selectDrawable(int index) {
-                if (Build.VERSION.SDK_INT < 21) {
-                    Drawable drawable = Theme.getStateDrawable(this, index);
-                    ColorFilter colorFilter = null;
-                    if (drawable instanceof BitmapDrawable) {
-                        colorFilter = ((BitmapDrawable) drawable).getPaint().getColorFilter();
-                    } else if (drawable instanceof NinePatchDrawable) {
-                        colorFilter = ((NinePatchDrawable) drawable).getPaint().getColorFilter();
-                    }
-                    boolean result = super.selectDrawable(index);
-                    if (colorFilter != null) {
-                        drawable.setColorFilter(colorFilter);
-                    }
-                    return result;
-                }
                 return super.selectDrawable(index);
             }
         };
@@ -5792,20 +5760,6 @@ public class Theme {
         StateListDrawable stateListDrawable = new StateListDrawable() {
             @Override
             public boolean selectDrawable(int index) {
-                if (Build.VERSION.SDK_INT < 21) {
-                    Drawable drawable = Theme.getStateDrawable(this, index);
-                    ColorFilter colorFilter = null;
-                    if (drawable instanceof BitmapDrawable) {
-                        colorFilter = ((BitmapDrawable) drawable).getPaint().getColorFilter();
-                    } else if (drawable instanceof NinePatchDrawable) {
-                        colorFilter = ((NinePatchDrawable) drawable).getPaint().getColorFilter();
-                    }
-                    boolean result = super.selectDrawable(index);
-                    if (colorFilter != null) {
-                        drawable.setColorFilter(colorFilter);
-                    }
-                    return result;
-                }
                 return super.selectDrawable(index);
             }
         };
@@ -5900,21 +5854,12 @@ public class Theme {
         ShapeDrawable defaultDrawable = new ShapeDrawable(ovalShape);
         defaultDrawable.getPaint().setColor(defaultColor);
         ShapeDrawable pressedDrawable = new ShapeDrawable(ovalShape);
-        if (Build.VERSION.SDK_INT >= 21) {
-            pressedDrawable.getPaint().setColor(0xffffffff);
-            ColorStateList colorStateList = new ColorStateList(
-                    new int[][]{StateSet.WILD_CARD},
-                    new int[]{pressedColor}
-            );
-            return new RippleDrawable(colorStateList, defaultDrawable, pressedDrawable);
-        } else {
-            pressedDrawable.getPaint().setColor(pressedColor);
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, pressedDrawable);
-            stateListDrawable.addState(new int[]{android.R.attr.state_focused}, pressedDrawable);
-            stateListDrawable.addState(StateSet.WILD_CARD, defaultDrawable);
-            return stateListDrawable;
-        }
+        pressedDrawable.getPaint().setColor(0xffffffff);
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{StateSet.WILD_CARD},
+                new int[]{pressedColor}
+        );
+        return new RippleDrawable(colorStateList, defaultDrawable, pressedDrawable);
     }
 
     public static Drawable createRoundRectDrawable(int rad, int defaultColor) {
@@ -5975,19 +5920,11 @@ public class Theme {
         defaultDrawable.getPaint().setColor(defaultColor);
         ShapeDrawable pressedDrawable = new ShapeDrawable(new RoundRectShape(new float[]{rad, rad, rad, rad, rad, rad, rad, rad}, null, null));
         pressedDrawable.getPaint().setColor(maskColor);
-        if (Build.VERSION.SDK_INT >= 21) {
-            ColorStateList colorStateList = new ColorStateList(
-                    new int[][]{StateSet.WILD_CARD},
-                    new int[]{pressedColor}
-            );
-            return new RippleDrawable(colorStateList, defaultDrawable, pressedDrawable);
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, pressedDrawable);
-            stateListDrawable.addState(new int[]{android.R.attr.state_selected}, pressedDrawable);
-            stateListDrawable.addState(StateSet.WILD_CARD, defaultDrawable);
-            return stateListDrawable;
-        }
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{StateSet.WILD_CARD},
+                new int[]{pressedColor}
+        );
+        return new RippleDrawable(colorStateList, defaultDrawable, pressedDrawable);
     }
 
     public static Drawable createSelectorDrawableFromDrawables(Drawable normal, Drawable pressed) {
@@ -6003,37 +5940,21 @@ public class Theme {
     }
 
     public static Drawable getRoundRectSelectorDrawable(int corners, int color) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Drawable maskDrawable = createRoundRectDrawable(corners, 0xffffffff);
-            ColorStateList colorStateList = new ColorStateList(
-                    new int[][]{StateSet.WILD_CARD},
-                    new int[]{(color & 0x00ffffff) | 0x19000000}
-            );
-            return new RippleDrawable(colorStateList, null, maskDrawable);
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, createRoundRectDrawable(corners, (color & 0x00ffffff) | 0x19000000));
-            stateListDrawable.addState(new int[]{android.R.attr.state_selected}, createRoundRectDrawable(corners, (color & 0x00ffffff) | 0x19000000));
-            stateListDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(0x00000000));
-            return stateListDrawable;
-        }
+        Drawable maskDrawable = createRoundRectDrawable(corners, 0xffffffff);
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{StateSet.WILD_CARD},
+                new int[]{(color & 0x00ffffff) | 0x19000000}
+        );
+        return new RippleDrawable(colorStateList, null, maskDrawable);
     }
 
     public static Drawable createSelectorWithBackgroundDrawable(int backgroundColor, int color) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Drawable maskDrawable = new ColorDrawable(backgroundColor);
-            ColorStateList colorStateList = new ColorStateList(
-                    new int[][]{StateSet.WILD_CARD},
-                    new int[]{color}
-            );
-            return new RippleDrawable(colorStateList, new ColorDrawable(backgroundColor), maskDrawable);
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(color));
-            stateListDrawable.addState(new int[]{android.R.attr.state_selected}, new ColorDrawable(color));
-            stateListDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(backgroundColor));
-            return stateListDrawable;
-        }
+        Drawable maskDrawable = new ColorDrawable(backgroundColor);
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{StateSet.WILD_CARD},
+                new int[]{color}
+        );
+        return new RippleDrawable(colorStateList, new ColorDrawable(backgroundColor), maskDrawable);
     }
 
     public static Drawable getSelectorDrawable(boolean whiteBackground) {
@@ -6050,20 +5971,12 @@ public class Theme {
 
     public static Drawable getSelectorDrawable(int color, String backgroundColor) {
         if (backgroundColor != null) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                Drawable maskDrawable = new ColorDrawable(0xffffffff);
-                ColorStateList colorStateList = new ColorStateList(
-                        new int[][]{StateSet.WILD_CARD},
-                        new int[]{color}
-                );
-                return new RippleDrawable(colorStateList, new ColorDrawable(getColor(backgroundColor)), maskDrawable);
-            } else {
-                StateListDrawable stateListDrawable = new StateListDrawable();
-                stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(color));
-                stateListDrawable.addState(new int[]{android.R.attr.state_selected}, new ColorDrawable(color));
-                stateListDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(getColor(backgroundColor)));
-                return stateListDrawable;
-            }
+            Drawable maskDrawable = new ColorDrawable(0xffffffff);
+            ColorStateList colorStateList = new ColorStateList(
+                    new int[][]{StateSet.WILD_CARD},
+                    new int[]{color}
+            );
+            return new RippleDrawable(colorStateList, new ColorDrawable(getColor(backgroundColor)), maskDrawable);
         } else {
             return createSelectorDrawable(color, 2);
         }
@@ -6085,113 +5998,62 @@ public class Theme {
     public static final int RIPPLE_MASK_ROUNDRECT_6DP = 7;
 
     public static Drawable createSelectorDrawable(int color, int maskType, int radius) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Drawable maskDrawable = null;
-            if ((maskType == RIPPLE_MASK_CIRCLE_20DP || maskType == 5) && Build.VERSION.SDK_INT >= 23) {
-                maskDrawable = null;
-            } else if (
-                maskType == RIPPLE_MASK_CIRCLE_20DP ||
-                maskType == RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE ||
-                maskType == RIPPLE_MASK_CIRCLE_TO_BOUND_CORNER ||
-                maskType == RIPPLE_MASK_CIRCLE_AUTO ||
-                maskType == 6 ||
-                maskType == RIPPLE_MASK_ROUNDRECT_6DP ||
-                maskType == 100
-            ) {
-                maskPaint.setColor(0xffffffff);
-                maskDrawable = new Drawable() {
-
-                    RectF rect;
-
-                    @Override
-                    public void draw(Canvas canvas) {
-                        android.graphics.Rect bounds = getBounds();
-                        if (maskType == 100) {
-                            if (rect == null) {
-                                rect = new RectF();
-                            }
-                            rect.set(bounds);
-                            canvas.drawRoundRect(rect, radius, radius, maskPaint);
-                        } else if (maskType == RIPPLE_MASK_ROUNDRECT_6DP) {
-                            if (rect == null) {
-                                rect = new RectF();
-                            }
-                            rect.set(bounds);
-                            float rad = radius <= 0 ? AndroidUtilities.dp(6) : radius;
-                            canvas.drawRoundRect(rect, rad, rad, maskPaint);
-                        } else {
-                            int rad;
-                            if (maskType == RIPPLE_MASK_CIRCLE_20DP || maskType == 6) {
-                                rad = radius <= 0 ? AndroidUtilities.dp(20) : radius;
-                            } else if (maskType == RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE) {
-                                rad = (Math.max(bounds.width(), bounds.height()) / 2);
-                            } else {
-                                // RIPPLE_MASK_CIRCLE_AUTO = 5
-                                // RIPPLE_MASK_CIRCLE_TO_BOUND_CORNER = 4
-                                rad = (int) Math.ceil(Math.sqrt((bounds.left - bounds.centerX()) * (bounds.left - bounds.centerX()) + (bounds.top - bounds.centerY()) * (bounds.top - bounds.centerY())));
-                            }
-                            canvas.drawCircle(bounds.centerX(), bounds.centerY(), rad, maskPaint);
-                        }
-                    }
-
-                    @Override
-                    public void setAlpha(int alpha) {
-
-                    }
-
-                    @Override
-                    public void setColorFilter(ColorFilter colorFilter) {
-
-                    }
-
-                    @Override
-                    public int getOpacity() {
-                        return PixelFormat.UNKNOWN;
-                    }
-                };
-            } else if (maskType == RIPPLE_MASK_ALL) {
-                maskDrawable = new ColorDrawable(0xffffffff);
-            }
-            ColorStateList colorStateList = new ColorStateList(
-                new int[][]{ StateSet.WILD_CARD },
-                new int[]{ color }
-            );
-            RippleDrawable rippleDrawable = new RippleDrawable(colorStateList, null, maskDrawable);
-            if (Build.VERSION.SDK_INT >= 23) {
-                if (maskType == RIPPLE_MASK_CIRCLE_20DP) {
-                    rippleDrawable.setRadius(radius <= 0 ? AndroidUtilities.dp(20) : radius);
-                } else if (maskType == RIPPLE_MASK_CIRCLE_AUTO) {
-                    rippleDrawable.setRadius(RippleDrawable.RADIUS_AUTO);
-                }
-            }
-            return rippleDrawable;
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(color));
-            stateListDrawable.addState(new int[]{android.R.attr.state_selected}, new ColorDrawable(color));
-            stateListDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(0x00000000));
-            return stateListDrawable;
-        }
-    }
-
-    public static Drawable createCircleSelectorDrawable(int color, int leftInset, int rightInset) {
-        if (Build.VERSION.SDK_INT >= 21) {
+        Drawable maskDrawable = null;
+        if ((maskType == RIPPLE_MASK_CIRCLE_20DP || maskType == 5) && Build.VERSION.SDK_INT >= 23) {
+            maskDrawable = null;
+        } else if (
+            maskType == RIPPLE_MASK_CIRCLE_20DP ||
+            maskType == RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE ||
+            maskType == RIPPLE_MASK_CIRCLE_TO_BOUND_CORNER ||
+            maskType == RIPPLE_MASK_CIRCLE_AUTO ||
+            maskType == 6 ||
+            maskType == RIPPLE_MASK_ROUNDRECT_6DP ||
+            maskType == 100
+        ) {
             maskPaint.setColor(0xffffffff);
-            Drawable maskDrawable = new Drawable() {
+            maskDrawable = new Drawable() {
+
+                RectF rect;
 
                 @Override
                 public void draw(Canvas canvas) {
-                    android.graphics.Rect bounds = getBounds();
-                    final int rad = (Math.max(bounds.width(), bounds.height()) / 2) + leftInset + rightInset;
-                    canvas.drawCircle(bounds.centerX() - leftInset + rightInset, bounds.centerY(), rad, maskPaint);
+                    Rect bounds = getBounds();
+                    if (maskType == 100) {
+                        if (rect == null) {
+                            rect = new RectF();
+                        }
+                        rect.set(bounds);
+                        canvas.drawRoundRect(rect, radius, radius, maskPaint);
+                    } else if (maskType == RIPPLE_MASK_ROUNDRECT_6DP) {
+                        if (rect == null) {
+                            rect = new RectF();
+                        }
+                        rect.set(bounds);
+                        float rad = radius <= 0 ? AndroidUtilities.dp(6) : radius;
+                        canvas.drawRoundRect(rect, rad, rad, maskPaint);
+                    } else {
+                        int rad;
+                        if (maskType == RIPPLE_MASK_CIRCLE_20DP || maskType == 6) {
+                            rad = radius <= 0 ? AndroidUtilities.dp(20) : radius;
+                        } else if (maskType == RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE) {
+                            rad = (Math.max(bounds.width(), bounds.height()) / 2);
+                        } else {
+                            // RIPPLE_MASK_CIRCLE_AUTO = 5
+                            // RIPPLE_MASK_CIRCLE_TO_BOUND_CORNER = 4
+                            rad = (int) Math.ceil(Math.sqrt((bounds.left - bounds.centerX()) * (bounds.left - bounds.centerX()) + (bounds.top - bounds.centerY()) * (bounds.top - bounds.centerY())));
+                        }
+                        canvas.drawCircle(bounds.centerX(), bounds.centerY(), rad, maskPaint);
+                    }
                 }
 
                 @Override
                 public void setAlpha(int alpha) {
+
                 }
 
                 @Override
                 public void setColorFilter(ColorFilter colorFilter) {
+
                 }
 
                 @Override
@@ -6199,18 +6061,53 @@ public class Theme {
                     return PixelFormat.UNKNOWN;
                 }
             };
-            ColorStateList colorStateList = new ColorStateList(
-                    new int[][]{StateSet.WILD_CARD},
-                    new int[]{color}
-            );
-            return new RippleDrawable(colorStateList, null, maskDrawable);
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(color));
-            stateListDrawable.addState(new int[]{android.R.attr.state_selected}, new ColorDrawable(color));
-            stateListDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(0x00000000));
-            return stateListDrawable;
+        } else if (maskType == RIPPLE_MASK_ALL) {
+            maskDrawable = new ColorDrawable(0xffffffff);
         }
+        ColorStateList colorStateList = new ColorStateList(
+            new int[][]{ StateSet.WILD_CARD },
+            new int[]{ color }
+        );
+        RippleDrawable rippleDrawable = new RippleDrawable(colorStateList, null, maskDrawable);
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (maskType == RIPPLE_MASK_CIRCLE_20DP) {
+                rippleDrawable.setRadius(radius <= 0 ? AndroidUtilities.dp(20) : radius);
+            } else if (maskType == RIPPLE_MASK_CIRCLE_AUTO) {
+                rippleDrawable.setRadius(RippleDrawable.RADIUS_AUTO);
+            }
+        }
+        return rippleDrawable;
+    }
+
+    public static Drawable createCircleSelectorDrawable(int color, int leftInset, int rightInset) {
+        maskPaint.setColor(0xffffffff);
+        Drawable maskDrawable = new Drawable() {
+
+            @Override
+            public void draw(Canvas canvas) {
+                Rect bounds = getBounds();
+                final int rad = (Math.max(bounds.width(), bounds.height()) / 2) + leftInset + rightInset;
+                canvas.drawCircle(bounds.centerX() - leftInset + rightInset, bounds.centerY(), rad, maskPaint);
+            }
+
+            @Override
+            public void setAlpha(int alpha) {
+            }
+
+            @Override
+            public void setColorFilter(ColorFilter colorFilter) {
+            }
+
+            @Override
+            public int getOpacity() {
+                return PixelFormat.UNKNOWN;
+            }
+        };
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{StateSet.WILD_CARD},
+                new int[]{color}
+        );
+        return new RippleDrawable(colorStateList, null, maskDrawable);
     }
 
     /**
@@ -6359,39 +6256,22 @@ public class Theme {
             );
         }
         private static Drawable createRect(Drawable background, int rippleColor, float ...radii) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Drawable maskDrawable = null;
-                if (hasNonzeroRadii(radii)) {
-                    maskDrawable = new ShapeDrawable(new RoundRectShape(calcRadii(radii), null, null));
-                    ((ShapeDrawable) maskDrawable).getPaint().setColor(0xffffffff);
-                } else {
-                    maskDrawable = new ShapeDrawable(new RectShape());
-                    ((ShapeDrawable) maskDrawable).getPaint().setColor(0xffffffff);
-                }
-                return new RippleDrawable(
-                    new ColorStateList(
-                        new int[][]{ StateSet.WILD_CARD },
-                        new int[]{ rippleColor }
-                    ),
-                    background,
-                    maskDrawable
-                );
+            Drawable maskDrawable = null;
+            if (hasNonzeroRadii(radii)) {
+                maskDrawable = new ShapeDrawable(new RoundRectShape(calcRadii(radii), null, null));
+                ((ShapeDrawable) maskDrawable).getPaint().setColor(0xffffffff);
             } else {
-                StateListDrawable stateListDrawable = new StateListDrawable();
-                Drawable ripple;
-                if (hasNonzeroRadii(radii)) {
-                    ripple = new ShapeDrawable(new RoundRectShape(calcRadii(radii), null, null));
-                    ((ShapeDrawable) ripple).getPaint().setColor(rippleColor);
-                } else {
-                    ripple = new ShapeDrawable(new RectShape());
-                    ((ShapeDrawable) ripple).getPaint().setColor(rippleColor);
-                }
-                Drawable pressed = new LayerDrawable(new Drawable[] { background, ripple });
-                stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, pressed);
-                stateListDrawable.addState(new int[]{android.R.attr.state_selected}, pressed);
-                stateListDrawable.addState(StateSet.WILD_CARD, background);
-                return stateListDrawable;
+                maskDrawable = new ShapeDrawable(new RectShape());
+                ((ShapeDrawable) maskDrawable).getPaint().setColor(0xffffffff);
             }
+            return new RippleDrawable(
+                new ColorStateList(
+                    new int[][]{ StateSet.WILD_CARD },
+                    new int[]{ rippleColor }
+                ),
+                background,
+                maskDrawable
+            );
         }
 
         private static Drawable createCircle(int rippleColor) {
@@ -6408,24 +6288,14 @@ public class Theme {
             );
         }
         private static Drawable createCircle(Drawable background, int rippleColor, float radius) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                return new RippleDrawable(
-                    new ColorStateList(
-                        new int[][]{ StateSet.WILD_CARD },
-                        new int[]{ rippleColor }
-                    ),
-                    background,
-                    new CircleDrawable(radius)
-                );
-            } else {
-                StateListDrawable stateListDrawable = new StateListDrawable();
-                Drawable ripple = new CircleDrawable(radius, rippleColor);
-                Drawable pressed = new LayerDrawable(new Drawable[] { background, ripple });
-                stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, pressed);
-                stateListDrawable.addState(new int[]{android.R.attr.state_selected}, pressed);
-                stateListDrawable.addState(StateSet.WILD_CARD, background);
-                return stateListDrawable;
-            }
+            return new RippleDrawable(
+                new ColorStateList(
+                    new int[][]{ StateSet.WILD_CARD },
+                    new int[]{ rippleColor }
+                ),
+                background,
+                new CircleDrawable(radius)
+            );
         }
 
         private static class CircleDrawable extends Drawable {
@@ -6579,9 +6449,6 @@ public class Theme {
     }
 
     public static void setMaskDrawableRad(Drawable rippleDrawable, int top, int bottom) {
-        if (Build.VERSION.SDK_INT < 21) {
-            return;
-        }
         if (rippleDrawable instanceof RippleDrawable) {
             RippleDrawable drawable = (RippleDrawable) rippleDrawable;
             int count = drawable.getNumberOfLayers();
@@ -6596,38 +6463,22 @@ public class Theme {
     }
 
     public static Drawable createRadSelectorDrawable(int color, int topRad, int bottomRad) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            maskPaint.setColor(0xffffffff);
-            Drawable maskDrawable = new RippleRadMaskDrawable(topRad, bottomRad);
-            ColorStateList colorStateList = new ColorStateList(
-                    new int[][]{StateSet.WILD_CARD},
-                    new int[]{color}
-            );
-            return new RippleDrawable(colorStateList, null, maskDrawable);
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(color));
-            stateListDrawable.addState(new int[]{android.R.attr.state_selected}, new ColorDrawable(color));
-            stateListDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(0x00000000));
-            return stateListDrawable;
-        }
+        maskPaint.setColor(0xffffffff);
+        Drawable maskDrawable = new RippleRadMaskDrawable(topRad, bottomRad);
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{StateSet.WILD_CARD},
+                new int[]{color}
+        );
+        return new RippleDrawable(colorStateList, null, maskDrawable);
     }
     public static Drawable createRadSelectorDrawable(int color, int topLeftRad, int topRightRad, int bottomRightRad, int bottomLeftRad) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            maskPaint.setColor(0xffffffff);
-            Drawable maskDrawable = new RippleRadMaskDrawable(topLeftRad, topRightRad, bottomRightRad, bottomLeftRad);
-            ColorStateList colorStateList = new ColorStateList(
-                    new int[][]{StateSet.WILD_CARD},
-                    new int[]{color}
-            );
-            return new RippleDrawable(colorStateList, null, maskDrawable);
-        } else {
-            StateListDrawable stateListDrawable = new StateListDrawable();
-            stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, new ColorDrawable(color));
-            stateListDrawable.addState(new int[]{android.R.attr.state_selected}, new ColorDrawable(color));
-            stateListDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(0x00000000));
-            return stateListDrawable;
-        }
+        maskPaint.setColor(0xffffffff);
+        Drawable maskDrawable = new RippleRadMaskDrawable(topLeftRad, topRightRad, bottomRightRad, bottomLeftRad);
+        ColorStateList colorStateList = new ColorStateList(
+                new int[][]{StateSet.WILD_CARD},
+                new int[]{color}
+        );
+        return new RippleDrawable(colorStateList, null, maskDrawable);
     }
 
     public static void applyPreviousTheme() {
@@ -10119,7 +9970,6 @@ public class Theme {
         }
     }
 
-    @TargetApi(21)
     @SuppressLint("DiscouragedPrivateApi")
     public static void setRippleDrawableForceSoftware(RippleDrawable drawable) {
         if (drawable == null) {
@@ -10156,7 +10006,7 @@ public class Theme {
             } catch (Throwable ignore) {
 
             }
-        } else if (Build.VERSION.SDK_INT >= 21 && drawable instanceof RippleDrawable) {
+        } else if (drawable instanceof RippleDrawable) {
             RippleDrawable rippleDrawable = (RippleDrawable) drawable;
             if (selected) {
                 rippleDrawable.setColor(new ColorStateList(

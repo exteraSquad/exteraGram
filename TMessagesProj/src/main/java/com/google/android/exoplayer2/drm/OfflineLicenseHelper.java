@@ -34,8 +34,6 @@ import java.util.Map;
 import java.util.UUID;
 
 /** Helper class to download, renew and release offline licenses. */
-@TargetApi(18)
-@RequiresApi(18)
 public final class OfflineLicenseHelper<T extends ExoMediaCrypto> {
 
   private static final DrmInitData DUMMY_DRM_INIT_DATA = new DrmInitData();

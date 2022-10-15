@@ -58,42 +58,40 @@ public class AudioRecordJNI {
 		if (!res)
 			return;
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			try {
-				if (AutomaticGainControl.isAvailable()) {
-					agc = AutomaticGainControl.create(audioRecord.getAudioSessionId());
-					if (agc != null)
-						agc.setEnabled(false);
-				} else {
-					VLog.w("AutomaticGainControl is not available on this device :(");
-				}
-			} catch (Throwable x) {
-				VLog.e("error creating AutomaticGainControl", x);
+		try {
+			if (AutomaticGainControl.isAvailable()) {
+				agc = AutomaticGainControl.create(audioRecord.getAudioSessionId());
+				if (agc != null)
+					agc.setEnabled(false);
+			} else {
+				VLog.w("AutomaticGainControl is not available on this device :(");
 			}
-			try {
-				if (NoiseSuppressor.isAvailable()) {
-					ns = NoiseSuppressor.create(audioRecord.getAudioSessionId());
-					if (ns != null) {
-						ns.setEnabled(Instance.getGlobalServerConfig().useSystemNs && isGoodAudioEffect(ns));
-					}
-				} else {
-					VLog.w("NoiseSuppressor is not available on this device :(");
+		} catch (Throwable x) {
+			VLog.e("error creating AutomaticGainControl", x);
+		}
+		try {
+			if (NoiseSuppressor.isAvailable()) {
+				ns = NoiseSuppressor.create(audioRecord.getAudioSessionId());
+				if (ns != null) {
+					ns.setEnabled(Instance.getGlobalServerConfig().useSystemNs && isGoodAudioEffect(ns));
 				}
-			} catch (Throwable x) {
-				VLog.e("error creating NoiseSuppressor", x);
+			} else {
+				VLog.w("NoiseSuppressor is not available on this device :(");
 			}
-			try {
-				if (AcousticEchoCanceler.isAvailable()) {
-					aec = AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
-					if (aec != null) {
-						aec.setEnabled(Instance.getGlobalServerConfig().useSystemAec && isGoodAudioEffect(aec));
-					}
-				} else {
-					VLog.w("AcousticEchoCanceler is not available on this device");
+		} catch (Throwable x) {
+			VLog.e("error creating NoiseSuppressor", x);
+		}
+		try {
+			if (AcousticEchoCanceler.isAvailable()) {
+				aec = AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
+				if (aec != null) {
+					aec.setEnabled(Instance.getGlobalServerConfig().useSystemAec && isGoodAudioEffect(aec));
 				}
-			} catch (Throwable x) {
-				VLog.e("error creating AcousticEchoCanceler", x);
+			} else {
+				VLog.w("AcousticEchoCanceler is not available on this device");
 			}
+		} catch (Throwable x) {
+			VLog.e("error creating AcousticEchoCanceler", x);
 		}
 
 		buffer = ByteBuffer.allocateDirect(bufferSize);

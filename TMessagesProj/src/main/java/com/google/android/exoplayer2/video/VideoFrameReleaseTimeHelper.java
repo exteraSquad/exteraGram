@@ -187,7 +187,6 @@ public final class VideoFrameReleaseTimeHelper {
     return snappedTimeNs - vsyncOffsetNs;
   }
 
-  @TargetApi(17)
   private DefaultDisplayListener maybeBuildDefaultDisplayListenerV17(Context context) {
     DisplayManager manager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
     return manager == null ? null : new DefaultDisplayListener(manager);
@@ -226,7 +225,6 @@ public final class VideoFrameReleaseTimeHelper {
     return snappedAfterDiff < snappedBeforeDiff ? snappedAfterNs : snappedBeforeNs;
   }
 
-  @TargetApi(17)
   private final class DefaultDisplayListener implements DisplayManager.DisplayListener {
 
     private final DisplayManager displayManager;

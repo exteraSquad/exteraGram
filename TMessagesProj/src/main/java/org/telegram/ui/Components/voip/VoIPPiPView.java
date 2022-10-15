@@ -202,9 +202,7 @@ public class VoIPPiPView implements VoIPService.StateListener, NotificationCente
             windowLayoutParams.type = WindowManager.LayoutParams.LAST_APPLICATION_WINDOW;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-        }
+        windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
 
         windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED |
@@ -511,16 +509,13 @@ public class VoIPPiPView implements VoIPService.StateListener, NotificationCente
             super(context);
 
             touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                setOutlineProvider(new ViewOutlineProvider() {
-                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), 1f / view.getScaleX() * AndroidUtilities.dp(4));
-                    }
-                });
-                setClipToOutline(true);
-            }
+            setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), 1f / view.getScaleX() * AndroidUtilities.dp(4));
+                }
+            });
+            setClipToOutline(true);
         }
 
         @Override
@@ -729,9 +724,7 @@ public class VoIPPiPView implements VoIPService.StateListener, NotificationCente
                         pipViewExpanded.floatingView.setScaleY(sc);
                         pipViewExpanded.floatingView.invalidate();
                         pipViewExpanded.windowView.invalidate();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            pipViewExpanded.floatingView.invalidateOutline();
-                        }
+                        pipViewExpanded.floatingView.invalidateOutline();
                     });
                     valueAnimator.addListener(new AnimatorListenerAdapter() {
                         @Override
@@ -769,9 +762,7 @@ public class VoIPPiPView implements VoIPService.StateListener, NotificationCente
                         expandedInstance.floatingView.setScaleX(sc);
                         expandedInstance.floatingView.setScaleY(sc);
                         expandedInstance.floatingView.invalidate();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            expandedInstance.floatingView.invalidateOutline();
-                        }
+                        expandedInstance.floatingView.invalidateOutline();
                         expandedInstance.windowView.invalidate();
                     }
                 });

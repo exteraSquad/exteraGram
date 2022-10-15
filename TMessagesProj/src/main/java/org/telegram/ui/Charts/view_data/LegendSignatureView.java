@@ -127,15 +127,13 @@ public class LegendSignatureView extends FrameLayout {
     public void setData(int index, long date, ArrayList<LineViewData> lines, boolean animateChanges) {
         int n = holdes.length;
         if (animateChanges) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                TransitionSet transition = new TransitionSet();
-                transition.
-                        addTransition(new Fade(Fade.OUT).setDuration(150)).
-                        addTransition(new ChangeBounds().setDuration(150)).
-                        addTransition(new Fade(Fade.IN).setDuration(150));
-                transition.setOrdering(TransitionSet.ORDERING_TOGETHER);
-                TransitionManager.beginDelayedTransition(this, transition);
-            }
+            TransitionSet transition = new TransitionSet();
+            transition.
+                    addTransition(new Fade(Fade.OUT).setDuration(150)).
+                    addTransition(new ChangeBounds().setDuration(150)).
+                    addTransition(new Fade(Fade.IN).setDuration(150));
+            transition.setOrdering(TransitionSet.ORDERING_TOGETHER);
+            TransitionManager.beginDelayedTransition(this, transition);
         }
 
         if (isTopHourChart) {

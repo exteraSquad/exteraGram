@@ -1199,7 +1199,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
    * @param presentationTimeUs The presentation time of the output buffer, in microseconds.
    * @param releaseTimeNs The wallclock time at which the frame should be displayed, in nanoseconds.
    */
-  @TargetApi(21)
   protected void renderOutputBufferV21(
       MediaCodec codec, int index, long presentationTimeUs, long releaseTimeNs) {
     maybeNotifyVideoSizeChanged();
@@ -1312,7 +1311,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     codec.setOutputSurface(surface);
   }
 
-  @TargetApi(21)
   private static void configureTunnelingV21(MediaFormat mediaFormat, int tunnelingAudioSessionId) {
     mediaFormat.setFeatureEnabled(CodecCapabilities.FEATURE_TunneledPlayback, true);
     mediaFormat.setInteger(MediaFormat.KEY_AUDIO_SESSION_ID, tunnelingAudioSessionId);

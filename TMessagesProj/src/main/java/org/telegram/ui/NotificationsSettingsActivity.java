@@ -161,11 +161,7 @@ public class NotificationsSettingsActivity extends BaseFragment implements Notif
         inappVibrateRow = rowCount++;
         inappPreviewRow = rowCount++;
         inchatSoundRow = rowCount++;
-        if (Build.VERSION.SDK_INT >= 21) {
-            inappPriorityRow = rowCount++;
-        } else {
-            inappPriorityRow = -1;
-        }
+        inappPriorityRow = rowCount++;
         callsSection2Row = rowCount++;
 
         eventsSectionRow = rowCount++;

@@ -236,7 +236,6 @@ public final class GlUtil {
   /**
    * Returns whether creating a GL context with {@value EXTENSION_SURFACELESS_CONTEXT} is possible.
    */
-  @TargetApi(17)
   public static boolean isSurfacelessContextExtensionSupported() {
     if (Util.SDK_INT < 17) {
       return false;

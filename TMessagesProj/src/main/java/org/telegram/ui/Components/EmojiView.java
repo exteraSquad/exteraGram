@@ -1372,15 +1372,12 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         dotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         dotPaint.setColor(getThemedColor(Theme.key_chat_emojiPanelNewTrending));
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            outlineProvider = new ViewOutlineProvider() {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(view.getPaddingLeft(), view.getPaddingTop(), view.getMeasuredWidth() - view.getPaddingRight(), view.getMeasuredHeight() - view.getPaddingBottom(), AndroidUtilities.dp(6));
-                }
-            };
-        }
+        outlineProvider = new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(view.getPaddingLeft(), view.getPaddingTop(), view.getMeasuredWidth() - view.getPaddingRight(), view.getMeasuredHeight() - view.getPaddingBottom(), AndroidUtilities.dp(6));
+            }
+        };
 
         emojiContainer = new FrameLayout(context);
         Tab emojiTab = new Tab();
@@ -2258,18 +2255,14 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         if (needSearch) {
             addView(bottomTabContainer, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, AndroidUtilities.dp(40) + AndroidUtilities.getShadowHeight(), Gravity.LEFT | Gravity.BOTTOM));
             bottomTabContainer.addView(backspaceButton, LayoutHelper.createFrame(47, 40, Gravity.BOTTOM | Gravity.RIGHT));
-            if (Build.VERSION.SDK_INT >= 21) {
-                backspaceButton.setBackground(Theme.createSelectorDrawable(color, Theme.RIPPLE_MASK_CIRCLE_20DP, AndroidUtilities.dp(18)));
-            }
+            backspaceButton.setBackground(Theme.createSelectorDrawable(color, Theme.RIPPLE_MASK_CIRCLE_20DP, AndroidUtilities.dp(18)));
 
             stickerSettingsButton = new ImageView(context);
             stickerSettingsButton.setImageResource(R.drawable.smiles_tab_settings);
             stickerSettingsButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_emojiPanelBackspace), PorterDuff.Mode.MULTIPLY));
             stickerSettingsButton.setScaleType(ImageView.ScaleType.CENTER);
             stickerSettingsButton.setFocusable(true);
-            if (Build.VERSION.SDK_INT >= 21) {
-                stickerSettingsButton.setBackground(Theme.createSelectorDrawable(color, Theme.RIPPLE_MASK_CIRCLE_20DP, AndroidUtilities.dp(18)));
-            }
+            stickerSettingsButton.setBackground(Theme.createSelectorDrawable(color, Theme.RIPPLE_MASK_CIRCLE_20DP, AndroidUtilities.dp(18)));
             stickerSettingsButton.setContentDescription(LocaleController.getString("Settings", R.string.Settings));
             bottomTabContainer.addView(stickerSettingsButton, LayoutHelper.createFrame(47, 40, Gravity.BOTTOM | Gravity.RIGHT));
             stickerSettingsButton.setOnClickListener(new OnClickListener() {
@@ -2357,9 +2350,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             searchButton.setScaleType(ImageView.ScaleType.CENTER);
             searchButton.setContentDescription(LocaleController.getString("Search", R.string.Search));
             searchButton.setFocusable(true);
-            if (Build.VERSION.SDK_INT >= 21) {
-                searchButton.setBackground(Theme.createSelectorDrawable(color, Theme.RIPPLE_MASK_CIRCLE_20DP, AndroidUtilities.dp(18)));
-            }
+            searchButton.setBackground(Theme.createSelectorDrawable(color, Theme.RIPPLE_MASK_CIRCLE_20DP, AndroidUtilities.dp(18)));
             bottomTabContainer.addView(searchButton, LayoutHelper.createFrame(47, 40, Gravity.BOTTOM | Gravity.LEFT));
             searchButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -2386,38 +2377,30 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                 }
             });
         } else {
-            addView(bottomTabContainer, LayoutHelper.createFrame((Build.VERSION.SDK_INT >= 21 ? 40 : 44) + 16, (Build.VERSION.SDK_INT >= 21 ? 40 : 44) + 8, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, 0, 0, 2, 0));
+            addView(bottomTabContainer, LayoutHelper.createFrame(40 + 16, 40 + 8, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, 0, 0, 2, 0));
 
             Drawable drawable = ExteraUtils.drawFab();
-            if (Build.VERSION.SDK_INT < 21) {
-                Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-                shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-                CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-                combinedDrawable.setIconSize(AndroidUtilities.dp(36), AndroidUtilities.dp(36));
-                drawable = combinedDrawable;
-            } else {
-                StateListAnimator animator = new StateListAnimator();
-                animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-                animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-                backspaceButton.setStateListAnimator(animator);
-                backspaceButton.setOutlineProvider(new ViewOutlineProvider() {
-                    @SuppressLint("NewApi")
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        if (ExteraConfig.squareFab) {
-                            outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(16));
-                        } else {
-                            outline.setOval(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-                        }
+            StateListAnimator animator = new StateListAnimator();
+            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
+            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
+            backspaceButton.setStateListAnimator(animator);
+            backspaceButton.setOutlineProvider(new ViewOutlineProvider() {
+                @SuppressLint("NewApi")
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    if (ExteraConfig.squareFab) {
+                        outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(16));
+                    } else {
+                        outline.setOval(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
                     }
-                });
-            }
+                }
+            });
             backspaceButton.setPadding(0, 0, AndroidUtilities.dp(2), 0);
             backspaceButton.setBackground(drawable);
             backspaceButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
             backspaceButton.setContentDescription(LocaleController.getString("AccDescrBackspace", R.string.AccDescrBackspace));
             backspaceButton.setFocusable(true);
-            bottomTabContainer.addView(backspaceButton, LayoutHelper.createFrame((Build.VERSION.SDK_INT >= 21 ? 40 : 44) - 4, (Build.VERSION.SDK_INT >= 21 ? 40 : 44) - 4, Gravity.LEFT | Gravity.TOP, 10, 0, 10, 0));
+            bottomTabContainer.addView(backspaceButton, LayoutHelper.createFrame(40 - 4, 40 - 4, Gravity.LEFT | Gravity.TOP, 10, 0, 10, 0));
             shadowLine.setVisibility(GONE);
             bottomTabContainerBackground.setVisibility(GONE);
         }
@@ -2765,7 +2748,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                     if (e != null && e.getValue().view == view) {
                         TouchDownInfo touch = touches.remove(e.getKey());
                         if (touch != null) {
-                            if (touch.view != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && touch.view.getBackground() instanceof RippleDrawable) {
+                            if (touch.view != null && touch.view.getBackground() instanceof RippleDrawable) {
                                 touch.view.getBackground().setState(new int[]{});
                             }
                             if (touch.view != null) {
@@ -2952,7 +2935,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                         touch.y = y;
                         touch.time = SystemClock.elapsedRealtime();
                         touch.view = touchChild;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && touchChild.getBackground() instanceof RippleDrawable) {
+                        if (touchChild.getBackground() instanceof RippleDrawable) {
                             touchChild.getBackground().setState(new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled});
                         }
                         touch.view.setPressed(true);
@@ -2985,7 +2968,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                             view.callOnClick();
                         }
                     }
-                    if (touch != null && touch.view != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && touch.view.getBackground() instanceof RippleDrawable) {
+                    if (touch != null && touch.view != null && touch.view.getBackground() instanceof RippleDrawable) {
                         touch.view.getBackground().setState(new int[]{});
                     }
                     if (touch != null && touch.view != null) {
@@ -5196,11 +5179,9 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         isLayout = true;
         if (AndroidUtilities.isInMultiwindow || forseMultiwindowLayout) {
             if (currentBackgroundType != 1) {
-                if (Build.VERSION.SDK_INT >= 21) {
-                    setOutlineProvider((ViewOutlineProvider) outlineProvider);
-                    setClipToOutline(true);
-                    setElevation(AndroidUtilities.dp(2));
-                }
+                setOutlineProvider((ViewOutlineProvider) outlineProvider);
+                setClipToOutline(true);
+                setElevation(AndroidUtilities.dp(2));
                 setBackgroundResource(R.drawable.smiles_popup);
                 getBackground().setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_emojiPanelBackground), PorterDuff.Mode.MULTIPLY));
                 if (needEmojiSearch) {
@@ -5210,11 +5191,9 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             }
         } else {
             if (currentBackgroundType != 0) {
-                if (Build.VERSION.SDK_INT >= 21) {
-                    setOutlineProvider(null);
-                    setClipToOutline(false);
-                    setElevation(0);
-                }
+                setOutlineProvider(null);
+                setClipToOutline(false);
+                setElevation(0);
                 setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
                 if (needEmojiSearch) {
                     bottomTabContainerBackground.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));

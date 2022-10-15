@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.UUID;
 
 /** A {@link DrmSessionManager} that supports playbacks using {@link ExoMediaDrm}. */
-@TargetApi(18)
 public class DefaultDrmSessionManager<T extends ExoMediaCrypto> implements DrmSessionManager<T> {
 
   /**

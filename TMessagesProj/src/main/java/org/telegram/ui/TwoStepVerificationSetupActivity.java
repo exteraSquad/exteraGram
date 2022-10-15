@@ -298,23 +298,21 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
         }
 
         floatingButtonContainer = new FrameLayout(context);
-        if (Build.VERSION.SDK_INT >= 21) {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            floatingButtonContainer.setStateListAnimator(animator);
-            floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    if (ExteraConfig.squareFab) {
-                        outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
-                    } else {
-                        outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                    }
+        StateListAnimator animator = new StateListAnimator();
+        animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
+        animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
+        floatingButtonContainer.setStateListAnimator(animator);
+        floatingButtonContainer.setOutlineProvider(new ViewOutlineProvider() {
+            @SuppressLint("NewApi")
+            @Override
+            public void getOutline(View view, Outline outline) {
+                if (ExteraConfig.squareFab) {
+                    outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
+                } else {
+                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
                 }
-            });
-        }
+            }
+        });
         floatingAutoAnimator = VerticalPositionAutoAnimator.attach(floatingButtonContainer);
         floatingButtonContainer.setOnClickListener(view -> processNext());
 
@@ -324,7 +322,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
         floatingButtonIcon.setColor(Theme.getColor(Theme.key_chats_actionIcon));
         floatingButtonIcon.setDrawBackground(false);
         floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.Next));
-        floatingButtonContainer.addView(floatingButtonIcon, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60));
+        floatingButtonContainer.addView(floatingButtonIcon, LayoutHelper.createFrame(56, 56));
 
         floatingProgressView = new RadialProgressView(context);
         floatingProgressView.setSize(AndroidUtilities.dp(22));
@@ -334,13 +332,6 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
         floatingButtonContainer.addView(floatingProgressView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         Drawable drawable = ExteraUtils.drawFab();
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        }
         floatingButtonContainer.setBackground(drawable);
 
         bottomSkipButton = new TextView(context);
@@ -714,8 +705,8 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
                 };
                 scrollView.setVerticalScrollBarEnabled(false);
                 frameLayout.addView(scrollView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-                frameLayout.addView(bottomSkipButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 56 : 60, Gravity.BOTTOM, 0, 0, 0, 16));
-                frameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 24, 16));
+                frameLayout.addView(bottomSkipButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 56, Gravity.BOTTOM, 0, 0, 0, 16));
+                frameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame(56, 56, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 24, 16));
                 container.addView(keyboardFrameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
                 LinearLayout scrollViewLinearLayout = new LinearLayout(context) {
@@ -724,7 +715,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
                         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
                         MarginLayoutParams params = (MarginLayoutParams) titleTextView.getLayoutParams();
-                        params.topMargin = (imageView.getVisibility() == GONE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? AndroidUtilities.statusBarHeight : 0) + AndroidUtilities.dp(8) + (currentType == TYPE_ENTER_HINT && AndroidUtilities.isSmallScreen() && !isLandscape() ? AndroidUtilities.dp(32) : 0);
+                        params.topMargin = (imageView.getVisibility() == GONE ? AndroidUtilities.statusBarHeight : 0) + AndroidUtilities.dp(8) + (currentType == TYPE_ENTER_HINT && AndroidUtilities.isSmallScreen() && !isLandscape() ? AndroidUtilities.dp(32) : 0);
                     }
                 };
                 scrollViewLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -779,9 +770,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
                 showPasswordButton.setImageResource(R.drawable.msg_message);
                 showPasswordButton.setScaleType(ImageView.ScaleType.CENTER);
                 showPasswordButton.setContentDescription(LocaleController.getString(R.string.TwoStepVerificationShowPassword));
-                if (Build.VERSION.SDK_INT >= 21) {
-                    showPasswordButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
-                }
+                showPasswordButton.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
                 showPasswordButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
                 AndroidUtilities.updateViewVisibilityAnimated(showPasswordButton, false, 0.1f, false);
 

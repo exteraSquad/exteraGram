@@ -31,7 +31,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /** Generates a {@link SurfaceTexture} using EGL/GLES functions. */
-@TargetApi(17)
 public final class EGLSurfaceTexture implements SurfaceTexture.OnFrameAvailableListener, Runnable {
 
   /** Listener to be called when the texture image on {@link SurfaceTexture} has been updated. */

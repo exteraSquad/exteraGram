@@ -195,22 +195,18 @@ public class PhotoViewerWebView extends FrameLayout {
         };
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
-        if (Build.VERSION.SDK_INT >= 17) {
-            webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-        }
+        webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-            CookieManager cookieManager = CookieManager.getInstance();
-            cookieManager.setAcceptThirdPartyCookies(webView, true);
-        }
+        webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptThirdPartyCookies(webView, true);
 
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (!isYouTube || Build.VERSION.SDK_INT < 17) {
+                if (!isYouTube) {
                     progressBar.setVisibility(View.INVISIBLE);
                     progressBarBlackBackground.setVisibility(View.INVISIBLE);
                     pipItem.setEnabled(true);
@@ -218,7 +214,6 @@ public class PhotoViewerWebView extends FrameLayout {
                 }
             }
 
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -474,15 +469,7 @@ public class PhotoViewerWebView extends FrameLayout {
     }
 
     private void runJsCode(String code) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            webView.evaluateJavascript(code, null);
-        } else {
-            try {
-                webView.loadUrl("javascript:" + code);
-            } catch (Exception e) {
-                FileLog.e(e);
-            }
-        }
+        webView.evaluateJavascript(code, null);
     }
 
     protected void processTouch(MotionEvent event) {
@@ -604,9 +591,7 @@ public class PhotoViewerWebView extends FrameLayout {
             if (currentYoutubeId != null) {
                 progressBarBlackBackground.setVisibility(View.VISIBLE);
                 isYouTube = true;
-                if (Build.VERSION.SDK_INT >= 17) {
-                    webView.addJavascriptInterface(new YoutubeProxy(), "YoutubeProxy");
-                }
+                webView.addJavascriptInterface(new YoutubeProxy(), "YoutubeProxy");
                 int seekToTime = 0;
                 if (originalUrl != null) {
                     try {

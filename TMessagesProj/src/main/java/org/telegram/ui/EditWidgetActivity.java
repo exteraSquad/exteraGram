@@ -387,23 +387,11 @@ public class EditWidgetActivity extends BaseFragment {
                                     String innerMessage;
                                     if (message.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                                         TLRPC.TL_messageMediaPoll mediaPoll = (TLRPC.TL_messageMediaPoll) message.messageOwner.media;
-                                        if (Build.VERSION.SDK_INT >= 18) {
-                                            innerMessage = String.format("\uD83D\uDCCA \u2068%s\u2069", mediaPoll.poll.question);
-                                        } else {
-                                            innerMessage = String.format("\uD83D\uDCCA %s", mediaPoll.poll.question);
-                                        }
+                                        innerMessage = String.format("\uD83D\uDCCA \u2068%s\u2069", mediaPoll.poll.question);
                                     } else if (message.messageOwner.media instanceof TLRPC.TL_messageMediaGame) {
-                                        if (Build.VERSION.SDK_INT >= 18) {
-                                            innerMessage = String.format("\uD83C\uDFAE \u2068%s\u2069", message.messageOwner.media.game.title);
-                                        } else {
-                                            innerMessage = String.format("\uD83C\uDFAE %s", message.messageOwner.media.game.title);
-                                        }
+                                        innerMessage = String.format("\uD83C\uDFAE \u2068%s\u2069", message.messageOwner.media.game.title);
                                     } else if (message.type == 14) {
-                                        if (Build.VERSION.SDK_INT >= 18) {
-                                            innerMessage = String.format("\uD83C\uDFA7 \u2068%s - %s\u2069", message.getMusicAuthor(), message.getMusicTitle());
-                                        } else {
-                                            innerMessage = String.format("\uD83C\uDFA7 %s - %s", message.getMusicAuthor(), message.getMusicTitle());
-                                        }
+                                        innerMessage = String.format("\uD83C\uDFA7 \u2068%s - %s\u2069", message.getMusicAuthor(), message.getMusicTitle());
                                     } else {
                                         innerMessage = message.messageText.toString();
                                     }

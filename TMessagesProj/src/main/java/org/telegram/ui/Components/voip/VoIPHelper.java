@@ -355,8 +355,8 @@ public class VoIPHelper {
 		}
 		intent.putExtra("is_outgoing", true);
 		intent.putExtra("start_incall_activity", true);
-		intent.putExtra("video_call", Build.VERSION.SDK_INT >= 18 && videoCall);
-		intent.putExtra("can_video_call", Build.VERSION.SDK_INT >= 18 && canVideoCall);
+		intent.putExtra("video_call", videoCall);
+		intent.putExtra("can_video_call", canVideoCall);
 		intent.putExtra("account", UserConfig.selectedAccount);
 		try {
 			activity.startService(intent);

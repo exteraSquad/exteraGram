@@ -261,7 +261,7 @@ public class PhotoFilterBlurControl extends FrameLayout {
                         case BlurViewActiveControlCenter: {
                             float translationX = locationX - pointerStartX;
                             float translationY = locationY - pointerStartY;
-                            Rect actualArea = new Rect((getWidth() - actualAreaSize.width) / 2, (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0) + (getHeight() - actualAreaSize.height) / 2, actualAreaSize.width, actualAreaSize.height);
+                            Rect actualArea = new Rect((getWidth() - actualAreaSize.width) / 2, (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0) + (getHeight() - actualAreaSize.height) / 2, actualAreaSize.width, actualAreaSize.height);
                             Point newPoint = new Point(Math.max(actualArea.x, Math.min(actualArea.x + actualArea.width, startCenterPoint.x + translationX)), Math.max(actualArea.y, Math.min(actualArea.y + actualArea.height, startCenterPoint.y + translationY)));
                             centerPoint = new Point((newPoint.x - actualArea.x) / actualAreaSize.width, ((newPoint.y - actualArea.y) + (actualAreaSize.width - actualAreaSize.height) / 2) / actualAreaSize.width);
                         }
@@ -347,7 +347,7 @@ public class PhotoFilterBlurControl extends FrameLayout {
                         case BlurViewActiveControlCenter: {
                             float translationX = locationX - pointerStartX;
                             float translationY = locationY - pointerStartY;
-                            Rect actualArea = new Rect((getWidth() - actualAreaSize.width) / 2, (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0) + (getHeight() - actualAreaSize.height) / 2, actualAreaSize.width, actualAreaSize.height);
+                            Rect actualArea = new Rect((getWidth() - actualAreaSize.width) / 2, (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0) + (getHeight() - actualAreaSize.height) / 2, actualAreaSize.width, actualAreaSize.height);
                             Point newPoint = new Point(Math.max(actualArea.x, Math.min(actualArea.x + actualArea.width, startCenterPoint.x + translationX)), Math.max(actualArea.y, Math.min(actualArea.y + actualArea.height, startCenterPoint.y + translationY)));
                             centerPoint = new Point((newPoint.x - actualArea.x) / actualAreaSize.width, ((newPoint.y - actualArea.y) + (actualAreaSize.width - actualAreaSize.height) / 2) / actualAreaSize.width);
                         }
@@ -499,7 +499,7 @@ public class PhotoFilterBlurControl extends FrameLayout {
     }
 
     private Point getActualCenterPoint() {
-        return new Point((getWidth() - actualAreaSize.width) / 2 + centerPoint.x * actualAreaSize.width, (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0) + (getHeight() - actualAreaSize.height) / 2 - (actualAreaSize.width - actualAreaSize.height) / 2 + centerPoint.y * actualAreaSize.width);
+        return new Point((getWidth() - actualAreaSize.width) / 2 + centerPoint.x * actualAreaSize.width, (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0) + (getHeight() - actualAreaSize.height) / 2 - (actualAreaSize.width - actualAreaSize.height) / 2 + centerPoint.y * actualAreaSize.width);
     }
 
     private float getActualInnerRadius() {

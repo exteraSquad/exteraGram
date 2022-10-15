@@ -112,11 +112,9 @@ public class DataSettingsActivity extends BaseFragment {
         storageUsageRow = rowCount++;
         dataUsageRow = rowCount++;
         storageNumRow = -1;
-        if (Build.VERSION.SDK_INT >= 19) {
-            storageDirs = AndroidUtilities.getRootDirs();
-            if (storageDirs.size() > 1) {
-                storageNumRow = rowCount++;
-            }
+        storageDirs = AndroidUtilities.getRootDirs();
+        if (storageDirs.size() > 1) {
+            storageNumRow = rowCount++;
         }
         usageSection2Row = rowCount++;
         mediaDownloadSectionRow = rowCount++;

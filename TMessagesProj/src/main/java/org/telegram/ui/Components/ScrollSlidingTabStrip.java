@@ -220,7 +220,7 @@ public class ScrollSlidingTabStrip extends HorizontalScrollView {
         tabTypes = new HashMap<>();
         futureTabsPositions.clear();
         tabCount = 0;
-        if (animated && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (animated) {
             final AutoTransition transition = new AutoTransition();
             transition.setDuration(250);
             transition.setOrdering(TransitionSet.ORDERING_TOGETHER);

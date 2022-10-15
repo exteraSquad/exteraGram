@@ -213,17 +213,13 @@ public class WebviewActivity extends BaseFragment {
 
         fragmentView = new FrameLayout(context);
         FrameLayout frameLayout = (FrameLayout) fragmentView;
-        if (Build.VERSION.SDK_INT >= 19) {
-            webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-            CookieManager cookieManager = CookieManager.getInstance();
-            cookieManager.setAcceptThirdPartyCookies(webView, true);
-            if (type == TYPE_GAME) {
-                webView.addJavascriptInterface(new TelegramWebviewProxy(), "TelegramWebviewProxy");
-            }
+        webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptThirdPartyCookies(webView, true);
+        if (type == TYPE_GAME) {
+            webView.addJavascriptInterface(new TelegramWebviewProxy(), "TelegramWebviewProxy");
         }
 
         webView.setWebViewClient(new WebViewClient() {

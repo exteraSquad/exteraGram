@@ -845,18 +845,16 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 lastDrawFrame = current;
 
                 if (maxRefreshRate == 0) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        WindowManager wm = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Context.WINDOW_SERVICE);
-                        Display display = wm.getDefaultDisplay();
-                        float[] rates = display.getSupportedRefreshRates();
-                        float maxRate = 0;
-                        for (float rate : rates) {
-                            if (rate > maxRate) {
-                                maxRate = rate;
-                            }
+                    WindowManager wm = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Context.WINDOW_SERVICE);
+                    Display display = wm.getDefaultDisplay();
+                    float[] rates = display.getSupportedRefreshRates();
+                    float maxRate = 0;
+                    for (float rate : rates) {
+                        if (rate > maxRate) {
+                            maxRate = rate;
                         }
-                        maxRefreshRate = maxRate;
-                    } else maxRefreshRate = 60;
+                    }
+                    maxRefreshRate = maxRate;
                 }
 
                 long drawMs = System.currentTimeMillis() - current;

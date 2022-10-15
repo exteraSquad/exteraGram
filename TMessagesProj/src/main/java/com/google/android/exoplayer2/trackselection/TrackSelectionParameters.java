@@ -169,7 +169,6 @@ public class TrackSelectionParameters implements Parcelable {
           disabledTextTrackSelectionFlags);
     }
 
-    @TargetApi(19)
     private void setPreferredTextLanguageAndRoleFlagsToCaptioningManagerSettingsV19(
         Context context) {
       if (Util.SDK_INT < 23 && Looper.myLooper() == null) {

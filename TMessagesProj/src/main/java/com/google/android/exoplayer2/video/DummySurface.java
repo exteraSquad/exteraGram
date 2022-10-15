@@ -37,7 +37,6 @@ import com.google.android.exoplayer2.util.Util;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** A dummy {@link Surface}. */
-@TargetApi(17)
 public final class DummySurface extends Surface {
 
   private static final String TAG = "DummySurface";

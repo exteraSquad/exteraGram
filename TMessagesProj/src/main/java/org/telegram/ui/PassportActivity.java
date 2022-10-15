@@ -357,7 +357,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
             cell.imageView.getLocationInWindow(coords);
             PhotoViewer.PlaceProviderObject object = new PhotoViewer.PlaceProviderObject();
             object.viewX = coords[0];
-            object.viewY = coords[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight);
+            object.viewY = coords[1] - 0;
             object.parentView = currentPhotoViewerLayout;
             object.imageReceiver = cell.imageView.getImageReceiver();
             object.thumb = object.imageReceiver.getBitmapSafe();
@@ -3987,7 +3987,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
                 bottomCellTranslation.setText(text);
                 linearLayout2.addView(bottomCellTranslation, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             }
-        } else if (Build.VERSION.SDK_INT >= 18) {
+        } else {
             scanDocumentCell = new TextSettingsCell(context);
             scanDocumentCell.setBackgroundDrawable(Theme.getSelectorDrawable(true));
             scanDocumentCell.setText(LocaleController.getString("PassportScanPassport", R.string.PassportScanPassport), false);
@@ -3997,7 +3997,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
                     getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, 22);
                     return;
                 }
-                CameraScanActivity fragment = new CameraScanActivity(org.telegram.ui.CameraScanActivity.TYPE_MRZ);
+                CameraScanActivity fragment = new CameraScanActivity(CameraScanActivity.TYPE_MRZ);
                 fragment.setDelegate(new CameraScanActivity.CameraScanActivityDelegate() {
                     @Override
                     public void didFindMrzInfo(MrzRecognizer.Result result) {
@@ -6581,9 +6581,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
                 AndroidUtilities.showKeyboard(inputFields[FIELD_EMAIL]);
             }
         } else if (currentActivityType == TYPE_ADDRESS || currentActivityType == TYPE_IDENTITY) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                createChatAttachView();
-            }
+            createChatAttachView();
         }
     }
 
@@ -6906,9 +6904,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
     public void startDocumentSelectActivity() {
         try {
             Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            if (Build.VERSION.SDK_INT >= 18) {
-                photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            }
+            photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             photoPickerIntent.setType("*/*");
             startActivityForResult(photoPickerIntent, 21);
         } catch (Exception e) {

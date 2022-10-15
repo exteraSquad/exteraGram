@@ -140,7 +140,7 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
 
     public ImageUpdater(boolean allowVideo) {
         imageReceiver = new ImageReceiver(null);
-        canSelectVideo = allowVideo && Build.VERSION.SDK_INT > 18;
+        canSelectVideo = allowVideo;
     }
 
     public void setDelegate(ImageUpdaterDelegate imageUpdaterDelegate) {
@@ -548,7 +548,7 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
                     takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(parentFragment.getParentActivity(), ApplicationLoader.getApplicationId() + ".provider", video));
                     takeVideoIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     takeVideoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                } else if (Build.VERSION.SDK_INT >= 18) {
+                } else {
                     takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(video));
                 }
                 takeVideoIntent.putExtra("android.intent.extras.CAMERA_FACING", 1);

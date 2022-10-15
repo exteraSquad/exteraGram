@@ -678,10 +678,8 @@ public class ThemesHorizontalListCell extends RecyclerListView implements Notifi
             info.setChecked(button.isChecked());
             info.setCheckable(true);
             info.setEnabled(true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
-                info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_LONG_CLICK, LocaleController.getString("AccDescrMoreOptions", R.string.AccDescrMoreOptions)));
-            }
+            info.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
+            info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_LONG_CLICK, LocaleController.getString("AccDescrMoreOptions", R.string.AccDescrMoreOptions)));
         }
     }
 

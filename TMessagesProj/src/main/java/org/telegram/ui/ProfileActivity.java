@@ -556,7 +556,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 avatarImage.getLocationInWindow(coords);
                 PhotoViewer.PlaceProviderObject object = new PhotoViewer.PlaceProviderObject();
                 object.viewX = coords[0];
-                object.viewY = coords[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight);
+                object.viewY = coords[1] - 0;
                 object.parentView = avatarImage;
                 object.imageReceiver = avatarImage.getImageReceiver();
                 if (userId != 0) {
@@ -839,7 +839,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         }
 
         public void setAlphaValue(float value, boolean self) {
-            if (Build.VERSION.SDK_INT > 18) {
+            {
                 int alpha = (int) (255 * value);
                 topOverlayGradient.setAlpha(alpha);
                 bottomOverlayGradient.setAlpha(alpha);
@@ -847,8 +847,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 barPaint.setAlpha((int) (0x55 * value));
                 selectedBarPaint.setAlpha(alpha);
                 this.alpha = value;
-            } else {
-                setAlpha(value);
             }
             if (!self) {
                 currentAnimationValue = value;
@@ -937,7 +935,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     selectedBarPaint.setAlpha((int) (0xff * alpha));
                 }
                 int width = (getMeasuredWidth() - AndroidUtilities.dp(5 * 2) - AndroidUtilities.dp(2 * (count - 1))) / count;
-                int y = AndroidUtilities.dp(4) + (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
+                int y = AndroidUtilities.dp(4) + (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
                 for (int a = 0; a < count; a++) {
                     int x = AndroidUtilities.dp(5 + a * 2) + width * a;
                     float progress;
@@ -1620,7 +1618,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         actionBar.setCastShadows(false);
         actionBar.setAddToContainer(false);
         actionBar.setClipContent(true);
-        actionBar.setOccupyStatusBar(Build.VERSION.SDK_INT >= 21 && !AndroidUtilities.isTablet() && !inBubbleMode);
+        actionBar.setOccupyStatusBar(!AndroidUtilities.isTablet() && !inBubbleMode);
         ImageView backButton = actionBar.getBackButton();
         backButton.setOnLongClickListener(e -> {
             ActionBarPopupWindow menu = BackButtonMenu.show(this, backButton, getDialogId(), resourcesProvider);
@@ -3086,15 +3084,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 null,
                                 LocaleController.getString("DebugMenuReadAllDialogs", R.string.DebugMenuReadAllDialogs),
                                 SharedConfig.pauseMusicOnRecord ? LocaleController.getString("DebugMenuDisablePauseMusic", R.string.DebugMenuDisablePauseMusic) : LocaleController.getString("DebugMenuEnablePauseMusic", R.string.DebugMenuEnablePauseMusic),
-                                BuildVars.DEBUG_VERSION && !AndroidUtilities.isTablet() && Build.VERSION.SDK_INT >= 23 ? (SharedConfig.smoothKeyboard ? LocaleController.getString("DebugMenuDisableSmoothKeyboard", R.string.DebugMenuDisableSmoothKeyboard) : LocaleController.getString("DebugMenuEnableSmoothKeyboard", R.string.DebugMenuEnableSmoothKeyboard)) : null,
-                                BuildVars.DEBUG_PRIVATE_VERSION ? (SharedConfig.disableVoiceAudioEffects ? "Enable voip audio effects" : "Disable voip audio effects") : null,
-                                Build.VERSION.SDK_INT >= 21 ? (SharedConfig.noStatusBar ? "Show status bar background" : "Hide status bar background") : null,
+                                BuildVars.DEBUG_VERSION && !AndroidUtilities.isTablet() && Build.VERSION.SDK_INT >= 23 ? SharedConfig.smoothKeyboard ? LocaleController.getString("DebugMenuDisableSmoothKeyboard", R.string.DebugMenuDisableSmoothKeyboard) : LocaleController.getString("DebugMenuEnableSmoothKeyboard", R.string.DebugMenuEnableSmoothKeyboard) : null,
+                                BuildVars.DEBUG_PRIVATE_VERSION ? SharedConfig.disableVoiceAudioEffects ? "Enable voip audio effects" : "Disable voip audio effects" : null,
+                                SharedConfig.noStatusBar ? "Show status bar background" : "Hide status bar background",
                                 BuildVars.DEBUG_PRIVATE_VERSION ? "Clean app update" : null,
                                 BuildVars.DEBUG_PRIVATE_VERSION ? "Reset suggestions" : null,
                                 BuildVars.DEBUG_PRIVATE_VERSION ? LocaleController.getString(SharedConfig.forceRtmpStream ? R.string.DebugMenuDisableForceRtmpStreamFlag : R.string.DebugMenuEnableForceRtmpStreamFlag) : null,
                                 BuildVars.DEBUG_PRIVATE_VERSION ? LocaleController.getString(R.string.DebugMenuClearWebViewCache) : null,
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? LocaleController.getString(SharedConfig.debugWebView ? R.string.DebugMenuDisableWebViewDebug : R.string.DebugMenuEnableWebViewDebug) : null,
-                                (AndroidUtilities.isTabletInternal() && BuildVars.DEBUG_PRIVATE_VERSION) ? (SharedConfig.forceDisableTabletMode ? "Enable tablet mode" : "Disable tablet mode") : null,
+                                LocaleController.getString(SharedConfig.debugWebView ? R.string.DebugMenuDisableWebViewDebug : R.string.DebugMenuEnableWebViewDebug),
+                                AndroidUtilities.isTabletInternal() && BuildVars.DEBUG_PRIVATE_VERSION ? SharedConfig.forceDisableTabletMode ? "Enable tablet mode" : "Disable tablet mode" : null,
                         };
 
                         builder.setItems(items, (dialog, which) -> {
@@ -3154,7 +3152,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 SharedConfig.toggleDisableVoiceAudioEffects();
                             } else if (which == 14) {
                                 SharedConfig.toggleNoStatusBar();
-                                if (getParentActivity() != null && Build.VERSION.SDK_INT >= 21) {
+                                if (getParentActivity() != null) {
                                     if (SharedConfig.noStatusBar) {
                                         getParentActivity().getWindow().setStatusBarColor(0);
                                     } else {
@@ -3387,10 +3385,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 super.onInitializeAccessibilityNodeInfo(info);
                 if (getImageReceiver().hasNotThumb()) {
                     info.setText(LocaleController.getString("AccDescrProfilePicture", R.string.AccDescrProfilePicture));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, LocaleController.getString("Open", R.string.Open)));
-                        info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_LONG_CLICK, LocaleController.getString("AccDescrOpenInPhotoViewer", R.string.AccDescrOpenInPhotoViewer)));
-                    }
+                    info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, LocaleController.getString("Open", R.string.Open)));
+                    info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_LONG_CLICK, LocaleController.getString("AccDescrOpenInPhotoViewer", R.string.AccDescrOpenInPhotoViewer)));
                 } else {
                     info.setVisibleToUser(false);
                 }
@@ -3578,31 +3574,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         writeButton = new RLottieImageView(context);
         Drawable drawable = ExteraUtils.drawFab();
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        }
         writeButton.setBackground(drawable);
-        if (Build.VERSION.SDK_INT >= 21) {
-            StateListAnimator animator = new StateListAnimator();
-            animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(writeButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-            animator.addState(new int[]{}, ObjectAnimator.ofFloat(writeButton, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-            writeButton.setStateListAnimator(animator);
-            writeButton.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    if (ExteraConfig.squareFab) {
-                        outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
-                    } else {
-                        outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                    }
+        StateListAnimator animator = new StateListAnimator();
+        animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(writeButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
+        animator.addState(new int[]{}, ObjectAnimator.ofFloat(writeButton, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
+        writeButton.setStateListAnimator(animator);
+        writeButton.setOutlineProvider(new ViewOutlineProvider() {
+            @SuppressLint("NewApi")
+            @Override
+            public void getOutline(View view, Outline outline) {
+                if (ExteraConfig.squareFab) {
+                    outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
+                } else {
+                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
                 }
-            });
-        }
+            }
+        });
         if (userId != 0) {
             if (imageUpdater != null) {
                 cameraDrawable = new RLottieDrawable(R.raw.camera_outline, String.valueOf(R.raw.camera_outline), AndroidUtilities.dp(56), AndroidUtilities.dp(56), false, null);
@@ -3800,11 +3787,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         sharedMediaLayout.setForwardRestrictedHint(fwdRestrictedHint);
 
         ViewGroup decorView;
-        if (Build.VERSION.SDK_INT >= 21) {
-            decorView = (ViewGroup) getParentActivity().getWindow().getDecorView();
-        } else {
-            decorView = frameLayout;
-        }
+        decorView = (ViewGroup) getParentActivity().getWindow().getDecorView();
         pinchToZoomHelper = new PinchToZoomHelper(decorView, frameLayout) {
 
             Paint statusBarPaint;
@@ -4399,7 +4382,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     icons.add(R.drawable.msg_calls);
                     items.add(LocaleController.getString("CallViaTelegram", R.string.CallViaTelegram));
                     actions.add(PHONE_OPTION_TELEGRAM_CALL);
-                    if (Build.VERSION.SDK_INT >= 18 && userInfo.video_calls_available) {
+                    if (userInfo.video_calls_available) {
                         icons.add(R.drawable.msg_videocall);
                         items.add(LocaleController.getString("VideoCallViaTelegram", R.string.VideoCallViaTelegram));
                         actions.add(PHONE_OPTION_TELEGRAM_VIDEO_CALL);
@@ -5778,7 +5761,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             } else {
                 transitionIndex = getNotificationCenter().setAnimationInProgress(transitionIndex, new int[]{NotificationCenter.dialogsNeedReload, NotificationCenter.closeChats, NotificationCenter.mediaCountDidLoad, NotificationCenter.mediaCountsDidLoad});
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !backward && getParentActivity() != null) {
+            if (!backward && getParentActivity() != null) {
                 navigationBarAnimationColorFrom = getParentActivity().getWindow().getNavigationBarColor();
             }
         }
@@ -7069,7 +7052,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             } else {
                 if (userInfo != null && userInfo.phone_calls_available) {
                     callItemVisible = true;
-                    videoCallItemVisible = Build.VERSION.SDK_INT >= 18 && userInfo.video_calls_available;
+                    videoCallItemVisible = userInfo.video_calls_available;
                 }
                 if (isBot || getContactsController().contactsDict.get(userId) == null) {
                     if (MessagesController.isSupportUser(user)) {

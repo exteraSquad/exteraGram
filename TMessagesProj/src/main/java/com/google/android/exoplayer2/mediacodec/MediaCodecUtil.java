@@ -958,7 +958,6 @@ public final class MediaCodecUtil {
     boolean isFeatureRequired(String feature, String mimeType, CodecCapabilities capabilities);
   }
 
-  @TargetApi(21)
   private static final class MediaCodecListCompatV21 implements MediaCodecListCompat {
 
     private final int codecKind;

@@ -286,11 +286,9 @@ public class ProxySettingsActivity extends BaseFragment {
         inputFieldsContainer = new LinearLayout(context);
         inputFieldsContainer.setOrientation(LinearLayout.VERTICAL);
         inputFieldsContainer.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // bring to front for transitions
-            inputFieldsContainer.setElevation(AndroidUtilities.dp(1f));
-            inputFieldsContainer.setOutlineProvider(null);
-        }
+        // bring to front for transitions
+        inputFieldsContainer.setElevation(AndroidUtilities.dp(1f));
+        inputFieldsContainer.setOutlineProvider(null);
         linearLayout2.addView(inputFieldsContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         inputFields = new EditTextBoldCursor[5];
@@ -701,7 +699,7 @@ public class ProxySettingsActivity extends BaseFragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 TransitionManager.endTransitions(linearLayout2);
             }
-            if (animated && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (animated) {
                 final TransitionSet transitionSet = new TransitionSet()
                         .addTransition(new Fade(Fade.OUT))
                         .addTransition(new ChangeBounds())

@@ -47,27 +47,25 @@ public class VoIPNotificationsLayout extends LinearLayout {
         super(context);
         setOrientation(VERTICAL);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            transitionSet = new TransitionSet();
-            transitionSet.addTransition(new Fade(Fade.OUT).setDuration(150))
-                    .addTransition(new ChangeBounds().setDuration(200))
-                    .addTransition(new Visibility() {
-                        @Override
-                        public Animator onAppear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) {
-                            AnimatorSet set = new AnimatorSet();
-                            view.setAlpha(0);
-                            set.playTogether(
-                                    ObjectAnimator.ofFloat(view, View.ALPHA, 0, 1f),
-                                    ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getMeasuredHeight(), 0)
-                            );
+        transitionSet = new TransitionSet();
+        transitionSet.addTransition(new Fade(Fade.OUT).setDuration(150))
+                .addTransition(new ChangeBounds().setDuration(200))
+                .addTransition(new Visibility() {
+                    @Override
+                    public Animator onAppear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) {
+                        AnimatorSet set = new AnimatorSet();
+                        view.setAlpha(0);
+                        set.playTogether(
+                                ObjectAnimator.ofFloat(view, View.ALPHA, 0, 1f),
+                                ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, view.getMeasuredHeight(), 0)
+                        );
 
-                            set.setInterpolator(CubicBezierInterpolator.DEFAULT);
+                        set.setInterpolator(CubicBezierInterpolator.DEFAULT);
 
-                            return set;
-                        }
-                    }.setDuration(200));
-            transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
-        }
+                        return set;
+                    }
+                }.setDuration(200));
+        transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
     }
 
     public void addNotification(int iconRes, String text, String tag, boolean animated) {
@@ -119,11 +117,9 @@ public class VoIPNotificationsLayout extends LinearLayout {
         if (viewToAdd.isEmpty() && viewToRemove.isEmpty()) {
             return;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            ViewParent parent = getParent();
-            if (parent != null) {
-                TransitionManager.beginDelayedTransition(this, transitionSet);
-            }
+        ViewParent parent = getParent();
+        if (parent != null) {
+            TransitionManager.beginDelayedTransition(this, transitionSet);
         }
 
         for (int i = 0; i < viewToAdd.size(); i++) {
@@ -160,11 +156,9 @@ public class VoIPNotificationsLayout extends LinearLayout {
     public void beforeLayoutChanges() {
         wasChanged = false;
         if (!lockAnimation) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                ViewParent parent = getParent();
-                if (parent != null) {
-                    TransitionManager.beginDelayedTransition(this, transitionSet);
-                }
+            ViewParent parent = getParent();
+            if (parent != null) {
+                TransitionManager.beginDelayedTransition(this, transitionSet);
             }
         }
     }
@@ -205,16 +199,14 @@ public class VoIPNotificationsLayout extends LinearLayout {
         public void startAnimation() {
             textView.setVisibility(View.GONE);
             postDelayed(() -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    TransitionSet transitionSet = new TransitionSet();
-                    transitionSet.
-                            addTransition(new Fade(Fade.IN).setDuration(150))
-                            .addTransition(new ChangeBounds().setDuration(200));
-                    transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
-                    ViewParent parent = getParent();
-                    if (parent != null) {
-                        TransitionManager.beginDelayedTransition((ViewGroup) parent, transitionSet);
-                    }
+                TransitionSet transitionSet = new TransitionSet();
+                transitionSet.
+                        addTransition(new Fade(Fade.IN).setDuration(150))
+                        .addTransition(new ChangeBounds().setDuration(200));
+                transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
+                ViewParent parent = getParent();
+                if (parent != null) {
+                    TransitionManager.beginDelayedTransition((ViewGroup) parent, transitionSet);
                 }
 
                 textView.setVisibility(View.VISIBLE);

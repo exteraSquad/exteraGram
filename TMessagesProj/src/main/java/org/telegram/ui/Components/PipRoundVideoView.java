@@ -184,71 +184,27 @@ public class PipRoundVideoView implements NotificationCenter.NotificationCenterD
         videoWidth = AndroidUtilities.dp(120 + 6);
         videoHeight = AndroidUtilities.dp(120 + 6);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            aspectRatioFrameLayout = new AspectRatioFrameLayout(activity) {
-                @Override
-                protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-                    boolean result = super.drawChild(canvas, child, drawingTime);
-                    if (child == textureView) {
-                        MessageObject currentMessageObject = MediaController.getInstance().getPlayingMessageObject();
-                        if (currentMessageObject != null) {
-                            rect.set(AndroidUtilities.dpf2(1.5f), AndroidUtilities.dpf2(1.5f), getMeasuredWidth() - AndroidUtilities.dpf2(1.5f), getMeasuredHeight() - AndroidUtilities.dpf2(1.5f));
-                            canvas.drawArc(rect, -90, 360 * currentMessageObject.audioProgress, false, Theme.chat_radialProgressPaint);
-                        }
+        aspectRatioFrameLayout = new AspectRatioFrameLayout(activity) {
+            @Override
+            protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+                boolean result = super.drawChild(canvas, child, drawingTime);
+                if (child == textureView) {
+                    MessageObject currentMessageObject = MediaController.getInstance().getPlayingMessageObject();
+                    if (currentMessageObject != null) {
+                        rect.set(AndroidUtilities.dpf2(1.5f), AndroidUtilities.dpf2(1.5f), getMeasuredWidth() - AndroidUtilities.dpf2(1.5f), getMeasuredHeight() - AndroidUtilities.dpf2(1.5f));
+                        canvas.drawArc(rect, -90, 360 * currentMessageObject.audioProgress, false, Theme.chat_radialProgressPaint);
                     }
-                    return result;
                 }
-            };
-            aspectRatioFrameLayout.setOutlineProvider(new ViewOutlineProvider() {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, AndroidUtilities.dp(120), AndroidUtilities.dp(120));
-                }
-            });
-            aspectRatioFrameLayout.setClipToOutline(true);
-        } else {
-            final Paint aspectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            aspectPaint.setColor(0xff000000);
-            aspectPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            aspectRatioFrameLayout = new AspectRatioFrameLayout(activity) {
-
-                private Path aspectPath = new Path();
-
-                @Override
-                protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-                    super.onSizeChanged(w, h, oldw, oldh);
-                    aspectPath.reset();
-                    aspectPath.addCircle(w / 2, h / 2, w / 2, Path.Direction.CW);
-                    aspectPath.toggleInverseFillType();
-                }
-
-                @Override
-                protected void dispatchDraw(Canvas canvas) {
-                    super.dispatchDraw(canvas);
-                    canvas.drawPath(aspectPath, aspectPaint);
-                }
-
-                @Override
-                protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-                    boolean result;
-                    try {
-                        result = super.drawChild(canvas, child, drawingTime);
-                    } catch (Throwable ignore) {
-                        result = false;
-                    }
-                    if (child == textureView) {
-                        MessageObject currentMessageObject = MediaController.getInstance().getPlayingMessageObject();
-                        if (currentMessageObject != null) {
-                            rect.set(AndroidUtilities.dpf2(1.5f), AndroidUtilities.dpf2(1.5f), getMeasuredWidth() - AndroidUtilities.dpf2(1.5f), getMeasuredHeight() - AndroidUtilities.dpf2(1.5f));
-                            canvas.drawArc(rect, -90, 360 * currentMessageObject.audioProgress, false, Theme.chat_radialProgressPaint);
-                        }
-                    }
-                    return result;
-                }
-            };
-            aspectRatioFrameLayout.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+                return result;
+            }
+        };
+        aspectRatioFrameLayout.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setOval(0, 0, AndroidUtilities.dp(120), AndroidUtilities.dp(120));
+            }
+        });
+        aspectRatioFrameLayout.setClipToOutline(true);
         aspectRatioFrameLayout.setAspectRatio(1.0f, 0);
         windowView.addView(aspectRatioFrameLayout, LayoutHelper.createFrame(120, 120, Gravity.LEFT | Gravity.TOP, 3, 3, 0, 0));
         windowView.setAlpha(1.0f);

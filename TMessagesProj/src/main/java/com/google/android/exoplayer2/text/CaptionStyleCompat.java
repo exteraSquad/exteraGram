@@ -124,7 +124,6 @@ public final class CaptionStyleCompat {
    * @param captionStyle A {@link CaptionStyle}.
    * @return The equivalent {@link CaptionStyleCompat}.
    */
-  @TargetApi(19)
   public static CaptionStyleCompat createFromCaptionStyle(
       CaptioningManager.CaptionStyle captionStyle) {
     if (Util.SDK_INT >= 21) {
@@ -159,7 +158,6 @@ public final class CaptionStyleCompat {
     this.typeface = typeface;
   }
 
-  @TargetApi(19)
   @SuppressWarnings("ResourceType")
   private static CaptionStyleCompat createFromCaptionStyleV19(
       CaptioningManager.CaptionStyle captionStyle) {
@@ -168,7 +166,6 @@ public final class CaptionStyleCompat {
         captionStyle.edgeType, captionStyle.edgeColor, captionStyle.getTypeface());
   }
 
-  @TargetApi(21)
   @SuppressWarnings("ResourceType")
   private static CaptionStyleCompat createFromCaptionStyleV21(
       CaptioningManager.CaptionStyle captionStyle) {

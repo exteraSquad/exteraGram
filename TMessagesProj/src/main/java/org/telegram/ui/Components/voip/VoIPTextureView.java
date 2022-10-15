@@ -176,20 +176,17 @@ public class VoIPTextureView extends FrameLayout {
         screencastView.addView(screencastText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 21, 28, 21, 0));
 
         if (applyRoundRadius) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                setOutlineProvider(new ViewOutlineProvider() {
-                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        if (roundRadius < 1) {
-                            outline.setRect((int) currentClipHorizontal, (int) currentClipVertical, (int) (view.getMeasuredWidth() - currentClipHorizontal), (int) (view.getMeasuredHeight() - currentClipVertical));
-                        } else {
-                            outline.setRoundRect((int) currentClipHorizontal, (int) currentClipVertical, (int) (view.getMeasuredWidth() - currentClipHorizontal), (int) (view.getMeasuredHeight() - currentClipVertical), roundRadius);
-                        }
+            setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    if (roundRadius < 1) {
+                        outline.setRect((int) currentClipHorizontal, (int) currentClipVertical, (int) (view.getMeasuredWidth() - currentClipHorizontal), (int) (view.getMeasuredHeight() - currentClipVertical));
+                    } else {
+                        outline.setRoundRect((int) currentClipHorizontal, (int) currentClipVertical, (int) (view.getMeasuredWidth() - currentClipHorizontal), (int) (view.getMeasuredHeight() - currentClipVertical), roundRadius);
                     }
-                });
-                setClipToOutline(true);
-            }
+                }
+            });
+            setClipToOutline(true);
         }
 
         if (isCamera) {
@@ -279,11 +276,7 @@ public class VoIPTextureView extends FrameLayout {
     public void setRoundCorners(float radius) {
         if (roundRadius != radius) {
             roundRadius = radius;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                invalidateOutline();
-            } else {
-                invalidate();
-            }
+            invalidateOutline();
         }
     }
 
@@ -418,9 +411,7 @@ public class VoIPTextureView extends FrameLayout {
             if (clipToTexture && !animateWithParent && currentAnimation == null && !animateOnNextLayout) {
                 currentClipHorizontal = (getMeasuredWidth() - renderer.getMeasuredWidth()) / 2f;
                 currentClipVertical = (getMeasuredHeight() - renderer.getMeasuredHeight()) / 2f;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    invalidateOutline();
-                }
+                invalidateOutline();
             }
         }
 
@@ -468,9 +459,7 @@ public class VoIPTextureView extends FrameLayout {
 
             currentClipVertical = clipVertical;
             currentClipHorizontal = clipHorizontal;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                invalidateOutline();
-            }
+            invalidateOutline();
             invalidate();
             float fromScaleFinal = aninateFromScale;
             float fromScaleBlurFinal = aninateFromScaleBlur;
@@ -484,9 +473,7 @@ public class VoIPTextureView extends FrameLayout {
                 animationProgress = (1f - v);
                 currentClipVertical = v * clipVertical;
                 currentClipHorizontal = v * clipHorizontal;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    invalidateOutline();
-                }
+                invalidateOutline();
                 invalidate();
 
                 float s = fromScaleFinal * v + scaleTextureToFill * (1f - v);
@@ -559,9 +546,7 @@ public class VoIPTextureView extends FrameLayout {
         }
         currentClipHorizontal = horizontalClip;
         currentClipVertical = verticalClip;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            invalidateOutline();
-        }
+        invalidateOutline();
         invalidate();
 
     }

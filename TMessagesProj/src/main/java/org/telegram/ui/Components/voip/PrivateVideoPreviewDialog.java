@@ -51,7 +51,6 @@ import androidx.core.graphics.ColorUtils;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-@TargetApi(21)
 public abstract class PrivateVideoPreviewDialog extends FrameLayout implements VoIPService.StateListener {
 
     private boolean isDismissed;

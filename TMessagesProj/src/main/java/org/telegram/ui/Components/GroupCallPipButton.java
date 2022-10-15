@@ -428,7 +428,7 @@ public class GroupCallPipButton extends FrameLayout implements NotificationCente
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && GroupCallPip.getInstance() != null) {
+        if (GroupCallPip.getInstance() != null) {
             final String label = GroupCallPip.getInstance().showAlert ? LocaleController.getString("AccDescrCloseMenu", R.string.AccDescrCloseMenu) : LocaleController.getString("AccDescrOpenMenu2", R.string.AccDescrOpenMenu2);
             info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, label));
         }

@@ -266,9 +266,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
                     params.width = params.height = WindowManager.LayoutParams.MATCH_PARENT;
                     params.format = PixelFormat.TRANSLUCENT;
                     params.type = WindowManager.LayoutParams.LAST_APPLICATION_WINDOW;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        params.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-                    }
+                    params.flags |= WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                         params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
                     }

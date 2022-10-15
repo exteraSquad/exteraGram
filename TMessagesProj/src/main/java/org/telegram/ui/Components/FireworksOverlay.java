@@ -211,9 +211,7 @@ public class FireworksOverlay extends View {
 
     public void start() {
         particles.clear();
-        if (Build.VERSION.SDK_INT >= 18) {
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
         started = true;
         startedFall = false;
         fallingDownCount = 0;
@@ -270,13 +268,11 @@ public class FireworksOverlay extends View {
             invalidate();
         } else {
             started = false;
-            if (Build.VERSION.SDK_INT >= 18) {
-                AndroidUtilities.runOnUIThread(() -> {
-                    if (!started) {
-                        setLayerType(View.LAYER_TYPE_NONE, null);
-                    }
-                });
-            }
+            AndroidUtilities.runOnUIThread(() -> {
+                if (!started) {
+                    setLayerType(View.LAYER_TYPE_NONE, null);
+                }
+            });
         }
     }
 }

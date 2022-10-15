@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 /** An {@link ExoMediaDrm} that does not support any protection schemes. */
-@RequiresApi(18)
 public final class DummyExoMediaDrm<T extends ExoMediaCrypto> implements ExoMediaDrm<T> {
 
   /** Returns a new instance. */

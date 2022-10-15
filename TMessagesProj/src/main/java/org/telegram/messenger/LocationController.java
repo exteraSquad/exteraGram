@@ -275,33 +275,29 @@ public class LocationController extends BaseController implements NotificationCe
     public void onConnected(Bundle bundle) {
         wasConnectedToPlayServices = true;
         try {
-            if (Build.VERSION.SDK_INT >= 21) {
-                ApplicationLoader.getLocationServiceProvider().checkLocationSettings(locationRequest, status -> {
-                    switch (status) {
-                        case ILocationServiceProvider.STATUS_SUCCESS:
-                            startFusedLocationRequest(true);
-                            break;
-                        case ILocationServiceProvider.STATUS_RESOLUTION_REQUIRED:
-                            Utilities.stageQueue.postRunnable(() -> {
-                                if (lookingForPeopleNearby || !sharingLocations.isEmpty()) {
-                                    AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.needShowPlayServicesAlert, status));
-                                }
-                            });
-                            break;
-                        case ILocationServiceProvider.STATUS_SETTINGS_CHANGE_UNAVAILABLE:
-                            Utilities.stageQueue.postRunnable(() -> {
-                                servicesAvailable = false;
-                                try {
-                                    apiClient.disconnect();
-                                    start();
-                                } catch (Throwable ignore) {}
-                            });
-                            break;
-                    }
-                });
-            } else {
-                startFusedLocationRequest(true);
-            }
+            ApplicationLoader.getLocationServiceProvider().checkLocationSettings(locationRequest, status -> {
+                switch (status) {
+                    case ILocationServiceProvider.STATUS_SUCCESS:
+                        startFusedLocationRequest(true);
+                        break;
+                    case ILocationServiceProvider.STATUS_RESOLUTION_REQUIRED:
+                        Utilities.stageQueue.postRunnable(() -> {
+                            if (lookingForPeopleNearby || !sharingLocations.isEmpty()) {
+                                AndroidUtilities.runOnUIThread(() -> getNotificationCenter().postNotificationName(NotificationCenter.needShowPlayServicesAlert, status));
+                            }
+                        });
+                        break;
+                    case ILocationServiceProvider.STATUS_SETTINGS_CHANGE_UNAVAILABLE:
+                        Utilities.stageQueue.postRunnable(() -> {
+                            servicesAvailable = false;
+                            try {
+                                apiClient.disconnect();
+                                start();
+                            } catch (Throwable ignore) {}
+                        });
+                        break;
+                }
+            });
         } catch (Throwable e) {
             FileLog.e(e);
         }
@@ -546,7 +542,7 @@ public class LocationController extends BaseController implements NotificationCe
     }
 
     private void setLastKnownLocation(Location location) {
-        if (location != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && (SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos()) / 1000000000 > 60 * 5) {
+        if (location != null && (SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos()) / 1000000000 > 60 * 5) {
             return;
         }
         lastKnownLocation = location;

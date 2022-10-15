@@ -598,7 +598,7 @@ public class PhotoFilterView extends FrameLayout implements FilterShaders.Filter
 
         updateSelectedBlurType();
 
-        if (Build.VERSION.SDK_INT >= 21 && !inBubbleMode) {
+        if (!inBubbleMode) {
             if (ownsTextureView) {
                 ((LayoutParams) textureView.getLayoutParams()).topMargin = AndroidUtilities.statusBarHeight;
             }
@@ -794,7 +794,7 @@ public class PhotoFilterView extends FrameLayout implements FilterShaders.Filter
 
     private void fixLayout(int viewWidth, int viewHeight) {
         viewWidth -= AndroidUtilities.dp(28);
-        viewHeight -= AndroidUtilities.dp(14 + 140 + 60) + (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
+        viewHeight -= AndroidUtilities.dp(14 + 140 + 60) + (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
 
         float bitmapW;
         float bitmapH;
@@ -821,7 +821,7 @@ public class PhotoFilterView extends FrameLayout implements FilterShaders.Filter
         }
 
         int bitmapX = (int) Math.ceil((viewWidth - bitmapW) / 2 + AndroidUtilities.dp(14));
-        int bitmapY = (int) Math.ceil((viewHeight - bitmapH) / 2 + AndroidUtilities.dp(14) + (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0));
+        int bitmapY = (int) Math.ceil((viewHeight - bitmapH) / 2 + AndroidUtilities.dp(14) + (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0));
 
         int width = (int) bitmapW;
         int height = (int) bitmapH;
@@ -832,7 +832,7 @@ public class PhotoFilterView extends FrameLayout implements FilterShaders.Filter
             layoutParams.width = width;
             layoutParams.height = height;
         }
-        curvesControl.setActualArea(bitmapX, bitmapY - (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0), width, height);
+        curvesControl.setActualArea(bitmapX, bitmapY - (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0), width, height);
 
         blurControl.setActualAreaSize(width, height);
         LayoutParams layoutParams = (LayoutParams) blurControl.getLayoutParams();

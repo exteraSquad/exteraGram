@@ -1155,7 +1155,6 @@ public final class C {
    *
    * @see AudioManager#generateAudioSessionId()
    */
-  @TargetApi(21)
   public static int generateAudioSessionIdV21(Context context) {
     return ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE))
         .generateAudioSessionId();

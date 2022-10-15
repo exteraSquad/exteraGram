@@ -26,11 +26,10 @@ import org.webrtc.SurfaceTextureHelper;
 import org.webrtc.VideoCapturer;
 import org.webrtc.voiceengine.WebRtcAudioRecord;
 
-@TargetApi(18)
 public class VideoCapturerDevice {
 
-    private static final int CAPTURE_WIDTH = Build.VERSION.SDK_INT <= 19 ? 480 : 1280;
-    private static final int CAPTURE_HEIGHT = Build.VERSION.SDK_INT <= 19 ? 320 : 720;
+    private static final int CAPTURE_WIDTH = 1280;
+    private static final int CAPTURE_HEIGHT = 720;
     private static final int CAPTURE_FPS = 30;
 
     public static EglBase eglBase;
@@ -51,9 +50,6 @@ public class VideoCapturerDevice {
     private CapturerObserver nativeCapturerObserver;
 
     public VideoCapturerDevice(boolean screencast) {
-        if (Build.VERSION.SDK_INT < 18) {
-            return;
-        }
         Logging.enableLogToDebugOutput(Logging.Severity.LS_INFO);
         Logging.d("VideoCapturerDevice", "device model = " + Build.MANUFACTURER + Build.MODEL);
         AndroidUtilities.runOnUIThread(() -> {
@@ -130,18 +126,12 @@ public class VideoCapturerDevice {
     }
 
     private void init(long ptr, String deviceName) {
-        if (Build.VERSION.SDK_INT < 18) {
-            return;
-        }
         AndroidUtilities.runOnUIThread(() -> {
             if (eglBase == null) {
                 return;
             }
             nativePtr = ptr;
             if ("screen".equals(deviceName)) {
-                if (Build.VERSION.SDK_INT < 21) {
-                    return;
-                }
                 if (videoCapturer == null) {
                     videoCapturer = new ScreenCapturerAndroid(mediaProjectionPermissionResultData, new MediaProjection.Callback() {
                         @Override
@@ -286,9 +276,6 @@ public class VideoCapturerDevice {
     }
 
     private void onStateChanged(long ptr, int state) {
-        if (Build.VERSION.SDK_INT < 18) {
-            return;
-        }
         AndroidUtilities.runOnUIThread(() -> {
             if (nativePtr != ptr) {
                 return;
@@ -311,9 +298,6 @@ public class VideoCapturerDevice {
     }
 
     private void onDestroy() {
-        if (Build.VERSION.SDK_INT < 18) {
-            return;
-        }
         nativePtr = 0;
         AndroidUtilities.runOnUIThread(() -> {
 //            if (eglBase != null) {

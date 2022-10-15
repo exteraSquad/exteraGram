@@ -82,11 +82,7 @@ public class AudioRecoder {
             }
 
             ByteBuffer decoderInputBuffer;
-            if (android.os.Build.VERSION.SDK_INT >= 21) {
-                decoderInputBuffer = decoder.getInputBuffer(decoderInputBufferIndex);
-            } else {
-                decoderInputBuffer = decoderInputBuffers[decoderInputBufferIndex];
-            }
+            decoderInputBuffer = decoder.getInputBuffer(decoderInputBufferIndex);
             int size = extractor.readSampleData(decoderInputBuffer, 0);
 
             long presentationTime = extractor.getSampleTime();

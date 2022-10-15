@@ -929,9 +929,7 @@ public class EmojiTabsStrip extends ScrollableHorizontalScrollView {
             setSmoothScrollingEnabled(true);
             setHorizontalScrollBarEnabled(false);
             setVerticalScrollBarEnabled(false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                setNestedScrollingEnabled(true);
-            }
+            setNestedScrollingEnabled(true);
             contentView = new LinearLayout(context) {
                 @Override
                 protected void onLayout(boolean changed, int l, int t, int r, int b) {

@@ -98,9 +98,7 @@ public class ReactionsDoubleTapManageActivity extends BaseFragment implements No
                 switch (viewType) {
                     case 0:
                         ThemePreviewMessagesCell messagesCell = new ThemePreviewMessagesCell(context, parentLayout, ThemePreviewMessagesCell.TYPE_REACTIONS_DOUBLE_TAP);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            messagesCell.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-                        }
+                        messagesCell.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
                         messagesCell.fragment = ReactionsDoubleTapManageActivity.this;
                         view = messagesCell;
                         break;

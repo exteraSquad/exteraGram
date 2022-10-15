@@ -42,7 +42,6 @@ import com.google.android.exoplayer2.util.Util;
  *     android:exported="true"/>
  * }</pre>
  */
-@TargetApi(21)
 public final class PlatformScheduler implements Scheduler {
 
   private static final boolean DEBUG = false;

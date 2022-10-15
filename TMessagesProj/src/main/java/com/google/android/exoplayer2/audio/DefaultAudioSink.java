@@ -1185,12 +1185,10 @@ public final class DefaultAudioSink implements AudioSink {
     }
   }
 
-  @TargetApi(21)
   private static int writeNonBlockingV21(AudioTrack audioTrack, ByteBuffer buffer, int size) {
     return audioTrack.write(buffer, size, WRITE_NON_BLOCKING);
   }
 
-  @TargetApi(21)
   private int writeNonBlockingWithAvSyncV21(AudioTrack audioTrack, ByteBuffer buffer, int size,
       long presentationTimeUs) {
     if (Util.SDK_INT >= 26) {
@@ -1228,7 +1226,6 @@ public final class DefaultAudioSink implements AudioSink {
     return result;
   }
 
-  @TargetApi(21)
   private static void setVolumeInternalV21(AudioTrack audioTrack, float volume) {
     audioTrack.setVolume(volume);
   }
@@ -1430,7 +1427,6 @@ public final class DefaultAudioSink implements AudioSink {
       return audioTrack;
     }
 
-    @TargetApi(21)
     private AudioTrack createAudioTrackV21(
         boolean tunneling, AudioAttributes audioAttributes, int audioSessionId) {
       android.media.AudioAttributes attributes;

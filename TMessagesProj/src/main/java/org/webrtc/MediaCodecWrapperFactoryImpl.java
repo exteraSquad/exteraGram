@@ -94,13 +94,11 @@ class MediaCodecWrapperFactoryImpl implements MediaCodecWrapperFactory {
     }
 
     @Override
-    @TargetApi(18)
     public Surface createInputSurface() {
       return mediaCodec.createInputSurface();
     }
 
     @Override
-    @TargetApi(19)
     public void setParameters(Bundle params) {
       mediaCodec.setParameters(params);
     }

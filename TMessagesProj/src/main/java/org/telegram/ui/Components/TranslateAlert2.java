@@ -482,9 +482,7 @@ public class TranslateAlert2 extends BottomSheet {
 
         subtitleView = new LinearLayout(context);
         subtitleView.setOrientation(LinearLayout.HORIZONTAL);
-        if (Build.VERSION.SDK_INT >= 17) {
-            subtitleView.setLayoutDirection(LocaleController.isRTL ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
-        }
+        subtitleView.setLayoutDirection(LocaleController.isRTL ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
         subtitleView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
 
         String fromLanguageName = languageName(fromLanguage);

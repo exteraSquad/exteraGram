@@ -594,17 +594,15 @@ public class ChatRightsEditActivity extends BaseFragment {
                                     dialog.setButton(DialogInterface.BUTTON_NEGATIVE, LocaleController.getString("Cancel", R.string.Cancel), (dialog1, which) -> {
 
                                     });
-                                    if (Build.VERSION.SDK_INT >= 21) {
-                                        dialog.setOnShowListener(dialog12 -> {
-                                            int count = datePicker.getChildCount();
-                                            for (int b = 0; b < count; b++) {
-                                                View child = datePicker.getChildAt(b);
-                                                ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
-                                                layoutParams.width = LayoutHelper.MATCH_PARENT;
-                                                child.setLayoutParams(layoutParams);
-                                            }
-                                        });
-                                    }
+                                    dialog.setOnShowListener(dialog12 -> {
+                                        int count = datePicker.getChildCount();
+                                        for (int b = 0; b < count; b++) {
+                                            View child = datePicker.getChildAt(b);
+                                            ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
+                                            layoutParams.width = LayoutHelper.MATCH_PARENT;
+                                            child.setLayoutParams(layoutParams);
+                                        }
+                                    });
                                     showDialog(dialog);
                                 } catch (Exception e) {
                                     FileLog.e(e);

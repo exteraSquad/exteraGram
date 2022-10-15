@@ -45,7 +45,7 @@ public class TermsOfServiceView extends FrameLayout {
         super(context);
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 
-        final int top = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? AndroidUtilities.statusBarHeight : 0;
+        final int top = AndroidUtilities.statusBarHeight;
 
         if (top > 0) {
             View view = new View(context);

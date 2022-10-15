@@ -119,7 +119,6 @@ import javax.microedition.khronos.opengles.GL;
 
 import com.exteragram.messenger.ExteraConfig;
 
-@TargetApi(18)
 public class InstantCameraView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private int currentAccount = UserConfig.selectedAccount;
@@ -250,63 +249,27 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
 
         rect = new RectF();
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            cameraContainer = new InstantViewCameraContainer(context) {
-                @Override
-                public void setScaleX(float scaleX) {
-                    super.setScaleX(scaleX);
-                    InstantCameraView.this.invalidate();
-                }
+        cameraContainer = new InstantViewCameraContainer(context) {
+            @Override
+            public void setScaleX(float scaleX) {
+                super.setScaleX(scaleX);
+                InstantCameraView.this.invalidate();
+            }
 
-                @Override
-                public void setAlpha(float alpha) {
-                    super.setAlpha(alpha);
-                    InstantCameraView.this.invalidate();
-                }
-            };
-            cameraContainer.setOutlineProvider(new ViewOutlineProvider() {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setOval(0, 0, textureViewSize, textureViewSize);
-                }
-            });
-            cameraContainer.setClipToOutline(true);
-            cameraContainer.setWillNotDraw(false);
-        } else {
-            final Path path = new Path();
-            final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(0xff000000);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            cameraContainer = new InstantViewCameraContainer(context) {
-
-                @Override
-                public void setScaleX(float scaleX) {
-                    super.setScaleX(scaleX);
-                    InstantCameraView.this.invalidate();
-                }
-
-                @Override
-                protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-                    super.onSizeChanged(w, h, oldw, oldh);
-                    path.reset();
-                    path.addCircle(w / 2, h / 2, w / 2, Path.Direction.CW);
-                    path.toggleInverseFillType();
-                }
-
-                @Override
-                protected void dispatchDraw(Canvas canvas) {
-                    try {
-                        super.dispatchDraw(canvas);
-                        canvas.drawPath(path, paint);
-                    } catch (Exception ignore) {
-
-                    }
-                }
-            };
-            cameraContainer.setWillNotDraw(false);
-            cameraContainer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+            @Override
+            public void setAlpha(float alpha) {
+                super.setAlpha(alpha);
+                InstantCameraView.this.invalidate();
+            }
+        };
+        cameraContainer.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setOval(0, 0, textureViewSize, textureViewSize);
+            }
+        });
+        cameraContainer.setClipToOutline(true);
+        cameraContainer.setWillNotDraw(false);
 
         addView(cameraContainer, new LayoutParams(AndroidUtilities.roundPlayingMessageSize, AndroidUtilities.roundPlayingMessageSize, Gravity.CENTER));
 
@@ -404,9 +367,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                 cameraContainer.getLayoutParams().width = cameraContainer.getLayoutParams().height = textureViewSize;
                 ((LayoutParams) muteImageView.getLayoutParams()).topMargin = textureViewSize / 2 - AndroidUtilities.dp(24);
                 textureOverlayView.setRoundRadius(textureViewSize / 2);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    cameraContainer.invalidateOutline();
-                }
+                cameraContainer.invalidateOutline();
             }
             updateTextureViewSize = false;
         }
@@ -554,12 +515,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
         }
 
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            switchCameraDrawable = (AnimatedVectorDrawable) ContextCompat.getDrawable(getContext(), R.drawable.avd_flip);
-            switchCameraButton.setImageDrawable(switchCameraDrawable);
-        } else {
-            switchCameraButton.setImageResource(R.drawable.vd_flip);
-        }
+        switchCameraDrawable = (AnimatedVectorDrawable) ContextCompat.getDrawable(getContext(), R.drawable.avd_flip);
+        switchCameraButton.setImageDrawable(switchCameraDrawable);
 
         textureOverlayView.setAlpha(1.0f);
         textureOverlayView.invalidate();
@@ -1948,13 +1905,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                     int inputBufferIndex = audioEncoder.dequeueInputBuffer(0);
                     if (inputBufferIndex >= 0) {
                         ByteBuffer inputBuffer;
-                        if (Build.VERSION.SDK_INT >= 21) {
-                            inputBuffer = audioEncoder.getInputBuffer(inputBufferIndex);
-                        } else {
-                            ByteBuffer[] inputBuffers = audioEncoder.getInputBuffers();
-                            inputBuffer = inputBuffers[inputBufferIndex];
-                            inputBuffer.clear();
-                        }
+                        inputBuffer = audioEncoder.getInputBuffer(inputBufferIndex);
                         long startWriteTime = input.offset[input.lastWroteBuffer];
                         for (int a = input.lastWroteBuffer; a <= input.results; a++) {
                             if (a < input.results) {
@@ -2106,7 +2057,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
         }
 
         private void createKeyframeThumb() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_HIGH && frameCount % 33 == 0) {
+            if (SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_HIGH && frameCount % 33 == 0) {
                 GenerateKeyframeThumbTask task = new GenerateKeyframeThumbTask();
                 generateKeyframeThumbsQueue.postRunnable(task);
             }
@@ -2496,9 +2447,6 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             }
 
             ByteBuffer[] encoderOutputBuffers = null;
-            if (Build.VERSION.SDK_INT < 21) {
-                encoderOutputBuffers = videoEncoder.getOutputBuffers();
-            }
             while (true) {
                 int encoderStatus = videoEncoder.dequeueOutputBuffer(videoBufferInfo, 10000);
                 if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
@@ -2506,9 +2454,6 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                         break;
                     }
                 } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    if (Build.VERSION.SDK_INT < 21) {
-                        encoderOutputBuffers = videoEncoder.getOutputBuffers();
-                    }
                 } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     MediaFormat newFormat = videoEncoder.getOutputFormat();
                     if (videoTrackIndex == -5) {
@@ -2521,11 +2466,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                     }
                 } else if (encoderStatus >= 0) {
                     ByteBuffer encodedData;
-                    if (Build.VERSION.SDK_INT < 21) {
-                        encodedData = encoderOutputBuffers[encoderStatus];
-                    } else {
-                        encodedData = videoEncoder.getOutputBuffer(encoderStatus);
-                    }
+                    encodedData = videoEncoder.getOutputBuffer(encoderStatus);
                     if (encodedData == null) {
                         throw new RuntimeException("encoderOutputBuffer " + encoderStatus + " was null");
                     }
@@ -2594,9 +2535,6 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                 }
             }
 
-            if (Build.VERSION.SDK_INT < 21) {
-                encoderOutputBuffers = audioEncoder.getOutputBuffers();
-            }
             boolean encoderOutputAvailable = true;
             while (true) {
                 int encoderStatus = audioEncoder.dequeueOutputBuffer(audioBufferInfo, 0);
@@ -2605,9 +2543,6 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                         break;
                     }
                 } else if (encoderStatus == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    if (Build.VERSION.SDK_INT < 21) {
-                        encoderOutputBuffers = audioEncoder.getOutputBuffers();
-                    }
                 } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                     MediaFormat newFormat = audioEncoder.getOutputFormat();
                     if (audioTrackIndex == -5) {
@@ -2615,11 +2550,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                     }
                 } else if (encoderStatus >= 0) {
                     ByteBuffer encodedData;
-                    if (Build.VERSION.SDK_INT < 21) {
-                        encodedData = encoderOutputBuffers[encoderStatus];
-                    } else {
-                        encodedData = audioEncoder.getOutputBuffer(encoderStatus);
-                    }
+                    encodedData = audioEncoder.getOutputBuffer(encoderStatus);
                     if (encodedData == null) {
                         throw new RuntimeException("encoderOutputBuffer " + encoderStatus + " was null");
                     }

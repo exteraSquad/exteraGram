@@ -146,13 +146,11 @@ public class VoIPController {
 	public void setConfig(double recvTimeout, double initTimeout, int dataSavingOption, long callID) {
 		ensureNativeInstance();
 		boolean sysAecAvailable = false, sysNsAvailable = false;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			try {
-				sysAecAvailable = AcousticEchoCanceler.isAvailable();
-				sysNsAvailable = NoiseSuppressor.isAvailable();
-			} catch (Throwable ignore) {
+		try {
+			sysAecAvailable = AcousticEchoCanceler.isAvailable();
+			sysNsAvailable = NoiseSuppressor.isAvailable();
+		} catch (Throwable ignore) {
 
-			}
 		}
 		SharedPreferences preferences = MessagesController.getGlobalMainSettings();
 		boolean dump = preferences.getBoolean("dbg_dump_call_stats", false);

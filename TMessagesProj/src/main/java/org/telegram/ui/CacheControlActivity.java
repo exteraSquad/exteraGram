@@ -155,42 +155,26 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
             totalSize = cacheSize + videoSize + audioSize + photoSize + documentsSize + musicSize + stickersSize;
 
             File path;
-            if (Build.VERSION.SDK_INT >= 19) {
-                ArrayList<File> storageDirs = AndroidUtilities.getRootDirs();
-                String dir = (path = storageDirs.get(0)).getAbsolutePath();
-                if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
-                    for (int a = 0, N = storageDirs.size(); a < N; a++) {
-                        File file = storageDirs.get(a);
-                        if (file.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
-                            path = file;
-                            break;
-                        }
+            ArrayList<File> storageDirs = AndroidUtilities.getRootDirs();
+            String dir = (path = storageDirs.get(0)).getAbsolutePath();
+            if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
+                for (int a = 0, N = storageDirs.size(); a < N; a++) {
+                    File file = storageDirs.get(a);
+                    if (file.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
+                        path = file;
+                        break;
                     }
                 }
-            } else {
-                path = new File(SharedConfig.storageCacheDir);
             }
             try {
                 StatFs stat = new StatFs(path.getPath());
                 long blockSize;
                 long blockSizeExternal;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    blockSize = stat.getBlockSizeLong();
-                } else {
-                    blockSize = stat.getBlockSize();
-                }
+                blockSize = stat.getBlockSizeLong();
                 long availableBlocks;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    availableBlocks = stat.getAvailableBlocksLong();
-                } else {
-                    availableBlocks = stat.getAvailableBlocks();
-                }
+                availableBlocks = stat.getAvailableBlocksLong();
                 long blocksTotal;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    blocksTotal = stat.getBlockCountLong();
-                } else {
-                    blocksTotal = stat.getBlockCount();
-                }
+                blocksTotal = stat.getBlockCountLong();
 
                 totalDeviceSize = blocksTotal * blockSize;
                 totalDeviceFreeSize = availableBlocks * blockSize;
@@ -229,7 +213,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
         if (view instanceof StroageUsageView) {
             StroageUsageView stroageUsageView = ((StroageUsageView) view);
             long currentTime = System.currentTimeMillis();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && currentTime - fragmentCreateTime > 250) {
+            if (currentTime - fragmentCreateTime > 250) {
                 TransitionSet transition = new TransitionSet();
                 ChangeBounds changeBounds = new ChangeBounds();
                 changeBounds.setDuration(250);
@@ -390,23 +374,11 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
             File path = Environment.getDataDirectory();
             StatFs stat = new StatFs(path.getPath());
             long blockSize;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                blockSize = stat.getBlockSizeLong();
-            } else {
-                blockSize = stat.getBlockSize();
-            }
+            blockSize = stat.getBlockSizeLong();
             long availableBlocks;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                availableBlocks = stat.getAvailableBlocksLong();
-            } else {
-                availableBlocks = stat.getAvailableBlocks();
-            }
+            availableBlocks = stat.getAvailableBlocksLong();
             long blocksTotal;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                blocksTotal = stat.getBlockCountLong();
-            } else {
-                blocksTotal = stat.getBlockCount();
-            }
+            blocksTotal = stat.getBlockCountLong();
 
             totalDeviceSize = blocksTotal * blockSize;
             totalDeviceFreeSize = availableBlocks * blockSize;

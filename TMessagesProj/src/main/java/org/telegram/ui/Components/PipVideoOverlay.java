@@ -652,9 +652,7 @@ public class PipVideoOverlay {
                 } catch (IllegalArgumentException ignored) {}
             }
         });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            scaleGestureDetector.setQuickScaleEnabled(false);
-        }
+        scaleGestureDetector.setQuickScaleEnabled(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             scaleGestureDetector.setStylusScaleEnabled(false);
         }
@@ -938,14 +936,7 @@ public class PipVideoOverlay {
 
             @Override
             public void draw(Canvas canvas) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    super.draw(canvas);
-                } else {
-                    canvas.save();
-                    canvas.clipPath(path);
-                    super.draw(canvas);
-                    canvas.restore();
-                }
+                super.draw(canvas);
             }
 
             @Override
@@ -978,15 +969,13 @@ public class PipVideoOverlay {
             }
         };
         contentView.addView(contentFrameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            contentFrameLayout.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(ROUNDED_CORNERS_DP));
-                }
-            });
-            contentFrameLayout.setClipToOutline(true);
-        }
+        contentFrameLayout.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(ROUNDED_CORNERS_DP));
+            }
+        });
+        contentFrameLayout.setClipToOutline(true);
         contentFrameLayout.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_actionBar));
 
         innerView = pipContentView;
@@ -1039,12 +1028,10 @@ public class PipVideoOverlay {
         expandButton.setOnClickListener(v -> {
             boolean isResumedByActivityManager = true;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ActivityManager activityManager = (ActivityManager) v.getContext().getSystemService(Context.ACTIVITY_SERVICE);
-                List<ActivityManager.RunningAppProcessInfo> appProcessInfos = activityManager.getRunningAppProcesses();
-                if (appProcessInfos != null && !appProcessInfos.isEmpty()) {
-                    isResumedByActivityManager = appProcessInfos.get(0).importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
-                }
+            ActivityManager activityManager = (ActivityManager) v.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningAppProcessInfo> appProcessInfos = activityManager.getRunningAppProcesses();
+            if (appProcessInfos != null && !appProcessInfos.isEmpty()) {
+                isResumedByActivityManager = appProcessInfos.get(0).importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
             }
 
             if (!inAppOnly && (!isResumedByActivityManager || !LaunchActivity.isResumed)) {

@@ -469,11 +469,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
 
     static {
         int cores;
-        if (Build.VERSION.SDK_INT >= 17) {
-            cores = Runtime.getRuntime().availableProcessors();
-        } else {
-            cores = 2;
-        }
+        cores = Runtime.getRuntime().availableProcessors();
         mediaSendThreadPool = new ThreadPoolExecutor(cores, cores, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
     }
 
@@ -6399,21 +6395,19 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
 
     private static boolean checkFileSize(AccountInstance accountInstance, Uri uri) {
         long len = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
+        try {
 
-                AssetFileDescriptor assetFileDescriptor = ApplicationLoader.applicationContext.getContentResolver().openAssetFileDescriptor(uri, "r", null);
-                if (assetFileDescriptor != null ) {
-                    len = assetFileDescriptor.getLength();
-                }
-                Cursor cursor = ApplicationLoader.applicationContext.getContentResolver().query(uri, new String[]{OpenableColumns.SIZE}, null, null, null);
-                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-                cursor.moveToFirst();
-                len = cursor.getLong(sizeIndex);
-
-            } catch (Exception e) {
-                FileLog.e(e);
+            AssetFileDescriptor assetFileDescriptor = ApplicationLoader.applicationContext.getContentResolver().openAssetFileDescriptor(uri, "r", null);
+            if (assetFileDescriptor != null ) {
+                len = assetFileDescriptor.getLength();
             }
+            Cursor cursor = ApplicationLoader.applicationContext.getContentResolver().query(uri, new String[]{OpenableColumns.SIZE}, null, null, null);
+            int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+            cursor.moveToFirst();
+            len = cursor.getLong(sizeIndex);
+
+        } catch (Exception e) {
+            FileLog.e(e);
         }
         if (!FileLoader.checkUploadFileSize(accountInstance.getCurrentAccount(), len)) {
             return true;
@@ -7093,23 +7087,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                 opts.inJustDecodeBounds = false;
                 opts.inSampleSize = (int) scaleFactor;
                 opts.inPreferredConfig = Bitmap.Config.RGB_565;
-                if (Build.VERSION.SDK_INT >= 21) {
-                    is = new FileInputStream(file);
-                    bitmap[0] = BitmapFactory.decodeStream(is, null, opts);
-                    is.close();
-                } else {
-                    /*opts.inPurgeable = true;
-                    RandomAccessFile f = new RandomAccessFile(file, "r");
-                    int len = (int) f.length();
-                    int offset = 0;
-                    byte[] data = bytes != null && bytes.length >= len ? bytes : null;
-                    if (data == null) {
-                        bytes = data = new byte[len];
-                    }
-                    f.readFully(data, 0, len);
-                    f.close();
-                    bitmapFinal[0] = BitmapFactory.decodeByteArray(data, offset, len, opts);*/
-                }
+                is = new FileInputStream(file);
+                bitmap[0] = BitmapFactory.decodeStream(is, null, opts);
+                is.close();
             } catch (Throwable ignore) {
 
             }
@@ -7855,17 +7835,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
             if (duration != null) {
                 attributeVideo.duration = (int) Math.ceil(Long.parseLong(duration) / 1000.0f);
             }
-            if (Build.VERSION.SDK_INT >= 17) {
-                String rotation = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-                if (rotation != null) {
-                    int val = Utilities.parseInt(rotation);
-                    if (videoEditedInfo != null) {
-                        videoEditedInfo.rotationValue = val;
-                    } else if (val == 90 || val == 270) {
-                        int temp = attributeVideo.w;
-                        attributeVideo.w = attributeVideo.h;
-                        attributeVideo.h = temp;
-                    }
+            String rotation = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+            if (rotation != null) {
+                int val = Utilities.parseInt(rotation);
+                if (videoEditedInfo != null) {
+                    videoEditedInfo.rotationValue = val;
+                } else if (val == 90 || val == 270) {
+                    int temp = attributeVideo.w;
+                    attributeVideo.w = attributeVideo.h;
+                    attributeVideo.h = temp;
                 }
             }
             infoObtained = true;
@@ -7976,41 +7954,6 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         long audioFramesSize = params[AnimatedFileDrawable.PARAM_NUM_AUDIO_FRAME_SIZE];
         int videoFramerate = params[AnimatedFileDrawable.PARAM_NUM_FRAMERATE];
 
-
-        if (Build.VERSION.SDK_INT < 18) {
-            try {
-                MediaCodecInfo codecInfo = MediaController.selectCodec(MediaController.VIDEO_MIME_TYPE);
-                if (codecInfo == null) {
-                    if (BuildVars.LOGS_ENABLED) {
-                        FileLog.d("no codec info for " + MediaController.VIDEO_MIME_TYPE);
-                    }
-                    return null;
-                } else {
-                    String name = codecInfo.getName();
-                    if (name.equals("OMX.google.h264.encoder") ||
-                            name.equals("OMX.ST.VFM.H264Enc") ||
-                            name.equals("OMX.Exynos.avc.enc") ||
-                            name.equals("OMX.MARVELL.VIDEO.HW.CODA7542ENCODER") ||
-                            name.equals("OMX.MARVELL.VIDEO.H264ENCODER") ||
-                            name.equals("OMX.k3.video.encoder.avc") ||
-                            name.equals("OMX.TI.DUCATI1.VIDEO.H264E")) {
-                        if (BuildVars.LOGS_ENABLED) {
-                            FileLog.d("unsupported encoder = " + name);
-                        }
-                        return null;
-                    } else {
-                        if (MediaController.selectColorFormat(codecInfo, MediaController.VIDEO_MIME_TYPE) == 0) {
-                            if (BuildVars.LOGS_ENABLED) {
-                                FileLog.d("no color format for " + MediaController.VIDEO_MIME_TYPE);
-                            }
-                            return null;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                return null;
-            }
-        }
 
         VideoEditedInfo videoEditedInfo = new VideoEditedInfo();
         videoEditedInfo.startTime = -1;
@@ -8150,12 +8093,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         if (isRound) {
                             if (isEncrypted) {
                                 thumb = Bitmap.createScaledBitmap(thumb, 90, 90, true);
-                                Utilities.blurBitmap(thumb, 7, Build.VERSION.SDK_INT < 21 ? 0 : 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
-                                Utilities.blurBitmap(thumb, 7, Build.VERSION.SDK_INT < 21 ? 0 : 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
-                                Utilities.blurBitmap(thumb, 7, Build.VERSION.SDK_INT < 21 ? 0 : 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
+                                Utilities.blurBitmap(thumb, 7, 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
+                                Utilities.blurBitmap(thumb, 7, 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
+                                Utilities.blurBitmap(thumb, 7, 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
                                 thumbKey = String.format(size.location.volume_id + "_" + size.location.local_id + "@%d_%d_b2", (int) (AndroidUtilities.roundMessageSize / AndroidUtilities.density), (int) (AndroidUtilities.roundMessageSize / AndroidUtilities.density));
                             } else {
-                                Utilities.blurBitmap(thumb, 3, Build.VERSION.SDK_INT < 21 ? 0 : 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
+                                Utilities.blurBitmap(thumb, 3, 1, thumb.getWidth(), thumb.getHeight(), thumb.getRowBytes());
                                 thumbKey = String.format(size.location.volume_id + "_" + size.location.local_id + "@%d_%d_b", (int) (AndroidUtilities.roundMessageSize / AndroidUtilities.density), (int) (AndroidUtilities.roundMessageSize / AndroidUtilities.density));
                             }
                         } else {

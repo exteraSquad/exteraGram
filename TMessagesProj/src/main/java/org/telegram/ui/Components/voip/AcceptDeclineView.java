@@ -521,9 +521,7 @@ public class AcceptDeclineView extends View {
             } else {
                 nodeInfo = AccessibilityNodeInfo.obtain(hostView, virtualViewId);
                 nodeInfo.setPackageName(hostView.getContext().getPackageName());
-                if (Build.VERSION.SDK_INT >= 21) {
-                    nodeInfo.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
-                }
+                nodeInfo.addAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK);
                 nodeInfo.setText(getVirtualViewText(virtualViewId));
                 nodeInfo.setClassName(Button.class.getName());
                 if (Build.VERSION.SDK_INT >= 24) {

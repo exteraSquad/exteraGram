@@ -412,9 +412,7 @@ public class PhotoAttachPhotoCell extends FrameLayout {
         if (checkBox.isChecked()) {
             info.setSelected(true);
         }
-        if (Build.VERSION.SDK_INT >= 21) {
-            info.addAction(new AccessibilityNodeInfo.AccessibilityAction(R.id.acc_action_open_photo, LocaleController.getString("Open", R.string.Open)));
-        }
+        info.addAction(new AccessibilityNodeInfo.AccessibilityAction(R.id.acc_action_open_photo, LocaleController.getString("Open", R.string.Open)));
     }
 
     @Override

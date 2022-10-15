@@ -1140,14 +1140,10 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.getSettings().setDomStorageEnabled(true);
 
-                if (Build.VERSION.SDK_INT >= 21) {
-                    webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    cookieManager.setAcceptThirdPartyCookies(webView, true);
-                }
-                if (Build.VERSION.SDK_INT >= 17) {
-                    webView.addJavascriptInterface(new TelegramWebviewProxy(), "TelegramWebviewProxy");
-                }
+                webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+                CookieManager cookieManager = CookieManager.getInstance();
+                cookieManager.setAcceptThirdPartyCookies(webView, true);
+                webView.addJavascriptInterface(new TelegramWebviewProxy(), "TelegramWebviewProxy");
                 webView.setWebViewClient(new WebViewClient() {
                     @Override
                     public void onLoadResource(WebView view, String url) {
@@ -2228,11 +2224,9 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
             if (currentStep == STEP_CHECKOUT) {
                 recurrentAccepted = isAcceptTermsChecked = !isCheckoutPreview;
                 bottomLayout = new BottomFrameLayout(context, paymentForm);
-                if (Build.VERSION.SDK_INT >= 21) {
-                    View selectorView = new View(context);
-                    selectorView.setBackground(Theme.getSelectorDrawable(getThemedColor(Theme.key_listSelector), false));
-                    bottomLayout.addView(selectorView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-                }
+                View selectorView = new View(context);
+                selectorView.setBackground(Theme.getSelectorDrawable(getThemedColor(Theme.key_listSelector), false));
+                bottomLayout.addView(selectorView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
                 frameLayout.addView(bottomLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM));
                 bottomLayout.setOnClickListener(v -> {
                     if (paymentForm.invoice.recurring && !recurrentAccepted) {
@@ -2337,11 +2331,9 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.getSettings().setDomStorageEnabled(true);
 
-                if (Build.VERSION.SDK_INT >= 21) {
-                    webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    cookieManager.setAcceptThirdPartyCookies(webView, true);
-                }
+                webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+                CookieManager cookieManager = CookieManager.getInstance();
+                cookieManager.setAcceptThirdPartyCookies(webView, true);
 
                 webView.setWebViewClient(new WebViewClient() {
 
@@ -3002,7 +2994,7 @@ public class PaymentFormActivity extends BaseFragment implements NotificationCen
     }
 
     private void initGooglePay(Context context) {
-        if (Build.VERSION.SDK_INT < 19 || getParentActivity() == null) {
+        if (getParentActivity() == null) {
             return;
         }
         Wallet.WalletOptions walletOptions = new Wallet.WalletOptions.Builder()

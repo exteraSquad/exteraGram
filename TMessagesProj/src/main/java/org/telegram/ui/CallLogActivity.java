@@ -545,35 +545,26 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
 		floatingButton.setScaleType(ImageView.ScaleType.CENTER);
 
 		Drawable drawable = ExteraUtils.drawFab();
-		if (Build.VERSION.SDK_INT < 21) {
-			Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow).mutate();
-			shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-			CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-			combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-			drawable = combinedDrawable;
-		}
 		floatingButton.setBackgroundDrawable(drawable);
 		floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
 		floatingButton.setImageResource(R.drawable.ic_call);
 		floatingButton.setContentDescription(LocaleController.getString("Call", R.string.Call));
-		if (Build.VERSION.SDK_INT >= 21) {
-			StateListAnimator animator = new StateListAnimator();
-			animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
-			animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
-			floatingButton.setStateListAnimator(animator);
-			floatingButton.setOutlineProvider(new ViewOutlineProvider() {
-				@SuppressLint("NewApi")
-				@Override
-				public void getOutline(View view, Outline outline) {
-                    if (ExteraConfig.squareFab) {
-                        outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
-                    } else {
-                        outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                    }
-				}
-			});
-		}
-		frameLayout.addView(floatingButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
+		StateListAnimator animator = new StateListAnimator();
+		animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
+		animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
+		floatingButton.setStateListAnimator(animator);
+		floatingButton.setOutlineProvider(new ViewOutlineProvider() {
+			@SuppressLint("NewApi")
+			@Override
+			public void getOutline(View view, Outline outline) {
+if (ExteraConfig.squareFab) {
+outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
+} else {
+outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
+}
+			}
+		});
+		frameLayout.addView(floatingButton, LayoutHelper.createFrame(56, 56, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
 		floatingButton.setOnClickListener(v -> {
 			Bundle args = new Bundle();
 			args.putBoolean("destroyAfterSelect", true);

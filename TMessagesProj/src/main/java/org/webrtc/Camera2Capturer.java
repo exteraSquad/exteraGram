@@ -15,7 +15,6 @@ import android.content.Context;
 import android.hardware.camera2.CameraManager;
 import androidx.annotation.Nullable;
 
-@TargetApi(21)
 public class Camera2Capturer extends CameraCapturer {
   private final Context context;
   @Nullable private final CameraManager cameraManager;

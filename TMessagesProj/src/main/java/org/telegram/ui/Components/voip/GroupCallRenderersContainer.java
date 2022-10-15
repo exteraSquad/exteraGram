@@ -1418,17 +1418,9 @@ public class GroupCallRenderersContainer extends FrameLayout {
                         spannableStringBuilder.append(", ");
                     }
                     if (user != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            spannableStringBuilder.append(UserObject.getFirstName(user), new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), 0);
-                        } else {
-                            spannableStringBuilder.append(UserObject.getFirstName(user));
-                        }
+                        spannableStringBuilder.append(UserObject.getFirstName(user), new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), 0);
                     } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            spannableStringBuilder.append(chat.title, new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), 0);
-                        } else {
-                            spannableStringBuilder.append(chat.title);
-                        }
+                        spannableStringBuilder.append(chat.title, new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), 0);
                     }
                 }
                 speakingIndex++;

@@ -776,9 +776,6 @@ public class ConnectionsManager extends BaseController {
 
     @SuppressLint("NewApi")
     protected byte getIpStrategy() {
-        if (Build.VERSION.SDK_INT < 19) {
-            return USE_IPV4_ONLY;
-        }
         if (BuildVars.LOGS_ENABLED) {
             try {
                 NetworkInterface networkInterface;

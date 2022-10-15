@@ -194,10 +194,8 @@ public class DialogsItemAnimator extends SimpleItemAnimator {
                     removingDialog.setTopClip(topClip);
                     removingDialog.setBottomClip(bottomClip);
                 }
-                if (Build.VERSION.SDK_INT >= 21) {
-                    dialogCell.setElevation(-1);
-                    dialogCell.setOutlineProvider(null);
-                }
+                dialogCell.setElevation(-1);
+                dialogCell.setOutlineProvider(null);
                 final ObjectAnimator animator = ObjectAnimator.ofFloat(dialogCell, AnimationProperties.CLIP_DIALOG_CELL_PROGRESS, 1.0f)
                         .setDuration(deleteDuration);
                 animator.setInterpolator(sDefaultInterpolator);
@@ -211,9 +209,7 @@ public class DialogsItemAnimator extends SimpleItemAnimator {
                     public void onAnimationEnd(Animator animator) {
                         animator.removeAllListeners();
                         dialogCell.setClipProgress(0.0f);
-                        if (Build.VERSION.SDK_INT >= 21) {
-                            dialogCell.setElevation(0);
-                        }
+                        dialogCell.setElevation(0);
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
@@ -233,9 +229,7 @@ public class DialogsItemAnimator extends SimpleItemAnimator {
                     public void onAnimationEnd(Animator animator) {
                         animator.removeAllListeners();
                         dialogCell.setClipProgress(0.0f);
-                        if (Build.VERSION.SDK_INT >= 21) {
-                            dialogCell.setElevation(0);
-                        }
+                        dialogCell.setElevation(0);
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();

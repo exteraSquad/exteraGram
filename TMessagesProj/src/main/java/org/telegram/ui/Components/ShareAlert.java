@@ -636,7 +636,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
                 layoutManager.setNeedFixGap(getLayoutParams().height <= 0);
                 searchLayoutManager.setNeedFixGap(getLayoutParams().height <= 0);
-                if (Build.VERSION.SDK_INT >= 21 && !isFullscreen) {
+                if (!isFullscreen) {
                     ignoreLayout = true;
                     setPadding(backgroundPaddingLeft, AndroidUtilities.statusBarHeight, backgroundPaddingLeft, 0);
                     ignoreLayout = false;
@@ -847,7 +847,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                 int height = getMeasuredHeight() + AndroidUtilities.dp(30 + 30) + backgroundPaddingTop;
                 int statusBarHeight = 0;
                 float radProgress = 1.0f;
-                if (!isFullscreen && Build.VERSION.SDK_INT >= 21) {
+                if (!isFullscreen) {
                     top += AndroidUtilities.statusBarHeight;
                     y += AndroidUtilities.statusBarHeight;
                     height -= AndroidUtilities.statusBarHeight;
@@ -937,7 +937,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
             @Override
             protected boolean allowSelectChildAtPosition(float x, float y) {
-                return y >= AndroidUtilities.dp(darkTheme && linkToCopy[1] != null ? 111 : 58) + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0);
+                return y >= AndroidUtilities.dp(darkTheme && linkToCopy[1] != null ? 111 : 58) + AndroidUtilities.statusBarHeight;
             }
         };
         gridView.setSelectorDrawableColor(0);
@@ -997,7 +997,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
             @Override
             protected boolean allowSelectChildAtPosition(float x, float y) {
-                return y >= AndroidUtilities.dp(darkTheme && linkToCopy[1] != null ? 111 : 58) + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0);
+                return y >= AndroidUtilities.dp(darkTheme && linkToCopy[1] != null ? 111 : 58) + AndroidUtilities.statusBarHeight;
             }
         };
         searchGridView.setSelectorDrawableColor(0);
@@ -1301,32 +1301,23 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
         ImageView writeButton = new ImageView(context);
         Drawable drawable = ExteraUtils.drawFab(true);
-        if (Build.VERSION.SDK_INT < 21) {
-            Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.floating_shadow_profile).mutate();
-            shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff000000, PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable, drawable, 0, 0);
-            combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-            drawable = combinedDrawable;
-        }
         writeButton.setBackgroundDrawable(drawable);
         writeButton.setImageResource(R.drawable.attach_send);
         writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         writeButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));
         writeButton.setScaleType(ImageView.ScaleType.CENTER);
-        if (Build.VERSION.SDK_INT >= 21) {
-            writeButton.setOutlineProvider(new ViewOutlineProvider() {
-                @SuppressLint("NewApi")
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    if (ExteraConfig.squareFab) {
-                        outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
-                    } else {
-                        outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
-                    }
+        writeButton.setOutlineProvider(new ViewOutlineProvider() {
+            @SuppressLint("NewApi")
+            @Override
+            public void getOutline(View view, Outline outline) {
+                if (ExteraConfig.squareFab) {
+                    outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
+                } else {
+                    outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
                 }
-            });
-        }
-        writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, Gravity.LEFT | Gravity.TOP, Build.VERSION.SDK_INT >= 21 ? 2 : 0, 0, 0, 0));
+            }
+        });
+        writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(56, 56, Gravity.LEFT | Gravity.TOP, 2, 0, 0, 0));
         writeButton.setOnClickListener(v -> sendInternal(true));
         writeButton.setOnLongClickListener(v -> {
             return onSendLongClick(writeButton);

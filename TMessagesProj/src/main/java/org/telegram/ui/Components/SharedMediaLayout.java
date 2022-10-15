@@ -920,7 +920,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                 if (imageReceiver != null) {
                     PhotoViewer.PlaceProviderObject object = new PhotoViewer.PlaceProviderObject();
                     object.viewX = coords[0];
-                    object.viewY = coords[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight);
+                    object.viewY = coords[1] - 0;
                     object.parentView = listView;
                     object.animatingImageView = mediaPages[0].animatingImageView;
                     mediaPages[0].listView.getLocationInWindow(coords);
@@ -4269,7 +4269,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             changed++;
         }
         if (changed > 0) {
-            if (animated && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (animated) {
                 final TransitionSet transitionSet = new TransitionSet();
                 transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
                 transitionSet.addTransition(new ChangeBounds());

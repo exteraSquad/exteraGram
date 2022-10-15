@@ -424,7 +424,7 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver implements Netwo
     }
 
     public boolean supportNetworkCallback() {
-      return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && connectivityManager != null;
+      return connectivityManager != null;
     }
   }
 

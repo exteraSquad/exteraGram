@@ -83,7 +83,7 @@ public class FilesMigrationService extends Service {
 
     public void migrateOldFolder() {
         File path = Environment.getExternalStorageDirectory();
-        if (Build.VERSION.SDK_INT >= 19 && !TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
+        if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
             ArrayList<File> dirs = AndroidUtilities.getRootDirs();
             if (dirs != null) {
                 for (int a = 0, N = dirs.size(); a < N; a++) {

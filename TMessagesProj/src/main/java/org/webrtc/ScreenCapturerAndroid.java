@@ -36,7 +36,6 @@ import org.telegram.messenger.FileLog;
  *
  * @note This class is only supported on Android Lollipop and above.
  */
-@TargetApi(21)
 public class ScreenCapturerAndroid implements VideoCapturer, VideoSink {
   private static final int DISPLAY_FLAGS =
       DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC | DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION;

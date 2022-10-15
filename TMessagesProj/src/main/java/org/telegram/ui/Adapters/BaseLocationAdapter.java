@@ -111,7 +111,7 @@ public abstract class BaseLocationAdapter extends RecyclerListView.SelectionAdap
     }
 
     protected void notifyStartSearch(boolean wasSearching, int oldItemCount, boolean animated) {
-        if (animated && Build.VERSION.SDK_INT >= 19) {
+        if (animated) {
             if (places.isEmpty() || wasSearching) {
                 if (!wasSearching) {
                     int fromIndex = Math.max(0, getItemCount() - 4);

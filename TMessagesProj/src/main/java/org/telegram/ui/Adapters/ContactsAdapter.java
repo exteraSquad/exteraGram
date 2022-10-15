@@ -373,7 +373,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
                             height = parent.getMeasuredHeight();
                         }
                         if (height == 0) {
-                            height = AndroidUtilities.displaySize.y - ActionBar.getCurrentActionBarHeight() - (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0);
+                            height = AndroidUtilities.displaySize.y - ActionBar.getCurrentActionBarHeight() - AndroidUtilities.statusBarHeight;
                         }
                         int cellHeight = AndroidUtilities.dp(50);
                         int totalHeight = onlyUsers != 0 ? 0 : cellHeight + AndroidUtilities.dp(30);

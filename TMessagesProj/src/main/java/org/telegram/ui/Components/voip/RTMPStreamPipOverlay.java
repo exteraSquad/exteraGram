@@ -254,7 +254,7 @@ public class RTMPStreamPipOverlay implements NotificationCenter.NotificationCent
                 pipHeight = (int) (getSuggestedHeight() * scaleFactor);
                 AndroidUtilities.runOnUIThread(()->{
                     contentFrameLayout.invalidate();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && contentFrameLayout.isInLayout()) {
+                    if (contentFrameLayout.isInLayout()) {
                         return;
                     }
                     contentFrameLayout.requestLayout();
@@ -328,9 +328,7 @@ public class RTMPStreamPipOverlay implements NotificationCenter.NotificationCent
                 windowManager.updateViewLayout(contentView, windowLayoutParams);
             }
         });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            scaleGestureDetector.setQuickScaleEnabled(false);
-        }
+        scaleGestureDetector.setQuickScaleEnabled(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             scaleGestureDetector.setStylusScaleEnabled(false);
         }
@@ -467,14 +465,7 @@ public class RTMPStreamPipOverlay implements NotificationCenter.NotificationCent
 
             @Override
             public void draw(Canvas canvas) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    super.draw(canvas);
-                } else {
-                    canvas.save();
-                    canvas.clipPath(path);
-                    super.draw(canvas);
-                    canvas.restore();
-                }
+                super.draw(canvas);
             }
 
             @Override
@@ -499,15 +490,13 @@ public class RTMPStreamPipOverlay implements NotificationCenter.NotificationCent
             }
         };
         contentView.addView(contentFrameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            contentFrameLayout.setOutlineProvider(new ViewOutlineProvider() {
-                @Override
-                public void getOutline(View view, Outline outline) {
-                    outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(ROUNDED_CORNERS_DP));
-                }
-            });
-            contentFrameLayout.setClipToOutline(true);
-        }
+        contentFrameLayout.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(ROUNDED_CORNERS_DP));
+            }
+        });
+        contentFrameLayout.setClipToOutline(true);
         contentFrameLayout.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_actionBar));
 
         avatarImageView = new BackupImageView(context);

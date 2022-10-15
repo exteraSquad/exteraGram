@@ -678,15 +678,15 @@ public class ThemeEditorView {
                 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                     int width = MeasureSpec.getSize(widthMeasureSpec);
                     int height = MeasureSpec.getSize(heightMeasureSpec);
-                    if (Build.VERSION.SDK_INT >= 21 && !isFullscreen) {
+                    if (!isFullscreen) {
                         ignoreLayout = true;
                         setPadding(backgroundPaddingLeft, AndroidUtilities.statusBarHeight, backgroundPaddingLeft, 0);
                         ignoreLayout = false;
                     }
 
-                    int pickerSize = Math.min(width, height - (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0));
+                    int pickerSize = Math.min(width, height - AndroidUtilities.statusBarHeight);
 
-                    int padding = height - (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0) + AndroidUtilities.dp(8) - pickerSize;
+                    int padding = height - AndroidUtilities.statusBarHeight + AndroidUtilities.dp(8) - pickerSize;
                     if (listView.getPaddingTop() != padding) {
                         ignoreLayout = true;
                         int previousPadding = listView.getPaddingTop();
@@ -722,7 +722,7 @@ public class ThemeEditorView {
                     int height = getMeasuredHeight() + AndroidUtilities.dp(30) + backgroundPaddingTop;
                     int statusBarHeight = 0;
                     float radProgress = 1.0f;
-                    if (!isFullscreen && Build.VERSION.SDK_INT >= 21) {
+                    if (!isFullscreen) {
                         top += AndroidUtilities.statusBarHeight;
                         y += AndroidUtilities.statusBarHeight;
                         height -= AndroidUtilities.statusBarHeight;
@@ -773,7 +773,7 @@ public class ThemeEditorView {
             listView = new RecyclerListView(context) {
                 @Override
                 protected boolean allowSelectChildAtPosition(float x, float y) {
-                    return y >= scrollOffsetY + AndroidUtilities.dp(48) + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0);
+                    return y >= scrollOffsetY + AndroidUtilities.dp(48) + AndroidUtilities.statusBarHeight;
                 }
             };
             listView.setSelectorDrawableColor(0x0f000000);

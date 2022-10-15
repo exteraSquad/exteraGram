@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
-@TargetApi(21)
 class Camera2Session implements CameraSession {
   private static final String TAG = "Camera2Session";
 

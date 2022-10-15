@@ -258,7 +258,7 @@ public class TranslateAlert extends Dialog {
 
         if (Build.VERSION.SDK_INT >= 30) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        } else if (Build.VERSION.SDK_INT >= 21) {
+        } else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
 
@@ -270,13 +270,11 @@ public class TranslateAlert extends Dialog {
         contentView.setBackground(backDrawable);
         contentView.setClipChildren(false);
         contentView.setClipToPadding(false);
-        if (Build.VERSION.SDK_INT >= 21) {
-            contentView.setFitsSystemWindows(true);
-            if (Build.VERSION.SDK_INT >= 30) {
-                contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |  View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-            } else {
-                contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-            }
+        contentView.setFitsSystemWindows(true);
+        if (Build.VERSION.SDK_INT >= 30) {
+            contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |  View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        } else {
+            contentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
         Paint containerPaint = new Paint();
@@ -356,9 +354,7 @@ public class TranslateAlert extends Dialog {
 
         subtitleView = new LinearLayout(context);
         subtitleView.setOrientation(LinearLayout.HORIZONTAL);
-        if (Build.VERSION.SDK_INT >= 17) {
-            subtitleView.setLayoutDirection(LocaleController.isRTL ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
-        }
+        subtitleView.setLayoutDirection(LocaleController.isRTL ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR);
         subtitleView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
 
         String fromLanguageName = languageName(fromLanguage);
@@ -780,12 +776,10 @@ public class TranslateAlert extends Dialog {
         params.dimAmount = 0;
         params.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         params.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-        if (Build.VERSION.SDK_INT >= 21) {
-            params.flags |=
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-        }
+        params.flags |=
+            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+            WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+            WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
         params.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         window.setAttributes(params);

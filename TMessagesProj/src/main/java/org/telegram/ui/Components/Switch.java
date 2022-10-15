@@ -158,7 +158,7 @@ public class Switch extends View {
     }
 
     public void setDrawRipple(boolean value) {
-        if (Build.VERSION.SDK_INT < 21 || value == drawRipple) {
+        if (value == drawRipple) {
             return;
         }
         drawRipple = value;

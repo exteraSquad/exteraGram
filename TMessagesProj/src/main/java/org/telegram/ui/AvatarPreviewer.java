@@ -102,12 +102,10 @@ public class AvatarPreviewer {
                     WindowManager.LayoutParams.LAST_APPLICATION_WINDOW,
                     0, PixelFormat.TRANSLUCENT
             );
-            if (Build.VERSION.SDK_INT >= 21) {
-                layoutParams.flags = WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
-                        WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                        WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
-            }
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
+                    WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
             windowManager.addView(layout, layoutParams);
             parentContainer.requestDisallowInterceptTouchEvent(true);
             visible = true;
@@ -499,11 +497,9 @@ public class AvatarPreviewer {
 
             int lPadding = padding, rPadding = padding, vPadding = padding;
 
-            if (Build.VERSION.SDK_INT >= 21) {
-                lPadding += insets.getStableInsetLeft();
-                rPadding += insets.getStableInsetRight();
-                vPadding += Math.max(insets.getStableInsetTop(), insets.getStableInsetBottom());
-            }
+            lPadding += insets.getStableInsetLeft();
+            rPadding += insets.getStableInsetRight();
+            vPadding += Math.max(insets.getStableInsetTop(), insets.getStableInsetBottom());
 
             final int arrowWidth = arrowDrawable.getIntrinsicWidth();
             final int arrowHeight = arrowDrawable.getIntrinsicHeight();
@@ -557,8 +553,8 @@ public class AvatarPreviewer {
                 canvas.scale(AndroidUtilities.lerp(0.95f, 1.0f, interpolatedProgress), AndroidUtilities.lerp(0.95f, 1.0f, interpolatedProgress), imageReceiver.getCenterX(), imageReceiver.getCenterY());
             }
 
-            final int statusBarHeight = Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0;
-            final int navBarHeight = Build.VERSION.SDK_INT >= 21 ? insets.getStableInsetBottom() : 0;
+            final int statusBarHeight = AndroidUtilities.statusBarHeight;
+            final int navBarHeight = insets.getStableInsetBottom();
             final int sheetHeight = menuItems.length * AndroidUtilities.dp(48) + AndroidUtilities.dp(16);
             final float maxBottom = getHeight() - (navBarHeight + sheetHeight + AndroidUtilities.dp(16));
             final float translationY = Math.min(0, maxBottom - imageReceiver.getImageY2());

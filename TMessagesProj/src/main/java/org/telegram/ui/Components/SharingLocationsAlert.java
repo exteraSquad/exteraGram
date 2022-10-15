@@ -85,9 +85,7 @@ public class SharingLocationsAlert extends BottomSheet implements NotificationCe
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                 int height = MeasureSpec.getSize(heightMeasureSpec);
-                if (Build.VERSION.SDK_INT >= 21) {
-                    height -= AndroidUtilities.statusBarHeight;
-                }
+                height -= AndroidUtilities.statusBarHeight;
                 int measuredWidth = getMeasuredWidth();
                 int contentSize = AndroidUtilities.dp(48 + 8) + AndroidUtilities.dp(56) + 1 + LocationController.getLocationsCount() * AndroidUtilities.dp(54);
 

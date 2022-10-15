@@ -257,7 +257,6 @@ import java.lang.annotation.RetentionPolicy;
     }
   }
 
-  @TargetApi(19)
   private static final class AudioTimestampV19 {
 
     private final AudioTrack audioTrack;

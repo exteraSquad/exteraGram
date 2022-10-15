@@ -553,7 +553,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                 int widthSize = MeasureSpec.getSize(widthMeasureSpec);
                 int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-                if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
+                if (lastInsets != null) {
                     WindowInsets insets = (WindowInsets) lastInsets;
                     if (AndroidUtilities.incorrectDisplaySizeFix) {
                         if (heightSize > AndroidUtilities.displaySize.y) {
@@ -569,7 +569,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                     }
                 }
                 setMeasuredDimension(widthSize, heightSize);
-                if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
+                if (lastInsets != null) {
                     widthSize -= ((WindowInsets) lastInsets).getSystemWindowInsetLeft();
                 }
                 containerView.measure(MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(heightSize, MeasureSpec.EXACTLY));
@@ -579,7 +579,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             @Override
             protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
                 int x = 0;
-                if (Build.VERSION.SDK_INT >= 21 && lastInsets != null) {
+                if (lastInsets != null) {
                     x += ((WindowInsets) lastInsets).getSystemWindowInsetLeft();
                 }
                 containerView.layout(x, 0, x + containerView.getMeasuredWidth(), containerView.getMeasuredHeight());
@@ -595,7 +595,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
 
             @Override
             protected void onDraw(Canvas canvas) {
-                if (Build.VERSION.SDK_INT >= 21 && isVisible && lastInsets != null) {
+                if (isVisible && lastInsets != null) {
                     WindowInsets insets = (WindowInsets) lastInsets;
                     if (photoAnimationInProgress != 0) {
                         blackPaint.setAlpha(photoBackgroundDrawable.getAlpha());
@@ -615,7 +615,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
                 super.onLayout(changed, left, top, right, bottom);
                 if (secretDeleteTimer != null) {
-                    int y = (ActionBar.getCurrentActionBarHeight() - secretDeleteTimer.getMeasuredHeight()) / 2 + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0);
+                    int y = (ActionBar.getCurrentActionBarHeight() - secretDeleteTimer.getMeasuredHeight()) / 2 + AndroidUtilities.statusBarHeight;
                     secretDeleteTimer.layout(secretDeleteTimer.getLeft(), y, secretDeleteTimer.getRight(), y + secretDeleteTimer.getMeasuredHeight());
                 }
             }
@@ -627,22 +627,20 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         layoutParams.height = LayoutHelper.MATCH_PARENT;
         layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
         containerView.setLayoutParams(layoutParams);
-        if (Build.VERSION.SDK_INT >= 21) {
-            containerView.setFitsSystemWindows(true);
-            containerView.setOnApplyWindowInsetsListener((v, insets) -> {
-                WindowInsets oldInsets = (WindowInsets) lastInsets;
-                lastInsets = insets;
-                if (oldInsets == null || !oldInsets.toString().equals(insets.toString())) {
-                    windowView.requestLayout();
-                }
-                if (Build.VERSION.SDK_INT >= 30) {
-                    return WindowInsets.CONSUMED;
-                } else {
-                    return insets.consumeSystemWindowInsets();
-                }
-            });
-            containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
+        containerView.setFitsSystemWindows(true);
+        containerView.setOnApplyWindowInsetsListener((v, insets) -> {
+            WindowInsets oldInsets = (WindowInsets) lastInsets;
+            lastInsets = insets;
+            if (oldInsets == null || !oldInsets.toString().equals(insets.toString())) {
+                windowView.requestLayout();
+            }
+            if (Build.VERSION.SDK_INT >= 30) {
+                return WindowInsets.CONSUMED;
+            } else {
+                return insets.consumeSystemWindowInsets();
+            }
+        });
+        containerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         gestureDetector = new GestureDetector(containerView.getContext(), this);
         gestureDetector.setOnDoubleTapListener(this);
@@ -651,7 +649,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         actionBar.setTitleColor(0xffffffff);
         actionBar.setSubtitleColor(0xffffffff);
         actionBar.setBackgroundColor(Theme.ACTION_BAR_PHOTO_VIEWER_COLOR);
-        actionBar.setOccupyStatusBar(Build.VERSION.SDK_INT >= 21);
+        actionBar.setOccupyStatusBar(true);
         actionBar.setItemsBackgroundColor(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR, false);
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setTitleRightMargin(AndroidUtilities.dp(70));
@@ -674,14 +672,10 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         windowLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         windowLayoutParams.gravity = Gravity.TOP;
         windowLayoutParams.type = WindowManager.LayoutParams.LAST_APPLICATION_WINDOW;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                    WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
-                    WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-        } else {
-            windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        }
+        windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+                WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
         windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
         centerImage.setParentView(containerView);
         centerImage.setForceCrossfade(true);
@@ -741,7 +735,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         float width = drawRegion.width();
         float height = drawRegion.height();
         int viewWidth = AndroidUtilities.displaySize.x;
-        int viewHeight = AndroidUtilities.displaySize.y + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0);
+        int viewHeight = AndroidUtilities.displaySize.y + AndroidUtilities.statusBarHeight;
         scale = Math.max(width / viewWidth, height / viewHeight);
 
         if (object.radius != null) {
@@ -758,9 +752,9 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         int clipVertical = (int) Math.abs(drawRegion.top - object.imageReceiver.getImageY());
         int[] coords2 = new int[2];
         object.parentView.getLocationInWindow(coords2);
-        clipTop = coords2[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight) - (object.viewY + drawRegion.top) + object.clipTopAddition;
+        clipTop = coords2[1] - 0 - (object.viewY + drawRegion.top) + object.clipTopAddition;
         clipTop = Math.max(0, Math.max(clipTop, clipVertical));
-        clipBottom = (object.viewY + drawRegion.top + (int) height) - (coords2[1] + object.parentView.getHeight() - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight)) + object.clipBottomAddition;
+        clipBottom = object.viewY + drawRegion.top + (int) height - (coords2[1] + object.parentView.getHeight() - 0) + object.clipBottomAddition;
         clipBottom = Math.max(0, Math.max(clipBottom, clipVertical));
 
         clipTopOrigin = 0;//coords2[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight) - (object.viewY + drawRegion.top) + object.clipTopAddition;
@@ -845,12 +839,10 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         isVisible = true;
 
         final Window window = parentActivity.getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            wasNavigationBarColor = window.getNavigationBarColor();
-            wasLightNavigationBar = AndroidUtilities.getLightNavigationBar(window);
-            AndroidUtilities.setLightNavigationBar(window, false);
-            AndroidUtilities.setNavigationBarColor(window, 0xff000000);
-        }
+        wasNavigationBarColor = window.getNavigationBarColor();
+        wasLightNavigationBar = AndroidUtilities.getLightNavigationBar(window);
+        AndroidUtilities.setLightNavigationBar(window, false);
+        AndroidUtilities.setNavigationBarColor(window, 0xff000000);
 
         imageMoveAnimation = new AnimatorSet();
         imageMoveAnimation.playTogether(
@@ -870,9 +862,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             if (containerView == null) {
                 return;
             }
-            if (Build.VERSION.SDK_INT >= 18) {
-                containerView.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
+            containerView.setLayerType(View.LAYER_TYPE_NONE, null);
             containerView.invalidate();
             if (closeAfterAnimation) {
                 closePhoto(true, true);
@@ -889,9 +879,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             }
         });
         photoTransitionAnimationStartTime = System.currentTimeMillis();
-        if (Build.VERSION.SDK_INT >= 18) {
-            containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
+        containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         imageMoveAnimation.setInterpolator(new DecelerateInterpolator());
         photoBackgroundDrawable.frame = 0;
         photoBackgroundDrawable.drawRunnable = () -> {
@@ -1237,7 +1225,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                 float width = (drawRegion.right - drawRegion.left);
                 float height = (drawRegion.bottom - drawRegion.top);
                 int viewWidth = AndroidUtilities.displaySize.x;
-                int viewHeight = AndroidUtilities.displaySize.y + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0);
+                int viewHeight = AndroidUtilities.displaySize.y + AndroidUtilities.statusBarHeight;
                 animateToScale = Math.max(width / viewWidth, height / viewHeight);
                 animateToX = object.viewX + drawRegion.left + width / 2 -  viewWidth / 2;
                 animateToY = object.viewY + drawRegion.top + height / 2 - viewHeight / 2;
@@ -1245,9 +1233,9 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                 int clipVertical =( int) Math.abs(drawRegion.top - object.imageReceiver.getImageY());
                 int[] coords2 = new int[2];
                 object.parentView.getLocationInWindow(coords2);
-                animateToClipTop = coords2[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight) - (object.viewY + drawRegion.top) + object.clipTopAddition;
+                animateToClipTop = coords2[1] - 0 - (object.viewY + drawRegion.top) + object.clipTopAddition;
                 animateToClipTop = Math.max(0, Math.max(animateToClipTop, clipVertical));
-                animateToClipBottom = (object.viewY + drawRegion.top + (int) height) - (coords2[1] + object.parentView.getHeight() - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight)) + object.clipBottomAddition;
+                animateToClipBottom = object.viewY + drawRegion.top + (int) height - (coords2[1] + object.parentView.getHeight() - 0) + object.clipBottomAddition;
                 animateToClipBottom = Math.max(0, Math.max(animateToClipBottom, clipVertical));
 
                 animateToClipTopOrigin = 0; // coords2[1] - (Build.VERSION.SDK_INT >= 21 ? 0 : AndroidUtilities.statusBarHeight) - (object.viewY + drawRegion.top) + object.clipTopAddition;
@@ -1258,7 +1246,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                 animationStartTime = System.currentTimeMillis();
                 zoomAnimation = true;
             } else {
-                int h = (AndroidUtilities.displaySize.y + (Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight : 0));
+                int h = AndroidUtilities.displaySize.y + AndroidUtilities.statusBarHeight;
                 animateToY = translationY >= 0 ? h : -h;
             }
             animateToRadius = false;
@@ -1286,9 +1274,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
             photoAnimationEndRunnable = () -> {
                 imageMoveAnimation = null;
                 photoAnimationInProgress = 0;
-                if (Build.VERSION.SDK_INT >= 18) {
-                    containerView.setLayerType(View.LAYER_TYPE_NONE, null);
-                }
+                containerView.setLayerType(View.LAYER_TYPE_NONE, null);
                 containerView.setVisibility(View.INVISIBLE);
                 onPhotoClosed(object);
             };
@@ -1311,9 +1297,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                 }
             });
             photoTransitionAnimationStartTime = System.currentTimeMillis();
-            if (Build.VERSION.SDK_INT >= 18) {
-                containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            }
+            containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             imageMoveAnimation.start();
         } else {
             AnimatorSet animatorSet = new AnimatorSet();
@@ -1328,9 +1312,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                 if (containerView == null) {
                     return;
                 }
-                if (Build.VERSION.SDK_INT >= 18) {
-                    containerView.setLayerType(View.LAYER_TYPE_NONE, null);
-                }
+                containerView.setLayerType(View.LAYER_TYPE_NONE, null);
                 containerView.setVisibility(View.INVISIBLE);
                 photoAnimationInProgress = 0;
                 onPhotoClosed(object);
@@ -1348,9 +1330,7 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
                 }
             });
             photoTransitionAnimationStartTime = System.currentTimeMillis();
-            if (Build.VERSION.SDK_INT >= 18) {
-                containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            }
+            containerView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             animatorSet.start();
         }
         return true;

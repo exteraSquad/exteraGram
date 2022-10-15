@@ -128,7 +128,7 @@ public class AvatarPreviewPagerIndicator extends View implements ProfileGalleryV
     }
 
     public void setAlphaValue(float value, boolean self) {
-        if (Build.VERSION.SDK_INT > 18) {
+        {
             int alpha = (int) (255 * value);
             topOverlayGradient.setAlpha(alpha);
             bottomOverlayGradient.setAlpha(alpha);
@@ -136,8 +136,6 @@ public class AvatarPreviewPagerIndicator extends View implements ProfileGalleryV
             barPaint.setAlpha((int) (0x55 * value));
             selectedBarPaint.setAlpha(alpha);
             this.alpha = value;
-        } else {
-            setAlpha(value);
         }
         if (!self) {
             currentAnimationValue = value;

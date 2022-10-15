@@ -883,9 +883,7 @@ public class NotificationsSoundActivity extends BaseFragment implements ChatAtta
     public void startDocumentSelectActivity() {
         try {
             Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            if (Build.VERSION.SDK_INT >= 18) {
-                photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            }
+            photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             photoPickerIntent.setType("audio/mpeg");
             startActivityForResult(photoPickerIntent, 21);
         } catch (Exception e) {

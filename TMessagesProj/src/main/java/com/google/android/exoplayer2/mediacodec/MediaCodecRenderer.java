@@ -148,7 +148,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
           fallbackException);
     }
 
-    @TargetApi(21)
     private static String getDiagnosticInfoV21(Throwable cause) {
       if (cause instanceof CodecException) {
         return ((CodecException) cause).getDiagnosticInfo();
@@ -179,7 +178,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
       diagnosticInfo = Util.SDK_INT >= 21 ? getDiagnosticInfoV21(cause) : null;
     }
 
-    @TargetApi(21)
     private static String getDiagnosticInfoV21(Throwable cause) {
       if (cause instanceof CodecException) {
         return ((CodecException) cause).getDiagnosticInfo();
@@ -1838,7 +1836,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
     return stackTrace.length > 0 && stackTrace[0].getClassName().equals("android.media.MediaCodec");
   }
 
-  @TargetApi(21)
   private static boolean isMediaCodecExceptionV21(IllegalStateException error) {
     return error instanceof MediaCodec.CodecException;
   }

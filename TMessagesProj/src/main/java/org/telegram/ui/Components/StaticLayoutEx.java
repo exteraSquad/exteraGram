@@ -49,15 +49,8 @@ public class StaticLayoutEx {
 
         try {
             final Class<?> textDirClass;
-            if (Build.VERSION.SDK_INT >= 18) {
-                textDirClass = TextDirectionHeuristic.class;
-                sTextDirection = TextDirectionHeuristics.FIRSTSTRONG_LTR;
-            } else {
-                ClassLoader loader = StaticLayoutEx.class.getClassLoader();
-                textDirClass = loader.loadClass(TEXT_DIR_CLASS);
-                Class<?> textDirsClass = loader.loadClass(TEXT_DIRS_CLASS);
-                sTextDirection = textDirsClass.getField(TEXT_DIR_FIRSTSTRONG_LTR).get(textDirsClass);
-            }
+            textDirClass = TextDirectionHeuristic.class;
+            sTextDirection = TextDirectionHeuristics.FIRSTSTRONG_LTR;
 
             final Class<?>[] signature = new Class[]{
                     CharSequence.class,

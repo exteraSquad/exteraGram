@@ -85,11 +85,9 @@ public class SeekBarView extends FrameLayout {
         thumbSize = AndroidUtilities.dp(24);
         currentRadius = AndroidUtilities.dp(6);
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            hoverDrawable = Theme.createSelectorDrawable(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_player_progress), 40), 1, AndroidUtilities.dp(16));
-            hoverDrawable.setCallback(this);
-            hoverDrawable.setVisible(true, false);
-        }
+        hoverDrawable = Theme.createSelectorDrawable(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_player_progress), 40), 1, AndroidUtilities.dp(16));
+        hoverDrawable.setCallback(this);
+        hoverDrawable.setVisible(true, false);
 
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
         setAccessibilityDelegate(seekBarAccessibilityDelegate = new FloatSeekBarAccessibilityDelegate(inPercents) {
@@ -210,7 +208,7 @@ public class SeekBarView extends FrameLayout {
                         setSeekBarDrag(true, (float) thumbX / (float) (getMeasuredWidth() - selectorWidth));
                     }
                 }
-                if (Build.VERSION.SDK_INT >= 21 && hoverDrawable != null) {
+                if (hoverDrawable != null) {
                     hoverDrawable.setState(StateSet.NOTHING);
                 }
                 delegate.onSeekBarPressed(false);
@@ -240,7 +238,7 @@ public class SeekBarView extends FrameLayout {
                         thumbDX = (int) (ev.getX() - thumbX);
                         pressed = true;
                         delegate.onSeekBarPressed(true);
-                        if (Build.VERSION.SDK_INT >= 21 && hoverDrawable != null) {
+                        if (hoverDrawable != null) {
                             hoverDrawable.setState(pressedState);
                             hoverDrawable.setHotspot(ev.getX(), ev.getY());
                         }
@@ -268,7 +266,7 @@ public class SeekBarView extends FrameLayout {
                             setSeekBarDrag(false, (float) thumbX / (float) (getMeasuredWidth() - selectorWidth));
                         }
                     }
-                    if (Build.VERSION.SDK_INT >= 21 && hoverDrawable != null) {
+                    if (hoverDrawable != null) {
                         hoverDrawable.setHotspot(ev.getX(), ev.getY());
                     }
                     invalidate();

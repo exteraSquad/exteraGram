@@ -105,9 +105,7 @@ public class CodeNumberField extends EditTextBoldCursor {
 
     public void setShowSoftInputOnFocusCompat(boolean showSoftInputOnFocus) {
         this.showSoftInputOnFocusInternal = showSoftInputOnFocus;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setShowSoftInputOnFocus(showSoftInputOnFocus);
-        }
+        setShowSoftInputOnFocus(showSoftInputOnFocus);
     }
 
     public float getFocusedProgress() {

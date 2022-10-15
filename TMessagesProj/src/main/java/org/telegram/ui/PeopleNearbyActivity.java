@@ -312,7 +312,7 @@ public class PeopleNearbyActivity extends BaseFragment implements NotificationCe
         actionBar.setItemsBackgroundColor(Theme.getColor(Theme.key_listSelector), false);
         actionBar.setCastShadows(false);
         actionBar.setAddToContainer(false);
-        actionBar.setOccupyStatusBar(Build.VERSION.SDK_INT >= 21 && !AndroidUtilities.isTablet());
+        actionBar.setOccupyStatusBar(!AndroidUtilities.isTablet());
         actionBar.setTitle(LocaleController.getString("PeopleNearby", R.string.PeopleNearby));
         actionBar.getTitleTextView().setAlpha(0.0f);
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {

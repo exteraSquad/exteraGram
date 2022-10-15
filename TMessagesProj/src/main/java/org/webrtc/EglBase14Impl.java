@@ -28,7 +28,6 @@ import org.webrtc.EglBase;
  * and an EGLSurface.
  */
 @SuppressWarnings("ReferenceEquality") // We want to compare to EGL14 constants.
-@TargetApi(18)
 class EglBase14Impl implements EglBase14 {
   private static final String TAG = "EglBase14Impl";
   private static final int EGLExt_SDK_VERSION = Build.VERSION_CODES.JELLY_BEAN_MR2;
@@ -58,7 +57,6 @@ class EglBase14Impl implements EglBase14 {
 
     @Override
     @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public long getNativeEglContext() {
       return CURRENT_SDK_VERSION >= Build.VERSION_CODES.LOLLIPOP ? egl14Context.getNativeHandle()
                                                                  : egl14Context.getHandle();

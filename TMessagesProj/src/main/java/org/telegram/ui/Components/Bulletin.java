@@ -329,7 +329,7 @@ public class Bulletin {
     }
 
     private static boolean isTransitionsEnabled() {
-        return MessagesController.getGlobalMainSettings().getBoolean("view_animations", true) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+        return MessagesController.getGlobalMainSettings().getBoolean("view_animations", true);
     }
 
     public void updatePosition() {

@@ -833,11 +833,7 @@ public class NotificationsCustomSettingsActivity extends BaseFragment implements
                 messagePopupNotificationRow = rowCount++;
             }
             messageSoundRow = rowCount++;
-            if (Build.VERSION.SDK_INT >= 21) {
-                messagePriorityRow = rowCount++;
-            } else {
-                messagePriorityRow = -1;
-            }
+            messagePriorityRow = rowCount++;
             groupSection2Row = rowCount++;
             exceptionsAddRow = rowCount++;
         } else {

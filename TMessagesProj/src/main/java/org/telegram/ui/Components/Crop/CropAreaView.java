@@ -329,7 +329,7 @@ public class CropAreaView extends ViewGroup {
             canvas.restore();
         } else {
             float width = getMeasuredWidth() - 2 * sidePadding;
-            float height = getMeasuredHeight() - bottomPadding - (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0) - 2 * sidePadding;
+            float height = getMeasuredHeight() - bottomPadding - (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0) - 2 * sidePadding;
             int size = (int) Math.min(width, height);
 
             if (circleBitmap == null || circleBitmap.getWidth() != size) {
@@ -356,7 +356,7 @@ public class CropAreaView extends ViewGroup {
                 bitmapPaint.setAlpha((int) (255 * frameAlpha));
                 dimPaint.setAlpha((int) (0x7f * frameAlpha));
                 float left = sidePadding + (width - size) / 2.0f;
-                float top = sidePadding + (height - size) / 2.0f + (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
+                float top = sidePadding + (height - size) / 2.0f + (!inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
                 float right = left + size;
                 float bottom = top + size;
                 canvas.drawRect(0, 0, getWidth(), (int) top, dimPaint);
@@ -566,7 +566,7 @@ public class CropAreaView extends ViewGroup {
     }
 
     public void calculateRect(RectF rect, float cropAspectRatio) {
-        float statusBarHeight = (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
+        float statusBarHeight = !inBubbleMode ? AndroidUtilities.statusBarHeight : 0;
         float left, top, right, bottom;
         float measuredHeight = (float) getMeasuredHeight() - bottomPadding - statusBarHeight;
         float aspectRatio = (float) getMeasuredWidth() / measuredHeight;
@@ -622,7 +622,7 @@ public class CropAreaView extends ViewGroup {
         int x = (int) (event.getX() - ((ViewGroup) getParent()).getX());
         int y = (int) (event.getY() - ((ViewGroup) getParent()).getY());
 
-        float statusBarHeight = (Build.VERSION.SDK_INT >= 21 && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
+        float statusBarHeight = !inBubbleMode ? AndroidUtilities.statusBarHeight : 0;
 
         int action = event.getActionMasked();
 

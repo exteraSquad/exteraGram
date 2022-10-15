@@ -359,12 +359,10 @@ public class ChatAttachAlertPhotoLayoutPreview extends ChatAttachAlert.AttachAle
                     rotate = false;
                     try {
                         if (photo.isVideo) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                                MediaMetadataRetriever m = new MediaMetadataRetriever();
-                                m.setDataSource(photo.path);
-                                String rotation = m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-                                rotate = rotation != null && (rotation.equals("90") || rotation.equals("270"));
-                            }
+                            MediaMetadataRetriever m = new MediaMetadataRetriever();
+                            m.setDataSource(photo.path);
+                            String rotation = m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+                            rotate = rotation != null && (rotation.equals("90") || rotation.equals("270"));
                         } else {
                             ExifInterface exif = new ExifInterface(photo.path);
                             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
