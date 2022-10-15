@@ -2854,7 +2854,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             editor.putInt("notify2_" + did, 0);
                         }
                         getMessagesStorage().setDialogFlags(did, 0);
-                        editor.commit();
+                        editor.apply();
                         TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(did);
                         if (dialog != null) {
                             dialog.notify_settings = new TLRPC.TL_peerNotifySettings();
@@ -2873,7 +2873,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         getNotificationsController().removeNotificationsForDialog(did);
                         getMessagesStorage().setDialogFlags(did, flags);
-                        editor.commit();
+                        editor.apply();
                         TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(did);
                         if (dialog != null) {
                             dialog.notify_settings = new TLRPC.TL_peerNotifySettings();
@@ -3122,8 +3122,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 getMessagesStorage().clearSentMedia();
                                 SharedConfig.setNoSoundHintShowed(false);
                                 SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
-                                editor.remove("archivehint").remove("proximityhint").remove("archivehint_l").remove("gifhint").remove("reminderhint").remove("soundHint").remove("themehint").remove("bganimationhint").remove("filterhint").commit();
-                                MessagesController.getEmojiSettings(currentAccount).edit().remove("featured_hidden").commit();
+                                editor.remove("archivehint").remove("proximityhint").remove("archivehint_l").remove("gifhint").remove("reminderhint").remove("soundHint").remove("themehint").remove("bganimationhint").remove("filterhint").apply();
+                                MessagesController.getEmojiSettings(currentAccount).edit().remove("featured_hidden").apply();
                                 SharedConfig.textSelectionHintShows = 0;
                                 SharedConfig.lockRecordAudioVideoHint = 0;
                                 SharedConfig.stickersReorderingHintUsed = false;
@@ -8967,12 +8967,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 toSave.add(o.toString());
             }
-            MessagesController.getGlobalMainSettings().edit().putStringSet("settingsSearchRecent2", toSave).commit();
+            MessagesController.getGlobalMainSettings().edit().putStringSet("settingsSearchRecent2", toSave).apply();
         }
 
         public void clearRecent() {
             recentSearches.clear();
-            MessagesController.getGlobalMainSettings().edit().remove("settingsSearchRecent2").commit();
+            MessagesController.getGlobalMainSettings().edit().remove("settingsSearchRecent2").apply();
             notifyDataSetChanged();
         }
 

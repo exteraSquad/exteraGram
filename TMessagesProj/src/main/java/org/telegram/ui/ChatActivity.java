@@ -10336,7 +10336,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             return false;
         }
         if (UserConfig.getInstance(currentAccount).isPremium()) {
-            preferences.edit().putInt("moreemojihint", moreemojihint + 1).commit();
+            preferences.edit().putInt("moreemojihint", moreemojihint + 1).apply();
         }
 
         if (getParentActivity() == null || fragmentView == null || emojiHintTextView != null) {
@@ -16862,7 +16862,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (preferences.getBoolean("themehint", false)) {
                 return;
             }
-            preferences.edit().putBoolean("themehint", true).commit();
+            preferences.edit().putBoolean("themehint", true).apply();
             boolean deleteTheme = (Boolean) args[2];
             undoView.showWithAction(0, UndoView.ACTION_THEME_CHANGED, null, () -> {
                 if (themeAccent != null) {
@@ -17288,7 +17288,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     int currentTime = getConnectionsManager().getCurrentTime();
                     if (Math.abs(currentTime - lastShowTime) >= timeout) {
                         if (visibleDialog == null && getParentActivity() != null) {
-                            preferences.edit().putInt("group_convert_time", currentTime).commit();
+                            preferences.edit().putInt("group_convert_time", currentTime).apply();
                             showDialog(AlertsCreator.createGigagroupConvertAlert(getParentActivity(), (dialog, which) -> showDialog(new GigagroupConvertAlert(getParentActivity(), ChatActivity.this) {
                                 @Override
                                 protected void onCovert() {

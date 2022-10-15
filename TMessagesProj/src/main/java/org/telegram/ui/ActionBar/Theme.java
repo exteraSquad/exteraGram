@@ -1901,7 +1901,7 @@ public class Theme {
                 jsonObject.put("wMotion", isMotion);
                 jsonObject.put("pIntensity", intensity);
                 editor.putString(key, jsonObject.toString());
-                editor.commit();
+                editor.apply();
             } catch (Throwable e) {
                 FileLog.e(e);
             }
@@ -1910,7 +1910,7 @@ public class Theme {
         private void delete() {
             String key = getKey();
             SharedPreferences themeConfig = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
-            themeConfig.edit().remove(key).commit();
+            themeConfig.edit().remove(key).apply();
             new File(ApplicationLoader.getFilesDirFixed(), fileName).delete();
             new File(ApplicationLoader.getFilesDirFixed(), originalFileName).delete();
         }
@@ -5619,7 +5619,7 @@ public class Theme {
         } else {
             editor.remove("nighttheme");
         }
-        editor.commit();
+        editor.apply();
     }
 
     @SuppressLint("PrivateApi")
@@ -7221,7 +7221,7 @@ public class Theme {
                 }
             }
             editor.putInt("accent_current_" + theme.assetName, theme.currentAccentId);
-            editor.commit();
+            editor.apply();
         } else {
             if (theme.prevAccentId != -1) {
                 if (remove) {
@@ -7270,7 +7270,7 @@ public class Theme {
         }
 
         editor.putInt("lastLoadingCurrentThemeTime", lastLoadingCurrentThemeTime);
-        editor.commit();
+        editor.apply();
 
         if (full) {
             for (int b = 0; b < 5; b++) {
@@ -7740,7 +7740,7 @@ public class Theme {
                 SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("theme", currentDayTheme.getKey());
-                editor.commit();
+                editor.apply();
             }
         } catch (Exception e) {
             FileLog.e(e);

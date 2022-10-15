@@ -906,7 +906,7 @@ public class LoginActivity extends BaseFragment {
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("logininfo2", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
     }
 
     private void putBundleToEditor(Bundle bundle, SharedPreferences.Editor editor, String prefix) {
@@ -1508,7 +1508,7 @@ public class LoginActivity extends BaseFragment {
             SharedPreferences.Editor editor = preferences.edit();
             editor.clear();
             putBundleToEditor(bundle, editor, null);
-            editor.commit();
+            editor.apply();
         } catch (Exception e) {
             FileLog.e(e);
         }
@@ -2394,7 +2394,7 @@ public class LoginActivity extends BaseFragment {
                                 if (!permissionsItems.isEmpty()) {
                                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                                     if (getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
-                                        preferences.edit().putBoolean("firstlogin", false).commit();
+                                        preferences.edit().putBoolean("firstlogin", false).apply();
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
 
                                         builder.setPositiveButton(LocaleController.getString("Continue", R.string.Continue), null);
@@ -2463,7 +2463,7 @@ public class LoginActivity extends BaseFragment {
                     if (!permissionsItems.isEmpty()) {
                         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                         if (preferences.getBoolean("firstlogin", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_CALL_LOG)) {
-                            preferences.edit().putBoolean("firstlogin", false).commit();
+                            preferences.edit().putBoolean("firstlogin", false).apply();
                             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
 
                             builder.setPositiveButton(LocaleController.getString("Continue", R.string.Continue), null);
@@ -2697,7 +2697,7 @@ public class LoginActivity extends BaseFragment {
                                 Runnable r = () -> {
                                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                                     if (preferences.getBoolean("firstloginshow", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
-                                        preferences.edit().putBoolean("firstloginshow", false).commit();
+                                        preferences.edit().putBoolean("firstloginshow", false).apply();
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
 
                                         builder.setTopAnimation(R.raw.incoming_calls, 46, false, Theme.getColor(Theme.key_dialogTopBackground));
