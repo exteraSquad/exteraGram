@@ -63,6 +63,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int stickersDividerRow;
 
     private int chatHeaderRow;
+    private int addCommaAfterMentionRow;
     private int hideSendAsChannelRow;
     private int hideKeyboardOnScrollRow;
     private int disableReactionsRow;
@@ -230,6 +231,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         stickersDividerRow = newRow();
 
         chatHeaderRow = newRow();
+        addCommaAfterMentionRow = newRow();
         hideSendAsChannelRow = newRow();
         hideKeyboardOnScrollRow = newRow();
         disableReactionsRow = newRow();
@@ -259,6 +261,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == unlimitedRecentStickersRow) {
             ExteraConfig.editor.putBoolean("unlimitedRecentStickers", ExteraConfig.unlimitedRecentStickers ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.unlimitedRecentStickers);
+        } else if (position == addCommaAfterMentionRow) {
+            ExteraConfig.editor.putBoolean("addCommaAfterMention", ExteraConfig.addCommaAfterMention ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.addCommaAfterMention);
         } else if (position == hideSendAsChannelRow) {
             ExteraConfig.editor.putBoolean("hideSendAsChannel", ExteraConfig.hideSendAsChannel ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideSendAsChannel);
@@ -362,11 +367,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             switch (holder.getItemViewType()) {
                 case 1:
-                    if (position == mediaDividerRow) {
-                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
-                    } else {
-                        holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
-                    }
+                    holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 3:
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
@@ -389,6 +390,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndCheck(LocaleController.getString("StickerTime", R.string.StickerTime), ExteraConfig.hideStickerTime, true);
                     } else if (position == unlimitedRecentStickersRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UnlimitedRecentStickers", R.string.UnlimitedRecentStickers), ExteraConfig.unlimitedRecentStickers, false);
+                    } else if (position == addCommaAfterMentionRow) {
+                        textCheckCell.setTextAndValueAndCheck(LocaleController.getString("AddCommaAfterMention", R.string.AddCommaAfterMention), LocaleController.getString("AddCommaAfterMentionValue", R.string.AddCommaAfterMentionValue), ExteraConfig.addCommaAfterMention, false, true);
                     } else if (position == hideSendAsChannelRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideSendAsChannel", R.string.HideSendAsChannel), ExteraConfig.hideSendAsChannel, true);
                     } else if (position == hideKeyboardOnScrollRow) {

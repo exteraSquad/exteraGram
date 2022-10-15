@@ -63,6 +63,7 @@ public class ExteraConfig {
     public static boolean hidePremiumStickersTab;
     public static boolean hideFeaturedEmojisTabs;
 
+    public static boolean addCommaAfterMention;
     public static boolean hideSendAsChannel;
     public static boolean hideKeyboardOnScroll;
     public static boolean disableReactions;
@@ -138,6 +139,7 @@ public class ExteraConfig {
             hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", false);
             hideFeaturedEmojisTabs = preferences.getBoolean("hideFeaturedEmojisTabs", false);
 
+            addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
             hideSendAsChannel = preferences.getBoolean("hideSendAsChannel", false);
             hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
             disableReactions = preferences.getBoolean("disableReactions", false);

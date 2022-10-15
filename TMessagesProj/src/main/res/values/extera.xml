@@ -79,6 +79,8 @@
     <string name="StickerTime">Hide time on stickers</string>
     <string name="UnlimitedRecentStickers">Unlimited recent stickers</string>
 
+    <string name="AddCommaAfterMention"> Add comma after mention</string>
+    <string name="AddCommaAfterMentionValue">\@exteraGram, \@exteraBeta, \@exteraGramCI</string>
     <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scrolling</string>
     <string name="DisableReactions">Disable reactions</string>

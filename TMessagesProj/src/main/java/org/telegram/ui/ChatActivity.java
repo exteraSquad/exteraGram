@@ -6691,7 +6691,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     searchUserMessages(null, chat);
                 } else {
                     if (chat.username != null) {
-                        chatActivityEnterView.replaceWithText(start, len, "@" + chat.username + " ", false);
+                        chatActivityEnterView.replaceWithText(start, len, "@" + chat.username + (ExteraConfig.addCommaAfterMention ? ", " : " "), false);
                     }
                 }
             } else if (object instanceof TLRPC.User) {
@@ -6700,11 +6700,17 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     searchUserMessages(user, null);
                 } else {
                     if (user.username != null) {
-                        chatActivityEnterView.replaceWithText(start, len, "@" + user.username + " ", false);
+                        chatActivityEnterView.replaceWithText(start, len, "@" + user.username + (!user.bot && ExteraConfig.addCommaAfterMention ? ", " : " "), false);
                     } else {
                         String name = UserObject.getFirstName(user, false);
-                        Spannable spannable = new SpannableString(name + " ");
-                        spannable.setSpan(new URLSpanUserMention("" + user.id, 3), 0, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        Spannable spannable;
+                        if (!user.bot && ExteraConfig.addCommaAfterMention) {
+                            spannable = new SpannableString(name + ", ");
+                            spannable.setSpan(new URLSpanUserMention("" + user.id, 3), 0, spannable.length() - 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        } else {
+                            spannable = new SpannableString(name + " ");
+                            spannable.setSpan(new URLSpanUserMention("" + user.id, 3), 0, spannable.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
                         chatActivityEnterView.replaceWithText(start, len, spannable, false);
                     }
                 }
@@ -6821,8 +6827,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 TLRPC.User user = (TLRPC.User) object;
                 if (!(searchingForUser && searchContainer.getVisibility() == View.VISIBLE)) {
                     String name = UserObject.getFirstName(user, false);
-                    Spannable spannable = new SpannableString(name + " ");
-                    spannable.setSpan(new URLSpanUserMention("" + user.id, 3), 0, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    Spannable spannable;
+                    if (!user.bot && ExteraConfig.addCommaAfterMention) {
+                        spannable = new SpannableString(name + ", ");
+                        spannable.setSpan(new URLSpanUserMention("" + user.id, 3), 0, spannable.length() - 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else {
+                        spannable = new SpannableString(name + " ");
+                        spannable.setSpan(new URLSpanUserMention("" + user.id, 3), 0, spannable.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
                     chatActivityEnterView.replaceWithText(start, len, spannable, false);
                     return true;
                 }
@@ -9317,8 +9329,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
             };
             videoPlayerContainer.setOutlineProvider(new ViewOutlineProvider() {
-
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void getOutline(View view, Outline outline) {
                     ImageReceiver imageReceiver = (ImageReceiver) view.getTag(R.id.parent_tag);
@@ -13963,7 +13973,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 int index = firstExtraction.indexOf("/ACTUAL");
                 if (index != -1) {
                     firstExtraction = firstExtraction.substring(0, index);
-                    String secondExtraction = URLDecoder.decode(firstExtraction, StandardCharsets.UTF_8);
+                    String secondExtraction = URLDecoder.decode(firstExtraction, "UTF-8");
                     uri = Uri.parse(secondExtraction);
                 }
             } catch (Exception e) {
@@ -24618,7 +24628,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             } else {
                 String formattedUrl = str;
                 try {
-                    formattedUrl = URLDecoder.decode(str.replaceAll("\\+", "%2b"), StandardCharsets.UTF_8);
+                    formattedUrl = URLDecoder.decode(str.replaceAll("\\+", "%2b"), "UTF-8");
                 } catch (Exception e) {
                     FileLog.e(e);
                 }
@@ -24900,7 +24910,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 BottomSheet.Builder builder = new BottomSheet.Builder(getParentActivity(), false, themeDelegate);
                 String formattedUrl = urlFinal;
                 try {
-                    formattedUrl = URLDecoder.decode(urlFinal.replaceAll("\\+", "%2b"), StandardCharsets.UTF_8);
+                    formattedUrl = URLDecoder.decode(urlFinal.replaceAll("\\+", "%2b"), "UTF-8");
                 } catch (Exception e) {
                     FileLog.e(e);
                 }

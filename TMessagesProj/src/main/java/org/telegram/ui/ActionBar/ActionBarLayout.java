@@ -1269,17 +1269,14 @@ public class ActionBarLayout extends FrameLayout {
         containerView.setTranslationY(0);
 
         if (preview) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                fragmentView.setOutlineProvider(new ViewOutlineProvider() {
-                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        outline.setRoundRect(0, AndroidUtilities.statusBarHeight, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(6));
-                    }
-                });
-                fragmentView.setClipToOutline(true);
-                fragmentView.setElevation(AndroidUtilities.dp(4));
-            }
+            fragmentView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, AndroidUtilities.statusBarHeight, view.getMeasuredWidth(), view.getMeasuredHeight(), AndroidUtilities.dp(6));
+                }
+            });
+            fragmentView.setClipToOutline(true);
+            fragmentView.setElevation(AndroidUtilities.dp(4));
             if (previewBackgroundDrawable == null) {
                 previewBackgroundDrawable = new ColorDrawable(0x2e000000);
             }

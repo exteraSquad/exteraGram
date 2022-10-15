@@ -3994,11 +3994,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (documentId != null) {
                     animatedStatusView.animateChange(ReactionsLayoutInBubble.VisibleReaction.fromCustomEmoji(documentId));
                 }
-//                ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> {
-//                    if (!(res instanceof TLRPC.TL_boolTrue)) {
-//                        // TODO: reject
-//                    }
-//                });
+                ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> {
+                    if (!(res instanceof TLRPC.TL_boolTrue)) {
+                        // TODO: reject
+                    }
+                });
                 if (popup[0] != null) {
                     selectAnimatedEmojiDialog = null;
                     popup[0].dismiss();
