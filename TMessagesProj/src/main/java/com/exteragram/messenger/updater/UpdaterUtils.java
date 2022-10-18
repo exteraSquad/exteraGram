@@ -19,12 +19,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
 import com.exteragram.messenger.ExteraConfig;
@@ -59,6 +59,7 @@ public class UpdaterUtils {
     public static String version, changelog, size, uploadDate;
     public static File otaPath, versionPath, apkFile;
 
+
     private static long id = 0L;
     private static final long updateCheckInterval = 3600000L; // 1 hour
 
@@ -81,15 +82,15 @@ public class UpdaterUtils {
     }
 
     public static void checkDirs() {
-        File externalDir = ApplicationLoader.applicationContext.getExternalFilesDir(null);
-        otaPath = new File(externalDir, "ota");
-        versionPath = new File(otaPath, version);
-        apkFile = new File(versionPath, "update.apk");
-
-        if (!versionPath.exists()) {
-            versionPath.mkdirs();
+        otaPath = new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), "ota");
+        if (version != null) {
+            versionPath = new File(otaPath, version);
+            apkFile = new File(versionPath, "update.apk");
+            if (!versionPath.exists()) {
+                versionPath.mkdirs();
+            }
+            updateDownloaded = apkFile.exists();
         }
-        updateDownloaded = apkFile.exists();
     }
 
     public static void checkUpdates(Context context, boolean manual) {
@@ -115,13 +116,15 @@ public class UpdaterUtils {
             }
 
             try {
-                if (BuildVars.isBetaApp()) uri = uri.replace("/exteraGram/", "/exteraGram-Beta/");
-                HttpURLConnection connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
+                if (BuildVars.isBetaApp()) {
+                    uri = uri.replace("/exteraGram/", "/exteraGram-Beta/");
+                }
+                var connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("User-Agent", getRandomUserAgent());
                 connection.setRequestProperty("Content-Type", "application/json");
 
-                StringBuilder textBuilder = new StringBuilder();
+                var textBuilder = new StringBuilder();
                 try (Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                     int c;
                     while ((c = reader.read()) != -1) {
@@ -129,8 +132,8 @@ public class UpdaterUtils {
                     }
                 }
 
-                JSONObject obj = new JSONObject(textBuilder.toString());
-                JSONArray arr = obj.getJSONArray("assets");
+                var obj = new JSONObject(textBuilder.toString());
+                var arr = obj.getJSONArray("assets");
 
                 if (arr.length() == 0) {
                     return;
@@ -138,7 +141,7 @@ public class UpdaterUtils {
 
                 String link, cpu = null;
                 try {
-                    PackageInfo info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
+                    var info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
                     switch (info.versionCode % 10) {
                         case 1:
                         case 3:
@@ -203,18 +206,18 @@ public class UpdaterUtils {
 
     public static void downloadApk(Context context, String link, String title) {
         if (!updateDownloaded) {
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
+            var request = new DownloadManager.Request(Uri.parse(link));
 
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
             request.setTitle(title);
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             request.setDestinationInExternalFilesDir(context, "ota/" + version, "update.apk");
 
-            DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            var manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
             id = manager.enqueue(request);
 
-            DownloadReceiver downloadBroadcastReceiver = new DownloadReceiver();
-            IntentFilter intentFilter = new IntentFilter();
+            var downloadBroadcastReceiver = new DownloadReceiver();
+            var intentFilter = new IntentFilter();
             intentFilter.addAction("android.intent.action.DOWNLOAD_COMPLETE");
             intentFilter.addAction("android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED");
             context.registerReceiver(downloadBroadcastReceiver, intentFilter);
@@ -224,11 +227,11 @@ public class UpdaterUtils {
     }
 
     public static void installApk(Context context, String path) {
-        File file = new File(path);
+        var file = new File(path);
         if (!file.exists()) {
             return;
         }
-        Intent install = new Intent(Intent.ACTION_VIEW);
+        var install = new Intent(Intent.ACTION_VIEW);
         Uri fileUri;
         if (Build.VERSION.SDK_INT >= 24) {
             fileUri = FileProvider.getUriForFile(context, ApplicationLoader.getApplicationId() + ".provider", file);
@@ -241,8 +244,7 @@ public class UpdaterUtils {
         }
         if (fileUri != null) {
             install.setDataAndType(fileUri, "application/vnd.android.package-archive");
-            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (install.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(install);
             }
@@ -285,7 +287,8 @@ public class UpdaterUtils {
     }
 
     public static long getMillisFromDate(String d, String format) {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat(format);
+        @SuppressLint("SimpleDateFormat")
+        var sdf = new SimpleDateFormat(format);
         try {
            Date date = sdf.parse(d);
            assert date != null;
@@ -380,7 +383,7 @@ public class UpdaterUtils {
     public static class DownloadReceiver extends BroadcastReceiver {
 
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, @NonNull Intent intent) {
             if (Objects.equals(intent.getAction(), DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 if (id == intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)) {
                     installApk(context, apkFile.getAbsolutePath());
@@ -388,9 +391,13 @@ public class UpdaterUtils {
                     updateDownloaded = false;
                 }
             } else if (Objects.equals(intent.getAction(), DownloadManager.ACTION_NOTIFICATION_CLICKED)) {
-                Intent viewDownloadIntent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
-                viewDownloadIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(viewDownloadIntent);
+                try {
+                    var viewDownloadIntent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+                    viewDownloadIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(viewDownloadIntent);
+                } catch(Exception e) {
+                    FileLog.e("Downloads activity not found: ", e);
+                }
             }
         }
     }

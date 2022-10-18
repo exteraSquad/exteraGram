@@ -26,7 +26,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Layout;
@@ -59,6 +58,8 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
+import org.telegram.messenger.FileLoader;
+import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.LocationController;
 import org.telegram.messenger.MediaController;
@@ -69,6 +70,7 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
+import org.telegram.messenger.audioinfo.AudioInfo;
 import org.telegram.messenger.voip.VoIPService;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
@@ -84,12 +86,6 @@ import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.GroupCallActivity;
 import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.LocationActivity;
-import org.telegram.messenger.audioinfo.AudioInfo;
-import org.telegram.messenger.ImageLocation;
-import org.telegram.messenger.FileLoader;
-import org.telegram.ui.Components.BackupImageView;
-import org.telegram.ui.Components.AudioPlayerAlert;
-import org.telegram.ui.Components.BackupImageView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -116,29 +112,28 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     })
     public @interface Style {}
 
-    private ImageView playButton;
-    private PlayPauseDrawable playPauseDrawable;
-    private AudioPlayerAlert.ClippingTextViewSwitcher titleTextView;
-    private AudioPlayerAlert.ClippingTextViewSwitcher subtitleTextView;
+    private final ImageView playButton;
+    private final PlayPauseDrawable playPauseDrawable;
+    private final AudioPlayerAlert.ClippingTextViewSwitcher titleTextView;
+    private final AudioPlayerAlert.ClippingTextViewSwitcher subtitleTextView;
     private AnimatorSet animatorSet;
-    private BaseFragment fragment;
-    private ChatActivity chatActivity;
-    private View applyingView;
-    private FrameLayout frameLayout;
-    private View selector;
-    private RLottieImageView importingImageView;
+    private final BaseFragment fragment;
+    private final View applyingView;
+    private final FrameLayout frameLayout;
+    private final View selector;
+    private final RLottieImageView importingImageView;
     private RLottieImageView muteButton;
-    private RLottieImageView nextButton;
-    private RLottieImageView prevButton;
-    private RLottieDrawable muteDrawable;
-    private ImageView closeButton;
+    private final RLottieImageView nextButton;
+    private final RLottieImageView prevButton;
+    private final RLottieDrawable muteDrawable;
+    private final ImageView closeButton;
     private ActionBarMenuItem playbackSpeedButton;
-    private ActionBarMenuSubItem[] speedItems = new ActionBarMenuSubItem[4];
+    private final ActionBarMenuSubItem[] speedItems = new ActionBarMenuSubItem[4];
     private FragmentContextView additionalContextView;
-    private TextView joinButton;
-    private CellFlickerDrawable joinButtonFlicker;
-    private CoverContainer coverContainer;
-    private View divider;
+    private final TextView joinButton;
+    private final CellFlickerDrawable joinButtonFlicker;
+    private final CoverContainer coverContainer;
+    private final View divider;
 
     private float currentX, secondX, currentY, secondY, dx, dy;
     private String currentFile;
@@ -154,7 +149,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     private String lastString;
     private boolean isMusic;
     private boolean supportsCalls = true;
-    private AvatarsImageView avatars;
+    private final AvatarsImageView avatars;
 
     private Paint gradientPaint;
     private LinearGradient linearGradient;
@@ -162,7 +157,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     private int gradientWidth;
     private TextPaint gradientTextPaint;
     private StaticLayout timeLayout;
-    private RectF rect = new RectF();
+    private final RectF rect = new RectF();
     private boolean scheduleRunnableScheduled;
     private final Runnable updateScheduleTimeRunnable = new Runnable() {
         @Override
@@ -194,14 +189,14 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
 
     private final int account = UserConfig.selectedAccount;
 
-    private boolean isLocation;
+    private final boolean isLocation;
 
     private FragmentContextViewDelegate delegate;
     private final Theme.ResourcesProvider resourcesProvider;
 
     private boolean firstLocationsLoaded;
     private int lastLocationSharingCount = -1;
-    private Runnable checkLocationRunnable = new Runnable() {
+    private final Runnable checkLocationRunnable = new Runnable() {
         @Override
         public void run() {
             checkLocationString();
@@ -600,10 +595,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                             return true;
                         }
                     }
-                    return super.onTouchEvent(event);
-                } else {
-                    return super.onTouchEvent(event);
                 }
+                return super.onTouchEvent(event);
             }
 
             @Override
@@ -625,7 +618,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 return;
             }
             if (voIPService.groupCall != null) {
-                AccountInstance accountInstance = AccountInstance.getInstance(voIPService.getAccount());
                 ChatObject.Call call = voIPService.groupCall;
                 TLRPC.Chat chat = voIPService.getChat();
                 TLRPC.TL_groupCallParticipant participant = call.participants.get(voIPService.getSelfId());
@@ -702,7 +694,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 }
                 if (messageObject.getDialogId() == dialogId) {
                     ((ChatActivity) fragment).scrollToMessageId(messageObject.getId(), 0, false, 0, true, 0);
-                    return true;
                 } else {
                     dialogId = messageObject.getDialogId();
                     Bundle args = new Bundle();
@@ -715,8 +706,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                     }
                     args.putInt("message_id", messageObject.getId());
                     fragment.presentFragment(new ChatActivity(args), fragment instanceof ChatActivity);
-                    return true;
                 }
+                return true;
             }
             return false;
         });
@@ -943,7 +934,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     }
 
     private void updateStyle(@Style int style) {
-        MessageObject messageObject = MediaController.getInstance().getPlayingMessageObject();
         if (currentStyle == style) {
             return;
         }
@@ -1713,7 +1703,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             }
             if (lastMessageObject != messageObject || prevStyle != STYLE_AUDIO_PLAYER) {
                 lastMessageObject = messageObject;
-                SpannableStringBuilder stringBuilder;
                 if (lastMessageObject.isVoice() || lastMessageObject.isRoundVideo()) {
                     isMusic = false;
                     if (playbackSpeedButton != null) {
@@ -1721,7 +1710,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                         playbackSpeedButton.setEnabled(true);
                     }
                     titleTextView.setPadding(0, 0, AndroidUtilities.dp(44), 0);
-                    stringBuilder = new SpannableStringBuilder(String.format("%s %s", messageObject.getMusicAuthor(), messageObject.getMusicTitle()));
 
                     for (int i = 0; i < 2; i++) {
                         TextView textView = i == 0 ? titleTextView.getTextView() : titleTextView.getNextTextView();
@@ -1748,7 +1736,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                     } else {
                         titleTextView.setPadding(0, 0, 0, 0);
                     }
-                    stringBuilder = new SpannableStringBuilder(String.format("%s - %s", messageObject.getMusicAuthor(), messageObject.getMusicTitle()));
                     for (int i = 0; i < 2; i++) {
                         TextView textView = i == 0 ? titleTextView.getTextView() : titleTextView.getNextTextView();
                         if (textView == null) {
@@ -1758,7 +1745,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                     }
                 }
 
-                boolean speedVisible = playbackSpeedButton.getVisibility() == View.GONE ? false : true;
+                boolean speedVisible = playbackSpeedButton.getVisibility() != View.GONE;
                 titleTextView.setText(isMusic ? messageObject.getMusicTitle() : messageObject.getMusicAuthor(), !create && wasVisible && isMusic);
                 subtitleTextView.setText(isMusic ? messageObject.getMusicAuthor() : messageObject.getMusicTitle(), !create && wasVisible && isMusic);
 
@@ -2267,7 +2254,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         }
         boolean clipped = false;
         if (currentStyle == STYLE_ACTIVE_GROUP_CALL || currentStyle == STYLE_CONNECTING_GROUP_CALL) {
-            boolean mutedByAdmin = GroupCallActivity.groupCallInstance == null && Theme.getFragmentContextViewWavesDrawable().getState() == FragmentContextViewWavesDrawable.MUTE_BUTTON_STATE_MUTED_BY_ADMIN;
             Theme.getFragmentContextViewWavesDrawable().updateState(wasDraw);
 
             float progress = topPadding / AndroidUtilities.dp((getStyleHeight()));
@@ -2348,7 +2334,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     public void updateCover(MessageObject messageObject) {
         final BackupImageView imageView = coverContainer.getImageView();
         final AudioInfo audioInfo = MediaController.getInstance().getAudioInfo();
-        final Theme.ResourcesProvider resourcesProvider;
         if (audioInfo != null && audioInfo.getCover() != null) {
             imageView.setImageBitmap(audioInfo.getCover());
             currentFile = null;
@@ -2361,32 +2346,26 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 imageView.setImage(ImageLocation.getForPath(artworkUrl), null, thumbImageLocation, null, null, 0, 1, messageObject);
             } else if (thumbImageLocation != null) {
                 imageView.setImage(null, null, thumbImageLocation, null, null, 0, 1, messageObject);
+            } else {
+                imageView.setImageResource(R.drawable.nocover, Theme.getColor(Theme.key_player_button));
             }
-            if (!imageView.getImageReceiver().hasBitmapImage()) imageView.setImageResource(R.drawable.nocover, Theme.getColor(Theme.key_player_button));
             imageView.invalidate();
         }
     }
 
     private static abstract class CoverContainer extends FrameLayout {
 
-        private final BackupImageView[] imageViews = new BackupImageView[2];
-        private int activeIndex;
+        private final BackupImageView imageView;
 
         public CoverContainer(@NonNull Context context) {
             super(context);
-            for (int i = 0; i < 2; i++) {
-                imageViews[i] = new BackupImageView(context);
-                final int index = i;
-                imageViews[i].setRoundRadius(AndroidUtilities.dp(2));
-                if (i == 1) {
-                    imageViews[i].setVisibility(GONE);
-                }
-                addView(imageViews[i], LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-            }
+            imageView = new BackupImageView(context);
+            imageView.setRoundRadius(AndroidUtilities.dp(2));
+            addView(imageView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         }
 
         public final BackupImageView getImageView() {
-            return imageViews[activeIndex];
+            return imageView;
         }
 
     }
@@ -2425,15 +2404,6 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 }
             }
         }
-    }
-
-    private int getTitleTextColor() {
-        if (currentStyle == STYLE_INACTIVE_GROUP_CALL) {
-            return getThemedColor(Theme.key_inappPlayerPerformer);
-        } else if (currentStyle == STYLE_CONNECTING_GROUP_CALL || currentStyle == STYLE_ACTIVE_GROUP_CALL) {
-            return getThemedColor(Theme.key_returnToCallText);
-        }
-        return getThemedColor(Theme.key_inappPlayerTitle);
     }
 
     private int getThemedColor(String key) {

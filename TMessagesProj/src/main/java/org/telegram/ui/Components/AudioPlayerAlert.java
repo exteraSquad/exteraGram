@@ -2035,11 +2035,11 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 imageView.setImage(ImageLocation.getForPath(artworkUrl), null, thumbImageLocation, null, null, 0, 1, messageObject);
             } else if (thumbImageLocation != null) {
                 imageView.setImage(null, null, thumbImageLocation, null, null, 0, 1, messageObject);
-            }
-            if (!imageView.getImageReceiver().hasBitmapImage()) {
-                noCover = true;
-                imageView.setImageResource(R.drawable.nocover, Theme.getColor(Theme.key_player_button));
             } else {
+                imageView.setImageResource(R.drawable.nocover, Theme.getColor(Theme.key_player_button));
+                noCover= true;
+            }
+            if (imageView.getImageReceiver().hasImageSet()) {
                 noCover = false;
             }
             imageView.invalidate();

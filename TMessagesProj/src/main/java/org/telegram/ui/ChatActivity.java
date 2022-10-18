@@ -2541,8 +2541,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         avatarContainer.premiumIconHiddable = true;
 
         avatarContainer.setOnLongClickListener(v -> {
-            openSearchWithText(null);
-            return true;
+            if (!isInPreviewMode() && !isComments) {
+                openSearchWithText(null);
+                return true;
+            }
+            return false;
         });
 
         AndroidUtilities.updateViewVisibilityAnimated(avatarContainer, true, 1f, false);

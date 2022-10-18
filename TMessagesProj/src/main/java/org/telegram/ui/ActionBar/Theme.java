@@ -7561,7 +7561,7 @@ public class Theme {
                 switchingNightTheme = false;
             }
         } else {
-            if (currentTheme != currentDayTheme && (currentTheme == null || currentNightTheme != null &&  currentTheme.isDark() != currentNightTheme.isDark())) {
+            if (currentTheme != currentDayTheme && (currentTheme == null || currentDayTheme != null &&  currentTheme.isLight() != currentDayTheme.isLight())) {
                 isInNigthMode = false;
                 lastThemeSwitchTime = SystemClock.elapsedRealtime();
                 switchingNightTheme = true;
