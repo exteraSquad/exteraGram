@@ -116,7 +116,7 @@ public class SharedPhotoVideoCell extends FrameLayout {
             videoInfoContainer.addView(imageView1, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL));
 
             videoTextView = new TextView(context);
-            videoTextView.setTextColor(0xffffffff);
+            videoTextView.setTextColor(Theme.getActiveTheme().isMonet() ? Theme.getColor(Theme.key_chat_mediaTimeText) : 0xffffffff);
             videoTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
             videoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
             videoTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);

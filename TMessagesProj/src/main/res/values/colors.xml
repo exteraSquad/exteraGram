@@ -10,8 +10,15 @@
     <color name="widget_edit_text">#999999</color>
     <color name="ic_background">#F54142</color>
     <color name="ic_background_beta">#747F9F</color>
-    <color name="monetRedLight">#B3261E</color>
-    <color name="monetRedDark">#F2B8B5</color>
-    <color name="colorCallGreen">#4CAF50</color>
-    <color name="colorCallRed">#EF5350</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <!--static m colors-->
+    <color name="mRed200">#EF9A9A</color>
+    <color name="mRed500">#F44336</color>
+    <color name="mRed800">#C62828</color>
+    <color name="mGreen200">#A5D6A7</color>  
+    <color name="mGreen500">#4CAF50</color>  
+    <color name="mGreen800">#2E7D32</color>   
 </resources>

@@ -31,6 +31,18 @@ public class MonetHelper {
 
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ids.put("mBlack", R.color.black);
+            ids.put("mWhite", R.color.white);
+
+            //static m colors
+            ids.put("mRed200", R.color.mRed200);
+            ids.put("mRed500", R.color.mRed500);
+            ids.put("mRed800", R.color.mRed800);
+            ids.put("mGreen200", R.color.mGreen200);
+            ids.put("mGreen500", R.color.mGreen500);
+            ids.put("mGreen800", R.color.mGreen800);
+
+            //dynamic monet engine colors
             ids.put("a1_10", android.R.color.system_accent1_10);
             ids.put("a1_50", android.R.color.system_accent1_50);
             ids.put("a1_100", android.R.color.system_accent1_100);
@@ -86,12 +98,6 @@ public class MonetHelper {
             ids.put("n2_700", android.R.color.system_neutral2_700);
             ids.put("n2_800", android.R.color.system_neutral2_800);
             ids.put("n2_900", android.R.color.system_neutral2_900);
-            ids.put("monetBlack", android.R.color.black);
-            ids.put("monetWhite", android.R.color.white);
-            ids.put("monetRedDark", R.color.monetRedDark);
-            ids.put("monetRedLight", R.color.monetRedLight);
-            ids.put("monetRedCall", R.color.colorCallRed);
-            ids.put("monetGreenCall", R.color.colorCallGreen);
         }
     }
 
