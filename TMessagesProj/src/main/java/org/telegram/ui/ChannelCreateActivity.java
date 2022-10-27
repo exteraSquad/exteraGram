@@ -37,7 +37,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
+
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.extras.Vibrate;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -63,15 +65,16 @@ import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextBlockCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Components.AvatarDrawable;
+import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CircularProgressDrawable;
 import org.telegram.ui.Components.CrossfadeDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
+import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.EditTextEmoji;
 import org.telegram.ui.Components.ImageUpdater;
-import org.telegram.ui.Components.BackupImageView;
-import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LinkActionView;
+import org.telegram.ui.Components.OutlineTextContainerView;
 import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RLottieImageView;
@@ -79,9 +82,6 @@ import org.telegram.ui.Components.RadialProgressView;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 
 import java.util.ArrayList;
-
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 
 public class ChannelCreateActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, ImageUpdater.ImageUpdaterDelegate {
 
@@ -96,6 +96,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
     private RadialProgressView avatarProgressView;
     private AvatarDrawable avatarDrawable;
     private ImageUpdater imageUpdater;
+    private OutlineTextContainerView descriptionFieldContainer;
     private EditTextBoldCursor descriptionTextView;
     private TLRPC.FileLocation avatar;
     private TLRPC.FileLocation avatarBig;
@@ -520,10 +521,10 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                     super.invalidate(l, t, r, b);
                 }
             };
-            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(64));
+            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(56));
             avatarDrawable.setInfo(5, null, null);
             avatarImage.setImageDrawable(avatarDrawable);
-            frameLayout.addView(avatarImage, LayoutHelper.createFrame(64, 64, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 16, 12, LocaleController.isRTL ? 16 : 0, 12));
+            frameLayout.addView(avatarImage, LayoutHelper.createFrame(56, 56, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 24, 20, LocaleController.isRTL ? 24 : 0, 12));
 
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setColor(0x55000000);
@@ -538,7 +539,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                 }
             };
             avatarOverlay.setContentDescription(LocaleController.getString("ChatSetPhotoOrVideo", R.string.ChatSetPhotoOrVideo));
-            frameLayout.addView(avatarOverlay, LayoutHelper.createFrame(64, 64, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 16, 12, LocaleController.isRTL ? 16 : 0, 12));
+            frameLayout.addView(avatarOverlay, LayoutHelper.createFrame(56, 56, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 24, 20, LocaleController.isRTL ? 24 : 0, 12));
             avatarOverlay.setOnClickListener(view -> {
                 imageUpdater.openMenu(avatar != null, () -> {
                     avatar = null;
@@ -564,7 +565,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                 avatarEditor.playAnimation();
             });
 
-            cameraDrawable = new RLottieDrawable(R.raw.camera, "" + R.raw.camera, AndroidUtilities.dp(60), AndroidUtilities.dp(60), false, null);
+            cameraDrawable = new RLottieDrawable(R.raw.camera, "" + R.raw.camera, AndroidUtilities.dp(52), AndroidUtilities.dp(52), false, null);
 
             avatarEditor = new RLottieImageView(context) {
                 @Override
@@ -584,13 +585,13 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             avatarEditor.setEnabled(false);
             avatarEditor.setClickable(false);
             avatarEditor.setPadding(AndroidUtilities.dp(0), 0, 0, AndroidUtilities.dp(1));
-            frameLayout.addView(avatarEditor, LayoutHelper.createFrame(64, 64, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 15, 12, LocaleController.isRTL ? 15 : 0, 12));
+            frameLayout.addView(avatarEditor, LayoutHelper.createFrame(56, 56, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 24, 20, LocaleController.isRTL ? 24 : 0, 12));
 
             avatarProgressView = new RadialProgressView(context);
             avatarProgressView.setSize(AndroidUtilities.dp(30));
             avatarProgressView.setProgressColor(0xffffffff);
             avatarProgressView.setNoProgress(false);
-            frameLayout.addView(avatarProgressView, LayoutHelper.createFrame(64, 64, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 16, 12, LocaleController.isRTL ? 16 : 0, 12));
+            frameLayout.addView(avatarProgressView, LayoutHelper.createFrame(56, 56, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 24, 20, LocaleController.isRTL ? 24 : 0, 12));
 
             showAvatarProgress(false, false);
 
@@ -600,9 +601,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                 nameTextView.setText(nameToSet);
                 nameToSet = null;
             }
-            InputFilter[] inputFilters = new InputFilter[1];
-            inputFilters[0] = new InputFilter.LengthFilter(100);
-            nameTextView.setFilters(inputFilters);
+            nameTextView.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(100)});
             nameTextView.getEditText().setSingleLine(true);
             nameTextView.getEditText().setImeOptions(EditorInfo.IME_ACTION_NEXT);
             nameTextView.getEditText().setOnEditorActionListener((textView, i, keyEvent) -> {
@@ -612,26 +611,28 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                 }
                 return false;
             });
-            frameLayout.addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 5 : 96, 0, LocaleController.isRTL ? 96 : 5, 0));
+            frameLayout.addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 24 : 96, 0, LocaleController.isRTL ? 96 : 24, 0));
+
+            descriptionFieldContainer = new OutlineTextContainerView(context);
+            descriptionFieldContainer.setText(LocaleController.getString("DescriptionPlaceholder", R.string.DescriptionPlaceholder));
+            linearLayout.addView(descriptionFieldContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 24, 14, 24, 0));
 
             descriptionTextView = new EditTextBoldCursor(context);
             descriptionTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            descriptionTextView.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
             descriptionTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-            descriptionTextView.setBackgroundDrawable(null);
-            descriptionTextView.setLineColors(getThemedColor(Theme.key_windowBackgroundWhiteInputField), getThemedColor(Theme.key_windowBackgroundWhiteInputFieldActivated), getThemedColor(Theme.key_windowBackgroundWhiteRedText3));
-            descriptionTextView.setPadding(0, 0, 0, AndroidUtilities.dp(6));
+            descriptionTextView.setBackground(null);
+            int padding = AndroidUtilities.dp(16);
+            descriptionTextView.setPadding(padding, padding, padding, padding);
             descriptionTextView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
             descriptionTextView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
             descriptionTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-            inputFilters = new InputFilter[1];
-            inputFilters[0] = new InputFilter.LengthFilter(120);
-            descriptionTextView.setFilters(inputFilters);
-            descriptionTextView.setHint(LocaleController.getString("DescriptionPlaceholder", R.string.DescriptionPlaceholder));
+            descriptionTextView.setFilters(new InputFilter.LengthFilter[]{new InputFilter.LengthFilter(120)});
             descriptionTextView.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             descriptionTextView.setCursorSize(AndroidUtilities.dp(20));
             descriptionTextView.setCursorWidth(1.5f);
-            linearLayout.addView(descriptionTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 24, 18, 24, 0));
+            descriptionTextView.setOnFocusChangeListener((v, hasFocus) -> descriptionFieldContainer.animateSelection(hasFocus ? 1 : 0));
+            descriptionFieldContainer.addView(descriptionTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+            descriptionFieldContainer.attachEditText(descriptionTextView);
             descriptionTextView.setOnEditorActionListener((textView, i, keyEvent) -> {
                 if (i == EditorInfo.IME_ACTION_DONE && doneButton != null) {
                     doneButton.performClick();
@@ -686,7 +687,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             linearLayout.addView(linearLayout2, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             radioButtonCell1 = new RadioButtonCell(context);
-            radioButtonCell1.setBackgroundDrawable(Theme.getSelectorDrawable(false));
+            radioButtonCell1.setBackground(Theme.getSelectorDrawable(false));
             radioButtonCell1.setTextAndValue(LocaleController.getString("ChannelPublic", R.string.ChannelPublic), LocaleController.getString("ChannelPublicInfo", R.string.ChannelPublicInfo), false, !isPrivate);
             linearLayout2.addView(radioButtonCell1, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             radioButtonCell1.setOnClickListener(v -> {
@@ -702,7 +703,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             });
 
             radioButtonCell2 = new RadioButtonCell(context);
-            radioButtonCell2.setBackgroundDrawable(Theme.getSelectorDrawable(false));
+            radioButtonCell2.setBackground(Theme.getSelectorDrawable(false));
             radioButtonCell2.setTextAndValue(LocaleController.getString("ChannelPrivate", R.string.ChannelPrivate), LocaleController.getString("ChannelPrivateInfo", R.string.ChannelPrivateInfo), false, isPrivate);
             linearLayout2.addView(radioButtonCell2, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             radioButtonCell2.setOnClickListener(v -> {
@@ -736,7 +737,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             editText.setMaxLines(1);
             editText.setLines(1);
             editText.setEnabled(false);
-            editText.setBackgroundDrawable(null);
+            editText.setBackground(null);
             editText.setPadding(0, 0, 0, 0);
             editText.setSingleLine(true);
             editText.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
@@ -749,7 +750,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             descriptionTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             descriptionTextView.setMaxLines(1);
             descriptionTextView.setLines(1);
-            descriptionTextView.setBackgroundDrawable(null);
+            descriptionTextView.setBackground(null);
             descriptionTextView.setPadding(0, 0, 0, 0);
             descriptionTextView.setSingleLine(true);
             descriptionTextView.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
@@ -793,7 +794,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             linkContainer.addView(checkTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, 17, 3, 17, 7));
 
             typeInfoCell = new TextInfoPrivacyCell(context);
-            typeInfoCell.setBackgroundDrawable(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+            typeInfoCell.setBackground(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
             linearLayout.addView(typeInfoCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             loadingAdminedCell = new LoadingCell(context);
@@ -805,7 +806,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             linearLayout.addView(adminnedChannelsLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             adminedInfoCell = new TextInfoPrivacyCell(context);
-            adminedInfoCell.setBackgroundDrawable(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+            adminedInfoCell.setBackground(Theme.getThemedDrawable(context, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
             linearLayout.addView(adminedInfoCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             updatePrivatePublic();
@@ -854,10 +855,10 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             if (loadingAdminedChannels) {
                 loadingAdminedCell.setVisibility(View.VISIBLE);
                 adminnedChannelsLayout.setVisibility(View.GONE);
-                typeInfoCell.setBackgroundDrawable(Theme.getThemedDrawable(typeInfoCell.getContext(), R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+                typeInfoCell.setBackground(Theme.getThemedDrawable(typeInfoCell.getContext(), R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                 adminedInfoCell.setVisibility(View.GONE);
             } else {
-                typeInfoCell.setBackgroundDrawable(Theme.getThemedDrawable(typeInfoCell.getContext(), R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
+                typeInfoCell.setBackground(Theme.getThemedDrawable(typeInfoCell.getContext(), R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                 loadingAdminedCell.setVisibility(View.GONE);
                 adminnedChannelsLayout.setVisibility(View.VISIBLE);
                 adminedInfoCell.setVisibility(View.VISIBLE);
@@ -868,7 +869,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
             sectionCell.setVisibility(View.VISIBLE);
             adminedInfoCell.setVisibility(View.GONE);
             adminnedChannelsLayout.setVisibility(View.GONE);
-            typeInfoCell.setBackgroundDrawable(Theme.getThemedDrawable(typeInfoCell.getContext(), R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
+            typeInfoCell.setBackground(Theme.getThemedDrawable(typeInfoCell.getContext(), R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
             linkContainer.setVisibility(View.VISIBLE);
             loadingAdminedCell.setVisibility(View.GONE);
             typeInfoCell.setText(isPrivate ? LocaleController.getString("ChannelPrivateLinkHelp", R.string.ChannelPrivateLinkHelp) : LocaleController.getString("ChannelUsernameHelp", R.string.ChannelUsernameHelp));

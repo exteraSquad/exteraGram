@@ -21,9 +21,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.EditorInfo;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
+import com.exteragram.messenger.extras.Vibrate;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
@@ -44,12 +47,9 @@ import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.CodepointsLengthInputFilter;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.NumberTextView;
 import org.telegram.ui.Components.OutlineTextContainerView;
 
 import java.util.ArrayList;
-
-import com.exteragram.messenger.extras.Vibrate;
 
 public class ChangeBioActivity extends BaseFragment {
 
@@ -87,7 +87,7 @@ public class ChangeBioActivity extends BaseFragment {
         fragmentView.setOnTouchListener((v, event) -> true);
 
         firstNameFieldContainer = new OutlineTextContainerView(context);
-        firstNameFieldContainer.setText(LocaleController.getString(R.string.UserBio));
+        firstNameFieldContainer.setText(LocaleController.getString("UserBio", R.string.UserBio));
         linearLayout.addView(firstNameFieldContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 24, 24, 24, 0));
 
         firstNameField = new EditTextBoldCursor(context) {
@@ -101,7 +101,6 @@ public class ChangeBioActivity extends BaseFragment {
         };
         firstNameField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         firstNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        firstNameField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
         firstNameField.setBackground(null);
         firstNameField.setMaxLines(4);
         firstNameField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
@@ -162,11 +161,11 @@ public class ChangeBioActivity extends BaseFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                firstNameFieldContainer.setText(LocaleController.getString(R.string.UserBio), getMessagesController().getAboutLimit() - Character.codePointCount(s, 0, s.length()));
+                firstNameFieldContainer.setText(String.format("%s (%d)", LocaleController.getString("UserBio", R.string.UserBio), getMessagesController().getAboutLimit() - Character.codePointCount(s, 0, s.length())));
             }
         });
 
-        firstNameFieldContainer.setText(LocaleController.getString(R.string.UserBio), getMessagesController().getAboutLimit());
+        firstNameFieldContainer.setText(String.format("%s (%d)", LocaleController.getString("UserBio", R.string.UserBio), getMessagesController().getAboutLimit()));
 
         helpTextView = new TextView(context);
         helpTextView.setFocusable(true);

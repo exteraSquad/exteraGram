@@ -44,6 +44,7 @@ import org.telegram.ui.PremiumPreviewFragment;
 public class EditTextEmoji extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate {
 
     private EditTextCaption editText;
+    private OutlineTextContainerView editTextFieldContainer;
     private ImageView emojiButton;
     private ReplaceableIconDrawable emojiIconDrawable;
     private EmojiView emojiView;
@@ -121,6 +122,13 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
         sizeNotifierLayout = parent;
         sizeNotifierLayout.setDelegate(this);
 
+        int padding = AndroidUtilities.dp(16);
+
+        if (style == STYLE_FRAGMENT) {
+            editTextFieldContainer = new OutlineTextContainerView(context);
+            addView(editTextFieldContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 0, 0, 0));
+        }
+
         editText = new EditTextCaption(context, resourcesProvider) {
             @Override
             public boolean onTouchEvent(MotionEvent event) {
@@ -152,23 +160,22 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
         editText.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         editText.setMaxLines(4);
-        editText.setFocusable(editText.isEnabled());
         editText.setCursorSize(AndroidUtilities.dp(20));
         editText.setCursorWidth(1.5f);
+        editText.setBackground(null);
         editText.setCursorColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
         if (style == STYLE_FRAGMENT) {
             editText.setGravity(Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT));
-            editText.setBackground(null);
-            editText.setLineColors(getThemedColor(Theme.key_windowBackgroundWhiteInputField), getThemedColor(Theme.key_windowBackgroundWhiteInputFieldActivated), getThemedColor(Theme.key_windowBackgroundWhiteRedText3));
-            editText.setHintTextColor(getThemedColor(Theme.key_windowBackgroundWhiteHintText));
             editText.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
-            editText.setPadding(LocaleController.isRTL ? AndroidUtilities.dp(40) : 0, 0, LocaleController.isRTL ? 0 : AndroidUtilities.dp(40), AndroidUtilities.dp(8));
-            addView(editText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 11 : 0, 1, LocaleController.isRTL ? 0 : 11, 0));
+            editText.setPadding(padding, padding, AndroidUtilities.dp(53), padding);
+            editText.setOnFocusChangeListener((v, hasFocus) -> editTextFieldContainer.animateSelection(hasFocus ? 1 : 0));
+            editTextFieldContainer.addView(editText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+            editTextFieldContainer.attachEditText(editText);
         } else {
+            editText.setFocusable(editText.isEnabled());
             editText.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             editText.setHintTextColor(getThemedColor(Theme.key_dialogTextHint));
             editText.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
-            editText.setBackground(null);
             editText.setPadding(0, AndroidUtilities.dp(11), 0, AndroidUtilities.dp(12));
             addView(editText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.CENTER_VERTICAL, 48, 0, 0, 0));
         }
@@ -179,7 +186,7 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
         emojiIconDrawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
         if (style == STYLE_FRAGMENT) {
             emojiIconDrawable.setIcon(R.drawable.smiles_tab_smiles, false);
-            addView(emojiButton, LayoutHelper.createFrame(48, 48, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT), 0, 0, 0, 7));
+            editTextFieldContainer.addView(emojiButton, LayoutHelper.createFrame(48, 48, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT), 0, 0, 5, 0));
         } else {
             emojiIconDrawable.setIcon(R.drawable.input_smile, false);
             addView(emojiButton, LayoutHelper.createFrame(48, 48, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 0));
@@ -226,11 +233,10 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
     @Override
     public void setEnabled(boolean enabled) {
         editText.setEnabled(enabled);
-        emojiButton.setVisibility(enabled ? VISIBLE : GONE);
-        if (enabled) {
-            editText.setPadding(LocaleController.isRTL ? AndroidUtilities.dp(40) : 0, 0, LocaleController.isRTL ? 0 : AndroidUtilities.dp(40), AndroidUtilities.dp(8));
-        } else {
-            editText.setPadding(0, 0, 0, AndroidUtilities.dp(8));
+        if (!enabled) {
+            emojiButton.setAlpha(0.5f);
+            emojiButton.setBackground(null);
+            emojiButton.setOnClickListener(null);
         }
     }
 
@@ -316,7 +322,11 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
     }
 
     public void setHint(CharSequence hint) {
-        editText.setHint(hint);
+        if (currentStyle == STYLE_FRAGMENT) {
+            editTextFieldContainer.setText((String) hint);
+        } else {
+            editText.setHint(hint);
+        }
     }
 
     public void setText(CharSequence text) {

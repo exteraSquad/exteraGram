@@ -92,7 +92,7 @@ public class ChangeNameActivity extends BaseFragment {
         fragmentView.setOnTouchListener((v, event) -> true);
 
         firstNameFieldContainer = new OutlineTextContainerView(context);
-        firstNameFieldContainer.setText(LocaleController.getString(R.string.FirstName));
+        firstNameFieldContainer.setText(LocaleController.getString("FirstName", R.string.FirstName));
         linearLayout.addView(firstNameFieldContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 24, 24, 24, 0));
 
         firstNameField = new EditTextBoldCursor(context) {
@@ -103,18 +103,17 @@ public class ChangeNameActivity extends BaseFragment {
         };
         firstNameField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         firstNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-        firstNameField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText, resourcesProvider));
         firstNameField.setBackground(null);
         firstNameField.setSingleLine(true);
         firstNameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
         firstNameField.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         firstNameField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated, resourcesProvider));
         firstNameField.setCursorWidth(1.5f);
+        firstNameField.setCursorSize(AndroidUtilities.dp(20));
         firstNameField.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         firstNameField.setOnFocusChangeListener((v, hasFocus) -> firstNameFieldContainer.animateSelection(hasFocus ? 1 : 0));
         int padding = AndroidUtilities.dp(16);
         firstNameField.setPadding(padding, padding, padding, padding);
-        firstNameField.setCursorSize(AndroidUtilities.dp(20));
         firstNameFieldContainer.addView(firstNameField, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         firstNameFieldContainer.attachEditText(firstNameField);
         firstNameField.setOnEditorActionListener((textView, i, keyEvent) -> {
@@ -126,7 +125,7 @@ public class ChangeNameActivity extends BaseFragment {
         });
 
         lastNameFieldContainer = new OutlineTextContainerView(context);
-        lastNameFieldContainer.setText(LocaleController.getString(R.string.LastName));
+        lastNameFieldContainer.setText(LocaleController.getString("LastName", R.string.LastName));
         linearLayout.addView(lastNameFieldContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 24, 24, 24, 0));
 
         lastNameField = new EditTextBoldCursor(context) {
@@ -137,17 +136,16 @@ public class ChangeNameActivity extends BaseFragment {
         };
         lastNameField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         lastNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-        lastNameField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText, resourcesProvider));
         lastNameField.setBackground(null);
         lastNameField.setSingleLine(true);
         lastNameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
         lastNameField.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         lastNameField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated, resourcesProvider));
         lastNameField.setCursorWidth(1.5f);
+        lastNameField.setCursorSize(AndroidUtilities.dp(20));
         lastNameField.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         lastNameField.setOnFocusChangeListener((v, hasFocus) -> lastNameFieldContainer.animateSelection(hasFocus ? 1 : 0));
         lastNameField.setPadding(padding, padding, padding, padding);
-        lastNameField.setCursorSize(AndroidUtilities.dp(20));
         lastNameFieldContainer.addView(lastNameField, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         lastNameFieldContainer.attachEditText(lastNameField);
         lastNameField.setOnEditorActionListener((textView, i, keyEvent) -> {
