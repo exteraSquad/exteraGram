@@ -75,6 +75,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -130,7 +132,6 @@ import org.telegram.ui.Components.MessageBackgroundDrawable;
 import org.telegram.ui.Components.MotionBackgroundDrawable;
 import org.telegram.ui.Components.MsgClockDrawable;
 import org.telegram.ui.Components.Point;
-import org.telegram.ui.Components.Premium.PremiumGradient;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RadialProgress2;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
@@ -164,8 +165,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate, ImageReceiver.ImageReceiverDelegate, DownloadController.FileDownloadProgressListener, TextSelectionHelper.SelectableView, NotificationCenter.NotificationCenterDelegate {
     private final static int TIME_APPEAR_MS = 200;
@@ -11302,7 +11301,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     currentForwardNameString = currentForwardName;
                 }
 
-                if (ExteraConfig.dateOfForwardedMsg) currentForwardNameString = currentForwardNameString + " • " + LocaleController.formatFwdDate(Long.valueOf(messageObject.messageOwner.fwd_from.date));
+                if (ExteraConfig.dateOfForwardedMsg) {
+                    currentForwardNameString += " • " + LocaleController.formatDateTime((long) messageObject.messageOwner.fwd_from.date);
+                }
+
                 forwardedNameWidth = getMaxNameWidth();
                 String forwardedString = getForwardedMessageText(messageObject);
                 if (hasPsaHint) {
@@ -11338,7 +11340,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     lastLine = Emoji.replaceEmoji(lastLine, Theme.chat_forwardNamePaint.getFontMetricsInt(), AndroidUtilities.dp(14), false);
                 } catch (Exception ignore) {
                 }
-                ;
                 try {
                     forwardedNameLayout[1] = new StaticLayout(lastLine, Theme.chat_forwardNamePaint, forwardedNameWidth + AndroidUtilities.dp(2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
                     lastLine = TextUtils.ellipsize(AndroidUtilities.replaceTags(forwardedString), Theme.chat_forwardNamePaint, forwardedNameWidth, TextUtils.TruncateAt.END);
@@ -11521,7 +11522,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             currentForwardNameString = currentForwardName;
                         }
 
-                        if (ExteraConfig.dateOfForwardedMsg) currentForwardNameString = currentForwardNameString + " • " + LocaleController.formatFwdDate(Long.valueOf(messageObject.messageOwner.fwd_from.date));
+                        if (ExteraConfig.dateOfForwardedMsg) {
+                            currentForwardNameString += " • " + LocaleController.formatDateTime((long) messageObject.messageOwner.fwd_from.date);
+                        }
+
                         name = getForwardedMessageText(messageObject);
                         String from = LocaleController.getString("From", R.string.From);
                         String fromFormattedString = LocaleController.getString("FromFormatted", R.string.FromFormatted);

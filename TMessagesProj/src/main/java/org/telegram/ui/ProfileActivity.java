@@ -2768,13 +2768,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             listView.stopScroll();
             if (position == idRow && did != 0) {
                 try {
-                    AndroidUtilities.addToClipboard(did + "");
+                    AndroidUtilities.addToClipboard(((TextDetailCell) view).getTextView().getText());
                     BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
                 } catch (Exception ignore) {}
                 return;
             } else if (position == dcRow) {
                 try {
-                    AndroidUtilities.addToClipboard(ddc + "");
+                    AndroidUtilities.addToClipboard(((TextDetailCell) view).getTextView().getText());
                     BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
                 } catch (Exception ignore) {}
                 return;

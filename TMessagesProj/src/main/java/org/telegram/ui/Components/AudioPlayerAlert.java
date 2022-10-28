@@ -2019,7 +2019,6 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
     public void updateCover(MessageObject messageObject, boolean animated) {
         final BackupImageView imageView = animated ? coverContainer.getNextImageView() : coverContainer.getImageView();
         final AudioInfo audioInfo = MediaController.getInstance().getAudioInfo();
-        final Theme.ResourcesProvider resourcesProvider;
         if (audioInfo != null && audioInfo.getCover() != null) {
             imageView.setImageBitmap(audioInfo.getCover());
             currentFile = null;
@@ -2037,10 +2036,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 imageView.setImage(null, null, thumbImageLocation, null, null, 0, 1, messageObject);
             } else {
                 imageView.setImageResource(R.drawable.nocover, Theme.getColor(Theme.key_player_button));
-                noCover= true;
-            }
-            if (imageView.getImageReceiver().hasImageSet()) {
-                noCover = false;
+                noCover = true;
             }
             imageView.invalidate();
         }
@@ -2117,12 +2113,11 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
         public void notifyDataSetChanged() {
             super.notifyDataSetChanged();
             if (playlist.size() > 1) {
-                playerLayout.setBackgroundColor(getThemedColor(Theme.key_player_background));
                 listView.setPadding(0, listView.getPaddingTop(), 0, AndroidUtilities.dp(184));
             } else {
-                playerLayout.setBackground(null);
                 listView.setPadding(0, listView.getPaddingTop(), 0, 0);
             }
+            playerLayout.setBackgroundColor(getThemedColor(Theme.key_player_background));
             updateEmptyView();
         }
 

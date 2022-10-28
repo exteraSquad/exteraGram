@@ -131,6 +131,10 @@ public class TextDetailCell extends FrameLayout {
         this.contentDescriptionValueFirst = contentDescriptionValueFirst;
     }
 
+    public TextView getTextView() {
+        return textView;
+    }
+
     @Override
     public void invalidate() {
         super.invalidate();

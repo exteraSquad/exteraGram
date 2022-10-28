@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.PatternMatcher;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.graphics.ColorUtils;
 
 import com.google.android.exoplayer2.util.Log;
 
@@ -96,17 +97,14 @@ public class MonetHelper {
 
     public static int getColor(String color) {
         try {
-            int c, id, alpha = 100;
-            boolean withAlpha = false;
-            if (color.matches(".*[()].*")) {
-                withAlpha = true;
+            int alpha = 100;
+            if (color.matches(".*\\(.*\\).*")) {
                 alpha = Integer.parseInt(color.substring(color.indexOf("(") + 1, color.indexOf(")")));
                 color = color.substring(0, color.indexOf("("));
             }
-            //noinspection ConstantConditions
-            id = ids.getOrDefault(color, 0);
-            c = ApplicationLoader.applicationContext.getColor(id);
-            return withAlpha ? Color.argb(Color.alpha(c) * alpha / 100, Color.red(c), Color.green(c), Color.blue(c)) : c;
+            int id = ids.getOrDefault(color, 0);
+            int c = ApplicationLoader.applicationContext.getColor(id);
+            return ColorUtils.setAlphaComponent(c, (int) (alpha * 2.55f));
         } catch (Exception e) {
             Log.e("Theme", "Error loading color " + color);
             e.printStackTrace();

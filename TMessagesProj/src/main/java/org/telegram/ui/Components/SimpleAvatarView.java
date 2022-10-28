@@ -72,7 +72,7 @@ public class SimpleAvatarView extends View {
         selectPaint.setAlpha((int) (Color.alpha(selectPaint.getColor()) * selectProgress));
         float stroke = selectPaint.getStrokeWidth();
         AndroidUtilities.rectTmp.set(stroke, stroke, getWidth() - stroke, getHeight() - stroke);
-        if (ExteraConfig.avatarCorners <= 28) {
+        if (ExteraConfig.avatarCorners != 30) {
             canvas.drawRoundRect(AndroidUtilities.rectTmp, ExteraConfig.getAvatarCorners(getWidth() - stroke * 2, true), ExteraConfig.getAvatarCorners(getWidth() - stroke * 2, true), selectPaint);
         } else {
             canvas.drawArc(AndroidUtilities.rectTmp, -90, selectProgress * 360, false, selectPaint);
