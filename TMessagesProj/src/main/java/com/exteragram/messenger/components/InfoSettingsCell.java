@@ -11,8 +11,11 @@
 
 package com.exteragram.messenger.components;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.FrameLayout;
@@ -20,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.monet.MonetHelper;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -30,17 +34,14 @@ import org.telegram.ui.Components.LayoutHelper;
 
 public class InfoSettingsCell extends FrameLayout {
 
-    private final TextView textView;
-
-    @SuppressLint("SetTextI18n")
     public InfoSettingsCell(Context context) {
         super(context);
 
-        textView = new TextView(context);
+        TextView textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        textView.setText(ExteraUtils.getAppName() + " | v" + BuildVars.BUILD_VERSION_STRING);
+        textView.setText(String.format("%s | %s", ExteraUtils.getAppName(), BuildVars.BUILD_VERSION_STRING));
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -60,20 +61,26 @@ public class InfoSettingsCell extends FrameLayout {
         valueTextView.setPadding(0, 0, 0, 0);
         addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 60, 178, 60, 20));
 
-        ImageView imageView = new ImageView(context);
-        imageView.setScaleType(ImageView.ScaleType.CENTER);
-        imageView.setImageResource(R.drawable.ic_logo_foreground);
-        addView(imageView, LayoutHelper.createFrame(108, 108, Gravity.CENTER | Gravity.TOP, 0, 20, 0, 0));
+        Drawable arrow = context.getResources().getDrawable(R.drawable.ic_logo_foreground).mutate();
+        Theme.ThemeInfo theme = Theme.getActiveTheme();
+        int color = BuildVars.isBetaApp() ? 0xff747F9F : 0xffF54142;
+
+        if (theme.isMonet() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            color = MonetHelper.getColor(theme.isDark() ? "n1_800" : "a1_100");
+            arrow.setColorFilter(new PorterDuffColorFilter(MonetHelper.getColor(theme.isDark() ? "a1_100" : "n2_700"), PorterDuff.Mode.MULTIPLY));
+        } else {
+            arrow.setAlpha((int) (70 * 2.55f));
+        }
+
+        ImageView logo = new ImageView(context);
+        logo.setScaleType(ImageView.ScaleType.CENTER);
+        logo.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(108), color));
+        logo.setImageDrawable(arrow);
+        addView(logo, LayoutHelper.createFrame(108, 108, Gravity.CENTER | Gravity.TOP, 0, 20, 0, 0));
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-    }
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
-        textView.invalidate();
     }
 }
