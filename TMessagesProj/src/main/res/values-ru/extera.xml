@@ -75,6 +75,14 @@
     <string name="StickerShapeRoundedMsg">Сообщение</string>
     <string name="StickerTime">Скрыть время под стикером</string>
     <string name="UnlimitedRecentStickers">Бесконечные недавние стикеры</string>
+    <string name="EmojiSuggestionsTap">Нажатие на подсказки эмодзи</string>
+    <string name="EmojiSuggestionTapReplace">Заменять текст</string>
+    <string name="EmojiSuggestionTapReplaceShort">Замена</string>
+    <string name="EmojiSuggestionTapAfter">Вставлять после текста</string>
+    <string name="EmojiSuggestionTapAfterShort">После</string>
+    <string name="EmojiSuggestionTapAfterSpace">Вставлять после текста с пробелом</string>
+    <string name="EmojiSuggestionTapAfterSpaceShort">После с пробелом</string>
+
     <string name="AddCommaAfterMention">Запятая после упоминания</string>
     <string name="HideSendAsChannel">Скрыть \"Написать от имени…\"</string>
     <string name="HideKeyboardOnScroll">Скрывать клавиатуру при скролле</string>

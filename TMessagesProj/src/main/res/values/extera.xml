@@ -78,8 +78,15 @@
     <string name="StickerShapeRoundedMsg">Message</string>
     <string name="StickerTime">Hide time on stickers</string>
     <string name="UnlimitedRecentStickers">Unlimited recent stickers</string>
+    <string name="EmojiSuggestionsTap">Tap on emoji suggestions</string>
+    <string name="EmojiSuggestionTapReplace">Replace text</string>
+    <string name="EmojiSuggestionTapReplaceShort">Replace</string>
+    <string name="EmojiSuggestionTapAfter">Insert after text</string>
+    <string name="EmojiSuggestionTapAfterShort">After</string>
+    <string name="EmojiSuggestionTapAfterSpace">Insert after text with space</string>
+    <string name="EmojiSuggestionTapAfterSpaceShort">After w/ space</string>
 
-    <string name="AddCommaAfterMention"> Add comma after mention</string>
+    <string name="AddCommaAfterMention">Add comma after mention</string>
     <string name="AddCommaAfterMentionValue">\@exteraGram, \@exteraBeta, \@exteraGramCI</string>
     <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scrolling</string>

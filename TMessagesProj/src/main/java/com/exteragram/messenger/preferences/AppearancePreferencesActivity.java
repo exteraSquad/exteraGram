@@ -93,18 +93,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int telegramFeaturesRow;
     private int drawerDividerRow;
 
-    private void onClick(DialogInterface dialog, int which) {
-        ExteraConfig.editor.putInt("eventType", ExteraConfig.eventType = which).apply();
-        RecyclerView.ViewHolder holder = getListView().findViewHolderForAdapterPosition(eventChooserRow);
-        if (holder != null) {
-            listAdapter.onBindViewHolder(holder, eventChooserRow);
-        }
-        if (getListView().getLayoutManager() != null)
-            recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
-        parentLayout.rebuildAllFragmentViews(true, true);
-        getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
-    }
-
     public class AvatarCornersCell extends FrameLayout {
 
         private final SeekBarView sizeBar;
@@ -391,7 +379,17 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     R.drawable.msg_settings_ny,
                     R.drawable.msg_saved_14,
                     R.drawable.msg_contacts_hw
-            }, this::onClick);
+            }, (dialog, which) -> {
+                ExteraConfig.editor.putInt("eventType", ExteraConfig.eventType = which).apply();
+                RecyclerView.ViewHolder holder = getListView().findViewHolderForAdapterPosition(eventChooserRow);
+                if (holder != null) {
+                    listAdapter.onBindViewHolder(holder, eventChooserRow);
+                }
+                if (getListView().getLayoutManager() != null)
+                    recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
+                parentLayout.rebuildAllFragmentViews(true, true);
+                getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
+            });
             builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
             showDialog(builder.create());
         }

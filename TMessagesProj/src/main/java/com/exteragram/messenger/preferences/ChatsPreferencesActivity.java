@@ -16,6 +16,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextPaint;
 import android.view.Gravity;
 import android.view.View;
@@ -37,16 +38,19 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
+import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SeekBarView;
 
 public class ChatsPreferencesActivity extends BasePreferencesActivity implements NotificationCenter.NotificationCenterDelegate {
 
+    private Parcelable recyclerViewState = null;
     private ActionBarMenuItem resetItem;
     private StickerSizeCell stickerSizeCell;
 
@@ -60,6 +64,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int stickersHeaderRow;
     private int hideStickerTimeRow;
     private int unlimitedRecentStickersRow;
+    private int emojiSuggestionTapRow;
     private int stickersDividerRow;
 
     private int chatHeaderRow;
@@ -228,6 +233,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         stickersHeaderRow = newRow();
         hideStickerTimeRow = newRow();
         unlimitedRecentStickersRow = newRow();
+        emojiSuggestionTapRow = newRow();
         stickersDividerRow = newRow();
 
         chatHeaderRow = newRow();
@@ -264,6 +270,29 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == addCommaAfterMentionRow) {
             ExteraConfig.editor.putBoolean("addCommaAfterMention", ExteraConfig.addCommaAfterMention ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.addCommaAfterMention);
+        } else if (position == emojiSuggestionTapRow) {
+            if (getParentActivity() == null) {
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+            builder.setTitle(LocaleController.getString("EmojiSuggestionsTap", R.string.EmojiSuggestionsTap));
+            builder.setItems(new CharSequence[]{
+                    LocaleController.getString("EmojiSuggestionTapReplace", R.string.EmojiSuggestionTapReplace),
+                    LocaleController.getString("EmojiSuggestionTapAfter", R.string.EmojiSuggestionTapAfter),
+                    LocaleController.getString("EmojiSuggestionTapAfterSpace", R.string.EmojiSuggestionTapAfterSpace)
+            }, (dialog, which) -> {
+                ExteraConfig.editor.putInt("emojiSuggestionTap", ExteraConfig.emojiSuggestionTap = which).apply();
+                RecyclerView.ViewHolder holder = getListView().findViewHolderForAdapterPosition(emojiSuggestionTapRow);
+                if (holder != null) {
+                    listAdapter.onBindViewHolder(holder, emojiSuggestionTapRow);
+                }
+                if (getListView().getLayoutManager() != null)
+                    recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
+                parentLayout.rebuildAllFragmentViews(true, true);
+                getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
+            });
+            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+            showDialog(builder.create());
         } else if (position == hideSendAsChannelRow) {
             ExteraConfig.editor.putBoolean("hideSendAsChannel", ExteraConfig.hideSendAsChannel ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideSendAsChannel);
@@ -374,7 +403,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     if (position == stickerSizeHeaderRow) {
                         headerCell.setText(LocaleController.getString("StickerSize", R.string.StickerSize));
                     } else if (position == stickersHeaderRow) {
-                        headerCell.setText(LocaleController.getString("AccDescrStickers", R.string.AccDescrStickers));
+                        headerCell.setText(LocaleController.getString("AccDescrStickers", R.string.AccDescrStickers) + " & " + LocaleController.getString("Emoji", R.string.Emoji));
                     } else if (position == chatHeaderRow) {
                         headerCell.setText(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort));
                     } else if (position == mediaHeaderRow) {
@@ -389,7 +418,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     if (position == hideStickerTimeRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("StickerTime", R.string.StickerTime), ExteraConfig.hideStickerTime, true);
                     } else if (position == unlimitedRecentStickersRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("UnlimitedRecentStickers", R.string.UnlimitedRecentStickers), ExteraConfig.unlimitedRecentStickers, false);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("UnlimitedRecentStickers", R.string.UnlimitedRecentStickers), ExteraConfig.unlimitedRecentStickers, true);
                     } else if (position == addCommaAfterMentionRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("AddCommaAfterMention", R.string.AddCommaAfterMention), LocaleController.getString("AddCommaAfterMentionValue", R.string.AddCommaAfterMentionValue), ExteraConfig.addCommaAfterMention, false, true);
                     } else if (position == hideSendAsChannelRow) {
@@ -422,6 +451,20 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("DisablePlayback", R.string.DisablePlayback), LocaleController.getString("DPDescription", R.string.DPDescription), ExteraConfig.disablePlayback, true, false);
                     }
                     break;
+                case 7:
+                    TextSettingsCell textSettingsCell = (TextSettingsCell) holder.itemView;
+                    if (position == emojiSuggestionTapRow) {
+                        String value;
+                        if (ExteraConfig.emojiSuggestionTap == 1) {
+                            value = LocaleController.getString("EmojiSuggestionTapAfterShort", R.string.EmojiSuggestionTapAfterShort);
+                        } else if (ExteraConfig.emojiSuggestionTap == 2) {
+                            value = LocaleController.getString("EmojiSuggestionTapAfterSpaceShort", R.string.EmojiSuggestionTapAfterSpaceShort);
+                        } else {
+                            value = LocaleController.getString("EmojiSuggestionTapReplaceShort", R.string.EmojiSuggestionTapReplaceShort);
+                        }
+                        textSettingsCell.setTextAndValue(LocaleController.getString("EmojiSuggestions", R.string.EmojiSuggestions), value, false);
+                    }
+                    break;
                 case 8:
                     TextInfoPrivacyCell cell = (TextInfoPrivacyCell) holder.itemView;
                     if (position == zalgoFilterInfoRow) {
@@ -437,6 +480,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 return 1;
             } else if (position == stickerSizeHeaderRow || position == stickersHeaderRow || position == chatHeaderRow || position == mediaHeaderRow || position == stickerShapeHeaderRow) {
                 return 3;
+            } else if (position == emojiSuggestionTapRow) {
+                return 7;
             } else if (position == zalgoFilterInfoRow) {
                 return 8;
             } else if (position == stickerShapeRow) {
