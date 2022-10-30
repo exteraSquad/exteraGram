@@ -4197,7 +4197,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     } else {
                         maxWidth = Math.min(getParentWidth(), AndroidUtilities.displaySize.y) - AndroidUtilities.dp(80);
                     }
-                    drawName = isPinnedChat || messageObject.messageOwner.peer_id.channel_id != 0 && (!messageObject.isOutOwner() || messageObject.isSupergroup()) || messageObject.isImportedForward() && messageObject.messageOwner.fwd_from.from_id == null;
+                    drawName = messageObject.messageOwner.peer_id.channel_id != 0 && (!messageObject.isOutOwner() || messageObject.isSupergroup()) || messageObject.isImportedForward() && messageObject.messageOwner.fwd_from.from_id == null;
                 }
 
                 availableTimeWidth = maxWidth;
@@ -11617,7 +11617,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     }
 
     private boolean isNeedAuthorName() {
-        return isPinnedChat && currentMessageObject.type == 0 || (!pinnedTop || ChatObject.isChannel(currentChat) && !currentChat.megagroup) && drawName && isChat && (!currentMessageObject.isOutOwner() || currentMessageObject.isSupergroup() && currentMessageObject.isFromGroup()) || currentMessageObject.isImportedForward() && currentMessageObject.messageOwner.fwd_from.from_id == null;
+        return (!pinnedTop || ChatObject.isChannel(currentChat) && !currentChat.megagroup) && drawName && isChat && (!currentMessageObject.isOutOwner() || currentMessageObject.isSupergroup() && currentMessageObject.isFromGroup()) || currentMessageObject.isImportedForward() && currentMessageObject.messageOwner.fwd_from.from_id == null;
     }
 
     private String getAuthorName() {
@@ -12662,6 +12662,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     drawCommentButton(canvas, 1f);
                 }
             } else {
+                sideStartY += AndroidUtilities.dp(6);
                 rect.set(sideStartX, sideStartY, sideStartX + AndroidUtilities.dp(32), sideStartY + AndroidUtilities.dp(32));
                 applyServiceShaderMatrix();
                 canvas.drawRoundRect(rect, AndroidUtilities.dp(16), AndroidUtilities.dp(16), getThemedPaint(sideButtonPressed ? Theme.key_paint_chatActionBackgroundSelected : Theme.key_paint_chatActionBackground));

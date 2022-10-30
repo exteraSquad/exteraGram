@@ -181,10 +181,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.exteragram.messenger.preferences.MainPreferencesActivity;
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.updater.UpdaterUtils;
 import com.exteragram.messenger.monet.MonetHelper;
+import com.exteragram.messenger.preferences.MainPreferencesActivity;
+import com.exteragram.messenger.updater.UpdaterUtils;
 
 public class LaunchActivity extends BasePermissionsActivity implements ActionBarLayout.ActionBarLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate {
     public final static Pattern PREFIX_T_ME_PATTERN = Pattern.compile("^(?:http(?:s|)://|)([A-z0-9-]+?)\\.t\\.me");

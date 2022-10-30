@@ -15,7 +15,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
-import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
@@ -24,21 +23,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
@@ -60,7 +57,6 @@ import org.telegram.ui.ActionBar.DrawerLayoutContainer;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
-import org.telegram.ui.Components.AnimatedFloat;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CubicBezierInterpolator;
@@ -74,7 +70,6 @@ import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.SnowflakesEffect;
 import org.telegram.ui.ThemeActivity;
 
-import com.exteragram.messenger.ExteraConfig;
 import java.util.ArrayList;
 
 public class DrawerProfileCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
@@ -158,7 +153,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         addView(arrowView, LayoutHelper.createFrame(59, 59, Gravity.RIGHT | Gravity.BOTTOM));
         setArrowState(false);
 
-        sunDrawable = new RLottieDrawable(R.raw.sun, "" + R.raw.sun, AndroidUtilities.dp(28), AndroidUtilities.dp(28), true, null);
+        sunDrawable = new RLottieDrawable(R.raw.sun_outline, "" + R.raw.sun_outline, AndroidUtilities.dp(28), AndroidUtilities.dp(28), true, null);
         if (Theme.isCurrentThemeDay()) {
             sunDrawable.setCustomEndFrame(36);
         } else {
@@ -182,13 +177,14 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         sunDrawable.beginApplyLayerColors();
         int color = Theme.getColor(Theme.key_chats_menuName);
         sunDrawable.setLayerColor("Sunny.**", color);
-        sunDrawable.setLayerColor("Path 6.**", color);
         sunDrawable.setLayerColor("Path.**", color);
-        sunDrawable.setLayerColor("Path 5.**", color);
+        sunDrawable.setLayerColor("Path 10.**", color);
+        sunDrawable.setLayerColor("Path 11.**", color);
         sunDrawable.commitApplyLayerColors();
+        sunDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuName), PorterDuff.Mode.MULTIPLY));
         darkThemeView.setScaleType(ImageView.ScaleType.CENTER);
         darkThemeView.setAnimation(sunDrawable);
-        darkThemeView.setBackgroundDrawable(Theme.createSelectorDrawable(darkThemeBackgroundColor = Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17)));
+        darkThemeView.setBackground(Theme.createSelectorDrawable(darkThemeBackgroundColor = Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17)));
         Theme.setRippleDrawableForceSoftware((RippleDrawable) darkThemeView.getBackground());
         darkThemeView.setOnClickListener(v -> {
             if (switchingTheme) {
@@ -511,9 +507,9 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
             currentMoonColor = color;
             sunDrawable.beginApplyLayerColors();
             sunDrawable.setLayerColor("Sunny.**", currentMoonColor);
-            sunDrawable.setLayerColor("Path 6.**", currentMoonColor);
             sunDrawable.setLayerColor("Path.**", currentMoonColor);
-            sunDrawable.setLayerColor("Path 5.**", currentMoonColor);
+            sunDrawable.setLayerColor("Path 10.**", currentMoonColor);
+            sunDrawable.setLayerColor("Path 11.**", currentMoonColor);
             sunDrawable.commitApplyLayerColors();
         }
         nameTextView.setTextColor(Theme.getColor(Theme.key_chats_menuName));

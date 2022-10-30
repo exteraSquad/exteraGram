@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.PatternMatcher;
 
@@ -20,6 +19,7 @@ import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.LauncherIconController;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 @RequiresApi(api = Build.VERSION_CODES.S)
@@ -135,6 +135,14 @@ public class MonetHelper {
         public void onReceive(Context context, Intent intent) {
             if (ACTION_OVERLAY_CHANGED.equals(intent.getAction())) {
                 if (Theme.getActiveTheme().isMonet()) {
+                    File darkTheme = new File(ApplicationLoader.getFilesDirFixed(), "monet_dark.attheme");
+                    File lightTheme = new File(ApplicationLoader.getFilesDirFixed(), "monet_light.attheme");
+                    if (darkTheme.exists()) {
+                        darkTheme.delete();
+                    }
+                    if (lightTheme.exists()) {
+                        lightTheme.delete();
+                    }
                     Theme.applyTheme(Theme.getActiveTheme());
                 }
             }
