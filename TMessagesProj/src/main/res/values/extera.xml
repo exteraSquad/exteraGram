@@ -101,6 +101,8 @@
 
     <string name="Media">Media</string>
     <string name="RearVideoMessages">Rear camera in video messages</string>
+    <string name="RememberLastUsedCamera">Remember last used camera</string>
+    <string name="RememberLastUsedCameraValue">When capturing video messages, the last used camera will be selected.</string>
     <string name="DisableCamera">Disable instant camera</string>
     <string name="DisableProximityEvents">Disable proximity events</string>
     <string name="PauseOnMinimize">Auto-pause</string>

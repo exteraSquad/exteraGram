@@ -82,6 +82,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
     private int mediaHeaderRow;
     private int rearVideoMessagesRow;
+    private int rememberLastUsedCameraRow;
     private int disableCameraRow;
     private int disableProximityEventsRow;
     private int pauseOnMinimizeRow;
@@ -250,9 +251,10 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         zalgoFilterInfoRow = newRow();
 
         mediaHeaderRow = newRow();
-        rearVideoMessagesRow = newRow();
         disableCameraRow = newRow();
         disableProximityEventsRow = newRow();
+        rearVideoMessagesRow = newRow();
+        rememberLastUsedCameraRow = newRow();
         pauseOnMinimizeRow = newRow();
         disablePlaybackRow = newRow();
         mediaDividerRow = newRow();
@@ -330,6 +332,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == rearVideoMessagesRow) {
             ExteraConfig.editor.putBoolean("rearVideoMessages", ExteraConfig.rearVideoMessages ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.rearVideoMessages);
+        } else if (position == rememberLastUsedCameraRow) {
+            ExteraConfig.editor.putBoolean("rememberLastUsedCamera", ExteraConfig.rememberLastUsedCamera ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.rememberLastUsedCamera);
         } else if (position == disableCameraRow) {
             ExteraConfig.editor.putBoolean("disableCamera", ExteraConfig.disableCamera ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableCamera);
@@ -441,6 +446,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndCheck(LocaleController.getString("ZalgoFilter", R.string.ZalgoFilter), ExteraConfig.zalgoFilter, false);
                     } else if (position == rearVideoMessagesRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("RearVideoMessages", R.string.RearVideoMessages), ExteraConfig.rearVideoMessages, true);
+                    } else if (position == rememberLastUsedCameraRow) {
+                        textCheckCell.setTextAndValueAndCheck(LocaleController.getString("RememberLastUsedCamera", R.string.RememberLastUsedCamera), LocaleController.getString("RememberLastUsedCameraValue", R.string.RememberLastUsedCameraValue), ExteraConfig.rememberLastUsedCamera, true, true);
                     } else if (position == disableCameraRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableCamera", R.string.DisableCamera), ExteraConfig.disableCamera, true);
                     } else if (position == disableProximityEventsRow) {

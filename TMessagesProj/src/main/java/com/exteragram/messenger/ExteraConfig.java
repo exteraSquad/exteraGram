@@ -76,6 +76,7 @@ public class ExteraConfig {
     public static boolean zalgoFilter;
 
     public static boolean rearVideoMessages;
+    public static boolean rememberLastUsedCamera;
     public static boolean disableCamera;
     public static boolean pauseOnMinimize;
     public static boolean disablePlayback;
@@ -152,6 +153,7 @@ public class ExteraConfig {
             showActionTimestamps = preferences.getBoolean("showActionTimestamps", true);
             zalgoFilter = preferences.getBoolean("zalgoFilter", false);
 
+            rememberLastUsedCamera = preferences.getBoolean("rememberLastUsedCamera", false);
             rearVideoMessages = preferences.getBoolean("rearVideoMessages", false);
             disableCamera = preferences.getBoolean("disableCamera", false);
             disableProximityEvents = preferences.getBoolean("disableProximityEvents", false);

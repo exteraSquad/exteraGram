@@ -860,7 +860,10 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             CameraController.getInstance().close(cameraSession, null, null);
             cameraSession = null;
         }
-        isFrontface = !isFrontface;
+        if (ExteraConfig.rememberLastUsedCamera) {
+            ExteraConfig.editor.putBoolean("rearVideoMessages", ExteraConfig.rearVideoMessages = isFrontface).apply();
+        }
+        isFrontface ^= true;
         initCamera();
         cameraReady = false;
         cameraThread.reinitForNewCamera();

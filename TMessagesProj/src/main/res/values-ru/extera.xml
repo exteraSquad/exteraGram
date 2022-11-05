@@ -97,6 +97,8 @@
 
     <string name="Media">Медиа</string>
     <string name="RearVideoMessages">Задняя камера в видеосообщениях</string>
+    <string name="RememberLastUsedCamera">Запоминать выбранную камеру</string>
+    <string name="RememberLastUsedCameraValue">При записи видеосообщений будет использоваться последняя выбранная камера.</string>
     <string name="DisableCamera">Отключить камеру в галерее</string>
     <string name="DisableProximityEvents">Отключить датчик приближения</string>
     <string name="PauseOnMinimize">Авто-пауза</string>
