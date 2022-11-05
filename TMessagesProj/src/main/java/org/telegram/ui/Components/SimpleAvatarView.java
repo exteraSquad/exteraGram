@@ -42,7 +42,7 @@ public class SimpleAvatarView extends View {
     }
 
     {
-        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(40));
+        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(56));
         selectPaint.setStrokeWidth(AndroidUtilities.dp(2));
         selectPaint.setStyle(Paint.Style.STROKE);
     }
@@ -81,7 +81,7 @@ public class SimpleAvatarView extends View {
 
         if (!isAvatarHidden) {
             float pad = selectPaint.getStrokeWidth() * 2.5f * selectProgress;
-            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(getWidth() - pad * 3, true));
+            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(getWidth() - pad * 2, true));
             avatarImage.setImageCoords(pad, pad, getWidth() - pad * 2, getHeight() - pad * 2);
             avatarImage.draw(canvas);
         }
@@ -94,6 +94,10 @@ public class SimpleAvatarView extends View {
     public void setAvatar(TLObject obj) {
         avatarDrawable.setInfo(obj);
         avatarImage.setForUserOrChat(obj, avatarDrawable);
+    }
+
+    public void setAvatarCorners(int corners) {
+        avatarImage.setRoundRadius(corners);
     }
 
     /**

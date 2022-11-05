@@ -83,7 +83,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
                 LauncherIconController.LauncherIcon icon = availableIcons.get(position);
                 if (icon == LauncherIconController.LauncherIcon.MONET && (Build.VERSION.SDK_INT < 31 || Build.VERSION.SDK_INT > 32)) {
                     return;
-                } else if (icon == LauncherIconController.LauncherIcon.RED && !ExteraUtils.checkSubFor(1178248235)) {
+                } else if (icon == LauncherIconController.LauncherIcon.RED && ExteraUtils.notSubbedTo(1178248235)) {
                     return;
                 }
                 holderView.bind(icon);
@@ -163,7 +163,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
         if (Build.VERSION.SDK_INT < 31 || Build.VERSION.SDK_INT > 32) {
             availableIcons.removeIf(p -> p.equals(LauncherIconController.LauncherIcon.MONET));
         }
-        if (!ExteraUtils.checkSubFor(1178248235)) {
+        if (ExteraUtils.notSubbedTo(1178248235)) {
             availableIcons.removeIf(p -> p.equals(LauncherIconController.LauncherIcon.RED));
         }
         if (MessagesController.getInstance(currentAccount).premiumLocked) {

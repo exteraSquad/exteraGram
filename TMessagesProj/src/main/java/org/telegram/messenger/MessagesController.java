@@ -993,7 +993,7 @@ public class MessagesController extends BaseController implements NotificationCe
         installReferer = mainPreferences.getString("installReferer", null);
         revokeTimeLimit = mainPreferences.getInt("revokeTimeLimit", revokeTimeLimit);
         revokeTimePmLimit = mainPreferences.getInt("revokeTimePmLimit", revokeTimePmLimit);
-        canRevokePmInbox = mainPreferences.getBoolean("canRevokePmInbox", canRevokePmInbox);
+        canRevokePmInbox = mainPreferences.getBoolean("canRevokePmInbox", true);
         preloadFeaturedStickers = mainPreferences.getBoolean("preloadFeaturedStickers", false);
         youtubePipType = mainPreferences.getString("youtubePipType", "disabled");
         keepAliveService = mainPreferences.getBoolean("keepAliveService", false);

@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -184,7 +186,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
             super(context);
             avatarDrawable.setTextSize((int) (AndroidUtilities.dp(18) / 1.15f));
             avatarImageView = new BackupImageView(context);
-            avatarImageView.setRoundRadius(AndroidUtilities.dp(20));
+            avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(40));
             addView(avatarImageView, LayoutHelper.createFrame(40, 40, Gravity.CENTER_HORIZONTAL, 0, 9, 0, 9));
             setWillNotDraw(false);
 

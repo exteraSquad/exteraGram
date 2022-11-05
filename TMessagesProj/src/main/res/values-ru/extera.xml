@@ -108,6 +108,7 @@
     <string name="DrawerElements">Элементы бокового меню</string>
     <string name="DrawerOptions">Настройки бокового меню</string>
     <string name="DrawerIconPack">Выбор стиля</string>
+    <string name="DependsOnTheDate">Зависит от даты</string>
     <string name="NewYear">Новый год</string>
     <string name="ValentinesDay">День святого Валентина</string>
     <string name="Halloween">Хэллоуин</string>

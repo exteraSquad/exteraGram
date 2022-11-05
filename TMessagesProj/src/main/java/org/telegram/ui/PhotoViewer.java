@@ -125,6 +125,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScrollerEnd;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
@@ -229,7 +231,6 @@ import org.telegram.ui.Components.StickersAlert;
 import org.telegram.ui.Components.TextViewSwitcher;
 import org.telegram.ui.Components.Tooltip;
 import org.telegram.ui.Components.URLSpanReplacement;
-import org.telegram.ui.Components.URLSpanUserMention;
 import org.telegram.ui.Components.URLSpanUserMentionPhotoViewer;
 import org.telegram.ui.Components.UndoView;
 import org.telegram.ui.Components.VideoEditTextureView;
@@ -256,9 +257,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 
 @SuppressLint("WrongConstant")
 @SuppressWarnings("unchecked")
@@ -6258,11 +6256,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (object instanceof TLRPC.User) {
                 TLRPC.User user = (TLRPC.User) object;
                 if (user.username != null) {
-                    captionEditText.replaceWithText(start, len, "@" + user.username + " ", false);
+                    captionEditText.replaceWithText(start, len, "@" + user.username + (ExteraConfig.addCommaAfterMention ? ", " : " "), false);
                 } else {
                     String name = UserObject.getFirstName(user);
-                    Spannable spannable = new SpannableString(name + " ");
-                    spannable.setSpan(new URLSpanUserMentionPhotoViewer("" + user.id, true), 0, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    Spannable spannable = new SpannableString(name + (ExteraConfig.addCommaAfterMention ? ", " : " "));
+                    spannable.setSpan(new URLSpanUserMentionPhotoViewer("" + user.id, true), 0, spannable.length() - (ExteraConfig.addCommaAfterMention ? 2 : 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     captionEditText.replaceWithText(start, len, spannable, false);
                 }
             } else if (object instanceof String) {
@@ -6307,8 +6305,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             } else if (object instanceof TLRPC.User) {
                 TLRPC.User user = (TLRPC.User) object;
                 String name = UserObject.getFirstName(user);
-                Spannable spannable = new SpannableString(name + " ");
-                spannable.setSpan(new URLSpanUserMentionPhotoViewer("" + user.id, true), 0, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                Spannable spannable = new SpannableString(name + (ExteraConfig.addCommaAfterMention ? ", " : " "));
+                spannable.setSpan(new URLSpanUserMentionPhotoViewer("" + user.id, true), 0, spannable.length() - (ExteraConfig.addCommaAfterMention ? 2 : 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 captionEditText.replaceWithText(start, len, spannable, false);
                 return true;
             }

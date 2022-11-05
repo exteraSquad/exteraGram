@@ -397,21 +397,26 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                     }
                     Emoji.EmojiSpan[] emojiSpans = editable.getSpans(i, i + replacingLength, Emoji.EmojiSpan.class);
                     if (emojiSpans != null) {
-                        for (int j = 0; j < emojiSpans.length; ++j) {
-                            editable.removeSpan(emojiSpans[j]);
+                        for (Emoji.EmojiSpan emojiSpan : emojiSpans) {
+                            editable.removeSpan(emojiSpan);
                         }
                     }
-                    switch (ExteraConfig.emojiSuggestionTap) {
-                        case 0:
-                            editable.replace(i, i + replacingLength, emoji);
-                            break;
-                        case 1:
-                            editable.insert(i + replacingLength, emoji);
-                            break;
-                        case 2:
-                            editable.insert(i + replacingLength, emoji);
-                            editable.insert(i + replacingLength, " ");
-                            break;
+                    int pos = i + replacingLength;
+                    if (Emoji.fullyConsistsOfEmojis(editable.subSequence(i, pos))) {
+                        editable.replace(i, pos, emoji);
+                    } else {
+                        switch (ExteraConfig.emojiSuggestionTap) {
+                            case 0:
+                                editable.replace(i, pos, emoji);
+                                break;
+                            case 1:
+                                editable.insert(pos, emoji);
+                                break;
+                            case 2:
+                                editable.insert(pos, emoji);
+                                editable.insert(pos, " ");
+                                break;
+                        }
                     }
                 } else {
                     break;

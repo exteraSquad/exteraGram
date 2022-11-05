@@ -204,14 +204,14 @@ public class FileLoadOperation {
     }
 
     private void updateParams() {
-        if (ExteraConfig.downloadSpeedBoost == 1 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) {
-            downloadChunkSizeBig = 1024 * 512;
-            maxDownloadRequests = 8;
-            maxDownloadRequestsBig = 8;
-        } else if (ExteraConfig.downloadSpeedBoost == 2) {
+        if (ExteraConfig.downloadSpeedBoost == 2) {
             downloadChunkSizeBig = 1024 * 1024;
             maxDownloadRequests = 16;
             maxDownloadRequestsBig = 16;
+        } else if (ExteraConfig.downloadSpeedBoost == 1 || MessagesController.getInstance(currentAccount).getfileExperimentalParams) {
+            downloadChunkSizeBig = 1024 * 512;
+            maxDownloadRequests = 8;
+            maxDownloadRequestsBig = 8;
         } else {
             downloadChunkSizeBig = 1024 * 128;
             maxDownloadRequests = 4;

@@ -265,7 +265,7 @@ public class UndoView extends FrameLayout {
         addView(leftImageView, LayoutHelper.createFrame(54, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL | Gravity.LEFT, 3, 0, 0, 0));
 
         avatarImageView = new BackupImageView(context);
-        avatarImageView.setRoundRadius(AndroidUtilities.dp(15));
+        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(30));
         addView(avatarImageView, LayoutHelper.createFrame(30, 30, Gravity.CENTER_VERTICAL | Gravity.LEFT, 15, 0, 0, 0));
 
         undoButton = new LinearLayout(context);

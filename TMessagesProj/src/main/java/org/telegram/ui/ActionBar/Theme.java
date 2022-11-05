@@ -5700,16 +5700,29 @@ public class Theme {
         calendar.setTimeInMillis(System.currentTimeMillis());
         int monthOfYear = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        int minutes = calendar.get(Calendar.MINUTE);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
 
         int eventType = -1;
-        if ((monthOfYear == 11 && dayOfMonth >= 24 && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1) || (ExteraConfig.eventType == 1)) {
-            eventType = 0;
-        } else if ((monthOfYear == 1 && dayOfMonth == 14) || (ExteraConfig.eventType == 2)) {
-            eventType = 1;
-        } else if ((monthOfYear == 9 && dayOfMonth >= 30 || monthOfYear == 10 && dayOfMonth == 1 && hour < 12) || (ExteraConfig.eventType == 3)) {
-            eventType = 2;
+        if (ExteraConfig.eventType == 0) {
+            if (monthOfYear == 11 && dayOfMonth >= 24 && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1) {
+                eventType = 0;
+            } else if (monthOfYear == 1 && dayOfMonth == 14) {
+                eventType = 1;
+            } else if (monthOfYear == 9 && dayOfMonth >= 30 || monthOfYear == 10 && dayOfMonth == 1 && hour < 12) {
+                eventType = 2;
+            }
+        } else {
+            switch (ExteraConfig.eventType) {
+                case 2:
+                    eventType = 0;
+                    break;
+                case 3:
+                    eventType = 1;
+                    break;
+                case 4:
+                    eventType = 2;
+                    break;
+            }
         }
         return eventType;
     }

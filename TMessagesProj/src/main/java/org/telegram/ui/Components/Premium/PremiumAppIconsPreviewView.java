@@ -32,7 +32,7 @@ public class PremiumAppIconsPreviewView extends FrameLayout implements PagerHead
 
         for (LauncherIconController.LauncherIcon icon : LauncherIconController.LauncherIcon.values()) {
             if ((icon == LauncherIconController.LauncherIcon.MONET) ||
-               (icon == LauncherIconController.LauncherIcon.RED && !ExteraUtils.checkSubFor(1178248235))) {
+               (icon == LauncherIconController.LauncherIcon.RED && ExteraUtils.notSubbedTo(1178248235))) {
                 continue;
             }
             icons.add(icon);

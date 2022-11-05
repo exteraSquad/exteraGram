@@ -369,12 +369,14 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
             builder.setTitle(LocaleController.getString("DrawerIconPack", R.string.DrawerIconPack));
-            builder.setItems(new CharSequence[]{
+            builder.setItems(new CharSequence[] {
+                    LocaleController.getString("DependsOnTheDate", R.string.DependsOnTheDate),
                     LocaleController.getString("Default", R.string.Default),
                     LocaleController.getString("NewYear", R.string.NewYear),
                     LocaleController.getString("ValentinesDay", R.string.ValentinesDay),
                     LocaleController.getString("Halloween", R.string.Halloween)
             }, new int[] {
+                    R.drawable.msg_calendar2,
                     R.drawable.msg_block,
                     R.drawable.msg_settings_ny,
                     R.drawable.msg_saved_14,
@@ -514,14 +516,22 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     TextSettingsCell textSettingsCell = (TextSettingsCell) holder.itemView;
                     if (position == eventChooserRow) {
                         String value;
-                        if (ExteraConfig.eventType == 1) {
-                            value = LocaleController.getString("NewYear", R.string.NewYear);
-                        } else if (ExteraConfig.eventType == 2) {
-                            value = LocaleController.getString("ValentinesDay", R.string.ValentinesDay);
-                        } else if (ExteraConfig.eventType == 3) {
-                            value = LocaleController.getString("Halloween", R.string.Halloween);
-                        } else {
-                            value = LocaleController.getString("Default", R.string.Default);
+                        switch (ExteraConfig.eventType) {
+                            case 1:
+                                value = LocaleController.getString("Default", R.string.Default);
+                                break;
+                            case 2:
+                                value = LocaleController.getString("NewYear", R.string.NewYear);
+                                break;
+                            case 3:
+                                value = LocaleController.getString("ValentinesDay", R.string.ValentinesDay);
+                                break;
+                            case 4:
+                                value = LocaleController.getString("Halloween", R.string.Halloween);
+                                break;
+                            default:
+                                value = LocaleController.getString("DependsOnTheDate", R.string.DependsOnTheDate);
+                                break;
                         }
                         textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconPack", R.string.DrawerIconPack), value, false);
                     }

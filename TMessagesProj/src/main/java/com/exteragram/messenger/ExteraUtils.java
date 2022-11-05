@@ -11,12 +11,10 @@
 
 package com.exteragram.messenger;
 
-import android.os.Build;
 import android.graphics.drawable.Drawable;
 
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.AccountInstance;
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
@@ -24,8 +22,7 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
-
-import java.util.Objects;
+import org.telegram.ui.ActionBar.Theme;
 
 public class ExteraUtils {
 
@@ -96,14 +93,14 @@ public class ExteraUtils {
         return finalString.isEmpty() ? LocaleController.getString("EventLogOriginalCaptionEmpty", R.string.EventLogOriginalCaptionEmpty) : finalString;
     }
 
-    public static boolean checkSubFor(long id) {
+    public static boolean notSubbedTo(long id) {
         TLRPC.Chat chat = MessagesController.getInstance(UserConfig.selectedAccount).getChat(id);
-        return chat != null && !chat.left && !chat.kicked;
+        return chat == null || chat.left || chat.kicked;
     }
 
     public static int[] getDrawerIconPack() {
         switch (ExteraConfig.eventType) {
-            case 1:
+            case 2:
                 return new int[] {
                     R.drawable.msg_groups_ny,
                     R.drawable.msg_secret_ny,
@@ -115,7 +112,7 @@ public class ExteraUtils {
                     R.drawable.msg_help_ny,
                     R.drawable.msg_nearby_ny
                 };
-            case 2:
+            case 3:
                 return new int[] {
                     R.drawable.msg_groups_14,
                     R.drawable.msg_secret_14,
@@ -127,7 +124,7 @@ public class ExteraUtils {
                     R.drawable.msg_help,
                     R.drawable.msg_secret_14
                 };
-            case 3:
+            case 4:
                 return new int[] {
                     R.drawable.msg_groups_hw,
                     R.drawable.msg_secret_hw,
