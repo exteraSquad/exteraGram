@@ -105,16 +105,16 @@ android {
 
     sourceSets.main.jniLibs.srcDirs = ['./jni/']
 
-    /*sourceSets.main {
+    sourceSets.main {
         jniLibs.srcDir 'libs'
         jni.srcDirs = []
-    }*/
+    }
 
-    externalNativeBuild {
+    /*externalNativeBuild {
         cmake {
             path 'jni/CMakeLists.txt'
         }
-    }
+    }*/
 
     lint {
         checkReleaseBuilds false
