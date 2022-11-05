@@ -67,6 +67,9 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
     private boolean needAddException;
     private String phone;
 
+    private String firstNameFromCard;
+    private String lastNameFromCard;
+
     private ContactAddActivityDelegate delegate;
 
     private final static int done_button = 1;
@@ -94,6 +97,8 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
         getNotificationCenter().addObserver(this, NotificationCenter.updateInterfaces);
         user_id = getArguments().getLong("user_id", 0);
         phone = getArguments().getString("phone");
+        firstNameFromCard = getArguments().getString("first_name_card");
+        lastNameFromCard = getArguments().getString("last_name_card");
         addContact = getArguments().getBoolean("addContact", false);
         needAddException = MessagesController.getNotificationsSettings(currentAccount).getBoolean("dialog_bar_exception" + user_id, false);
         TLRPC.User user = null;
@@ -247,9 +252,10 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
             }
             return false;
         });
+        lastNameField.setText(lastNameFromCard);
 
         TLRPC.User user = getMessagesController().getUser(user_id);
-        if (user != null) {
+        if (user != null && firstNameFromCard == null && lastNameFromCard == null) {
             if (user.phone == null) {
                 if (phone != null) {
                     user.phone = PhoneFormat.stripExceptNumbers(phone);
@@ -265,7 +271,7 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
         infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         infoTextView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         if (addContact) {
-            if (!needAddException || TextUtils.isEmpty(user.phone)) {
+            if (!needAddException || TextUtils.isEmpty(getPhone())) {
                 linearLayout.addView(infoTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 24, 18, 24, 0));
             }
 
@@ -294,17 +300,22 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
         if (user == null) {
             return;
         }
-        if (TextUtils.isEmpty(user.phone)) {
+        if (TextUtils.isEmpty(getPhone())) {
             nameTextView.setText(LocaleController.getString("MobileHidden", R.string.MobileHidden));
             infoTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("MobileHiddenExceptionInfo", R.string.MobileHiddenExceptionInfo, UserObject.getFirstName(user))));
         } else {
-            nameTextView.setText(PhoneFormat.getInstance().format("+" + user.phone));
+            nameTextView.setText(PhoneFormat.getInstance().format("+" + getPhone()));
             if (needAddException) {
                 infoTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("MobileVisibleInfo", R.string.MobileVisibleInfo, UserObject.getFirstName(user))));
             }
         }
         onlineTextView.setText(LocaleController.formatUserStatus(currentAccount, user));
         avatarImage.setForUserOrChat(user, avatarDrawable = new AvatarDrawable(user));
+    }
+
+    private String getPhone() {
+        TLRPC.User user = getMessagesController().getUser(user_id);
+        return user != null && !TextUtils.isEmpty(user.phone) ? user.phone : phone;
     }
 
     public void didReceivedNotification(int id, int account, Object... args) {

@@ -174,6 +174,10 @@ public class Theme {
         public boolean isSelected;
         private Path path;
 
+        public Path getPath() {
+            return path;
+        }
+
         private Rect backupRect = new Rect();
 
         private final ResourcesProvider resourcesProvider;
@@ -187,6 +191,7 @@ public class Theme {
         public static MotionBackgroundDrawable[] motionBackground = new MotionBackgroundDrawable[3];
 
         private int[] currentShadowDrawableRadius = new int[]{-1, -1, -1, -1};
+        private Bitmap[] shadowDrawableBitmap = new Bitmap[4];
         private Drawable[] shadowDrawable = new Drawable[4];
         private int[] shadowDrawableColor = new int[]{0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff};
 
@@ -216,6 +221,8 @@ public class Theme {
 
         PathDrawParams pathDrawCacheParams;
         private int overrideRoundRadius;
+        private float overrideRounding;
+        public boolean forceInvalidatePath;
 
         public MessageDrawable(int type, boolean out, boolean selected) {
             this(type, out, selected, null);
@@ -434,7 +441,14 @@ public class Theme {
         }
 
         public Drawable getBackgroundDrawable() {
-            int newRad = AndroidUtilities.dp(SharedConfig.bubbleRadius);
+            int newRad;
+            if (overrideRoundRadius != 0) {
+                newRad = overrideRoundRadius;
+            } else if (overrideRounding > 0) {
+                newRad = 0;
+            } else {
+                newRad = AndroidUtilities.dp(SharedConfig.bubbleRadius);
+            }
             int idx;
             if (isTopNear && isBottomNear) {
                 idx = 3;
@@ -561,6 +575,9 @@ public class Theme {
             boolean forceSetColor = false;
             if (currentShadowDrawableRadius[idx] != newRad) {
                 currentShadowDrawableRadius[idx] = newRad;
+                if (shadowDrawableBitmap[idx] != null) {
+                    shadowDrawableBitmap[idx].recycle();
+                }
                 try {
                     Bitmap bitmap = Bitmap.createBitmap(dp(50), dp(40), Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(bitmap);
@@ -586,6 +603,7 @@ public class Theme {
                         draw(canvas, shadowPaint);
                     }
 
+                    shadowDrawableBitmap[idx] = bitmap;
                     shadowDrawable[idx] = new NinePatchDrawable(bitmap, getByteBuffer(bitmap.getWidth() / 2 - 1, bitmap.getWidth() / 2 + 1, bitmap.getHeight() / 2 - 1, bitmap.getHeight() / 2 + 1).array(), new Rect(), null);
                     forceSetColor = true;
                 } catch (Throwable ignore) {
@@ -598,6 +616,20 @@ public class Theme {
                 shadowDrawableColor[idx] = color;
             }
             return shadowDrawable[idx];
+        }
+
+        @Override
+        protected void finalize() throws Throwable {
+            super.finalize();
+
+            for (Bitmap bitmap : shadowDrawableBitmap) {
+                if (bitmap != null) {
+                    bitmap.recycle();
+                }
+            }
+            Arrays.fill(shadowDrawableBitmap, null);
+            Arrays.fill(shadowDrawable, null);
+            Arrays.fill(currentShadowDrawableRadius, -1);
         }
 
         private static ByteBuffer getByteBuffer(int x1, int x2, int y1, int y2) {
@@ -666,7 +698,7 @@ public class Theme {
 
         public void draw(Canvas canvas, Paint paintToUse) {
             Rect bounds = getBounds();
-            if (paintToUse == null && gradientShader == null) {
+            if (paintToUse == null && gradientShader == null && overrideRoundRadius == 0 && overrideRounding <= 0) {
                 Drawable background = getBackgroundDrawable();
                 if (background != null) {
                     background.setBounds(bounds);
@@ -680,12 +712,15 @@ public class Theme {
             if (overrideRoundRadius != 0) {
                 rad = overrideRoundRadius;
                 nearRad = overrideRoundRadius;
+            } else if (overrideRounding > 0) {
+                rad = AndroidUtilities.lerp(dp(SharedConfig.bubbleRadius), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
+                nearRad = AndroidUtilities.lerp(dp(Math.min(6, SharedConfig.bubbleRadius)), Math.min(bounds.width(), bounds.height()) / 2, overrideRounding);
             } else if (currentType == TYPE_PREVIEW) {
                 rad = dp(6);
                 nearRad = dp(6);
             } else {
                 rad = dp(SharedConfig.bubbleRadius);
-                nearRad = dp(Math.min(5, SharedConfig.bubbleRadius));
+                nearRad = dp(Math.min(6, SharedConfig.bubbleRadius));
             }
             int smallRad = dp(6);
 
@@ -716,8 +751,8 @@ public class Theme {
                 path = this.path;
                 invalidatePath = true;
             }
-            if (invalidatePath) {
-                path.reset();
+            if (invalidatePath || overrideRoundRadius != 0) {
+                path.rewind();
                 if (isOut) {
                     if (drawFullBubble || currentType == TYPE_PREVIEW || paintToUse != null || drawFullBottom) {
                         if (currentType == TYPE_MEDIA) {
@@ -888,6 +923,10 @@ public class Theme {
             this.overrideRoundRadius = radius;
         }
 
+        public void setRoundingRadius(float rounding) {
+            this.overrideRounding = rounding;
+        }
+
         public static class PathDrawParams {
             Path path = new Path();
             Rect lastRect = new Rect();
@@ -900,6 +939,10 @@ public class Theme {
                 lastDrawFullBottom = drawFullBottom;
                 lastRect.set(bounds);
                 return invalidate;
+            }
+            
+            public Path getPath() {
+                return path;
             }
         }
     }
@@ -2370,6 +2413,21 @@ public class Theme {
                     themeAccent.backgroundRotation = patternRotations[a];
                     themeAccent.patternSlug = patternSlugs[a];
                 }
+
+                //override default themes
+                if (isHome(themeAccent) && name.equals("Dark Blue") || name.equals("Night")) {
+                    themeAccent.myMessagesAccentColor = 0xff6573f8;
+                    themeAccent.myMessagesGradientAccentColor1 = 0xff7644cb;
+                    themeAccent.myMessagesGradientAccentColor2 = 0xff8849b4;
+                    themeAccent.myMessagesGradientAccentColor3 = 0xffa751a8;
+                    if (name.equals("Night")) {
+                        themeAccent.patternIntensity = -0.57f;
+                        themeAccent.backgroundOverrideColor = 0xff6c7fa6;
+                        themeAccent.backgroundGradientOverrideColor1 = 0xff2e344b;
+                        themeAccent.backgroundGradientOverrideColor2 = 0xff7874a7;
+                        themeAccent.backgroundGradientOverrideColor3 = 0xff333258;
+                    }
+                }
                 themeAccentsMap.put(themeAccent.id, themeAccent);
                 themeAccents.add(themeAccent);
             }
@@ -2867,8 +2925,10 @@ public class Theme {
     public static Drawable dialogs_errorDrawable;
     public static Drawable dialogs_reorderDrawable;
     public static Drawable dialogs_lockDrawable;
+    public static Drawable dialogs_lock2Drawable;
     public static Drawable dialogs_muteDrawable;
     public static Drawable dialogs_outlineArrowDrawable;
+    public static Drawable dialogs_unmuteDrawable;
     public static Drawable dialogs_verifiedDrawable;
     public static ScamDrawable dialogs_scamDrawable;
     public static ScamDrawable dialogs_fakeDrawable;
@@ -2960,6 +3020,7 @@ public class Theme {
     public static TextPaint chat_forwardNamePaint;
     public static TextPaint chat_replyNamePaint;
     public static TextPaint chat_replyTextPaint;
+    public static TextPaint chat_commentTextPaint;
     public static TextPaint chat_contextResult_titleTextPaint;
     public static TextPaint chat_contextResult_descriptionTextPaint;
 
@@ -3901,6 +3962,7 @@ public class Theme {
     public static final String key_drawable_goIcon = "drawableGoIcon";
     public static final String key_drawable_msgError = "drawableMsgError";
     public static final String key_drawable_msgIn = "drawableMsgIn";
+    public static final String key_drawable_msgInInstant = "drawableMsgInInstant";
     public static final String key_drawable_msgInClock = "drawableMsgInClock";
     public static final String key_drawable_msgInClockSelected = "drawableMsgInClockSelected";
     public static final String key_drawable_msgInSelected = "drawableMsgInSelected";
@@ -6468,12 +6530,32 @@ public class Theme {
             for (int a = 0; a < count; a++) {
                 Drawable layer = drawable.getDrawable(a);
                 if (layer instanceof RippleRadMaskDrawable) {
-                    drawable.setDrawableByLayerId(android.R.id.mask, new RippleRadMaskDrawable(top, bottom));
+                    ((RippleRadMaskDrawable) layer).setRadius(top, bottom);
+//                    drawable.setDrawableByLayerId(android.R.id.mask, new RippleRadMaskDrawable(top, bottom));
                     break;
                 }
             }
         }
     }
+
+    public static void setMaskDrawableRad(Drawable rippleDrawable, int topLeftRad, int topRightRad, int bottomRightRad, int bottomLeftRad) {
+        if (Build.VERSION.SDK_INT < 21) {
+            return;
+        }
+        if (rippleDrawable instanceof RippleDrawable) {
+            RippleDrawable drawable = (RippleDrawable) rippleDrawable;
+            int count = drawable.getNumberOfLayers();
+            for (int a = 0; a < count; a++) {
+                Drawable layer = drawable.getDrawable(a);
+                if (layer instanceof RippleRadMaskDrawable) {
+                    ((RippleRadMaskDrawable) layer).setRadius(topLeftRad, topRightRad, bottomRightRad, bottomLeftRad);
+//                    drawable.setDrawableByLayerId(android.R.id.mask, new RippleRadMaskDrawable(top, bottom));
+                    break;
+                }
+            }
+        }
+    }
+
 
     public static Drawable createRadSelectorDrawable(int color, int topRad, int bottomRad) {
         maskPaint.setColor(0xffffffff);
@@ -7574,7 +7656,7 @@ public class Theme {
                 switchingNightTheme = false;
             }
         } else {
-            if (currentTheme != currentDayTheme && (currentTheme == null || currentDayTheme != null &&  currentTheme.isLight() != currentDayTheme.isLight())) {
+            if (currentTheme != currentDayTheme && (currentTheme == null || currentDayTheme != null && currentTheme.isLight() != currentDayTheme.isLight())) {
                 isInNigthMode = false;
                 lastThemeSwitchTime = SystemClock.elapsedRealtime();
                 switchingNightTheme = true;
@@ -8715,6 +8797,7 @@ public class Theme {
             dialogs_actionMessagePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
             dialogs_lockDrawable = resources.getDrawable(R.drawable.list_secret);
+            dialogs_lock2Drawable = resources.getDrawable(R.drawable.msg_mini_lock2);
             dialogs_checkDrawable = resources.getDrawable(R.drawable.list_check).mutate();
             dialogs_playDrawable = resources.getDrawable(R.drawable.minithumb_play).mutate();
             dialogs_checkReadDrawable = resources.getDrawable(R.drawable.list_check).mutate();
@@ -8723,6 +8806,7 @@ public class Theme {
             dialogs_errorDrawable = resources.getDrawable(R.drawable.list_warning_sign);
             dialogs_reorderDrawable = resources.getDrawable(R.drawable.list_reorder).mutate();
             dialogs_muteDrawable = resources.getDrawable(R.drawable.list_mute).mutate();
+            dialogs_unmuteDrawable = resources.getDrawable(R.drawable.list_unmute).mutate();
             dialogs_verifiedDrawable = resources.getDrawable(R.drawable.verified_area).mutate();
             dialogs_outlineArrowDrawable = resources.getDrawable(R.drawable.ic_outline_arrow);
             dialogs_scamDrawable = new ScamDrawable(11, 0);
@@ -8793,6 +8877,7 @@ public class Theme {
         dialogs_offlinePaint.setColor(getColor(key_windowBackgroundWhiteGrayText3));
 
         setDrawableColorByKey(dialogs_lockDrawable, key_chats_secretIcon);
+        setDrawableColorByKey(dialogs_lock2Drawable, key_chats_pinnedIcon);
         setDrawableColorByKey(dialogs_checkDrawable, key_chats_sentCheck);
         setDrawableColorByKey(dialogs_checkReadDrawable, key_chats_sentReadCheck);
         setDrawableColorByKey(dialogs_halfCheckDrawable, key_chats_sentReadCheck);
@@ -8801,6 +8886,7 @@ public class Theme {
         setDrawableColorByKey(dialogs_pinnedDrawable, key_chats_pinnedIcon);
         setDrawableColorByKey(dialogs_reorderDrawable, key_chats_pinnedIcon);
         setDrawableColorByKey(dialogs_muteDrawable, key_chats_muteIcon);
+        setDrawableColorByKey(dialogs_unmuteDrawable, key_chats_muteIcon);
         setDrawableColorByKey(dialogs_mentionDrawable, key_chats_mentionIcon);
         setDrawableColorByKey(dialogs_reactionsMentionDrawable, key_chats_mentionIcon);
         setDrawableColorByKey(dialogs_verifiedDrawable, key_chats_verifiedBackground);
@@ -8847,6 +8933,14 @@ public class Theme {
                 chat_msgTextPaintThreeEmoji = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                 chat_msgBotButtonPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
                 chat_msgBotButtonPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                chat_namePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                chat_namePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                chat_replyNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                chat_replyNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                chat_replyTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                chat_forwardNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                chat_adminPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+                chat_timePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             }
 
             final float[] emojiSizePercents = new float[] {.7f, .52f, .37f, .28f, .25f, .19f};
@@ -8861,110 +8955,112 @@ public class Theme {
             chat_msgTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
             chat_msgGameTextPaint.setTextSize(AndroidUtilities.dp(14));
             chat_msgBotButtonPaint.setTextSize(AndroidUtilities.dp(15));
+            float smallerDp = (2 * SharedConfig.fontSize + 10) / 3f; // 6f + SharedConfig.fontSize / 2f;
+            chat_namePaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_replyNamePaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_replyTextPaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_forwardNamePaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_adminPaint.setTextSize(AndroidUtilities.dp(smallerDp - 1));
+//            float timeDp = 2 * (SharedConfig.fontSize - 16) / 3f + 12;
+//            chat_timePaint.setTextSize(AndroidUtilities.dp(timeDp));
         }
     }
 
     public static void createCommonChatResources() {
         createCommonMessageResources();
 
-        synchronized (sync) {
-            if (chat_infoPaint == null) {
-                chat_infoPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_stickerCommentCountPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_stickerCommentCountPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_docNamePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_docNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_docBackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_deleteProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_botProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_botProgressPaint.setStrokeCap(Paint.Cap.ROUND);
-                chat_botProgressPaint.setStyle(Paint.Style.STROKE);
-                chat_locationTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_locationTitlePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_locationAddressPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_urlPaint = new Paint();
-                chat_urlPaint.setPathEffect(LinkPath.getRoundedEffect());
-                chat_outUrlPaint = new Paint();
-                chat_outUrlPaint.setPathEffect(LinkPath.getRoundedEffect());
-                chat_textSearchSelectionPaint = new Paint();
-                chat_textSearchSelectionPaint.setPathEffect(LinkPath.getRoundedEffect());
-                chat_radialProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_radialProgressPaint.setStrokeCap(Paint.Cap.ROUND);
-                chat_radialProgressPaint.setStyle(Paint.Style.STROKE);
-                chat_radialProgressPaint.setColor(0x9fffffff);
-                chat_radialProgress2Paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_radialProgress2Paint.setStrokeCap(Paint.Cap.ROUND);
-                chat_radialProgress2Paint.setStyle(Paint.Style.STROKE);
-                chat_audioTimePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                chat_audioTimePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
-                chat_livePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_livePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_audioTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_audioTitlePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_audioPerformerPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_botButtonPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_botButtonPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_contactNamePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_contactNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_contactPhonePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_durationPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_gamePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_gamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_shipmentPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_timePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                chat_timePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
-                chat_adminPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                chat_adminPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
-                chat_namePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                chat_namePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_forwardNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                chat_forwardNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
-                chat_replyNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                chat_replyNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_replyTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                chat_replyTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
-                chat_instantViewPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_instantViewPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_instantViewRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_instantViewRectPaint.setStyle(Paint.Style.STROKE);
-                chat_instantViewRectPaint.setStrokeCap(Paint.Cap.ROUND);
-                chat_pollTimerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_pollTimerPaint.setStyle(Paint.Style.STROKE);
-                chat_pollTimerPaint.setStrokeCap(Paint.Cap.ROUND);
-                chat_replyLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_msgErrorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_statusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_statusRecordPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_statusRecordPaint.setStyle(Paint.Style.STROKE);
-                chat_statusRecordPaint.setStrokeCap(Paint.Cap.ROUND);
-                chat_actionTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_actionTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_unlockExtendedMediaTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_unlockExtendedMediaTextPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
-                chat_actionBackgroundGradientDarkenPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_actionBackgroundGradientDarkenPaint.setColor(0x2a000000);
-                chat_timeBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_contextResult_titleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_contextResult_titleTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                chat_contextResult_descriptionTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-                chat_composeBackgroundPaint = new Paint();
-                chat_radialProgressPausedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_radialProgressPausedSeekbarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    
-                chat_messageBackgroundSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_actionBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_actionBackgroundSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_actionBackgroundPaint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
-                chat_actionBackgroundSelectedPaint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
-    
-                addChatPaint(key_paint_chatMessageBackgroundSelected, chat_messageBackgroundSelectedPaint, key_chat_selectedBackground);
-                addChatPaint(key_paint_chatActionBackground, chat_actionBackgroundPaint, key_chat_serviceBackground);
-                addChatPaint(key_paint_chatActionBackgroundSelected, chat_actionBackgroundSelectedPaint, key_chat_serviceBackgroundSelected);
-                addChatPaint(key_paint_chatActionText, chat_actionTextPaint, key_chat_serviceText);
-                addChatPaint(key_paint_chatBotButton, chat_botButtonPaint, key_chat_botButtonText);
-                addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
-                addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
-            }
+        if (chat_infoPaint == null) {
+            chat_infoPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_stickerCommentCountPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_stickerCommentCountPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_docNamePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_docNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_docBackPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_deleteProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_botProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_botProgressPaint.setStrokeCap(Paint.Cap.ROUND);
+            chat_botProgressPaint.setStyle(Paint.Style.STROKE);
+            chat_locationTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_locationTitlePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_locationAddressPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_urlPaint = new Paint();
+            chat_urlPaint.setPathEffect(LinkPath.getRoundedEffect());
+            chat_outUrlPaint = new Paint();
+            chat_outUrlPaint.setPathEffect(LinkPath.getRoundedEffect());
+            chat_textSearchSelectionPaint = new Paint();
+            chat_textSearchSelectionPaint.setPathEffect(LinkPath.getRoundedEffect());
+            chat_radialProgressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_radialProgressPaint.setStrokeCap(Paint.Cap.ROUND);
+            chat_radialProgressPaint.setStyle(Paint.Style.STROKE);
+            chat_radialProgressPaint.setColor(0x9fffffff);
+            chat_radialProgress2Paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_radialProgress2Paint.setStrokeCap(Paint.Cap.ROUND);
+            chat_radialProgress2Paint.setStyle(Paint.Style.STROKE);
+            chat_audioTimePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_livePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_livePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_audioTitlePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_audioTitlePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_audioPerformerPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_botButtonPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_botButtonPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_contactNamePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_contactNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_contactPhonePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_durationPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_gamePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_gamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_shipmentPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_timePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_adminPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_namePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_namePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_forwardNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_replyNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_replyNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_replyTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_commentTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            chat_instantViewPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_instantViewPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_instantViewRectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_instantViewRectPaint.setStyle(Paint.Style.STROKE);
+            chat_instantViewRectPaint.setStrokeCap(Paint.Cap.ROUND);
+            chat_pollTimerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_pollTimerPaint.setStyle(Paint.Style.STROKE);
+            chat_pollTimerPaint.setStrokeCap(Paint.Cap.ROUND);
+            chat_replyLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_msgErrorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_statusPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_statusRecordPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_statusRecordPaint.setStyle(Paint.Style.STROKE);
+            chat_statusRecordPaint.setStrokeCap(Paint.Cap.ROUND);
+            chat_actionTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_actionTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_unlockExtendedMediaTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_unlockExtendedMediaTextPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+            chat_actionBackgroundGradientDarkenPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_actionBackgroundGradientDarkenPaint.setColor(0x2a000000);
+            chat_timeBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_contextResult_titleTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_contextResult_titleTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            chat_contextResult_descriptionTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            chat_composeBackgroundPaint = new Paint();
+            chat_radialProgressPausedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_radialProgressPausedSeekbarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+            chat_messageBackgroundSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_actionBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_actionBackgroundSelectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_actionBackgroundPaint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
+            chat_actionBackgroundSelectedPaint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+            addChatPaint(key_paint_chatMessageBackgroundSelected, chat_messageBackgroundSelectedPaint, key_chat_selectedBackground);
+            addChatPaint(key_paint_chatActionBackground, chat_actionBackgroundPaint, key_chat_serviceBackground);
+            addChatPaint(key_paint_chatActionBackgroundSelected, chat_actionBackgroundSelectedPaint, key_chat_serviceBackgroundSelected);
+            addChatPaint(key_paint_chatActionText, chat_actionTextPaint, key_chat_serviceText);
+            addChatPaint(key_paint_chatBotButton, chat_botButtonPaint, key_chat_botButtonText);
+            addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
+            addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
         }
     }
 
@@ -9205,6 +9301,7 @@ public class Theme {
             addChatDrawable(key_drawable_msgInSelected, chat_msgInSelectedDrawable, null);
             addChatDrawable(key_drawable_msgInMedia, chat_msgInMediaDrawable, null);
             addChatDrawable(key_drawable_msgInMediaSelected, chat_msgInMediaSelectedDrawable, null);
+            addChatDrawable(key_drawable_msgInInstant, chat_msgInInstantDrawable, key_chat_inInstant);
             addChatDrawable(key_drawable_msgOut, chat_msgOutDrawable, null);
             addChatDrawable(key_drawable_msgOutSelected, chat_msgOutSelectedDrawable, null);
             addChatDrawable(key_drawable_msgOutMedia, chat_msgOutMediaDrawable, null);
@@ -9258,12 +9355,14 @@ public class Theme {
             chat_contactNamePaint.setTextSize(AndroidUtilities.dp(15));
             chat_contactPhonePaint.setTextSize(AndroidUtilities.dp(13));
             chat_durationPaint.setTextSize(AndroidUtilities.dp(12));
+            float smallerDp = (2 * SharedConfig.fontSize + 10) / 3f; // 6f + SharedConfig.fontSize / 2f;
+            chat_namePaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_replyNamePaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_replyTextPaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_forwardNamePaint.setTextSize(AndroidUtilities.dp(smallerDp));
+            chat_adminPaint.setTextSize(AndroidUtilities.dp(smallerDp - 1));
+            float timeDp = 2 * (SharedConfig.fontSize - 16) / 3f + 12;
             chat_timePaint.setTextSize(AndroidUtilities.dp(12));
-            chat_adminPaint.setTextSize(AndroidUtilities.dp(13));
-            chat_namePaint.setTextSize(AndroidUtilities.dp(14));
-            chat_forwardNamePaint.setTextSize(AndroidUtilities.dp(14));
-            chat_replyNamePaint.setTextSize(AndroidUtilities.dp(14));
-            chat_replyTextPaint.setTextSize(AndroidUtilities.dp(14));
             chat_gamePaint.setTextSize(AndroidUtilities.dp(13));
             chat_shipmentPaint.setTextSize(AndroidUtilities.dp(13));
             chat_instantViewPaint.setTextSize(AndroidUtilities.dp(13));
@@ -9275,6 +9374,8 @@ public class Theme {
             chat_contextResult_descriptionTextPaint.setTextSize(AndroidUtilities.dp(13));
             chat_radialProgressPaint.setStrokeWidth(AndroidUtilities.dp(3));
             chat_radialProgress2Paint.setStrokeWidth(AndroidUtilities.dp(2));
+            chat_commentTextPaint.setTextSize(AndroidUtilities.dp(14));
+            chat_commentTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
         }
     }
 

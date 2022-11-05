@@ -21,7 +21,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.ui.ActionBar.ActionBarLayout;
+import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.ChatMessageCell;
 import org.telegram.ui.Components.BackgroundGradientDrawable;
@@ -39,9 +39,9 @@ public class StickerSizePreviewCell extends LinearLayout {
     private final ChatMessageCell[] cells = new ChatMessageCell[2];
     private final MessageObject[] messageObjects = new MessageObject[2];
     private final Drawable shadowDrawable;
-    private final ActionBarLayout parentLayout;
+    private final INavigationLayout parentLayout;
 
-    public StickerSizePreviewCell (Context context, ActionBarLayout layout) {
+    public StickerSizePreviewCell (Context context, INavigationLayout layout) {
         super(context);
 
         parentLayout = layout;

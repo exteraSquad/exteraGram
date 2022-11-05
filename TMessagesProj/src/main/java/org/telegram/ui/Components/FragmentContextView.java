@@ -110,25 +110,29 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             STYLE_INACTIVE_GROUP_CALL,
             STYLE_IMPORTING_MESSAGES
     })
-    public @interface Style {}
+    public @interface Style {
+    }
 
     private final ImageView playButton;
     private final PlayPauseDrawable playPauseDrawable;
     private final AudioPlayerAlert.ClippingTextViewSwitcher titleTextView;
     private final AudioPlayerAlert.ClippingTextViewSwitcher subtitleTextView;
     private AnimatorSet animatorSet;
-    private final BaseFragment fragment;
-    private final View applyingView;
-    private final FrameLayout frameLayout;
-    private final View selector;
-    private final RLottieImageView importingImageView;
+    private BaseFragment fragment;
+    private ChatActivityInterface chatActivity;
+    private View applyingView;
+    private FrameLayout frameLayout;
+    private View selector;
+    private RLottieImageView importingImageView;
     private RLottieImageView muteButton;
     private final RLottieImageView nextButton;
     private final RLottieImageView prevButton;
     private final RLottieDrawable muteDrawable;
     private final ImageView closeButton;
     private ActionBarMenuItem playbackSpeedButton;
-    private final ActionBarMenuSubItem[] speedItems = new ActionBarMenuSubItem[4];
+    private ActionBarMenuSubItem[] speedItems = new ActionBarMenuSubItem[4];
+    private FrameLayout silentButton;
+    private ImageView silentButtonImage;
     private FragmentContextView additionalContextView;
     private final TextView joinButton;
     private final CellFlickerDrawable joinButtonFlicker;
@@ -142,7 +146,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     private int currentProgress = -1;
 
     private MessageObject lastMessageObject;
-    private float topPadding;
+    protected float topPadding;
     private boolean visible;
     @Style
     private int currentStyle = STYLE_NOT_SET;
@@ -166,7 +170,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 scheduleRunnableScheduled = false;
                 return;
             }
-            ChatObject.Call call = ((ChatActivity) fragment).getGroupCall();
+            ChatObject.Call call = chatActivity.getGroupCall();
             if (call == null || !call.isScheduled()) {
                 timeLayout = null;
                 scheduleRunnableScheduled = false;
@@ -251,6 +255,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         this.resourcesProvider = resourcesProvider;
 
         fragment = parentFragment;
+        if (parentFragment instanceof ChatActivityInterface) {
+            chatActivity = (ChatActivityInterface) parentFragment;
+        }
         SizeNotifierFrameLayout sizeNotifierFrameLayout = null;
         if (fragment.getFragmentView() instanceof SizeNotifierFrameLayout) {
             sizeNotifierFrameLayout = (SizeNotifierFrameLayout) fragment.getFragmentView();
@@ -283,7 +290,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                         gradientPaint.setShader(linearGradient);
                         gradientWidth = width;
                     }
-                    ChatObject.Call call = ((ChatActivity) fragment).getGroupCall();
+                    ChatObject.Call call = chatActivity.getGroupCall();
                     float moveProgress = 0.0f;
                     if (fragment != null && call != null && call.isScheduled()) {
                         long diff = ((long) call.call.schedule_date) * 1000 - fragment.getConnectionsManager().getCurrentTimeMillis();
@@ -464,9 +471,24 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         addView(joinButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.RIGHT, 0, 10, 14, 0));
         joinButton.setOnClickListener(v -> FragmentContextView.this.callOnClick());
 
+        silentButton = new FrameLayout(context);
+        silentButtonImage = new ImageView(context);
+        silentButtonImage.setImageResource(R.drawable.msg_mute);
+        silentButtonImage.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_inappPlayerClose), PorterDuff.Mode.MULTIPLY));
+        silentButton.addView(silentButtonImage, LayoutHelper.createFrame(20, 20, Gravity.CENTER));
+        silentButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_inappPlayerClose) & 0x19ffffff, 1, AndroidUtilities.dp(14)));
+        silentButton.setContentDescription(LocaleController.getString("Unmute", R.string.Unmute));
+        silentButton.setOnClickListener(e -> {
+            MediaController.getInstance().updateSilent(false);
+        });
+        silentButton.setVisibility(View.GONE);
+        addView(silentButton, LayoutHelper.createFrame(36, 36, Gravity.RIGHT | Gravity.TOP, 0, 0, 36, 0));
+
         if (!location) {
             playbackSpeedButton = new ActionBarMenuItem(context, null, 0, getThemedColor(Theme.key_dialogTextBlack), resourcesProvider);
             playbackSpeedButton.setLongClickEnabled(false);
+            playbackSpeedButton.setVisibility(GONE);
+            playbackSpeedButton.setTag(null);
             playbackSpeedButton.setShowSubmenuByMove(false);
             playbackSpeedButton.setContentDescription(LocaleController.getString("AccDescrPlayerSpeed", R.string.AccDescrPlayerSpeed));
             playbackSpeedButton.setDelegate(id -> {
@@ -653,9 +675,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 if (fragment instanceof DialogsActivity) {
                     builder.setMessage(LocaleController.getString("StopLiveLocationAlertAllText", R.string.StopLiveLocationAlertAllText));
                 } else {
-                    ChatActivity activity = (ChatActivity) fragment;
-                    TLRPC.Chat chat = activity.getCurrentChat();
-                    TLRPC.User user = activity.getCurrentUser();
+                    TLRPC.Chat chat = chatActivity.getCurrentChat();
+                    TLRPC.User user = chatActivity.getCurrentUser();
                     if (chat != null) {
                         builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("StopLiveLocationAlertToGroupText", R.string.StopLiveLocationAlertToGroupText, chat.title)));
                     } else if (user != null) {
@@ -670,7 +691,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                             LocationController.getInstance(a).removeAllLocationSharings();
                         }
                     } else {
-                        LocationController.getInstance(fragment.getCurrentAccount()).removeSharingLocation(((ChatActivity) fragment).getDialogId());
+                        LocationController.getInstance(fragment.getCurrentAccount()).removeSharingLocation(chatActivity.getDialogId());
                     }
                 });
                 builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
@@ -743,11 +764,11 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                         }
                     } else {
                         long dialogId = 0;
-                        if (fragment instanceof ChatActivity) {
-                            dialogId = ((ChatActivity) fragment).getDialogId();
+                        if (chatActivity != null) {
+                            dialogId = chatActivity.getDialogId();
                         }
                         if (messageObject.getDialogId() == dialogId) {
-                            ((ChatActivity) fragment).scrollToMessageId(messageObject.getId(), 0, false, 0, true, 0);
+                            chatActivity.scrollToMessageId(messageObject.getId(), 0, false, 0, true, 0);
                         } else {
                             dialogId = messageObject.getDialogId();
                             Bundle args = new Bundle();
@@ -769,8 +790,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             } else if (currentStyle == STYLE_LIVE_LOCATION) {
                 long did = 0;
                 int account = UserConfig.selectedAccount;
-                if (fragment instanceof ChatActivity) {
-                    did = ((ChatActivity) fragment).getDialogId();
+                if (chatActivity != null) {
+                    did = chatActivity.getDialogId();
                     account = fragment.getCurrentAccount();
                 } else if (LocationController.getLocationsCount() == 1) {
                     for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
@@ -796,12 +817,11 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 if (fragment.getParentActivity() == null) {
                     return;
                 }
-                ChatActivity chatActivity = (ChatActivity) fragment;
                 ChatObject.Call call = chatActivity.getGroupCall();
                 if (call == null) {
                     return;
                 }
-                VoIPHelper.startCall(chatActivity.getMessagesController().getChat(call.chatId), null, null, false, call.call != null && !call.call.rtmp_stream, fragment.getParentActivity(), fragment, fragment.getAccountInstance());
+                VoIPHelper.startCall(fragment.getMessagesController().getChat(call.chatId), null, null, false, call.call != null && !call.call.rtmp_stream, fragment.getParentActivity(), fragment, fragment.getAccountInstance());
             } else if (currentStyle == STYLE_IMPORTING_MESSAGES) {
                 SendMessagesHelper.ImportingHistory importingHistory = parentFragment.getSendMessagesHelper().getImportingHistory(((ChatActivity) parentFragment).getDialogId());
                 if (importingHistory == null) {
@@ -893,15 +913,15 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             if (fragment instanceof DialogsActivity) {
                 show = LocationController.getLocationsCount() != 0;
             } else {
-                show = LocationController.getInstance(fragment.getCurrentAccount()).isSharingLocation(((ChatActivity) fragment).getDialogId());
+                show = LocationController.getInstance(fragment.getCurrentAccount()).isSharingLocation(chatActivity.getDialogId());
             }
         } else {
             if (VoIPService.getSharedInstance() != null && !VoIPService.getSharedInstance().isHangingUp() && VoIPService.getSharedInstance().getCallState() != VoIPService.STATE_WAITING_INCOMING) {
                 show = true;
                 startJoinFlickerAnimation();
-            } else if (fragment instanceof ChatActivity && fragment.getSendMessagesHelper().getImportingHistory(((ChatActivity) fragment).getDialogId()) != null && !isPlayingVoice()) {
+            } else if (chatActivity != null && fragment.getSendMessagesHelper().getImportingHistory(chatActivity.getDialogId()) != null && !isPlayingVoice()) {
                 show = true;
-            } else if (fragment instanceof ChatActivity && ((ChatActivity) fragment).getGroupCall() != null && ((ChatActivity) fragment).getGroupCall().shouldShowPanel() && !GroupCallPip.isShowing() && !isPlayingVoice()) {
+            } else if (chatActivity != null && chatActivity.getGroupCall() != null && chatActivity.getGroupCall().shouldShowPanel() && !GroupCallPip.isShowing() && !isPlayingVoice()) {
                 show = true;
                 startJoinFlickerAnimation();
             } else {
@@ -931,6 +951,17 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
 
     protected void playbackSpeedChanged(float value) {
 
+    }
+
+    private void updateSilent() {
+        if (currentStyle == STYLE_AUDIO_PLAYER) {
+            boolean isSilent = MediaController.getInstance().isSilent;
+            AndroidUtilities.updateViewShow(silentButton, isSilent);
+            AndroidUtilities.updateViewShow(playbackSpeedButton, !isSilent);
+        } else {
+            AndroidUtilities.updateViewShow(silentButton, false, true, false);
+            AndroidUtilities.updateViewShow(playbackSpeedButton, false, true, false);
+        }
     }
 
     private void updateStyle(@Style int style) {
@@ -990,6 +1021,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             closeButton.setContentDescription(LocaleController.getString("AccDescrClosePlayer", R.string.AccDescrClosePlayer));
             if (playbackSpeedButton != null) {
                 playbackSpeedButton.setVisibility(GONE);
+                playbackSpeedButton.setTag(null);
             }
             titleTextView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 35, 0, 36, 0));
         } else if (style == STYLE_AUDIO_PLAYER || style == STYLE_LIVE_LOCATION) {
@@ -1026,6 +1058,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 playButton.setLayoutParams(LayoutHelper.createFrame(36, 48, Gravity.TOP | Gravity.RIGHT, 0, 0, 38, 0));
                 if (playbackSpeedButton != null) {
                     playbackSpeedButton.setVisibility(VISIBLE);
+                    playbackSpeedButton.setTag(1);
                 }
                 closeButton.setContentDescription(LocaleController.getString("AccDescrClosePlayer", R.string.AccDescrClosePlayer));
             } else {
@@ -1066,8 +1099,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             importingImageView.stopAnimation();
 
             boolean isRtmpStream = false;
-            if (fragment instanceof ChatActivity) {
-                ChatActivity chatActivity = (ChatActivity) fragment;
+            if (chatActivity != null) {
                 isRtmpStream = chatActivity.getGroupCall() != null && chatActivity.getGroupCall().call != null && chatActivity.getGroupCall().call.rtmp_stream;
             }
 
@@ -1083,6 +1115,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             playButton.setVisibility(GONE);
             if (playbackSpeedButton != null) {
                 playbackSpeedButton.setVisibility(GONE);
+                playbackSpeedButton.setTag(null);
             }
         } else if (style == STYLE_CONNECTING_GROUP_CALL || style == STYLE_ACTIVE_GROUP_CALL) {
             selector.setBackground(null);
@@ -1138,6 +1171,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             titleTextView.setPadding(AndroidUtilities.dp(112), 0, AndroidUtilities.dp(112), 0);
             if (playbackSpeedButton != null) {
                 playbackSpeedButton.setVisibility(GONE);
+                playbackSpeedButton.setTag(null);
             }
         }
     }
@@ -1217,9 +1251,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
 
             if (VoIPService.getSharedInstance() != null && !VoIPService.getSharedInstance().isHangingUp() && VoIPService.getSharedInstance().getCallState() != VoIPService.STATE_WAITING_INCOMING && !GroupCallPip.isShowing()) {
                 checkCall(true);
-            } else if (fragment instanceof ChatActivity && fragment.getSendMessagesHelper().getImportingHistory(((ChatActivity) fragment).getDialogId()) != null && !isPlayingVoice()) {
+            } else if (chatActivity != null && fragment.getSendMessagesHelper().getImportingHistory(chatActivity.getDialogId()) != null && !isPlayingVoice()) {
                 checkImport(true);
-            } else if (fragment instanceof ChatActivity && ((ChatActivity) fragment).getGroupCall() != null && ((ChatActivity) fragment).getGroupCall().shouldShowPanel() && !GroupCallPip.isShowing() && !isPlayingVoice()) {
+            } else if (chatActivity != null && chatActivity.getGroupCall() != null && chatActivity.getGroupCall().shouldShowPanel() && !GroupCallPip.isShowing() && !isPlayingVoice()) {
                 checkCall(true);
             } else {
                 checkCall(true);
@@ -1252,8 +1286,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             setTopPadding(AndroidUtilities.dp2(getStyleHeight()));
         }
 
-         speakerAmplitude = 0;
-         micAmplitude = 0;
+        speakerAmplitude = 0;
+        micAmplitude = 0;
     }
 
     @Override
@@ -1266,9 +1300,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         if (id == NotificationCenter.liveLocationsChanged) {
             checkLiveLocation(false);
         } else if (id == NotificationCenter.liveLocationsCacheChanged) {
-            if (fragment instanceof ChatActivity) {
+            if (chatActivity != null) {
                 long did = (Long) args[0];
-                if (((ChatActivity) fragment).getDialogId() == did) {
+                if (chatActivity.getDialogId() == did) {
                     checkLocationString();
                 }
             }
@@ -1306,14 +1340,14 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             }
         } else if (id == NotificationCenter.groupCallTypingsUpdated) {
             if (visible && currentStyle == STYLE_INACTIVE_GROUP_CALL) {
-                ChatObject.Call call = ((ChatActivity) fragment).getGroupCall();
+                ChatObject.Call call = chatActivity.getGroupCall();
                 if (call != null) {
                     if (call.isScheduled()) {
                         subtitleTextView.setText(LocaleController.formatStartsTime(call.call.schedule_date, 4), false);
                     } else if (call.call.participants_count == 0) {
                         subtitleTextView.setText(LocaleController.getString(call.call.rtmp_stream ? R.string.ViewersWatchingNobody : R.string.MembersTalkingNobody), false);
                     } else {
-                        subtitleTextView.setText(LocaleController.formatPluralString(call.call.rtmp_stream ? "ViewersWatching" :  "Participants", call.call.participants_count), false);
+                        subtitleTextView.setText(LocaleController.formatPluralString(call.call.rtmp_stream ? "ViewersWatching" : "Participants", call.call.participants_count), false);
                     }
                 }
                 updateAvatars(true);
@@ -1369,7 +1403,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         if (fragment instanceof DialogsActivity) {
             show = LocationController.getLocationsCount() != 0;
         } else {
-            show = LocationController.getInstance(fragment.getCurrentAccount()).isSharingLocation(((ChatActivity) fragment).getDialogId());
+            show = LocationController.getInstance(fragment.getCurrentAccount()).isSharingLocation(chatActivity.getDialogId());
         }
         if (!show) {
             lastLocationSharingCount = -1;
@@ -1480,12 +1514,11 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     }
 
     private void checkLocationString() {
-        if (!(fragment instanceof ChatActivity) || titleTextView == null) {
+        if (chatActivity == null || titleTextView == null) {
             return;
         }
-        ChatActivity chatActivity = (ChatActivity) fragment;
         long dialogId = chatActivity.getDialogId();
-        int currentAccount = chatActivity.getCurrentAccount();
+        int currentAccount = fragment.getCurrentAccount();
         ArrayList<TLRPC.Message> messages = LocationController.getInstance(currentAccount).locationsCache.get(dialogId);
         if (!firstLocationsLoaded) {
             LocationController.getInstance(currentAccount).loadLiveLocations(dialogId);
@@ -1575,8 +1608,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         if (messageObject == null || messageObject.getId() == 0 || messageObject.isVideo()) {
             lastMessageObject = null;
             boolean callAvailable = supportsCalls && VoIPService.getSharedInstance() != null && !VoIPService.getSharedInstance().isHangingUp() && VoIPService.getSharedInstance().getCallState() != VoIPService.STATE_WAITING_INCOMING && !GroupCallPip.isShowing();
-            if (!isPlayingVoice() && !callAvailable && fragment instanceof ChatActivity && !GroupCallPip.isShowing()) {
-                ChatObject.Call call = ((ChatActivity) fragment).getGroupCall();
+            if (!isPlayingVoice() && !callAvailable && chatActivity != null && !GroupCallPip.isShowing()) {
+                ChatObject.Call call = chatActivity.getGroupCall();
                 callAvailable = call != null && call.shouldShowPanel();
             }
             if (callAvailable) {
@@ -1786,11 +1819,10 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     }
 
     public void checkImport(boolean create) {
-        if (!(fragment instanceof ChatActivity) || visible && (currentStyle == STYLE_CONNECTING_GROUP_CALL || currentStyle == STYLE_ACTIVE_GROUP_CALL)) {
+        if (chatActivity == null || visible && (currentStyle == STYLE_CONNECTING_GROUP_CALL || currentStyle == STYLE_ACTIVE_GROUP_CALL)) {
             return;
         }
-        ChatActivity chatActivity = (ChatActivity) fragment;
-        SendMessagesHelper.ImportingHistory importingHistory = chatActivity.getSendMessagesHelper().getImportingHistory(chatActivity.getDialogId());
+        SendMessagesHelper.ImportingHistory importingHistory = fragment.getSendMessagesHelper().getImportingHistory(chatActivity.getDialogId());
         View fragmentView = fragment.getFragmentView();
         if (!create && fragmentView != null) {
             if (fragmentView.getParent() == null || ((View) fragmentView.getParent()).getVisibility() != VISIBLE) {
@@ -1798,7 +1830,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             }
         }
 
-        Dialog dialog = chatActivity.getVisibleDialog();
+        Dialog dialog = fragment.getVisibleDialog();
         if ((isPlayingVoice() || chatActivity.shouldShowImport() || dialog instanceof ImportingAlert && !((ImportingAlert) dialog).isDismissed()) && importingHistory != null) {
             importingHistory = null;
         }
@@ -1941,8 +1973,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 callAvailable = false;
             }
             groupActive = false;
-            if (!isPlayingVoice() && !GroupCallActivity.groupCallUiVisible && supportsCalls && !callAvailable && fragment instanceof ChatActivity) {
-                ChatObject.Call call = ((ChatActivity) fragment).getGroupCall();
+            if (!isPlayingVoice() && !GroupCallActivity.groupCallUiVisible && supportsCalls && !callAvailable && chatActivity != null) {
+                ChatObject.Call call = chatActivity.getGroupCall();
                 if (call != null && call.shouldShowPanel()) {
                     callAvailable = true;
                     groupActive = true;
@@ -1996,7 +2028,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 setVisibility(GONE);
             }
 
-            if (create && fragment instanceof ChatActivity && ((ChatActivity) fragment).openedWithLivestream() && !GroupCallPip.isShowing()) {
+            if (create && chatActivity != null && chatActivity.openedWithLivestream() && !GroupCallPip.isShowing()) {
                 BulletinFactory.of(fragment).createSimpleBulletin(R.raw.linkbroken, LocaleController.getString("InviteExpired", R.string.InviteExpired)).show();
             }
         } else {
@@ -2041,8 +2073,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 boolean updateAnimated = currentStyle == STYLE_INACTIVE_GROUP_CALL && visible;
                 updateStyle(STYLE_INACTIVE_GROUP_CALL);
 
-                ChatObject.Call call = ((ChatActivity) fragment).getGroupCall();
-                TLRPC.Chat chat = ((ChatActivity) fragment).getCurrentChat();
+                ChatObject.Call call = chatActivity.getGroupCall();
+                TLRPC.Chat chat = chatActivity.getCurrentChat();
                 if (call.isScheduled()) {
                     if (gradientPaint == null) {
                         gradientTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -2083,7 +2115,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                     if (call.call.participants_count == 0) {
                         subtitleTextView.setText(LocaleController.getString(call.call.rtmp_stream ? R.string.ViewersWatchingNobody : R.string.MembersTalkingNobody), false);
                     } else {
-                        subtitleTextView.setText(LocaleController.formatPluralString(call.call.rtmp_stream ? "ViewersWatching" :  "Participants", call.call.participants_count), false);
+                        subtitleTextView.setText(LocaleController.formatPluralString(call.call.rtmp_stream ? "ViewersWatching" : "Participants", call.call.participants_count), false);
                     }
                     frameLayout.invalidate();
                 }
@@ -2169,10 +2201,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         if (avatars.avatarsDarawable.transitionProgressAnimator == null) {
             int currentAccount;
             if (currentStyle == STYLE_INACTIVE_GROUP_CALL) {
-                if (fragment instanceof ChatActivity) {
-                    ChatActivity chatActivity = (ChatActivity) fragment;
+                if (chatActivity != null) {
                     call = chatActivity.getGroupCall();
-                    currentAccount = chatActivity.getCurrentAccount();
+                    currentAccount = fragment.getCurrentAccount();
                 } else {
                     call = null;
                     currentAccount = account;
@@ -2181,7 +2212,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             } else {
                 if (VoIPService.getSharedInstance() != null) {
                     call = VoIPService.getSharedInstance().groupCall;
-                    userCall = fragment instanceof ChatActivity ? null : VoIPService.getSharedInstance().getUser();
+                    userCall = chatActivity != null ? null : VoIPService.getSharedInstance().getUser();
                     currentAccount = VoIPService.getSharedInstance().getAccount();
                 } else {
                     call = null;
@@ -2375,13 +2406,13 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         if (service != null && (currentStyle == STYLE_CONNECTING_GROUP_CALL || currentStyle == STYLE_ACTIVE_GROUP_CALL)) {
             int currentCallState = service.getCallState();
             if (!service.isSwitchingStream() && (currentCallState == VoIPService.STATE_WAIT_INIT || currentCallState == VoIPService.STATE_WAIT_INIT_ACK || currentCallState == VoIPService.STATE_CREATING || currentCallState == VoIPService.STATE_RECONNECTING)) {
-                titleTextView.setText(LocaleController.getString("VoipGroupConnecting", R.string. VoipGroupConnecting), false);
+                titleTextView.setText(LocaleController.getString("VoipGroupConnecting", R.string.VoipGroupConnecting), false);
             } else if (service.getChat() != null) {
                 if (!TextUtils.isEmpty(service.groupCall.call.title)) {
                     titleTextView.setText(service.groupCall.call.title, false);
                 } else {
-                    if (fragment instanceof ChatActivity && ((ChatActivity) fragment).getCurrentChat() != null && ((ChatActivity) fragment).getCurrentChat().id == service.getChat().id) {
-                        TLRPC.Chat chat = ((ChatActivity) fragment).getCurrentChat();
+                    if (chatActivity != null && chatActivity.getCurrentChat() != null && chatActivity.getCurrentChat().id == service.getChat().id) {
+                        TLRPC.Chat chat = chatActivity.getCurrentChat();
                         if (VoIPService.hasRtmpStream()) {
                             titleTextView.setText(LocaleController.getString(R.string.VoipChannelViewVoiceChat), false);
                         } else {
@@ -2397,7 +2428,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 }
             } else if (service.getUser() != null) {
                 TLRPC.User user = service.getUser();
-                if (fragment instanceof ChatActivity && ((ChatActivity) fragment).getCurrentUser() != null && ((ChatActivity) fragment).getCurrentUser().id == user.id) {
+                if (chatActivity != null && chatActivity.getCurrentUser() != null && chatActivity.getCurrentUser().id == user.id) {
                     titleTextView.setText(LocaleController.getString("ReturnToCall", R.string.ReturnToCall));
                 } else {
                     titleTextView.setText(ContactsController.formatName(user.first_name, user.last_name));
@@ -2409,5 +2440,42 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     private int getThemedColor(String key) {
         Integer color = resourcesProvider != null ? resourcesProvider.getColor(key) : null;
         return color != null ? color : Theme.getColor(key);
+    }
+
+    public interface ChatActivityInterface {
+
+        default ChatObject.Call getGroupCall() {
+            return null;
+        }
+
+        default TLRPC.Chat getCurrentChat() {
+            return null;
+        }
+
+        default TLRPC.User getCurrentUser() {
+            return null;
+        }
+
+        long getDialogId();
+
+        default void scrollToMessageId(int id, int i, boolean b, int i1, boolean b1, int i2) {
+
+        }
+
+        default boolean shouldShowImport() {
+            return false;
+        }
+
+        default boolean openedWithLivestream() {
+            return false;
+        }
+
+        default long getMergeDialogId() {
+            return 0;
+        }
+
+        default int getTopicId() {
+            return 0;
+        }
     }
 }

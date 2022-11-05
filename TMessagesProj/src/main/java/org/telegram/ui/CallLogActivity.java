@@ -1067,7 +1067,7 @@ outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
 					cell.button.setTag(chat.id);
 					String text;
 					if (ChatObject.isChannel(chat) && !chat.megagroup) {
-						if (TextUtils.isEmpty(chat.username)) {
+						if (!ChatObject.isPublic(chat)) {
 							text = LocaleController.getString("ChannelPrivate", R.string.ChannelPrivate).toLowerCase();
 						} else {
 							text = LocaleController.getString("ChannelPublic", R.string.ChannelPublic).toLowerCase();
@@ -1075,7 +1075,7 @@ outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
 					} else {
 						if (chat.has_geo) {
 							text = LocaleController.getString("MegaLocation", R.string.MegaLocation);
-						} else if (TextUtils.isEmpty(chat.username)) {
+						} else if (!ChatObject.isPublic(chat)) {
 							text = LocaleController.getString("MegaPrivate", R.string.MegaPrivate).toLowerCase();
 						} else {
 							text = LocaleController.getString("MegaPublic", R.string.MegaPublic).toLowerCase();
@@ -1113,7 +1113,7 @@ outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
 	}
 
 	@Override
-	protected void onTransitionAnimationStart(boolean isOpen, boolean backward) {
+	public void onTransitionAnimationStart(boolean isOpen, boolean backward) {
 		super.onTransitionAnimationStart(isOpen, backward);
 		if (isOpen) {
 			openTransitionStarted = true;

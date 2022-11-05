@@ -340,10 +340,10 @@ public class CheckBoxBase {
                     sweepAngle = (int) (-360 * progress);
                 } else if (backgroundType == 1) {
                     startAngle = -90;
-                    sweepAngle = (int) (-270 * progress);
+                    sweepAngle = (int) (-360 * progress);
                 } else {
                     startAngle = 90;
-                    sweepAngle = (int) (270 * progress);
+                    sweepAngle = (int) (360 * progress);
                 }
 
                 if (backgroundType == 6) {

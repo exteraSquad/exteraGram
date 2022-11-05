@@ -1,3 +1,5 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
@@ -48,6 +50,8 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
 }
+
+def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)
 
 static def getAppID() {
     Properties properties = new Properties()
@@ -101,16 +105,16 @@ android {
 
     sourceSets.main.jniLibs.srcDirs = ['./jni/']
 
-    sourceSets.main {
+    /*sourceSets.main {
         jniLibs.srcDir 'libs'
         jni.srcDirs = []
-    }
+    }*/
 
-    /*externalNativeBuild {
+    externalNativeBuild {
         cmake {
             path 'jni/CMakeLists.txt'
         }
-    }*/
+    }
 
     lint {
         checkReleaseBuilds false
@@ -149,7 +153,8 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
-            buildConfigField 'boolean', 'DEBUG_VERSION', 'true'
+            buildConfigField "boolean", "DEBUG_VERSION", "true"
+            buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
         }
 
         release {
@@ -162,7 +167,8 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
-            crunchPngs false
+            buildConfigField "boolean", "DEBUG_VERSION", "false"
+            buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
         }
     }
 

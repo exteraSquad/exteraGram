@@ -101,6 +101,8 @@ public class DataSettingsActivity extends BaseFragment {
 
     private int rowCount;
 
+    private boolean updateVoipUseLessData;
+
     @Override
     public boolean onFragmentCreate() {
         super.onFragmentCreate();
@@ -352,6 +354,7 @@ public class DataSettingsActivity extends BaseFragment {
                             }
                             if (val != -1) {
                                 preferences.edit().putInt("VoipDataSaving", val).apply();
+                                updateVoipUseLessData = true;
                             }
                             if (listAdapter != null) {
                                 listAdapter.notifyItemChanged(position);
@@ -508,7 +511,8 @@ public class DataSettingsActivity extends BaseFragment {
                                 value = LocaleController.getString("UseLessDataAlways", R.string.UseLessDataAlways);
                                 break;
                         }
-                        textCell.setTextAndValue(LocaleController.getString("VoipUseLessData", R.string.VoipUseLessData), value, true);
+                        textCell.setTextAndValue(LocaleController.getString("VoipUseLessData", R.string.VoipUseLessData), value, updateVoipUseLessData, true);
+                        updateVoipUseLessData = false;
                     } else if (position == dataUsageRow) {
                         textCell.setText(LocaleController.getString("NetworkUsage", R.string.NetworkUsage), storageNumRow != -1);
                     } else if (position == storageNumRow) {

@@ -855,9 +855,15 @@ public class BotWebViewContainer extends FrameLayout implements NotificationCent
         return isBackButtonVisible;
     }
 
-    @SuppressWarnings("deprecation")
     public void evaluateJs(String script) {
-        checkCreateWebView();
+        evaluateJs(script, true);
+    }
+
+    @SuppressWarnings("deprecation")
+    public void evaluateJs(String script, boolean create) {
+        if (create) {
+            checkCreateWebView();
+        }
         if (webView == null) {
             return;
         }
@@ -885,7 +891,7 @@ public class BotWebViewContainer extends FrameLayout implements NotificationCent
     }
 
     private void notifyEvent(String event, JSONObject eventData) {
-        evaluateJs("window.Telegram.WebView.receiveEvent('" + event + "', " + eventData + ");");
+        evaluateJs("window.Telegram.WebView.receiveEvent('" + event + "', " + eventData + ");", false);
     }
 
     public void setWebViewScrollListener(WebViewScrollListener webViewScrollListener) {
@@ -1151,11 +1157,7 @@ public class BotWebViewContainer extends FrameLayout implements NotificationCent
                         }
                     }
                     if (vibrationEffect != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            AndroidUtilities.getVibrator().vibrate(vibrationEffect.getVibrationEffectForOreo());
-                        } else {
-                            AndroidUtilities.getVibrator().vibrate(vibrationEffect.fallbackTimings, -1);
-                        }
+                        vibrationEffect.vibrate();
                     }
                 } catch (Exception e) {
                     FileLog.e(e);

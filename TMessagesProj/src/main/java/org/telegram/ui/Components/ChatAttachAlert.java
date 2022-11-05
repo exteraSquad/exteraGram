@@ -2305,7 +2305,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(56, 56, Gravity.LEFT | Gravity.TOP, 2, 0, 0, 0));
         writeButton.setOnClickListener(v -> {
             if (currentLimit - codepointCount < 0) {
-                AndroidUtilities.shakeView(captionLimitView, 2, 0);
+                AndroidUtilities.shakeView(captionLimitView);
                 Vibrator vibrator = (Vibrator) captionLimitView.getContext().getSystemService(Context.VIBRATOR_SERVICE);
                 if (vibrator != null) {
                     vibrator.vibrate(200);

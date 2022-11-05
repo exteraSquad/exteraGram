@@ -47,6 +47,7 @@ import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessageObject;
+import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
@@ -80,7 +81,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     private ImageView shadowView;
     private ImageView arrowView;
     private RLottieImageView darkThemeView;
-    private RLottieDrawable sunDrawable;
+    private static RLottieDrawable sunDrawable;
     private boolean updateRightDrawable = true;
     private AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable status;
     private AnimatedStatusView animatedStatus;
@@ -136,7 +137,9 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         nameTextView.setTextSize(15);
         nameTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
         nameTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 16, 0, 76, 28));
+        nameTextView.setEllipsizeByGradient(true);
+        nameTextView.setRightDrawableOutside(true);
+        addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 16, 0, 52, 28));
 
         phoneTextView = new TextView(context);
         phoneTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
@@ -144,7 +147,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         phoneTextView.setMaxLines(1);
         phoneTextView.setSingleLine(true);
         phoneTextView.setGravity(Gravity.LEFT);
-        addView(phoneTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 16, 0, 76, 9));
+        addView(phoneTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 16, 0, 52, 9));
 
         arrowView = new ImageView(context);
         arrowView.setScaleType(ImageView.ScaleType.CENTER);
@@ -153,14 +156,18 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         addView(arrowView, LayoutHelper.createFrame(59, 59, Gravity.RIGHT | Gravity.BOTTOM));
         setArrowState(false);
 
-        sunDrawable = new RLottieDrawable(R.raw.sun_outline, "" + R.raw.sun_outline, AndroidUtilities.dp(28), AndroidUtilities.dp(28), true, null);
-        if (Theme.isCurrentThemeDay()) {
-            sunDrawable.setCustomEndFrame(36);
-        } else {
-            sunDrawable.setCustomEndFrame(0);
-            sunDrawable.setCurrentFrame(36);
+        boolean playDrawable;
+        if (playDrawable = sunDrawable == null) {
+            sunDrawable = new RLottieDrawable(R.raw.sun_outline, "" + R.raw.sun_outline, AndroidUtilities.dp(28), AndroidUtilities.dp(28), true, null);
+            sunDrawable.setPlayInDirectionOfCustomEndFrame(true);
+            if (Theme.isCurrentThemeDay()) {
+                sunDrawable.setCustomEndFrame(0);
+                sunDrawable.setCurrentFrame(0);
+            } else {
+                sunDrawable.setCurrentFrame(35);
+                sunDrawable.setCustomEndFrame(36);
+            }
         }
-        sunDrawable.setPlayInDirectionOfCustomEndFrame(true);
         darkThemeView = new RLottieImageView(context) {
             @Override
             public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
@@ -184,8 +191,11 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         sunDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuName), PorterDuff.Mode.MULTIPLY));
         darkThemeView.setScaleType(ImageView.ScaleType.CENTER);
         darkThemeView.setAnimation(sunDrawable);
-        darkThemeView.setBackground(Theme.createSelectorDrawable(darkThemeBackgroundColor = Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17)));
+        darkThemeView.setBackgroundDrawable(Theme.createSelectorDrawable(darkThemeBackgroundColor = Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17)));
         Theme.setRippleDrawableForceSoftware((RippleDrawable) darkThemeView.getBackground());
+        if (!playDrawable && sunDrawable.getCustomEndFrame() != sunDrawable.getCurrentFrame()) {
+            darkThemeView.playAnimation();
+        }
         darkThemeView.setOnClickListener(v -> {
             if (switchingTheme) {
                 return;
@@ -714,8 +724,15 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
             nameTextView.invalidate();
         } else if (id == NotificationCenter.userEmojiStatusUpdated) {
             setUser((TLRPC.User) args[0], accountsShown);
-        } else if (id == NotificationCenter.currentUserPremiumStatusChanged || id == NotificationCenter.updateInterfaces) {
+        } else if (id == NotificationCenter.currentUserPremiumStatusChanged) {
             setUser(UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser(), accountsShown);
+        } else if (id == NotificationCenter.updateInterfaces) {
+            int flags = (int) args[0];
+            if ((flags & MessagesController.UPDATE_MASK_NAME) != 0 || (flags & MessagesController.UPDATE_MASK_AVATAR) != 0 ||
+                (flags & MessagesController.UPDATE_MASK_STATUS) != 0 || (flags & MessagesController.UPDATE_MASK_PHONE) != 0 ||
+                (flags & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
+                setUser(UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser(), accountsShown);
+            }
         }
     }
 

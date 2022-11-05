@@ -1591,6 +1591,7 @@ public class BottomSheet extends Dialog {
         try {
             super.dismiss();
         } catch (Exception e) {
+            //ignore: not attached to window manager
             FileLog.e(e);
         }
     }
