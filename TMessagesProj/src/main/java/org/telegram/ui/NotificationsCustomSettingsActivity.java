@@ -44,6 +44,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.NotificationsController;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
@@ -1027,7 +1028,7 @@ public class NotificationsCustomSettingsActivity extends BaseFragment implements
                                 TLRPC.User user = getMessagesController().getUser(encryptedChat.user_id);
                                 if (user != null) {
                                     names[0] = ContactsController.formatName(user.first_name, user.last_name);
-                                    names[1] = user.username;
+                                    names[1] = UserObject.getPublicUsername(user);
                                 }
                             }
                         } else if (DialogObject.isUserDialog(exception.did)) {
@@ -1036,7 +1037,7 @@ public class NotificationsCustomSettingsActivity extends BaseFragment implements
                                 continue;
                             }
                             names[0] = ContactsController.formatName(user.first_name, user.last_name);
-                            names[1] = user.username;
+                            names[1] = UserObject.getPublicUsername(user);
                             object = user;
                         } else {
                             TLRPC.Chat chat = getMessagesController().getChat(-exception.did);
