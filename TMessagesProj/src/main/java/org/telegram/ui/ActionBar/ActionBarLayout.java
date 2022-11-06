@@ -94,7 +94,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                 return super.drawChild(canvas, child, drawingTime);
             } else {
                 int actionBarHeight = 0;
-                int actionBarY = 0;
                 int childCount = getChildCount();
                 for (int a = 0; a < childCount; a++) {
                     View view = getChildAt(a);
@@ -104,23 +103,20 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                     if (view instanceof ActionBar && view.getVisibility() == VISIBLE) {
                         if (((ActionBar) view).getCastShadows()) {
                             actionBarHeight = view.getMeasuredHeight();
-                            actionBarY = (int) view.getY();
                         }
                         break;
                     }
                 }
                 boolean result = super.drawChild(canvas, child, drawingTime);
-                if (actionBarHeight != 0) canvas.drawLine(0, actionBarHeight + 1, getMeasuredWidth(), actionBarHeight + 1, Theme.dividerPaint);
+                if (actionBarHeight != 0)
+                    canvas.drawLine(0, actionBarHeight + 1, getMeasuredWidth(), actionBarHeight + 1, Theme.dividerPaint);
                 return result;
             }
         }
 
         @Override
         public boolean hasOverlappingRendering() {
-            if (Build.VERSION.SDK_INT >= 28) {
-                return true;
-            }
-            return false;
+            return Build.VERSION.SDK_INT >= 28;
         }
 
         @Override
@@ -449,6 +445,11 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
 
     @Override
     public void drawHeaderShadow(Canvas canvas, int y) {
+        drawHeaderShadow(canvas, 255, y);
+    }
+
+    @Override
+    public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
         canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
     }
 
@@ -635,11 +636,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
             }
             canvas.restore();
         }
-    }
-
-    @Override
-    public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
-        //
     }
 
     private void drawPreviewDrawables(Canvas canvas, ViewGroup containerView) {

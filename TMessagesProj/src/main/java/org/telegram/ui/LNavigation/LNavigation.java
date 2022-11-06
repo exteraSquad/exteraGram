@@ -146,16 +146,6 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
     private float startScroll;
 
     /**
-     * Header shadow drawable
-     */
-    private Drawable headerShadowDrawable;
-
-    /**
-     * Front view shadow drawable
-     */
-    private Drawable layerShadowDrawable;
-
-    /**
      * Gesture detector for scroll
      */
     private GestureDetectorCompat gestureDetector;
@@ -293,9 +283,6 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
         overlayLayout = new FrameLayout(context);
         addView(overlayLayout);
 
-        headerShadowDrawable = getResources().getDrawable(R.drawable.header_shadow).mutate();
-        layerShadowDrawable = getResources().getDrawable(R.drawable.layer_shadow).mutate();
-
         dimmPaint.setColor(0x7a000000);
         setWillNotDraw(false);
 
@@ -387,9 +374,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
         gestureDetector.setIsLongpressEnabled(false);
 
         stiffnessControl = new LinearLayout(context);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            stiffnessControl.setElevation(AndroidUtilities.dp(12));
-        }
+        stiffnessControl.setElevation(AndroidUtilities.dp(12));
         stiffnessControl.setOrientation(LinearLayout.VERTICAL);
         stiffnessControl.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 
@@ -879,7 +864,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
         invalidate();
 
         try {
-            if (bgView != null && fgView != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (bgView != null && fgView != null) {
                 getParentActivity().getWindow().setNavigationBarColor(ColorUtils.blendARGB(fgView.fragment.getNavigationBarColor(), bgView.fragment.getNavigationBarColor(), swipeProgress));
             }
         } catch (Exception ignore) {}
@@ -1209,10 +1194,6 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
             int widthNoPaddings = getWidth() - getPaddingLeft() - getPaddingRight();
             dimmPaint.setAlpha((int) (0x7a * (1f - swipeProgress)));
             canvas.drawRect(getPaddingLeft(), getPaddingTop(), widthNoPaddings * swipeProgress + getPaddingLeft(), getHeight() - getPaddingBottom(), dimmPaint);
-
-            layerShadowDrawable.setAlpha((int) (0xFF * (1f - swipeProgress)));
-            layerShadowDrawable.setBounds((int) (widthNoPaddings * swipeProgress - layerShadowDrawable.getIntrinsicWidth()) + getPaddingLeft(), getPaddingTop(), (int) (widthNoPaddings * swipeProgress) + getPaddingLeft(), getHeight() - getPaddingBottom());
-            layerShadowDrawable.draw(canvas);
         }
         if (useAlphaAnimations) {
             canvas.restore();
@@ -1878,7 +1859,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
                     Rect rect = new Rect();
                     child.getLocalVisibleRect(rect);
                     rect.offset(lp.leftMargin, lp.topMargin);
-                    rect.top += Build.VERSION.SDK_INT >= 21 ? AndroidUtilities.statusBarHeight - 1 : 0;
+                    rect.top += AndroidUtilities.statusBarHeight - 1;
                     foregroundDrawable.setAlpha((int) (v.getAlpha() * 255));
                     foregroundDrawable.setBounds(rect);
                     foregroundDrawable.draw(canvas);
@@ -1901,7 +1882,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
             if (previewMenu == null) {
                 int width = AndroidUtilities.dp(32), height = width / 2;
                 int x = (getMeasuredWidth() - width) / 2;
-                int y = (int) (params.topMargin + containerView.getTranslationY() - AndroidUtilities.dp(12 + (Build.VERSION.SDK_INT < 21 ? 20 : 0)));
+                int y = (int) (params.topMargin + containerView.getTranslationY() - AndroidUtilities.dp(12));
                 Theme.moveUpDrawable.setAlpha((int) (alpha * 0xFF));
                 Theme.moveUpDrawable.setBounds(x, y, x + width, y + height);
                 Theme.moveUpDrawable.draw(canvas);
@@ -1911,17 +1892,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
 
     @Override
     public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
-        if (headerShadowDrawable != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (headerShadowDrawable.getAlpha() != alpha) {
-                    headerShadowDrawable.setAlpha(alpha);
-                }
-            } else {
-                headerShadowDrawable.setAlpha(alpha);
-            }
-            headerShadowDrawable.setBounds(0, y, getMeasuredWidth(), y + headerShadowDrawable.getIntrinsicHeight());
-            headerShadowDrawable.draw(canvas);
-        }
+        canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
     }
 
     @Override
@@ -2152,7 +2123,6 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
                 return super.drawChild(canvas, child, drawingTime);
             } else {
                 int actionBarHeight = 0;
-                int actionBarY = 0;
                 int childCount = getChildCount();
                 for (int i = 0; i < childCount; i++) {
                     View view = getChildAt(i);
@@ -2162,7 +2132,6 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
                     if (view instanceof ActionBar && view.getVisibility() == VISIBLE) {
                         if (((ActionBar) view).getCastShadows()) {
                             actionBarHeight = (int) (view.getMeasuredHeight() * view.getScaleY());
-                            actionBarY = (int) view.getY();
                         }
                         break;
                     }
@@ -2180,10 +2149,8 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
                 if (clipRoundForeground) {
                     canvas.restore();
                 }
-                if (actionBarHeight != 0 && headerShadowDrawable != null) {
-                    headerShadowDrawable.setBounds(0, actionBarY + actionBarHeight, getMeasuredWidth(), actionBarY + actionBarHeight + headerShadowDrawable.getIntrinsicHeight());
-                    headerShadowDrawable.draw(canvas);
-                }
+                if (actionBarHeight != 0)
+                    canvas.drawLine(0, actionBarHeight + 1, getMeasuredWidth(), actionBarHeight + 1, Theme.dividerPaint);
                 return result;
             }
         }

@@ -3554,11 +3554,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 return;
             }
             openAvatar();
-            return;
         });
 
         avatarImage.setOnLongClickListener(v -> {
-            if (avatarBig != null) {
+            if (avatarBig != null || isTopic) {
                 return false;
             }
             if (!AndroidUtilities.isTablet() && !isInLandscapeMode && avatarImage.getImageReceiver().hasNotThumb() && !AndroidUtilities.isAccessibilityScreenReaderEnabled()) {

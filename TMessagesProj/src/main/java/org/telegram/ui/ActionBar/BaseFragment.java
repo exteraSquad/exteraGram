@@ -767,7 +767,7 @@ public abstract class BaseFragment {
     }
 
     public int getNavigationBarColor() {
-        return Theme.getColor(Theme.key_windowBackgroundGray);
+        return ExteraConfig.transparentNavBar ? Theme.getColor(Theme.key_chat_messagePanelBackground) : Theme.getColor(Theme.key_windowBackgroundGray);
     }
 
     public void setNavigationBarColor(int color) {
