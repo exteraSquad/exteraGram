@@ -64,7 +64,7 @@ public class ExteraUtils {
             return String.format("DC%d, %s", DC, getDCName(DC));
         }
     }
-    
+
     public static String getDCName(int dc) {
         switch (dc) {
             case 1:
@@ -101,52 +101,52 @@ public class ExteraUtils {
     public static int[] getDrawerIconPack() {
         switch (ExteraConfig.eventType) {
             case 2:
-                return new int[] {
-                    R.drawable.msg_groups_ny,
-                    R.drawable.msg_secret_ny,
-                    R.drawable.msg_channel_ny,
-                    R.drawable.msg_contacts_ny,
-                    R.drawable.msg_calls_ny,
-                    R.drawable.msg_saved_ny,
-                    R.drawable.msg_invite_ny,
-                    R.drawable.msg_help_ny,
-                    R.drawable.msg_nearby_ny
+                return new int[]{
+                        R.drawable.msg_groups_ny,
+                        R.drawable.msg_secret_ny,
+                        R.drawable.msg_channel_ny,
+                        R.drawable.msg_contacts_ny,
+                        R.drawable.msg_calls_ny,
+                        R.drawable.msg_saved_ny,
+                        R.drawable.msg_invite_ny,
+                        R.drawable.msg_help_ny,
+                        R.drawable.msg_nearby_ny
                 };
             case 3:
-                return new int[] {
-                    R.drawable.msg_groups_14,
-                    R.drawable.msg_secret_14,
-                    R.drawable.msg_channel_14,
-                    R.drawable.msg_contacts_14,
-                    R.drawable.msg_calls_14,
-                    R.drawable.msg_saved_14,
-                    R.drawable.msg_secret_ny,
-                    R.drawable.msg_help,
-                    R.drawable.msg_secret_14
+                return new int[]{
+                        R.drawable.msg_groups_14,
+                        R.drawable.msg_secret_14,
+                        R.drawable.msg_channel_14,
+                        R.drawable.msg_contacts_14,
+                        R.drawable.msg_calls_14,
+                        R.drawable.msg_saved_14,
+                        R.drawable.msg_secret_ny,
+                        R.drawable.msg_help,
+                        R.drawable.msg_secret_14
                 };
             case 4:
-                return new int[] {
-                    R.drawable.msg_groups_hw,
-                    R.drawable.msg_secret_hw,
-                    R.drawable.msg_channel_hw,
-                    R.drawable.msg_contacts_hw,
-                    R.drawable.msg_calls_hw,
-                    R.drawable.msg_saved_hw,
-                    R.drawable.msg_invite_hw,
-                    R.drawable.msg_help_hw,
-                    R.drawable.msg_secret_hw
+                return new int[]{
+                        R.drawable.msg_groups_hw,
+                        R.drawable.msg_secret_hw,
+                        R.drawable.msg_channel_hw,
+                        R.drawable.msg_contacts_hw,
+                        R.drawable.msg_calls_hw,
+                        R.drawable.msg_saved_hw,
+                        R.drawable.msg_invite_hw,
+                        R.drawable.msg_help_hw,
+                        R.drawable.msg_secret_hw
                 };
             default:
-                return new int[] {
-                    R.drawable.msg_groups,
-                    R.drawable.msg_secret,
-                    R.drawable.msg_channel,
-                    R.drawable.msg_contacts,
-                    R.drawable.msg_calls,
-                    R.drawable.msg_saved,
-                    R.drawable.msg_invite,
-                    R.drawable.msg_help,
-                    R.drawable.msg_nearby
+                return new int[]{
+                        R.drawable.msg_groups,
+                        R.drawable.msg_secret,
+                        R.drawable.msg_channel,
+                        R.drawable.msg_contacts,
+                        R.drawable.msg_calls,
+                        R.drawable.msg_saved,
+                        R.drawable.msg_invite,
+                        R.drawable.msg_help,
+                        R.drawable.msg_nearby
                 };
         }
     }

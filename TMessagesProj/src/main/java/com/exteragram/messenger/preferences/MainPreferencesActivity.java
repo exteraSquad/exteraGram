@@ -137,7 +137,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
                     if (position == categoryHeaderRow) {
                         headerCell.setText(LocaleController.getString("Categories", R.string.Categories));
-                    } else if (position == infoHeaderRow){
+                    } else if (position == infoHeaderRow) {
                         headerCell.setText(LocaleController.getString("Links", R.string.Links));
                     }
                     break;

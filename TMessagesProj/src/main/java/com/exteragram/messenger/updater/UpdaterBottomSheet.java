@@ -110,7 +110,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             size.setTextAndValueAndIcon(LocaleController.getString("UpdateSize", R.string.UpdateSize), args[2], R.drawable.msg_sendfile, true);
             size.setOnClickListener(v -> copyText(size.getTextView().getText() + ": " + size.getValueTextView().getText()));
             linearLayout.addView(size);
-            
+
             TextCell changelog = new TextCell(context);
             changelog.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
             changelog.setTextAndIcon(LocaleController.getString("Changelog", R.string.Changelog), R.drawable.msg_log, false);
@@ -137,7 +137,7 @@ public class UpdaterBottomSheet extends BottomSheet {
                 isTranslated ^= true;
             }, () -> {}));
             linearLayout.addView(changelogTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-    
+
             TextView doneButton = new TextView(context);
             doneButton.setLines(1);
             doneButton.setSingleLine(true);
@@ -153,7 +153,7 @@ public class UpdaterBottomSheet extends BottomSheet {
                 dismiss();
             });
             linearLayout.addView(doneButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 5));
-    
+
             TextView scheduleButton = new TextView(context);
             scheduleButton.setLines(1);
             scheduleButton.setSingleLine(true);
@@ -176,7 +176,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             buildType.setTextAndValueAndIcon(LocaleController.getString("BuildType", R.string.BuildType), btype, R.drawable.msg_customize, true);
             buildType.setOnClickListener(v -> copyText(buildType.getTextView().getText() + ": " + buildType.getValueTextView().getText()));
             linearLayout.addView(buildType);
-    
+
             TextCheckWithIconCell checkOnLaunch = new TextCheckWithIconCell(context);
             checkOnLaunch.setEnabled(true, null);
             checkOnLaunch.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
@@ -186,7 +186,7 @@ public class UpdaterBottomSheet extends BottomSheet {
                 checkOnLaunch.setChecked(!checkOnLaunch.isChecked());
             });
             linearLayout.addView(checkOnLaunch);
-    
+
             TextCell clearUpdates = new TextCell(context) {
                 @Override
                 protected void onDraw(Canvas canvas) {
@@ -205,7 +205,7 @@ public class UpdaterBottomSheet extends BottomSheet {
                 }
             });
             linearLayout.addView(clearUpdates);
-    
+
             TextView checkUpdatesButton = new TextView(context);
             checkUpdatesButton.setLines(1);
             checkUpdatesButton.setSingleLine(true);

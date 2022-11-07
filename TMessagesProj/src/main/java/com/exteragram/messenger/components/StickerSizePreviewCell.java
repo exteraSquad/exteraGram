@@ -41,7 +41,7 @@ public class StickerSizePreviewCell extends LinearLayout {
     private final Drawable shadowDrawable;
     private final INavigationLayout parentLayout;
 
-    public StickerSizePreviewCell (Context context, INavigationLayout layout) {
+    public StickerSizePreviewCell(Context context, INavigationLayout layout) {
         super(context);
 
         parentLayout = layout;

@@ -137,7 +137,8 @@ public class FabShapeCell extends LinearLayout {
         }
     }
 
-    protected void rebuildFragments() {}
+    protected void rebuildFragments() {
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

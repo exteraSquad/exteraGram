@@ -16,7 +16,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.telegram.messenger.time.FastDateFormat;
-import org.telegram.messenger.video.MediaCodecVideoConvertor;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.LaunchActivity;
@@ -118,7 +117,6 @@ public class FileLog {
         try {
             getInstance().dateFormat.format(System.currentTimeMillis());
             String messageStr = "receive message -> " + message.getClass().getSimpleName() + " : " + gson.toJson(message);
-            String res = "null";
             long time = System.currentTimeMillis();
             FileLog.getInstance().logQueue.postRunnable(() -> {
                 try {
@@ -164,10 +162,7 @@ public class FileLog {
 
                 @Override
                 public boolean shouldSkipField(FieldAttributes f) {
-                    if (privateFields.contains(f.getName())) {
-                        return true;
-                    }
-                    return false;
+                    return privateFields.contains(f.getName());
                 }
 
                 @Override
@@ -348,10 +343,6 @@ public class FileLog {
                 System.exit(2);
             }
         }
-    }
-
-    private static boolean needSent(Throwable e) {
-        return !(e instanceof InterruptedException) && !(e instanceof MediaCodecVideoConvertor.ConversionCanceledException) && !(e instanceof IgnoreSentException);
     }
 
     public static void d(final String message) {

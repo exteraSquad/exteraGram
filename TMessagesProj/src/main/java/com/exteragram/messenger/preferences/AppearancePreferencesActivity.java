@@ -247,9 +247,9 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         iconsHeaderRow = newRow();
         eventChooserRow = newRow();
         iconsDividerRow = newRow();
-    
+
         drawerHeaderRow = newRow();
-        
+
         statusRow = getUserConfig().isPremium() ? newRow() : -1;
         newGroupRow = newRow();
         newSecretChatRow = newRow();
@@ -270,7 +270,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         if (position == useSystemFontsRow) {
             ExteraConfig.editor.putBoolean("useSystemFonts", ExteraConfig.useSystemFonts ^= true).apply();
             AndroidUtilities.clearTypefaceCache();
-            if (getListView().getLayoutManager() != null) recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
+            if (getListView().getLayoutManager() != null)
+                recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
             parentLayout.rebuildAllFragmentViews(true, true);
             getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
         } else if (position == useSystemEmojiRow) {
@@ -296,19 +297,22 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         } else if (position == centerTitleRow) {
             ExteraConfig.editor.putBoolean("centerTitle", ExteraConfig.centerTitle ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.centerTitle);
-            if (getListView().getLayoutManager() != null) recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
+            if (getListView().getLayoutManager() != null)
+                recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
             parentLayout.rebuildAllFragmentViews(true, true);
             getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
         } else if (position == newSwitchStyleRow) {
             ExteraConfig.editor.putBoolean("newSwitchStyle", ExteraConfig.newSwitchStyle ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.newSwitchStyle);
-            if (getListView().getLayoutManager() != null) recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
+            if (getListView().getLayoutManager() != null)
+                recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
             parentLayout.rebuildAllFragmentViews(true, true);
             getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
         } else if (position == disableDividersRow) {
             ExteraConfig.editor.putBoolean("disableDividers", ExteraConfig.disableDividers ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableDividers);
-            if (getListView().getLayoutManager() != null) recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
+            if (getListView().getLayoutManager() != null)
+                recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
             parentLayout.rebuildAllFragmentViews(true, true);
             getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
         } else if (position == transparentNavBarRow) {
@@ -369,13 +373,13 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
             builder.setTitle(LocaleController.getString("DrawerIconPack", R.string.DrawerIconPack));
-            builder.setItems(new CharSequence[] {
+            builder.setItems(new CharSequence[]{
                     LocaleController.getString("DependsOnTheDate", R.string.DependsOnTheDate),
                     LocaleController.getString("Default", R.string.Default),
                     LocaleController.getString("NewYear", R.string.NewYear),
                     LocaleController.getString("ValentinesDay", R.string.ValentinesDay),
                     LocaleController.getString("Halloween", R.string.Halloween)
-            }, new int[] {
+            }, new int[]{
                     R.drawable.msg_calendar2,
                     R.drawable.msg_block,
                     R.drawable.msg_settings_ny,
@@ -417,7 +421,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         public int getItemCount() {
             return rowCount;
         }
-
 
         @NonNull
         @Override
@@ -552,7 +555,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             } else if (position == applicationHeaderRow || position == drawerHeaderRow || position == iconsHeaderRow || position == avatarCornersHeaderRow) {
                 return 3;
             } else if (position == useSystemFontsRow || position == useSystemEmojiRow || position == transparentStatusBarRow || position == transparentNavBarRow ||
-                      position == blurForAllThemesRow || position == centerTitleRow || position == newSwitchStyleRow || position == disableDividersRow) {
+                    position == blurForAllThemesRow || position == centerTitleRow || position == newSwitchStyleRow || position == disableDividersRow) {
                 return 5;
             } else if (position == eventChooserRow) {
                 return 7;

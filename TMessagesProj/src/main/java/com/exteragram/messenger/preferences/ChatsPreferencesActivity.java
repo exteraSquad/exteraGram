@@ -60,7 +60,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int stickerShapeHeaderRow;
     private int stickerShapeRow;
     private int stickerShapeDividerRow;
-    
+
     private int stickersHeaderRow;
     private int hideStickerTimeRow;
     private int unlimitedRecentStickersRow;

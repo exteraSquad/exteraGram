@@ -277,10 +277,10 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         @Override
         public int getItemViewType(int position) {
             if (position == generalDividerRow || position == profileDividerRow ||
-                position == premiumDividerRow || position == speedBoostersDividerRow) {
+                    position == premiumDividerRow || position == speedBoostersDividerRow) {
                 return 1;
             } else if (position == generalHeaderRow || position == archiveHeaderRow || position == profileHeaderRow ||
-                       position == premiumHeaderRow || position == speedBoostersHeaderRow) {
+                    position == premiumHeaderRow || position == speedBoostersHeaderRow) {
                 return 3;
             } else if (position == forcePacmanAnimationInfoRow) {
                 return 8;

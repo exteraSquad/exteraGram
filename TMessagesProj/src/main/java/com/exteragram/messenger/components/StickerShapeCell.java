@@ -154,7 +154,8 @@ public class StickerShapeCell extends LinearLayout {
         }
     }
 
-    protected void updateStickerPreview() {}
+    protected void updateStickerPreview() {
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
