@@ -88,7 +88,6 @@ import com.exteragram.messenger.ExteraUtils;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BotWebViewVibrationEffect;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
@@ -410,7 +409,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private int canClearCacheCount;
     private int canReportSpamCount;
     private int canUnarchiveCount;
-    private int forumCount;
     private boolean canDeletePsaSelected;
 
     private int topPadding;
@@ -1662,7 +1660,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 long dialogId = dialogCell.getDialogId();
                 if (actionBar.isActionModeShowed(null)) {
                     TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(dialogId);
-                    if (!allowMoving || dialog == null || !isDialogPinned(dialog) || DialogObject.isFolderDialogId(dialogId)) {
+                    if (!allowMoving || !isDialogPinned(dialog) || DialogObject.isFolderDialogId(dialogId)) {
                         return 0;
                     }
                     movingView = (DialogCell) viewHolder.itemView;
@@ -1706,7 +1704,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             DialogCell dialogCell = (DialogCell) target.itemView;
             long dialogId = dialogCell.getDialogId();
             TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(dialogId);
-            if (dialog == null || !isDialogPinned(dialog) || DialogObject.isFolderDialogId(dialogId)) {
+            if (!isDialogPinned(dialog) || DialogObject.isFolderDialogId(dialogId)) {
                 return false;
             }
             int fromIndex = source.getAdapterPosition();
@@ -2428,7 +2426,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 protected void onDefaultTabMoved() {
                     if (!getMessagesController().premiumLocked) {
                         try {
-                            performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_PRESS, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
+                            }
                         } catch (Exception ignore) {}
                         topBulletin = BulletinFactory.of(DialogsActivity.this).createSimpleBulletin(R.raw.filter_reorder, AndroidUtilities.replaceTags(LocaleController.formatString("LimitReachedReorderFolder", R.string.LimitReachedReorderFolder, LocaleController.getString(R.string.FilterAllChats))), LocaleController.getString("PremiumMore", R.string.PremiumMore), Bulletin.DURATION_PROLONG, () -> {
                             showDialog(new PremiumFeatureBottomSheet(DialogsActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_ADVANCED_CHAT_MANAGEMENT, true));
@@ -3379,9 +3379,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (searchViewPager.dialogsSearchAdapter.isSearchWas() && searchViewPager.dialogsSearchAdapter.isRecentSearchDisplayed()) {
                     builder.setTitle(LocaleController.getString("ClearSearchAlertPartialTitle", R.string.ClearSearchAlertPartialTitle));
                     builder.setMessage(LocaleController.formatPluralString("ClearSearchAlertPartial", searchViewPager.dialogsSearchAdapter.getRecentResultsCount()));
-                    builder.setPositiveButton(LocaleController.getString("Clear", R.string.Clear), (dialogInterface, i) -> {
-                        searchViewPager.dialogsSearchAdapter.clearRecentSearch();
-                    });
+                    builder.setPositiveButton(LocaleController.getString("Clear", R.string.Clear), (dialogInterface, i) -> searchViewPager.dialogsSearchAdapter.clearRecentSearch());
                 } else {
                     builder.setTitle(LocaleController.getString("ClearSearchAlertTitle", R.string.ClearSearchAlertTitle));
                     builder.setMessage(LocaleController.getString("ClearSearchAlert", R.string.ClearSearchAlert));
@@ -4313,33 +4311,31 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             animatorSet.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) speedItem.getIconView().getDrawable();
-                        if (visible) {
-                            drawable.start();
+                    AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) speedItem.getIconView().getDrawable();
+                    if (visible) {
+                        drawable.start();
 
-                            if (SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_LOW) {
-                                TLRPC.TL_help_premiumPromo premiumPromo = MediaDataController.getInstance(currentAccount).getPremiumPromo();
-                                String typeString = PremiumPreviewFragment.featureTypeToServerString(PremiumPreviewFragment.PREMIUM_FEATURE_DOWNLOAD_SPEED);
-                                if (premiumPromo != null) {
-                                    int index = -1;
-                                    for (int i = 0; i < premiumPromo.video_sections.size(); i++) {
-                                        if (premiumPromo.video_sections.get(i).equals(typeString)) {
-                                            index = i;
-                                            break;
-                                        }
-                                    }
-                                    if (index != -1) {
-                                        FileLoader.getInstance(currentAccount).loadFile(premiumPromo.videos.get(index), null, FileLoader.PRIORITY_HIGH, 0);
+                        if (SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_LOW) {
+                            TLRPC.TL_help_premiumPromo premiumPromo = MediaDataController.getInstance(currentAccount).getPremiumPromo();
+                            String typeString = PremiumPreviewFragment.featureTypeToServerString(PremiumPreviewFragment.PREMIUM_FEATURE_DOWNLOAD_SPEED);
+                            if (premiumPromo != null) {
+                                int index = -1;
+                                for (int i = 0; i < premiumPromo.video_sections.size(); i++) {
+                                    if (premiumPromo.video_sections.get(i).equals(typeString)) {
+                                        index = i;
+                                        break;
                                     }
                                 }
+                                if (index != -1) {
+                                    FileLoader.getInstance(currentAccount).loadFile(premiumPromo.videos.get(index), null, FileLoader.PRIORITY_HIGH, 0);
+                                }
                             }
+                        }
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            drawable.reset();
                         } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                drawable.reset();
-                            } else {
-                                drawable.setVisible(false, true);
-                            }
+                            drawable.setVisible(false, true);
                         }
                     }
                 }
@@ -5624,7 +5620,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             }
                         }
                         presentFragment(chatActivity);
-                    };
+                    }
                 }
             }
         }
@@ -6823,7 +6819,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         canMuteCount = 0;
         canPinCount = 0;
         canReadCount = 0;
-        forumCount = 0;
+        int forumCount = 0;
         canClearCacheCount = 0;
         int cantBlockCount = 0;
         canReportSpamCount = 0;

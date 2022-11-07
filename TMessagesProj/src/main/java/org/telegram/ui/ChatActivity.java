@@ -39,7 +39,6 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Shader;
 import android.graphics.Typeface;
@@ -688,7 +687,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private int skeletonColor0;
     private int skeletonColor1;
 
-    private boolean premiumInvoiceBot;
     private boolean showScrollToMessageError;
     private int startLoadFromMessageId;
     private int startLoadFromDate;
@@ -4242,35 +4240,35 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             private float endTrackingX;
             private boolean wasTrackingVibrate;
 
-            private float springMultiplier = 2000f;
+            private final float springMultiplier = 2000f;
 
-            private Paint outlineActionBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            private Paint outlineActionBackgroundDarkenPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            private final Paint outlineActionBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            private final Paint outlineActionBackgroundDarkenPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-            private FloatValueHolder slidingDrawableVisibilityProgress = new FloatValueHolder(0);
-            private SpringAnimation slidingDrawableVisibilitySpring = new SpringAnimation(slidingDrawableVisibilityProgress)
+            private final FloatValueHolder slidingDrawableVisibilityProgress = new FloatValueHolder(0);
+            private final SpringAnimation slidingDrawableVisibilitySpring = new SpringAnimation(slidingDrawableVisibilityProgress)
                     .setMinValue(0f)
                     .setMaxValue(springMultiplier)
                     .setSpring(new SpringForce(0)
                             .setStiffness(SpringForce.STIFFNESS_MEDIUM)
                             .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY))
                     .addUpdateListener((animation, value, velocity) -> invalidate());
-            private FloatValueHolder slidingFillProgress = new FloatValueHolder(0);
-            private SpringAnimation slidingFillProgressSpring = new SpringAnimation(slidingFillProgress)
+            private final FloatValueHolder slidingFillProgress = new FloatValueHolder(0);
+            private final SpringAnimation slidingFillProgressSpring = new SpringAnimation(slidingFillProgress)
                     .setMinValue(0f)
                     .setSpring(new SpringForce(0)
                             .setStiffness(400f)
                             .setDampingRatio(SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY))
                     .addUpdateListener((animation, value, velocity) -> invalidate());
-            private FloatValueHolder slidingOuterRingProgress = new FloatValueHolder(0);
-            private SpringAnimation slidingOuterRingSpring = new SpringAnimation(slidingOuterRingProgress)
+            private final FloatValueHolder slidingOuterRingProgress = new FloatValueHolder(0);
+            private final SpringAnimation slidingOuterRingSpring = new SpringAnimation(slidingOuterRingProgress)
                     .setMinValue(0f)
                     .setSpring(new SpringForce(0)
                             .setStiffness(200f)
                             .setDampingRatio(SpringForce.DAMPING_RATIO_NO_BOUNCY))
                     .addUpdateListener((animation, value, velocity) -> invalidate());
             private boolean slidingBeyondMax;
-            private Path path = new Path();
+            private final Path path = new Path();
 
             private boolean ignoreLayout;
             private boolean invalidated;
@@ -6232,7 +6230,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 checkScrollForLoad(true);
                 if (firstVisibleItem != RecyclerView.NO_POSITION) {
-                    int totalItemCount = chatAdapter.getItemCount();
                     if (firstVisibleItem == 0 && forwardEndReached[0]) {
                         if (dy >= 0) {
                             canShowPagedownButton = false;
@@ -6775,9 +6772,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         restartTopicButton.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
         restartTopicButton.setGravity(Gravity.CENTER);
         restartTopicButton.setText(LocaleController.getString("RestartTopic", R.string.RestartTopic).toUpperCase());
-        if (Build.VERSION.SDK_INT >= 21) {
-            restartTopicButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_chat_addContact) & 0x19ffffff, 3));
-        }
+        restartTopicButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_chat_addContact) & 0x19ffffff, 3));
         topChatPanelView.addView(restartTopicButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.TOP, 0, 0, 0, 1));
         restartTopicButton.setOnClickListener(v -> {
             getMessagesController().getTopicsController().toggleCloseTopic(currentChat.id, forumTopic.id, forumTopic.closed = false);
@@ -14766,7 +14761,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             int loadIndex = did == dialog_id ? 0 : 1;
             int count = (Integer) args[1];
             int fnid = (Integer) args[4];
-            int last_unread_date = (Integer) args[7];
             int load_type = (Integer) args[8];
             boolean isEnd = (Boolean) args[9];
             int loaded_max_id = (Integer) args[12];
@@ -17164,7 +17158,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                     if (chatActivityEnterView != null) {
                         chatActivityEnterView.setBotsCount(botsCount, hasBotsCommands, true);
-                        boolean hasBotWebView = getMessagesController().getUser(info.user_id).bot_menu_webview;
                         chatActivityEnterView.updateBotWebView(true);
                     }
                 }
@@ -24753,7 +24746,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
         }
         int count = chatListView.getChildCount();
-        MessageObject editingMessageObject = chatActivityEnterView != null ? chatActivityEnterView.getEditingMessageObject() : null;
         long linkedChatId = chatInfo != null ? chatInfo.linked_chat_id : 0;
         for (int a = 0; a < count; a++) {
             View view = chatListView.getChildAt(a);
@@ -25054,8 +25046,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private int commentLoadingMessageId;
     private TLRPC.TL_messages_discussionMessage savedDiscussionMessage;
     private TLRPC.messages_Messages savedHistory;
-    private boolean savedNoHistory;
-    private boolean savedNoDiscussion;
 
     private void processLoadedDiscussionMessage(TLRPC.TL_messages_discussionMessage discussionMessage, TLRPC.messages_Messages history, int maxReadId, MessageObject fallbackMessage, TLRPC.TL_messages_getDiscussionMessage req, TLRPC.Chat originalChat, int highlightMsgId, MessageObject originalMessage) {
         final int thisCommentLoadingMessageId = commentLoadingMessageId;
@@ -25177,8 +25167,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         commentLoadingMessageId = 0;
         savedDiscussionMessage = null;
-        savedNoDiscussion = false;
-        savedNoHistory = false;
         savedHistory = null;
 
         if (chatListView != null) {
@@ -25208,7 +25196,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     getMessagesController().putUsers(savedDiscussionMessage.users, false);
                     getMessagesController().putChats(savedDiscussionMessage.chats, false);
                 } else {
-                    savedNoDiscussion = true;
                 }
 
                 ArrayList<TLRPC.Message> msgs = new ArrayList<>();
@@ -25251,13 +25238,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     chatListView.invalidateViews();
                                     return;
                                 }
-                                savedNoHistory = true;
                             }
                             processLoadedDiscussionMessage(savedDiscussionMessage, savedHistory, maxReadId, fallbackMessage, req, chat, highlightMsgId, originalMessage);
                         }));
                     });
                 } else {
-                    savedNoHistory = true;
                     processLoadedDiscussionMessage(savedDiscussionMessage, savedHistory, maxReadId, fallbackMessage, req, chat, highlightMsgId, originalMessage);
                 }
             };
@@ -26426,19 +26411,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(h, MeasureSpec.AT_MOST));
                                     }
 
-                                    Path path = new Path();
+                                    final Path path = new Path();
                                     @Override
                                     protected void dispatchDraw(Canvas canvas) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                            canvas.save();
-                                            path.rewind();
-                                            path.addRoundRect(AndroidUtilities.dp(8), AndroidUtilities.dp(8), getWidth() - AndroidUtilities.dp(8), getHeight() - AndroidUtilities.dp(8), AndroidUtilities.dp(6), AndroidUtilities.dp(6), Path.Direction.CW);
-                                            canvas.clipPath(path);
-                                            super.dispatchDraw(canvas);
-                                            canvas.restore();
-                                        } else {
-                                            super.dispatchDraw(canvas);
-                                        }
+                                        canvas.save();
+                                        path.rewind();
+                                        path.addRoundRect(AndroidUtilities.dp(8), AndroidUtilities.dp(8), getWidth() - AndroidUtilities.dp(8), getHeight() - AndroidUtilities.dp(8), AndroidUtilities.dp(6), AndroidUtilities.dp(6), Path.Direction.CW);
+                                        canvas.clipPath(path);
+                                        super.dispatchDraw(canvas);
+                                        canvas.restore();
                                     }
                                 };
                                 scrimPopupContainerLayout.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
@@ -28868,12 +28849,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             int width = previousFragment.getFragmentView().getWidth();
 
             switchingFromTopicsProgress = isOpen ? 0f : 1f;
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    switchingFromTopicsProgress = (float) animation.getAnimatedValue();
-                    contentView.invalidate();
-                }
+            valueAnimator.addUpdateListener(animation -> {
+                switchingFromTopicsProgress = (float) animation.getAnimatedValue();
+                contentView.invalidate();
             });
 
             switchingFromTopics = true;

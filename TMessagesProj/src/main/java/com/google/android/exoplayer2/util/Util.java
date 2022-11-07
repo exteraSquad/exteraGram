@@ -127,9 +127,9 @@ public final class Util {
 
   private static final String TAG = "Util";
   private static final Pattern XS_DATE_TIME_PATTERN = Pattern.compile(
-      "(\\d\\d\\d\\d)\\-(\\d\\d)\\-(\\d\\d)[Tt]"
-      + "(\\d\\d):(\\d\\d):(\\d\\d)([\\.,](\\d+))?"
-      + "([Zz]|((\\+|\\-)(\\d?\\d):?(\\d\\d)))?");
+      "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)[Tt]"
+      + "(\\d\\d):(\\d\\d):(\\d\\d)([.,](\\d+))?"
+      + "([Zz]|(([+\\-])(\\d?\\d):?(\\d\\d)))?");
   private static final Pattern XS_DURATION_PATTERN =
       Pattern.compile("^(-)?P(([0-9]*)Y)?(([0-9]*)M)?(([0-9]*)D)?"
           + "(T(([0-9]*)H)?(([0-9]*)M)?(([0-9.]*)S)?)?$");
@@ -479,7 +479,7 @@ public final class Util {
    * @return The language tag.
    */
   public static String getLocaleLanguageTag(Locale locale) {
-    return SDK_INT >= 21 ? getLocaleLanguageTagV21(locale) : locale.toString();
+    return getLocaleLanguageTagV21(locale);
   }
 
   /**
@@ -957,7 +957,7 @@ public final class Util {
    *     &gt; right.
    */
   public static int compareLong(long left, long right) {
-    return left < right ? -1 : left == right ? 0 : 1;
+    return Long.compare(left, right);
   }
 
   /**
@@ -1416,14 +1416,11 @@ public final class Util {
       case 8:
         if (Util.SDK_INT >= 23) {
           return AudioFormat.CHANNEL_OUT_7POINT1_SURROUND;
-        } else if (Util.SDK_INT >= 21) {
+        } else {
           // Equal to AudioFormat.CHANNEL_OUT_7POINT1_SURROUND, which is hidden before Android M.
           return AudioFormat.CHANNEL_OUT_5POINT1
               | AudioFormat.CHANNEL_OUT_SIDE_LEFT
               | AudioFormat.CHANNEL_OUT_SIDE_RIGHT;
-        } else {
-          // 8 ch output is not supported before Android L.
-          return AudioFormat.CHANNEL_INVALID;
         }
       default:
         return AudioFormat.CHANNEL_INVALID;
@@ -2006,10 +2003,8 @@ public final class Util {
     Point displaySize = new Point();
     if (Util.SDK_INT >= 23) {
       getDisplaySizeV23(display, displaySize);
-    } else if (Util.SDK_INT >= 17) {
-      getDisplaySizeV17(display, displaySize);
     } else {
-      getDisplaySizeV16(display, displaySize);
+      getDisplaySizeV17(display, displaySize);
     }
     return displaySize;
   }

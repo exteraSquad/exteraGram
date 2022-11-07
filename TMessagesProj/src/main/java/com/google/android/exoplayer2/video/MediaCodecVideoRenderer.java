@@ -885,11 +885,7 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     if (forceRenderOutputBuffer) {
       long releaseTimeNs = System.nanoTime();
       notifyFrameMetadataListener(presentationTimeUs, releaseTimeNs, format, currentMediaFormat);
-      if (Util.SDK_INT >= 21) {
-        renderOutputBufferV21(codec, bufferIndex, presentationTimeUs, releaseTimeNs);
-      } else {
-        renderOutputBuffer(codec, bufferIndex, presentationTimeUs);
-      }
+      renderOutputBufferV21(codec, bufferIndex, presentationTimeUs, releaseTimeNs);
       return true;
     }
 
@@ -925,33 +921,11 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       return true;
     }
 
-    if (Util.SDK_INT >= 21) {
-      // Let the underlying framework time the release.
-      if (earlyUs < 50000) {
-        notifyFrameMetadataListener(
-            presentationTimeUs, adjustedReleaseTimeNs, format, currentMediaFormat);
-        renderOutputBufferV21(codec, bufferIndex, presentationTimeUs, adjustedReleaseTimeNs);
-        return true;
-      }
-    } else {
-      // We need to time the release ourselves.
-      if (earlyUs < 30000) {
-        if (earlyUs > 11000) {
-          // We're a little too early to render the frame. Sleep until the frame can be rendered.
-          // Note: The 11ms threshold was chosen fairly arbitrarily.
-          try {
-            // Subtracting 10000 rather than 11000 ensures the sleep time will be at least 1ms.
-            Thread.sleep((earlyUs - 10000) / 1000);
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return false;
-          }
-        }
-        notifyFrameMetadataListener(
-            presentationTimeUs, adjustedReleaseTimeNs, format, currentMediaFormat);
-        renderOutputBuffer(codec, bufferIndex, presentationTimeUs);
-        return true;
-      }
+    // Let the underlying framework time the release.
+    if (earlyUs < 50000) {
+      notifyFrameMetadataListener(presentationTimeUs, adjustedReleaseTimeNs, format, currentMediaFormat);
+      renderOutputBufferV21(codec, bufferIndex, presentationTimeUs, adjustedReleaseTimeNs);
+      return true;
     }
 
     // We're either not playing, or it's not time to render the frame yet.
@@ -962,19 +936,14 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     currentWidth = width;
     currentHeight = height;
     currentPixelWidthHeightRatio = pendingPixelWidthHeightRatio;
-    if (Util.SDK_INT >= 21) {
       // On API level 21 and above the decoder applies the rotation when rendering to the surface.
       // Hence currentUnappliedRotation should always be 0. For 90 and 270 degree rotations, we need
       // to flip the width, height and pixel aspect ratio to reflect the rotation that was applied.
-      if (pendingRotationDegrees == 90 || pendingRotationDegrees == 270) {
-        int rotatedHeight = currentWidth;
-        currentWidth = currentHeight;
-        currentHeight = rotatedHeight;
-        currentPixelWidthHeightRatio = 1 / currentPixelWidthHeightRatio;
-      }
-    } else {
-      // On API level 20 and below the decoder does not apply the rotation.
-      currentUnappliedRotationDegrees = pendingRotationDegrees;
+    if (pendingRotationDegrees == 90 || pendingRotationDegrees == 270) {
+      int rotatedHeight = currentWidth;
+      currentWidth = currentHeight;
+      currentHeight = rotatedHeight;
+      currentPixelWidthHeightRatio = 1 / currentPixelWidthHeightRatio;
     }
     // Must be applied each time the output MediaFormat changes.
     codec.setVideoScalingMode(scalingMode);
@@ -1463,26 +1432,12 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       if (longEdgePx <= formatLongEdgePx || shortEdgePx <= formatShortEdgePx) {
         // Don't return a size not larger than the format for which the codec is being configured.
         return null;
-      } else if (Util.SDK_INT >= 21) {
+      } else {
         Point alignedSize = codecInfo.alignVideoSizeV21(isVerticalVideo ? shortEdgePx : longEdgePx,
-            isVerticalVideo ? longEdgePx : shortEdgePx);
+                isVerticalVideo ? longEdgePx : shortEdgePx);
         float frameRate = format.frameRate;
         if (codecInfo.isVideoSizeAndRateSupportedV21(alignedSize.x, alignedSize.y, frameRate)) {
           return alignedSize;
-        }
-      } else {
-        try {
-          // Conservatively assume the codec requires 16px width and height alignment.
-          longEdgePx = Util.ceilDivide(longEdgePx, 16) * 16;
-          shortEdgePx = Util.ceilDivide(shortEdgePx, 16) * 16;
-          if (longEdgePx * shortEdgePx <= MediaCodecUtil.maxH264DecodableFrameSize()) {
-            return new Point(
-                isVerticalVideo ? shortEdgePx : longEdgePx,
-                isVerticalVideo ? longEdgePx : shortEdgePx);
-          }
-        } catch (DecoderQueryException e) {
-          // We tried our best. Give up!
-          return null;
         }
       }
     }

@@ -157,11 +157,8 @@ public final class Requirements implements Parcelable {
   }
 
   private boolean isDeviceIdle(Context context) {
-    PowerManager powerManager =
-        (PowerManager) Assertions.checkNotNull(context.getSystemService(Context.POWER_SERVICE));
-    return Util.SDK_INT >= 23
-        ? powerManager.isDeviceIdleMode()
-        : Util.SDK_INT >= 20 ? !powerManager.isInteractive() : !powerManager.isScreenOn();
+    PowerManager powerManager = (PowerManager) Assertions.checkNotNull(context.getSystemService(Context.POWER_SERVICE));
+    return Util.SDK_INT >= 23 ? powerManager.isDeviceIdleMode() : !powerManager.isInteractive();
   }
 
   private static boolean isInternetConnectivityValidated(ConnectivityManager connectivityManager) {

@@ -1600,15 +1600,11 @@ public class Bulletin {
                 params.dimAmount = 0;
                 params.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
                 params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    params.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-                }
+                params.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
                 params.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-                if (Build.VERSION.SDK_INT >= 21) {
-                    params.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
-                            WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
-                            WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-                }
+                params.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+                        WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                        WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
                 params.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
                 params.height = ViewGroup.LayoutParams.MATCH_PARENT;
                 if (Build.VERSION.SDK_INT >= 28) {

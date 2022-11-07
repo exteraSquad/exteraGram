@@ -15,14 +15,16 @@
  */
 package com.google.android.exoplayer2.text;
 
-import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.accessibility.CaptioningManager;
 import android.view.accessibility.CaptioningManager.CaptionStyle;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -126,13 +128,7 @@ public final class CaptionStyleCompat {
    */
   public static CaptionStyleCompat createFromCaptionStyle(
       CaptioningManager.CaptionStyle captionStyle) {
-    if (Util.SDK_INT >= 21) {
       return createFromCaptionStyleV21(captionStyle);
-    } else {
-      // Note - Any caller must be on at least API level 19 or greater (because CaptionStyle did
-      // not exist in earlier API levels).
-      return createFromCaptionStyleV19(captionStyle);
-    }
   }
 
   /**

@@ -250,22 +250,9 @@ public final class MediaCodecInfo {
       if (format.width <= 0 || format.height <= 0) {
         return true;
       }
-      if (Util.SDK_INT >= 21) {
-        return isVideoSizeAndRateSupportedV21(format.width, format.height, format.frameRate);
-      } else {
-        boolean isFormatSupported =
-            format.width * format.height <= MediaCodecUtil.maxH264DecodableFrameSize();
-        if (!isFormatSupported) {
-          logNoSupport("legacyFrameSize, " + format.width + "x" + format.height);
-        }
-        return isFormatSupported;
-      }
+      return isVideoSizeAndRateSupportedV21(format.width, format.height, format.frameRate);
     } else { // Audio
-      return Util.SDK_INT < 21
-          || ((format.sampleRate == Format.NO_VALUE
-                  || isAudioSampleRateSupportedV21(format.sampleRate))
-              && (format.channelCount == Format.NO_VALUE
-                  || isAudioChannelCountSupportedV21(format.channelCount)));
+      return (format.sampleRate == Format.NO_VALUE || isAudioSampleRateSupportedV21(format.sampleRate)) && (format.channelCount == Format.NO_VALUE || isAudioChannelCountSupportedV21(format.channelCount));
     }
   }
 
@@ -537,7 +524,7 @@ public final class MediaCodecInfo {
   }
 
   private static boolean isAdaptive(CodecCapabilities capabilities) {
-    return Util.SDK_INT >= 19 && isAdaptiveV19(capabilities);
+    return isAdaptiveV19(capabilities);
   }
 
   private static boolean isAdaptiveV19(CodecCapabilities capabilities) {
@@ -545,7 +532,7 @@ public final class MediaCodecInfo {
   }
 
   private static boolean isTunneling(CodecCapabilities capabilities) {
-    return Util.SDK_INT >= 21 && isTunnelingV21(capabilities);
+    return isTunnelingV21(capabilities);
   }
 
   private static boolean isTunnelingV21(CodecCapabilities capabilities) {
@@ -553,7 +540,7 @@ public final class MediaCodecInfo {
   }
 
   private static boolean isSecure(CodecCapabilities capabilities) {
-    return Util.SDK_INT >= 21 && isSecureV21(capabilities);
+    return isSecureV21(capabilities);
   }
 
   private static boolean isSecureV21(CodecCapabilities capabilities) {

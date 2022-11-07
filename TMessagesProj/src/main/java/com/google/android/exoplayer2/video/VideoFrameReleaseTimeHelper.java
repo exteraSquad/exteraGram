@@ -78,7 +78,7 @@ public final class VideoFrameReleaseTimeHelper {
       windowManager = null;
     }
     if (windowManager != null) {
-      displayListener = Util.SDK_INT >= 17 ? maybeBuildDefaultDisplayListenerV17(context) : null;
+      displayListener = maybeBuildDefaultDisplayListenerV17(context);
       vsyncSampler = VSyncSampler.getInstance();
     } else {
       displayListener = null;

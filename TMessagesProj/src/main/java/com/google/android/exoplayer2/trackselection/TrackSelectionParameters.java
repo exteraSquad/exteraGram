@@ -99,11 +99,8 @@ public class TrackSelectionParameters implements Parcelable {
      * @param context A {@link Context}.
      * @return This builder.
      */
-    public Builder setPreferredTextLanguageAndRoleFlagsToCaptioningManagerSettings(
-        Context context) {
-      if (Util.SDK_INT >= 19) {
-        setPreferredTextLanguageAndRoleFlagsToCaptioningManagerSettingsV19(context);
-      }
+    public Builder setPreferredTextLanguageAndRoleFlagsToCaptioningManagerSettings(Context context) {
+      setPreferredTextLanguageAndRoleFlagsToCaptioningManagerSettingsV19(context);
       return this;
     }
 

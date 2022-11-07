@@ -16,14 +16,15 @@
 package com.google.android.exoplayer2.audio;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.ConditionVariable;
 import android.os.SystemClock;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -32,6 +33,7 @@ import com.google.android.exoplayer2.extractor.MpegAudioHeader;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -391,7 +393,7 @@ public final class DefaultAudioSink implements AudioSink {
       // output from platform API version 21 only. Other integer PCM encodings are resampled by this
       // sink to 16-bit PCM. We assume that the audio framework will downsample any number of
       // channels to the output device's required number of channels.
-      return encoding != C.ENCODING_PCM_FLOAT || Util.SDK_INT >= 21;
+      return true;
     } else {
       return audioCapabilities != null
           && audioCapabilities.supportsEncoding(encoding)
@@ -420,14 +422,6 @@ public final class DefaultAudioSink implements AudioSink {
       int trimStartFrames,
       int trimEndFrames)
       throws ConfigurationException {
-    if (Util.SDK_INT < 21 && inputChannelCount == 8 && outputChannels == null) {
-      // AudioTrack doesn't support 8 channel output before Android L. Discard the last two (side)
-      // channels to give a 6 channel stream that is supported.
-      outputChannels = new int[6];
-      for (int i = 0; i < outputChannels.length; i++) {
-        outputChannels[i] = i;
-      }
-    }
 
     boolean isInputPcm = Util.isEncodingLinearPcm(inputEncoding);
     boolean processingEnabled = isInputPcm;
@@ -526,19 +520,6 @@ public final class DefaultAudioSink implements AudioSink {
         Assertions.checkNotNull(configuration)
             .buildAudioTrack(tunneling, audioAttributes, audioSessionId);
     int audioSessionId = audioTrack.getAudioSessionId();
-    if (enablePreV21AudioSessionWorkaround) {
-      if (Util.SDK_INT < 21) {
-        // The workaround creates an audio track with a two byte buffer on the same session, and
-        // does not release it until this object is released, which keeps the session active.
-        if (keepSessionIdAudioTrack != null
-            && audioSessionId != keepSessionIdAudioTrack.getAudioSessionId()) {
-          releaseKeepSessionIdAudioTrack();
-        }
-        if (keepSessionIdAudioTrack == null) {
-          keepSessionIdAudioTrack = initializeKeepSessionIdAudioTrack(audioSessionId);
-        }
-      }
-    }
     if (this.audioSessionId != audioSessionId) {
       this.audioSessionId = audioSessionId;
       if (listener != null) {
@@ -739,31 +720,10 @@ public final class DefaultAudioSink implements AudioSink {
       Assertions.checkArgument(outputBuffer == buffer);
     } else {
       outputBuffer = buffer;
-      if (Util.SDK_INT < 21) {
-        int bytesRemaining = buffer.remaining();
-        if (preV21OutputBuffer == null || preV21OutputBuffer.length < bytesRemaining) {
-          preV21OutputBuffer = new byte[bytesRemaining];
-        }
-        int originalPosition = buffer.position();
-        buffer.get(preV21OutputBuffer, 0, bytesRemaining);
-        buffer.position(originalPosition);
-        preV21OutputBufferOffset = 0;
-      }
     }
     int bytesRemaining = buffer.remaining();
-    int bytesWritten = 0;
-    if (Util.SDK_INT < 21) { // isInputPcm == true
-      // Work out how many bytes we can write without the risk of blocking.
-      int bytesToWrite = audioTrackPositionTracker.getAvailableBufferSize(writtenPcmBytes);
-      if (bytesToWrite > 0) {
-        bytesToWrite = Math.min(bytesRemaining, bytesToWrite);
-        bytesWritten = audioTrack.write(preV21OutputBuffer, preV21OutputBufferOffset, bytesToWrite);
-        if (bytesWritten > 0) {
-          preV21OutputBufferOffset += bytesWritten;
-          buffer.position(buffer.position() + bytesWritten);
-        }
-      }
-    } else if (tunneling) {
+    int bytesWritten;
+    if (tunneling) {
       Assertions.checkState(avSyncPresentationTimeUs != C.TIME_UNSET);
       bytesWritten = writeNonBlockingWithAvSyncV21(audioTrack, buffer, bytesRemaining,
           avSyncPresentationTimeUs);
@@ -909,7 +869,7 @@ public final class DefaultAudioSink implements AudioSink {
 
   @Override
   public void enableTunnelingV21(int tunnelingAudioSessionId) {
-    Assertions.checkState(Util.SDK_INT >= 21);
+    Assertions.checkState(true);
     if (!tunneling || audioSessionId != tunnelingAudioSessionId) {
       tunneling = true;
       audioSessionId = tunnelingAudioSessionId;
@@ -937,10 +897,8 @@ public final class DefaultAudioSink implements AudioSink {
   private void setVolumeInternal() {
     if (!isInitialized()) {
       // Do nothing.
-    } else if (Util.SDK_INT >= 21) {
-      setVolumeInternalV21(audioTrack, volume);
     } else {
-      setVolumeInternalV3(audioTrack, volume);
+      setVolumeInternalV21(audioTrack, volume);
     }
   }
 
@@ -1387,32 +1345,7 @@ public final class DefaultAudioSink implements AudioSink {
         boolean tunneling, AudioAttributes audioAttributes, int audioSessionId)
         throws InitializationException {
       AudioTrack audioTrack;
-      if (Util.SDK_INT >= 21) {
-        audioTrack = createAudioTrackV21(tunneling, audioAttributes, audioSessionId);
-      } else {
-        int streamType = Util.getStreamTypeForAudioUsage(audioAttributes.usage);
-        if (audioSessionId == C.AUDIO_SESSION_ID_UNSET) {
-          audioTrack =
-              new AudioTrack(
-                  streamType,
-                  outputSampleRate,
-                  outputChannelConfig,
-                  outputEncoding,
-                  bufferSize,
-                  MODE_STREAM);
-        } else {
-          // Re-attach to the same audio session.
-          audioTrack =
-              new AudioTrack(
-                  streamType,
-                  outputSampleRate,
-                  outputChannelConfig,
-                  outputEncoding,
-                  bufferSize,
-                  MODE_STREAM,
-                  audioSessionId);
-        }
-      }
+      audioTrack = createAudioTrackV21(tunneling, audioAttributes, audioSessionId);
 
       int state = audioTrack.getState();
       if (state != STATE_INITIALIZED) {

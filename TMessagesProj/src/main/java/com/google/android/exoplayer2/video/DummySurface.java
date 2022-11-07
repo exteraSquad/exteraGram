@@ -19,7 +19,6 @@ import static com.google.android.exoplayer2.util.EGLSurfaceTexture.SECURE_MODE_N
 import static com.google.android.exoplayer2.util.EGLSurfaceTexture.SECURE_MODE_PROTECTED_PBUFFER;
 import static com.google.android.exoplayer2.util.EGLSurfaceTexture.SECURE_MODE_SURFACELESS_CONTEXT;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.os.Handler;
@@ -27,13 +26,16 @@ import android.os.Handler.Callback;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.view.Surface;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.EGLSurfaceTexture;
 import com.google.android.exoplayer2.util.EGLSurfaceTexture.SecureMode;
 import com.google.android.exoplayer2.util.GlUtil;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /** A dummy {@link Surface}. */
@@ -79,7 +81,6 @@ public final class DummySurface extends Surface {
    *     {@link #isSecureSupported(Context)} returns {@code false}.
    */
   public static DummySurface newInstanceV17(Context context, boolean secure) {
-    assertApiLevel17OrHigher();
     Assertions.checkState(!secure || isSecureSupported(context));
     DummySurfaceThread thread = new DummySurfaceThread();
     return thread.init(secure ? secureMode : SECURE_MODE_NONE);
@@ -103,12 +104,6 @@ public final class DummySurface extends Surface {
         thread.release();
         threadReleased = true;
       }
-    }
-  }
-
-  private static void assertApiLevel17OrHigher() {
-    if (Util.SDK_INT < 17) {
-      throw new UnsupportedOperationException("Unsupported prior to API level 17");
     }
   }
 

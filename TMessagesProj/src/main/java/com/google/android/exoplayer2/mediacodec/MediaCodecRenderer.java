@@ -115,7 +115,7 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
           format.sampleMimeType,
           secureDecoderRequired,
           mediaCodecInfo,
-          Util.SDK_INT >= 21 ? getDiagnosticInfoV21(cause) : null,
+          getDiagnosticInfoV21(cause),
           /* fallbackDecoderInitializationException= */ null);
     }
 
@@ -175,7 +175,7 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
     public DecoderException(Throwable cause, @Nullable MediaCodecInfo codecInfo) {
       super("Decoder failed: " + (codecInfo == null ? null : codecInfo.name), cause);
       this.codecInfo = codecInfo;
-      diagnosticInfo = Util.SDK_INT >= 21 ? getDiagnosticInfoV21(cause) : null;
+      diagnosticInfo = getDiagnosticInfoV21(cause);
     }
 
     private static String getDiagnosticInfoV21(Throwable cause) {
@@ -655,7 +655,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
     codecHasOutputMediaFormat = false;
     resetInputBuffer();
     resetOutputBuffer();
-    resetCodecBuffers();
     waitingForKeys = false;
     codecHotswapDeadlineMs = C.TIME_UNSET;
     decodeOnlyPresentationTimestamps.clear();
@@ -929,10 +928,8 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
       codec.start();
       TraceUtil.endSection();
       codecInitializedTimestamp = SystemClock.elapsedRealtime();
-      getCodecBuffers(codec);
     } catch (Exception e) {
       if (codec != null) {
-        resetCodecBuffers();
         codec.release();
       }
       throw e;
@@ -984,34 +981,12 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
         || SystemClock.elapsedRealtime() - drainStartTimeMs < renderTimeLimitMs;
   }
 
-  private void getCodecBuffers(MediaCodec codec) {
-    if (Util.SDK_INT < 21) {
-      inputBuffers = codec.getInputBuffers();
-      outputBuffers = codec.getOutputBuffers();
-    }
-  }
-
-  private void resetCodecBuffers() {
-    if (Util.SDK_INT < 21) {
-      inputBuffers = null;
-      outputBuffers = null;
-    }
-  }
-
   private ByteBuffer getInputBuffer(int inputIndex) {
-    if (Util.SDK_INT >= 21) {
-      return codec.getInputBuffer(inputIndex);
-    } else {
-      return inputBuffers[inputIndex];
-    }
+    return codec.getInputBuffer(inputIndex);
   }
 
   private ByteBuffer getOutputBuffer(int outputIndex) {
-    if (Util.SDK_INT >= 21) {
-      return codec.getOutputBuffer(outputIndex);
-    } else {
-      return outputBuffers[outputIndex];
-    }
+    return codec.getOutputBuffer(outputIndex);
   }
 
   private boolean hasOutputBuffer() {
@@ -1523,7 +1498,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
           processOutputFormat();
           return true;
         } else if (outputIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED /* (-3) */) {
-          processOutputBuffersChanged();
           return true;
         }
         /* MediaCodec.INFO_TRY_AGAIN_LATER (-1) or unknown negative return value */
@@ -1627,15 +1601,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
       mediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
     }
     onOutputFormatChanged(codec, mediaFormat);
-  }
-
-  /**
-   * Processes a change in the output buffers.
-   */
-  private void processOutputBuffersChanged() {
-    if (Util.SDK_INT < 21) {
-      outputBuffers = codec.getOutputBuffers();
-    }
   }
 
   /**
@@ -1829,7 +1794,7 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
   }
 
   private static boolean isMediaCodecException(IllegalStateException error) {
-    if (Util.SDK_INT >= 21 && isMediaCodecExceptionV21(error)) {
+    if (isMediaCodecExceptionV21(error)) {
       return true;
     }
     StackTraceElement[] stackTrace = error.getStackTrace();
@@ -1852,11 +1817,7 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
    * @return True if the decoder is known to fail when flushed.
    */
   private static boolean codecNeedsFlushWorkaround(String name) {
-    return Util.SDK_INT < 18
-        || (Util.SDK_INT == 18
-        && ("OMX.SEC.avc.dec".equals(name) || "OMX.SEC.avc.dec.secure".equals(name)))
-        || (Util.SDK_INT == 19 && Util.MODEL.startsWith("SM-G800")
-        && ("OMX.Exynos.avc.dec".equals(name) || "OMX.Exynos.avc.dec.secure".equals(name)));
+    return false;
   }
 
   /**
@@ -1914,8 +1875,7 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
    * @return True if the decoder is known to fail if NAL units are queued before CSD.
    */
   private static boolean codecNeedsDiscardToSpsWorkaround(String name, Format format) {
-    return Util.SDK_INT < 21 && format.initializationData.isEmpty()
-        && "OMX.MTK.VIDEO.DECODER.AVC".equals(name);
+    return false;
   }
 
   /**
@@ -1933,7 +1893,6 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
   private static boolean codecNeedsEosPropagationWorkaround(MediaCodecInfo codecInfo) {
     String name = codecInfo.name;
     return (Util.SDK_INT <= 25 && "OMX.rk.video_decoder.avc".equals(name))
-        || (Util.SDK_INT <= 17 && "OMX.allwinner.video.decoder.avc".equals(name))
         || ("Amazon".equals(Util.MANUFACTURER) && "AFTS".equals(Util.MODEL) && codecInfo.secure);
   }
 
@@ -1951,11 +1910,7 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
    *     buffer with {@link MediaCodec#BUFFER_FLAG_END_OF_STREAM} set. False otherwise.
    */
   private static boolean codecNeedsEosFlushWorkaround(String name) {
-    return (Util.SDK_INT <= 23 && "OMX.google.vorbis.decoder".equals(name))
-        || (Util.SDK_INT <= 19
-            && ("hb2000".equals(Util.DEVICE) || "stvm8".equals(Util.DEVICE))
-            && ("OMX.amlogic.avc.decoder.awesome".equals(name)
-                || "OMX.amlogic.avc.decoder.awesome.secure".equals(name)));
+    return Util.SDK_INT <= 23 && "OMX.google.vorbis.decoder".equals(name);
   }
 
   /**
@@ -1988,8 +1943,7 @@ public abstract class MediaCodecRenderer extends BaseRenderer {
    *     channel. False otherwise.
    */
   private static boolean codecNeedsMonoChannelCountWorkaround(String name, Format format) {
-    return Util.SDK_INT <= 18 && format.channelCount == 1
-        && "OMX.MTK.AUDIO.DECODER.MP3".equals(name);
+    return false;
   }
 
   /**

@@ -235,7 +235,7 @@ public abstract class SimpleDecoderAudioRenderer extends BaseRenderer implements
       return RendererCapabilities.create(formatSupport);
     }
     @TunnelingSupport
-    int tunnelingSupport = Util.SDK_INT >= 21 ? TUNNELING_SUPPORTED : TUNNELING_NOT_SUPPORTED;
+    int tunnelingSupport = TUNNELING_SUPPORTED;
     return RendererCapabilities.create(formatSupport, ADAPTIVE_NOT_SEAMLESS, tunnelingSupport);
   }
 

@@ -14,7 +14,6 @@ package com.exteragram.messenger.preferences;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -269,6 +268,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     protected void onItemClick(View view, int position, float x, float y) {
         if (position == useSystemFontsRow) {
             ExteraConfig.editor.putBoolean("useSystemFonts", ExteraConfig.useSystemFonts ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.useSystemFonts);
             AndroidUtilities.clearTypefaceCache();
             if (getListView().getLayoutManager() != null)
                 recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();

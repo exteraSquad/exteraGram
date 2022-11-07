@@ -11,7 +11,6 @@ package org.telegram.ui.ActionBar;
 import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -41,7 +40,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -70,6 +68,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
+
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.monet.MonetAccent;
+import com.exteragram.messenger.monet.MonetHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -120,7 +122,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -134,10 +135,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.monet.MonetAccent;
-import com.exteragram.messenger.monet.MonetHelper;
 
 public class Theme {
 
@@ -330,7 +327,7 @@ public class Theme {
             if (gradientColor3 == null) {
                 gradientColor3 = 0;
             }
-            int num = 0;
+            int num;
             if (themePreview) {
                 num = 2;
             } else {
@@ -344,7 +341,7 @@ public class Theme {
                 currentGradientColor3 = colors[3];
             }
             if (isCrossfadeBackground && gradientColor2 != 0 && animatedGradient) {
-                if (backgroundHeight != currentBackgroundHeight || crosfadeFromBitmapShader == null || currentColor != color || currentGradientColor1 != gradientColor1 || currentGradientColor2 != gradientColor2 || currentGradientColor3 != gradientColor3 || currentAnimateGradient != animatedGradient) {
+                if (backgroundHeight != currentBackgroundHeight || crosfadeFromBitmapShader == null || currentColor != color || currentGradientColor1 != gradientColor1 || currentGradientColor2 != gradientColor2 || currentGradientColor3 != gradientColor3 || !currentAnimateGradient) {
                     if (crosfadeFromBitmap == null) {
                         crosfadeFromBitmap = Bitmap.createBitmap(60, 80, Bitmap.Config.ARGB_8888);
                         crosfadeFromBitmapShader = new BitmapShader(crosfadeFromBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
@@ -363,7 +360,7 @@ public class Theme {
                 paint.setShader(gradientShader);
                 paint.setColor(0xffffffff);
                 currentColor = color;
-                currentAnimateGradient = animatedGradient;
+                currentAnimateGradient = true;
                 currentGradientColor1 = gradientColor1;
                 currentGradientColor2 = gradientColor2;
                 currentGradientColor3 = gradientColor3;
@@ -380,13 +377,13 @@ public class Theme {
                     gradientShader = motionBackground[num].getBitmapShader();
                 } else {
                     if (gradientColor2 != 0) {
+                        int[] colors;
                         if (gradientColor3 != 0) {
-                            int[] colors = new int[]{gradientColor3, gradientColor2, gradientColor1, color};
-                            gradientShader = new LinearGradient(0, blurredViewTopOffset, 0, backgroundHeight, colors, null, Shader.TileMode.CLAMP);
+                            colors = new int[]{gradientColor3, gradientColor2, gradientColor1, color};
                         } else {
-                            int[] colors = new int[]{gradientColor2, gradientColor1, color};
-                            gradientShader = new LinearGradient(0, blurredViewTopOffset, 0, backgroundHeight, colors, null, Shader.TileMode.CLAMP);
+                            colors = new int[]{gradientColor2, gradientColor1, color};
                         }
+                        gradientShader = new LinearGradient(0, blurredViewTopOffset, 0, backgroundHeight, colors, null, Shader.TileMode.CLAMP);
                     } else {
                         int[] colors = new int[]{gradientColor1, color};
                         gradientShader = new LinearGradient(0, blurredViewTopOffset, 0, backgroundHeight, colors, null, Shader.TileMode.CLAMP);
@@ -412,11 +409,6 @@ public class Theme {
             currentBackgroundHeight = backgroundHeight;
 
             topY = top - (gradientShader instanceof BitmapShader ? heightOffset : 0);
-            isTopNear = topNear;
-            isBottomNear = bottomNear;
-        }
-
-        public void setTopBottomNear(boolean topNear, boolean bottomNear) {
             isTopNear = topNear;
             isBottomNear = bottomNear;
         }
@@ -1189,10 +1181,8 @@ public class Theme {
                 if (background != null) {
                     Bitmap dst = Bitmap.createBitmap(patternBitmap.getWidth(), patternBitmap.getHeight(), Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(dst);
-                    if (background != null) {
-                        background.setBounds(0, 0, patternBitmap.getWidth(), patternBitmap.getHeight());
-                        background.draw(canvas);
-                    }
+                    background.setBounds(0, 0, patternBitmap.getWidth(), patternBitmap.getHeight());
+                    background.draw(canvas);
 
                     Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
                     paint.setColorFilter(new PorterDuffColorFilter(patternColor, PorterDuff.Mode.SRC_IN));
@@ -1377,8 +1367,6 @@ public class Theme {
                 }
                 if (useBlackText) {
                     isMyMessagesGradientColorsNear = distance1 <= 35000 && distance2 <= 35000;
-                } else {
-                    isMyMessagesGradientColorsNear = false;
                 }
                 myMessagesAccent = getAccentColor(hsvTemp1, color, firstColor);
             }
@@ -1593,7 +1581,7 @@ public class Theme {
                 inBubble = getColor(key_chat_inBubble);
             }
 
-            int gradientAverageColor = outBubble;
+            int gradientAverageColor;
             if (info != null && info.emoticon != null && !isDarkTheme) {
                 currentColors.remove(key_chat_selectedBackground);
                 gradientAverageColor = averageColor(currentColors, key_chat_wallpaper_gradient_to1, key_chat_wallpaper_gradient_to2, key_chat_wallpaper_gradient_to3);
@@ -1650,15 +1638,7 @@ public class Theme {
         }
 
         private float[] tempHSV = new float[3];
-        private int setHue(int color, int hueFromColor) {
-            Color.colorToHSV(hueFromColor, tempHSV);
-            float hue = tempHSV[0];
-            Color.colorToHSV(color, tempHSV);
-            if (tempHSV[1] > 0.02f) {
-                tempHSV[0] = hue;
-            }
-            return Color.HSVToColor(Color.alpha(color), tempHSV);
-        }
+
         private float getHue(int color) {
             Color.colorToHSV(color, tempHSV);
             return tempHSV[0];
@@ -1720,17 +1700,18 @@ public class Theme {
         }
         private int averageColor(HashMap<String, Integer> colors, String ...keys) {
             int r = 0, g = 0, b = 0, c = 0;
-            for (int i = 0; i < keys.length; ++i) {
-                if (!colors.containsKey(keys[i])) {
+            for (String key : keys) {
+                if (!colors.containsKey(key)) {
                     continue;
                 }
                 try {
-                    int color = colors.get(keys[i]);
+                    int color = colors.get(key);
                     r += Color.red(color);
                     g += Color.green(color);
                     b += Color.blue(color);
                     c++;
-                } catch (Exception ignore) {}
+                } catch (Exception ignore) {
+                }
             }
             if (c == 0) {
                 return 0;
@@ -1798,7 +1779,7 @@ public class Theme {
                 }
                 wallpaperLink = "https://attheme.org?slug=" + patternSlug + "&intensity=" + (int) (patternIntensity * 100) + "&bg_color=" + color;
                 if (modes.length() > 0) {
-                    wallpaperLink += "&mode=" + modes.toString();
+                    wallpaperLink += "&mode=" + modes;
                 }
             }
 
@@ -1846,17 +1827,6 @@ public class Theme {
             (int) ((Color.red(B) * aB + Color.red(A) * aA * (1 - aB)) / aC),
             (int) ((Color.green(B) * aB + Color.green(A) * aA * (1 - aB)) / aC),
             (int) ((Color.blue(B) * aB + Color.blue(A) * aA * (1 - aB)) / aC)
-        );
-    }
-
-    public static int reverseBlendOver(float ax, int y, int z) {
-        float ay = Color.alpha(y) / 255f,
-              az = Color.alpha(z) / 255f;
-        return Color.argb(
-            (int) (ax * 255),
-            (int) ((Color.red(y) * ay * (1 - ax) - Color.red(z) * az) / ax),
-            (int) ((Color.green(y) * ay * (1 - ax) - Color.green(z) * az) / ax),
-            (int) ((Color.blue(y) * ay * (1 - ax) - Color.blue(z) * az) / ax)
         );
     }
 
@@ -2351,7 +2321,7 @@ public class Theme {
                 if (object.has("info")) {
                     try {
                         SerializedData serializedData = new SerializedData(Utilities.hexToBytes(object.getString("info")));
-                        themeInfo.info = (TLRPC.TL_theme) TLRPC.Theme.TLdeserialize(serializedData, serializedData.readInt32(true), true);
+                        themeInfo.info = TLRPC.Theme.TLdeserialize(serializedData, serializedData.readInt32(true), true);
                     } catch (Throwable e) {
                         FileLog.e(e);
                     }
@@ -2380,10 +2350,6 @@ public class Theme {
             return themeInfo;
         }
 
-        private void setAccentColorOptions(int[] options) {
-            setAccentColorOptions(options, null, null, null, null, null, null, null, null, null, null);
-        }
-
         private void setAccentColorOptions(int[] accent, int[] myMessages, int[] myMessagesGradient, int[] background, int[] backgroundGradient1, int[] backgroundGradient2, int[] backgroundGradient3, int[] ids, String[] patternSlugs, int[] patternRotations, int[] patternIntensities) {
             defaultAccentCount = accent.length;
             themeAccents = new ArrayList<>();
@@ -2405,7 +2371,6 @@ public class Theme {
                     themeAccent.myMessagesGradientAccentColor1 = myMessagesGradient[a];
                 }
                 if (background != null) {
-                    themeAccent.backgroundOverrideColor = background[a];
                     if (firstAccentIsDefault && themeAccent.id == DEFALT_THEME_ACCENT_ID) {
                         themeAccent.backgroundOverrideColor = 0x100000000L;
                     } else {
@@ -2603,8 +2568,9 @@ public class Theme {
             if (settingsIndex < info.settings.size()) {
                 settings = info.settings.get(settingsIndex);
             }
+            ThemeAccent themeAccent;
             if (ignoreThemeInfoId) {
-                ThemeAccent themeAccent = chatAccentsByThemeId.get(info.id);
+                themeAccent = chatAccentsByThemeId.get(info.id);
                 if (themeAccent != null) {
                     return themeAccent;
                 }
@@ -2614,9 +2580,8 @@ public class Theme {
                 themeAccent.info = info;
                 themeAccent.account = account;
                 chatAccentsByThemeId.put(id, themeAccent);
-                return themeAccent;
             } else {
-                ThemeAccent themeAccent = accentsByThemeId.get(info.id);
+                themeAccent = accentsByThemeId.get(info.id);
                 if (themeAccent != null) {
                     return themeAccent;
                 }
@@ -2629,8 +2594,8 @@ public class Theme {
                 themeAccents.add(0, themeAccent);
                 sortAccents(this);
                 accentsByThemeId.put(info.id, themeAccent);
-                return themeAccent;
             }
+            return themeAccent;
         }
 
         public ThemeAccent getAccent(boolean createNew) {
@@ -2812,12 +2777,10 @@ public class Theme {
 
     public static final int ACTION_BAR_PHOTO_VIEWER_COLOR = 0x7f000000;
     public static final int ACTION_BAR_MEDIA_PICKER_COLOR = 0xff333333;
-    public static final int ACTION_BAR_VIDEO_EDIT_COLOR = 0xff000000;
     public static final int ACTION_BAR_PLAYER_COLOR = 0xffffffff;
     public static final int ACTION_BAR_PICKER_SELECTOR_COLOR = 0xff3d3d3d;
     public static final int ACTION_BAR_WHITE_SELECTOR_COLOR = 0x40ffffff;
     public static final int ACTION_BAR_AUDIO_SELECTOR_COLOR = 0x2f000000;
-    public static final int ARTICLE_VIEWER_MEDIA_PROGRESS_COLOR = 0xffffffff;
 
     public static final int AUTO_NIGHT_TYPE_NONE = 0;
     public static final int AUTO_NIGHT_TYPE_SCHEDULED = 1;
@@ -2850,17 +2813,17 @@ public class Theme {
     };
 
     public static int DEFALT_THEME_ACCENT_ID = 99;
-    public static int selectedAutoNightType = AUTO_NIGHT_TYPE_NONE;
+    public static int selectedAutoNightType;
     public static boolean autoNightScheduleByLocation;
-    public static float autoNightBrighnessThreshold = 0.25f;
-    public static int autoNightDayStartTime = 22 * 60;
-    public static int autoNightDayEndTime = 8 * 60;
-    public static int autoNightSunsetTime = 22 * 60;
-    public static int autoNightLastSunCheckDay = -1;
-    public static int autoNightSunriseTime = 8 * 60;
-    public static String autoNightCityName = "";
-    public static double autoNightLocationLatitude = 10000;
-    public static double autoNightLocationLongitude = 10000;
+    public static float autoNightBrighnessThreshold;
+    public static int autoNightDayStartTime;
+    public static int autoNightDayEndTime;
+    public static int autoNightSunsetTime;
+    public static int autoNightLastSunCheckDay;
+    public static int autoNightSunriseTime;
+    public static String autoNightCityName;
+    public static double autoNightLocationLatitude;
+    public static double autoNightLocationLongitude;
 
     private static Paint maskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -2905,7 +2868,6 @@ public class Theme {
     private static int themedWallpaperFileOffset;
     private static String themedWallpaperLink;
     private static boolean isWallpaperMotion;
-    private static int patternIntensity;
     private static boolean isPatternWallpaper;
 
     public static Paint dividerPaint;
@@ -4047,7 +4009,6 @@ public class Theme {
 
     private static HashSet<String> myMessagesColorKeys = new HashSet<>();
     private static HashSet<String> myMessagesBubblesColorKeys = new HashSet<>();
-    private static HashSet<String> myMessagesGradientColorsNearKeys = new HashSet<>();
     private static HashMap<String, Integer> defaultColors = new HashMap<>();
     private static HashMap<String, String> fallbackKeys = new HashMap<>();
     private static HashSet<String> themeAccentExclusionKeys = new HashSet<>();
@@ -4117,7 +4078,6 @@ public class Theme {
         defaultColors.put(key_dialogShadowLine, 0x12000000);
         defaultColors.put(key_dialogEmptyImage, 0xff9fa4a8);
         defaultColors.put(key_dialogEmptyText, 0xff8c9094);
-        defaultColors.put(key_dialogSwipeRemove, 0xffe56555);
         defaultColors.put(key_dialogSwipeRemove, 0xffe56555);
         defaultColors.put(key_dialogReactionMentionBackground, 0xffF05459);
 
@@ -5371,8 +5331,8 @@ public class Theme {
             themesString = themeConfig.getString("themes", null);
             if (!TextUtils.isEmpty(themesString)) {
                 String[] themesArr = themesString.split("&");
-                for (int a = 0; a < themesArr.length; a++) {
-                    themeInfo = ThemeInfo.createWithString(themesArr[a]);
+                for (String s : themesArr) {
+                    themeInfo = ThemeInfo.createWithString(s);
                     if (themeInfo != null) {
                         otherThemes.add(themeInfo);
                         themes.add(themeInfo);
@@ -5485,7 +5445,7 @@ public class Theme {
                                     if (version >= 5) {
                                         if (data.readBool(true)) {
                                             accent.account = data.readInt32(true);
-                                            accent.info = (TLRPC.TL_theme) TLRPC.Theme.TLdeserialize(data, data.readInt32(true), true);
+                                            accent.info = TLRPC.Theme.TLdeserialize(data, data.readInt32(true), true);
                                         }
                                     }
                                     if (accent.info != null) {
@@ -5690,7 +5650,6 @@ public class Theme {
     }
 
     private static Method StateListDrawable_getStateDrawableMethod;
-    private static Field BitmapDrawable_mColorFilter;
 
     public static void saveAutoNightThemeConfig() {
         SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
@@ -5825,13 +5784,8 @@ public class Theme {
             calendar.setTimeInMillis(System.currentTimeMillis());
             int monthOfYear = calendar.get(Calendar.MONTH);
             int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-            int minutes = calendar.get(Calendar.MINUTE);
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            if (monthOfYear == 0 && dayOfMonth == 1 && hour <= 23) {
-                canStartHolidayAnimation = true;
-            } else {
-                canStartHolidayAnimation = false;
-            }
+            canStartHolidayAnimation = monthOfYear == 0 && dayOfMonth == 1 && hour <= 23;
             if (dialogs_holidayDrawable == null) {
                 if (monthOfYear == 11 && dayOfMonth >= (BuildVars.DEBUG_PRIVATE_VERSION ? 29 : 31) && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1) {
                     dialogs_holidayDrawable = ApplicationLoader.applicationContext.getResources().getDrawable(R.drawable.newyear);
@@ -6104,7 +6058,7 @@ public class Theme {
     public static Drawable createSelectorDrawable(int color, int maskType, int radius) {
         Drawable maskDrawable = null;
         if ((maskType == RIPPLE_MASK_CIRCLE_20DP || maskType == 5) && Build.VERSION.SDK_INT >= 23) {
-            maskDrawable = null;
+            //
         } else if (
             maskType == RIPPLE_MASK_CIRCLE_20DP ||
             maskType == RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE ||
@@ -6360,14 +6314,13 @@ public class Theme {
             );
         }
         private static Drawable createRect(Drawable background, int rippleColor, float ...radii) {
-            Drawable maskDrawable = null;
+            ShapeDrawable maskDrawable;
             if (hasNonzeroRadii(radii)) {
                 maskDrawable = new ShapeDrawable(new RoundRectShape(calcRadii(radii), null, null));
-                ((ShapeDrawable) maskDrawable).getPaint().setColor(0xffffffff);
             } else {
                 maskDrawable = new ShapeDrawable(new RectShape());
-                ((ShapeDrawable) maskDrawable).getPaint().setColor(0xffffffff);
             }
+            maskDrawable.getPaint().setColor(0xffffffff);
             return new RippleDrawable(
                 new ColorStateList(
                     new int[][]{ StateSet.WILD_CARD },
@@ -6378,9 +6331,6 @@ public class Theme {
             );
         }
 
-        private static Drawable createCircle(int rippleColor) {
-            return createCircle(0, rippleColor, RADIUS_TO_BOUNDS);
-        }
         private static Drawable createCircle(int rippleColor, float radius) {
             return createCircle(0, rippleColor, radius);
         }
@@ -6410,11 +6360,11 @@ public class Theme {
 
             public CircleDrawable(float radius) {
                 this.radius = radius;
-                if (this.maskPaint == null) {
-                    this.maskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    this.maskPaint.setColor(0xffffffff);
+                if (maskPaint == null) {
+                    maskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                    maskPaint.setColor(0xffffffff);
                 }
-                this.paint = this.maskPaint;
+                this.paint = maskPaint;
             }
 
             public CircleDrawable(float radius, int paintColor) {
@@ -6568,9 +6518,6 @@ public class Theme {
     }
 
     public static void setMaskDrawableRad(Drawable rippleDrawable, int topLeftRad, int topRightRad, int bottomRightRad, int bottomLeftRad) {
-        if (Build.VERSION.SDK_INT < 21) {
-            return;
-        }
         if (rippleDrawable instanceof RippleDrawable) {
             RippleDrawable drawable = (RippleDrawable) rippleDrawable;
             int count = drawable.getNumberOfLayers();
@@ -6686,11 +6633,11 @@ public class Theme {
                     if (mode != null) {
                         mode = mode.toLowerCase();
                         String[] modes = mode.split(" ");
-                        if (modes != null && modes.length > 0) {
-                            for (int a = 0; a < modes.length; a++) {
-                                if ("blur".equals(modes[a])) {
+                        if (modes.length > 0) {
+                            for (String s : modes) {
+                                if ("blur".equals(s)) {
                                     themeInfo.isBlured = true;
-                                } else if ("motion".equals(modes[a])) {
+                                } else if ("motion".equals(s)) {
                                     themeInfo.isMotion = true;
                                 }
                             }
@@ -6866,17 +6813,16 @@ public class Theme {
                         if (mode != null) {
                             mode = mode.toLowerCase();
                             String[] modes = mode.split(" ");
-                            if (modes != null && modes.length > 0) {
-                                for (int a = 0; a < modes.length; a++) {
-                                    if ("blur".equals(modes[a])) {
+                            if (modes.length > 0) {
+                                for (String s : modes) {
+                                    if ("blur".equals(s)) {
                                         themeInfo.isBlured = true;
-                                    } else if ("motion".equals(modes[a])) {
+                                    } else if ("motion".equals(s)) {
                                         themeInfo.isMotion = true;
                                     }
                                 }
                             }
                         }
-                        int intensity = Utilities.parseInt(data.getQueryParameter("intensity"));
                         themeInfo.patternBgGradientRotation = 45;
                         try {
                             String bgColor = data.getQueryParameter("bg_color");
@@ -6991,17 +6937,16 @@ public class Theme {
                                 if (mode != null) {
                                     mode = mode.toLowerCase();
                                     String[] modes = mode.split(" ");
-                                    if (modes != null && modes.length > 0) {
-                                        for (int a = 0; a < modes.length; a++) {
-                                            if ("blur".equals(modes[a])) {
+                                    if (modes.length > 0) {
+                                        for (String s : modes) {
+                                            if ("blur".equals(s)) {
                                                 themeInfo.isBlured = true;
-                                            } else if ("motion".equals(modes[a])) {
+                                            } else if ("motion".equals(s)) {
                                                 themeInfo.isMotion = true;
                                             }
                                         }
                                     }
                                 }
-                                int intensity = Utilities.parseInt(data.getQueryParameter("intensity"));
                                 themeInfo.patternBgGradientRotation = 45;
                                 try {
                                     String bgColor = data.getQueryParameter("bg_color");
@@ -7766,7 +7711,7 @@ public class Theme {
             wallpaperLink = "https://attheme.org?slug=" + wallpaperInfo.slug + "&intensity=" + (int) (wallpaperInfo.intensity * 100) + "&bg_color=" + color;
         }
         if (modes.length() > 0) {
-            wallpaperLink += "&mode=" + modes.toString();
+            wallpaperLink += "&mode=" + modes;
         }
         return wallpaperLink;
     }
@@ -7802,7 +7747,7 @@ public class Theme {
                         colorsMap.put(key_chat_outBubbleGradient3, outBubbleGradient3);
                     }
                 }
-                colorsMap.put(key_chat_outBubbleGradientAnimated, accent != null && accent.myMessagesAnimated ? 1 : 0);
+                colorsMap.put(key_chat_outBubbleGradientAnimated, accent.myMessagesAnimated ? 1 : 0);
             }
         }
         for (HashMap.Entry<String, Integer> entry : colorsMap.entrySet()) {
@@ -7903,7 +7848,7 @@ public class Theme {
             } else {
                 continue;
             }
-            if (info == null || info.document == null) {
+            if (info.document == null) {
                 continue;
             }
 
@@ -7996,16 +7941,15 @@ public class Theme {
                 boolean added = false;
                 for (int a = 0, N = res.themes.size(); a < N; a++) {
                     TLRPC.TL_theme t = res.themes.get(a);
-                    if (!(t instanceof TLRPC.TL_theme)) {
+                    if (t == null) {
                         continue;
                     }
-                    TLRPC.TL_theme theme = t;
-                    if (theme.isDefault) {
-                        emojiPreviewThemes.add(theme);
+                    if (t.isDefault) {
+                        emojiPreviewThemes.add(t);
                     }
-                    if (theme.settings != null && theme.settings.size() > 0) {
-                        for (int i = 0; i < theme.settings.size(); i++) {
-                            TLRPC.ThemeSettings settings = theme.settings.get(i);
+                    if (t.settings != null && t.settings.size() > 0) {
+                        for (int i = 0; i < t.settings.size(); i++) {
+                            TLRPC.ThemeSettings settings = t.settings.get(i);
                             if (settings != null) {
                                 String key = getBaseThemeKey(settings);
                                 if (key == null) {
@@ -8015,7 +7959,7 @@ public class Theme {
                                 if (info == null || info.themeAccents == null) {
                                     continue;
                                 }
-                                ThemeAccent accent = info.accentsByThemeId.get(theme.id);
+                                ThemeAccent accent = info.accentsByThemeId.get(t.id);
                                 if (accent != null) {
                                     if (!ThemeInfo.accentEquals(accent, settings)) {
                                         File file = accent.getPathToWallpaper();
@@ -8033,16 +7977,16 @@ public class Theme {
                                     accent.patternMotion = settings.wallpaper != null && settings.wallpaper.settings != null && settings.wallpaper.settings.motion;
                                     oldServerThemes.remove(accent);
                                 } else {
-                                    accent = info.createNewAccent(theme, currentAccount, false, i);
+                                    accent = info.createNewAccent(t, currentAccount, false, i);
                                     if (!TextUtils.isEmpty(accent.patternSlug)) {
                                         loadPatterns = true;
                                     }
                                 }
-                                accent.isDefault = theme.isDefault;
+                                accent.isDefault = t.isDefault;
                             }
                         }
                     } else {
-                        String key = "remote" + theme.id;
+                        String key = "remote" + t.id;
                         ThemeInfo info = themesDict.get(key);
                         if (info == null) {
                             info = new ThemeInfo();
@@ -8054,8 +7998,8 @@ public class Theme {
                         } else {
                             oldServerThemes.remove(info);
                         }
-                        info.name = theme.title;
-                        info.info = theme;
+                        info.name = t.title;
+                        info.info = t;
                         themesDict.put(info.getKey(), info);
                     }
                 }
@@ -8559,9 +8503,7 @@ public class Theme {
     }
 
     public static void getThemeFileValuesInBackground(File file, String assetName, String[] wallpaperLink, Utilities.Callback<HashMap<String, Integer>> onDone) {
-        Utilities.themeQueue.postRunnable(() -> {
-            onDone.run(getThemeFileValues(file, assetName, wallpaperLink));
-        });
+        Utilities.themeQueue.postRunnable(() -> onDone.run(getThemeFileValues(file, assetName, wallpaperLink)));
     }
 
     public static HashMap<String, Integer> getThemeFileValues(File file, String assetName, String[] wallpaperLink) {
@@ -8723,8 +8665,8 @@ public class Theme {
         dividerPaint.setColor(getColor(key_divider));
         linkSelectionPaint.setColor(getColor(key_windowBackgroundWhiteLinkSelection));
 
-        for (int a = 0; a < avatarDrawables.length; a++) {
-            setDrawableColorByKey(avatarDrawables[a], key_avatar_text);
+        for (Drawable avatarDrawable : avatarDrawables) {
+            setDrawableColorByKey(avatarDrawable, key_avatar_text);
         }
 
         dialogs_archiveAvatarDrawable.beginApplyLayerColors();
@@ -9390,7 +9332,6 @@ public class Theme {
             chat_replyTextPaint.setTextSize(AndroidUtilities.dp(smallerDp));
             chat_forwardNamePaint.setTextSize(AndroidUtilities.dp(smallerDp));
             chat_adminPaint.setTextSize(AndroidUtilities.dp(smallerDp - 1));
-            float timeDp = 2 * (SharedConfig.fontSize - 16) / 3f + 12;
             chat_timePaint.setTextSize(AndroidUtilities.dp(12));
             chat_gamePaint.setTextSize(AndroidUtilities.dp(13));
             chat_shipmentPaint.setTextSize(AndroidUtilities.dp(13));
@@ -9539,8 +9480,8 @@ public class Theme {
             setDrawableColorByKey(calllog_msgCallDownRedDrawable, key_calls_callReceivedRedIcon);
             setDrawableColorByKey(calllog_msgCallDownGreenDrawable, key_calls_callReceivedGreenIcon);
 
-            for (int i = 0; i < chat_status_drawables.length; i++) {
-                setDrawableColorByKey(chat_status_drawables[i], key_chats_actionMessage);
+            for (StatusDrawable chat_status_drawable : chat_status_drawables) {
+                setDrawableColorByKey(chat_status_drawable, key_chats_actionMessage);
             }
 
             for (int a = 0; a < 5; a++) {
@@ -9671,7 +9612,6 @@ public class Theme {
             servicePressedColor = currentColors.get(key_chat_serviceBackgroundSelected);
         }
         Integer serviceColor2 = serviceColor;
-        Integer servicePressedColor2 = servicePressedColor;
 
         if (serviceColor == null) {
             serviceColor = serviceMessageColor;
@@ -9679,9 +9619,6 @@ public class Theme {
         }
         if (servicePressedColor == null) {
             servicePressedColor = serviceSelectedMessageColor;
-        }
-        if (servicePressedColor2 == null) {
-            servicePressedColor2 = serviceSelectedMessage2Color;
         }
 
         Drawable drawable = wallpaperOverride != null ? wallpaperOverride : currentWallpaper;
@@ -10265,7 +10202,6 @@ public class Theme {
             isWallpaperMotion = settings.isWallpaperMotion != null ? settings.isWallpaperMotion : isWallpaperMotion;
             isPatternWallpaper = settings.isPatternWallpaper != null ? settings.isPatternWallpaper : isPatternWallpaper;
             isCustomTheme = settings.isCustomTheme != null ? settings.isCustomTheme : isCustomTheme;
-            patternIntensity = intensity;
             wallpaper = settings.wallpaper != null ? settings.wallpaper : wallpaper;
             Drawable drawable = settings.wallpaper;
             calcBackgroundColor(drawable, 1);
@@ -10330,7 +10266,7 @@ public class Theme {
             if (gradientToColor3 == null) {
                 gradientToColor3 = 0;
             }
-            Integer gradientToColor2 = currentColors.get(key_chat_wallpaper_gradient_to2);
+            Integer gradientToColor2;
             gradientToColor2 = currentColors.get(key_chat_wallpaper_gradient_to2);
             Integer gradientToColor1 = currentColors.get(key_chat_wallpaper_gradient_to1);
 
@@ -10363,7 +10299,7 @@ public class Theme {
                         File f = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(wallpaperDocument, true);
                         patternBitmap = SvgHelper.getBitmap(f, AndroidUtilities.dp(360), AndroidUtilities.dp(640), false);
                         if (patternBitmap != null) {
-                            FileOutputStream stream = null;
+                            FileOutputStream stream;
                             try {
                                 stream = new FileOutputStream(wallpaperFile);
                                 patternBitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
@@ -10637,7 +10573,6 @@ public class Theme {
         if (file != null) {
             FileInputStream stream = null;
             try {
-                int currentPosition = 0;
                 stream = new FileInputStream(file);
                 stream.getChannel().position(offset);
                 BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -10879,9 +10814,7 @@ public class Theme {
             if (accent.parentTheme.getKey().equals("Day") && accent.id == 9) {
                 return true;
             }
-            if ((accent.parentTheme.getKey().equals("Night") || accent.parentTheme.getKey().equals("Dark Blue")) && accent.id == 0) {
-                return true;
-            }
+            return (accent.parentTheme.getKey().equals("Night") || accent.parentTheme.getKey().equals("Dark Blue")) && accent.id == 0;
         }
         return false;
     }
