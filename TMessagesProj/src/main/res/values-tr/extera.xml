@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <!--
+
+     This is the source code of exteraGram for Android.
+
+     We do not and cannot prevent the use of our code,
+     but be respectful and credit the original author.
+
+     Copyright @immat0x1, @itsv1eds, 2022.
+
+     -->
+
+<resources>
+    <!--  exteraGram's Main Strings  -->
+    <string name="UpdateExteraGram">bu mesaj exteraGram sürümünüzde desteklenmiyor, lütfen uygulamayı aşağıdaki linkten uygulamayı güncelleyin: https://github.com/exteraSquad/exteraGram/releases/latest</string>
+    <string name="MutualContact">Ortak Kişi</string>
+    <string name="ToBeginning">Başlangıç</string>
+    <string name="SaveMessage">Mesajı Kaydet</string>
+    <!--  Main Menu (about)  -->
+    <string name="exteraPrivacy">exterGram Gizlilik Politikası ve SSS</string>
+    <string name="Links">Bağlantılar</string>
+    <string name="AboutExteraDescription">Resmi Telegram kaynaklarına dayalı deneysel bir Telegram istemcisi!</string>
+    <string name="Channel">Kanal</string>
+    <string name="Crowdin">Çeviri</string>
+    <string name="SourceCode">Kaynak Kodu</string>
+    <string name="Preferences">exterGram Ayarları</string>
+    <string name="RestartRequired">Değişikliklerin etkili olması için uygulamayı yeniden başlatın.</string>
+    <string name="Categories">Kategoriler</string>
+    <!--  Appearance  -->
+    <string name="UseSystemFonts">Sistem yazı tipi</string>
+    <string name="UseSystemEmoji">Sistem emojileri</string>
+    <string name="TransparentStatusBar">Şeffaf durum çubuğu</string>
+    <string name="BlurForAllThemes">Tüm temalar için bulanıklık</string>
+    <string name="CenterTitle">Eylem çubuğu ortalanmış başlık</string>
+    <string name="NewSwitchStyle">MD3 anahtar stili</string>
+    <string name="DisableDividers">Ayırıcıyı devre dışı bırak</string>
+    <string name="TransparentNavBar">Şeffaf gezinme çubuğu</string>
+    <string name="TransparentNavBarInfo">Gezinme çubuğu tamamen şeffaf olmayacaktır, yalnızca Mesaj Panelinin rengini alacaktır.</string>
+    <!--  General  -->
+    <string name="AvatarCorners">Avatar köşeleri</string>
+    <string name="DownloadSpeedBoost">İndirme hızını yükselt</string>
+    <string name="UploadSpeedBoost">Yükleme hızını yükselt</string>
+    <string name="Ultra">Ultra</string>
+    <string name="DisableNumberRounding">Sayı yuvarlamayı devre dışı bırak</string>
+    <string name="FormatTimeWithSeconds">Saati saniye ile göster</string>
+    <string name="ChatsOnTitle">\"exteraGram\" yerine \"Sohbetler\"</string>
+    <string name="DisableVibration">Titreşimi devre dışı bırak</string>
+    <string name="ForceTabletMode">Tablet moduna zorla</string>
+    <string name="ArchiveOnPull">Açılır menüde arşivi aç</string>
+    <string name="DisableUnarchiveSwipe">\"Arşivden çıkar\" hareketini devre dışı bırak</string>
+    <string name="ForcePacmanAnimation">Pac-Man animasyonunu zorla</string>
+    <string name="ForcePacmanAnimationInfo">Bu, sohbet listesinde seçilen \"Arşivle\" kaydırma hareketini gerektirir.</string>
+    <string name="Profile">Profil</string>
+    <string name="HidePhoneNumber">Telefon numarasını gizle</string>
+    <string name="ShowID">Profilde ID\'yi Göster</string>
+    <string name="ShowDC">Profilde DC\'yi Göster</string>
+    <string name="HidePremiumStickersTab">Premium çıkartmalar sekmesini gizle</string>
+    <string name="HideFeaturedEmojisTabs">Popüler premium ifadeleri gizle</string>
+    <string name="PremiumAutoPlayback">Premium otomatik oynatma</string>
+    <string name="DisableAnimatedAvatars">Hareketli avatarları devre dışı bırak</string>
+    <!--  Chats  -->
+    <string name="StickerSize">Çıkartma boyutu</string>
+    <string name="StickerSizeDialogMessageReplyTo">vay</string>
+    <string name="StickerSizeDialogMessage">vay, o çok tatlı!</string>
+    <string name="StickerShape">Çıkartma şekli</string>
+    <string name="StickerShapeRounded">Yuvarlatılmış</string>
+    <string name="StickerShapeRoundedMsg">Mesaj</string>
+    <string name="StickerTime">Çıkartmalar için zamanı gizle</string>
+    <string name="UnlimitedRecentStickers">Sınırsız favori çıkartmaları</string>
+    <string name="HideSendAsChannel">\"Kanal Olarak Gönder\"i Gizle</string>
+    <string name="HideKeyboardOnScroll">Kaydırırken klavyeyi gizle</string>
+    <string name="DisableReactions">Reaksiyonları devre dışı bırak</string>
+    <string name="DisableGreetingSticker">Tebrik çıkartmasını devre dışı bırak</string>
+    <string name="DisableJumpToNextChannel">\"Sonraki Kanala Geç\"i devre dışı bırak</string>
+    <string name="DateOfForwardedMsg">İletilen mesajın tarihini göster</string>
+    <string name="ShowMessageID">Mesaj ID\'sini göster</string>
+    <string name="ShowActionTimestamps">Eylemler için zaman damgalarını göster</string>
+    <string name="ZalgoFilter">\"Zalgo\" sembollerini filtreleyin</string>
+    <string name="ZalgoFilterInfo">Takma adlardaki veya mesajlardaki tüm \"Z̷͍͌ā̸̜l̸̞̂g̷̝͘o̶̩̓\" sembolleri kaldırılacaktır. Mesaj önbelleği temizlenecektir.</string>
+    <string name="Media">Medya</string>
+    <string name="RearVideoMessages">Videolu mesajlarda arka kamerayı kullan</string>
+    <string name="DisableCamera">Anında kamerayı devre dışı bırak</string>
+    <string name="DisableProximityEvents">Yakınlık sensörünü devre dışı bırak</string>
+    <string name="PauseOnMinimize">Otomatik duraklat</string>
+    <string name="POMDescription">Cihaz kilitlendiğinde veya exteraGram simge durumuna küçültüldüğünde video oynatmayı duraklatır.</string>
+    <string name="DisablePlayback">Oynatmayı devre dışı bırak</string>
+    <string name="DPDescription">Ses düğmesine basıldığında oynatmayı devre dışı bırak.</string>
+    <!--  Drawer  -->
+    <string name="DrawerElements">Çekmece elemanları</string>
+    <string name="DrawerOptions">Çekmece ayarları</string>
+    <string name="DrawerIconPack">Simge paketi</string>
+    <string name="NewYear">Yeni Yıl</string>
+    <string name="ValentinesDay">Sevgililer Günü</string>
+    <string name="Halloween">Cadılar Bayramı</string>
+    <!--  Updates  -->
+    <string name="Updates">Güncellemeler</string>
+    <string name="UpdateAvailable">Güncelleme mevcut!</string>
+    <string name="CheckOnLaunch">Başlangıçta kontrol et</string>
+    <string name="NoUpdates">Güncelleme bulunamadı.</string>
+    <string name="CheckForUpdates">Güncellemeleri denetle</string>
+    <string name="CurrentVersion">Güncel Sürüm</string>
+    <string name="Version">Sürüm</string>
+    <string name="UpdateSize">Güncelleme boyutu</string>
+    <string name="Changelog">Değişiklikler:</string>
+    <string name="BuildType">Yapı tipi</string>
+    <string name="BTRelease">Sürüm</string>
+    <string name="BTBeta">Beta</string>
+    <string name="ClearUpdatesCache">Güncelleme önbelleğini temizle</string>
+    <string name="ClearedUpdatesCache">Önbellek **%1$s** temizlendi.</string>
+    <string name="NothingToClear">Temizlenecek bir şey yok.</string>
+    <string name="LastCheck">Son kontrol</string>
+    <!--  Other  -->
+    <string name="BoldItalic">Kalın italik</string>
+    <string name="OpenPremiumBot">Resmi botu aç</string>
+    <string name="Select">Seç</string>
+    <string name="EnterID">Kullanıcı ID girin</string>
+    <string name="TrackSaved">Parça **%1$s** konumuna kaydedildi.</string>
+    <string name="ChannelToSaveDescription">Parçaların kaydedileceği kanalın/sohbetin/kullanıcının kimliğini girin</string>
+    <string name="Unknown">Bilinmeyen</string>
+    <string name="ConfirmCall">Aramayı onayla</string>
+    <string name="CallTo">**%1$s** aransın mı?</string>
+    <string name="AppIconRelease">Sürüm</string>
+    <string name="AppIconBeta">Beta</string>
+    <string name="AppIconInverted">Ters</string>
+    <string name="AppIconGradient">Gradyan</string>
+    <string name="AppIconPixel">Piksel</string>
+</resources>
