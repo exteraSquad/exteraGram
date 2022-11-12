@@ -54,27 +54,6 @@ dependencies {
 
 def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)
 
-static def getAppID() {
-    Properties properties = new Properties()
-    properties.load(new FileInputStream("./API_KEYS"))
-
-    return properties.get("APP_ID")
-}
-
-static def getAppHash() {
-    Properties properties = new Properties()
-    properties.load(new FileInputStream("./API_KEYS"))
-
-    return "\"" + properties.get("APP_HASH") + "\""
-}
-
-static def getGoogleMapsAPI() {
-    Properties properties = new Properties()
-    properties.load(new FileInputStream("./API_KEYS"))
-
-    return "\"" + properties.get("MAPS_V2_API") + "\""
-}
-
 android {
     compileSdkVersion 33
     buildToolsVersion '33.0.0'
@@ -84,6 +63,11 @@ android {
     defaultConfig.applicationId = APP_PACKAGE
     defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
 
+    Properties localProperties = new Properties()
+    if (project.rootProject.file('API_KEYS').exists()) {
+        localProperties.load(project.rootProject.file('API_KEYS').newDataInputStream())
+    }
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 33
@@ -91,10 +75,10 @@ android {
 
         // Obtain your own keys at:
         // Telegram: https://core.telegram.org/api/obtaining_api_id
-        buildConfigField 'int', 'APP_ID', getAppID()
-        buildConfigField 'String', 'APP_HASH', getAppHash()
+        buildConfigField 'int', 'APP_ID', localProperties.getProperty("APP_ID")
+        buildConfigField 'String', 'APP_HASH', localProperties.getProperty("APP_HASH")
         // Google Console: https://console.cloud.google.com/google/maps-apis/credentials
-        resValue 'string', 'MAPS_V2_API', getGoogleMapsAPI()
+        resValue 'string', 'MAPS_V2_API', localProperties.getProperty("MAPS_V2_API")
 
         externalNativeBuild {
             cmake {
@@ -146,7 +130,6 @@ android {
         debug {
             debuggable false
             jniDebuggable true
-            applicationIdSuffix ".beta"
             signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
@@ -173,95 +156,51 @@ android {
         }
     }
 
-    sourceSets.debug {
-        manifest.srcFile 'config/debug/AndroidManifest.xml'
-    }
-
-    sourceSets.release {
-        manifest.srcFile 'config/release/AndroidManifest.xml'
-    }
-
     flavorDimensions "minApi"
 
     productFlavors {
         armv7 {
-            ndk {
-                abiFilters "armeabi-v7a"
-            }
-            ext {
-                abiVersionCode = 1
-            }
+            ndk.abiFilters "armeabi-v7a"
+            ext.abiVersionCode = 1
         }
         x86 {
-            ndk {
-                abiFilters "x86"
-            }
-            ext {
-                abiVersionCode = 2
-            }
+            ndk.abiFilters "x86"
+            ext.abiVersionCode = 2
         }
         arm64 {
-            ndk {
-                abiFilters "arm64-v8a"
-            }
-            ext {
-                abiVersionCode = 3
-            }
+            ndk.abiFilters "arm64-v8a"
+            ext.abiVersionCode = 5
         }
         x64 {
-            ndk {
-                abiFilters "x86_64"
-            }
-            ext {
-                abiVersionCode = 4
-            }
+            ndk.abiFilters "x86_64"
+            ext.abiVersionCode = 6
         }
         afat {
-            ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            }
-            sourceSets.release {
-                manifest.srcFile 'config/release/AndroidManifest.xml'
-            }
-            ext {
-                abiVersionCode = 5
-            }
+            ndk.abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            sourceSets.release.manifest.srcFile 'config/release/AndroidManifest.xml'
+            ext.abiVersionCode = 0
         }
         beta {
-            ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a"
-            }
-            sourceSets.debug {
-                manifest.srcFile 'config/debug/AndroidManifest.xml'
-            }
-            ext {
-                abiVersionCode = 6
-            }
+            ndk.abiFilters "armeabi-v7a", "arm64-v8a"
+            sourceSets.debug.manifest.srcFile 'config/debug/AndroidManifest.xml'
+            ext.abiVersionCode = 9
         }
     }
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def buildType = variant.productFlavors[0].name
-            if (variant.productFlavors[0].name != "beta") {
-                buildType = "release"
-            }
+            def buildType = variant.productFlavors[0].name == "beta" ? "beta-" : ""
             def date = new Date()
             def formattedDate = date.format('ddMMyyyy')
 
-            outputFileName = "exteragram-${buildType}-${formattedDate}.apk"
+            outputFileName = "exteraGram-${buildType}${formattedDate}.apk"
             output.versionCodeOverride = defaultConfig.versionCode * 10 + variant.productFlavors.get(0).abiVersionCode
         }
     }
 
     variantFilter { variant ->
         def names = variant.flavors*.name
-        if (variant.buildType.name != "release" && !names.contains("beta")) {
-            setIgnore(true)
-        }
-        if (variant.buildType.name != "debug" && names.contains("beta")) {
-            setIgnore(true)
-        }
+        setIgnore(variant.buildType.name != "debug" && names.contains("beta") || variant.buildType.name != "release" && !names.contains("beta"))
     }
 
     dependenciesInfo.includeInApk false
