@@ -29,7 +29,7 @@
         <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/etg_splash</item>
         <item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
-        <item name="android:windowSplashScreenBackground">#181818</item>
+        <item name="android:windowSplashScreenBackground">@android:color/system_neutral1_900</item>
     </style>
 
 </resources>

@@ -11,13 +11,13 @@
             <path
                 android:name="splash_background"
                 android:pathData="M 160 85 C 140.116 85 121.027 92.907 106.967 106.967 C 92.907 121.027 85 140.116 85 160 C 85 179.884 92.907 198.973 106.967 213.033 C 121.027 227.093 140.116 235 160 235 C 179.884 235 198.973 227.093 213.033 213.033 C 227.093 198.973 235 179.884 235 160 C 235 140.116 227.093 121.027 213.033 106.967 C 198.973 92.907 179.884 85 160 85 Z"
-                android:fillColor="@color/ic_background"
+                android:fillColor="@color/ic_background_monet"
                 android:fillAlpha="0"
                 android:strokeWidth="1"/>
             <path
                 android:name="splash_icon"
                 android:pathData="M 171.295 145.34 C 174.131 144.404 175.813 145.922 174.911 148.77 C 172.645 155.926 168.198 168.983 165.369 177.226 C 164.63 179.381 161.202 179.297 160.342 177.187 C 158.867 173.568 156.693 169.355 153.727 166.285 C 150.891 163.349 146.921 161.226 143.395 159.775 C 141.247 158.892 141.172 155.283 143.377 154.555 L 171.295 145.34 Z"
-                android:fillColor="#FFFFFF"
+                android:fillColor="@color/ic_foreground_monet"
                 android:fillAlpha="0"
                 android:strokeWidth="1"/>
         </vector>
@@ -62,7 +62,7 @@
                     android:startOffset="200"
                     android:duration="400"
                     android:valueFrom="0"
-                    android:valueTo="0.7"
+                    android:valueTo="1"
                     android:valueType="floatType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
             </set>
