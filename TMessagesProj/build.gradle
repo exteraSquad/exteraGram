@@ -95,11 +95,7 @@ android {
         jni.srcDirs = []
     }
 
-    /*externalNativeBuild {
-        cmake {
-            path 'jni/CMakeLists.txt'
-        }
-    }*/
+    /*externalNativeBuild.cmake.path 'jni/CMakeLists.txt'*/
 
     lint {
         checkReleaseBuilds false

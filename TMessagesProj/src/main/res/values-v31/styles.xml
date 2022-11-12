@@ -30,6 +30,7 @@
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/etg_splash</item>
         <item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
         <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <!-- APP WIDGET -->

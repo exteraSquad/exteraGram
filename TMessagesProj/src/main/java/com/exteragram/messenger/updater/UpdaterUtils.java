@@ -132,44 +132,17 @@ public class UpdaterUtils {
                 if (arr.length() == 0)
                     return;
 
-                String link, cpu = null;
-                try {
-                    var info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
-                    switch (info.versionCode % 10) {
-                        case 1:
-                        case 3:
-                            cpu = "arm-v7a";
-                            break;
-                        case 2:
-                        case 4:
-                            cpu = "x86";
-                            break;
-                        case 5:
-                        case 7:
-                            cpu = "arm64-v8a";
-                            break;
-                        case 6:
-                        case 8:
-                            cpu = "x86_64";
-                            break;
-                        case 0:
-                        case 9:
-                            cpu = "universal";
-                            break;
-                    }
-                } catch (Exception e) {
-                    cpu = Build.SUPPORTED_ABIS[0];
-                }
+                String link, installedApkType = getInstalledApkType();
 
                 for (int i = 0; i < arr.length(); i++) {
                     downloadURL = link = arr.getJSONObject(i).getString("browser_download_url");
                     size = AndroidUtilities.formatFileSize(arr.getJSONObject(i).getLong("size"));
-                    if (link.contains("arm64") && Objects.equals(cpu, "arm64-v8a") ||
-                            link.contains("arm7") && Objects.equals(cpu, "armeabi-v7a") ||
-                            link.contains("x86") && Objects.equals(cpu, "x86") ||
-                            link.contains("x64") && Objects.equals(cpu, "x86_64") ||
-                            link.contains("universal") && Objects.equals(cpu, "universal") && !BuildVars.isBetaApp() ||
-                            link.contains("beta") && BuildVars.isBetaApp()) {
+                    if (link.contains("arm64") && Objects.equals(installedApkType, "arm64-v8a") ||
+                            link.contains("arm7") && Objects.equals(installedApkType, "armeabi-v7a") ||
+                            link.contains("x86") && Objects.equals(installedApkType, "x86") ||
+                            link.contains("x64") && Objects.equals(installedApkType, "x86_64") ||
+                            link.contains("universal") && Objects.equals(installedApkType, "universal") ||
+                            link.contains("beta") && Objects.equals(installedApkType, "beta")) {
                         break;
                     }
                 }
@@ -257,6 +230,27 @@ public class UpdaterUtils {
     public static String getOtaDirSize() {
         checkDirs();
         return AndroidUtilities.formatFileSize(Utilities.getDirSize(otaPath.getAbsolutePath(), 5, true), true);
+    }
+
+    public static String getInstalledApkType() {
+        try {
+            var info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
+            switch (info.versionCode % 10) {
+                case 1:
+                case 3: return "arm-v7a";
+                case 2:
+                case 4: return "x86";
+                case 5:
+                case 7: return "arm64-v8a";
+                case 6:
+                case 8: return "x86_64";
+                case 0: return "universal";
+                case 9: return "beta";
+            }
+        } catch (Exception e) {
+            return Build.SUPPORTED_ABIS[0];
+        }
+        return null;
     }
 
     public static void cleanOtaDir() {
