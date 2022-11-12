@@ -508,7 +508,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean didPressTranscribeButtonEnough() {
-        return transcribeButtonPressed >= 2;
+        return true;
     }
 
     public void pressTranscribeButton() {
