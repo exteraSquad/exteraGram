@@ -6702,14 +6702,14 @@ public class Theme {
                         try {
                             String rotation = data.getQueryParameter("rotation");
                             if (!TextUtils.isEmpty(rotation)) {
-                                themeInfo.patternBgGradientRotation = Utilities.parseInt(rotation);
+                                themeInfo.patternBgGradientRotation = Integer.parseInt(rotation);
                             }
                         } catch (Exception ignore) {
 
                         }
 
                         if (!TextUtils.isEmpty(intensity)) {
-                            themeInfo.patternIntensity = Utilities.parseInt(intensity);
+                            themeInfo.patternIntensity = Integer.parseInt(intensity);
                         }
                         if (themeInfo.patternIntensity == 0) {
                             themeInfo.patternIntensity = 50;
@@ -6881,7 +6881,7 @@ public class Theme {
                         try {
                             String rotation = data.getQueryParameter("rotation");
                             if (!TextUtils.isEmpty(rotation)) {
-                                themeInfo.patternBgGradientRotation = Utilities.parseInt(rotation);
+                                themeInfo.patternBgGradientRotation = Integer.parseInt(rotation);
                             }
                         } catch (Exception ignore) {
 
@@ -7005,7 +7005,7 @@ public class Theme {
                                 try {
                                     String rotation = data.getQueryParameter("rotation");
                                     if (!TextUtils.isEmpty(rotation)) {
-                                        themeInfo.patternBgGradientRotation = Utilities.parseInt(rotation);
+                                        themeInfo.patternBgGradientRotation = Integer.parseInt(rotation);
                                     }
                                 } catch (Exception ignore) {
 
@@ -8581,12 +8581,12 @@ public class Theme {
                                     try {
                                         value = Color.parseColor(param);
                                     } catch (Exception ignore) {
-                                        value = Utilities.parseInt(param);
+                                        value = Integer.parseInt(param);
                                     }
                                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && (param.startsWith("a") || param.startsWith("n") || param.startsWith("m"))) {
                                     value = MonetHelper.getColor(param.trim());
                                 } else {
-                                    value = Utilities.parseInt(param);
+                                    value = Integer.parseInt(param);
                                 }
                                 stringMap.put(key, value);
                             }
