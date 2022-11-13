@@ -8390,29 +8390,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     cell.getTextView().setGravity(Gravity.CENTER_HORIZONTAL);
                     cell.getTextView().setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText3));
                     cell.getTextView().setMovementMethod(null);
-                    try {
-                        PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
-                        int code = pInfo.versionCode / 10;
-                        String abi = "";
-                        switch (pInfo.versionCode % 10) {
-                            case 1:
-                            case 2:
-                                abi = "store bundled " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                break;
-                            default:
-                            case 9:
-                                if (BuildVars.isStandaloneApp()) {
-                                    abi = "direct " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                } else {
-                                    abi = "universal " + Build.CPU_ABI + " " + Build.CPU_ABI2;
-                                }
-                                break;
-                        }
-                        if (BuildVars.isBetaApp()) cell.setText("exteraGram β | v" + BuildVars.BUILD_VERSION_STRING);
-                        else cell.setText("exteraGram | v" + BuildVars.BUILD_VERSION_STRING);
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
+                    cell.setText(ExteraUtils.getAppName() + " | " + BuildVars.BUILD_VERSION_STRING);
                     cell.getTextView().setPadding(0, AndroidUtilities.dp(14), 0, AndroidUtilities.dp(14));
                     view = cell;
                     view.setBackgroundDrawable(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, getThemedColor(Theme.key_windowBackgroundGrayShadow)));

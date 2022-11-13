@@ -20,7 +20,7 @@ public class BuildVars {
     public static boolean USE_CLOUD_STRINGS = true;
     public static boolean CHECK_UPDATES = false;
     public static boolean NO_SCOPED_STORAGE = Build.VERSION.SDK_INT <= 29;
-    public static boolean PM_BUILD = false;
+    public static boolean PM_BUILD = BuildConfig.IS_PM_BUILD;
     public static int BUILD_VERSION;
     public static String BUILD_VERSION_STRING;
     public static int APP_ID;

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.updater.UpdaterBottomSheet;
 
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
@@ -69,7 +70,8 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     @Override
     protected void onItemClick(View view, int position, float x, float y) {
         if (position == aboutExteraRow) {
-            (new UpdaterBottomSheet(getParentActivity(), false)).show();
+            if (!BuildVars.PM_BUILD)
+                (new UpdaterBottomSheet(getParentActivity(), false)).show();
         } else if (position == sourceCodeRow) {
             Browser.openUrl(getParentActivity(), "https://github.com/exteraSquad/exteraGram");
         } else if (position == channelRow) {

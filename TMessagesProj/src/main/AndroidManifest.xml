@@ -91,7 +91,6 @@
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
         android:allowAudioPlaybackCapture="true"
-        android:enableOnBackInvokedCallback="false"
         android:exported="true"
         tools:replace="android:supportsRtl" >
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="@string/MAPS_V2_API" />
