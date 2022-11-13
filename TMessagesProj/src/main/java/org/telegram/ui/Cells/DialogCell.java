@@ -677,9 +677,9 @@ public class DialogCell extends BaseCell {
             return;
         }
         if (checkBox != null) {
-            int paddingStart = AndroidUtilities.dp(messagePaddingStart - (useForceThreeLines || SharedConfig.useThreeLinesLayout ? 29 : 27));
+            int paddingStart = AndroidUtilities.dp(messagePaddingStart - (useForceThreeLines || SharedConfig.useThreeLinesLayout ? 26 : 28));
             int x = LocaleController.isRTL ? (right - left) - paddingStart : paddingStart;
-            int y = AndroidUtilities.dp(chekBoxPaddingTop + (useForceThreeLines || SharedConfig.useThreeLinesLayout ? 6 : 0));
+            int y = AndroidUtilities.dp(chekBoxPaddingTop + (useForceThreeLines || SharedConfig.useThreeLinesLayout ? 4 : 0));
             checkBox.layout(x, y, x + checkBox.getMeasuredWidth(), y + checkBox.getMeasuredHeight());
         }
         int size = getMeasuredHeight() + getMeasuredWidth() << 16;

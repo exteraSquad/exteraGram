@@ -6458,7 +6458,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 @Override
                 protected void dispatchDraw(Canvas canvas) {
                     super.dispatchDraw(canvas);
-                    canvas.drawLine(0, getMeasuredHeight() - AndroidUtilities.dp(2), getMeasuredWidth(), getMeasuredHeight() - AndroidUtilities.dp(2), Theme.dividerPaint);
+                    if (!ExteraConfig.disableDividers)
+                        canvas.drawLine(0, getMeasuredHeight() - AndroidUtilities.dp(2), getMeasuredWidth(), getMeasuredHeight() - AndroidUtilities.dp(2), Theme.dividerPaint);
                 }
             };
             pinnedMessageView.setTag(1);
@@ -6665,7 +6666,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             @Override
             protected void dispatchDraw(Canvas canvas) {
                 super.dispatchDraw(canvas);
-                canvas.drawLine(0, getMeasuredHeight() - AndroidUtilities.dp(2), getMeasuredWidth(), getMeasuredHeight() - AndroidUtilities.dp(2), Theme.dividerPaint);
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, getMeasuredHeight() - AndroidUtilities.dp(2), getMeasuredWidth(), getMeasuredHeight() - AndroidUtilities.dp(2), Theme.dividerPaint);
             }
         };
         topChatPanelView.backgroundColor = getThemedColor(Theme.key_chat_topPanelBackground);
@@ -8143,8 +8145,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
         };
 
-        replyLineView = new View(context);
-        replyLineView.setBackgroundColor(getThemedColor(Theme.key_chat_replyPanelLine));
+        replyLineView = new View(context) {
+            @Override
+            protected void onDraw(Canvas canvas) {
+                super.onDraw(canvas);
+                canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
+            }
+        };
         chatActivityEnterView.addTopView(chatActivityEnterTopView, replyLineView, 48);
 
         final FrameLayout replyLayout = new FrameLayout(context);
@@ -8413,7 +8420,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 super.onDraw(canvas);
                 int bottom = Theme.chat_composeShadowDrawable.getIntrinsicHeight();
                 canvas.drawRect(0, bottom, getMeasuredWidth(), getMeasuredHeight(), getThemedPaint(Theme.key_paint_chatComposeBackground));
-                canvas.drawLine(0, bottom, getMeasuredWidth(), bottom, Theme.dividerPaint);
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, bottom, getMeasuredWidth(), bottom, Theme.dividerPaint);
             }
         };
         bottomOverlay.setWillNotDraw(false);
@@ -8456,7 +8464,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     canvas.drawRect(0, bottom, getMeasuredWidth(), getMeasuredHeight(), getThemedPaint(Theme.key_paint_chatComposeBackground));
                 }
                 super.dispatchDraw(canvas);
-                canvas.drawLine(0, bottom, getMeasuredWidth(), bottom, Theme.dividerPaint);
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, bottom, getMeasuredWidth(), bottom, Theme.dividerPaint);
             }
         };
         bottomOverlayChat.isTopView = false;

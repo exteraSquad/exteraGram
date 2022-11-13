@@ -41,6 +41,8 @@ import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 import androidx.viewpager.widget.ViewPager;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.LocaleController;
@@ -1899,7 +1901,8 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
 
     @Override
     public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
-        canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
+        if (!ExteraConfig.disableDividers)
+            canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
     }
 
     @Override
@@ -2156,7 +2159,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
                 if (clipRoundForeground) {
                     canvas.restore();
                 }
-                if (actionBarHeight != 0)
+                if (actionBarHeight != 0 && !ExteraConfig.disableDividers)
                     canvas.drawLine(0, actionBarHeight + 1, getMeasuredWidth(), actionBarHeight + 1, Theme.dividerPaint);
                 return result;
             }

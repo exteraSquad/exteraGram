@@ -56,6 +56,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.ChatObject;
@@ -2277,10 +2279,12 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
         addView(actionModeLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.TOP));
 
         shadowLine = new View(context);
-        shadowLine.setBackgroundColor(getThemedColor(Theme.key_divider));
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
-        layoutParams.topMargin = AndroidUtilities.dp(48) - 1;
-        addView(shadowLine, layoutParams);
+        if (!ExteraConfig.disableDividers) {
+            shadowLine.setBackgroundColor(getThemedColor(Theme.key_divider));
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
+            layoutParams.topMargin = AndroidUtilities.dp(48) - 1;
+            addView(shadowLine, layoutParams);
+        }
 
         updateTabs(false);
         switchToCurrentSelectedMode(false);

@@ -317,7 +317,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                     timeLayout.draw(canvas);
                     canvas.restore();
                 }
-                canvas.drawLine(0, AndroidUtilities.dp(getStyleHeight()) - 1, getMeasuredWidth(), AndroidUtilities.dp(getStyleHeight()) - 1, Theme.dividerPaint);
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, AndroidUtilities.dp(getStyleHeight()) - 1, getMeasuredWidth(), AndroidUtilities.dp(getStyleHeight()) - 1, Theme.dividerPaint);
             }
         };
         addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));

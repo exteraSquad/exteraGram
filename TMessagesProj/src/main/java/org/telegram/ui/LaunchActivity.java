@@ -862,7 +862,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             FileLog.e(e);
         }
         MediaController.getInstance().setBaseActivity(this, true);
-        updateAppUpdateViews(false);
+        // updateAppUpdateViews(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             FingerprintController.checkKeyReady();

@@ -705,7 +705,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
                     } else if (keepMedia == 4) {
                         index = 0;
                     } else {
-                        index = keepMedia + 1;
+                        index = keepMedia + 2;
                     }
                     slideChooseView.setOptions(index, LocaleController.formatPluralString("Days", 1), LocaleController.formatPluralString("Days", 3), LocaleController.formatPluralString("Weeks", 1), LocaleController.formatPluralString("Months", 1), LocaleController.getString("KeepMediaForever", R.string.KeepMediaForever));
                     break;

@@ -108,7 +108,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                     }
                 }
                 boolean result = super.drawChild(canvas, child, drawingTime);
-                if (actionBarHeight != 0)
+                if (actionBarHeight != 0 && !ExteraConfig.disableDividers)
                     canvas.drawLine(0, actionBarHeight + 1, getMeasuredWidth(), actionBarHeight + 1, Theme.dividerPaint);
                 return result;
             }
@@ -450,7 +450,8 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
 
     @Override
     public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
-        canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
+        if (!ExteraConfig.disableDividers)
+            canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
     }
 
     @Keep

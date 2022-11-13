@@ -5320,8 +5320,8 @@ public class Theme {
             themeInfo = new ThemeInfo();
             themeInfo.name = "Monet Light";
             themeInfo.assetName = "monet_light.attheme";
-            themeInfo.previewBackgroundColor = MonetHelper.getColor("n1_50");
-            themeInfo.previewInColor = MonetHelper.getColor("a1_100");
+            themeInfo.previewBackgroundColor = MonetHelper.getColor("n1_10");
+            themeInfo.previewInColor = MonetHelper.getColor("n1_50");
             themeInfo.previewOutColor = MonetHelper.getColor("a1_600");
             themeInfo.sortIndex = 6;
             themes.add(themeInfo);
@@ -5331,8 +5331,8 @@ public class Theme {
             themeInfo.name = "Monet Dark";
             themeInfo.assetName = "monet_dark.attheme";
             themeInfo.previewBackgroundColor = MonetHelper.getColor("n1_900");
-            themeInfo.previewInColor = MonetHelper.getColor("n2_800");
-            themeInfo.previewOutColor = MonetHelper.getColor("a1_100");
+            themeInfo.previewInColor = MonetHelper.getColor("n1_800");
+            themeInfo.previewOutColor = MonetHelper.getColor("a1_200");
             themeInfo.sortIndex = 7;
             themes.add(themeInfo);
             themesDict.put("Monet Dark", themeInfo);

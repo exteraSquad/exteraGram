@@ -108,7 +108,8 @@ public class UpdaterUtils {
 
         if (BuildVars.PM_BUILD || isCheckingForUpdates || id != 0L || (System.currentTimeMillis() - ExteraConfig.updateScheduleTimestamp < updateCheckInterval && !manual))
             return;
-        Utilities.globalQueue.postRunnable(() -> {
+
+        Utilities.stageQueue.postRunnable(() -> {
             ExteraConfig.editor.putLong("lastUpdateCheckTime", ExteraConfig.lastUpdateCheckTime = System.currentTimeMillis()).apply();
             isCheckingForUpdates = true;
             try {
