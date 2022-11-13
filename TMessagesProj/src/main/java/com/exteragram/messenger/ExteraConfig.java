@@ -73,7 +73,6 @@ public class ExteraConfig {
     public static boolean dateOfForwardedMsg;
     public static boolean showMessageID;
     public static boolean showActionTimestamps;
-    public static boolean zalgoFilter;
 
     public static boolean rearVideoMessages;
     public static boolean rememberLastUsedCamera;
@@ -151,7 +150,6 @@ public class ExteraConfig {
             dateOfForwardedMsg = preferences.getBoolean("dateOfForwardedMsg", false);
             showMessageID = preferences.getBoolean("showMessageID", false);
             showActionTimestamps = preferences.getBoolean("showActionTimestamps", true);
-            zalgoFilter = preferences.getBoolean("zalgoFilter", false);
 
             rememberLastUsedCamera = preferences.getBoolean("rememberLastUsedCamera", false);
             rearVideoMessages = preferences.getBoolean("rearVideoMessages", false);

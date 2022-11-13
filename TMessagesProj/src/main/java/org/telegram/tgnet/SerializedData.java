@@ -8,8 +8,6 @@
 
 package org.telegram.tgnet;
 
-import static com.exteragram.messenger.ExteraUtils.zalgoFilter;
-
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 
@@ -443,7 +441,7 @@ public class SerializedData extends AbstractSerializedData {
                 len++;
                 i++;
             }
-            return zalgoFilter(new String(b, StandardCharsets.UTF_8));
+            return new String(b, StandardCharsets.UTF_8);
         } catch (Exception e) {
             if (exception) {
                 throw new RuntimeException("read string error", e);

@@ -72,8 +72,6 @@
     <string name="DateOfForwardedMsg">显示被转发原消息时间</string>
     <string name="ShowMessageID">显示消息ID</string>
     <string name="ShowActionTimestamps">显示操作的时间戳</string>
-    <string name="ZalgoFilter">过滤 \"Zalgo \"符号</string>
-    <string name="ZalgoFilterInfo">所有 \"Z̷͍͌ā̸̜l̸̞̂g̷̝͘o̶̩̓\"符号在昵称或消息中将被移除。信息缓存将被清除。</string>
     <string name="Media">媒体</string>
     <string name="RearVideoMessages">视频留言默认使用后置摄像头</string>
     <string name="DisableCamera">禁用即时相机预览</string>

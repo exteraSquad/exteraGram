@@ -42,7 +42,6 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCheckCell;
-import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
@@ -77,8 +76,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int dateOfForwardedMsgRow;
     private int showMessageIDRow;
     private int showActionTimestampsRow;
-    private int zalgoFilterRow;
-    private int zalgoFilterInfoRow;
+    private int chatDividerRow;
 
     private int mediaHeaderRow;
     private int rearVideoMessagesRow;
@@ -247,8 +245,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         dateOfForwardedMsgRow = newRow();
         showMessageIDRow = newRow();
         showActionTimestampsRow = newRow();
-        zalgoFilterRow = newRow();
-        zalgoFilterInfoRow = newRow();
+        chatDividerRow = newRow();
 
         mediaHeaderRow = newRow();
         disableCameraRow = newRow();
@@ -322,12 +319,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == showActionTimestampsRow) {
             ExteraConfig.editor.putBoolean("showActionTimestamps", ExteraConfig.showActionTimestamps ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.showActionTimestamps);
-            parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == zalgoFilterRow) {
-            ExteraConfig.editor.putBoolean("zalgoFilter", ExteraConfig.zalgoFilter ^= true).apply();
-            getMessagesController().clearQueryTime();
-            getMessagesStorage().clearLocalDatabase();
-            ((TextCheckCell) view).setChecked(ExteraConfig.zalgoFilter);
             parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == rearVideoMessagesRow) {
             ExteraConfig.editor.putBoolean("rearVideoMessages", ExteraConfig.rearVideoMessages ^= true).apply();
@@ -441,9 +432,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     } else if (position == showMessageIDRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("ShowMessageID", R.string.ShowMessageID), ExteraConfig.showMessageID, true);
                     } else if (position == showActionTimestampsRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("ShowActionTimestamps", R.string.ShowActionTimestamps), ExteraConfig.showActionTimestamps, true);
-                    } else if (position == zalgoFilterRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("ZalgoFilter", R.string.ZalgoFilter), ExteraConfig.zalgoFilter, false);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("ShowActionTimestamps", R.string.ShowActionTimestamps), ExteraConfig.showActionTimestamps, false);
                     } else if (position == rearVideoMessagesRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("RearVideoMessages", R.string.RearVideoMessages), ExteraConfig.rearVideoMessages, true);
                     } else if (position == rememberLastUsedCameraRow) {
@@ -472,25 +461,17 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textSettingsCell.setTextAndValue(LocaleController.getString("EmojiSuggestions", R.string.EmojiSuggestions), value, false);
                     }
                     break;
-                case 8:
-                    TextInfoPrivacyCell cell = (TextInfoPrivacyCell) holder.itemView;
-                    if (position == zalgoFilterInfoRow) {
-                        cell.setText(LocaleController.getString("ZalgoFilterInfo", R.string.ZalgoFilterInfo));
-                    }
-                    break;
             }
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (position == stickersDividerRow || position == mediaDividerRow || position == stickerShapeDividerRow) {
+            if (position == stickersDividerRow || position == mediaDividerRow || position == stickerShapeDividerRow || position == chatDividerRow) {
                 return 1;
             } else if (position == stickerSizeHeaderRow || position == stickersHeaderRow || position == chatHeaderRow || position == mediaHeaderRow || position == stickerShapeHeaderRow) {
                 return 3;
             } else if (position == emojiSuggestionTapRow) {
                 return 7;
-            } else if (position == zalgoFilterInfoRow) {
-                return 8;
             } else if (position == stickerShapeRow) {
                 return 10;
             } else if (position == stickerSizeRow) {

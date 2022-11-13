@@ -85,14 +85,6 @@ public class ExteraUtils {
         return LocaleController.getString("exteraAppName", R.string.exteraAppName) + beta;
     }
 
-    public static String zalgoFilter(String text) {
-        if (!ExteraConfig.zalgoFilter || !text.matches(".*\\p{Mn}{3}.*")) {
-            return text;
-        }
-        String finalString = text.replaceAll("(?i)([aeiouy]̈)|[̀-ͯ҉]|[\\p{Mn}]", "");
-        return finalString.isEmpty() ? LocaleController.getString("EventLogOriginalCaptionEmpty", R.string.EventLogOriginalCaptionEmpty) : finalString;
-    }
-
     public static boolean notSubbedTo(long id) {
         TLRPC.Chat chat = MessagesController.getInstance(UserConfig.selectedAccount).getChat(id);
         return chat == null || chat.left || chat.kicked;

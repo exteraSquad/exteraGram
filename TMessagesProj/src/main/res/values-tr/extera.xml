@@ -76,8 +76,6 @@
     <string name="DateOfForwardedMsg">İletilen mesajın tarihini göster</string>
     <string name="ShowMessageID">Mesaj ID\'sini göster</string>
     <string name="ShowActionTimestamps">Eylemler için zaman damgalarını göster</string>
-    <string name="ZalgoFilter">\"Zalgo\" sembollerini filtreleyin</string>
-    <string name="ZalgoFilterInfo">Takma adlardaki veya mesajlardaki tüm \"Z̷͍͌ā̸̜l̸̞̂g̷̝͘o̶̩̓\" sembolleri kaldırılacaktır. Mesaj önbelleği temizlenecektir.</string>
     <string name="Media">Medya</string>
     <string name="RearVideoMessages">Videolu mesajlarda arka kamerayı kullan</string>
     <string name="DisableCamera">Anında kamerayı devre dışı bırak</string>

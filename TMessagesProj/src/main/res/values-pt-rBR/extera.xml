@@ -72,8 +72,6 @@
     <string name="DateOfForwardedMsg">Mostrar a data da mensagem encaminhada</string>
     <string name="ShowMessageID">Mostrar ID da mensagem</string>
     <string name="ShowActionTimestamps">Mostrar data e hora de ações</string>
-    <string name="ZalgoFilter">Filtrar símbolos \"Zalgo\"</string>
-    <string name="ZalgoFilterInfo">Todos os símbolos de \"\"Z̷͍͌ā̸̜l̸̞̂g̷̝͘o̶̩̓\" em nomes ou mensagens serão removidos. O cache de mensagens será limpo.</string>
     <string name="Media">Mídia</string>
     <string name="RearVideoMessages">Câmera traseira em mensagens de vídeo</string>
     <string name="DisableCamera">Desativar câmara instantânea</string>

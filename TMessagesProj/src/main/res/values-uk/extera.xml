@@ -72,8 +72,6 @@
     <string name="DateOfForwardedMsg">Показувати дату пересланого повідомлення</string>
     <string name="ShowMessageID">Показати ідентифікатор повідомлення</string>
     <string name="ShowActionTimestamps">Показувати час для дій</string>
-    <string name="ZalgoFilter">Фільтр символів «Zalgo»</string>
-    <string name="ZalgoFilterInfo">Всі символи \"Z̷͍͌ā̸̜l̸̞̂g̷̝͘o̶̩̓\" в ніках та повідомленнях будуть видалені. Буде очищено кеш повідомлень.</string>
     <string name="Media">Медіа</string>
     <string name="RearVideoMessages">Задня камера у відеоповідомленнях</string>
     <string name="DisableCamera">Вимкнути миттєву камеру</string>
