@@ -8149,7 +8149,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             @Override
             protected void onDraw(Canvas canvas) {
                 super.onDraw(canvas);
-                canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
             }
         };
         chatActivityEnterView.addTopView(chatActivityEnterTopView, replyLineView, 48);
@@ -14044,6 +14045,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     ids.add(selectedMessagesIds[a].keyAt(b));
                 }
             }
+            assert message != null;
             Integer msgId = message.getId();
             if (ids.contains(msgId)) {
                 if (!selectedMessagesIds[0].withTouch.contains(msgId)) {

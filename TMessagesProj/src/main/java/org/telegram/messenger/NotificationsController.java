@@ -55,6 +55,8 @@ import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.exteragram.messenger.ExteraUtils;
+
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.support.LongSparseIntArray;
 import org.telegram.tgnet.ConnectionsManager;
@@ -3907,7 +3909,7 @@ public class NotificationsController extends BaseController {
     }
 
     private int setNotificationColor() {
-        return BuildVars.isBetaApp() ? 0xff747f9f : 0xfff54142;
+        return ExteraUtils.getNotificationIconColor();
     }
 
     private boolean isSilentMessage(MessageObject messageObject) {

@@ -8,20 +8,21 @@
 
 package org.telegram.ui.Cells;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.R;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.SimpleTextView;
 
+@SuppressLint("ViewConstructor")
 public class ChatUnreadCell extends FrameLayout {
 
-    private SimpleTextView textView;
-    private Theme.ResourcesProvider resourcesProvider;
+    private final SimpleTextView textView;
+    private final Theme.ResourcesProvider resourcesProvider;
 
     public ChatUnreadCell(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context);
@@ -32,7 +33,7 @@ public class ChatUnreadCell extends FrameLayout {
         textView.setPadding(AndroidUtilities.dp(12), AndroidUtilities.dp(6), AndroidUtilities.dp(12), AndroidUtilities.dp(6));
         textView.setTextSize(14);
         textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(getColor(Theme.key_chat_unreadMessagesStartText));
+        textView.setTextColor(getColor());
         textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
         addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
     }
@@ -47,11 +48,11 @@ public class ChatUnreadCell extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(40), MeasureSpec.EXACTLY));
+        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(46), MeasureSpec.EXACTLY));
     }
 
-    private int getColor(String key) {
-        Integer color = resourcesProvider != null ? resourcesProvider.getColor(key) : null;
-        return color != null ? color : Theme.getColor(key);
+    private int getColor() {
+        Integer color = resourcesProvider != null ? resourcesProvider.getColor(Theme.key_chat_unreadMessagesStartText) : null;
+        return color != null ? color : Theme.getColor(Theme.key_chat_unreadMessagesStartText);
     }
 }

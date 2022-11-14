@@ -11,10 +11,15 @@
 
 package com.exteragram.messenger;
 
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+
+import com.exteragram.messenger.monet.MonetHelper;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
@@ -141,5 +146,19 @@ public class ExteraUtils {
                         R.drawable.msg_nearby
                 };
         }
+    }
+
+    public static int getNotificationIconColor() {
+        if (Build.VERSION.SDK_INT >= 31) {
+            Configuration configuration = ApplicationLoader.applicationContext.getResources().getConfiguration();
+            switch (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_NO:
+                case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                    return MonetHelper.getColor("a1_600");
+                case Configuration.UI_MODE_NIGHT_YES:
+                    return MonetHelper.getColor("a1_100");
+            }
+        }
+        return BuildVars.isBetaApp() ? 0xff747f9f : 0xfff54142;
     }
 }

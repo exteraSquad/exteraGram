@@ -35,6 +35,7 @@ import org.json.JSONTokener;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
+import org.telegram.messenger.DispatchQueue;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.Utilities;
@@ -53,6 +54,8 @@ import java.util.Date;
 import java.util.Objects;
 
 public class UpdaterUtils {
+
+    public static volatile DispatchQueue otaQueue = new DispatchQueue("otaQueue");
 
     private static String uri = "https://api.github.com/repos/exteraSquad/exteraGram/releases/latest";
     private static String downloadURL = null;
@@ -109,7 +112,7 @@ public class UpdaterUtils {
         if (BuildVars.PM_BUILD || isCheckingForUpdates || id != 0L || (System.currentTimeMillis() - ExteraConfig.updateScheduleTimestamp < updateCheckInterval && !manual))
             return;
 
-        Utilities.stageQueue.postRunnable(() -> {
+        otaQueue.postRunnable(() -> {
             ExteraConfig.editor.putLong("lastUpdateCheckTime", ExteraConfig.lastUpdateCheckTime = System.currentTimeMillis()).apply();
             isCheckingForUpdates = true;
             try {
@@ -138,12 +141,12 @@ public class UpdaterUtils {
                 for (int i = 0; i < arr.length(); i++) {
                     downloadURL = link = arr.getJSONObject(i).getString("browser_download_url");
                     size = AndroidUtilities.formatFileSize(arr.getJSONObject(i).getLong("size"));
-                    if (link.contains("arm64") && Objects.equals(installedApkType, "arm64-v8a") ||
-                            link.contains("arm7") && Objects.equals(installedApkType, "armeabi-v7a") ||
+                    if (link.contains("arm64-v8a") && Objects.equals(installedApkType, "arm64-v8a") ||
+                            link.contains("armeabi-v7a") && Objects.equals(installedApkType, "armeabi-v7a") ||
                             link.contains("x86") && Objects.equals(installedApkType, "x86") ||
-                            link.contains("x64") && Objects.equals(installedApkType, "x86_64") ||
+                            link.contains("x86_64") && Objects.equals(installedApkType, "x86_64") ||
                             link.contains("universal") && Objects.equals(installedApkType, "universal") ||
-                            link.contains("beta") && Objects.equals(installedApkType, "beta")) {
+                            link.contains("beta") && BuildVars.isBetaApp()) {
                         break;
                     }
                 }
@@ -238,15 +241,15 @@ public class UpdaterUtils {
             var info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
             switch (info.versionCode % 10) {
                 case 1:
-                case 3: return "arm-v7a";
+                case 3: return "armeabi-v7a";
                 case 2:
                 case 4: return "x86";
                 case 5:
                 case 7: return "arm64-v8a";
                 case 6:
                 case 8: return "x86_64";
-                case 0: return "universal";
-                case 9: return "beta";
+                case 0:
+                case 9: return "universal";
             }
         } catch (Exception e) {
             return Build.SUPPORTED_ABIS[0];
@@ -331,7 +334,7 @@ public class UpdaterUtils {
     }
 
     public static void translate(CharSequence text, OnTranslationSuccess onSuccess, OnTranslationFail onFail) {
-        Utilities.globalQueue.postRunnable(() -> {
+        otaQueue.postRunnable(() -> {
             String uri;
             HttpURLConnection connection;
             try {
