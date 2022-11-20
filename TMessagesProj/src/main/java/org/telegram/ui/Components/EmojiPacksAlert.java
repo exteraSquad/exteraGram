@@ -930,6 +930,9 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
     @Override
     public void dismiss() {
         super.dismiss();
+        if (customEmojiPacks != null) {
+            customEmojiPacks.recycle();
+        }
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.startAllHeavyOperations, 4);
     }
 
@@ -1565,6 +1568,10 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
                     }
                 }
             }
+        }
+
+        public void recycle() {
+            NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.groupStickersDidLoad);
         }
 
         public String getTitle(int index) {
