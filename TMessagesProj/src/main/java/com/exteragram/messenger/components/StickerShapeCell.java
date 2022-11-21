@@ -85,7 +85,6 @@ public class StickerShapeCell extends LinearLayout {
             }
             int width = (int) Math.ceil(textPaint.measureText(text));
 
-            textPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             canvas.drawText(text, (getMeasuredWidth() - width) >> 1, AndroidUtilities.dp(102), textPaint);
 
             rect.set(AndroidUtilities.dp(10), AndroidUtilities.dp(10), getMeasuredWidth() - AndroidUtilities.dp(10), AndroidUtilities.dp(70));
@@ -102,6 +101,7 @@ public class StickerShapeCell extends LinearLayout {
         private void setProgress(float progress) {
             this.progress = progress;
 
+            textPaint.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), Theme.getColor(Theme.key_windowBackgroundWhiteValueText), progress));
             outlinePaint.setColor(ColorUtils.blendARGB(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F), Theme.getColor(Theme.key_windowBackgroundWhiteValueText), progress));
             outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(AndroidUtilities.lerp(0.5f, 2f, progress))));
             invalidate();
