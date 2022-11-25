@@ -21,7 +21,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.Rect;
 import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.os.SystemClock;
 
@@ -260,7 +260,7 @@ public class EditTextBoldCursor extends EditTextEffects {
         if (cursorDrawable != null) {
             return super.getTextCursorDrawable();
         }
-        ShapeDrawable shapeDrawable = new ShapeDrawable(new RectShape()) {
+        ShapeDrawable shapeDrawable = new ShapeDrawable(new RoundRectShape(new float[]{AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10)}, null, null)) {
             @Override
             public void draw(Canvas canvas) {
                 super.draw(canvas);
@@ -309,9 +309,9 @@ public class EditTextBoldCursor extends EditTextEffects {
                     return AndroidUtilities.dp(cursorWidth);
                 }
             };
-            cursorDrawable.setShape(new RectShape());
+            cursorDrawable.setShape(new RoundRectShape(new float[]{AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10), AndroidUtilities.dp(10)}, null, null));
             gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{0xff54a1db, 0xff54a1db});
-
+            gradientDrawable.setCornerRadius(AndroidUtilities.dp(10));
             setTextCursorDrawable(cursorDrawable);
         }
 
@@ -347,6 +347,7 @@ public class EditTextBoldCursor extends EditTextEffects {
         if (cursorDrawable == null) {
             try {
                 gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{0xff54a1db, 0xff54a1db});
+                gradientDrawable.setCornerRadius(AndroidUtilities.dp(10));
                 if (Build.VERSION.SDK_INT >= 29) {
                     setTextCursorDrawable(gradientDrawable);
                 }
@@ -873,7 +874,7 @@ public class EditTextBoldCursor extends EditTextEffects {
             int scrollHeight = (getLayout() == null ? 0 : getLayout().getHeight()) - getMeasuredHeight() + getPaddingBottom() + getPaddingTop();
             int bottom = (int) lineY + getScrollY() + Math.min(Math.max(0, scrollHeight - getScrollY()), AndroidUtilities.dp(2));
             int centerX = lastTouchX < 0 ? getMeasuredWidth() / 2 : lastTouchX,
-                maxWidth = Math.max(centerX, getMeasuredWidth() - centerX) * 2;
+                    maxWidth = Math.max(centerX, getMeasuredWidth() - centerX) * 2;
             if (lineActiveness < 1f) {
                 canvas.drawRect(getScrollX(), bottom - lineWidth, getScrollX() + getMeasuredWidth(), bottom, linePaint);
             }
@@ -884,11 +885,11 @@ public class EditTextBoldCursor extends EditTextEffects {
                 }
                 int lineThickness = (int) ((lineActive ? 1 : lineActivenessT) * AndroidUtilities.dp(2));
                 canvas.drawRect(
-                    getScrollX() + Math.max(0, centerX - activeLineWidth / 2),
-                    bottom - lineThickness,
-                    getScrollX() + Math.min(centerX + activeLineWidth / 2, getMeasuredWidth()),
-                    bottom,
-                    activeLinePaint
+                        getScrollX() + Math.max(0, centerX - activeLineWidth / 2),
+                        bottom - lineThickness,
+                        getScrollX() + Math.min(centerX + activeLineWidth / 2, getMeasuredWidth()),
+                        bottom,
+                        activeLinePaint
                 );
             }
         }
