@@ -3819,12 +3819,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 writeButton.setContentDescription(LocaleController.getString("AccDescrChangeProfilePicture", R.string.AccDescrChangeProfilePicture));
                 writeButton.setPadding(AndroidUtilities.dp(2), 0, 0, AndroidUtilities.dp(2));
             } else {
-                writeButton.setImageResource(R.drawable.profile_newmsg);
+                writeButton.setImageResource(R.drawable.profile_newmsg_filled);
                 writeButton.setContentDescription(LocaleController.getString("AccDescrOpenChat", R.string.AccDescrOpenChat));
             }
         } else {
             if (currentChat.megagroup) {
-                writeButton.setImageResource(R.drawable.msg_channel);
+                writeButton.setImageResource(R.drawable.msg_channel_filled);
                 writeButton.setContentDescription(LocaleController.getString("OpenChannel2", R.string.OpenChannel2));
             } else {
                 writeButton.setImageResource(R.drawable.profile_discuss);
