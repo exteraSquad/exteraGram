@@ -56,7 +56,7 @@
     <string name="ShowID">Profilde ID\'yi Göster</string>
     <string name="ShowDC">Profilde DC\'yi Göster</string>
     <string name="HidePremiumStickersTab">Premium çıkartmalar sekmesini gizle</string>
-    <string name="HideFeaturedEmojisTabs">Popüler premium ifadeleri gizle</string>
+    <string name="HideFeaturedEmoji">Popüler premium ifadeleri gizle</string>
     <string name="PremiumAutoPlayback">Premium otomatik oynatma</string>
     <string name="DisableAnimatedAvatars">Hareketli avatarları devre dışı bırak</string>
     <!--  Chats  -->

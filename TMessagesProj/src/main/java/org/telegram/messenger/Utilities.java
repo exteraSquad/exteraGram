@@ -113,14 +113,6 @@ public class Utilities {
         if (value == null) {
             return 0;
         }
-//        if (BuildConfig.BUILD_HOST_IS_WINDOWS) {
-//            Matcher matcher = pattern.matcher(value);
-//            if (matcher.find()) {
-//                return Integer.parseInt(matcher.group());
-//            }
-//        } else {
-
-// use old method because of broken new
         if (true) {
             int val = 0;
             try {
@@ -137,8 +129,11 @@ public class Utilities {
                 }
                 if (start >= 0) {
                     String str = value.subSequence(start, end).toString();
-//                  val = parseInt(str);
-                    val = Integer.parseInt(str);
+                    try {
+                        val = Math.toIntExact(parseLong(str));
+                    } catch (Exception e) {
+                        val = Integer.parseInt(str);
+                    }
                 }
             } catch (Exception ignore) {}
             return val;

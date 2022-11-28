@@ -6368,7 +6368,7 @@ public class LoginActivity extends BaseFragment {
                     super.invalidate(l, t, r, b);
                 }
             };
-            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(avatarImage.getWidth(), true));
+            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(78));
             avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REGISTER);
             avatarDrawable.setInfo(5, null, null);
             avatarImage.setImageDrawable(avatarDrawable);

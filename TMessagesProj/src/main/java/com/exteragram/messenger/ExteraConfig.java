@@ -61,7 +61,7 @@ public class ExteraConfig {
     public static boolean unlimitedRecentStickers;
     public static boolean premiumAutoPlayback;
     public static boolean hidePremiumStickersTab;
-    public static boolean hideFeaturedEmojisTabs;
+    public static boolean hideFeaturedEmoji;
 
     public static boolean addCommaAfterMention;
     public static int emojiSuggestionTap;
@@ -115,7 +115,7 @@ public class ExteraConfig {
             disableDividers = preferences.getBoolean("disableDividers", false);
             newSwitchStyle = preferences.getBoolean("newSwitchStyle", true);
             transparentNavBar = preferences.getBoolean("transparentNavBar", false);
-            squareFab = preferences.getBoolean("squareFab", false);
+            squareFab = preferences.getBoolean("squareFab", true);
 
             avatarCorners = preferences.getFloat("avatarCorners", 30.0f);
             downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);
@@ -137,8 +137,8 @@ public class ExteraConfig {
             hideStickerTime = preferences.getBoolean("hideStickerTime", false);
             unlimitedRecentStickers = preferences.getBoolean("unlimitedRecentStickers", false);
             premiumAutoPlayback = preferences.getBoolean("premiumAutoPlayback", false);
-            hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", false);
-            hideFeaturedEmojisTabs = preferences.getBoolean("hideFeaturedEmojisTabs", false);
+            hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", true);
+            hideFeaturedEmoji = preferences.getBoolean("hideFeaturedEmoji", false);
 
             addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
             emojiSuggestionTap = preferences.getInt("emojiSuggestionTap", 0);

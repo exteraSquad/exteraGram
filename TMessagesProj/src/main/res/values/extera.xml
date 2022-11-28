@@ -65,7 +65,7 @@
     <string name="ShowID">Show ID in Profile</string>
     <string name="ShowDC">Show DC in Profile</string>
     <string name="HidePremiumStickersTab">Hide premium stickers tab</string>
-    <string name="HideFeaturedEmojisTabs">Hide featured premium emojis</string>
+    <string name="HideFeaturedEmoji">Hide featured premium emoji</string>
     <string name="PremiumAutoPlayback">Premium auto-playback</string>
     <string name="DisableAnimatedAvatars">Disable animated avatars</string>
 

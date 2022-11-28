@@ -58,6 +58,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.DocumentObject;
@@ -2485,7 +2487,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
             frozenEmojiPacks = new ArrayList<>(mediaDataController.getStickerSets(MediaDataController.TYPE_EMOJIPACKS));
         }
         ArrayList<TLRPC.TL_messages_stickerSet> installedEmojipacks = frozenEmojiPacks;
-        ArrayList<TLRPC.StickerSetCovered> featuredEmojiPacks = new ArrayList<>(mediaDataController.getFeaturedEmojiSets());
+        ArrayList<TLRPC.StickerSetCovered> featuredEmojiPacks = ExteraConfig.hideFeaturedEmoji ? null : new ArrayList<>(mediaDataController.getFeaturedEmojiSets());
 
         ArrayList<Integer> prevRowHashCodes = new ArrayList<>(rowHashCodes);
         totalCount = 0;

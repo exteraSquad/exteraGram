@@ -878,7 +878,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
         avatarDrawable.setInfo(chat);
         if (avatarImageView != null) {
             avatarImageView.setForUserOrChat(chat, avatarDrawable);
-            avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 32 : 42));
+            avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 24 : 42));
         }
 
     }
@@ -939,7 +939,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             avatarDrawable.setInfo(chat);
             if (avatarImageView != null) {
                 avatarImageView.setForUserOrChat(chat, avatarDrawable);
-                avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat.forum ? 32 : 42));
+                avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat.forum ? 24 : 42));
             }
         }
     }

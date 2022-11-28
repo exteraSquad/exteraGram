@@ -15,7 +15,6 @@ import android.animation.ObjectAnimator;
 import android.animation.StateListAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -33,7 +32,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
@@ -4804,6 +4802,8 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         featuredStickerSets.clear();
         ArrayList<TLRPC.StickerSetCovered> featured = mediaDataController.getFeaturedStickerSets();
         for (int a = 0, N = featured.size(); a < N; a++) {
+            if (ExteraConfig.hidePremiumStickersTab)
+                break;
             TLRPC.StickerSetCovered set = featured.get(a);
             if (mediaDataController.isStickerPackInstalled(set.set.id)) {
                 continue;
@@ -4888,7 +4888,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         if (info != null) {
             long hiddenStickerSetId = MessagesController.getEmojiSettings(currentAccount).getLong("group_hide_stickers_" + info.id, -1);
             TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(info.id);
-            if (chat == null || info.stickerset == null || !ChatObject.hasAdminRights(chat)) {
+            if (info.stickerset == null || !ChatObject.hasAdminRights(chat)) {
                 groupStickersHidden = hiddenStickerSetId != -1;
             } else if (info.stickerset != null) {
                 groupStickersHidden = hiddenStickerSetId == info.stickerset.id;
@@ -6766,8 +6766,10 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             ArrayList<TLRPC.StickerSetCovered> featured = mediaDataController.getFeaturedEmojiSets();
             featuredEmojiSets.clear();
             for (int a = 0, N = featured.size(); a < N; a++) {
+                if (ExteraConfig.hideFeaturedEmoji)
+                    break;
                 TLRPC.StickerSetCovered set = featured.get(a);
-                if ((!mediaDataController.isStickerPackInstalled(set.set.id) || installedEmojiSets.contains(set.set.id)) && !ExteraConfig.hideFeaturedEmojisTabs) {
+                if ((!mediaDataController.isStickerPackInstalled(set.set.id) || installedEmojiSets.contains(set.set.id))) {
                     featuredEmojiSets.add(set);
                 }
             }

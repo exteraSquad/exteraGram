@@ -1001,7 +1001,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         public boolean onTouchEvent(MotionEvent ev) {
             if (parentLayout != null && filterTabsView != null && !filterTabsView.isEditing() && !searching &&
                     !parentLayout.checkTransitionAnimation() && !parentLayout.isInPreviewMode() && !parentLayout.isPreviewOpenAnimationInProgress() && !parentLayout.getDrawerLayoutContainer().isDrawerOpened() &&
-                    (ev == null || startedTracking || ev.getY() > actionBar.getMeasuredHeight() + actionBar.getTranslationY()) && SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS) {
+                    (ev == null || startedTracking || ev.getY() > actionBar.getMeasuredHeight() + actionBar.getTranslationY()) && SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS ||
+                    filterTabsView != null && initialDialogsType == 3) {
                 if (ev != null) {
                     if (velocityTracker == null) {
                         velocityTracker = VelocityTracker.obtain();
@@ -2671,8 +2672,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 } else {
                                     if (dialogFilter.dialogs.isEmpty()) getMessagesController().loadTabDialogs(dialogFilter);
                                     for (var dialog : dialogFilter.dialogs) {
-                                        if (dialog.unread_count == 0 && dialog.unread_mentions_count == 0) continue;
-                                        getMessagesController().markDialogAsRead(dialog.id, dialog.top_message, dialog.top_message, dialog.last_message_date, false, 0, dialog.unread_count, true, 0);
+                                        if (dialog.unread_count != 0 || dialog.unread_mentions_count != 0 || dialog.unread_mark)
+                                            markAsRead(dialog.id);
                                     }
                                 }
                             } else {
@@ -3484,7 +3485,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         filtersView.setVisibility(View.GONE);
 
         floatingButtonContainer = new FrameLayout(context);
-        floatingButtonContainer.setVisibility(onlySelect && initialDialogsType != 10 || folderId != 0 ? View.GONE : View.VISIBLE);
+        floatingButtonContainer.setVisibility(isInPreviewMode() || onlySelect && initialDialogsType != 10 || folderId != 0 ? View.GONE : View.VISIBLE);
         contentView.addView(floatingButtonContainer, LayoutHelper.createFrame(56, 56, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
         floatingButtonContainer.setOnClickListener(v -> {
             if (parentLayout != null && parentLayout.isInPreviewMode()) {
@@ -9241,5 +9242,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }),
                 new FloatingDebugController.DebugItem(LocaleController.getString(R.string.DebugClearSendMessageAsPeers), () -> getMessagesController().clearSendAsPeers())
         );
+    }
+
+    public boolean isSwipeBackEnabled(MotionEvent event) {
+        return !(initialDialogsType == 3 && viewPages[0].selectedType != filterTabsView.getFirstTabId());
     }
 }

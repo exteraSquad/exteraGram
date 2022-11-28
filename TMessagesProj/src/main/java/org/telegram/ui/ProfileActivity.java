@@ -4090,7 +4090,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (chatId != 0) {
             TLRPC.Chat chatLocal = getMessagesController().getChat(chatId);
             if (chatLocal != null && chatLocal.forum) {
-                return 32;
+                return 24;
             }
         }
         return 42;

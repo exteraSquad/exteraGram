@@ -55,7 +55,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int disableAnimatedAvatarsRow;
     private int premiumAutoPlaybackRow;
     private int hidePremiumStickersTabRow;
-    private int hideFeaturedEmojisTabsRow;
+    private int hideFeaturedEmojiRow;
     private int premiumDividerRow;
 
     private int archiveHeaderRow;
@@ -91,7 +91,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         disableAnimatedAvatarsRow = newRow();
         premiumAutoPlaybackRow = newRow();
         hidePremiumStickersTabRow = getUserConfig().isPremium() ? newRow() : -1;
-        hideFeaturedEmojisTabsRow = newRow();
+        hideFeaturedEmojiRow = newRow();
         premiumDividerRow = newRow();
 
         archiveHeaderRow = newRow();
@@ -156,9 +156,9 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         } else if (position == hidePremiumStickersTabRow) {
             ExteraConfig.editor.putBoolean("hidePremiumStickersTab", ExteraConfig.hidePremiumStickersTab ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hidePremiumStickersTab);
-        } else if (position == hideFeaturedEmojisTabsRow) {
-            ExteraConfig.editor.putBoolean("hideFeaturedEmojisTabs", ExteraConfig.hideFeaturedEmojisTabs ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.hideFeaturedEmojisTabs);
+        } else if (position == hideFeaturedEmojiRow) {
+            ExteraConfig.editor.putBoolean("hideFeaturedEmoji", ExteraConfig.hideFeaturedEmoji ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.hideFeaturedEmoji);
         } else if (position == uploadSpeedBoostRow) {
             ExteraConfig.editor.putBoolean("uploadSpeedBoost", ExteraConfig.uploadSpeedBoost ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.uploadSpeedBoost);
@@ -248,8 +248,8 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString("PremiumAutoPlayback", R.string.PremiumAutoPlayback), ExteraConfig.premiumAutoPlayback, true);
                     } else if (position == hidePremiumStickersTabRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HidePremiumStickersTab", R.string.HidePremiumStickersTab), ExteraConfig.hidePremiumStickersTab, true);
-                    } else if (position == hideFeaturedEmojisTabsRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("HideFeaturedEmojisTabs", R.string.HideFeaturedEmojisTabs), ExteraConfig.hideFeaturedEmojisTabs, false);
+                    } else if (position == hideFeaturedEmojiRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("HideFeaturedEmoji", R.string.HideFeaturedEmoji), ExteraConfig.hideFeaturedEmoji, false);
                     } else if (position == uploadSpeedBoostRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UploadSpeedBoost", R.string.UploadSpeedBoost), ExteraConfig.uploadSpeedBoost, false);
                     }

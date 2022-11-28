@@ -10022,7 +10022,6 @@ public class MessagesController extends BaseController implements NotificationCe
         if (threadId != 0) {
             createReadTask = maxPositiveId != Integer.MAX_VALUE;
         } else {
-            boolean countMessages = getNotificationsController().showBadgeMessages;
             if (!DialogObject.isEncryptedDialog(dialogId)) {
                 if (maxPositiveId == 0) {
                     return;

@@ -62,7 +62,7 @@
     <string name="ShowID">Показывать ID в профиле</string>
     <string name="ShowDC">Показывать DC в профиле</string>
     <string name="HidePremiumStickersTab">Скрыть вкладку премиум стикеров</string>
-    <string name="HideFeaturedEmojisTabs">Скрыть избранные премиум эмодзи</string>
+    <string name="HideFeaturedEmoji">Скрыть избранные премиум эмодзи</string>
     <string name="PremiumAutoPlayback">Авто-анимация премиум стикеров</string>
     <string name="DisableAnimatedAvatars">Отключить анимированные аватарки</string>
 
