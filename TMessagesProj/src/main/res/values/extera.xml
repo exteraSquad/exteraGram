@@ -123,6 +123,7 @@
     <string name="CheckOnLaunch">Check on launch</string>
     <string name="NoUpdates">Updates not found.</string>
     <string name="CheckForUpdates">Check for updates</string>
+    <string name="CheckingForUpdates">Checking for updates…</string>
     <string name="CurrentVersion">Current version</string>
     <string name="Version">Version</string>
     <string name="UpdateSize">Update size</string>

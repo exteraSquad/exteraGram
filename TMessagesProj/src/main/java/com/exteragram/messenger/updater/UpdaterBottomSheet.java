@@ -13,6 +13,8 @@
 
 package com.exteragram.messenger.updater;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -26,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
@@ -49,6 +53,7 @@ public class UpdaterBottomSheet extends BottomSheet {
     private RLottieImageView imageView;
     private TextView changelogTextView;
 
+    AnimatorSet animatorSet;
     private boolean isTranslated = false;
     private CharSequence translatedC;
 
@@ -134,7 +139,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             changelogTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             changelogTextView.setOnClickListener(v -> UpdaterUtils.translate(args[1], (String translated) -> {
                 translatedC = translated;
-                animateChangelog(UpdaterUtils.replaceTags(isTranslated ? args[1] : (String) translatedC));
+                animateView(changelogTextView, UpdaterUtils.replaceTags(isTranslated ? args[1] : (String) translatedC));
                 isTranslated ^= true;
             }, () -> {}));
             linearLayout.addView(changelogTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
@@ -208,21 +213,28 @@ public class UpdaterBottomSheet extends BottomSheet {
             });
             linearLayout.addView(clearUpdates);
 
-            TextView checkUpdatesButton = new TextView(context);
-            checkUpdatesButton.setLines(1);
-            checkUpdatesButton.setSingleLine(true);
-            checkUpdatesButton.setEllipsize(TextUtils.TruncateAt.END);
-            checkUpdatesButton.setGravity(Gravity.CENTER);
-            checkUpdatesButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-            checkUpdatesButton.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 6));
-            checkUpdatesButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            checkUpdatesButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            checkUpdatesButton.setText(LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
-            checkUpdatesButton.setOnClickListener(v -> UpdaterUtils.checkUpdates(context, true, () -> {
-                BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates)).show();
-                timeView.setText(LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
-            }, this::dismiss));
-            linearLayout.addView(checkUpdatesButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
+            FrameLayout checkUpdatesBackground = new FrameLayout(context);
+            checkUpdatesBackground.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 6));
+            linearLayout.addView(checkUpdatesBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
+
+            TextView checkUpdates = new TextView(context);
+            checkUpdates.setLines(1);
+            checkUpdates.setSingleLine(true);
+            checkUpdates.setEllipsize(TextUtils.TruncateAt.END);
+            checkUpdates.setGravity(Gravity.CENTER);
+            checkUpdates.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+            checkUpdates.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            checkUpdates.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            checkUpdates.setText(LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
+            checkUpdates.setOnClickListener(v -> {
+                animateView(checkUpdates, LocaleController.getString("CheckingForUpdates", R.string.CheckingForUpdates));
+                UpdaterUtils.checkUpdates(context, true, () -> {
+                    BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates)).show();
+                    timeView.setText(LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
+                    animateView(checkUpdates, LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
+                }, this::dismiss);
+            });
+            checkUpdatesBackground.addView(checkUpdates, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
         }
 
         ScrollView scrollView = new ScrollView(context);
@@ -230,15 +242,33 @@ public class UpdaterBottomSheet extends BottomSheet {
         setCustomView(scrollView);
     }
 
-    private void animateChangelog(CharSequence text) {
-        changelogTextView.setText(text);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.setDuration(250);
+    private void animateView(View v, CharSequence text) {
+        if (animatorSet != null) {
+            animatorSet.cancel();
+        }
+        if (v instanceof TextView)
+            ((TextView) v).setText(text);
+        animatorSet = new AnimatorSet();
+        animatorSet.setDuration(300);
         animatorSet.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         animatorSet.playTogether(
-                ObjectAnimator.ofFloat(changelogTextView, View.ALPHA, 0.0f, 1.0f),
-                ObjectAnimator.ofFloat(changelogTextView, View.TRANSLATION_Y, AndroidUtilities.dp(12), 0)
+                ObjectAnimator.ofFloat(v, View.ALPHA, 0.0f, 1.0f),
+                ObjectAnimator.ofFloat(v, View.TRANSLATION_Y, AndroidUtilities.dp(12), 0)
         );
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(@NonNull Animator animation) {
+                if (animatorSet != null && animatorSet.equals(animation)) {
+                    animatorSet = null;
+                }
+            }
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                if (animatorSet != null && animatorSet.equals(animation)) {
+                    animatorSet = null;
+                }
+            }
+        });
         animatorSet.start();
     }
 

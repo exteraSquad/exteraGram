@@ -119,6 +119,7 @@
     <string name="CheckOnLaunch">Проверять при запуске</string>
     <string name="NoUpdates">Обновлений не найдено.</string>
     <string name="CheckForUpdates">Проверить обновления</string>
+    <string name="CheckingForUpdates">Ищем обновления…</string>
     <string name="CurrentVersion">Текущая версия</string>
     <string name="Version">Версия</string>
     <string name="UpdateSize">Размер обновления</string>

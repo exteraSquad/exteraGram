@@ -111,10 +111,9 @@ public class UpdaterUtils {
 
         if (BuildVars.PM_BUILD || isCheckingForUpdates || id != 0L || (System.currentTimeMillis() - ExteraConfig.updateScheduleTimestamp < updateCheckInterval && !manual))
             return;
-
+        isCheckingForUpdates = true;
         otaQueue.postRunnable(() -> {
             ExteraConfig.editor.putLong("lastUpdateCheckTime", ExteraConfig.lastUpdateCheckTime = System.currentTimeMillis()).apply();
-            isCheckingForUpdates = true;
             try {
                 if (BuildVars.isBetaApp())
                     uri = uri.replace("/exteraGram/", "/exteraGram-Beta/");
@@ -170,7 +169,7 @@ public class UpdaterUtils {
                 e.printStackTrace();
             }
             isCheckingForUpdates = false;
-        });
+        }, 200);
     }
 
     public static void downloadApk(Context context, String link, String title) {
