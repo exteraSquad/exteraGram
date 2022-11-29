@@ -68,6 +68,7 @@
     <string name="HideFeaturedEmoji">Hide featured premium emoji</string>
     <string name="PremiumAutoPlayback">Premium auto-playback</string>
     <string name="DisableAnimatedAvatars">Disable animated avatars</string>
+    <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
 
     <!-- Chats -->
     <string name="StickerSize">Stickers size</string>
@@ -88,8 +89,8 @@
 
     <string name="AddCommaAfterMention">Add comma after mention</string>
     <string name="AddCommaAfterMentionValue">\@exteraGram, \@exteraBeta, \@exteraGramCI</string>
-    <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scrolling</string>
+    <string name="HideShareButton">Hide side \"Share\" button</string>
     <string name="DisableReactions">Disable reactions</string>
     <string name="DisableGreetingSticker">Disable greeting sticker</string>
     <string name="DisableJumpToNextChannel">Disable \"Jump to next channel\"</string>

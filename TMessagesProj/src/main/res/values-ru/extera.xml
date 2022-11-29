@@ -86,6 +86,7 @@
     <string name="AddCommaAfterMention">Запятая после упоминания</string>
     <string name="HideSendAsChannel">Скрыть \"Написать от имени…\"</string>
     <string name="HideKeyboardOnScroll">Скрывать клавиатуру при скролле</string>
+    <string name="HideShareButton">Скрыть боковую кнопку \"Поделиться\"</string>
     <string name="DisableGreetingSticker">Скрыть приветственный стикер</string>
     <string name="DisableJumpToNextChannel">Отключить \"Перейти в новый канал\"</string>
     <string name="DisableReactions">Отключить реакции</string>

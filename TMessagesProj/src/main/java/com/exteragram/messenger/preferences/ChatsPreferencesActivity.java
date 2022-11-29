@@ -69,6 +69,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int chatHeaderRow;
     private int addCommaAfterMentionRow;
     private int hideKeyboardOnScrollRow;
+    private int hideShareButtonRow;
     private int disableReactionsRow;
     private int disableGreetingStickerRow;
     private int disableJumpToNextChannelRow;
@@ -237,6 +238,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         chatHeaderRow = newRow();
         addCommaAfterMentionRow = newRow();
         hideKeyboardOnScrollRow = newRow();
+        hideShareButtonRow = newRow();
         disableReactionsRow = newRow();
         disableGreetingStickerRow = newRow();
         disableJumpToNextChannelRow = newRow();
@@ -293,6 +295,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == hideKeyboardOnScrollRow) {
             ExteraConfig.editor.putBoolean("hideKeyboardOnScroll", ExteraConfig.hideKeyboardOnScroll ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideKeyboardOnScroll);
+        } else if (position == hideShareButtonRow) {
+            ExteraConfig.editor.putBoolean("hideShareButton", ExteraConfig.hideShareButton ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.hideShareButton);
         } else if (position == disableReactionsRow) {
             ExteraConfig.editor.putBoolean("disableReactions", ExteraConfig.disableReactions ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableReactions);
@@ -414,6 +419,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("AddCommaAfterMention", R.string.AddCommaAfterMention), LocaleController.getString("AddCommaAfterMentionValue", R.string.AddCommaAfterMentionValue), ExteraConfig.addCommaAfterMention, false, true);
                     } else if (position == hideKeyboardOnScrollRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideKeyboardOnScroll", R.string.HideKeyboardOnScroll), ExteraConfig.hideKeyboardOnScroll, true);
+                    } else if (position == hideShareButtonRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("HideShareButton", R.string.HideShareButton), ExteraConfig.hideShareButton, true);
                     } else if (position == disableReactionsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableReactions", R.string.DisableReactions), ExteraConfig.disableReactions, true);
                     } else if (position == disableGreetingStickerRow) {

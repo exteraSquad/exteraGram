@@ -63,11 +63,12 @@ public class ExteraConfig {
     public static boolean premiumAutoPlayback;
     public static boolean hidePremiumStickersTab;
     public static boolean hideFeaturedEmoji;
+    public static boolean hideSendAsChannel;
 
     public static boolean addCommaAfterMention;
     public static int emojiSuggestionTap;
-    public static boolean hideSendAsChannel;
     public static boolean hideKeyboardOnScroll;
+    public static boolean hideShareButton;
     public static boolean disableReactions;
     public static boolean disableGreetingSticker;
     public static boolean disableJumpToNextChannel;
@@ -140,10 +141,11 @@ public class ExteraConfig {
             premiumAutoPlayback = preferences.getBoolean("premiumAutoPlayback", false);
             hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", true);
             hideFeaturedEmoji = preferences.getBoolean("hideFeaturedEmoji", false);
+            hideSendAsChannel = preferences.getBoolean("hideSendAsChannel", false);
 
             addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
             emojiSuggestionTap = preferences.getInt("emojiSuggestionTap", 0);
-            hideSendAsChannel = preferences.getBoolean("hideSendAsChannel", false);
+            hideShareButton = preferences.getBoolean("hideShareButton", true);
             hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
             disableReactions = preferences.getBoolean("disableReactions", false);
             disableJumpToNextChannel = preferences.getBoolean("disableJumpToNextChannel", false);
