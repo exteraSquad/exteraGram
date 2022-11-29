@@ -68,7 +68,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
     private int chatHeaderRow;
     private int addCommaAfterMentionRow;
-    private int hideSendAsChannelRow;
     private int hideKeyboardOnScrollRow;
     private int disableReactionsRow;
     private int disableGreetingStickerRow;
@@ -237,7 +236,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
         chatHeaderRow = newRow();
         addCommaAfterMentionRow = newRow();
-        hideSendAsChannelRow = newRow();
         hideKeyboardOnScrollRow = newRow();
         disableReactionsRow = newRow();
         disableGreetingStickerRow = newRow();
@@ -292,9 +290,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             });
             builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
             showDialog(builder.create());
-        } else if (position == hideSendAsChannelRow) {
-            ExteraConfig.editor.putBoolean("hideSendAsChannel", ExteraConfig.hideSendAsChannel ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.hideSendAsChannel);
         } else if (position == hideKeyboardOnScrollRow) {
             ExteraConfig.editor.putBoolean("hideKeyboardOnScroll", ExteraConfig.hideKeyboardOnScroll ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideKeyboardOnScroll);
@@ -417,8 +412,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndCheck(LocaleController.getString("UnlimitedRecentStickers", R.string.UnlimitedRecentStickers), ExteraConfig.unlimitedRecentStickers, true);
                     } else if (position == addCommaAfterMentionRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("AddCommaAfterMention", R.string.AddCommaAfterMention), LocaleController.getString("AddCommaAfterMentionValue", R.string.AddCommaAfterMentionValue), ExteraConfig.addCommaAfterMention, false, true);
-                    } else if (position == hideSendAsChannelRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("HideSendAsChannel", R.string.HideSendAsChannel), ExteraConfig.hideSendAsChannel, true);
                     } else if (position == hideKeyboardOnScrollRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideKeyboardOnScroll", R.string.HideKeyboardOnScroll), ExteraConfig.hideKeyboardOnScroll, true);
                     } else if (position == disableReactionsRow) {
