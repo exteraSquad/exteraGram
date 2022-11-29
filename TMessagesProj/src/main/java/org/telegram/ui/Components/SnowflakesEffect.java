@@ -11,7 +11,6 @@ package org.telegram.ui.Components;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Build;
 import android.view.View;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -22,11 +21,11 @@ import java.util.ArrayList;
 
 public class SnowflakesEffect {
 
-    private Paint particlePaint;
-    private Paint particleThinPaint;
-    private Paint bitmapPaint = new Paint();
+    private final Paint particlePaint;
+    private final Paint particleThinPaint;
+    private final Paint bitmapPaint = new Paint();
     private String colorKey = Theme.key_actionBarDefaultTitle;
-    private int viewType;
+    private final int viewType;
 
     Bitmap particleBitmap;
 
@@ -97,8 +96,8 @@ public class SnowflakesEffect {
         }
     }
 
-    private ArrayList<Particle> particles = new ArrayList<>();
-    private ArrayList<Particle> freeParticles = new ArrayList<>();
+    private final ArrayList<Particle> particles = new ArrayList<>();
+    private final ArrayList<Particle> freeParticles = new ArrayList<>();
 
     private int color;
 

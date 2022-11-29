@@ -35,6 +35,7 @@ public class ExteraConfig {
     public static boolean transparentNavBar;
     public static boolean squareFab;
     public static int eventType;
+    public static boolean forceDrawerSnow;
     public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures;
 
     // general
@@ -171,6 +172,7 @@ public class ExteraConfig {
             inviteFriends = preferences.getBoolean("inviteFriends", false);
             telegramFeatures = preferences.getBoolean("telegramFeatures", true);
             eventType = preferences.getInt("eventType", 0);
+            forceDrawerSnow = preferences.getBoolean("forceDrawerSnow", false);
 
             lastUpdateCheckTime = preferences.getLong("lastUpdateCheckTime", 0);
             updateScheduleTimestamp = preferences.getLong("updateScheduleTimestamp", 0);

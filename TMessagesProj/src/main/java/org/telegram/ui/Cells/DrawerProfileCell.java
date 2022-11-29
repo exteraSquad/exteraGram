@@ -246,7 +246,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         });
         addView(darkThemeView, LayoutHelper.createFrame(48, 48, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 90));
 
-        if (Theme.getEventType() == 0) {
+        if (Theme.getEventType() == 0 && ExteraConfig.eventType != 2 || ExteraConfig.forceDrawerSnow) {
             snowflakesEffect = new SnowflakesEffect(0);
             snowflakesEffect.setColorKey(Theme.key_chats_menuName);
         }

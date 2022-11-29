@@ -75,6 +75,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
     private int iconsHeaderRow;
     private int eventChooserRow;
+    private int forceSnowRow;
     private int iconsDividerRow;
 
     private int drawerHeaderRow;
@@ -245,6 +246,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
         iconsHeaderRow = newRow();
         eventChooserRow = newRow();
+        forceSnowRow = newRow();
         iconsDividerRow = newRow();
 
         drawerHeaderRow = newRow();
@@ -367,6 +369,10 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ExteraConfig.toggleDrawerElements(11);
             ((TextCheckWithIconCell) view).setChecked(ExteraConfig.telegramFeatures);
             parentLayout.rebuildAllFragmentViews(false, false);
+        } else if (position == forceSnowRow) {
+            ExteraConfig.editor.putBoolean("forceDrawerSnow", ExteraConfig.forceDrawerSnow ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.forceDrawerSnow);
+            showBulletin();
         } else if (position == eventChooserRow) {
             if (getParentActivity() == null) {
                 return;
@@ -483,6 +489,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableDividers", R.string.DisableDividers), ExteraConfig.disableDividers, true);
                     } else if (position == transparentNavBarRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("TransparentNavBar", R.string.TransparentNavBar), ExteraConfig.transparentNavBar, false);
+                    } else if (position == forceSnowRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("DrawerForceSnow", R.string.DrawerForceSnow), ExteraConfig.forceDrawerSnow, false);
                     }
                     break;
                 case 6:
@@ -536,7 +544,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                                 value = LocaleController.getString("DependsOnTheDate", R.string.DependsOnTheDate);
                                 break;
                         }
-                        textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconPack", R.string.DrawerIconPack), value, false);
+                        textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconPack", R.string.DrawerIconPack), value, true);
                     }
                     break;
                 case 8:
@@ -555,7 +563,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             } else if (position == applicationHeaderRow || position == drawerHeaderRow || position == iconsHeaderRow || position == avatarCornersHeaderRow) {
                 return 3;
             } else if (position == useSystemFontsRow || position == useSystemEmojiRow || position == transparentStatusBarRow || position == transparentNavBarRow ||
-                    position == blurForAllThemesRow || position == centerTitleRow || position == newSwitchStyleRow || position == disableDividersRow) {
+                    position == blurForAllThemesRow || position == centerTitleRow || position == newSwitchStyleRow || position == disableDividersRow || position == forceSnowRow) {
                 return 5;
             } else if (position == eventChooserRow) {
                 return 7;
