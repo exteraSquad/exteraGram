@@ -60,6 +60,7 @@ public class ExteraConfig {
     public static int stickerShape;
     public static boolean hideStickerTime;
     public static boolean unlimitedRecentStickers;
+    public static boolean stickersAutoReorder;
     public static boolean premiumAutoPlayback;
     public static boolean hidePremiumStickersTab;
     public static boolean hideFeaturedEmoji;
@@ -147,6 +148,7 @@ public class ExteraConfig {
             stickerShape = preferences.getInt("stickerShape", 0);
             hideStickerTime = preferences.getBoolean("hideStickerTime", false);
             unlimitedRecentStickers = preferences.getBoolean("unlimitedRecentStickers", false);
+            stickersAutoReorder = preferences.getBoolean("stickersAutoReorder", false);
             premiumAutoPlayback = preferences.getBoolean("premiumAutoPlayback", false);
             hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", true);
             hideFeaturedEmoji = preferences.getBoolean("hideFeaturedEmoji", false);

@@ -75,6 +75,7 @@
     <string name="StickerShapeRoundedMsg">Сообщение</string>
     <string name="StickerTime">Скрыть время под стикером</string>
     <string name="UnlimitedRecentStickers">Бесконечные недавние стикеры</string>
+    <string name="StickersAutoReorder">Изменение порядка по использованию</string>
     <string name="EmojiSuggestionsTap">Нажатие на подсказки эмодзи</string>
     <string name="EmojiSuggestionTapReplace">Заменять текст</string>
     <string name="EmojiSuggestionTapReplaceShort">Замена</string>

@@ -63,6 +63,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int stickersHeaderRow;
     private int hideStickerTimeRow;
     private int unlimitedRecentStickersRow;
+    private int stickersAutoReorderRow;
     private int emojiSuggestionTapRow;
     private int stickersDividerRow;
 
@@ -232,6 +233,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         stickersHeaderRow = newRow();
         hideStickerTimeRow = newRow();
         unlimitedRecentStickersRow = newRow();
+        stickersAutoReorderRow = newRow();
         emojiSuggestionTapRow = newRow();
         stickersDividerRow = newRow();
 
@@ -266,6 +268,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == unlimitedRecentStickersRow) {
             ExteraConfig.editor.putBoolean("unlimitedRecentStickers", ExteraConfig.unlimitedRecentStickers ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.unlimitedRecentStickers);
+        } else if (position == stickersAutoReorderRow) {
+            ExteraConfig.editor.putBoolean("stickersAutoReorder", ExteraConfig.stickersAutoReorder ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.stickersAutoReorder);
         } else if (position == addCommaAfterMentionRow) {
             ExteraConfig.editor.putBoolean("addCommaAfterMention", ExteraConfig.addCommaAfterMention ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.addCommaAfterMention);
@@ -415,6 +420,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndCheck(LocaleController.getString("StickerTime", R.string.StickerTime), ExteraConfig.hideStickerTime, true);
                     } else if (position == unlimitedRecentStickersRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UnlimitedRecentStickers", R.string.UnlimitedRecentStickers), ExteraConfig.unlimitedRecentStickers, true);
+                    } else if (position == stickersAutoReorderRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("StickersAutoReorder", R.string.StickersAutoReorder), ExteraConfig.stickersAutoReorder, true);
                     } else if (position == addCommaAfterMentionRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("AddCommaAfterMention", R.string.AddCommaAfterMention), LocaleController.getString("AddCommaAfterMentionValue", R.string.AddCommaAfterMentionValue), ExteraConfig.addCommaAfterMention, false, true);
                     } else if (position == hideKeyboardOnScrollRow) {

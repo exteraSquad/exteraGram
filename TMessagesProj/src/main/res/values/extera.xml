@@ -79,6 +79,7 @@
     <string name="StickerShapeRoundedMsg">Message</string>
     <string name="StickerTime">Hide time on stickers</string>
     <string name="UnlimitedRecentStickers">Unlimited recent stickers</string>
+    <string name="StickersAutoReorder">Auto-reordering by usage</string>
     <string name="EmojiSuggestionsTap">Tap on emoji suggestions</string>
     <string name="EmojiSuggestionTapReplace">Replace text</string>
     <string name="EmojiSuggestionTapReplaceShort">Replace</string>

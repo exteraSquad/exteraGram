@@ -21,7 +21,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.MediaCodecInfo;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -45,6 +44,8 @@ import android.widget.Toast;
 import androidx.annotation.UiThread;
 import androidx.collection.LongSparseArray;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.json.JSONObject;
 import org.telegram.messenger.audioinfo.AudioInfo;
@@ -3243,6 +3244,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
         if (params != null && params.containsKey("originalPath")) {
             originalPath = params.get("originalPath");
         }
+
+        updateStickersOreder = ExteraConfig.stickersAutoReorder;
 
         TLRPC.Message newMsg = null;
         MessageObject newMsgObj = null;
