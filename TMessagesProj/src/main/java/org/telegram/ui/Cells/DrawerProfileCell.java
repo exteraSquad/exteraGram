@@ -673,8 +673,8 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         status.setColor(Theme.getColor(Theme.isCurrentThemeDark() ? Theme.key_chats_verifiedBackground : Theme.key_chats_menuPhoneCats));
         if (!ExteraConfig.hidePhoneNumber) {
             phoneTextView.setText(PhoneFormat.getInstance().format("+" + user.phone));
-        } else if (!TextUtils.isEmpty(user.username)) {
-            phoneTextView.setText("@" + user.username);
+        } else if (!TextUtils.isEmpty(UserObject.getPublicUsername(user))) {
+            phoneTextView.setText("@" + UserObject.getPublicUsername(user));
         } else {
             phoneTextView.setText(LocaleController.getString("MobileHidden",R.string.MobileHidden));
         }

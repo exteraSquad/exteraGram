@@ -866,7 +866,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     AttachBotButton.this.invalidate();
                 }
             };
-            imageView.setRoundRadius(ExteraConfig.getAvatarCorners(46));
+            imageView.setRoundRadius(ExteraConfig.getAvatarCorners(44));
             addView(imageView, LayoutHelper.createFrame(46, 46, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 9, 0, 0));
 
             selector = new View(context);

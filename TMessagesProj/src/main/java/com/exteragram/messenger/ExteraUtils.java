@@ -13,14 +13,19 @@ package com.exteragram.messenger;
 
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 
 import com.exteragram.messenger.monet.MonetHelper;
+import com.exteragram.messenger.updater.UpdaterUtils;
 
+import org.json.JSONArray;
+import org.json.JSONTokener;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
+import org.telegram.messenger.DispatchQueue;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
@@ -29,7 +34,16 @@ import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+
 public class ExteraUtils {
+
+    public static volatile DispatchQueue translateQueue = new DispatchQueue("translateQueue", false);
 
     public static Drawable drawFab() {
         return drawFab(false);
@@ -160,5 +174,55 @@ public class ExteraUtils {
             }
         }
         return BuildVars.isBetaApp() ? 0xff747f9f : 0xfff54142;
+    }
+
+    public interface OnTranslationSuccess {
+        void run(String translated);
+    }
+
+    public interface OnTranslationFail {
+        void run();
+    }
+
+    public static void translate(CharSequence text, String target, OnTranslationSuccess onSuccess, OnTranslationFail onFail) {
+        if (!translateQueue.isAlive()) {
+            translateQueue.start();
+        }
+        translateQueue.postRunnable(() -> {
+            String uri;
+            HttpURLConnection connection;
+            try {
+                uri = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=";
+                uri += Uri.encode(target);
+                uri += "&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&q=";
+                uri += Uri.encode(text.toString());
+                connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("User-Agent", UpdaterUtils.getRandomUserAgent());
+                connection.setRequestProperty("Content-Type", "application/json");
+
+                StringBuilder textBuilder = new StringBuilder();
+                try (Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                    int c;
+                    while ((c = reader.read()) != -1) textBuilder.append((char) c);
+                }
+                JSONTokener tokener = new JSONTokener(textBuilder.toString());
+                JSONArray array = new JSONArray(tokener);
+                JSONArray array1 = array.getJSONArray(0);
+                StringBuilder result = new StringBuilder();
+                for (int i = 0; i < array1.length(); ++i) {
+                    String blockText = array1.getJSONArray(i).getString(0);
+                    if (blockText != null && !blockText.equals("null"))
+                        result.append(blockText);
+                }
+                if (text.length() > 0 && text.charAt(0) == '\n') result.insert(0, "\n");
+                if (onSuccess != null)
+                    AndroidUtilities.runOnUIThread(() -> onSuccess.run(result.toString()));
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (onFail != null)
+                    AndroidUtilities.runOnUIThread(onFail::run);
+            }
+        });
     }
 }

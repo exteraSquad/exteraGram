@@ -137,7 +137,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             changelogTextView.setText(UpdaterUtils.replaceTags(args[1]));
             changelogTextView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(10));
             changelogTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            changelogTextView.setOnClickListener(v -> UpdaterUtils.translate(args[1], (String translated) -> {
+            changelogTextView.setOnClickListener(v -> ExteraUtils.translate(args[1], LocaleController.getInstance().getCurrentLocale().getLanguage(), (String translated) -> {
                 translatedC = translated;
                 animateView(changelogTextView, UpdaterUtils.replaceTags(isTranslated ? args[1] : (String) translatedC));
                 isTranslated ^= true;

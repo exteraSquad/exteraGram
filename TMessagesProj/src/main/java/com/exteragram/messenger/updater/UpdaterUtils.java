@@ -29,9 +29,7 @@ import androidx.core.content.FileProvider;
 
 import com.exteragram.messenger.ExteraConfig;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
@@ -65,8 +63,8 @@ public class UpdaterUtils {
     private static long id = 0L;
     private static final long updateCheckInterval = 3600000L; // 1 hour
 
-    public static boolean updateDownloaded = false;
-    public static boolean isCheckingForUpdates;
+    private static boolean updateDownloaded;
+    private static boolean checkingForUpdates;
 
     private static final String[] userAgents = {
             "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X) AppleWebKit/602.1.38 (KHTML, like Gecko) Version/10.0 Mobile/14A5297c Safari/602.1",
@@ -109,9 +107,9 @@ public class UpdaterUtils {
 
     public static void checkUpdates(Context context, boolean manual, OnUpdateNotFound onUpdateNotFound, OnUpdateFound onUpdateFound) {
 
-        if (BuildVars.PM_BUILD || isCheckingForUpdates || id != 0L || (System.currentTimeMillis() - ExteraConfig.updateScheduleTimestamp < updateCheckInterval && !manual))
+        if (BuildVars.PM_BUILD || checkingForUpdates || id != 0L || (System.currentTimeMillis() - ExteraConfig.updateScheduleTimestamp < updateCheckInterval && !manual))
             return;
-        isCheckingForUpdates = true;
+        checkingForUpdates = true;
         otaQueue.postRunnable(() -> {
             ExteraConfig.editor.putLong("lastUpdateCheckTime", ExteraConfig.lastUpdateCheckTime = System.currentTimeMillis()).apply();
             try {
@@ -168,7 +166,7 @@ public class UpdaterUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            isCheckingForUpdates = false;
+            checkingForUpdates = false;
         }, 200);
     }
 
@@ -228,6 +226,10 @@ public class UpdaterUtils {
             }
         }
         return Integer.parseInt(v[0]) < Integer.parseInt(v[1]);
+    }
+
+    public static boolean isCheckingForUpdates() {
+        return checkingForUpdates;
     }
 
     public static String getOtaDirSize() {
@@ -322,53 +324,6 @@ public class UpdaterUtils {
             FileLog.e(e);
         }
         return new SpannableStringBuilder(str);
-    }
-
-    public interface OnTranslationSuccess {
-        void run(String translated);
-    }
-
-    public interface OnTranslationFail {
-        void run();
-    }
-
-    public static void translate(CharSequence text, OnTranslationSuccess onSuccess, OnTranslationFail onFail) {
-        otaQueue.postRunnable(() -> {
-            String uri;
-            HttpURLConnection connection;
-            try {
-                uri = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=";
-                uri += Uri.encode(LocaleController.getInstance().getCurrentLocale().getLanguage());
-                uri += "&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&q=";
-                uri += Uri.encode(text.toString());
-                connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", getRandomUserAgent());
-                connection.setRequestProperty("Content-Type", "application/json");
-
-                StringBuilder textBuilder = new StringBuilder();
-                try (Reader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                    int c;
-                    while ((c = reader.read()) != -1) textBuilder.append((char) c);
-                }
-                JSONTokener tokener = new JSONTokener(textBuilder.toString());
-                JSONArray array = new JSONArray(tokener);
-                JSONArray array1 = array.getJSONArray(0);
-                StringBuilder result = new StringBuilder();
-                for (int i = 0; i < array1.length(); ++i) {
-                    String blockText = array1.getJSONArray(i).getString(0);
-                    if (blockText != null && !blockText.equals("null"))
-                        result.append(blockText);
-                }
-                if (text.length() > 0 && text.charAt(0) == '\n') result.insert(0, "\n");
-                if (onSuccess != null)
-                    AndroidUtilities.runOnUIThread(() -> onSuccess.run(result.toString()));
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (onFail != null)
-                    AndroidUtilities.runOnUIThread(onFail::run);
-            }
-        });
     }
 
     public static class DownloadReceiver extends BroadcastReceiver {

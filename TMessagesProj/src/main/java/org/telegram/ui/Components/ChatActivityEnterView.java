@@ -101,6 +101,9 @@ import androidx.dynamicanimation.animation.SpringForce;
 import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
+
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -154,8 +157,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class ChatActivityEnterView extends BlurredFrameLayout implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate, StickersAlert.StickersAlertDelegate {
 
@@ -3694,8 +3695,35 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
             boolean scheduleButtonValue = parentFragment != null && parentFragment.canScheduleMessage();
             boolean sendWithoutSoundButtonValue = !(self || slowModeTimer > 0 && !isInScheduleMode());
+            if (true) {
+                ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, !scheduleButtonValue && !sendWithoutSoundButtonValue, resourcesProvider);
+                translateButton.setTextAndIcon(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")", R.drawable.msg_translate);
+                translateButton.setMinimumWidth(AndroidUtilities.dp(196));
+                translateButton.setOnClickListener(v -> {
+                    if (sendPopupWindow != null && sendPopupWindow.isShowing())
+                        sendPopupWindow.dismiss();
+                    ExteraUtils.translate(getEditField().getText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                        getEditField().setText(translated);
+                        getEditField().setSelection(translated.length());
+                    }, () -> {});
+                });
+                translateButton.setOnLongClickListener(v -> {
+                    if (parentFragment == null)
+                        return false;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
+                    builder.setTitle(LocaleController.getString("Language", R.string.Language));
+                    builder.setItems(ExteraConfig.supportedLanguages, (dialog, which) -> {
+                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[which]).apply();
+                        translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
+                    });
+                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                    builder.create().show();
+                    return true;
+                });
+                sendPopupLayout.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+            }
             if (scheduleButtonValue) {
-                ActionBarMenuSubItem scheduleButton = new ActionBarMenuSubItem(getContext(), true, !sendWithoutSoundButtonValue, resourcesProvider);
+                ActionBarMenuSubItem scheduleButton = new ActionBarMenuSubItem(getContext(), false, !sendWithoutSoundButtonValue, resourcesProvider);
                 if (self) {
                     scheduleButton.setTextAndIcon(LocaleController.getString("SetReminder", R.string.SetReminder), R.drawable.msg_calendar2);
                 } else {
