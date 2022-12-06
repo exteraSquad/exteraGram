@@ -28,7 +28,6 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -1321,7 +1320,7 @@ public class ImageLoader {
                             }
                         }
                     } catch (Throwable e) {
-                        FileLog.e(e);
+                        FileLog.e(e, !(e instanceof FileNotFoundException));
                     }
                 } else {
                     try {
@@ -1366,7 +1365,8 @@ public class ImageLoader {
                                 Utilities.loadWebpImage(image, buffer, buffer.limit(), null, !opts.inPurgeable);
                                 file.close();
                             } else {
-                                if (opts.inPurgeable || secureDocumentKey != null || Build.VERSION.SDK_INT <= 29) {
+                                try {
+
                                     RandomAccessFile f = new RandomAccessFile(cacheFileFinal, "r");
                                     int len = (int) f.length();
                                     int offset = 0;
@@ -1393,7 +1393,11 @@ public class ImageLoader {
                                     if (!error) {
                                         image = BitmapFactory.decodeByteArray(data, offset, len, opts);
                                     }
-                                } else {
+                                } catch (Throwable e) {
+
+                                }
+
+                                if (image == null) {
                                     FileInputStream is;
                                     if (inEncryptedFile) {
                                         is = new EncryptedFileInputStream(cacheFileFinal, cacheImage.encryptionKeyPath);
@@ -1590,7 +1594,7 @@ public class ImageLoader {
                         toSet = bitmapDrawable;
                     } else {
                         Bitmap image = bitmapDrawable.getBitmap();
-                        image.recycle();
+                        AndroidUtilities.recycleBitmap(image);
                     }
                     if (toSet != null && incrementUseCount) {
                         incrementUseCount(cacheImage.key);

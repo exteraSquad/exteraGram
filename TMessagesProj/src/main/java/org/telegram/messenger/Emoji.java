@@ -329,9 +329,9 @@ public class Emoji {
             this.end = end;
             this.code = code;
         }
-        int start;
-        int end;
-        CharSequence code;
+        public int start;
+        public int end;
+        public CharSequence code;
     }
 
     public static boolean fullyConsistsOfEmojis(CharSequence cs) {
@@ -503,10 +503,14 @@ public class Emoji {
             s = Spannable.Factory.getInstance().newSpannable(cs.toString());
         }
         ArrayList<EmojiSpanRange> emojis = parseEmojis(s, emojiOnly);
+        if (emojis.isEmpty()) {
+            return cs;
+        }
 
         AnimatedEmojiSpan[] animatedEmojiSpans = s.getSpans(0, s.length(), AnimatedEmojiSpan.class);
         EmojiSpan span;
         Drawable drawable;
+        int limitCount = SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH ? 100 : 50;
         for (int i = 0; i < emojis.size(); ++i) {
             try {
                 EmojiSpanRange emojiRange = emojis.get(i);
@@ -531,7 +535,6 @@ public class Emoji {
             } catch (Exception e) {
                 FileLog.e(e);
             }
-            int limitCount = SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH ? 200 : 100;
             if ((Build.VERSION.SDK_INT < 23 || Build.VERSION.SDK_INT >= 29)/* && !BuildVars.DEBUG_PRIVATE_VERSION*/ && (i + 1) >= limitCount) {
                 break;
             }

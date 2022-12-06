@@ -116,6 +116,9 @@ public class RadioCell extends FrameLayout {
         }
     }
 
+    public void hideRadioButton() {
+        radioButton.setVisibility(View.GONE);
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         if (needDivider && !ExteraConfig.disableDividers) {

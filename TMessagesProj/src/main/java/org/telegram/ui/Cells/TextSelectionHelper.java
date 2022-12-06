@@ -1802,6 +1802,10 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                 yOffset = lastBlock.textYOffset;
             }
 
+            if (lastLayout == null) {
+                return -1;
+            }
+
             if (y < 0) {
                 y = 1;
             }

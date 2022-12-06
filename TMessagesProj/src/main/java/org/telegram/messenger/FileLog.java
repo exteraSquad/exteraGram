@@ -36,6 +36,7 @@ public class FileLog {
     private File networkFile = null;
     private File tonlibFile = null;
     private boolean initied;
+    public static boolean databaseIsMalformed = false;
 
     private OutputStreamWriter tlStreamWriter = null;
     private File tlRequestsFile = null;
@@ -297,6 +298,9 @@ public class FileLog {
     public static void e(final Throwable e) {
         if (!BuildVars.LOGS_ENABLED) {
             return;
+        }
+        if (BuildVars.DEBUG_VERSION && e instanceof SQLiteException && e.getMessage() != null && e.getMessage().contains("disk image is malformed")) {
+            databaseIsMalformed = true;
         }
         ensureInitied();
         e.printStackTrace();
