@@ -1320,7 +1320,7 @@ public class ImageLoader {
                             }
                         }
                     } catch (Throwable e) {
-                        FileLog.e(e, !(e instanceof FileNotFoundException));
+                        FileLog.e(e);
                     }
                 } else {
                     try {

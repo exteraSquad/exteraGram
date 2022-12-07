@@ -11063,6 +11063,7 @@ public class MessagesStorage extends BaseController {
             forumTopic.icon_emoji_id = action.icon_emoji_id;
             forumTopic.title = action.title;
             forumTopic.closed = action.closed;
+            forumTopic.hidden = action.hidden;
             int flags = 0;
             if ((action.flags & 1) != 0) {
                 flags += TopicsController.TOPIC_FLAG_TITLE;
@@ -11072,6 +11073,9 @@ public class MessagesStorage extends BaseController {
             }
             if ((action.flags & 4) != 0) {
                 flags += TopicsController.TOPIC_FLAG_CLOSE;
+            }
+            if ((action.flags & 8) != 0) {
+                flags += TopicsController.TOPIC_FLAG_HIDE;
             }
             updateTopicData(dialogId, forumTopic, flags);
             int finalFlags = flags;

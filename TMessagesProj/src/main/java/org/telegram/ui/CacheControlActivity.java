@@ -302,7 +302,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
                         i--;
                     }
                 }
-                Collections.sort(entities, (o1, o2) -> (int) (o2.totalSize - o1.totalSize));
+                sort(entities);
                 AndroidUtilities.runOnUIThread(() -> {
                     loadingDialogs = false;
                     getMessagesController().putUsers(users, true);
@@ -322,7 +322,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
                                 unknownChatsEntity = dialogEntities;
                             }
                             if (changed) {
-                                Collections.sort(entities, (o1, o2) -> (int) (o2.totalSize - o1.totalSize));
+                                sort(entities);
                             }
                         }
                     }
@@ -332,6 +332,17 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
                     }
                 });
             });
+        });
+    }
+
+    private void sort(ArrayList<DialogFileEntities> entities) {
+        Collections.sort(entities, (o1, o2) -> {
+            if (o2.totalSize > o1.totalSize) {
+                return 1;
+            } else if (o2.totalSize < o1.totalSize)  {
+                return -1;
+            }
+            return 0;
         });
     }
 
@@ -1552,6 +1563,6 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
         selectedDialogsCountTextView.setOnTouchListener((v, event) -> true);
 
 
-        ActionBarMenuItem deleteItem = actionMode.addItemWithWidth(delete_id, R.drawable.msg_delete, AndroidUtilities.dp(54), LocaleController.getString("ClearCache", R.string.ClearCache));
+        ActionBarMenuItem deleteItem = actionMode.addItemWithWidth(delete_id, R.drawable.msg_clear, AndroidUtilities.dp(54), LocaleController.getString("ClearCache", R.string.ClearCache));
     }
 }

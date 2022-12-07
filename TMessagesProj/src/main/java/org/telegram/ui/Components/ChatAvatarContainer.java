@@ -881,7 +881,6 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             avatarImageView.setForUserOrChat(chat, avatarDrawable);
             avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 24 : 42));
         }
-
     }
 
     public void setUserAvatar(TLRPC.User user) {

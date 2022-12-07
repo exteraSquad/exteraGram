@@ -272,11 +272,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             AndroidUtilities.runOnUIThread(updateListRunnable, 36);
 
         }
-
-        @Override
-        protected void dispatchDraw(Canvas canvas) {
-            super.dispatchDraw(canvas);
-        }
     }
 
     private ViewPagerFixed.TabsView searchTabsView;
@@ -1638,7 +1633,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
 
             int pos = parentPage.layoutManager.findFirstVisibleItemPosition();
-            if (pos != RecyclerView.NO_POSITION && !dialogsListFrozen && parentPage.itemTouchhelper.isIdle()) {
+            if (pos != RecyclerView.NO_POSITION && parentPage.itemTouchhelper.isIdle()) {
                 RecyclerView.ViewHolder holder = parentPage.listView.findViewHolderForAdapterPosition(pos);
                 if (holder != null) {
                     int top = holder.itemView.getTop();
@@ -1726,7 +1721,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         @Override
         public boolean onTouchEvent(MotionEvent e) {
-            if (fastScrollAnimationRunning || waitingForScrollFinished || parentPage.dialogsItemAnimator.isRunning() || rightFragmentTransitionInProgress) {
+            if (fastScrollAnimationRunning || waitingForScrollFinished || rightFragmentTransitionInProgress) {
                 return false;
             }
             int action = e.getAction();
@@ -2000,8 +1995,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             int fromIndex = source.getAdapterPosition();
             int toIndex = target.getAdapterPosition();
-            parentPage.listView.setItemAnimator(parentPage.dialogsItemAnimator);
-            parentPage.dialogsAdapter.notifyItemMoved(fromIndex, toIndex);
+            if (parentPage.listView.getItemAnimator() == null) {
+                parentPage.listView.setItemAnimator(parentPage.dialogsItemAnimator);
+            }
+            parentPage.dialogsAdapter.moveDialogs(parentPage.listView, fromIndex, toIndex);
 
             if (viewPages[0].dialogsType == 7 || viewPages[0].dialogsType == 8) {
                 MessagesController.DialogFilter filter = getMessagesController().selectedDialogFilter[viewPages[0].dialogsType == 8 ? 1 : 0];
@@ -5017,7 +5014,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             viewPage.listView.stopScroll();
         }
         int a = animated ? 1 : 0;
-
+        RecyclerView.Adapter currentAdapter = viewPages[a].listView.getAdapter();
+        if (viewPages[a].selectedType < 0 || viewPages[a].selectedType >= getMessagesController().dialogFilters.size()) {
+            return;
+        }
         MessagesController.DialogFilter filter = getMessagesController().dialogFilters.get(viewPages[a].selectedType);
         if (filter.isDefault()) {
             viewPages[a].dialogsType = 0;
@@ -5157,7 +5157,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     private void updateDrawerSwipeEnabled() {
         if (parentLayout != null && parentLayout.getDrawerLayoutContainer() != null) {
-            parentLayout.getDrawerLayoutContainer().setAllowOpenDrawerBySwipe(isFirstTab && !searchIsShowed && SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment()));
+            parentLayout.getDrawerLayoutContainer().setAllowOpenDrawerBySwipe(((isFirstTab && SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS) || SharedConfig.getChatSwipeAction(currentAccount) != SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS) && !searchIsShowed && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment()));
         }
     }
 
@@ -8838,7 +8838,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             return;
         }
         for (ViewPage viewPage : viewPages) {
-            if (viewPage.getVisibility() != View.VISIBLE || viewPages[b].dialogsAdapter.getDialogsListIsFrozen()) {
+            if (viewPage.getVisibility() != View.VISIBLE || viewPage.dialogsAdapter.getDialogsListIsFrozen()) {
                 continue;
             }
 //            ArrayList<TLRPC.Dialog> dialogs = getDialogsArray(currentAccount, viewPages[b].dialogsType, folderId, false);

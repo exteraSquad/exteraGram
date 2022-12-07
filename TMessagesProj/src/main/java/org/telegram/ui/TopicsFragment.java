@@ -465,7 +465,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             }
 
         };
-        contentView.needBlur = true;
+        contentView.needBlur = !inPreviewMode;
 
         actionBar.setAddToContainer(false);
         actionBar.setCastShadows(false);
@@ -2873,6 +2873,9 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             }
             if (this.animatedEmojiDrawable != null && attached) {
                 this.animatedEmojiDrawable.removeView(this);
+            }
+            if (animatedEmojiDrawable != null) {
+                animatedEmojiDrawable.setColorFilter(Theme.chat_animatedEmojiTextColorFilter);
             }
             this.animatedEmojiDrawable = animatedEmojiDrawable;
             if (animatedEmojiDrawable != null && attached) {

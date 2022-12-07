@@ -37,6 +37,7 @@ public class FileLoadOperation {
     long streamOffset;
 
     public static volatile DispatchQueue filesQueue = new DispatchQueue("writeFileQueue");
+    private boolean forceSmallChunk;
 
     public void setStream(FileLoadOperationStream stream, boolean streamPriority, long streamOffset) {
         this.stream = stream;
@@ -50,6 +51,7 @@ public class FileLoadOperation {
         private TLRPC.TL_upload_file response;
         private TLRPC.TL_upload_webFile responseWeb;
         private TLRPC.TL_upload_cdnFile responseCdn;
+        private boolean forceSmallChunk;
     }
 
     public static class Range {
@@ -1334,7 +1336,7 @@ public class FileLoadOperation {
                         } catch (ZipException zipException) {
                             ungzip = false;
                         } catch (Throwable e) {
-                            FileLog.e(e, !(e instanceof FileNotFoundException));
+                            FileLog.e(e);
                             if (BuildVars.LOGS_ENABLED) {
                                 FileLog.e("unable to ungzip temp = " + cacheFileTempFinal + " to final = " + cacheFileFinal);
                             }
@@ -1762,7 +1764,14 @@ public class FileLoadOperation {
                 }
             }
         } else {
-            if (error.text.contains("FILE_MIGRATE_")) {
+            if (error.text.contains("LIMIT_INVALID") && !requestInfo.forceSmallChunk) {
+                if (!forceSmallChunk) {
+                    forceSmallChunk = true;
+                    currentDownloadChunkSize = 0;
+                    pause();
+                    start();
+                }
+            } else if (error.text.contains("FILE_MIGRATE_")) {
                 String errorMsg = error.text.replace("FILE_MIGRATE_", "");
                 Scanner scanner = new Scanner(errorMsg);
                 scanner.useDelimiter("");
@@ -1999,6 +2008,7 @@ public class FileLoadOperation {
             final RequestInfo requestInfo = new RequestInfo();
             requestInfos.add(requestInfo);
             requestInfo.offset = downloadOffset;
+            requestInfo.forceSmallChunk = forceSmallChunk;
 
             if (!isPreloadVideoOperation && supportsPreloading && preloadStream != null && preloadedBytesRanges != null) {
                 PreloadRange range = preloadedBytesRanges.get(requestInfo.offset);
@@ -2038,7 +2048,7 @@ public class FileLoadOperation {
                     continue;
                 }
             }
-
+            requestInfo.forceSmallChunk = forceSmallChunk;
             requestInfo.requestToken = ConnectionsManager.getInstance(currentAccount).sendRequest(request, (response, error) -> {
                 if (!requestInfos.contains(requestInfo)) {
                     return;
