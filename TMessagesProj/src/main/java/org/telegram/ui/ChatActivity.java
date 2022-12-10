@@ -16949,13 +16949,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             if (voters.chosen) {
                                 if (voters.correct) {
                                     fireworksOverlay.start();
-                                    if (!ExteraConfig.disableVibration) pollView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                 } else {
                                     ((ChatMessageCell) pollView).shakeView();
-                                    if (!ExteraConfig.disableVibration) pollView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                     showPollSolution(cell.getMessageObject(), results);
                                     cell.showHintButton(false, true, 0);
                                 }
+                                if (!ExteraConfig.disableVibration) pollView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                 break;
                             }
                         }
@@ -26523,10 +26522,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             }
                             String username = UserObject.getPublicUsername(user);
                             if (username != null) {
-                                sb.append("@").append(username).append(" ");
+                                sb.append("@").append(username).append(ExteraConfig.addCommaAfterMention ? ", " : " ");
                             } else {
                                 String name = UserObject.getFirstName(user, false);
-                                Spannable spannable = new SpannableString(name + " ");
+                                Spannable spannable = new SpannableString(name + (ExteraConfig.addCommaAfterMention ? ", " : " "));
                                 spannable.setSpan(new URLSpanUserMention("" + user.id, 3), 0, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                                 sb.append(spannable);
                             }

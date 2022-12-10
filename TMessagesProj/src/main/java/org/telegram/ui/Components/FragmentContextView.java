@@ -1765,6 +1765,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                             titleTextView.setPadding(0, 0, AndroidUtilities.dp(44), 0);
                             updatePlaybackButton();
                         } else {
+                            playbackSpeedButton.setVisibility(GONE);
                             playbackSpeedButton.setAlpha(0.0f);
                             playbackSpeedButton.setEnabled(false);
                             titleTextView.setPadding(0, 0, 0, 0);

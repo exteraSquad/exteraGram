@@ -278,18 +278,17 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
                 nameLeft = AndroidUtilities.dp(11);
             }
             nameLockTop = AndroidUtilities.dp(22.0f);
-            updateStatus(false, null, false);
+            updateStatus(false, false,null, false);
         } else {
             if (chat != null) {
                 dialog_id = -chat.id;
                 drawCheck = chat.verified;
-                drawArrow = ExteraConfig.isExtera(chat);
                 if (!LocaleController.isRTL) {
                     nameLeft = AndroidUtilities.dp(AndroidUtilities.leftBaseline);
                 } else {
                     nameLeft = AndroidUtilities.dp(11);
                 }
-                updateStatus(drawCheck, null, false);
+                updateStatus(drawCheck, ExteraConfig.isExtera(chat), null, false);
             } else if (user != null) {
                 dialog_id = user.id;
                 if (!LocaleController.isRTL) {
@@ -299,9 +298,8 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
                 }
                 nameLockTop = AndroidUtilities.dp(21);
                 drawCheck = user.verified;
-                drawArrow = ExteraConfig.isExteraDev(user);
                 drawPremium = !user.self && MessagesController.getInstance(currentAccount).isPremiumUser(user);
-                updateStatus(drawCheck, user, false);
+                updateStatus(drawCheck, ExteraConfig.isExteraDev(user), user, false);
             }
         }
 
@@ -509,7 +507,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
         nameLockLeft += getPaddingLeft();
     }
 
-    public void updateStatus(boolean verified, TLRPC.User user, boolean animated) {
+    public void updateStatus(boolean verified, boolean arrow, TLRPC.User user, boolean animated) {
         if (verified) {
             statusDrawable.set(new CombinedDrawable(Theme.dialogs_verifiedDrawable, Theme.dialogs_verifiedCheckDrawable, 0, 0), animated);
             statusDrawable.setColor(null);
@@ -519,7 +517,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
         } else if (user != null && !user.self && user.emoji_status instanceof TLRPC.TL_emojiStatus) {
             statusDrawable.set(((TLRPC.TL_emojiStatus) user.emoji_status).document_id, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
-        } else if (user != null && !user.self && ExteraConfig.isExteraDev(user)) {
+        } else if (arrow) {
             statusDrawable.set(Theme.dialogs_outlineArrowDrawable, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
         } else if (user != null && !user.self && MessagesController.getInstance(currentAccount).isPremiumUser(user)) {
@@ -584,7 +582,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
                 }
             }
             if (!continueUpdate && (mask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0 && user != null) {
-                updateStatus(user.verified, user, true);
+                updateStatus(user.verified, ExteraConfig.isExteraDev(user), user, true);
             }
             if (!continueUpdate && ((mask & MessagesController.UPDATE_MASK_NAME) != 0 && user != null) || (mask & MessagesController.UPDATE_MASK_CHAT_NAME) != 0 && chat != null) {
                 String newName;

@@ -163,16 +163,6 @@ public class ExteraUtils {
     }
 
     public static int getNotificationIconColor() {
-        if (Build.VERSION.SDK_INT >= 31) {
-            Configuration configuration = ApplicationLoader.applicationContext.getResources().getConfiguration();
-            switch (configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_NO:
-                case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                    return MonetHelper.getColor("a1_600");
-                case Configuration.UI_MODE_NIGHT_YES:
-                    return MonetHelper.getColor("a1_100");
-            }
-        }
         return BuildVars.isBetaApp() ? 0xff747f9f : 0xfff54142;
     }
 

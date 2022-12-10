@@ -16,6 +16,8 @@ import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.exteragram.messenger.ExteraUtils;
+
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.LaunchActivity;
 
@@ -142,13 +144,14 @@ public class LocationSharingService extends Service implements NotificationCente
                 NotificationsController.checkOtherNotificationsChannel();
                 builder.setChannelId(NotificationsController.OTHER_NOTIFICATIONS_CHANNEL);
                 builder.setContentTitle(LocaleController.getString("AppName", R.string.AppName));
+                builder.setCategory(NotificationCompat.CATEGORY_LOCATION_SHARING);
                 Intent stopIntent = new Intent(ApplicationLoader.applicationContext, StopLiveLocationReceiver.class);
                 builder.addAction(0, LocaleController.getString("StopLiveLocation", R.string.StopLiveLocation), PendingIntent.getBroadcast(ApplicationLoader.applicationContext, 2, stopIntent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT));
             }
 
             updateNotification(false);
             startForeground(6, builder.build());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             FileLog.e(e);
         }
         return Service.START_NOT_STICKY;

@@ -54,8 +54,7 @@ public class Vibrate {
         } else {
             vibrator = (Vibrator) ApplicationLoader.applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
         }
-
-        if (!vibrator.hasVibrator()) {
+        if (vibrator != null && !vibrator.hasVibrator()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 try {
                     vibrator.vibrate(VibrationEffect.createOneShot(time, VibrationEffect.DEFAULT_AMPLITUDE));
