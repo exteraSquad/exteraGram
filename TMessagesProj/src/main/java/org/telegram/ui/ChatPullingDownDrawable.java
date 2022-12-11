@@ -153,8 +153,8 @@ public class ChatPullingDownDrawable implements NotificationCenter.NotificationC
             chatNameWidth = Math.min(chatNameWidth, lastWidth - AndroidUtilities.dp(60));
             chatNameLayout = new StaticLayout(nameStr, textPaint, chatNameWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
-            String str1 = null;
-            String str2 = null;
+            String str1;
+            String str2;
 
             if (drawFolderBackground && dialogFolderId != folderId && dialogFolderId != 0) {
                 str1 = LocaleController.getString("SwipeToGoNextArchive", R.string.SwipeToGoNextArchive);

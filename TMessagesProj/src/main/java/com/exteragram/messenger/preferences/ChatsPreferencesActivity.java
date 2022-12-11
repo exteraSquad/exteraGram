@@ -71,6 +71,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int addCommaAfterMentionRow;
     private int hideKeyboardOnScrollRow;
     private int hideShareButtonRow;
+    private int hideMuteUnmuteButtonRow;
     private int disableReactionsRow;
     private int disableGreetingStickerRow;
     private int disableJumpToNextChannelRow;
@@ -239,8 +240,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
         chatHeaderRow = newRow();
         addCommaAfterMentionRow = newRow();
-        hideKeyboardOnScrollRow = newRow();
+        hideMuteUnmuteButtonRow = newRow();
         hideShareButtonRow = newRow();
+        hideKeyboardOnScrollRow = newRow();
         disableReactionsRow = newRow();
         disableGreetingStickerRow = newRow();
         disableJumpToNextChannelRow = newRow();
@@ -303,6 +305,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == hideShareButtonRow) {
             ExteraConfig.editor.putBoolean("hideShareButton", ExteraConfig.hideShareButton ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideShareButton);
+        } else if (position == hideMuteUnmuteButtonRow) {
+            ExteraConfig.editor.putBoolean("hideMuteUnmuteButton", ExteraConfig.hideMuteUnmuteButton ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.hideMuteUnmuteButton);
         } else if (position == disableReactionsRow) {
             ExteraConfig.editor.putBoolean("disableReactions", ExteraConfig.disableReactions ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableReactions);
@@ -427,7 +432,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     } else if (position == hideKeyboardOnScrollRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideKeyboardOnScroll", R.string.HideKeyboardOnScroll), ExteraConfig.hideKeyboardOnScroll, true);
                     } else if (position == hideShareButtonRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("HideShareButton", R.string.HideShareButton), ExteraConfig.hideShareButton, true);
+                        textCheckCell.setTextAndCheck(LocaleController.formatString("HideShareButton", R.string.HideShareButton, LocaleController.getString("ShareFile", R.string.ShareFile)), ExteraConfig.hideShareButton, true);
+                    } else if (position == hideMuteUnmuteButtonRow) {
+                        textCheckCell.setTextAndValueAndCheck(LocaleController.formatString("HideMuteUnmuteButton", R.string.HideMuteUnmuteButton, LocaleController.getString("ChannelMute", R.string.ChannelMute)), LocaleController.getString("HideMuteUnmuteButtonValue", R.string.HideMuteUnmuteButtonValue), ExteraConfig.hideMuteUnmuteButton, true, true);
                     } else if (position == disableReactionsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableReactions", R.string.DisableReactions), ExteraConfig.disableReactions, true);
                     } else if (position == disableGreetingStickerRow) {

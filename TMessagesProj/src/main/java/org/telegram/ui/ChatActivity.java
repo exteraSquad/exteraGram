@@ -214,6 +214,7 @@ import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.CounterView;
 import org.telegram.ui.Components.CrossfadeDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
+import org.telegram.ui.Components.Easings;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.EditTextCaption;
 import org.telegram.ui.Components.EmbedBottomSheet;
@@ -3746,7 +3747,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         bottom = bottomOverlayChat.getBottom();
                     }
                     top -= (int) ((pullingDownAnimateToActivity == null ? 0 : pullingDownAnimateToActivity.pullingBottomOffset) * pullingDownAnimateProgress);
-                    pullingDownDrawable.drawBottomPanel(canvas, top, bottom, getMeasuredWidth());
+                    if ((!isMuteUnmuteButton() && bottomOverlayChat.getVisibility() == View.VISIBLE) || chatActivityEnterView.getVisibility() == View.VISIBLE)
+                        pullingDownDrawable.drawBottomPanel(canvas, top, bottom, getMeasuredWidth());
                 }
                 if (pullingDownAnimateToActivity != null) {
                     canvas.saveLayerAlpha(0, 0, getMeasuredWidth(), getMeasuredHeight(), (int) (255 * pullingDownAnimateProgress), Canvas.ALL_SAVE_FLAG);
@@ -3916,7 +3918,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         child.measure(contentWidthSpec, contentHeightSpec);
                     } else if (child == chatListView) {
                         int contentWidthSpec = MeasureSpec.makeMeasureSpec(widthSize, MeasureSpec.EXACTLY);
-                        int h = heightSize - listViewTopHeight - (inPreviewMode ? AndroidUtilities.statusBarHeight : 0) + blurredViewTopOffset + blurredViewBottomOffset;
+                        int h = heightSize - listViewTopHeight - (inPreviewMode ? AndroidUtilities.statusBarHeight : 0) + blurredViewTopOffset + blurredViewBottomOffset + (isBottomOverlaysInvisible() ? AndroidUtilities.dp(50) : 0);
                         if (keyboardSize > AndroidUtilities.dp(20) && getLayoutParams().height < 0) {
                             h += keyboardSize;
                         }
@@ -4114,9 +4116,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         childTop -= chatActivityEnterView.getMeasuredHeight() - AndroidUtilities.dp(2);
                         mentionContainer.setTranslationY(chatActivityEnterView.getAnimatedTop());
                     } else if (child == pagedownButton || child == mentiondownButton || child == reactionsMentiondownButton) {
-                        if (!inPreviewMode) {
-                            childTop -= chatActivityEnterView.getMeasuredHeight();
-                        }
+                        childTop += (isBottomOverlaysInvisible() ? AndroidUtilities.dp(50) : 0) - (!inPreviewMode ? chatActivityEnterView.getMeasuredHeight() : 0);
                     } else if (child == emptyViewContainer) {
                         childTop -= inputFieldHeight / 2 - (actionBar.getVisibility() == VISIBLE ? actionBar.getMeasuredHeight() / 2 : 0);
                     } else if (chatActivityEnterView.isPopupView(child)) {
@@ -8704,6 +8704,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         selectButton = new TextView(context);
         selectButton.setText(LocaleController.getString("Select", R.string.Select));
+        selectButton.setVisibility(View.INVISIBLE);
         selectButton.setGravity(Gravity.CENTER_VERTICAL);
         selectButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         selectButton.setPadding(AndroidUtilities.dp(14), 0, AndroidUtilities.dp(21), 0);
@@ -8737,6 +8738,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         replyButton = new TextView(context);
         replyButton.setText(LocaleController.getString("Reply", R.string.Reply));
+        replyButton.setVisibility(View.INVISIBLE);
         replyButton.setGravity(Gravity.CENTER_VERTICAL);
         replyButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         replyButton.setPadding(AndroidUtilities.dp(14), 0, AndroidUtilities.dp(21), 0);
@@ -8784,7 +8786,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         contentView.addView(searchContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 51, Gravity.BOTTOM));
         contentView.addView(messageEnterTransitionContainer = new MessageEnterTransitionContainer(contentView, currentAccount));
         undoView = new UndoView(context, this, false, themeDelegate);
-        undoView.setAdditionalTranslationY(AndroidUtilities.dp(51));
+        undoView.setAdditionalTranslationY(isBottomOverlaysInvisible() ? 0 : AndroidUtilities.dp(51));
         contentView.addView(undoView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 8, 0, 8, 8));
 
         if (currentChat != null) {
@@ -9910,7 +9912,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             bottomMessagesActionContainer.setTranslationY(bottomPanelTranslationYReverse);
         }
         if (undoView != null) {
-            undoView.setAdditionalTranslationY(chatActivityEnterView.getHeightWithTopView() - chatActivityEnterView.getAnimatedTop());
+            undoView.setAdditionalTranslationY(chatActivityEnterView.getHeightWithTopView() - chatActivityEnterView.getAnimatedTop() - (isBottomOverlaysInvisible() ? AndroidUtilities.dp(51) : 0));
         }
     }
 
@@ -14051,12 +14053,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             );
                         }
                         selectButtonAnimation.setDuration(100);
-                        int newSelectVisibilityFinal = newSelectVisibility;
                         selectButtonAnimation.addListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 if (selectButtonAnimation != null && selectButtonAnimation.equals(animation)) {
-                                    if (newSelectVisibilityFinal == View.GONE) {
+                                    if (newSelectVisibility == View.GONE) {
                                         selectButton.setVisibility(View.GONE);
                                     }
                                 }
@@ -14499,7 +14500,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 entry.reset();
             }
             fillEditingMediaWithCaption(photos.get(0).caption, photos.get(0).entities);
-            SendMessagesHelper.prepareSendingMedia(getAccountInstance(), photos, dialog_id, null, getThreadMessage(), null, forceDocument, true, null, notify, scheduleDate, photos.get(0).updateStickersOrder);
+            SendMessagesHelper.prepareSendingMedia(getAccountInstance(), photos, dialog_id, replyingMessageObject, getThreadMessage(), null, forceDocument, true, null, notify, scheduleDate, photos.get(0).updateStickersOrder);
             afterMessageSend();
             chatActivityEnterView.setFieldText("");
         }
@@ -20060,6 +20061,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 topViewWasVisible = 0;
             }
         }
+        if (isMuteUnmuteButton())
+            bottomOverlayChat.setVisibility(View.INVISIBLE);
         checkRaiseSensors();
     }
 
@@ -21483,7 +21486,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             contentView.onResume();
         }
         checkChecksHint();
-
         Bulletin.addDelegate(this, bulletinDelegate = new Bulletin.Delegate() {
             @Override
             public int getBottomOffset(int tag) {
@@ -21505,7 +21507,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     height += translationY;
                 }
                 height += contentPanTranslation;
-                return height - AndroidUtilities.dp(1.5f);
+                return height - AndroidUtilities.dp(1.5f) - (isBottomOverlaysInvisible() ? AndroidUtilities.dp(50) : 0);
             }
         });
 
@@ -22113,6 +22115,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
         if (chatActivityEnterView != null) {
             chatActivityEnterView.preventInput = false;
+        }
+        if (ExteraConfig.hideMuteUnmuteButton) {
+            updatePaddings();
         }
         textSelectionHintWasShowed = false;
     }
@@ -30013,5 +30018,23 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         int width;
         int height;
         int lastBottom;
+    }
+
+    private boolean isBottomOverlaysInvisible() {
+        return bottomOverlayChat.getVisibility() == View.INVISIBLE && chatActivityEnterView.getVisibility() == View.INVISIBLE && bottomMessagesActionContainer.getVisibility() == View.INVISIBLE && searchContainer.getVisibility() == View.INVISIBLE && !isInPreviewMode() && !isInBubbleMode() && ExteraConfig.hideMuteUnmuteButton;
+    }
+
+    private boolean isMuteUnmuteButton() {
+        return (bottomOverlayChatText.getText() == LocaleController.getString("ChannelMute", R.string.ChannelMute) || bottomOverlayChatText.getText() == LocaleController.getString("ChannelUnmute", R.string.ChannelUnmute)) && ExteraConfig.hideMuteUnmuteButton;
+    }
+
+    private void updatePaddings() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f).setDuration(200);
+        animator.addUpdateListener(animation -> {
+            fragmentView.requestLayout();
+            updateBulletinLayout();
+            getUndoView().setAdditionalTranslationY(0);
+        });
+        animator.start();
     }
 }

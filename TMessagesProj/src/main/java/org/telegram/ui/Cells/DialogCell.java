@@ -4064,8 +4064,8 @@ public class DialogCell extends BaseCell {
                 int x = countLeftLocal - AndroidUtilities.dp(5.5f);
                 rect.set(x, countTop, x + countWidth + AndroidUtilities.dp(11), countTop + AndroidUtilities.dp(23));
 
+                int restoreToCount = canvas.save();
                 if (globalScale != 1f) {
-                    canvas.save();
                     canvas.scale(globalScale, globalScale, rect.centerX(), rect.centerY());
                 }
                 if (progressFinal != 1f) {
@@ -4077,7 +4077,6 @@ public class DialogCell extends BaseCell {
                         Theme.dialogs_pinnedDrawable.draw(canvas);
                         canvas.restore();
                     }
-                    canvas.save();
                     canvas.scale(progressFinal, progressFinal, rect.centerX(), rect.centerY());
                 }
 
@@ -4092,12 +4091,7 @@ public class DialogCell extends BaseCell {
                     canvas.restore();
                 }
 
-                if (progressFinal != 1f) {
-                    canvas.restore();
-                }
-                if (globalScale != 1f) {
-                    canvas.restore();
-                }
+                canvas.restoreToCount(restoreToCount);
             } else {
                 paint.setAlpha((int) ((1.0f - reorderIconProgress) * fillPaintAlpha));
                 Theme.dialogs_countTextPaint.setAlpha((int) ((1.0f - reorderIconProgress) * 255));

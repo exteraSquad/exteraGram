@@ -91,7 +91,9 @@
     <string name="AddCommaAfterMention">Add comma after mention</string>
     <string name="AddCommaAfterMentionValue">\@exteraGram, \@exteraBeta, \@exteraGramCI</string>
     <string name="HideKeyboardOnScroll">Hide keyboard on scrolling</string>
-    <string name="HideShareButton">Hide side \"Share\" button</string>
+    <string name="HideShareButton">Hide side \"%1$s\" button</string>
+    <string name="HideMuteUnmuteButton">Hide \"%1$s\" button</string>
+    <string name="HideMuteUnmuteButtonValue">from the bottom of the channels.</string>
     <string name="DisableReactions">Disable reactions</string>
     <string name="DisableGreetingSticker">Disable greeting sticker</string>
     <string name="DisableJumpToNextChannel">Disable \"Jump to next channel\"</string>

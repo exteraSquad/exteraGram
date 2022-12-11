@@ -70,6 +70,7 @@ public class ExteraConfig {
     public static int emojiSuggestionTap;
     public static boolean hideKeyboardOnScroll;
     public static boolean hideShareButton;
+    public static boolean hideMuteUnmuteButton;
     public static boolean disableReactions;
     public static boolean disableGreetingSticker;
     public static boolean disableJumpToNextChannel;
@@ -158,6 +159,7 @@ public class ExteraConfig {
             addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
             emojiSuggestionTap = preferences.getInt("emojiSuggestionTap", 0);
             hideShareButton = preferences.getBoolean("hideShareButton", true);
+            hideMuteUnmuteButton = preferences.getBoolean("hideMuteUnmuteButton", false);
             hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
             disableReactions = preferences.getBoolean("disableReactions", false);
             disableJumpToNextChannel = preferences.getBoolean("disableJumpToNextChannel", false);
