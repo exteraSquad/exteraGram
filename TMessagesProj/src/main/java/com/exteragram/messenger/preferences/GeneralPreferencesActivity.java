@@ -49,6 +49,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int showIDRow;
     private int showDCRow;
     private int hidePhoneNumberRow;
+    private int alwaysExpandProfilePhotoRow;
     private int profileDividerRow;
 
     private int premiumHeaderRow;
@@ -83,6 +84,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         generalDividerRow = newRow();
 
         profileHeaderRow = newRow();
+        alwaysExpandProfilePhotoRow = newRow();
         hidePhoneNumberRow = newRow();
         showIDRow = newRow();
         showDCRow = newRow();
@@ -144,6 +146,10 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
             ((TextCheckCell) view).setChecked(ExteraConfig.hidePhoneNumber);
             parentLayout.rebuildAllFragmentViews(false, false);
             getNotificationCenter().postNotificationName(NotificationCenter.mainUserInfoChanged);
+        } else if (position == alwaysExpandProfilePhotoRow) {
+            ExteraConfig.editor.putBoolean("alwaysExpandProfilePhoto", ExteraConfig.alwaysExpandProfilePhoto ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.alwaysExpandProfilePhoto);
+            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == showIDRow) {
             ExteraConfig.editor.putBoolean("showID", ExteraConfig.showID ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.showID);
@@ -245,6 +251,8 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString("ForcePacmanAnimation", R.string.ForcePacmanAnimation), ExteraConfig.forcePacmanAnimation, false);
                     } else if (position == hidePhoneNumberRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HidePhoneNumber", R.string.HidePhoneNumber), ExteraConfig.hidePhoneNumber, true);
+                    } else if (position == alwaysExpandProfilePhotoRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("AlwaysExpandProfilePhoto", R.string.AlwaysExpandProfilePhoto), ExteraConfig.alwaysExpandProfilePhoto, true);
                     } else if (position == showIDRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("ShowID", R.string.ShowID), ExteraConfig.showID, true);
                     } else if (position == showDCRow) {

@@ -49,6 +49,7 @@ public class ExteraConfig {
     public static boolean archiveOnPull;
     public static boolean disableUnarchiveSwipe;
     public static boolean forcePacmanAnimation;
+    public static boolean alwaysExpandProfilePhoto;
     public static boolean hidePhoneNumber;
     public static boolean showID;
     public static boolean showDC;
@@ -142,6 +143,7 @@ public class ExteraConfig {
             archiveOnPull = preferences.getBoolean("archiveOnPull", false);
             disableUnarchiveSwipe = preferences.getBoolean("disableUnarchiveSwipe", true);
             forcePacmanAnimation = preferences.getBoolean("forcePacmanAnimation", false);
+            alwaysExpandProfilePhoto = preferences.getBoolean("alwaysExpandProfilePhoto", false);
             hidePhoneNumber = preferences.getBoolean("hidePhoneNumber", false);
             showID = preferences.getBoolean("showID", true);
             showDC = preferences.getBoolean("showDC", false);

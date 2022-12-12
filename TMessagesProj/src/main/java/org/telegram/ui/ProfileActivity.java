@@ -1470,9 +1470,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         vcardLastName = arguments.getString("vcard_last_name");
         reportSpam = arguments.getBoolean("reportSpam", false);
         if (!expandPhoto) {
-            expandPhoto = arguments.getBoolean("expandPhoto", false);
+            expandPhoto = arguments.getBoolean("expandPhoto", false) || ExteraConfig.alwaysExpandProfilePhoto;
             if (expandPhoto) {
-                needSendMessage = true;
+                needSendMessage = false;
             }
         }
         if (userId != 0) {
@@ -1503,6 +1503,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             userInfo = getMessagesController().getUserFull(userId);
             getMessagesController().loadFullUser(getMessagesController().getUser(userId), classGuid, true);
             participantsMap = null;
+
+            expandPhoto &= user.photo != null && user.photo.photo_big != null;
 
             if (UserObject.isUserSelf(user)) {
                 imageUpdater = new ImageUpdater(true);
@@ -1553,6 +1555,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             } else if (chatInfo == null) {
                 chatInfo = getMessagesStorage().loadChatInfo(chatId, false, null, false, false);
             }
+
+            expandPhoto &= currentChat.photo != null && currentChat.photo.photo_big != null && !isTopic;
 
             updateExceptions();
         } else {
@@ -2309,6 +2313,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         if (premiumCrossfadeDrawable != null) {
                             premiumCrossfadeDrawable.setProgress(1f);
+                        }
+                        if (arrowDrawable != null) {
+                            arrowDrawable.setProgress(1f);
                         }
                         updateEmojiStatusDrawableColor(1f);
                         onlineTextView[1].setTextColor(Color.argb(179, 255, 255, 255));
@@ -6188,6 +6195,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 expandPhoto = true;
             }
         }
+        if (ExteraConfig.alwaysExpandProfilePhoto)
+            playProfileAnimation = 0;
     }
 
     private void updateSharedMediaRows() {

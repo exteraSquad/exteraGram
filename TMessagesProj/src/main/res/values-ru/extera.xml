@@ -59,6 +59,7 @@
     <string name="ForcePacmanAnimationInfo">Для этого нужно выбрать \"Архивировать\" в \"Смахивание влево в списке чатов\".</string>
     <string name="Profile">Профиль</string>
     <string name="HidePhoneNumber">Скрыть номер телефона</string>
+    <string name="AlwaysExpandProfilePhoto">Всегда раскрывать фото профиля</string>
     <string name="ShowID">Показывать ID в профиле</string>
     <string name="ShowDC">Показывать DC в профиле</string>
     <string name="HidePremiumStickersTab">Скрыть вкладку премиум стикеров</string>

@@ -62,6 +62,7 @@
     <string name="ForcePacmanAnimationInfo">This requires the selected \"Archive\" swipe gesture in chat list.</string>
     <string name="Profile">Profile</string>
     <string name="HidePhoneNumber">Hide phone number</string>
+    <string name="AlwaysExpandProfilePhoto">Always expand profile photo</string>
     <string name="ShowID">Show ID in Profile</string>
     <string name="ShowDC">Show DC in Profile</string>
     <string name="HidePremiumStickersTab">Hide premium stickers tab</string>
@@ -96,7 +97,7 @@
     <string name="HideMuteUnmuteButtonValue">from the bottom of the channels.</string>
     <string name="DisableReactions">Disable reactions</string>
     <string name="DisableGreetingSticker">Disable greeting sticker</string>
-    <string name="DisableJumpToNextChannel">Disable \"Jump to next channel\"</string>
+    <string name="DisableJumpToNextChannel">Disable \"Jump to the next channel\"</string>
     <string name="DateOfForwardedMsg">Show date of forwarded message</string>
     <string name="ShowMessageID">Show message ID</string>
     <string name="ShowActionTimestamps">Show timestamps for actions</string>
