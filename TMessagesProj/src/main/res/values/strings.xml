@@ -5915,4 +5915,8 @@
     <string name="SelectChatsForDisableAutoDelete2_many">will remove the self-destruct timer</string>
     <string name="SelectChatsForDisableAutoDelete2_other">will remove the self-destruct timer</string>
     <string name="DisableAutoDeleteTimer">Disable Auto-Delete</string>
+    <string name="AppIcon480dsgn">480 DSGN</string>
+    <string name="AppIconGlow">Glow</string>
+    <string name="AppIconSpace">Space</string>
+    <string name="AppIconWinter">Winter</string>
 </resources>

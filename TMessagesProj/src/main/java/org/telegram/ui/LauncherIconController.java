@@ -45,7 +45,11 @@ public class LauncherIconController {
         DEFAULT("DefaultIcon", BuildVars.isBetaApp() ? R.color.ic_background_beta : R.color.ic_background, R.drawable.ic_foreground, R.string.AppIconDefault),
         MONET("MonetIcon", R.color.ic_background_monet, R.drawable.ic_foreground_monet, R.string.AppIconMonet),
         GRADIENT("GradientIcon", R.mipmap.ic_background_gradient, R.drawable.ic_foreground, R.string.AppIconGradient),
-        GOOGLE("GoogleIcon", R.mipmap.ic_background_google, R.mipmap.ic_foreground_google, R.string.AppIconGoogle),
+        GOOGLE("GoogleIcon", R.color.white, R.mipmap.ic_foreground_google, R.string.AppIconGoogle),
+        DSGN480("Dsgn480Icon", R.mipmap.ic_background_480dsgn, R.mipmap.ic_foreground_480dsgn, R.string.AppIcon480dsgn),
+        GLOW("GlowIcon", R.mipmap.ic_background_glow, R.mipmap.ic_foreground_glow, R.string.AppIconGlow),
+        SPACE("SpaceIcon", R.mipmap.ic_background_space, R.mipmap.ic_foreground_space, R.string.AppIconSpace),
+        WINTER("WinterIcon", R.mipmap.ic_background_winter, R.drawable.ic_foreground, R.string.AppIconWinter),
         RED("RedIcon", R.mipmap.ic_background_red, R.mipmap.ic_foreground_red, R.string.AppIconRed);
 
         public final String key;
