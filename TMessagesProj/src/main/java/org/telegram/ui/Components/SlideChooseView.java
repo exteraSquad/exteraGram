@@ -120,8 +120,8 @@ public class SlideChooseView extends View {
         dashedFrom = from;
     }
 
-    public void setNeedDivider(boolean need) {
-        needDivider = need;
+    public void setNeedDivider(boolean divider) {
+        needDivider = divider;
     }
 
     @Override

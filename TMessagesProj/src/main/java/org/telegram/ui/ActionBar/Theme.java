@@ -70,6 +70,7 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.monet.MonetAccent;
 import com.exteragram.messenger.monet.MonetHelper;
 
@@ -5828,12 +5829,18 @@ public class Theme {
             int monthOfYear = calendar.get(Calendar.MONTH);
             int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
             int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            canStartHolidayAnimation = monthOfYear == 0 && dayOfMonth == 1 && hour <= 23;
+            canStartHolidayAnimation = ExteraConfig.forceDrawerSnow || (monthOfYear == 0 && dayOfMonth == 1 && hour <= 23);
             if (dialogs_holidayDrawable == null) {
-                if (monthOfYear == 11 && dayOfMonth >= (BuildVars.DEBUG_PRIVATE_VERSION ? 29 : 31) && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1) {
+                if (canStartHolidayAnimation || (monthOfYear == 11 && dayOfMonth >= (BuildVars.DEBUG_PRIVATE_VERSION ? 29 : 31) && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1)) {
+                    boolean isUpperCase;
+                    try {
+                        isUpperCase = Character.isUpperCase(ExteraUtils.getActionBarTitle().charAt(0));
+                    } catch (Exception e){
+                        isUpperCase = false;
+                    }
                     dialogs_holidayDrawable = ApplicationLoader.applicationContext.getResources().getDrawable(R.drawable.newyear);
                     dialogs_holidayDrawableOffsetX = -AndroidUtilities.dp(3);
-                    dialogs_holidayDrawableOffsetY = -AndroidUtilities.dp(1);
+                    dialogs_holidayDrawableOffsetY = AndroidUtilities.dp(isUpperCase ? 2 : 6);
                 }
             }
         }

@@ -95,6 +95,7 @@
         android:manageSpaceActivity="org.telegram.ui.ExternalActionActivity"
         android:supportsRtl="false"
         android:requestLegacyExternalStorage="true"
+        android:hasFragileUserData="true"
         android:preserveLegacyExternalStorage="true"
         android:allowAudioPlaybackCapture="true"
         android:exported="true"
@@ -105,21 +106,6 @@
             android:enabled="true"
             android:name="com.exteragram.messenger.DefaultIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:enabled="false"
-            android:name="com.exteragram.messenger.RevertedIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_reverted"
-            android:roundIcon="@mipmap/ic_launcher_reverted"
             android:exported="true">
 
             <intent-filter>
@@ -146,21 +132,6 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="com.exteragram.messenger.InvertedIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_inverted"
-            android:roundIcon="@mipmap/ic_launcher_inverted"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:enabled="false"
             android:name="com.exteragram.messenger.GradientIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/ic_launcher_gradient"
@@ -173,22 +144,6 @@
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
         </activity-alias>
-
-        <activity-alias
-            android:enabled="false"
-            android:name="com.exteragram.messenger.PixelIcon"
-            android:targetActivity="org.telegram.ui.LaunchActivity"
-            android:icon="@mipmap/ic_launcher_pixel"
-            android:roundIcon="@mipmap/ic_launcher_pixel"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
         
         <activity-alias
             android:enabled="false"

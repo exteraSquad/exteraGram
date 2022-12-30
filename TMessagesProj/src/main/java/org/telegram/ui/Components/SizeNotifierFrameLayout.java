@@ -412,7 +412,8 @@ public class SizeNotifierFrameLayout extends FrameLayout {
     }
 
     private void checkSnowflake(Canvas canvas) {
-        if (Theme.canStartHolidayAnimation()) {
+        // false until it get fixed by xaxtix
+        if (Theme.canStartHolidayAnimation() && false) {
             if (snowflakesEffect == null) {
                 snowflakesEffect = new SnowflakesEffect(1);
             }

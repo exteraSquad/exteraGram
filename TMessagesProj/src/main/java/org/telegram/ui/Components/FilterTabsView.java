@@ -47,6 +47,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
@@ -259,6 +261,8 @@ public class FilterTabsView extends FrameLayout {
             String animateToOtherKey;
             String unreadKey;
             String unreadOtherKey;
+            String unreadTextKey;
+            String unreadTextOtherKey;
             int id1;
             int id2;
             if (manualScrollingToId != -1) {
@@ -804,7 +808,7 @@ public class FilterTabsView extends FrameLayout {
 
             int color1 = Theme.getColor(tabLineColorKey);
             int color2 = Theme.getColor(aTabLineColorKey);
-            selectorDrawable.setColor(ColorUtils.blendARGB(color1, color2, value));
+            selectorDrawable.setColor(ColorUtils.setAlphaComponent(ColorUtils.blendARGB(color1, color2, value), ExteraConfig.tabStyle >= 3 ? 0x2F : 0xFF));
 
             listView.invalidateViews();
             listView.invalidate();
@@ -828,9 +832,13 @@ public class FilterTabsView extends FrameLayout {
         deletePaint.setStrokeWidth(AndroidUtilities.dp(1.5f));
 
         selectorDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, null);
-        float rad = AndroidUtilities.dpf2(3);
-        selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, 0, 0, 0, 0});
-        selectorDrawable.setColor(Theme.getColor(tabLineColorKey));
+        float rad = AndroidUtilities.dpf2(ExteraConfig.tabStyle == 3 ? 8 : ExteraConfig.tabStyle == 4 ? 30 : 3);
+        if (ExteraConfig.tabStyle == 1 || ExteraConfig.tabStyle >= 3) {
+            selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, rad, rad, rad, rad});
+        } else {
+            selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, 0, 0, 0, 0});
+        }
+        selectorDrawable.setColor(ColorUtils.setAlphaComponent(Theme.getColor(tabLineColorKey), ExteraConfig.tabStyle >= 3 ? 0x2F : 0xFF));
 
         setHorizontalScrollBarEnabled(false);
         listView = new RecyclerListView(context) {
@@ -962,8 +970,8 @@ public class FilterTabsView extends FrameLayout {
         };
         itemAnimator.setDelayAnimations(false);
         listView.setItemAnimator(itemAnimator);
-        listView.setSelectorType(8);
-        listView.setSelectorRadius(6);
+        listView.setSelectorType(ExteraConfig.tabStyle >= 3 ? 100 : 8);
+        listView.setSelectorRadius(8);
         listView.setSelectorDrawableColor(Theme.getColor(selectorColorKey));
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) {
 
@@ -1019,7 +1027,7 @@ public class FilterTabsView extends FrameLayout {
             }
             TabView tabView = (TabView) view;
             if (isEditing) {
-                if (position != 0) {
+                if (position != 0 || ExteraConfig.hideAllChats) {
                     int side = AndroidUtilities.dp(6);
                     if (tabView.rect.left - side < x && tabView.rect.right + side > x) {
                         delegate.onDeletePressed(tabView.currentTab.id);
@@ -1256,11 +1264,11 @@ public class FilterTabsView extends FrameLayout {
                     indicatorX = (int) (tabView.getX() + (viewWidth - indicatorWidth) / 2);
                 }
             }
-            if (indicatorWidth != 0) {
+            if (indicatorWidth != 0 && ExteraConfig.tabStyle != 2) {
                 canvas.save();
                 canvas.translate(listView.getTranslationX(), 0);
                 canvas.scale(listView.getScaleX(), 1f, listView.getPivotX() + listView.getX(), listView.getPivotY());
-                selectorDrawable.setBounds((int) indicatorX, height - AndroidUtilities.dpr(4), (int) (indicatorX + indicatorWidth), height);
+                selectorDrawable.setBounds((int) indicatorX - (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), ExteraConfig.tabStyle >= 3 ? height / 2 - AndroidUtilities.dp(16) : height - AndroidUtilities.dpr(4), (int) (indicatorX + indicatorWidth) + (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), ExteraConfig.tabStyle >= 3 ? height / 2 + AndroidUtilities.dp(16) : height);
                 selectorDrawable.draw(canvas);
                 canvas.restore();
             }
@@ -1321,12 +1329,17 @@ public class FilterTabsView extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (!tabs.isEmpty()) {
             int width = MeasureSpec.getSize(widthMeasureSpec) - AndroidUtilities.dp(7) - AndroidUtilities.dp(7);
-            Tab firstTab = findDefaultTab();
-            firstTab.setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
-            int tabWith = firstTab.getWidth(false);
-            firstTab.setTitle(allTabsWidth > width ? LocaleController.getString("FilterAllChatsShort", R.string.FilterAllChatsShort) : LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
-            int trueTabsWidth = allTabsWidth - tabWith;
-            trueTabsWidth += firstTab.getWidth(false);
+            int trueTabsWidth;
+            if (!ExteraConfig.hideAllChats)  {
+                Tab firstTab = findDefaultTab();
+                firstTab.setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+                int tabWith = firstTab.getWidth(false);
+                firstTab.setTitle(allTabsWidth > width ? LocaleController.getString("FilterAllChatsShort", R.string.FilterAllChatsShort) : LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+                trueTabsWidth = allTabsWidth - tabWith;
+                trueTabsWidth += firstTab.getWidth(false);
+            } else {
+                trueTabsWidth = allTabsWidth;
+            }
             int prevWidth = additionalTabWidth;
             additionalTabWidth = trueTabsWidth < width ? (width - trueTabsWidth) / tabs.size() : 0;
             if (prevWidth != additionalTabWidth) {
@@ -1488,7 +1501,7 @@ public class FilterTabsView extends FrameLayout {
                 invalidated = true;
                 requestLayout();
                 allTabsWidth = 0;
-                findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+                if (!ExteraConfig.hideAllChats) findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
                 for (int b = 0; b < N; b++) {
                     allTabsWidth += tabs.get(b).getWidth(true) + AndroidUtilities.dp(32);
                 }
@@ -1519,7 +1532,7 @@ public class FilterTabsView extends FrameLayout {
             listView.setItemAnimator(itemAnimator);
             adapter.notifyDataSetChanged();
             allTabsWidth = 0;
-            findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+            if (!ExteraConfig.hideAllChats) findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
             for (int b = 0, N = tabs.size(); b < N; b++) {
                 allTabsWidth += tabs.get(b).getWidth(true) + AndroidUtilities.dp(32);
             }
@@ -1577,6 +1590,22 @@ public class FilterTabsView extends FrameLayout {
                 return;
             }
             ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).dialogFilters;
+            if (ExteraConfig.hideAllChats) {
+                int defaultPosition = 0;
+                for (int i = 0; i < filters.size(); i++) {
+                    if (filters.get(i).isDefault()) {
+                        defaultPosition = i;
+                        break;
+                    }
+                }
+                if (idx1 >= defaultPosition) {
+                    idx1++;
+                }
+                if (idx2 >= defaultPosition) {
+                    idx2++;
+                }
+            }
+
             MessagesController.DialogFilter filter1 = filters.get(idx1);
             MessagesController.DialogFilter filter2 = filters.get(idx2);
             int temp = filter1.order;
@@ -1675,7 +1704,7 @@ public class FilterTabsView extends FrameLayout {
 
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            if (MessagesController.getInstance(UserConfig.selectedAccount).premiumLocked && (!isEditing || (viewHolder.getAdapterPosition() == 0 && tabs.get(0).isDefault && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium()))) {
+            if (!ExteraConfig.hideAllChats && (!isEditing || (viewHolder.getAdapterPosition() == 0 && tabs.get(0).isDefault && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium()))) {
                 return makeMovementFlags(0, 0);
             }
             return makeMovementFlags(ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, 0);
@@ -1683,7 +1712,7 @@ public class FilterTabsView extends FrameLayout {
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source, RecyclerView.ViewHolder target) {
-            if (MessagesController.getInstance(UserConfig.selectedAccount).premiumLocked && ((source.getAdapterPosition() == 0 || target.getAdapterPosition() == 0) && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium())) {
+            if (!ExteraConfig.hideAllChats && ((source.getAdapterPosition() == 0 || target.getAdapterPosition() == 0) && !UserConfig.getInstance(UserConfig.selectedAccount).isPremium())) {
                 return false;
             }
             adapter.swapElements(source.getAdapterPosition(), target.getAdapterPosition());

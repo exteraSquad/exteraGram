@@ -21,7 +21,7 @@
     <!-- Main Menu (about) -->
     <string name="exteraPrivacy">Политика конфиденциальности и FAQ</string>
     <string name="Links">Ссылки</string>
-    <string name="AboutExteraDescription">Экспериментальный Telegram-клиент, основанный на официальном исходном коде Telegram!</string>
+    <string name="AboutExteraDescription">Экспериментальный Telegram-клиент, основанный на официальном исходном коде!</string>
     <string name="Channel">Канал</string>
     <string name="Chats">Чаты</string>
     <string name="Crowdin">Перевод</string>
@@ -45,12 +45,21 @@
 
     <!-- General -->
     <string name="AvatarCorners">Закругление аватарок</string>
+    <string name="HideActionBarStatus">Скрыть статус</string>
+    <string name="HideAllChats">Скрыть папку \"%1$s\"</string>
+    <string name="ActionBarTitle">Текст заголовка</string>
+    <string name="TabStyle">Стиль папок</string>
+    <string name="TabStyleTextOnly">Текст</string>
+    <string name="TabStyleRounded">Закруглённый</string>
+    <string name="TabStyleChips">Чипсы</string>
+    <string name="TabStylePills">Таблетки</string>
+    <string name="ActionBarTitleUsername">Короткая ссылка</string>
+    <string name="ActionBarTitleName">Имя</string>
     <string name="DownloadSpeedBoost">Увеличение скорости загрузки</string>
     <string name="UploadSpeedBoost">Увеличение скорости отправки</string>
     <string name="Ultra">Ультра</string>
     <string name="DisableNumberRounding">Отключить округление чисел</string>
     <string name="FormatTimeWithSeconds">Показывать время с секундами</string>
-    <string name="ChatsOnTitle">\"Чаты\" вместо \"exteraGram\"</string>
     <string name="DisableVibration">Отключить вибрацию</string>
     <string name="ForceTabletMode">Планшетный режим</string>
     <string name="ArchiveOnPull">Открывать архив при вытягивании</string>

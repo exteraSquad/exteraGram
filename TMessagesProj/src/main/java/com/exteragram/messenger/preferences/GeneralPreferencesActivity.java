@@ -40,7 +40,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int generalHeaderRow;
     private int formatTimeWithSecondsRow;
     private int disableNumberRoundingRow;
-    private int chatsOnTitleRow;
     private int disableVibrationRow;
     private int forceTabletModeRow;
     private int generalDividerRow;
@@ -78,7 +77,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         generalHeaderRow = newRow();
         disableNumberRoundingRow = newRow();
         formatTimeWithSecondsRow = newRow();
-        chatsOnTitleRow = newRow();
         disableVibrationRow = newRow();
         forceTabletModeRow = newRow();
         generalDividerRow = newRow();
@@ -115,10 +113,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
             ExteraConfig.editor.putBoolean("formatTimeWithSeconds", ExteraConfig.formatTimeWithSeconds ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.formatTimeWithSeconds);
             LocaleController.getInstance().recreateFormatters();
-            parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == chatsOnTitleRow) {
-            ExteraConfig.editor.putBoolean("chatsOnTitle", ExteraConfig.chatsOnTitle ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.chatsOnTitle);
             parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == disableVibrationRow) {
             ExteraConfig.editor.putBoolean("disableVibration", ExteraConfig.disableVibration ^= true).apply();
@@ -235,8 +229,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("DisableNumberRounding", R.string.DisableNumberRounding), "1.23K -> 1,234", ExteraConfig.disableNumberRounding, true, true);
                     } else if (position == formatTimeWithSecondsRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("FormatTimeWithSeconds", R.string.FormatTimeWithSeconds), "12:34 -> 12:34:56", ExteraConfig.formatTimeWithSeconds, true, true);
-                    } else if (position == chatsOnTitleRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("ChatsOnTitle", R.string.ChatsOnTitle), ExteraConfig.chatsOnTitle, true);
                     } else if (position == disableVibrationRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableVibration", R.string.DisableVibration), ExteraConfig.disableVibration, true);
                     } else if (position == disableAnimatedAvatarsRow) {

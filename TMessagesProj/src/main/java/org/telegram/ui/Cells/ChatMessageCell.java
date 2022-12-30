@@ -13204,9 +13204,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             }
             currentNameStatusDrawable.setBounds(
                 (int) (Math.abs(nx) + nameLayoutWidth + AndroidUtilities.dp(2)),
-                (int) nameY + nameLayout.getHeight() / 2 - AndroidUtilities.dp(10),
+                (int) nameY + nameLayout.getHeight() / 2 - AndroidUtilities.dp(12),
                 (int) (Math.abs(nx) + nameLayoutWidth + AndroidUtilities.dp(22)),
-                (int) (nameY + nameLayout.getHeight() / 2 + AndroidUtilities.dp(10))
+                (int) (nameY + nameLayout.getHeight() / 2 + AndroidUtilities.dp(8))
             );
             currentNameStatusDrawable.setColor(ColorUtils.setAlphaComponent(color, 115));
             currentNameStatusDrawable.draw(canvas);

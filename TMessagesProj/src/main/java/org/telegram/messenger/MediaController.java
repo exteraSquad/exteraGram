@@ -3505,6 +3505,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         return isPaused || downloadingCurrentMessage;
     }
 
+    public boolean isPaused() {
+        return isPaused;
+    }
+
     public boolean isDownloadingCurrentMessage() {
         return downloadingCurrentMessage;
     }

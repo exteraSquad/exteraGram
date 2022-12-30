@@ -42,7 +42,6 @@
     <string name="AvatarCorners">头像圆角</string>
     <string name="DisableNumberRounding">禁用数字舍入</string>
     <string name="FormatTimeWithSeconds">时间精确到秒</string>
-    <string name="ChatsOnTitle">主标题显示为“对话”</string>
     <string name="DisableVibration">关闭振动</string>
     <string name="ForceTabletMode">强制开启平板模式</string>
     <string name="DisableAnimatedAvatars">禁用动态头像</string>

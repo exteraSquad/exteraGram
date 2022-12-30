@@ -15,6 +15,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.exteragram.messenger.monet.MonetHelper;
 import com.exteragram.messenger.updater.UpdaterUtils;
@@ -110,8 +111,8 @@ public class ExteraUtils {
     }
 
     public static int[] getDrawerIconPack() {
-        switch (ExteraConfig.eventType) {
-            case 2:
+        switch (Theme.getEventType()) {
+            case 0:
                 return new int[]{
                         R.drawable.msg_groups_ny,
                         R.drawable.msg_secret_ny,
@@ -123,7 +124,7 @@ public class ExteraUtils {
                         R.drawable.msg_help_ny,
                         R.drawable.msg_nearby_ny
                 };
-            case 3:
+            case 1:
                 return new int[]{
                         R.drawable.msg_groups_14,
                         R.drawable.msg_secret_14,
@@ -135,7 +136,7 @@ public class ExteraUtils {
                         R.drawable.msg_help,
                         R.drawable.msg_secret_14
                 };
-            case 4:
+            case 2:
                 return new int[]{
                         R.drawable.msg_groups_hw,
                         R.drawable.msg_secret_hw,
@@ -214,5 +215,27 @@ public class ExteraUtils {
                     AndroidUtilities.runOnUIThread(onFail::run);
             }
         });
+    }
+
+    public static String getActionBarTitle() {
+        return getActionBarTitle(ExteraConfig.actionBarTitle);
+    }
+    public static String getActionBarTitle(int num) {
+        TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
+        String title;
+        if (num == 0) {
+            title = LocaleController.getString("exteraAppName", R.string.exteraAppName);
+        } else if (num == 1) {
+            title = LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort);
+        } else if (num == 2) {
+            if (!TextUtils.isEmpty(UserObject.getPublicUsername(user))) {
+                title = UserObject.getPublicUsername(user);
+            } else {
+                title = UserObject.getFirstName(user);
+            }
+        } else {
+            title = UserObject.getFirstName(user);
+        }
+        return title;
     }
 }

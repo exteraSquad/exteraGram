@@ -44,7 +44,6 @@
     <string name="Ultra">Ultra</string>
     <string name="DisableNumberRounding">Sayı yuvarlamayı devre dışı bırak</string>
     <string name="FormatTimeWithSeconds">Saati saniye ile göster</string>
-    <string name="ChatsOnTitle">\"exteraGram\" yerine \"Sohbetler\"</string>
     <string name="DisableVibration">Titreşimi devre dışı bırak</string>
     <string name="ForceTabletMode">Tablet moduna zorla</string>
     <string name="ArchiveOnPull">Açılır menüde arşivi aç</string>

@@ -446,7 +446,7 @@ public class ActionBar extends FrameLayout {
         if (titleTextView[0] != null) {
             titleTextView[0].setVisibility(value != null && !isSearchFieldVisible ? VISIBLE : INVISIBLE);
             titleTextView[0].setText(lastTitle = value);
-            if (UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) {
+            if (UserConfig.getInstance(UserConfig.selectedAccount).isPremium() && !ExteraConfig.hideActionBarStatus) {
                 titleTextView[0].setRightDrawable(lastRightDrawable = rightDrawable);
                 titleTextView[0].setRightDrawableOnClick(rightDrawableOnClickListener);
                 if (rightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
@@ -1609,13 +1609,7 @@ public class ActionBar extends FrameLayout {
     }
 
     public static int getCurrentActionBarHeight() {
-        if (AndroidUtilities.isTablet()) {
-            return AndroidUtilities.dp(64);
-        } else if (AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y) {
-            return AndroidUtilities.dp(48);
-        } else {
-            return AndroidUtilities.dp(56);
-        }
+        return !AndroidUtilities.isTablet() && AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y ? AndroidUtilities.dp(56) : AndroidUtilities.dp(64);
     }
 
     public void setTitleAnimated(CharSequence title, boolean fromBottom, long duration) {

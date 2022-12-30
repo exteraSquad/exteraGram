@@ -31,7 +31,6 @@
     <string name="FormatTimeWithSeconds">時間を秒で書式設定</string>
     <string name="HideAllChats">「すべてのチャット」タブを非表示にする</string>
     <string name="HideProxySponsor">プロキシスポンサーを隠す</string>
-    <string name="ChatsOnTitle">\"exteraGram\" の代わりに \"Chats\"</string>
     <string name="DisableVibration">バイブレーションを無効</string>
     <string name="ForceTabletMode">タブレットモードを強制する</string>
     <string name="ArchiveOnPull">保管したチャットをプルダウンで開く</string>

@@ -31,7 +31,6 @@
     <string name="FormatTimeWithSeconds">Afficher l\'heure avec les secondes</string>
     <string name="HideAllChats">Masquer l\'onglet \"Toutes les discussions\"</string>
     <string name="HideProxySponsor">Cacher le sponsor du proxy</string>
-    <string name="ChatsOnTitle">\"Chats\" au lieu de \"exteraGram\"</string>
     <string name="DisableVibration">Désactiver les vibrations</string>
     <string name="ForceTabletMode">Forcer le mode Tablet Ui</string>
     <string name="ArchiveOnPull">Ouvrir les archives dans le menu déroulant</string>

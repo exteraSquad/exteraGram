@@ -6,5 +6,5 @@
     <foreground
         android:drawable="@mipmap/ic_foreground_google" />
     <monochrome
-        android:drawable="@drawable/ic_monochrome"/>
+        android:drawable="@drawable/ic_monochrome_google"/>
 </adaptive-icon>

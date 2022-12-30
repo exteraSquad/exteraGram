@@ -11,24 +11,42 @@
 
 package com.exteragram.messenger.preferences;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.components.InfoSettingsCell;
 import com.exteragram.messenger.updater.UpdaterBottomSheet;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.browser.Browser;
+import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCell;
+import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.RecyclerListView;
 
 public class MainPreferencesActivity extends BasePreferencesActivity {
+
+    private View actionBarBackground;
+    private AnimatorSet actionBarAnimator;
+
+    private InfoSettingsCell infoSettingsCell;
 
     private int categoryHeaderRow;
     private int generalRow;
@@ -45,6 +63,126 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     private int groupRow;
     private int crowdinRow;
     private int infoDividerRow;
+
+    @Override
+    public View createView(Context context) {
+        actionBar.setBackButtonImage(R.drawable.ic_ab_back);
+        actionBar.setBackground(null);
+        actionBar.setTitleColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        actionBar.setItemsColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), false);
+        actionBar.setItemsBackgroundColor(Theme.getColor(Theme.key_listSelector), false);
+        actionBar.setCastShadows(false);
+        actionBar.setAddToContainer(false);
+        actionBar.setOccupyStatusBar(!AndroidUtilities.isTablet());
+        actionBar.setTitle(getTitle());
+        actionBar.getTitleTextView().setAlpha(0.0f);
+        actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+            @Override
+            public void onItemClick(int id) {
+                if (id == -1) {
+                    finishFragment();
+                }
+            }
+        });
+
+        fragmentView = new FrameLayout(context) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionBarBackground.getLayoutParams();
+                layoutParams.height = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + AndroidUtilities.dp(3);
+
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
+
+            @Override
+            protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+                super.onLayout(changed, left, top, right, bottom);
+                checkScroll(false);
+            }
+        };
+        fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+        fragmentView.setTag(Theme.key_windowBackgroundGray);
+        FrameLayout frameLayout = (FrameLayout) fragmentView;
+
+        listView = new RecyclerListView(context);
+        listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        listView.setAdapter(listAdapter = createAdapter(context));
+        frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
+        listView.setOnItemClickListener(this::onItemClick);
+        listView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                checkScroll(true);
+            }
+        });
+
+         actionBarBackground = new View(context) {
+
+            private final Paint paint = new Paint();
+
+            @Override
+            protected void onDraw(Canvas canvas) {
+                paint.setColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                int h = getMeasuredHeight() - AndroidUtilities.dp(3);
+                canvas.drawRect(0, 0, getMeasuredWidth(), h, paint);
+                parentLayout.drawHeaderShadow(canvas, h);
+            }
+        };
+        actionBarBackground.setAlpha(0.0f);
+        frameLayout.addView(actionBarBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        frameLayout.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
+        updateRowsId();
+        return fragmentView;
+    }
+
+    private final int[] location = new int[2];
+    private void checkScroll(boolean animated) {
+        int first = layoutManager.findFirstVisibleItemPosition();
+        boolean show;
+        if (first != 0) {
+            show = true;
+        } else {
+            RecyclerView.ViewHolder holder = listView.findViewHolderForAdapterPosition(first);
+            if (holder == null) {
+                show = true;
+            } else {
+                infoSettingsCell = (InfoSettingsCell) holder.itemView;
+                infoSettingsCell.textView.getLocationOnScreen(location);
+                show = location[1] + infoSettingsCell.textView.getMeasuredHeight() < actionBar.getBottom();
+            }
+        }
+        boolean visible = actionBarBackground.getTag() == null;
+        if (show != visible) {
+            actionBarBackground.setTag(show ? null : 1);
+            if (actionBarAnimator != null) {
+                actionBarAnimator.cancel();
+                actionBarAnimator = null;
+            }
+            if (animated) {
+                actionBarAnimator = new AnimatorSet();
+                actionBarAnimator.playTogether(
+                        ObjectAnimator.ofFloat(actionBarBackground, View.ALPHA, show ? 1.0f : 0.0f),
+                        ObjectAnimator.ofFloat(actionBar.getTitleTextView(), View.ALPHA, show ? 1.0f : 0.0f)
+                );
+                actionBarAnimator.setDuration(250);
+                actionBarAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (animation.equals(actionBarAnimator)) {
+                            actionBarAnimator = null;
+                        }
+                    }
+                });
+                actionBarAnimator.start();
+            } else {
+                actionBarBackground.setAlpha(show ? 1.0f : 0.0f);
+                actionBar.getTitleTextView().setAlpha(show ? 1.0f : 0.0f);
+            }
+        }
+    }
 
     @Override
     protected void updateRowsId() {
@@ -95,6 +233,11 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     }
 
     @Override
+    protected boolean hasWhiteActionBar() {
+        return true;
+    }
+
+    @Override
     protected BaseListAdapter createAdapter(Context context) {
         return new ListAdapter(context);
     }
@@ -142,6 +285,10 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == infoHeaderRow) {
                         headerCell.setText(LocaleController.getString("Links", R.string.Links));
                     }
+                    break;
+                case 4:
+                    infoSettingsCell = (InfoSettingsCell) holder.itemView;
+                    infoSettingsCell.setPadding(0, ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.dp(40), 0, 0);
                     break;
             }
         }

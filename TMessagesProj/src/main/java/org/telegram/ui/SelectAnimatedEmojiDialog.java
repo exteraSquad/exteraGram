@@ -2616,6 +2616,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
         } else if (type == TYPE_EMOJI_STATUS) {
             ArrayList<TLRPC.EmojiStatus> recentEmojiStatuses = MediaDataController.getInstance(currentAccount).getRecentEmojiStatuses();
             TLRPC.TL_messages_stickerSet defaultSet = MediaDataController.getInstance(currentAccount).getStickerSet(new TLRPC.TL_inputStickerSetEmojiDefaultStatuses(), false);
+            TLRPC.TL_messages_stickerSet exteraSet = MediaDataController.getInstance(currentAccount).getStickerSetById(5903149394043076636L);
             if (defaultSet == null) {
                 defaultSetLoading = true;
             } else {
@@ -2624,13 +2625,16 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                     rowHashCodes.add(2);
                 }
                 ArrayList<TLRPC.EmojiStatus> defaultEmojiStatuses = MediaDataController.getInstance(currentAccount).getDefaultEmojiStatuses();
-                final int maxrecentlen = layoutManager.getSpanCount() * (RECENT_MAX_LINES + 8);
+                final int maxrecentlen = layoutManager.getSpanCount() * (RECENT_MAX_LINES + 9);
                 if (defaultSet.documents != null && !defaultSet.documents.isEmpty()) {
                     for (int i = 0; i < Math.min(layoutManager.getSpanCount() - 1, defaultSet.documents.size()); ++i) {
                         recent.add(new AnimatedEmojiSpan(defaultSet.documents.get(i), null));
                         if (recent.size() + (includeEmpty ? 1 : 0) >= maxrecentlen) {
                             break;
                         }
+                    }
+                    if (exteraSet != null) {
+                        recent.add(new AnimatedEmojiSpan(exteraSet.documents.get(3), null));
                     }
                 }
                 if (recentEmojiStatuses != null && !recentEmojiStatuses.isEmpty()) {
@@ -2706,7 +2710,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
             }
         }
         if (installedEmojipacks != null) {
-            for (int i = 0, j = 0; i < installedEmojipacks.size(); ++i) {
+            for (int i = 0; i < installedEmojipacks.size(); ++i) {
                 TLRPC.TL_messages_stickerSet set = installedEmojipacks.get(i);
                 if (set != null && set.set != null && set.set.emojis && !installedEmojiSets.contains(set.set.id)) {
                     positionToSection.put(totalCount, packs.size());
@@ -2727,7 +2731,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                     for (int k = 0; k < pack.documents.size(); ++k) {
                         rowHashCodes.add(Objects.hash(3212, pack.documents.get(k).id));
                     }
-                    j++;
                 }
             }
         }

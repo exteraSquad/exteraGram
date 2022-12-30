@@ -18,6 +18,8 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.R;
 import org.telegram.tgnet.TLRPC;
 
 import java.util.Arrays;
@@ -27,6 +29,11 @@ public class ExteraConfig {
     private static final Object sync = new Object();
 
     // appearance
+    public static float avatarCorners = 30.0f;
+    public static boolean hideActionBarStatus;
+    public static int actionBarTitle;
+    public static int tabStyle;
+    public static boolean hideAllChats;
     public static boolean useSystemFonts;
     public static boolean blurForAllThemes;
     public static boolean centerTitle;
@@ -39,12 +46,10 @@ public class ExteraConfig {
     public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures;
 
     // general
-    public static float avatarCorners = 30.0f;
     public static int downloadSpeedBoost;
     public static boolean uploadSpeedBoost;
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
-    public static boolean chatsOnTitle;
     public static boolean forceTabletMode;
     public static boolean archiveOnPull;
     public static boolean disableUnarchiveSwipe;
@@ -92,8 +97,8 @@ public class ExteraConfig {
     public static boolean checkUpdatesOnLaunch;
 
     // other
-    private static final int[] OFFICIAL_CHANNELS = {1233768168, 1524581881, 1571726392, 1632728092, 1638754701, 1779596027, 1172503281};
-    private static final int[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611};
+    private static final long[] OFFICIAL_CHANNELS = {1233768168, 1524581881, 1571726392, 1632728092, 1638754701, 1779596027, 1172503281};
+    private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381};
     public static long channelToSave;
 
     public static String targetLanguage;
@@ -123,6 +128,7 @@ public class ExteraConfig {
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("exteraconfig", Activity.MODE_PRIVATE);
             editor = preferences.edit();
 
+            avatarCorners = preferences.getFloat("avatarCorners", 30.0f);
             useSystemFonts = preferences.getBoolean("useSystemFonts", true);
             disableVibration = preferences.getBoolean("disableVibration", false);
             blurForAllThemes = preferences.getBoolean("blurForAllThemes", false);
@@ -132,12 +138,13 @@ public class ExteraConfig {
             transparentNavBar = preferences.getBoolean("transparentNavBar", false);
             squareFab = preferences.getBoolean("squareFab", true);
 
-            avatarCorners = preferences.getFloat("avatarCorners", 30.0f);
+            hideActionBarStatus = preferences.getBoolean("hideActionBarStatus", false);
+            actionBarTitle = preferences.getInt("actionBarTitle", 0);
+            tabStyle = preferences.getInt("tabStyle", 0);
             downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);
             uploadSpeedBoost = preferences.getBoolean("uploadSpeedBoost", false);
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
-            chatsOnTitle = preferences.getBoolean("chatsOnTitle", false);
             forceTabletMode = preferences.getBoolean("forceTabletMode", false);
             disableAnimatedAvatars = preferences.getBoolean("disableAnimatedAvatars", false);
             archiveOnPull = preferences.getBoolean("archiveOnPull", false);
@@ -198,7 +205,7 @@ public class ExteraConfig {
 
             channelToSave = preferences.getLong("channelToSave", 0);
 
-            targetLanguage = preferences.getString("targetLanguage", (String) supportedLanguages[7]);
+            targetLanguage = preferences.getString("targetLanguage", (String) supportedLanguages[8]);
 
             configLoaded = true;
         }

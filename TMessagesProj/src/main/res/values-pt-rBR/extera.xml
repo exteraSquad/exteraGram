@@ -42,7 +42,6 @@
     <string name="AvatarCorners">Cantos dos avatares</string>
     <string name="DisableNumberRounding">Desativar arredondamento de números</string>
     <string name="FormatTimeWithSeconds">Formatar a hora com segundos</string>
-    <string name="ChatsOnTitle">\"Conversas\" em vez de \"exteraGram\"</string>
     <string name="DisableVibration">Desabilitar vibração</string>
     <string name="ForceTabletMode">Forçar modo tablet</string>
     <string name="DisableAnimatedAvatars">Desativar avatares animados</string>

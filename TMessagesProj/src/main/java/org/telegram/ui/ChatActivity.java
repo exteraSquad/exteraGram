@@ -7519,10 +7519,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             @Override
             public void onDraw(Canvas canvas) {
                 int bottom = Theme.chat_composeShadowDrawable.getIntrinsicHeight();
-                Theme.chat_composeShadowDrawable.setBounds(0, 0, getMeasuredWidth(), bottom);
-                Theme.chat_composeShadowDrawable.draw(canvas);
                 AndroidUtilities.rectTmp2.set(0, bottom, getMeasuredWidth(), getMeasuredHeight());
                 contentView.drawBlurRect(canvas, getY(), AndroidUtilities.rectTmp2, getThemedPaint(Theme.key_paint_chatComposeBackground), false);
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, bottom + 1, getMeasuredWidth(), bottom + 1, Theme.dividerPaint);
             }
         };
         bottomMessagesActionContainer.drawBlur = false;
@@ -8369,12 +8369,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             @Override
             public void onDraw(Canvas canvas) {
                 int bottom = Theme.chat_composeShadowDrawable.getIntrinsicHeight();
-                if (chatActivityEnterView.getVisibility() != View.VISIBLE) {
-                    Theme.chat_composeShadowDrawable.setBounds(0, 0, getMeasuredWidth(), bottom);
-                    Theme.chat_composeShadowDrawable.draw(canvas);
-                }
                 AndroidUtilities.rectTmp2.set(0, bottom, getMeasuredWidth(), getMeasuredHeight());
                 contentView.drawBlurRect(canvas, getY(), AndroidUtilities.rectTmp2, getThemedPaint(Theme.key_paint_chatComposeBackground), false);
+                if (!ExteraConfig.disableDividers && chatActivityEnterView.getVisibility() != View.VISIBLE)
+                    canvas.drawLine(0, bottom + 1, getMeasuredWidth(), bottom + 1, Theme.dividerPaint);
             }
 
             @Override
@@ -8496,7 +8494,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 int bottom = Theme.chat_composeShadowDrawable.getIntrinsicHeight();
                 canvas.drawRect(0, bottom, getMeasuredWidth(), getMeasuredHeight(), getThemedPaint(Theme.key_paint_chatComposeBackground));
                 if (!ExteraConfig.disableDividers)
-                    canvas.drawLine(0, bottom, getMeasuredWidth(), bottom, Theme.dividerPaint);
+                    canvas.drawLine(0, bottom + 1, getMeasuredWidth(), bottom + 1, Theme.dividerPaint);
             }
         };
         bottomOverlay.setWillNotDraw(false);
@@ -8540,7 +8538,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 super.dispatchDraw(canvas);
                 if (!ExteraConfig.disableDividers)
-                    canvas.drawLine(0, bottom, getMeasuredWidth(), bottom, Theme.dividerPaint);
+                    canvas.drawLine(0, bottom + 1, getMeasuredWidth(), bottom + 1, Theme.dividerPaint);
             }
         };
         bottomOverlayChat.isTopView = false;
@@ -8712,6 +8710,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         selectButton.setTextColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
         selectButton.setCompoundDrawablePadding(AndroidUtilities.dp(7));
         selectButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        selectButton.setTranslationX(AndroidUtilities.dp(2));
         Drawable image = context.getResources().getDrawable(R.drawable.select_between).mutate();
         image.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_actionBarActionModeDefaultIcon), PorterDuff.Mode.MULTIPLY));
         selectButton.setCompoundDrawablesWithIntrinsicBounds(image, null, null, null);

@@ -12,19 +12,25 @@
 package com.exteragram.messenger.components;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
 import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.Easings;
 import org.telegram.ui.Components.LayoutHelper;
@@ -51,6 +57,7 @@ public class FabShapeCell extends LinearLayout {
             setSelected(square && ExteraConfig.squareFab || !square && !ExteraConfig.squareFab, false);
         }
 
+        @SuppressLint("DrawAllocation")
         @Override
         protected void onDraw(Canvas canvas) {
             int color = Theme.getColor(Theme.key_switchTrack);
@@ -62,7 +69,7 @@ public class FabShapeCell extends LinearLayout {
             Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
             canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
 
-            float stroke = outlinePaint.getStrokeWidth();
+            float stroke = outlinePaint.getStrokeWidth() - Math.max(1, AndroidUtilities.dp(0.25f));
             rect.set(stroke, stroke, getMeasuredWidth() - stroke, getMeasuredHeight() - stroke);
             canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), outlinePaint);
 
@@ -81,6 +88,11 @@ public class FabShapeCell extends LinearLayout {
             Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(Theme.key_chats_actionBackground));
             rect.set(getMeasuredWidth() - AndroidUtilities.dp(42), getMeasuredHeight() - AndroidUtilities.dp(12), getMeasuredWidth() - AndroidUtilities.dp(12), getMeasuredHeight() - AndroidUtilities.dp(42));
             canvas.drawRoundRect(rect, AndroidUtilities.dp(squareFab ? 9 : 100), AndroidUtilities.dp(squareFab ? 9 : 100), Theme.dialogs_onlineCirclePaint);
+
+            Drawable edit = ContextCompat.getDrawable(getContext(), R.drawable.floating_pencil);
+            edit.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
+            edit.setBounds(getMeasuredWidth() - AndroidUtilities.dp(33), getMeasuredHeight() - AndroidUtilities.dp(32.5f), getMeasuredWidth() - AndroidUtilities.dp(21), getMeasuredHeight() - AndroidUtilities.dp(20.5f));
+            edit.draw(canvas);
         }
 
         private void setProgress(float progress) {
@@ -113,7 +125,7 @@ public class FabShapeCell extends LinearLayout {
     public FabShapeCell(Context context) {
         super(context);
         setOrientation(HORIZONTAL);
-        setPadding(AndroidUtilities.dp(13), AndroidUtilities.dp(10), AndroidUtilities.dp(13), AndroidUtilities.dp(6));
+        setPadding(AndroidUtilities.dp(13), AndroidUtilities.dp(15), AndroidUtilities.dp(13), AndroidUtilities.dp(21));
 
         for (int a = 0; a < 2; a++) {
             boolean square = a == 1;
@@ -141,7 +153,15 @@ public class FabShapeCell extends LinearLayout {
     }
 
     @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        if (!ExteraConfig.disableDividers)
+            canvas.drawLine(AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(90), MeasureSpec.EXACTLY));
+        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(110), MeasureSpec.EXACTLY));
     }
 }

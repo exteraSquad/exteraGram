@@ -99,11 +99,10 @@ public class TextCell extends FrameLayout {
         valueImageView.setScaleType(ImageView.ScaleType.CENTER);
         addView(valueImageView);
 
-        if (needCheck) {
-            checkBox = new Switch(context, resourcesProvider);
-            checkBox.setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
-            addView(checkBox, LayoutHelper.createFrame(37, 20, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, 22, 0, 22, 0));
-        }
+        checkBox = new Switch(context, resourcesProvider);
+        checkBox.setVisibility(GONE);
+        checkBox.setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
+        addView(checkBox, LayoutHelper.createFrame(37, 20, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, 22, 0, 22, 0));
 
         setFocusable(true);
     }
@@ -159,7 +158,7 @@ public class TextCell extends FrameLayout {
         if (valueImageView.getVisibility() == VISIBLE) {
             valueImageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
         }
-        if (checkBox != null) {
+        if (checkBox.getVisibility() == VISIBLE) {
             checkBox.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(37), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(20), MeasureSpec.EXACTLY));
         }
         setMeasuredDimension(width, AndroidUtilities.dp(50) + (needDivider ? 1 : 0));
@@ -168,9 +167,7 @@ public class TextCell extends FrameLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (checkBox != null) {
-            checkBox.setEnabled(enabled);
-        }
+        checkBox.setEnabled(enabled);
     }
 
     @Override
@@ -204,7 +201,7 @@ public class TextCell extends FrameLayout {
             viewLeft = LocaleController.isRTL ? AndroidUtilities.dp(23) : width - valueImageView.getMeasuredWidth() - AndroidUtilities.dp(23);
             valueImageView.layout(viewLeft, viewTop, viewLeft + valueImageView.getMeasuredWidth(), viewTop + valueImageView.getMeasuredHeight());
         }
-        if (checkBox != null && checkBox.getVisibility() == VISIBLE) {
+        if (checkBox.getVisibility() == VISIBLE) {
             viewTop = (height - checkBox.getMeasuredHeight()) / 2;
             viewLeft = LocaleController.isRTL ? AndroidUtilities.dp(22) : width - checkBox.getMeasuredWidth() - AndroidUtilities.dp(22);
             checkBox.layout(viewLeft, viewTop, viewLeft + checkBox.getMeasuredWidth(), viewTop + checkBox.getMeasuredHeight());
@@ -290,9 +287,6 @@ public class TextCell extends FrameLayout {
         valueImageView.setVisibility(GONE);
         needDivider = divider;
         setWillNotDraw(!needDivider);
-        if (checkBox != null) {
-            checkBox.setVisibility(GONE);
-        }
     }
 
     public void setValue(String value) {
@@ -315,9 +309,6 @@ public class TextCell extends FrameLayout {
         imageView.setImageResource(resId);
         needDivider = divider;
         setWillNotDraw(!needDivider);
-        if (checkBox != null) {
-            checkBox.setVisibility(GONE);
-        }
     }
 
     public void setTextAndCheck(String text, boolean checked, boolean divider) {
@@ -341,10 +332,8 @@ public class TextCell extends FrameLayout {
         textView.setText(text);
         valueTextView.setVisibility(GONE);
         valueImageView.setVisibility(GONE);
-        if (checkBox != null) {
-            checkBox.setVisibility(VISIBLE);
-            checkBox.setChecked(checked, false);
-        }
+        checkBox.setVisibility(VISIBLE);
+        checkBox.setChecked(checked, false);
         imageView.setVisibility(VISIBLE);
         imageView.setPadding(0, AndroidUtilities.dp(7), 0, 0);
         imageView.setImageResource(resId);
@@ -381,9 +370,6 @@ public class TextCell extends FrameLayout {
         imageView.setPadding(0, AndroidUtilities.dp(7), 0, 0);
         needDivider = divider;
         setWillNotDraw(!needDivider);
-        if (checkBox != null) {
-            checkBox.setVisibility(GONE);
-        }
     }
 
     @Override

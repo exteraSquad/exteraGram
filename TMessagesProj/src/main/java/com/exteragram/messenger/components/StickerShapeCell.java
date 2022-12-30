@@ -71,7 +71,7 @@ public class StickerShapeCell extends LinearLayout {
             Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
             canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
 
-            float stroke = outlinePaint.getStrokeWidth();
+            float stroke = outlinePaint.getStrokeWidth() - Math.max(1, AndroidUtilities.dp(0.25f));
             rect.set(stroke, stroke, getMeasuredWidth() - stroke, AndroidUtilities.dp(80) - stroke);
             canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), outlinePaint);
 

@@ -16,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.SystemClock;
 import androidx.annotation.Keep;
+import androidx.core.graphics.ColorUtils;
 
 import android.text.Layout;
 import android.util.SparseArray;
@@ -28,6 +29,8 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
@@ -128,9 +131,14 @@ public class ScrollSlidingTextTabStrip extends HorizontalScrollView {
         this.resourcesProvider = resourcesProvider;
 
         selectorDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, null);
-        float rad = AndroidUtilities.dpf2(3);
-        selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, 0, 0, 0, 0});
-        selectorDrawable.setColor(Theme.getColor(tabLineColorKey, resourcesProvider));
+        float rad = AndroidUtilities.dpf2(ExteraConfig.tabStyle == 3 ? 8 : ExteraConfig.tabStyle == 4 ? 30 : 3);
+        if (ExteraConfig.tabStyle == 1 ||ExteraConfig.tabStyle >= 3) {
+            selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, rad, rad, rad, rad});
+        } else {
+            selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, 0, 0, 0, 0});
+        }
+        selectorDrawable.setColor(ColorUtils.setAlphaComponent(Theme.getColor(tabLineColorKey, resourcesProvider), ExteraConfig.tabStyle >= 3 ? 0x2F : 0xFF));
+
 
         setFillViewport(true);
         setWillNotDraw(false);
@@ -276,7 +284,8 @@ public class ScrollSlidingTextTabStrip extends HorizontalScrollView {
         };
             tab.setWillNotDraw(false);
             tab.setGravity(Gravity.CENTER);
-            tab.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(selectorColorKey, resourcesProvider), 3));
+            if (ExteraConfig.tabStyle < 3)
+                tab.setBackground(Theme.createSelectorDrawable(Theme.getColor(selectorColorKey, resourcesProvider), 3));
             tab.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             tab.setSingleLine(true);
             tab.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -343,7 +352,7 @@ public class ScrollSlidingTextTabStrip extends HorizontalScrollView {
         activeTextColorKey = active;
         unactiveTextColorKey = unactive;
         selectorColorKey = selector;
-        selectorDrawable.setColor(Theme.getColor(tabLineColorKey, resourcesProvider));
+        selectorDrawable.setColor(ColorUtils.setAlphaComponent(Theme.getColor(tabLineColorKey, resourcesProvider), ExteraConfig.tabStyle >= 3 ? 0x2F : 0xFF));
     }
 
     public int getCurrentTabId() {
@@ -378,8 +387,9 @@ public class ScrollSlidingTextTabStrip extends HorizontalScrollView {
             selectorDrawable.setAlpha((int) (255 * tabsContainer.getAlpha()));
             float x = indicatorX + indicatorXAnimationDx;
             float w = x + indicatorWidth + indicatorWidthAnimationDx;
-            selectorDrawable.setBounds((int) x, height - AndroidUtilities.dpr(4), (int) w, height);
-            selectorDrawable.draw(canvas);
+            selectorDrawable.setBounds((int) x - (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0),ExteraConfig.tabStyle >= 3 ? height / 2 - AndroidUtilities.dp(16) : height - AndroidUtilities.dp(4), (int) w + (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0),ExteraConfig.tabStyle >= 3 ? height / 2 + AndroidUtilities.dp(16) : height);
+            if (ExteraConfig.tabStyle != 2)
+                selectorDrawable.draw(canvas);
         }
         return result;
     }

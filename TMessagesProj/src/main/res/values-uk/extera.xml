@@ -42,7 +42,6 @@
     <string name="AvatarCorners">Закруглення аватарок</string>
     <string name="DisableNumberRounding">Вимкнути округлення чисел</string>
     <string name="FormatTimeWithSeconds">Форматувати час з секундами</string>
-    <string name="ChatsOnTitle">\"Чати\" замість \"exteraGram\"</string>
     <string name="DisableVibration">Вимкнути вібрацію</string>
     <string name="ForceTabletMode">Примусовий режим планшета</string>
     <string name="DisableAnimatedAvatars">Вимкнути анімовані аватарки</string>

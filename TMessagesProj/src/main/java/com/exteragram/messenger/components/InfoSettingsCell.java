@@ -34,34 +34,12 @@ import org.telegram.ui.Components.LayoutHelper;
 
 public class InfoSettingsCell extends FrameLayout {
 
+    public TextView textView;
+
     public InfoSettingsCell(Context context) {
         super(context);
 
-        TextView textView = new TextView(context);
-        textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        textView.setText(String.format("%s | %s", ExteraUtils.getAppName(), BuildVars.BUILD_VERSION_STRING));
-        textView.setLines(1);
-        textView.setMaxLines(1);
-        textView.setSingleLine(true);
-        textView.setPadding(0, 0, 0, 0);
-        textView.setGravity(Gravity.CENTER);
-        addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 50, 148, 50, 0));
-
-        TextView valueTextView = new TextView(context);
-        valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2));
-        valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
-        valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        valueTextView.setText(LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription));
-        valueTextView.setGravity(Gravity.CENTER);
-        valueTextView.setLines(0);
-        valueTextView.setMaxLines(0);
-        valueTextView.setSingleLine(false);
-        valueTextView.setPadding(0, 0, 0, 0);
-        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 60, 178, 60, 20));
-
-        Drawable arrow = context.getResources().getDrawable(R.drawable.ic_logo_foreground).mutate();
+        Drawable arrow = getResources().getDrawable(R.drawable.ic_logo_foreground).mutate();
         Theme.ThemeInfo theme = Theme.getActiveTheme();
         int color = BuildVars.isBetaApp() ? 0xff747F9F : 0xffF54142;
 
@@ -75,8 +53,34 @@ public class InfoSettingsCell extends FrameLayout {
         ImageView logo = new ImageView(context);
         logo.setScaleType(ImageView.ScaleType.CENTER);
         logo.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(108), color));
+        //TODO: logo.setBackground(new GradientArrowBackground(context, color));
         logo.setImageDrawable(arrow);
         addView(logo, LayoutHelper.createFrame(108, 108, Gravity.CENTER | Gravity.TOP, 0, 20, 0, 0));
+
+        textView = new TextView(context);
+        textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        textView.setText(String.format("%s | %s", ExteraUtils.getAppName(), BuildVars.BUILD_VERSION_STRING));
+        textView.setLines(1);
+        textView.setMaxLines(1);
+        textView.setSingleLine(true);
+        textView.setPadding(0, 0, 0, 0);
+        textView.setGravity(Gravity.CENTER);
+        addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 50, 145, 50, 0));
+
+        TextView valueTextView = new TextView(context);
+        valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        valueTextView.setText(LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription));
+        valueTextView.setGravity(Gravity.CENTER);
+        valueTextView.setLines(0);
+        valueTextView.setMaxLines(0);
+        valueTextView.setSingleLine(false);
+        valueTextView.setPadding(0, 0, 0, 0);
+        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 60, 180, 60, 27));
+
     }
 
     @Override

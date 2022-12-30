@@ -6199,11 +6199,10 @@ public class MessageObject {
         if (document == null) {
             return false;
         }
-        TLRPC.InputStickerSet set = MessageObject.getInputStickerSet(document);
         for (int a = 0, N = document.attributes.size(); a < N; a++) {
             TLRPC.DocumentAttribute attribute = document.attributes.get(a);
             if (attribute instanceof TLRPC.TL_documentAttributeCustomEmoji) {
-                if (attribute.stickerset instanceof TLRPC.TL_inputStickerSetID && attribute.stickerset.id == 1269403972611866647L) {
+                if (attribute.stickerset instanceof TLRPC.TL_inputStickerSetID && (attribute.stickerset.id == 1269403972611866647L || document.id == 5289549144703115739L)) {
                     return true;
                 }
                 return ((TLRPC.TL_documentAttributeCustomEmoji) attribute).text_color;

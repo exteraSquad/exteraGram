@@ -13,18 +13,20 @@ package com.exteragram.messenger.preferences;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.components.InfoSettingsCell;
-import com.exteragram.messenger.components.TextCheckWithIconCell;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -93,12 +95,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
 
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setTitle(getTitle());
-        actionBar.setAllowOverlayTitle(false);
-
-        if (AndroidUtilities.isTablet()) {
-            actionBar.setOccupyStatusBar(false);
-        }
-
+        actionBar.setOccupyStatusBar(!AndroidUtilities.isTablet());
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
@@ -107,15 +104,14 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                 }
             }
         });
+        actionBar.setAllowOverlayTitle(false);
 
         listView = new RecyclerListView(context);
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
+        listView.setAdapter(listAdapter = createAdapter(context));
 
-        listAdapter = createAdapter(context);
-        listView.setAdapter(listAdapter);
-
-        frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP, 0, 0, 0, 0));
+        frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP));
         if (listView.getItemAnimator() != null) {
             ((DefaultItemAnimator) listView.getItemAnimator()).setDelayAnimations(false);
         }
@@ -134,6 +130,17 @@ public abstract class BasePreferencesActivity extends BaseFragment {
 
     protected RecyclerListView getListView() {
         return listView;
+    }
+
+    protected boolean hasWhiteActionBar() {
+        return false;
+    }
+
+    @Override
+    public boolean isLightStatusBar() {
+        if (!hasWhiteActionBar()) return super.isLightStatusBar();
+        int color = getThemedColor(Theme.key_windowBackgroundWhite);
+        return ColorUtils.calculateLuminance(color) > 0.7f;
     }
 
     protected abstract String getTitle();
@@ -186,10 +193,6 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                     view = new TextCheckCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
-                case 6:
-                    view = new TextCheckWithIconCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-                    break;
                 case 7:
                     view = new TextSettingsCell(mContext);
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
@@ -202,6 +205,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                 // case 11: Chats > StickerSizeCell
                 // case 12: Appearance > FabShapeCell
                 // case 13: General > DownloadSpeedChooser
+                // case 14: General > ActionBarSetupCell
                 default:
                     throw new IllegalStateException("Unexpected value: " + viewType);
             }

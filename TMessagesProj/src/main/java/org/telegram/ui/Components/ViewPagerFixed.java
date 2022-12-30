@@ -39,6 +39,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.MessagesController;
@@ -942,9 +944,13 @@ public class ViewPagerFixed extends FrameLayout {
             deletePaint.setStrokeWidth(AndroidUtilities.dp(1.5f));
 
             selectorDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, null);
-            float rad = AndroidUtilities.dpf2(3);
-            selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, 0, 0, 0, 0});
-            selectorDrawable.setColor(Theme.getColor(tabLineColorKey));
+            float rad = AndroidUtilities.dpf2(ExteraConfig.tabStyle == 3 ? 8 : ExteraConfig.tabStyle == 4 ? 30 : 3);
+            if (ExteraConfig.tabStyle == 1 || ExteraConfig.tabStyle >= 3) {
+                selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, rad, rad, rad, rad});
+            } else {
+                selectorDrawable.setCornerRadii(new float[]{rad, rad, rad, rad, 0, 0, 0, 0});
+            }
+            selectorDrawable.setColor(ColorUtils.setAlphaComponent(Theme.getColor(tabLineColorKey), ExteraConfig.tabStyle >= 3 ? 0x2F : 0xFF));
 
             setHorizontalScrollBarEnabled(false);
             listView = new RecyclerListView(context) {
@@ -982,9 +988,9 @@ public class ViewPagerFixed extends FrameLayout {
                 }
             };
             ((DefaultItemAnimator) listView.getItemAnimator()).setDelayAnimations(false);
-            listView.setSelectorType(8);
+            listView.setSelectorType(ExteraConfig.tabStyle >= 3 ? 100 : 8);
             listView.setSelectorRadius(6);
-            listView.setSelectorDrawableColor(Theme.getColor(selectorColorKey));
+            listView.setSelectorDrawableColor(ExteraConfig.tabStyle >= 3 ? 0x00 : Theme.getColor(selectorColorKey));
             listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) {
                 @Override
                 public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
@@ -1241,8 +1247,9 @@ public class ViewPagerFixed extends FrameLayout {
                     }
                 }
                 if (indicatorWidth != 0) {
-                    selectorDrawable.setBounds(indicatorX, (int) (height - AndroidUtilities.dpr(4) + hideProgress * AndroidUtilities.dpr(4)), indicatorX + indicatorWidth, (int) (height + hideProgress * AndroidUtilities.dpr(4)));
-                    selectorDrawable.draw(canvas);
+                    selectorDrawable.setBounds(indicatorX - (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), (int) (ExteraConfig.tabStyle >= 3 ? height / 2 - AndroidUtilities.dp(16) : height - AndroidUtilities.dpr(4) + hideProgress * AndroidUtilities.dpr(4)), indicatorX + indicatorWidth + (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), (int) (ExteraConfig.tabStyle >= 3 ? height / 2 + AndroidUtilities.dp(16) : height + hideProgress * AndroidUtilities.dpr(4)));
+                    if (ExteraConfig.tabStyle != 2)
+                        selectorDrawable.draw(canvas);
                 }
                 if (crossfadeBitmap != null) {
                     crossfadePaint.setAlpha((int) (crossfadeAlpha * 255));
@@ -1271,7 +1278,7 @@ public class ViewPagerFixed extends FrameLayout {
         }
 
         public void updateColors() {
-            selectorDrawable.setColor(Theme.getColor(tabLineColorKey));
+            selectorDrawable.setColor(ColorUtils.setAlphaComponent(Theme.getColor(tabLineColorKey), ExteraConfig.tabStyle >= 3 ? 0x2F : 0xFF));
             listView.invalidateViews();
             listView.invalidate();
             invalidate();

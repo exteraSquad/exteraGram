@@ -33,7 +33,6 @@ import androidx.annotation.NonNull;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.components.TextCheckWithIconCell;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -183,13 +182,13 @@ public class UpdaterBottomSheet extends BottomSheet {
             buildType.setOnClickListener(v -> copyText(buildType.getTextView().getText() + ": " + buildType.getValueTextView().getText()));
             linearLayout.addView(buildType);
 
-            TextCheckWithIconCell checkOnLaunch = new TextCheckWithIconCell(context);
-            checkOnLaunch.setEnabled(true, null);
+            TextCell checkOnLaunch = new TextCell(context);
+            checkOnLaunch.setEnabled(true);
             checkOnLaunch.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
-            checkOnLaunch.setTextAndCheckAndIcon(LocaleController.getString("CheckOnLaunch", R.string.CheckOnLaunch), R.drawable.msg_timeredit, ExteraConfig.checkUpdatesOnLaunch, true);
+            checkOnLaunch.setTextAndCheckAndIcon(LocaleController.getString("CheckOnLaunch", R.string.CheckOnLaunch), ExteraConfig.checkUpdatesOnLaunch, R.drawable.msg_timeredit, true);
             checkOnLaunch.setOnClickListener(v -> {
                 ExteraConfig.editor.putBoolean("checkUpdatesOnLaunch", ExteraConfig.checkUpdatesOnLaunch ^= true).apply();
-                checkOnLaunch.setChecked(!checkOnLaunch.isChecked());
+                checkOnLaunch.setChecked(!checkOnLaunch.getCheckBox().isChecked());
             });
             linearLayout.addView(checkOnLaunch);
 

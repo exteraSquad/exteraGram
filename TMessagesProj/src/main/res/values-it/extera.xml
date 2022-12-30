@@ -31,7 +31,6 @@
     <string name="FormatTimeWithSeconds">Mostra i secondi nell\'orario</string>
     <string name="HideAllChats">Nascondi la cartella \"Tutte le chat\"</string>
     <string name="HideProxySponsor">Nascondi sponsor del proxy</string>
-    <string name="ChatsOnTitle">\"Chat\" invece di \"exteraGram\"</string>
     <string name="DisableVibration">Disattiva vibrazioni</string>
     <string name="ForceTabletMode">Forza modalità tablet</string>
     <string name="ArchiveOnPull">Apri l\'archivio scorrendo verso il basso</string>

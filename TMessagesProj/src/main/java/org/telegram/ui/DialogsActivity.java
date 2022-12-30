@@ -787,7 +787,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 canvas.translate(scrimViewLocation[0] - pos[0], scrimViewLocation[1]);
                 if (scrimViewBackground != null) {
                     scrimViewBackground.setAlpha(scrimViewAppearing ? 255 : (int) (scrimPaint.getAlpha() / 50f * 255f));
-                    scrimViewBackground.setBounds(0, 0, scrimView.getWidth(), scrimView.getHeight());
+                    scrimViewBackground.setBounds(0, ExteraConfig.tabStyle >= 3 ? AndroidUtilities.dp(1) : 0, scrimView.getWidth(), scrimView.getHeight());
                     scrimViewBackground.draw(canvas);
                 }
                 Drawable selectorDrawable = filterTabsView.getListView().getSelectorDrawable();
@@ -2661,14 +2661,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else {
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
                 statusDrawable.center = true;
-                // TODO: STATUS DISABLER
-                if (BuildVars.DEBUG_VERSION && !ExteraConfig.chatsOnTitle) {
-                    actionBar.setTitle(LocaleController.getString("AppNameBeta", R.string.AppNameBeta), statusDrawable);
-                } else if (!ExteraConfig.chatsOnTitle) {
-                    actionBar.setTitle(LocaleController.getString("AppName", R.string.AppName), statusDrawable);
-                } else {
-                    actionBar.setTitle(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), statusDrawable);
-                }
+                actionBar.setTitle(ExteraUtils.getActionBarTitle(), statusDrawable);
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
             if (folderId == 0) {
@@ -3010,7 +3003,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             getParentActivity().getWindow().getDecorView().setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
                         }
                     };
-                    scrimViewBackground = Theme.createRoundRectDrawable(AndroidUtilities.dp(6), 0, Theme.getColor(Theme.key_actionBarDefault));
+                    scrimViewBackground = Theme.createRoundRectDrawable(AndroidUtilities.dp(ExteraConfig.tabStyle == 3 ? 8 : (ExteraConfig.tabStyle == 4 ? 20 : 6)), 0, Theme.getColor(Theme.key_actionBarDefault));
                     scrimPopupWindow.setDismissAnimationDuration(220);
                     scrimPopupWindow.setOutsideTouchable(true);
                     scrimPopupWindow.setClippingEnabled(true);
@@ -5083,12 +5076,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 filterTabsView.removeTabs();
                 for (int a = 0, N = filters.size(); a < N; a++) {
                     if (filters.get(a).isDefault()) {
-                        filterTabsView.addTab(a, 0, LocaleController.getString("FilterAllChats", R.string.FilterAllChats), true,  filters.get(a).locked);
+                        if (!ExteraConfig.hideAllChats) filterTabsView.addTab(a, 0, LocaleController.getString("FilterAllChats", R.string.FilterAllChats), true,  filters.get(a).locked);
                     } else {
                         filterTabsView.addTab(a, filters.get(a).localId, filters.get(a).name, false,  filters.get(a).locked);
                     }
                 }
-                if (stableId >= 0) {
+                if (ExteraConfig.hideAllChats && stableId <= 0) {
+                    id = filterTabsView.getFirstTabId();
+                    updateCurrentTab = true;
+                    viewPages[0].selectedType = id;
+                    filterTabsView.selectTabWithStableId(filterTabsView.getStableId(0));
+                } else if (stableId >= 0) {
                     if (filterTabsView.getStableId(viewPages[0].selectedType) != stableId) {
                         updateCurrentTab = true;
                         viewPages[0].selectedType = id;
