@@ -202,7 +202,7 @@ public class LoginActivity extends BaseFragment {
             VIEW_CODE_EMAIL = 14,
             VIEW_CODE_FRAGMENT_SMS = 15;
 
-    private final static int COUNTRY_STATE_NOT_SET_OR_VALID = 0,
+    public final static int COUNTRY_STATE_NOT_SET_OR_VALID = 0,
             COUNTRY_STATE_EMPTY = 1,
             COUNTRY_STATE_INVALID = 2;
 
@@ -1232,7 +1232,7 @@ public class LoginActivity extends BaseFragment {
                 return;
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-            builder.setTitle(LocaleController.getString(R.string.AppName));
+            builder.setTitle(LocaleController.getString("StopLoadingTitle", R.string.StopLoadingTitle));
             builder.setMessage(LocaleController.getString("StopLoading", R.string.StopLoading));
             builder.setPositiveButton(LocaleController.getString("WaitMore", R.string.WaitMore), null);
             builder.setNegativeButton(LocaleController.getString("Stop", R.string.Stop), (dialogInterface, i) -> {
@@ -1393,7 +1393,7 @@ public class LoginActivity extends BaseFragment {
                 return;
             }
 
-            cancelDeleteProgressDialog = new AlertDialog(getParentActivity(), 3);
+            cancelDeleteProgressDialog = new AlertDialog(getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER);
             cancelDeleteProgressDialog.setCanCancel(false);
             cancelDeleteProgressDialog.show();
             return;
@@ -1667,12 +1667,13 @@ public class LoginActivity extends BaseFragment {
         private CountrySelectActivity.Country currentCountry;
 
         private ArrayList<CountrySelectActivity.Country> countriesArray = new ArrayList<>();
-        private HashMap<String, CountrySelectActivity.Country> codesMap = new HashMap<>();
+        private HashMap<String, List<CountrySelectActivity.Country>> codesMap = new HashMap<>();
         private HashMap<String, List<String>> phoneFormatMap = new HashMap<>();
 
         private boolean ignoreSelection = false;
         private boolean ignoreOnTextChange = false;
         private boolean ignoreOnPhoneChange = false;
+        private boolean ignoreOnPhoneChangePaste = false;
         private boolean nextPressed = false;
         private boolean confirmedNumber = false;
 
@@ -1811,7 +1812,27 @@ public class LoginActivity extends BaseFragment {
                         if (text.length() > 4) {
                             for (int a = 4; a >= 1; a--) {
                                 String sub = text.substring(0, a);
-                                country = codesMap.get(sub);
+
+                                List<CountrySelectActivity.Country> list = codesMap.get(sub);
+                                if (list == null) {
+                                    country = null;
+                                } else if (list.size() > 1) {
+                                    SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+                                    String lastMatched = preferences.getString("phone_code_last_matched_" + sub, null);
+
+                                    country = list.get(list.size() - 1);
+                                    if (lastMatched != null) {
+                                        for (CountrySelectActivity.Country c : countriesArray) {
+                                            if (Objects.equals(c.shortname, lastMatched)) {
+                                                country = c;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    country = list.get(0);
+                                }
+
                                 if (country != null) {
                                     ok = true;
                                     textToSet = text.substring(a) + phoneField.getText().toString();
@@ -1827,7 +1848,7 @@ public class LoginActivity extends BaseFragment {
 
                         CountrySelectActivity.Country lastMatchedCountry = null;
                         int matchedCountries = 0;
-                        for (CountrySelectActivity.Country c : codesMap.values()) {
+                        for (CountrySelectActivity.Country c : countriesArray) {
                             if (c.code.startsWith(text)) {
                                 matchedCountries++;
                                 if (c.code.equals(text)) {
@@ -1840,7 +1861,26 @@ public class LoginActivity extends BaseFragment {
                             codeField.setText(text = lastMatchedCountry.code);
                         }
 
-                        country = codesMap.get(text);
+                        List<CountrySelectActivity.Country> list = codesMap.get(text);
+                        if (list == null) {
+                            country = null;
+                        } else if (list.size() > 1) {
+                            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+                            String lastMatched = preferences.getString("phone_code_last_matched_" + text, null);
+
+                            country = list.get(list.size() - 1);
+                            if (lastMatched != null) {
+                                for (CountrySelectActivity.Country c : countriesArray) {
+                                    if (Objects.equals(c.shortname, lastMatched)) {
+                                        country = c;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            country = list.get(0);
+                        }
+
                         if (country != null) {
                             ignoreSelection = true;
                             currentCountry = country;
@@ -1955,7 +1995,43 @@ public class LoginActivity extends BaseFragment {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (ignoreOnPhoneChange || ignoreOnPhoneChangePaste) {
+                        return;
+                    }
 
+                    String str = s.toString().substring(start, start + count).replaceAll("[^\\d]+", "");
+                    if (str.isEmpty()) {
+                        return;
+                    }
+
+                    ignoreOnPhoneChangePaste = true;
+                    for (int i = Math.min(3, str.length()); i >= 0; i--) {
+                        String code = str.substring(0, i);
+
+                        List<CountrySelectActivity.Country> list = codesMap.get(code);
+                        if (list != null && !list.isEmpty()) {
+                            List<String> patterns = phoneFormatMap.get(code);
+
+                            if (patterns == null || patterns.isEmpty()) {
+                                continue;
+                            }
+
+                            for (String pattern : patterns) {
+                                String pat = pattern.replace(" ", "");
+                                if (pat.length() == str.length() - i) {
+                                    codeField.setText(code);
+                                    ignoreOnTextChange = true;
+                                    phoneField.setText(str.substring(i));
+                                    ignoreOnTextChange = false;
+
+                                    afterTextChanged(phoneField.getText());
+                                    phoneField.setSelection(phoneField.getText().length(), phoneField.getText().length());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    ignoreOnPhoneChangePaste = false;
                 }
 
                 @Override
@@ -2003,6 +2079,7 @@ public class LoginActivity extends BaseFragment {
                         phoneField.setSelection(Math.min(start, phoneField.length()));
                     }
                     phoneField.onTextChange();
+                    invalidateCountryHint();
                     ignoreOnPhoneChange = false;
                 }
             });
@@ -2090,7 +2167,13 @@ public class LoginActivity extends BaseFragment {
                     countryWithCode.code = args[0];
                     countryWithCode.shortname = args[1];
                     countriesArray.add(0, countryWithCode);
-                    codesMap.put(args[0], countryWithCode);
+
+                    List<CountrySelectActivity.Country> countryList = codesMap.get(args[0]);
+                    if (countryList == null) {
+                        codesMap.put(args[0], countryList = new ArrayList<>());
+                    }
+                    countryList.add(countryWithCode);
+
                     if (args.length > 3) {
                         phoneFormatMap.put(args[0], Collections.singletonList(args[3]));
                     }
@@ -2166,7 +2249,11 @@ public class LoginActivity extends BaseFragment {
                                     countryWithCode.shortname = c.iso2;
 
                                     countriesArray.add(countryWithCode);
-                                    codesMap.put(countryCode.country_code, countryWithCode);
+                                    List<CountrySelectActivity.Country> countryList = codesMap.get(countryCode.country_code);
+                                    if (countryList == null) {
+                                        codesMap.put(countryCode.country_code, countryList = new ArrayList<>());
+                                    }
+                                    countryList.add(countryWithCode);
                                     if (countryCode.patterns.size() > 0) {
                                         phoneFormatMap.put(countryCode.country_code, countryCode.patterns);
                                     }
@@ -2181,7 +2268,30 @@ public class LoginActivity extends BaseFragment {
                                 if (number.length() > 4) {
                                     for (int a = 4; a >= 1; a--) {
                                         String sub = number.substring(0, a);
-                                        CountrySelectActivity.Country country2 = codesMap.get(sub);
+
+                                        CountrySelectActivity.Country country2;
+                                        List<CountrySelectActivity.Country> list = codesMap.get(sub);
+                                        if (list == null) {
+                                            country2 = null;
+                                        } else if (list.size() > 1) {
+                                            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+                                            String lastMatched = preferences.getString("phone_code_last_matched_" + sub, null);
+
+                                            if (lastMatched != null) {
+                                                country2 = list.get(list.size() - 1);
+                                                for (CountrySelectActivity.Country c : countriesArray) {
+                                                    if (Objects.equals(c.shortname, lastMatched)) {
+                                                        country2 = c;
+                                                        break;
+                                                    }
+                                                }
+                                            } else {
+                                                country2 = list.get(list.size() - 1);
+                                            }
+                                        } else {
+                                            country2 = list.get(0);
+                                        }
+
                                         if (country2 != null) {
                                             ok = true;
                                             codeField.setText(sub);
@@ -2269,8 +2379,11 @@ public class LoginActivity extends BaseFragment {
             currentCountry = country;
             countryState = COUNTRY_STATE_NOT_SET_OR_VALID;
             ignoreOnTextChange = false;
+
+            MessagesController.getGlobalMainSettings().edit().putString("phone_code_last_matched_" + country.code, country.shortname).apply();
         }
 
+        private String countryCodeForHint;
         private void setCountryHint(String code, CountrySelectActivity.Country country) {
             SpannableStringBuilder sb = new SpannableStringBuilder();
             String flag = LocaleController.getLanguageFlag(country.shortname);
@@ -2288,11 +2401,53 @@ public class LoginActivity extends BaseFragment {
             }
             sb.append(country.name);
             setCountryButtonText(Emoji.replaceEmoji(sb, countryButton.getCurrentView().getPaint().getFontMetricsInt(), AndroidUtilities.dp(20), false));
+            countryCodeForHint = code;
+            wasCountryHintIndex = -1;
+            invalidateCountryHint();
+        }
+
+        private int wasCountryHintIndex = -1;
+        private void invalidateCountryHint() {
+            String code = countryCodeForHint;
+            String str = phoneField.getText() != null ? phoneField.getText().toString().replace(" ", "") : "";
+
             if (phoneFormatMap.get(code) != null && !phoneFormatMap.get(code).isEmpty()) {
-                String hint = phoneFormatMap.get(code).get(0);
-                phoneField.setHintText(hint != null ? hint.replace('X', '0') : null);
-            } else {
+                int index = -1;
+                List<String> patterns = phoneFormatMap.get(code);
+                if (!str.isEmpty()) {
+                    for (int i = 0; i < patterns.size(); i++) {
+                        String pattern = patterns.get(i);
+                        if (str.startsWith(pattern.replace(" ", "").replace("X", "").replace("0", ""))) {
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+                if (index == -1) {
+                    for (int i = 0; i < patterns.size(); i++) {
+                        String pattern = patterns.get(i);
+                        if (pattern.startsWith("X") || pattern.startsWith("0")) {
+                            index = i;
+                            break;
+                        }
+                    }
+                    if (index == -1) {
+                        index = 0;
+                    }
+                }
+
+                if (wasCountryHintIndex != index) {
+                    String hint = phoneFormatMap.get(code).get(index);
+                    int ss = phoneField.getSelectionStart(), se = phoneField.getSelectionEnd();
+                    phoneField.setHintText(hint != null ? hint.replace('X', '0') : null);
+                    phoneField.setSelection(ss, se);
+                    wasCountryHintIndex = index;
+                }
+            } else if (wasCountryHintIndex != -1) {
+                int ss = phoneField.getSelectionStart(), se = phoneField.getSelectionEnd();
                 phoneField.setHintText(null);
+                phoneField.setSelection(ss, se);
+                wasCountryHintIndex = -1;
             }
         }
 
@@ -2582,6 +2737,7 @@ public class LoginActivity extends BaseFragment {
                 settings.flags |= 64;
             }
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
+            preferences.edit().remove("sms_hash_code").apply();
             if (settings.allow_app_hash) {
                 preferences.edit().putString("sms_hash", BuildVars.SMS_HASH).apply();
             } else {
@@ -2751,7 +2907,28 @@ public class LoginActivity extends BaseFragment {
                             if (number.length() > 4) {
                                 for (int a = 4; a >= 1; a--) {
                                     String sub = number.substring(0, a);
-                                    CountrySelectActivity.Country country = codesMap.get(sub);
+
+                                    CountrySelectActivity.Country country;
+                                    List<CountrySelectActivity.Country> list = codesMap.get(sub);
+                                    if (list == null) {
+                                        country = null;
+                                    } else if (list.size() > 1) {
+                                        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+                                        String lastMatched = preferences.getString("phone_code_last_matched_" + sub, null);
+
+                                        country = list.get(list.size() - 1);
+                                        if (lastMatched != null) {
+                                            for (CountrySelectActivity.Country c : countriesArray) {
+                                                if (Objects.equals(c.shortname, lastMatched)) {
+                                                    country = c;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        country = list.get(0);
+                                    }
+
                                     if (country != null) {
                                         ok = true;
                                         textToSet = number.substring(a);
@@ -6498,7 +6675,7 @@ public class LoginActivity extends BaseFragment {
                         cameraDrawable.setCurrentFrame(0, false);
                         isCameraWaitAnimationAllowed = true;
                     }
-                });
+                }, 0);
                 isCameraWaitAnimationAllowed = false;
                 avatarEditor.setAnimation(cameraDrawable);
                 cameraDrawable.setCurrentFrame(0);
@@ -6731,7 +6908,7 @@ public class LoginActivity extends BaseFragment {
         }
 
         @Override
-        public void didUploadPhoto(final TLRPC.InputFile photo, final TLRPC.InputFile video, double videoStartTimestamp, String videoPath, final TLRPC.PhotoSize bigSize, final TLRPC.PhotoSize smallSize) {
+        public void didUploadPhoto(final TLRPC.InputFile photo, final TLRPC.InputFile video, double videoStartTimestamp, String videoPath, final TLRPC.PhotoSize bigSize, final TLRPC.PhotoSize smallSize, boolean isVideo) {
             AndroidUtilities.runOnUIThread(() -> {
                 avatar = smallSize.location;
                 avatarBig = bigSize.location;

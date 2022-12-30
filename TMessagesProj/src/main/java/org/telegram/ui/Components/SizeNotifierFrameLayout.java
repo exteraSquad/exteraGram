@@ -412,12 +412,11 @@ public class SizeNotifierFrameLayout extends FrameLayout {
     }
 
     private void checkSnowflake(Canvas canvas) {
-        // false until it get fixed by xaxtix
-        if (Theme.canStartHolidayAnimation() && false) {
+        if (Theme.canStartHolidayAnimation() && !SharedConfig.getLiteMode().enabled()) {
             if (snowflakesEffect == null) {
                 snowflakesEffect = new SnowflakesEffect(1);
             }
-            snowflakesEffect.onDraw(this, canvas);
+            snowflakesEffect.onDraw(backgroundView, canvas);
         }
     }
 

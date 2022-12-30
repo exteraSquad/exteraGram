@@ -241,8 +241,8 @@ public class TranslateAlert extends Dialog {
     private boolean noforwards;
     private OnLinkPress onLinkPress;
     private Runnable onDismiss;
-    public TranslateAlert(BaseFragment fragment, Context context, String fromLanguage, String toLanguage, CharSequence text, boolean noforwards, OnLinkPress onLinkPress, Runnable onDismiss) {
-        this(fragment, context, -1, null, -1, fromLanguage, toLanguage, text, noforwards, onLinkPress, onDismiss);
+    public TranslateAlert(BaseFragment fragment, Context context, int currentAccount, String fromLanguage, String toLanguage, CharSequence text, boolean noforwards, OnLinkPress onLinkPress, Runnable onDismiss) {
+        this(fragment, context, currentAccount, null, -1, fromLanguage, toLanguage, text, noforwards, onLinkPress, onDismiss);
     }
     public TranslateAlert(BaseFragment fragment, Context context, int currentAccount, TLRPC.InputPeer peer, int msgId, String fromLanguage, String toLanguage, CharSequence text, boolean noforwards, OnLinkPress onLinkPress, Runnable onDismiss) {
         super(context, R.style.TransparentDialog);
@@ -1252,8 +1252,8 @@ public class TranslateAlert extends Dialog {
         }
         return alert;
     }
-    public static TranslateAlert showAlert(Context context, BaseFragment fragment, String fromLanguage, String toLanguage, CharSequence text, boolean noforwards, OnLinkPress onLinkPress, Runnable onDismiss) {
-        TranslateAlert alert = new TranslateAlert(fragment, context, fromLanguage, toLanguage, text, noforwards, onLinkPress, onDismiss);
+    public static TranslateAlert showAlert(Context context, BaseFragment fragment, int currentAccount, String fromLanguage, String toLanguage, CharSequence text, boolean noforwards, OnLinkPress onLinkPress, Runnable onDismiss) {
+        TranslateAlert alert = new TranslateAlert(fragment, context, currentAccount, fromLanguage, toLanguage, text, noforwards, onLinkPress, onDismiss);
         if (fragment != null) {
             if (fragment.getParentActivity() != null) {
                 fragment.showDialog(alert);

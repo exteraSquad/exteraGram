@@ -615,6 +615,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 return super.onTouch(ev);
             }
         };
+        seekBarView.setLineWidth(4);
         seekBarView.setDelegate(new SeekBarView.SeekBarViewDelegate() {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
@@ -1936,6 +1937,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                 lastTime = newTime;
                 timeTextView.setText(AndroidUtilities.formatShortDuration(newTime));
             }
+            seekBarView.updateTimestamps(messageObject, null);
         }
     }
 

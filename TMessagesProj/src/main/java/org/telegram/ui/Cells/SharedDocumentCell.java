@@ -89,6 +89,7 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
     public final static int VIEW_TYPE_DEFAULT = 0;
     public final static int VIEW_TYPE_PICKER = 1;
     public final static int VIEW_TYPE_GLOBAL_SEARCH = 2;
+    public final static int VIEW_TYPE_CACHE = 3;
 
     private SpannableStringBuilder dotSpan;
     private CharSequence caption;
@@ -272,7 +273,9 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
         }
         if (thumb != null || resId != 0) {
             if (thumb != null) {
-                thumbImageView.setImage(thumb, "42_42", null);
+                if (viewType != VIEW_TYPE_CACHE) {
+                    thumbImageView.setImage(thumb, "42_42", null);
+                }
             } else {
                 Drawable drawable = Theme.createCircleDrawableWithIcon(AndroidUtilities.dp(42), resId);
                 String iconKey;
@@ -301,8 +304,10 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
         } else {
             extTextView.setAlpha(1.0f);
             placeholderImageView.setAlpha(1.0f);
-            thumbImageView.setImageBitmap(null);
-            thumbImageView.setVisibility(INVISIBLE);
+            if (viewType != VIEW_TYPE_CACHE) {
+                thumbImageView.setImageBitmap(null);
+                thumbImageView.setVisibility(INVISIBLE);
+            }
         }
         setWillNotDraw(!needDivider);
     }
@@ -725,10 +730,10 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
 
         if (showReorderIcon || showReorderIconProgress != 0) {
             if (showReorderIcon && showReorderIconProgress != 1f) {
-                showReorderIconProgress += 16 /150f;
+                showReorderIconProgress += 16 / 150f;
                 invalidate();
             } else if (!showReorderIcon && showReorderIconProgress != 0) {
-                showReorderIconProgress -= 16 /150f;
+                showReorderIconProgress -= 16 / 150f;
                 invalidate();
             }
             showReorderIconProgress = Utilities.clamp(showReorderIconProgress, 1f, 0);
@@ -766,5 +771,17 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
             showReorderIconProgress = show ? 1f : 0;
         }
         invalidate();
+    }
+
+    public void setPhoto(String path) {
+        if (path.endsWith("mp4")) {
+            thumbImageView.setImage("vthumb://0:" + path, null, null);
+            thumbImageView.setVisibility(View.VISIBLE);
+        } else if (path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".png") || path.endsWith(".gif")) {
+            thumbImageView.setImage("thumb://0:" + path, null, null);
+            thumbImageView.setVisibility(View.VISIBLE);
+        } else {
+            thumbImageView.setVisibility(View.GONE);
+        }
     }
 }

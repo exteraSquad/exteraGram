@@ -197,7 +197,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                 if (selectionStart == emojiEnd) {
                     String emoji = text.toString().substring(emojiStart, emojiEnd);
                     show = true;
-                    containerView.setVisibility(View.VISIBLE);
+//                    containerView.setVisibility(View.VISIBLE);
                     arrowToSpan = lastEmoji;
                     arrowToStart = arrowToEnd = null;
                     searchAnimated(emoji);
@@ -209,7 +209,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
             AnimatedEmojiSpan[] aspans = (text instanceof Spanned) ? ((Spanned) text).getSpans(Math.max(0, selectionEnd), selectionEnd, AnimatedEmojiSpan.class) : null;
             if ((aspans == null || aspans.length == 0) && selectionEnd < 52) {
                 show = true;
-                containerView.setVisibility(View.VISIBLE);
+//                containerView.setVisibility(View.VISIBLE);
                 arrowToSpan = null;
                 searchKeywords(text.toString().substring(0, selectionEnd));
                 containerView.invalidate();
