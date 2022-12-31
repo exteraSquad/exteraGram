@@ -50,6 +50,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.view.ViewCompat;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.Emoji;
@@ -2044,6 +2046,10 @@ public class VoIPFragment implements VoIPService.StateListener, NotificationCent
             bottomButton.setData(R.drawable.calls_unmute, Color.WHITE, ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * 0.12f)), LocaleController.getString("VoipMute", R.string.VoipMute), false, animated);
         }
         currentUserCameraFloatingLayout.setMuted(service.isMicMute(), animated);
+        if (ExteraConfig.useSolarIcons) {
+            bottomButton.setCrossOffset(-AndroidUtilities.dpf2(3.5f));
+            bottomButton.setCrossOffsetY(-AndroidUtilities.dpf2(6f));
+        }
         bottomButton.setOnClickListener(view -> {
             final VoIPService serviceInstance = VoIPService.getSharedInstance();
             if (serviceInstance != null) {
@@ -2077,7 +2083,8 @@ public class VoIPFragment implements VoIPService.StateListener, NotificationCent
             } else {
                 bottomButton.setData(R.drawable.calls_video, Color.BLACK, Color.WHITE, LocaleController.getString("VoipStartVideo", R.string.VoipStartVideo), true, animated);
             }
-            bottomButton.setCrossOffset(-AndroidUtilities.dpf2(3.5f));
+            bottomButton.setCrossOffset(-AndroidUtilities.dpf2(3.5f + (ExteraConfig.useSolarIcons ? 3.5f : 0)));
+            bottomButton.setCrossOffsetY(-AndroidUtilities.dpf2(ExteraConfig.useSolarIcons ? 3.5f : 0));
             bottomButton.setOnClickListener(view -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     activity.requestPermissions(new String[]{Manifest.permission.CAMERA}, 102);

@@ -1957,6 +1957,11 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         return messageObject != null && messageObject.isVoice();
     }
 
+    private boolean isPlayingRoundVideo() {
+        MessageObject messageObject = MediaController.getInstance().getPlayingMessageObject();
+        return messageObject != null && messageObject.isRoundVideo();
+    }
+
     public void checkCall(boolean create) {
         VoIPService voIPService = VoIPService.getSharedInstance();
         if (visible && currentStyle == STYLE_IMPORTING_MESSAGES && (voIPService == null || voIPService.isHangingUp())) {
@@ -2451,9 +2456,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     public void updateButtonsVisibility(boolean animated) {
         boolean paused = MediaController.getInstance().isPaused();
         if (closeButton != null) {
-            AndroidUtilities.updateViewShow(closeButton, paused || isPlayingVoice(), true, animated);
+            AndroidUtilities.updateViewShow(closeButton, paused || isPlayingVoice() || isPlayingRoundVideo(), true, animated);
         }
-        if (nextButton != null && !isPlayingVoice()) {
+        if (nextButton != null && !isPlayingVoice() && !isPlayingRoundVideo()) {
             AndroidUtilities.updateViewShow(nextButton, !paused, true, animated);
         }
     }

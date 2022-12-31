@@ -141,13 +141,13 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
         drawerHeaderRow = newRow();
         statusRow = getUserConfig().isPremium() ? newRow() : -1;
+        archivedChatsRow = newRow();
         newGroupRow = newRow();
         newSecretChatRow = newRow();
         newChannelRow = newRow();
         contactsRow = newRow();
         callsRow = newRow();
         peopleNearbyRow = newRow();
-        archivedChatsRow = newRow();
         savedMessagesRow = newRow();
         scanQrRow = newRow();
         inviteFriendsRow = newRow();

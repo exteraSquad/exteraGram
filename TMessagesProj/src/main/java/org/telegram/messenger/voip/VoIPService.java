@@ -3994,8 +3994,8 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			endTitle = new SpannableString(endTitle);
 			((SpannableString) endTitle).setSpan(new ForegroundColorSpan(0xFFF44336), 0, endTitle.length(), 0);
 		}
-		PendingIntent endPendingIntent = PendingIntent.getBroadcast(this, 0, endIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
-		builder.addAction(R.drawable.ic_call_end_white_24dp, endTitle, endPendingIntent);
+		PendingIntent endPendingIntent = PendingIntent.getBroadcast(this, 0, endIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+		if (Build.VERSION.SDK_INT < 31) builder.addAction(R.drawable.ic_call_end_white_24dp, endTitle, endPendingIntent);
 		Intent answerIntent = new Intent(this, VoIPActionsReceiver.class);
 		answerIntent.setAction(getPackageName() + ".ANSWER_CALL");
 		answerIntent.putExtra("call_id", getCallID());
@@ -4004,8 +4004,8 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			answerTitle = new SpannableString(answerTitle);
 			((SpannableString) answerTitle).setSpan(new ForegroundColorSpan(0xFF00AA00), 0, answerTitle.length(), 0);
 		}
-		PendingIntent answerPendingIntent = PendingIntent.getBroadcast(this, 0, answerIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
-		builder.addAction(R.drawable.ic_call, answerTitle, answerPendingIntent);
+		PendingIntent answerPendingIntent = PendingIntent.getBroadcast(this, 0, answerIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+		if (Build.VERSION.SDK_INT < 31) builder.addAction(R.drawable.ic_call, answerTitle, answerPendingIntent);
 		builder.setPriority(Notification.PRIORITY_MAX);
 		builder.setShowWhen(false);
 		builder.setColor(0xff2ca5e0);
@@ -4019,6 +4019,18 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 			}
 		}
 		Bitmap avatar = getRoundAvatarBitmap(userOrChat);
+		if (Build.VERSION.SDK_INT >= 31) {
+			builder.setColor(0xff282e31);
+			builder.setColorized(true);
+			Person caller = new Person.Builder()
+					.setIcon(Icon.createWithBitmap(avatar))
+					.setName(name)
+					.build();
+			Notification.CallStyle callStyle = Notification.CallStyle.forIncomingCall(caller, endPendingIntent, answerPendingIntent);
+			callStyle.setIsVideo(videoCall);
+			builder.setStyle(callStyle);
+			builder.setContentText(video ? LocaleController.getString("VoipInVideoCallBranding", R.string.VoipInVideoCallBranding) : LocaleController.getString("VoipInCallBranding", R.string.VoipInCallBranding));
+		}
 		RemoteViews customView = new RemoteViews(getPackageName(), LocaleController.isRTL ? R.layout.call_notification_rtl : R.layout.call_notification);
 		customView.setTextViewText(R.id.name, name);
 		if (TextUtils.isEmpty(subText)) {

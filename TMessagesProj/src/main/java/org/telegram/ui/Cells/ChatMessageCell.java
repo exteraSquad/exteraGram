@@ -13085,7 +13085,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
 
         Drawable commentStickerDrawable = Theme.getThemeDrawable(Theme.key_drawable_commentSticker);
-        setDrawableBounds(commentStickerDrawable, sideStartX + AndroidUtilities.dp(4), sideStartY + AndroidUtilities.dp(4));
+        setDrawableBounds(commentStickerDrawable, sideStartX + AndroidUtilities.dp(4 + (ExteraConfig.useSolarIcons ? 2 : 0)), sideStartY + AndroidUtilities.dp(4 + (ExteraConfig.useSolarIcons ? 2 : 0)));
         if (alpha != 1f) {
             commentStickerDrawable.setAlpha((int) (255 * alpha));
             commentStickerDrawable.draw(canvas);
@@ -15625,9 +15625,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             rect.set(x, y, x + AndroidUtilities.dp(14), y + AndroidUtilities.dp(14));
             int oldAlpha = Theme.chat_msgErrorPaint.getAlpha();
             Theme.chat_msgErrorPaint.setAlpha((int) (oldAlpha * alpha));
-            canvas.drawRoundRect(rect, AndroidUtilities.dp(1), AndroidUtilities.dp(1), Theme.chat_msgErrorPaint);
+            if (!ExteraConfig.useSolarIcons) {
+                canvas.drawRoundRect(rect, AndroidUtilities.dp(2), AndroidUtilities.dp(2), Theme.chat_msgErrorPaint);
+                setDrawableBounds(Theme.chat_msgErrorDrawable, x + AndroidUtilities.dp(6), y + AndroidUtilities.dp(2));
+            } else {
+                setDrawableBounds(Theme.chat_msgErrorDrawable, x - AndroidUtilities.dpf2(4), y + AndroidUtilities.dpf2(1.5f));
+            }
             Theme.chat_msgErrorPaint.setAlpha(oldAlpha);
-            setDrawableBounds(Theme.chat_msgErrorDrawable, x + AndroidUtilities.dp(6), y + AndroidUtilities.dp(2));
             Theme.chat_msgErrorDrawable.setAlpha((int) (255 * alpha));
             if (useScale) {
                 canvas.save();

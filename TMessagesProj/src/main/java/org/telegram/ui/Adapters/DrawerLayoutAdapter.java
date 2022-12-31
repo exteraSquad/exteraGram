@@ -290,9 +290,9 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             scanQrIcon = R.drawable.msg_qrcode;
             savedIcon = R.drawable.msg_saved_14;
             settingsIcon = R.drawable.msg_settings_14;
-            inviteIcon = R.drawable.msg_secret_ny;
-            helpIcon = R.drawable.msg_help;
-            peopleNearbyIcon = R.drawable.msg_secret_14;
+            inviteIcon = R.drawable.msg_invite_14;
+            helpIcon = R.drawable.msg_help_14;
+            peopleNearbyIcon = R.drawable.msg_nearby_14;
         } else if (eventType == 2) {
             newGroupIcon = R.drawable.msg_groups_hw;
             newSecretIcon = R.drawable.msg_secret_hw;
@@ -329,13 +329,16 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             }
             items.add(null); // divider
         }
+        if (ExteraConfig.archivedChats) {
+            items.add(new Item(14, LocaleController.getString("ArchivedChats", R.string.ArchivedChats), archiveIcon));
+            items.add(null);
+        }
         if (ExteraConfig.newGroup) items.add(new Item(2, LocaleController.getString("NewGroup", R.string.NewGroup), newGroupIcon));
         if (ExteraConfig.newSecretChat) items.add(new Item(3, LocaleController.getString("NewSecretChat", R.string.NewSecretChat), newSecretIcon));
         if (ExteraConfig.newChannel) items.add(new Item(4, LocaleController.getString("NewChannel", R.string.NewChannel), newChannelIcon));
         if (ExteraConfig.contacts) items.add(new Item(6, LocaleController.getString("Contacts", R.string.Contacts), contactsIcon));
         if (ExteraConfig.calls) items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
         if (ExteraConfig.peopleNearby && hasGps) items.add(new Item(12, LocaleController.getString("PeopleNearby", R.string.PeopleNearby), peopleNearbyIcon));
-        if (ExteraConfig.archivedChats) items.add(new Item(14, LocaleController.getString("ArchivedChats", R.string.ArchivedChats), archiveIcon));
         if (ExteraConfig.savedMessages) items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
         items.add(new Item(8, LocaleController.getString("Settings", R.string.Settings), settingsIcon));
         if (ExteraConfig.inviteFriends || ExteraConfig.telegramFeatures || ExteraConfig.scanQr) items.add(null);

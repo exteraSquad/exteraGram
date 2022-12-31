@@ -87,14 +87,14 @@ android {
         }
     }
 
-    sourceSets.main.jniLibs.srcDirs = ['./jni/']
+    // externalNativeBuild.cmake.path 'jni/CMakeLists.txt'
 
     sourceSets.main {
+        // jniLibs.srcDir = './jni/'
         jniLibs.srcDir 'libs'
         jni.srcDirs = []
+        res.srcDirs = ['src/main/res', 'src/main/res-solar']
     }
-
-    /*externalNativeBuild.cmake.path 'jni/CMakeLists.txt'*/
 
     lint {
         checkReleaseBuilds false

@@ -132,9 +132,9 @@ public class ExteraUtils {
                         R.drawable.msg_contacts_14,
                         R.drawable.msg_calls_14,
                         R.drawable.msg_saved_14,
-                        R.drawable.msg_secret_ny,
-                        R.drawable.msg_help,
-                        R.drawable.msg_secret_14
+                        R.drawable.msg_invite_14,
+                        R.drawable.msg_help_14,
+                        R.drawable.msg_nearby_14
                 };
             case 2:
                 return new int[]{

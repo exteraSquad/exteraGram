@@ -71,6 +71,7 @@ import androidx.core.math.MathUtils;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.extras.IconReplacer;
 import com.exteragram.messenger.monet.MonetAccent;
 import com.exteragram.messenger.monet.MonetHelper;
 
@@ -5894,7 +5895,7 @@ public class Theme {
     public static CombinedDrawable createCircleDrawableWithIcon(int size, int iconRes, int stroke) {
         Drawable drawable;
         if (iconRes != 0) {
-            drawable = ApplicationLoader.applicationContext.getResources().getDrawable(iconRes).mutate();
+            drawable = ApplicationLoader.applicationContext.getResources().getDrawable(IconReplacer.replace(iconRes)).mutate();
         } else {
             drawable = null;
         }

@@ -34,6 +34,7 @@ public class ExteraConfig {
     public static int actionBarTitle;
     public static int tabStyle;
     public static boolean hideAllChats;
+    public static boolean useSolarIcons;
     public static boolean useSystemFonts;
     public static boolean blurForAllThemes;
     public static boolean centerTitle;
@@ -127,8 +128,9 @@ public class ExteraConfig {
 
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("exteraconfig", Activity.MODE_PRIVATE);
             editor = preferences.edit();
-
+            
             avatarCorners = preferences.getFloat("avatarCorners", 30.0f);
+            useSolarIcons = preferences.getBoolean("useSolarIcons", true);
             useSystemFonts = preferences.getBoolean("useSystemFonts", true);
             disableVibration = preferences.getBoolean("disableVibration", false);
             blurForAllThemes = preferences.getBoolean("blurForAllThemes", false);
@@ -277,14 +279,12 @@ public class ExteraConfig {
     }
 
     public static void toggleLogging() {
-        SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Activity.MODE_PRIVATE).edit();
-        editor.putBoolean("logsEnabled", BuildVars.LOGS_ENABLED ^= true).apply();
+        ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Activity.MODE_PRIVATE).edit().putBoolean("logsEnabled", BuildVars.LOGS_ENABLED ^= true).apply();
         if (!BuildVars.LOGS_ENABLED) FileLog.cleanupLogs();
     }
 
     public static boolean getLogging() {
-        SharedPreferences sharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Activity.MODE_PRIVATE);
-        return sharedPreferences.getBoolean("logsEnabled", BuildVars.DEBUG_VERSION);
+        return ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Activity.MODE_PRIVATE).getBoolean("logsEnabled", BuildVars.DEBUG_VERSION);
     }
 
     public static String getCurrentLangCode() {

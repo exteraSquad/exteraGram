@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -79,6 +80,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraResources;
 import com.exteragram.messenger.extras.ExceptionHandler;
 import com.exteragram.messenger.monet.MonetHelper;
 import com.exteragram.messenger.preferences.MainPreferencesActivity;
@@ -195,6 +197,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LaunchActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate {
+
+    private final static ExteraResources res = null;
+
+    @Override
+    public Resources getResources() {
+        if (res == null) {
+            if (ExteraConfig.useSolarIcons) {
+                return new ExteraResources(super.getResources());
+            }
+        } else {
+            return ExteraConfig.useSolarIcons && !(res instanceof ExteraResources) ? new ExteraResources(super.getResources()) : res;
+        }
+        return super.getResources();
+    }
+
     public final static Pattern PREFIX_T_ME_PATTERN = Pattern.compile("^(?:http(?:s|)://|)([A-z0-9-]+?)\\.t\\.me");
 
     public static boolean isResumed;

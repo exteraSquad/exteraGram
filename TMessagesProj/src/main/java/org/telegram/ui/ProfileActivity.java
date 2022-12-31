@@ -7068,6 +7068,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private Drawable getVerifiedCrossfadeDrawable() {
         if (verifiedCrossfadeDrawable == null) {
             verifiedDrawable = Theme.profile_verifiedDrawable.getConstantState().newDrawable().mutate();
+            if (ExteraConfig.useSolarIcons) verifiedDrawable.setColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY);
             verifiedCheckDrawable = Theme.profile_verifiedCheckDrawable.getConstantState().newDrawable().mutate();
             verifiedCrossfadeDrawable = new CrossfadeDrawable(new CombinedDrawable(verifiedDrawable, verifiedCheckDrawable), ContextCompat.getDrawable(getParentActivity(), R.drawable.verified_profile));
         }
@@ -8887,7 +8888,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setColors(null, Theme.key_windowBackgroundWhiteRedText5);
                     } else if (position == languageRow) {
                         textCell.setTextAndIcon(LocaleController.getString("Language", R.string.Language), R.drawable.msg_language, false);
-                        textCell.setImageLeft(23);
+                        if (!ExteraConfig.useSolarIcons)
+                            textCell.setImageLeft(23);
                     } else if (position == exteraRow) {
                         textCell.setTextAndIcon(LocaleController.getString("Preferences", R.string.Preferences), R.drawable.etg_settings, true);
                     } else if (position == notificationRow) {
