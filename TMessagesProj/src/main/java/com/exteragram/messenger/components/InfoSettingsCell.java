@@ -34,7 +34,7 @@ import org.telegram.ui.Components.LayoutHelper;
 
 public class InfoSettingsCell extends FrameLayout {
 
-    public TextView textView;
+    public final TextView textView;
 
     public InfoSettingsCell(Context context) {
         super(context);

@@ -53,7 +53,7 @@ import java.util.Objects;
 
 public class UpdaterUtils {
 
-    public static volatile DispatchQueue otaQueue = new DispatchQueue("otaQueue");
+    public static final DispatchQueue otaQueue = new DispatchQueue("otaQueue");
 
     private static String uri = "https://api.github.com/repos/exteraSquad/exteraGram/releases/latest";
     private static String downloadURL = null;
@@ -226,10 +226,6 @@ public class UpdaterUtils {
             }
         }
         return Integer.parseInt(v[0]) < Integer.parseInt(v[1]);
-    }
-
-    public static boolean isCheckingForUpdates() {
-        return checkingForUpdates;
     }
 
     public static String getOtaDirSize() {

@@ -23,19 +23,14 @@
     <string name="CenterTitle">Centra titolo nella barra delle azioni</string>
     <string name="NewSwitchStyle">Abilita lo stile alternativo</string>
     <string name="TransparentNavBar">Barra di Navigazione Trasparente</string>
-    <string name="TransparentNavBarValue">La barra di navigazione non diventerà completamente trasparente, otterrà solo il colore del Pannello messaggi.</string>
-    <string name="SquareFab">FAB a forma quadrata</string>
-    <string name="SquareFabInfo">Un pulsante di azione fluttuante (FAB) è un pulsante circolare che attiva l\'azione primaria nell\'interfaccia utente dell\'app. Si trova nell\'angolo inferiore destro dello schermo.</string>
     <!-- General -->
     <string name="DisableNumberRounding">Disattiva l\'arrotondamento dei numeri</string>
     <string name="FormatTimeWithSeconds">Mostra i secondi nell\'orario</string>
     <string name="HideAllChats">Nascondi la cartella \"Tutte le chat\"</string>
-    <string name="HideProxySponsor">Nascondi sponsor del proxy</string>
     <string name="DisableVibration">Disattiva vibrazioni</string>
     <string name="ForceTabletMode">Forza modalità tablet</string>
     <string name="ArchiveOnPull">Apri l\'archivio scorrendo verso il basso</string>
     <string name="DisableUnarchiveSwipe">Disabilita lo scorrimento \"Unarchive\"</string>
-    <string name="ForcePacmanAnimation">Forza l\'animazione di Pac-Man</string>
     <string name="ForcePacmanAnimationInfo">Questo richiede lo scorrimento \"Archive\" selezionato nella lista di chat.</string>
     <string name="Profile">Profilo</string>
     <string name="HidePhoneNumber">Nascondi il numero di telefono</string>
@@ -63,7 +58,6 @@
     <string name="DisablePlayback">Disabilita riproduzione</string>
     <string name="DPDescription">Disabilita la riproduzione quando viene premuto il tasto volume</string>
     <!-- Drawer -->
-    <string name="Drawer">Menu</string>
     <string name="DrawerElements">Elementi del cassetto</string>
     <string name="DrawerOptions">Opzioni del cassetto</string>
     <string name="DrawerIconPack">Pacchetto icone</string>

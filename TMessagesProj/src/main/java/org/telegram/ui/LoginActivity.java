@@ -2316,13 +2316,16 @@ public class LoginActivity extends BaseFragment {
                             }
                         }
                         CountrySelectActivity.Country countryWithCode = new CountrySelectActivity.Country();
-                        String test_code = "999";
                         countryWithCode.name = "Test Backend";
-                        countryWithCode.code = test_code;
+                        countryWithCode.code = "999";
                         countryWithCode.shortname = "EX";
                         countriesArray.add(countryWithCode);
-                        codesMap.put(test_code, countryWithCode);
-                        phoneFormatMap.put(test_code, Collections.singletonList("66 X XXXX"));
+                        List<CountrySelectActivity.Country> countryList = codesMap.get(countryWithCode.code);
+                        if (countryList == null) {
+                            codesMap.put(countryWithCode.code, countryList = new ArrayList<>());
+                        }
+                        countryList.add(countryWithCode);
+                        phoneFormatMap.put(countryWithCode.code, Collections.singletonList("66 X XXXX"));
                     }
                 });
             }, ConnectionsManager.RequestFlagWithoutLogin | ConnectionsManager.RequestFlagFailOnServerErrors);

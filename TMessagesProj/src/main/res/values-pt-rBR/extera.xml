@@ -47,7 +47,6 @@
     <string name="DisableAnimatedAvatars">Desativar avatares animados</string>
     <string name="ArchiveOnPull">Abrir Conversas Arquivadas ao deslizar pra cima</string>
     <string name="DisableUnarchiveSwipe">Desativar \"Desarquivar\" ao deslizar</string>
-    <string name="ForcePacmanAnimation">Forçar Animação do Pac-Man</string>
     <string name="ForcePacmanAnimationInfo">Isto requer o gesto de deslizar \"Arquivar\" selecionado na lista de conversas.</string>
     <string name="Profile">Perfil</string>
     <string name="HidePhoneNumber">Ocultar número do telefone</string>
@@ -113,9 +112,6 @@
     <string name="Unknown">Desconhecido</string>
     <string name="ConfirmCall">Confirmar ligação</string>
     <string name="CallTo">Ligar para **%1$s**?</string>
-    <string name="AppIconRelease">Release</string>
-    <string name="AppIconBeta">Beta</string>
-    <string name="AppIconInverted">Invertido</string>
     <string name="AppIconMonet">Monet</string>
     <string name="AppIconGradient">Gradiente</string>
     <string name="AppIconPixel">Pixel</string>

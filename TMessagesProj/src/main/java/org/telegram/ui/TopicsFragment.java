@@ -1882,7 +1882,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
 
     private void checkLoading() {
         loadingTopics = topicsController.isLoading(chatId);
-        if (topicsEmptyView != null/* && forumTopics.size() == 0*/) {
+        if (topicsEmptyView != null && (forumTopics.size() == 0 || (forumTopics.size() == 1 && forumTopics.get(0).topic.id == 1))) {
             topicsEmptyView.showProgress(loadingTopics, fragmentBeginToShow);
         }
         if (recyclerListView != null) {
@@ -2014,7 +2014,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         }, e -> {
             if (e != null && "INVITE_REQUEST_SENT".equals(e.text)) {
                 SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
-                preferences.edit().putLong("dialog_join_requested_time_" + -chatId, System.currentTimeMillis()).commit();
+                preferences.edit().putLong("dialog_join_requested_time_" + -chatId, System.currentTimeMillis()).apply();
                 JoinGroupAlert.showBulletin(getContext(), this, ChatObject.isChannelAndNotMegaGroup(getCurrentChat()));
                 updateChatInfo(true);
                 return false;
@@ -2542,8 +2542,8 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
                 adapter.setItems(oldItems, forumTopics);
             }
 
-            if (scrollToTop && layoutManager != null) {
-                layoutManager.scrollToPosition(0);
+            if ((scrollToTop || oldCount == 0) && layoutManager != null) {
+                layoutManager.scrollToPositionWithOffset(0, 0);
                 scrollToTop = false;
             }
         }

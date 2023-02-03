@@ -401,21 +401,16 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 textView.setLines(1);
                 textView.setSingleLine(true);
                 textView.setEllipsize(TextUtils.TruncateAt.END);
+                textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
                 textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
                 if (currentStyle == STYLE_LIVE_LOCATION) {
-                    textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
                     textView.setTypeface(Typeface.DEFAULT);
-                    textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
                 } else if (currentStyle == STYLE_INACTIVE_GROUP_CALL || currentStyle == STYLE_AUDIO_PLAYER) {
                     textView.setGravity(Gravity.TOP | Gravity.LEFT);
                     textView.setTextColor(getThemedColor(currentStyle == STYLE_AUDIO_PLAYER ? Theme.key_player_actionBarTitle : Theme.key_inappPlayerPerformer));
-                    textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                    textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
                 } else if (currentStyle == STYLE_CONNECTING_GROUP_CALL || currentStyle == STYLE_ACTIVE_GROUP_CALL) {
-                    textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
                     textView.setTextColor(getThemedColor(Theme.key_returnToCallText));
-                    textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 }
                 return textView;
@@ -432,7 +427,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
                 textView.setSingleLine(true);
                 textView.setEllipsize(TextUtils.TruncateAt.END);
                 textView.setGravity(Gravity.LEFT);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                 textView.setTextColor(getThemedColor(Theme.key_inappPlayerClose));
                 return textView;
             }
@@ -761,7 +756,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             if (currentStyle == STYLE_AUDIO_PLAYER) {
                 MessageObject messageObject = MediaController.getInstance().getPlayingMessageObject();
                 if (fragment != null && messageObject != null) {
-                    if (messageObject.isMusic() || messageObject.isVoice()) {
+                    if ((messageObject.isMusic() || isPlayingVoice()) && !isPlayingRoundVideo()) {
                         if (getContext() instanceof LaunchActivity) {
                             fragment.showDialog(new AudioPlayerAlert(getContext(), resourcesProvider));
                         }
@@ -1315,8 +1310,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         } else if (id == NotificationCenter.messagePlayingDidStart || id == NotificationCenter.messagePlayingPlayStateChanged || id == NotificationCenter.messagePlayingDidReset || id == NotificationCenter.didEndCall) {
             if (currentStyle == STYLE_CONNECTING_GROUP_CALL || currentStyle == STYLE_ACTIVE_GROUP_CALL || currentStyle == STYLE_INACTIVE_GROUP_CALL) {
                 checkCall(false);
+            } else if (currentStyle == STYLE_AUDIO_PLAYER && id != NotificationCenter.messagePlayingDidReset) {
+                updateButtonsVisibility(true);
             }
-            updateButtonsVisibility(true);
             checkPlayer(false);
         } else if (id == NotificationCenter.fileLoaded) {
             String name = (String) args[0];
@@ -1790,7 +1786,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
 
                 coverContainer.setVisibility(isMusic ? VISIBLE : GONE);
                 nextButton.setVisibility(!MediaController.getInstance().isPaused() && isMusic ? VISIBLE : GONE);
-                prevButton.setVisibility(isMusic ? VISIBLE : GONE);
+                prevButton.setVisibility(!MediaController.getInstance().isPaused() && isMusic ? VISIBLE : GONE);
                 closeButton.setVisibility(MediaController.getInstance().isPaused() || !isMusic ? VISIBLE : GONE);
 
                 titleTextView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, Gravity.LEFT | Gravity.TOP, isMusic ? 55 : 18, 4, isMusic ? speedVisible ? 146 : 110 : 110, 0));
@@ -2402,7 +2398,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         public CoverContainer(@NonNull Context context) {
             super(context);
             imageView = new BackupImageView(context);
-            imageView.setRoundRadius(AndroidUtilities.dp(2));
+            imageView.setRoundRadius(AndroidUtilities.dp(4));
             addView(imageView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         }
 
@@ -2460,6 +2456,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         }
         if (nextButton != null && !isPlayingVoice() && !isPlayingRoundVideo()) {
             AndroidUtilities.updateViewShow(nextButton, !paused, true, animated);
+        }
+        if (prevButton != null && !isPlayingVoice() && !isPlayingRoundVideo()) {
+            AndroidUtilities.updateViewShow(prevButton, !paused, true, animated);
         }
     }
 }

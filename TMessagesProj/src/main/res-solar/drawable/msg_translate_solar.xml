@@ -8,23 +8,11 @@
         android:strokeWidth="1.67"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M21.5 21l-4-8-4 8m0.73-1.42h6.56"/>
+        android:pathData="M22.5 22L16 9 9.5 22m2.5-4.33h8"/>
     <path
         android:strokeColor="#FFFFFFFF"
         android:strokeWidth="1.67"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M11.29 3.56H3.02m4.11-1.38v1.38m2.08-0.02C9.21 7.11 6.42 10 3 10m8.29 0C9.8 10 8.46 9.2 7.52 7.94"/>
-    <path
-        android:strokeColor="#FFFFFFFF"
-        android:strokeWidth="1.67"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M2 15c0 3.87 3.13 7 7 7l-1.05-1.75"/>
-    <path
-        android:strokeColor="#FFFFFFFF"
-        android:strokeWidth="1.67"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:pathData="M22 9c0-3.87-3.13-7-7-7l1.05 1.75"/>
+        android:pathData="M14.5 4.3H1.53M7.98 2v2.3m3.27 0c0 5.93-4.38 10.7-9.75 10.7m2.32-5.57s2.4 3.8 4.77 2.15"/>
 </vector>

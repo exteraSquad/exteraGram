@@ -62,8 +62,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int archiveHeaderRow;
     private int archiveOnPullRow;
     private int disableUnarchiveSwipeRow;
-    private int forcePacmanAnimationRow;
-    private int forcePacmanAnimationInfoRow;
+    private int archiveDividerRow;
 
     @Override
     protected void updateRowsId() {
@@ -99,8 +98,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         archiveHeaderRow = newRow();
         archiveOnPullRow = newRow();
         disableUnarchiveSwipeRow = newRow();
-        forcePacmanAnimationRow = newRow();
-        forcePacmanAnimationInfoRow = newRow();
+        archiveDividerRow = newRow();
     }
 
     @Override
@@ -131,10 +129,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         } else if (position == disableUnarchiveSwipeRow) {
             ExteraConfig.editor.putBoolean("disableUnarchiveSwipe", ExteraConfig.disableUnarchiveSwipe ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableUnarchiveSwipe);
-        } else if (position == forcePacmanAnimationRow) {
-            ExteraConfig.editor.putBoolean("forcePacmanAnimation", ExteraConfig.forcePacmanAnimation ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.forcePacmanAnimation);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == hidePhoneNumberRow) {
             ExteraConfig.editor.putBoolean("hidePhoneNumber", ExteraConfig.hidePhoneNumber ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hidePhoneNumber);
@@ -236,11 +230,9 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == forceTabletModeRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("ForceTabletMode", R.string.ForceTabletMode), ExteraConfig.forceTabletMode, false);
                     } else if (position == disableUnarchiveSwipeRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("DisableUnarchiveSwipe", R.string.DisableUnarchiveSwipe), ExteraConfig.disableUnarchiveSwipe, true);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("DisableUnarchiveSwipe", R.string.DisableUnarchiveSwipe), ExteraConfig.disableUnarchiveSwipe, false);
                     } else if (position == archiveOnPullRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("ArchiveOnPull", R.string.ArchiveOnPull), ExteraConfig.archiveOnPull, true);
-                    } else if (position == forcePacmanAnimationRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("ForcePacmanAnimation", R.string.ForcePacmanAnimation), ExteraConfig.forcePacmanAnimation, false);
                     } else if (position == hidePhoneNumberRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HidePhoneNumber", R.string.HidePhoneNumber), ExteraConfig.hidePhoneNumber, true);
                     } else if (position == alwaysExpandProfilePhotoRow) {
@@ -263,12 +255,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                     break;
                 case 8:
                     TextInfoPrivacyCell cell = (TextInfoPrivacyCell) holder.itemView;
-                    if (position == forcePacmanAnimationInfoRow) {
-                        cell.setText(LocaleController.getString("ForcePacmanAnimationInfo", R.string.ForcePacmanAnimationInfo));
-                        cell.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
-                    } else {
-                        cell.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
-                    }
+                    cell.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 13:
                     SlideChooseView slide = (SlideChooseView) holder.itemView;
@@ -284,13 +271,11 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         @Override
         public int getItemViewType(int position) {
             if (position == generalDividerRow || position == profileDividerRow ||
-                    position == premiumDividerRow || position == speedBoostersDividerRow) {
+                    position == premiumDividerRow || position == speedBoostersDividerRow || position == archiveDividerRow) {
                 return 1;
             } else if (position == generalHeaderRow || position == archiveHeaderRow || position == profileHeaderRow ||
                     position == premiumHeaderRow || position == speedBoostersHeaderRow) {
                 return 3;
-            } else if (position == forcePacmanAnimationInfoRow) {
-                return 8;
             } else if (position == downloadSpeedChooserRow) {
                 return 13;
             }

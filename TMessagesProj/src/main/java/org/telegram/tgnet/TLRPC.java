@@ -14,6 +14,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLoader;
@@ -25464,7 +25465,7 @@ public class TLRPC {
             ttl = stream.readInt32(exception);
             message = stream.readString(exception);
             if ((flags & 512) != 0) {
-                media = DecryptedMessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception);
+                media = DecryptedMessageMedia.TLdeserialize(stream, stream.readInt32(exception), exception || BuildVars.DEBUG_PRIVATE_VERSION);
             }
             if ((flags & 128) != 0) {
                 int magic = stream.readInt32(exception);
@@ -25476,7 +25477,7 @@ public class TLRPC {
                 }
                 int count = stream.readInt32(exception);
                 for (int a = 0; a < count; a++) {
-                    MessageEntity object = MessageEntity.TLdeserialize(stream, stream.readInt32(exception), exception);
+                    MessageEntity object = MessageEntity.TLdeserialize(stream, stream.readInt32(exception), exception || BuildVars.DEBUG_PRIVATE_VERSION);
                     if (object == null) {
                         return;
                     }
@@ -40014,8 +40015,11 @@ public class TLRPC {
                 case 0x89f5c4a:
                     result = new TL_decryptedMessageMediaEmpty();
                     break;
-                case 0x7afe8ae2:
+                case 0x6abd9782:
                     result = new TL_decryptedMessageMediaDocument();
+                    break;
+                case 0x7afe8ae2:
+                    result = new TL_decryptedMessageMediaDocument_layer101();
                     break;
                 case 0xe50511d8:
                     result = new TL_decryptedMessageMediaWebPage();
@@ -40126,6 +40130,56 @@ public class TLRPC {
     }
 
     public static class TL_decryptedMessageMediaDocument extends DecryptedMessageMedia {
+        public static int constructor = 0x6abd9782;
+
+        public byte[] thumb;
+
+        public void readParams(AbstractSerializedData stream, boolean exception) {
+            thumb = stream.readByteArray(exception);
+            thumb_w = stream.readInt32(exception);
+            thumb_h = stream.readInt32(exception);
+            mime_type = stream.readString(exception);
+            size = stream.readInt64(exception);
+            key = stream.readByteArray(exception);
+            iv = stream.readByteArray(exception);
+            int magic = stream.readInt32(exception);
+            if (magic != 0x1cb5c415) {
+                if (exception) {
+                    throw new RuntimeException(String.format("wrong Vector magic, got %x", magic));
+                }
+                return;
+            }
+            int count = stream.readInt32(exception);
+            for (int a = 0; a < count; a++) {
+                DocumentAttribute object = DocumentAttribute.TLdeserialize(stream, stream.readInt32(exception), exception);
+                if (object == null) {
+                    return;
+                }
+                attributes.add(object);
+            }
+            caption = stream.readString(exception);
+        }
+
+        public void serializeToStream(AbstractSerializedData stream) {
+            stream.writeInt32(constructor);
+            stream.writeByteArray(thumb);
+            stream.writeInt32(thumb_w);
+            stream.writeInt32(thumb_h);
+            stream.writeString(mime_type);
+            stream.writeInt64(size);
+            stream.writeByteArray(key);
+            stream.writeByteArray(iv);
+            stream.writeInt32(0x1cb5c415);
+            int count = attributes.size();
+            stream.writeInt32(count);
+            for (int a = 0; a < count; a++) {
+                attributes.get(a).serializeToStream(stream);
+            }
+            stream.writeString(caption);
+        }
+    }
+
+    public static class TL_decryptedMessageMediaDocument_layer101 extends TL_decryptedMessageMediaDocument {
         public static int constructor = 0x7afe8ae2;
 
         public byte[] thumb;
@@ -53513,9 +53567,10 @@ public class TLRPC {
     }
 
     public static class TL_messages_getStickerSet extends TLObject {
-        public static int constructor = 0x2619a90e;
+        public static int constructor = 0xc8a0ec74;
 
         public InputStickerSet stickerset;
+        public int hash;
 
         public TLObject deserializeResponse(AbstractSerializedData stream, int constructor, boolean exception) {
             return TL_messages_stickerSet.TLdeserialize(stream, constructor, exception);
@@ -53524,6 +53579,7 @@ public class TLRPC {
         public void serializeToStream(AbstractSerializedData stream) {
             stream.writeInt32(constructor);
             stickerset.serializeToStream(stream);
+            stream.writeInt32(hash);
         }
     }
 

@@ -23,19 +23,14 @@
     <string name="CenterTitle">Centrar título en la barra de acción</string>
     <string name="NewSwitchStyle">Habilitar estilo alternativo de interruptor</string>
     <string name="TransparentNavBar">Barra de navegación transparente</string>
-    <string name="TransparentNavBarValue">La barra de navegación no será completamente transparente, sólo obtendrá el color del Panel de Mensajes.</string>
-    <string name="SquareFab">FAB en forma cuadrado</string>
-    <string name="SquareFabInfo">Un botón de acción flotante (FAB) es un botón circular que activa la acción primaria en la interfaz de usuario de la aplicación. Se encuentra en la esquina inferior derecha de la pantalla.</string>
     <!-- General -->
     <string name="DisableNumberRounding">Desactivar redondeo de número</string>
     <string name="FormatTimeWithSeconds">Formato de tiempo con segundos</string>
     <string name="HideAllChats">Ocultar pestaña \"Todos los chats\"</string>
-    <string name="HideProxySponsor">Ocultar patrocinador del proxy</string>
     <string name="DisableVibration">Desactivar las vibraciones</string>
     <string name="ForceTabletMode">Forzar modo tablet</string>
     <string name="ArchiveOnPull">Abrir archivados al desplegar</string>
     <string name="DisableUnarchiveSwipe">Desactivar el deslizado \"Desarchivar\"</string>
-    <string name="ForcePacmanAnimation">Forzar la animación Pac-Man</string>
     <string name="ForcePacmanAnimationInfo">Esto requiere que el gesto de \"Archivar\" seleccionado desliza en la lista de chat.</string>
     <string name="Profile">Perfil</string>
     <string name="HidePhoneNumber">Ocultar número de teléfono</string>
@@ -63,7 +58,6 @@
     <string name="DisablePlayback">Desactivar reproducción</string>
     <string name="DPDescription">Deshabilita la reproducción cuando se presiona el botón de volumen</string>
     <!-- Drawer -->
-    <string name="Drawer">Cajón</string>
     <string name="DrawerElements">Elementos del arrastre</string>
     <string name="DrawerOptions">Opciones de marcador</string>
     <string name="DrawerIconPack">Pack de iconos</string>

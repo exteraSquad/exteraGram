@@ -14,12 +14,14 @@ package com.exteragram.messenger;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
+import com.exteragram.messenger.icons.EmptyIconSet;
+import com.exteragram.messenger.icons.BaseIconSet;
+import com.exteragram.messenger.icons.SolarIconSet;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.R;
 import org.telegram.tgnet.TLRPC;
 
 import java.util.Arrays;
@@ -54,7 +56,6 @@ public class ExteraConfig {
     public static boolean forceTabletMode;
     public static boolean archiveOnPull;
     public static boolean disableUnarchiveSwipe;
-    public static boolean forcePacmanAnimation;
     public static boolean alwaysExpandProfilePhoto;
     public static boolean hidePhoneNumber;
     public static boolean showID;
@@ -142,7 +143,8 @@ public class ExteraConfig {
 
             hideActionBarStatus = preferences.getBoolean("hideActionBarStatus", false);
             actionBarTitle = preferences.getInt("actionBarTitle", 0);
-            tabStyle = preferences.getInt("tabStyle", 0);
+            tabStyle = preferences.getInt("tabStyle", 1);
+            hideAllChats = preferences.getBoolean("hideAllChats", false);
             downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);
             uploadSpeedBoost = preferences.getBoolean("uploadSpeedBoost", false);
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
@@ -151,7 +153,6 @@ public class ExteraConfig {
             disableAnimatedAvatars = preferences.getBoolean("disableAnimatedAvatars", false);
             archiveOnPull = preferences.getBoolean("archiveOnPull", false);
             disableUnarchiveSwipe = preferences.getBoolean("disableUnarchiveSwipe", true);
-            forcePacmanAnimation = preferences.getBoolean("forcePacmanAnimation", false);
             alwaysExpandProfilePhoto = preferences.getBoolean("alwaysExpandProfilePhoto", false);
             hidePhoneNumber = preferences.getBoolean("hidePhoneNumber", false);
             showID = preferences.getBoolean("showID", true);
@@ -289,5 +290,9 @@ public class ExteraConfig {
 
     public static String getCurrentLangCode() {
         return targetLanguage.substring(targetLanguage.indexOf("(") + 1, targetLanguage.indexOf(")"));
+    }
+
+    public static BaseIconSet getIconPack() {
+        return useSolarIcons ? new SolarIconSet() : new EmptyIconSet();
     }
 }

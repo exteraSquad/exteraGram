@@ -1267,7 +1267,7 @@ public class FilterTabsView extends FrameLayout {
                 canvas.save();
                 canvas.translate(listView.getTranslationX(), 0);
                 canvas.scale(listView.getScaleX(), 1f, listView.getPivotX() + listView.getX(), listView.getPivotY());
-                selectorDrawable.setBounds((int) indicatorX - (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), ExteraConfig.tabStyle >= 3 ? height / 2 - AndroidUtilities.dp(16) : height - AndroidUtilities.dpr(4), (int) (indicatorX + indicatorWidth) + (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), ExteraConfig.tabStyle >= 3 ? height / 2 + AndroidUtilities.dp(16) : height);
+                selectorDrawable.setBounds((int) indicatorX - (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), ExteraConfig.tabStyle >= 3 ? height / 2 - AndroidUtilities.dp(ExteraConfig.tabStyle == 3 ? 17 : 18) : height - AndroidUtilities.dpr(4), (int) (indicatorX + indicatorWidth) + (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(10) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(12) : 0), ExteraConfig.tabStyle >= 3 ? height / 2 + AndroidUtilities.dp(ExteraConfig.tabStyle == 3 ? 17 : 18) : height);
                 selectorDrawable.draw(canvas);
                 canvas.restore();
             }

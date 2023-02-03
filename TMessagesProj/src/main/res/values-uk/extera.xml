@@ -47,7 +47,6 @@
     <string name="DisableAnimatedAvatars">Вимкнути анімовані аватарки</string>
     <string name="ArchiveOnPull">Відкрити архів при витягуванні</string>
     <string name="DisableUnarchiveSwipe">Вимкнути свайп «Розархівувати»</string>
-    <string name="ForcePacmanAnimation">Примусова анімація Pac-Man</string>
     <string name="ForcePacmanAnimationInfo">Для цього потрібно вибрати \"Архівувати\" свайп з жестом у списку чатів.</string>
     <string name="Profile">Профіль</string>
     <string name="HidePhoneNumber">Приховати номер телефону</string>
@@ -113,9 +112,6 @@
     <string name="Unknown">Невідомо</string>
     <string name="ConfirmCall">Підтвердити дзвінок</string>
     <string name="CallTo">Зателефонувати до **%1$s**?</string>
-    <string name="AppIconRelease">Реліз</string>
-    <string name="AppIconBeta">Бета</string>
-    <string name="AppIconInverted">Інвертований</string>
     <string name="AppIconMonet">Monet</string>
     <string name="AppIconGradient">Градієнт</string>
     <string name="AppIconPixel">Піксель</string>

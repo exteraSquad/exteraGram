@@ -38,7 +38,7 @@ import org.telegram.ui.Components.SeekBarView;
 import java.util.Objects;
 
 @SuppressLint("ViewConstructor")
-public class ActionBarSetupCell extends FrameLayout {
+public class MainScreenSetupCell extends FrameLayout {
 
     private final FrameLayout preview;
     private final SeekBarView sizeBar;
@@ -66,7 +66,7 @@ public class ActionBarSetupCell extends FrameLayout {
     private final int endCornersSize = 30;
     private int lastWidth;
 
-    public ActionBarSetupCell(Context context, INavigationLayout fragment) {
+    public MainScreenSetupCell(Context context, INavigationLayout fragment) {
         super(context);
         setWillNotDraw(false);
 
@@ -135,7 +135,7 @@ public class ActionBarSetupCell extends FrameLayout {
                     );
                 }
 
-                float width = (int) Math.ceil(textPaint.measureText(titleText));
+                float width = textPaint.measureText(titleText);
                 float titleStart = centeredTitleProgress * ((w - width - AndroidUtilities.dp(30) * statusProgress) / 2 - AndroidUtilities.dp(78)) + AndroidUtilities.dp(78);
                 float titleEnd = titleStart + width;
 
@@ -164,7 +164,7 @@ public class ActionBarSetupCell extends FrameLayout {
                     canvas.drawText(s, startX, startY - AndroidUtilities.dp(13), textPaint);
                 }
 
-                float sw = (int) Math.ceil(textPaint.measureText(tabName));
+                float sw = textPaint.measureText(tabName);
                 float startX = w / 6 - sw / 2;
                 textPaint.setColor(ColorUtils.blendARGB(0x00, Theme.getColor(Theme.key_windowBackgroundWhiteValueText), hideAllChatsProgress));
                 textPaint.setTextSize(AndroidUtilities.dp(12 + 3 * hideAllChatsProgress));
@@ -175,11 +175,11 @@ public class ActionBarSetupCell extends FrameLayout {
                         startX - allChatsPadding * hideAllChatsProgress - AndroidUtilities.dp(10) * chipsStyleProgress - AndroidUtilities.dp(3) * pillsStyleProgress,
                         startY + AndroidUtilities.dp(6) * textStyleProgress - AndroidUtilities.dp(2) * chipsStyleProgress,
                         startX + sw + allChatsPadding * hideAllChatsProgress + AndroidUtilities.dp(10) * chipsStyleProgress + AndroidUtilities.dp(3) * pillsStyleProgress,
-                        startY + AndroidUtilities.dp(8) - AndroidUtilities.dp(4) * roundedStyleProgress - AndroidUtilities.dp(43) * chipsStyleProgress,
+                        startY + AndroidUtilities.dp(8) - AndroidUtilities.dp(4) * roundedStyleProgress - AndroidUtilities.dp(45) * chipsStyleProgress,
                         AndroidUtilities.dpf2(8 + 10 * pillsStyleProgress),
                         AndroidUtilities.dpf2(8 + 10 * pillsStyleProgress),
                         Theme.dialogs_onlineCirclePaint);
-                canvas.drawText(tabName, startX, startY - AndroidUtilities.dp(13), textPaint);
+                canvas.drawText(tabName, startX, startY - AndroidUtilities.dp(14), textPaint);
 
                 h -= startY + AndroidUtilities.dp(4);
                 canvas.translate(0, startY + AndroidUtilities.dp(4));
@@ -213,7 +213,7 @@ public class ActionBarSetupCell extends FrameLayout {
             return;
 
         if (animate) {
-            animator = ValueAnimator.ofFloat(statusProgress, to).setDuration(300);
+            animator = ValueAnimator.ofFloat(statusProgress, to).setDuration(250);
             animator.setInterpolator(Easings.easeInOutQuad);
             animator.addUpdateListener(animation -> {
                 statusProgress = (Float) animation.getAnimatedValue();
@@ -233,7 +233,7 @@ public class ActionBarSetupCell extends FrameLayout {
             return;
 
         if (animate) {
-            animator = ValueAnimator.ofFloat(centeredTitleProgress, to).setDuration(300);
+            animator = ValueAnimator.ofFloat(centeredTitleProgress, to).setDuration(250);
             animator.setInterpolator(Easings.easeInOutQuad);
             animator.addUpdateListener(animation -> {
                 centeredTitleProgress = (Float) animation.getAnimatedValue();
@@ -250,7 +250,7 @@ public class ActionBarSetupCell extends FrameLayout {
         if (Objects.equals(tabName, getTabName()) && animate)
             return;
         if (animate) {
-            animator = ValueAnimator.ofFloat(1f, 0f).setDuration(300);
+            animator = ValueAnimator.ofFloat(1f, 0f).setDuration(250);
             animator.setInterpolator(Easings.easeInOutQuad);
             animator.addUpdateListener(animation -> {
                 hideAllChatsProgress = (Float) animation.getAnimatedValue();
@@ -313,8 +313,8 @@ public class ActionBarSetupCell extends FrameLayout {
         currentStyle = ExteraConfig.tabStyle;
 
         if (animate) {
-            ValueAnimator def = ValueAnimator.ofFloat(0f, 1f).setDuration(300);
-            def.setStartDelay(150);
+            ValueAnimator def = ValueAnimator.ofFloat(0f, 1f).setDuration(250);
+            def.setStartDelay(100);
             def.setInterpolator(Easings.easeInOutQuad);
             def.addUpdateListener(animation -> {
                 if (currentStyle == 1) {
@@ -330,7 +330,7 @@ public class ActionBarSetupCell extends FrameLayout {
                 invalidate();
             });
 
-            animator = ValueAnimator.ofFloat(1f, 0f).setDuration(300);
+            animator = ValueAnimator.ofFloat(1f, 0f).setDuration(250);
             animator.setStartDelay(100);
             animator.setInterpolator(Easings.easeInOutQuad);
             animator.addUpdateListener(animation -> {

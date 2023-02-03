@@ -15,10 +15,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -858,7 +860,7 @@ public class DialogCell extends BaseCell {
         }
         if (isDialogCell) {
             boolean needUpdate = updateHelper.update();
-            if (!needUpdate && currentDialogFolderId == 0) {
+            if (!needUpdate && currentDialogFolderId == 0 && encryptedChat == null) {
                 return;
             }
         }
@@ -973,7 +975,7 @@ public class DialogCell extends BaseCell {
                 }
             } else {
                 drawVerified = !forbidVerified && customDialog.verified;
-                drawArrow = !forbidVerified && customDialog.arrowed;
+                drawArrow = customDialog.arrowed;
                 if (useForceThreeLines || SharedConfig.useThreeLinesLayout) {
                     if (!LocaleController.isRTL) {
                         nameLeft = AndroidUtilities.dp(messagePaddingStart + 6);
@@ -1092,11 +1094,9 @@ public class DialogCell extends BaseCell {
                         } else if (chat.fake) {
                             drawScam = 2;
                             Theme.dialogs_fakeDrawable.checkText();
-                        } else if (ExteraConfig.isExtera(chat)) {
-                            drawArrow = true;
-                        } else {
-                            drawVerified = !forbidVerified && chat.verified;
                         }
+                        drawArrow = ExteraConfig.isExtera(chat);
+                        drawVerified = !forbidVerified && chat.verified;
                     } else if (user != null) {
                         if (user.scam) {
                             drawScam = 1;
@@ -1104,11 +1104,9 @@ public class DialogCell extends BaseCell {
                         } else if (user.fake) {
                             drawScam = 2;
                             Theme.dialogs_fakeDrawable.checkText();
-                        } else if (user.id != UserConfig.getInstance(currentAccount).getClientUserId() && ExteraConfig.isExteraDev(user)) {
-                            drawArrow = true;
-                        } else {
-                            drawVerified =!forbidVerified && user.verified;
                         }
+                        drawArrow = user.id != UserConfig.getInstance(currentAccount).getClientUserId() && ExteraConfig.isExteraDev(user);
+                        drawVerified = !forbidVerified && user.verified;
                         drawPremium = MessagesController.getInstance(currentAccount).isPremiumUser(user) && UserConfig.getInstance(currentAccount).clientUserId != user.id && user.id != 0;
                         if (drawPremium) {
                             if (user.emoji_status instanceof TLRPC.TL_emojiStatusUntil && ((TLRPC.TL_emojiStatusUntil) user.emoji_status).until > (int) (System.currentTimeMillis() / 1000)) {
@@ -1118,8 +1116,14 @@ public class DialogCell extends BaseCell {
                                 nameLayoutEllipsizeByGradient = true;
                                 emojiStatus.set(((TLRPC.TL_emojiStatus) user.emoji_status).document_id, false);
                             } else {
-                                nameLayoutEllipsizeByGradient = true;
-                                emojiStatus.set(PremiumGradient.getInstance().premiumStarDrawableMini, false);
+                                if (drawArrow) {
+                                    Drawable arrow = Theme.dialogs_outlineArrowDrawable;
+                                    arrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+                                    emojiStatus.set(arrow, false);
+                                } else {
+                                    nameLayoutEllipsizeByGradient = true;
+                                    emojiStatus.set(PremiumGradient.getInstance().premiumStarDrawableMini, false);
+                                }
                             }
                         }
                     }
@@ -3542,7 +3546,8 @@ public class DialogCell extends BaseCell {
                 setDrawableBounds(Theme.dialogs_verifiedCheckDrawable, nameMuteLeft - AndroidUtilities.dp(1), AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 13.5f : 16.5f));
                 Theme.dialogs_verifiedDrawable.draw(canvas);
                 Theme.dialogs_verifiedCheckDrawable.draw(canvas);
-            } else if (drawArrow) {
+            } else if (drawArrow && emojiStatus == null || drawArrow && chat != null) {
+                Theme.dialogs_outlineArrowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
                 setDrawableBounds(Theme.dialogs_outlineArrowDrawable, nameMuteLeft - AndroidUtilities.dp(3), AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 10f : 13f));
                 Theme.dialogs_outlineArrowDrawable.draw(canvas);
             } else if (drawPremium) {

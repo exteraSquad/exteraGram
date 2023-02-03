@@ -48,7 +48,6 @@
     <string name="ForceTabletMode">Tablet moduna zorla</string>
     <string name="ArchiveOnPull">Açılır menüde arşivi aç</string>
     <string name="DisableUnarchiveSwipe">\"Arşivden çıkar\" hareketini devre dışı bırak</string>
-    <string name="ForcePacmanAnimation">Pac-Man animasyonunu zorla</string>
     <string name="ForcePacmanAnimationInfo">Bu, sohbet listesinde seçilen \"Arşivle\" kaydırma hareketini gerektirir.</string>
     <string name="Profile">Profil</string>
     <string name="HidePhoneNumber">Telefon numarasını gizle</string>
@@ -117,9 +116,6 @@
     <string name="Unknown">Bilinmeyen</string>
     <string name="ConfirmCall">Aramayı onayla</string>
     <string name="CallTo">**%1$s** aransın mı?</string>
-    <string name="AppIconRelease">Sürüm</string>
-    <string name="AppIconBeta">Beta</string>
-    <string name="AppIconInverted">Ters</string>
     <string name="AppIconGradient">Gradyan</string>
     <string name="AppIconPixel">Piksel</string>
 </resources>

@@ -400,7 +400,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
         DownloadController.getInstance(currentAccount).removeLoadingFileObserver(this);
         previousWidth = 0;
         if (messageObject.type == MessageObject.TYPE_SUGGEST_PHOTO) {
-            imageReceiver.setRoundRadius((int) (stickerSize / 2f));
+            imageReceiver.setRoundRadius(ExteraConfig.getAvatarCorners(stickerSize * 0.7f, true));
             imageReceiver.setAllowStartLottieAnimation(true);
             imageReceiver.setDelegate(null);
             TLRPC.TL_messageActionSuggestProfilePhoto action = (TLRPC.TL_messageActionSuggestProfilePhoto) messageObject.messageOwner.action;
@@ -893,7 +893,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
             giftRectSize = Math.min((int) (AndroidUtilities.isTablet() ? AndroidUtilities.getMinTabletSide() * 0.6f : AndroidUtilities.displaySize.x * 0.6f), AndroidUtilities.displaySize.y - ActionBar.getCurrentActionBarHeight() - AndroidUtilities.statusBarHeight - AndroidUtilities.dp(64));
             stickerSize = giftRectSize - AndroidUtilities.dp(106);
             if (messageObject.type == MessageObject.TYPE_SUGGEST_PHOTO) {
-                imageReceiver.setRoundRadius(stickerSize / 2);
+                imageReceiver.setRoundRadius(ExteraConfig.getAvatarCorners(stickerSize * 0.7f, true));
             } else {
                 imageReceiver.setRoundRadius(0);
             }

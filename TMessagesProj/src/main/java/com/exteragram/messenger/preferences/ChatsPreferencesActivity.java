@@ -16,7 +16,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.TextPaint;
 import android.view.Gravity;
 import android.view.View;
@@ -24,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +41,7 @@ import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
+import org.telegram.ui.Cells.RadioColorCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.LayoutHelper;
@@ -49,9 +50,18 @@ import org.telegram.ui.Components.SeekBarView;
 
 public class ChatsPreferencesActivity extends BasePreferencesActivity implements NotificationCenter.NotificationCenterDelegate {
 
-    private Parcelable recyclerViewState = null;
     private ActionBarMenuItem resetItem;
     private StickerSizeCell stickerSizeCell;
+
+    private final CharSequence[] suggestions = new CharSequence[]{
+            LocaleController.getString("EmojiSuggestionTapReplace", R.string.EmojiSuggestionTapReplace),
+            LocaleController.getString("EmojiSuggestionTapAfter", R.string.EmojiSuggestionTapAfter),
+            LocaleController.getString("EmojiSuggestionTapAfterSpace", R.string.EmojiSuggestionTapAfterSpace)
+    }, suggestionsValue = new CharSequence[]{
+            LocaleController.getString("EmojiSuggestionTapReplaceShort", R.string.EmojiSuggestionTapReplaceShort),
+            LocaleController.getString("EmojiSuggestionTapAfterShort", R.string.EmojiSuggestionTapAfterShort),
+            LocaleController.getString("EmojiSuggestionTapAfterSpaceShort", R.string.EmojiSuggestionTapAfterSpaceShort)
+    };
 
     private int stickerSizeHeaderRow;
     private int stickerSizeRow;
@@ -282,21 +292,26 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
             builder.setTitle(LocaleController.getString("EmojiSuggestionsTap", R.string.EmojiSuggestionsTap));
-            builder.setItems(new CharSequence[]{
-                    LocaleController.getString("EmojiSuggestionTapReplace", R.string.EmojiSuggestionTapReplace),
-                    LocaleController.getString("EmojiSuggestionTapAfter", R.string.EmojiSuggestionTapAfter),
-                    LocaleController.getString("EmojiSuggestionTapAfterSpace", R.string.EmojiSuggestionTapAfterSpace)
-            }, (dialog, which) -> {
-                ExteraConfig.editor.putInt("emojiSuggestionTap", ExteraConfig.emojiSuggestionTap = which).apply();
-                RecyclerView.ViewHolder holder = getListView().findViewHolderForAdapterPosition(emojiSuggestionTapRow);
-                if (holder != null) {
-                    listAdapter.onBindViewHolder(holder, emojiSuggestionTapRow);
-                }
-                if (getListView().getLayoutManager() != null)
-                    recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
-                parentLayout.rebuildAllFragmentViews(true, true);
-                getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
-            });
+
+            LinearLayout linearLayout = new LinearLayout(getParentActivity());
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            builder.setView(linearLayout);
+
+            for (int a = 0; a < suggestions.length; a++) {
+                RadioColorCell cell = new RadioColorCell(getParentActivity());
+                cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
+                cell.setTag(a);
+                cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
+                cell.setTextAndValue(suggestions[a], ExteraConfig.emojiSuggestionTap == a);
+                cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
+                linearLayout.addView(cell);
+                cell.setOnClickListener(v -> {
+                    Integer which = (Integer) v.getTag();
+                    ExteraConfig.editor.putInt("emojiSuggestionTap", ExteraConfig.emojiSuggestionTap = which).apply();
+                    ((TextSettingsCell) view).setTextAndValue(LocaleController.getString("EmojiSuggestions", R.string.EmojiSuggestions), suggestionsValue[which], true, true);
+                    builder.getDismissRunnable().run();
+                });
+            }
             builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
             showDialog(builder.create());
         } else if (position == hideKeyboardOnScrollRow) {
@@ -464,15 +479,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 case 7:
                     TextSettingsCell textSettingsCell = (TextSettingsCell) holder.itemView;
                     if (position == emojiSuggestionTapRow) {
-                        String value;
-                        if (ExteraConfig.emojiSuggestionTap == 1) {
-                            value = LocaleController.getString("EmojiSuggestionTapAfterShort", R.string.EmojiSuggestionTapAfterShort);
-                        } else if (ExteraConfig.emojiSuggestionTap == 2) {
-                            value = LocaleController.getString("EmojiSuggestionTapAfterSpaceShort", R.string.EmojiSuggestionTapAfterSpaceShort);
-                        } else {
-                            value = LocaleController.getString("EmojiSuggestionTapReplaceShort", R.string.EmojiSuggestionTapReplaceShort);
-                        }
-                        textSettingsCell.setTextAndValue(LocaleController.getString("EmojiSuggestions", R.string.EmojiSuggestions), value, false);
+                        textSettingsCell.setTextAndValue(LocaleController.getString("EmojiSuggestions", R.string.EmojiSuggestions), suggestionsValue[ExteraConfig.emojiSuggestionTap], false);
                     }
                     break;
             }

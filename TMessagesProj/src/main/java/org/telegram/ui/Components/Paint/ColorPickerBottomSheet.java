@@ -488,7 +488,6 @@ public class ColorPickerBottomSheet extends BottomSheet {
         private Paint outlinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         private float positionX, positionY;
-        private Drawable shadowDrawable;
 
         private float[] hsv = new float[3];
 
@@ -500,7 +499,6 @@ public class ColorPickerBottomSheet extends BottomSheet {
             outlinePaint.setColor(Color.WHITE);
             outlinePaint.setStyle(Paint.Style.FILL_AND_STROKE);
             outlinePaint.setStrokeWidth(AndroidUtilities.dp(3));
-            shadowDrawable = ContextCompat.getDrawable(context, R.drawable.knob_shadow);
         }
 
         @Override
@@ -526,14 +524,6 @@ public class ColorPickerBottomSheet extends BottomSheet {
             int h = getHeight() - getPaddingTop() - getPaddingBottom();
             float cx = getPaddingLeft() + MathUtils.clamp(positionX * w, min, w - min);
             float cy = getPaddingTop() + MathUtils.clamp(positionY * h, min, h - min);
-            shadowDrawable.getPadding(AndroidUtilities.rectTmp2);
-            shadowDrawable.setBounds(
-                (int) (cx - outlineRad - AndroidUtilities.rectTmp2.left),
-                (int) (cy - outlineRad - AndroidUtilities.rectTmp2.top),
-                (int) (cx + outlineRad + AndroidUtilities.rectTmp2.bottom),
-                (int) (cy + outlineRad + AndroidUtilities.rectTmp2.bottom)
-            );
-            shadowDrawable.draw(canvas);
             canvas.drawCircle(cx, cy, outlineRad, outlinePaint);
             PaintColorsListView.drawColorCircle(canvas, cx, cy, rad2, ColorUtils.setAlphaComponent(mColor, 0xFF));
         }

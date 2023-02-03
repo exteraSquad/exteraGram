@@ -47,6 +47,10 @@
     <string name="TabStylePills">Pills</string>
     <string name="ActionBarTitleUsername">Username</string>
     <string name="ActionBarTitleName">First Name</string>
+    <string name="MainScreenSetupInfo">Most features require a client restart to work correctly.</string>
+    <string name="IconPack">Icons</string>
+    <string name="SolarIcons">Use \"Solar\" Icons</string>
+    <string name="SolarIconsInfo">Powered by @Design480</string>
     <string name="UseSystemFonts">Use system fonts</string>
     <string name="UseSystemEmoji">Use system emoji</string>
     <string name="TransparentStatusBar">Transparent status bar</string>
@@ -67,7 +71,6 @@
     <string name="ForceTabletMode">Force tablet mode</string>
     <string name="ArchiveOnPull">Open archive on pulldown</string>
     <string name="DisableUnarchiveSwipe">Disable \"Unarchive\" swipe</string>
-    <string name="ForcePacmanAnimation">Force Pac-Man animation</string>
     <string name="ForcePacmanAnimationInfo">This requires the selected \"Archive\" swipe gesture in chat list.</string>
     <string name="Profile">Profile</string>
     <string name="HidePhoneNumber">Hide phone number</string>
@@ -111,7 +114,6 @@
     <string name="ShowMessageID">Show message ID</string>
     <string name="ShowActionTimestamps">Show timestamps for actions</string>
 
-    <string name="Media">Media</string>
     <string name="RearVideoMessages">Rear camera in video messages</string>
     <string name="RememberLastUsedCamera">Remember last used camera</string>
     <string name="RememberLastUsedCameraValue">When capturing video messages, the last used camera will be selected.</string>
@@ -156,8 +158,6 @@
 
     <string name="OpenPremiumBot">Open official bot</string>
 
-    <string name="Select">Select</string>
-
     <string name="EnterID">Enter the ID</string>
     <string name="TrackSaved">Track saved to **%1$s**.</string>
     <string name="ChannelToSaveDescription">Enter the ID of the channel/chat/user where the tracks will be saved</string>
@@ -169,9 +169,6 @@
     <string name="formatterDay24HSec" translatable="false">HH:mm:ss</string>
     <string name="formatterDay12HSec" translatable="false">h:mm:ss a</string>
 
-    <string name="AppIconRelease">Release</string>
-    <string name="AppIconBeta">Beta</string>
-    <string name="AppIconInverted">Inverted</string>
     <string name="AppIconMonet">Monet</string>
     <string name="AppIconGradient">Gradient</string>
     <string name="AppIconPixel">Pixel</string>

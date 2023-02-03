@@ -55,6 +55,9 @@
     <string name="TabStylePills">Таблетки</string>
     <string name="ActionBarTitleUsername">Короткая ссылка</string>
     <string name="ActionBarTitleName">Имя</string>
+    <string name="MainScreenSetupInfo">Большинству функций требуется перезапуск клиента для корректной работы.</string>
+    <string name="IconPack">Иконки</string>
+    <string name="SolarIcons">Использовать набор \"Solar\"</string>
     <string name="DownloadSpeedBoost">Увеличение скорости загрузки</string>
     <string name="UploadSpeedBoost">Увеличение скорости отправки</string>
     <string name="Ultra">Ультра</string>
@@ -64,7 +67,6 @@
     <string name="ForceTabletMode">Планшетный режим</string>
     <string name="ArchiveOnPull">Открывать архив при вытягивании</string>
     <string name="DisableUnarchiveSwipe">Отключить жест \"Вернуть\"</string>
-    <string name="ForcePacmanAnimation">Pac-Man анимация</string>
     <string name="ForcePacmanAnimationInfo">Для этого нужно выбрать \"Архивировать\" в \"Смахивание влево в списке чатов\".</string>
     <string name="Profile">Профиль</string>
     <string name="HidePhoneNumber">Скрыть номер телефона</string>
@@ -162,12 +164,12 @@
     <string name="ConfirmCall">Подтверждение звонка</string>
     <string name="CallTo">Позвонить **%1$s**?</string>
 
-    <string name="AppIconRelease">Релизная</string>
-    <string name="AppIconBeta">Бета</string>
-    <string name="AppIconInverted">Инверсия</string>
     <string name="AppIconMonet">Monet</string>
     <string name="AppIconGradient">Градиент</string>
-    <string name="AppIconPixel">Пиксельная</string>
     <string name="AppIconGoogle">Google</string>
+    <string name="AppIcon480dsgn">480 DSGN</string>
+    <string name="AppIconGlow">Свечение</string>
+    <string name="AppIconSpace">Космос</string>
+    <string name="AppIconWinter">Зима</string>
     <string name="AppIconRed">Красный бля</string>
 </resources>

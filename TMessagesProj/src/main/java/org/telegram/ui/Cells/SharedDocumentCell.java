@@ -59,6 +59,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 public class SharedDocumentCell extends FrameLayout implements DownloadController.FileDownloadProgressListener {
 
@@ -277,7 +278,7 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
                     thumbImageView.setImage(thumb, "42_42", null);
                 }
             } else {
-                Drawable drawable = Theme.createCircleDrawableWithIcon(AndroidUtilities.dp(42), resId);
+                Drawable drawable = ExteraUtils.createCircleDrawableWithIcon(getContext(), resId, AndroidUtilities.dp(42));
                 String iconKey;
                 String backKey;
                 if (resId == R.drawable.files_storage) {

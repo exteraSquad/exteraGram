@@ -23,19 +23,14 @@
     <string name="CenterTitle">Centrer le titre dans la barre d\'action</string>
     <string name="NewSwitchStyle">Activer le style de changement alternatif</string>
     <string name="TransparentNavBar">Barre de navigation transparente</string>
-    <string name="TransparentNavBarValue">La barre de navigation ne deviendra pas complètement transparente, elle ne prendra que la couleur du panneau de messages.</string>
-    <string name="SquareFab">FAB en forme de carré</string>
-    <string name="SquareFabInfo">Un bouton d\'action flottant (FAB) est un bouton circulaire qui déclenche l\'action principale dans l\'interface d\'application. Il se trouve dans le coin inférieur droit de l\'écran.</string>
     <!-- General -->
     <string name="DisableNumberRounding">Désactiver l\'arrondi des nombres</string>
     <string name="FormatTimeWithSeconds">Afficher l\'heure avec les secondes</string>
     <string name="HideAllChats">Masquer l\'onglet \"Toutes les discussions\"</string>
-    <string name="HideProxySponsor">Cacher le sponsor du proxy</string>
     <string name="DisableVibration">Désactiver les vibrations</string>
     <string name="ForceTabletMode">Forcer le mode Tablet Ui</string>
     <string name="ArchiveOnPull">Ouvrir les archives dans le menu déroulant</string>
     <string name="DisableUnarchiveSwipe">Désactiver le balayage \"Déarchive\"</string>
-    <string name="ForcePacmanAnimation">Forcer l\'animation de Pac-Man</string>
     <string name="ForcePacmanAnimationInfo">Cela nécessite le geste de balayage sélectionné dans la liste de chat.</string>
     <string name="Profile">Profil</string>
     <string name="HidePhoneNumber">Cacher le numéro de téléphone</string>
@@ -63,7 +58,6 @@
     <string name="DisablePlayback">Désactiver la lecture</string>
     <string name="DPDescription">Désactive la lecture lorsque le bouton de volume est enfoncé</string>
     <!-- Drawer -->
-    <string name="Drawer">Liste d\'applications</string>
     <string name="DrawerElements">Éléments du tiroir</string>
     <string name="DrawerOptions">Tri tiroir</string>
     <string name="DrawerIconPack">Pack d\'icônes</string>

@@ -597,9 +597,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             } else if (arrow) {
                 Drawable exteraArrow = ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.ic_outline_arrow).mutate();
                 exteraArrow.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY));
-                titleTextView.setRightDrawable(exteraArrow);
-                titleTextView.setRightDrawableTopPadding(-AndroidUtilities.dp(0.5f));
-                rightDrawableIsScamOrVerified = true;
+                emojiStatusDrawable.set(exteraArrow, animated);
             } else {
                 Drawable drawable = ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.msg_premium_liststar).mutate();
                 drawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY));

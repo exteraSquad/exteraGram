@@ -4852,7 +4852,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         menuItem.setContentDescription(LocaleController.getString("AccDescrMoreOptions", R.string.AccDescrMoreOptions));
         allMediaItem = menuItem.addSubItem(gallery_menu_showall, R.drawable.msg_media, LocaleController.getString("ShowAllMedia", R.string.ShowAllMedia));
         allMediaItem.setColors(0xfffafafa, 0xfffafafa);
-        if (ExteraConfig.centerTitle) menuItem.addSubItem(gallery_menu_pip2, R.drawable.ic_goinline, LocaleController.getString("AccDescrPipMode", R.string.AccDescrPipMode)).setColors(0xfffafafa, 0xfffafafa);
+        menuItem.addSubItem(gallery_menu_pip2, R.drawable.ic_goinline, LocaleController.getString("AccDescrPipMode", R.string.AccDescrPipMode)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_savegif, R.drawable.msg_gif, LocaleController.getString("SaveToGIFs", R.string.SaveToGIFs)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_showinchat, R.drawable.msg_message, LocaleController.getString("ShowInChat", R.string.ShowInChat)).setColors(0xfffafafa, 0xfffafafa);
         menuItem.addSubItem(gallery_menu_masks2, R.drawable.msg_sticker, LocaleController.getString("ShowStickers", R.string.ShowStickers)).setColors(0xfffafafa, 0xfffafafa);
@@ -8151,9 +8151,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 aspectRatioFrameLayout.setVisibility(View.VISIBLE);
             }
             if (!pipItem.isEnabled() && (pipItem.getVisibility() == View.VISIBLE || menuItem.isSubItemVisible(gallery_menu_pip2))) {
+                if (ExteraConfig.centerTitle) menuItem.showSubItem(gallery_menu_pip2);
                 pipAvailable = true;
                 pipItem.setEnabled(true);
-                if (!ExteraConfig.centerTitle) pipItem.animate().alpha(1.0f).setDuration(175).withEndAction(null).start();
+                pipItem.animate().alpha(1.0f).setDuration(175).withEndAction(null).start();
             }
             playerWasReady = true;
             if (currentMessageObject != null && currentMessageObject.isVideo()) {
@@ -8812,8 +8813,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         pipAvailable = false;
         playerInjected = false;
         if (pipItem.isEnabled() || menuItem.isSubItemVisible(gallery_menu_pip2)) {
+            menuItem.showSubItem(gallery_menu_pip2);
             pipItem.setEnabled(false);
-            if (!ExteraConfig.centerTitle) pipItem.animate().alpha(0.5f).setDuration(175).withEndAction(null).start();
+            pipItem.animate().alpha(0.5f).setDuration(175).withEndAction(null).start();
         }
         if (keepScreenOnFlagSet) {
             try {
@@ -10968,6 +10970,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     private void setItemVisible(View itemView, boolean visible, boolean animate, float maxAlpha) {
+        if (itemView == pipItem && ExteraConfig.centerTitle && visible) {
+            return;
+        }
         Boolean visibleNow = actionBarItemsVisibility.get(itemView);
         if (visibleNow == null || visibleNow != visible) {
             actionBarItemsVisibility.put(itemView, visible);
@@ -11054,6 +11059,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         allMediaItem.setText(LocaleController.getString("ShowAllMedia", R.string.ShowAllMedia));
         setItemVisible(sendItem, false, false);
         setItemVisible(pipItem, false, true);
+        menuItem.hideSubItem(gallery_menu_pip2);
         if (photoCropView != null) {
             photoCropView.setSubtitle(null);
         }
@@ -11516,12 +11522,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 menuItem.checkHideMenuItem();
                 if (isEmbedVideo) {
                     menuItem.showSubItem(gallery_menu_openin);
-                    if (ExteraConfig.centerTitle) {
-                        menuItem.showSubItem(gallery_menu_pip2);
-                        setItemVisible(pipItem, false, false);
-                    } else {
-                        setItemVisible(pipItem, true, false);
-                    }
+                    if (ExteraConfig.centerTitle) menuItem.showSubItem(gallery_menu_pip2);
+                    setItemVisible(pipItem, true, false);
                 } else if (isVideo) {
                     if (!noforwards || (slideshowMessageId == 0 ? MessageObject.getMedia(newMessageObject.messageOwner).webpage != null && MessageObject.getMedia(newMessageObject.messageOwner).webpage.url != null :
                             MessageObject.getMedia(imagesArr.get(0).messageOwner).webpage != null && MessageObject.getMedia(imagesArr.get(0).messageOwner).webpage.url != null)) {
@@ -11535,20 +11537,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     }
                     if (!pipAvailable) {
                         pipItem.setEnabled(false);
-                        if (ExteraConfig.centerTitle) {
-                            menuItem.showSubItem(gallery_menu_pip2);
-                            setItemVisible(pipItem, false, false);
-                        } else {
-                            setItemVisible(pipItem, true, !masksItemVisible, 0.5f);
-                        }
+                        setItemVisible(pipItem, true, !masksItemVisible, 0.5f);
                     } else {
-                        if (ExteraConfig.centerTitle) {
-                            menuItem.showSubItem(gallery_menu_pip2);
-                            setItemVisible(pipItem, false, !masksItemVisible);
-                        } else {
-                            setItemVisible(pipItem, true, !masksItemVisible);
-                        }
+                        setItemVisible(pipItem, true, !masksItemVisible);
                     }
+                    if (ExteraConfig.centerTitle) menuItem.showSubItem(gallery_menu_pip2);
                     if (newMessageObject.hasAttachedStickers() && !DialogObject.isEncryptedDialog(newMessageObject.getDialogId())) {
                         menuItem.showSubItem(gallery_menu_masks2);
                     } else {
@@ -11560,13 +11553,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     speedGap.setVisibility(View.GONE);
                     menuItem.hideSubItem(gallery_menu_openin);
                     menuItem.checkHideMenuItem();
-                    final boolean pipItemVisible = ExteraConfig.centerTitle ? pipItem.getVisibility() == View.VISIBLE || menuItem.isSubItemVisible(gallery_menu_pip2) : pipItem.getVisibility() == View.VISIBLE;
+                    final boolean pipItemVisible = pipItem.getVisibility() == View.VISIBLE || menuItem.isSubItemVisible(gallery_menu_pip2);
                     final boolean shouldMasksItemBeVisible = newMessageObject.hasAttachedStickers() && !DialogObject.isEncryptedDialog(newMessageObject.getDialogId());
                     if (pipItemVisible) {
                         setItemVisible(pipItem, false, !shouldMasksItemBeVisible);
-                        if (ExteraConfig.centerTitle) menuItem.hideSubItem(gallery_menu_pip2);
+                        menuItem.hideSubItem(gallery_menu_pip2);
                     }
-                    setItemVisible(masksItem, !ExteraConfig.centerTitle ? shouldMasksItemBeVisible : false, !pipItemVisible);
+                    setItemVisible(masksItem, !ExteraConfig.centerTitle && shouldMasksItemBeVisible, !pipItemVisible);
                     if (ExteraConfig.centerTitle && shouldMasksItemBeVisible) menuItem.showSubItem(gallery_menu_masks2);
                 }
                 final boolean shouldAutoPlayed = shouldMessageObjectAutoPlayed(newMessageObject);
@@ -11629,12 +11622,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 allowShare = !noforwards;
                 bottomButtonsLayout.setVisibility(View.VISIBLE);
                 paintButton.setVisibility(View.GONE);
-                if (!ExteraConfig.centerTitle) {
-                    shareItem.setVisibility(allowShare ? View.VISIBLE : View.GONE);
-                } else {
-                    shareItem.setVisibility(View.GONE);
-                    shareButton.setVisibility(allowShare ? View.VISIBLE : View.GONE);
-                }
+                shareItem.setVisibility(View.GONE);
+                shareButton.setVisibility(allowShare ? View.VISIBLE : View.GONE);
                 actionBar.setTitle(LocaleController.getString("AttachGif", R.string.AttachGif));
             } else {
                 if (totalImagesCount + totalImagesCountMerge != 0 && !needSearchImageInArr) {
@@ -11722,7 +11711,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     if (bottomButtonsLayout.getVisibility() == View.VISIBLE) {
                         menuItem.hideSubItem(gallery_menu_share);
                         if (shareItem != null) {
-                            shareItem.setVisibility(View.VISIBLE);
+                            shareItem.setVisibility(View.GONE);
                         }
                     } else {
                         menuItem.showSubItem(gallery_menu_share);
@@ -11794,8 +11783,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 menuItem.showSubItem(gallery_menu_save);
             }
             allowShare = !noforwards;
-            if (ExteraConfig.centerTitle) shareItem.setVisibility(View.GONE);
-            shareButton.setVisibility(allowShare && shareItem.getVisibility() != View.VISIBLE ? View.VISIBLE : View.GONE);
+            shareItem.setVisibility(View.GONE);
+            shareButton.setVisibility(allowShare ? View.VISIBLE : View.GONE);
 
             bottomButtonsLayout.setVisibility(!videoPlayerControlVisible ? View.VISIBLE : View.GONE);
             if (bottomButtonsLayout.getVisibility() == View.VISIBLE) {
@@ -12025,22 +12014,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
                 if (!pipAvailable) {
                     pipItem.setEnabled(false);
-                    if (ExteraConfig.centerTitle) {
-                        setItemVisible(pipItem, false, false);
-                        menuItem.showSubItem(gallery_menu_pip2);
-                    } else {
-                        setItemVisible(pipItem, true, true, 0.5f);
-                    }
+                    setItemVisible(pipItem, true, true, 0.5f);
                 } else {
-                    if (ExteraConfig.centerTitle) {
-                        setItemVisible(pipItem, false, false);
-                        menuItem.showSubItem(gallery_menu_pip2);
-                    } else {
-                        setItemVisible(pipItem, true, true);
-                    }
+                    setItemVisible(pipItem, true, true);
                 }
+                if (ExteraConfig.centerTitle) menuItem.showSubItem(gallery_menu_pip2);
             } else {
                 menuItem.hideSubItem(gallery_menu_openin);
+                menuItem.hideSubItem(gallery_menu_pip2);
                 setItemVisible(pipItem, false, true);
             }
             if (bottomLayout.getVisibility() != View.GONE) {
@@ -12048,12 +12029,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
             bottomLayout.setTag(null);
 
-            if (!ExteraConfig.centerTitle) {
-                shareItem.setVisibility(allowShare ? View.VISIBLE : View.GONE);
-            } else {
-                shareItem.setVisibility(View.GONE);
-                shareButton.setVisibility(allowShare ? View.VISIBLE : View.GONE);
-            }
+            shareItem.setVisibility(View.GONE);
+            shareButton.setVisibility(allowShare ? View.VISIBLE : View.GONE);
 
             if (currentAnimation != null) {
                 menuItem.hideSubItem(gallery_menu_save);
@@ -16660,7 +16637,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     private boolean enableSwipeToPiP() {
+        // TODO: swipe to pip
         return false;
+//        if (!BuildVars.DEBUG_PRIVATE_VERSION) {
+//            return false;
+//        }
+//        boolean permissionsEnabled = Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(parentActivity);
+//        return pipAvailable && textureUploaded && videoPlayer != null && videoPlayer.getRepeatCount() == 0 && permissionsEnabled && !(changingTextureView || switchingInlineMode || isInline);
     }
 
     @Override

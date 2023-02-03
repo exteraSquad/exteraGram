@@ -445,13 +445,17 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
 
     @Override
     public void drawHeaderShadow(Canvas canvas, int y) {
-        drawHeaderShadow(canvas, 255, y);
+        drawHeaderShadow(canvas, Theme.dividerPaint.getAlpha(), y);
     }
 
     @Override
     public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
+        int a = Theme.dividerPaint.getAlpha();
+        if (alpha > a) alpha = a;
+        Theme.dividerPaint.setAlpha(alpha);
         if (!ExteraConfig.disableDividers)
             canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
+        Theme.dividerPaint.setAlpha(a);
     }
 
     @Keep

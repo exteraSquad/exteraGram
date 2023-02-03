@@ -66,12 +66,12 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.extras.IconReplacer;
 import com.exteragram.messenger.monet.MonetAccent;
 import com.exteragram.messenger.monet.MonetHelper;
 
@@ -5440,7 +5440,7 @@ public class Theme {
                     }
                 }
                 saveOtherThemes(true, true);
-                themeConfig.edit().remove("themes").commit();
+                themeConfig.edit().remove("themes").apply();
             }
         }
 
@@ -5463,7 +5463,7 @@ public class Theme {
                 if (applyingTheme != null && !themeConfig.contains("lastDayTheme")) {
                     SharedPreferences.Editor editor = themeConfig.edit();
                     editor.putString("lastDayTheme", applyingTheme.getKey());
-                    editor.commit();
+                    editor.apply();
                 }
             }
 
@@ -5484,7 +5484,7 @@ public class Theme {
             if (currentNightTheme != null && !themeConfig.contains("lastDarkTheme")) {
                 SharedPreferences.Editor editor = themeConfig.edit();
                 editor.putString("lastDarkTheme", currentNightTheme.getKey());
-                editor.commit();
+                editor.apply();
             }
 
             SharedPreferences.Editor oldEditor = null;
@@ -5636,8 +5636,8 @@ public class Theme {
                 }
             }
             if (oldEditor != null) {
-                oldEditor.commit();
-                oldEditorNew.commit();
+                oldEditor.apply();
+                oldEditorNew.apply();
             }
 
             selectedAutoNightType = preferences.getInt("selectedAutoNightType", AUTO_NIGHT_TYPE_NONE);
@@ -5698,7 +5698,7 @@ public class Theme {
                     currentNightTheme.setOverrideWallpaper(overrideWallpaper);
                 }
             }
-            preferences.edit().remove("overrideThemeWallpaper").remove("selectedBackground2").commit();
+            preferences.edit().remove("overrideThemeWallpaper").remove("selectedBackground2").apply();
         }
 
         int switchToTheme = needSwitchToTheme();
@@ -5888,7 +5888,7 @@ public class Theme {
             if (monthOfYear == 0 && dayOfMonth == 1 && hour <= 23) {
                 canStartHolidayAnimation = true;
             } else {
-                canStartHolidayAnimation = BuildVars.DEBUG_VERSION || ExteraConfig.forceDrawerSnow;//false;
+                canStartHolidayAnimation = ExteraConfig.forceDrawerSnow;//false;
             }
             if (dialogs_holidayDrawable == null) {
                 if (canStartHolidayAnimation || (monthOfYear == 11 && dayOfMonth >= (BuildVars.DEBUG_PRIVATE_VERSION ? 29 : 31) && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1)) {
@@ -5899,8 +5899,8 @@ public class Theme {
                         isUpperCase = false;
                     }
                     dialogs_holidayDrawable = ApplicationLoader.applicationContext.getResources().getDrawable(R.drawable.newyear);
-                    dialogs_holidayDrawableOffsetX = -AndroidUtilities.dp(3);
-                    dialogs_holidayDrawableOffsetY = AndroidUtilities.dp(isUpperCase ? 2 : 6);
+                    dialogs_holidayDrawableOffsetX = -AndroidUtilities.dp(3f);
+                    dialogs_holidayDrawableOffsetY = AndroidUtilities.dp(isUpperCase ? 4.5f : 6.5f);
                 }
             }
         }
@@ -5954,7 +5954,7 @@ public class Theme {
     public static CombinedDrawable createCircleDrawableWithIcon(int size, int iconRes, int stroke) {
         Drawable drawable;
         if (iconRes != 0) {
-            drawable = ApplicationLoader.applicationContext.getResources().getDrawable(IconReplacer.replace(iconRes)).mutate();
+            drawable = ContextCompat.getDrawable(ApplicationLoader.applicationContext, iconRes).mutate();
         } else {
             drawable = null;
         }

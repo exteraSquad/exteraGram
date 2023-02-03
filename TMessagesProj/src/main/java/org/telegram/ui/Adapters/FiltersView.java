@@ -593,15 +593,7 @@ public class FiltersView extends RecyclerListView {
                 }
             }
         }
-
         return false;
-    }
-
-    @Override
-    public void onDraw(Canvas c) {
-        super.onDraw(c);
-        if (!ExteraConfig.disableDividers)
-            c.drawRect(0, getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
     }
 
     public void updateColors() {

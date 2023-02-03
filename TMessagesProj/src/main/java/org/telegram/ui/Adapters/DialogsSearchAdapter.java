@@ -1264,6 +1264,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
         View view;
         switch (viewType) {
             case VIEW_TYPE_PROFILE_CELL:
+            case VIEW_TYPE_INVITE_CONTACT_CELL:
                 view = new ProfileSearchCell(mContext);
                 break;
             case VIEW_TYPE_GRAY_SECTION:
@@ -1326,9 +1327,6 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                 });
                 view = horizontalListView;
                 innerListView = horizontalListView;
-                break;
-            case VIEW_TYPE_INVITE_CONTACT_CELL:
-                view = new ProfileSearchCell(mContext);
                 break;
             case VIEW_TYPE_ADD_BY_PHONE:
             default:

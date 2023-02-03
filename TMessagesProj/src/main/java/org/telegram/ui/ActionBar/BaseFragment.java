@@ -790,7 +790,7 @@ public abstract class BaseFragment {
     }
 
     public int getNavigationBarColor() {
-        return ExteraConfig.transparentNavBar ? Theme.getColor(Theme.key_chat_messagePanelBackground) : Theme.getColor(Theme.key_windowBackgroundGray);
+        return Theme.getColor(ExteraConfig.transparentNavBar ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray);
     }
 
     public void setNavigationBarColor(int color) {

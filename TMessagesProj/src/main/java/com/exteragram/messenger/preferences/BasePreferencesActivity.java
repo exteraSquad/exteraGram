@@ -13,8 +13,8 @@ package com.exteragram.messenger.preferences;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +29,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.exteragram.messenger.components.InfoSettingsCell;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
@@ -43,6 +45,7 @@ import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.URLSpanNoUnderline;
 
 public abstract class BasePreferencesActivity extends BaseFragment {
 
@@ -168,7 +171,6 @@ public abstract class BasePreferencesActivity extends BaseFragment {
             return type == 2 || type == 5 || type == 6 || type == 7;
         }
 
-
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -211,6 +213,28 @@ public abstract class BasePreferencesActivity extends BaseFragment {
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
+        }
+    }
+
+    protected CharSequence addLinkSpan(String text, String username) {
+        int index = text.indexOf(username);
+        if (index != -1) {
+            try {
+                SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
+                URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
+                    @Override
+                    public void onClick(View widget) {
+                        MessagesController.getInstance(currentAccount).openByUserName(username.substring(1), BasePreferencesActivity.this, 1);
+                    }
+                };
+                stringBuilder.setSpan(urlSpan, index, index + username.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                return stringBuilder;
+            } catch (Exception e) {
+                FileLog.e(e);
+                return text;
+            }
+        } else {
+            return text;
         }
     }
 }

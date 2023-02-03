@@ -47,7 +47,7 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.21"
 }
 
 def isPmBuild = "false"
@@ -72,10 +72,10 @@ android {
         targetSdkVersion 33
         versionName APP_VERSION_NAME
 
-        // Obtain your own keys at:
-        // Telegram: https://core.telegram.org/api/obtaining_api_id
+        // Obtain your own keys at: https://core.telegram.org/api/obtaining_api_id
         buildConfigField 'int', 'APP_ID', localProperties.getProperty("APP_ID")
         buildConfigField 'String', 'APP_HASH', localProperties.getProperty("APP_HASH")
+
         // Google Console: https://console.cloud.google.com/google/maps-apis/credentials
         resValue 'string', 'MAPS_V2_API', localProperties.getProperty("MAPS_V2_API")
 
@@ -87,11 +87,11 @@ android {
         }
     }
 
-    // externalNativeBuild.cmake.path 'jni/CMakeLists.txt'
+    externalNativeBuild.cmake.path 'jni/CMakeLists.txt'
 
     sourceSets.main {
-        // jniLibs.srcDir = './jni/'
-        jniLibs.srcDir 'libs'
+        jniLibs.srcDirs = ['./jni/']
+        //jniLibs.srcDir 'libs'
         jni.srcDirs = []
         res.srcDirs = ['src/main/res', 'src/main/res-solar']
     }
@@ -106,6 +106,10 @@ android {
         targetCompatibility JavaVersion.VERSION_11
 
         coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget=11
     }
 
     signingConfigs {

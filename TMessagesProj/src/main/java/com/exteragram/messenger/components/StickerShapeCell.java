@@ -18,7 +18,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.TextPaint;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -75,14 +79,7 @@ public class StickerShapeCell extends LinearLayout {
             rect.set(stroke, stroke, getMeasuredWidth() - stroke, AndroidUtilities.dp(80) - stroke);
             canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), outlinePaint);
 
-            String text;
-            if (isRounded) {
-                text = LocaleController.getString("StickerShapeRounded", R.string.StickerShapeRounded);
-            } else if (isRoundedAsMsg) {
-                text = LocaleController.getString("StickerShapeRoundedMsg", R.string.StickerShapeRoundedMsg);
-            } else {
-                text = LocaleController.getString("Default", R.string.Default);
-            }
+            String text = isRounded ? LocaleController.getString("StickerShapeRounded", R.string.StickerShapeRounded) : isRoundedAsMsg ? LocaleController.getString("StickerShapeRoundedMsg", R.string.StickerShapeRoundedMsg) : LocaleController.getString("Default", R.string.Default);
             int width = (int) Math.ceil(textPaint.measureText(text));
 
             canvas.drawText(text, (getMeasuredWidth() - width) >> 1, AndroidUtilities.dp(102), textPaint);
@@ -94,7 +91,13 @@ public class StickerShapeCell extends LinearLayout {
             } else if (isRounded) {
                 canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
             } else {
-                canvas.drawRoundRect(rect, AndroidUtilities.dp(SharedConfig.bubbleRadius), AndroidUtilities.dp(SharedConfig.bubbleRadius), Theme.dialogs_onlineCirclePaint);
+                Rect rect1 = new Rect();
+                rect.round(rect1);
+                int rad = AndroidUtilities.dp(SharedConfig.bubbleRadius);
+                ShapeDrawable defaultDrawable = new ShapeDrawable(new RoundRectShape(new float[]{rad, rad, rad, rad, rad, rad, rad / 3, rad / 3}, null, null));
+                defaultDrawable.getPaint().setColor(Theme.dialogs_onlineCirclePaint.getColor());
+                defaultDrawable.setBounds(rect1);
+                defaultDrawable.draw(canvas);
             }
         }
 

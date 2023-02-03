@@ -23,19 +23,14 @@
     <string name="CenterTitle">Titel in Aktionsleiste zentrieren</string>
     <string name="NewSwitchStyle">Alternativer Schalter-Stil aktivieren</string>
     <string name="TransparentNavBar">transparente Navigationsleiste</string>
-    <string name="TransparentNavBarValue">Die Navigationsleiste wird nicht vollständig transparent, sie erhält nur die Farbe des Nachrichtenfensters.</string>
-    <string name="SquareFab">Quadratform FAB</string>
-    <string name="SquareFabInfo">Eine schwebende Aktionstaste (FAB) ist eine kreisförmige Schaltfläche, die die primäre Aktion in der App-Benutzeroberfläche auslöst. Sie befindet sich in der rechten unteren Ecke des Bildschirms.</string>
     <!-- General -->
     <string name="DisableNumberRounding">Nummernrundung deaktivieren</string>
     <string name="FormatTimeWithSeconds">Zeit mit Sekunden formatieren</string>
     <string name="HideAllChats">Tab Alle Chat-Tabs ausblenden</string>
-    <string name="HideProxySponsor">Proxy-Sponsor ausblenden</string>
     <string name="DisableVibration">Vibration deaktivieren</string>
     <string name="ForceTabletMode">Tablet-Modus erzwingen</string>
     <string name="ArchiveOnPull">Archiv beim Herunterziehen öffnen</string>
     <string name="DisableUnarchiveSwipe">\"Unarchivieren\" wischen deaktivieren</string>
-    <string name="ForcePacmanAnimation">Pac-Man Animation erzwingen</string>
     <string name="ForcePacmanAnimationInfo">Dies erfordert die ausgewählte \"Archiv\"-Geste in der Chat-Liste.</string>
     <string name="Profile">Profil</string>
     <string name="HidePhoneNumber">Meine Telefonnummer ausblenden</string>
@@ -63,7 +58,6 @@
     <string name="DisablePlayback">Player öffnen</string>
     <string name="DPDescription">Deaktiviert die Wiedergabe bei Lautstärketasten</string>
     <!-- Drawer -->
-    <string name="Drawer">Schublade</string>
     <string name="DrawerElements">Drawer-Elemente</string>
     <string name="DrawerOptions">Drawer Optionen</string>
     <string name="DrawerIconPack">Symbolpaket</string>

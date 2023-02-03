@@ -47,7 +47,6 @@
     <string name="DisableAnimatedAvatars">禁用动态头像</string>
     <string name="ArchiveOnPull">下拉打开已归档对话</string>
     <string name="DisableUnarchiveSwipe">禁用\"取消存档\"滑动动作</string>
-    <string name="ForcePacmanAnimation">强制吃豆人动画</string>
     <string name="ForcePacmanAnimationInfo">这需要在聊天列表中选择“存档”滑动动作。</string>
     <string name="Profile">个人资料</string>
     <string name="HidePhoneNumber">隐藏手机号码</string>
@@ -113,9 +112,6 @@
     <string name="Unknown">Unknown</string>
     <string name="ConfirmCall">呼叫前确认</string>
     <string name="CallTo">是否呼叫**%1$s**？</string>
-    <string name="AppIconRelease">Release</string>
-    <string name="AppIconBeta">Beta</string>
-    <string name="AppIconInverted">反色</string>
     <string name="AppIconMonet">莫奈</string>
     <string name="AppIconGradient">渐变</string>
     <string name="AppIconPixel">Pixel</string>

@@ -11,13 +11,17 @@
 
 package com.exteragram.messenger;
 
-import android.content.res.Configuration;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
-import com.exteragram.messenger.monet.MonetHelper;
+import androidx.core.content.ContextCompat;
+
 import com.exteragram.messenger.updater.UpdaterUtils;
 
 import org.json.JSONArray;
@@ -34,6 +38,7 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.CombinedDrawable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -41,10 +46,11 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 public class ExteraUtils {
 
-    public static volatile DispatchQueue translateQueue = new DispatchQueue("translateQueue", false);
+    public static final DispatchQueue translateQueue = new DispatchQueue("translateQueue", false);
 
     public static Drawable drawFab() {
         return drawFab(false);
@@ -81,7 +87,7 @@ public class ExteraUtils {
         if (DC == -1 || DC == 0) {
             return getDCName(DC);
         } else {
-            return String.format("DC%d, %s", DC, getDCName(DC));
+            return String.format(Locale.ROOT, "DC%d, %s", DC, getDCName(DC));
         }
     }
 
@@ -146,7 +152,7 @@ public class ExteraUtils {
                         R.drawable.msg_saved_hw,
                         R.drawable.msg_invite_hw,
                         R.drawable.msg_help_hw,
-                        R.drawable.msg_secret_hw
+                        R.drawable.msg_nearby_hw
                 };
             default:
                 return new int[]{
@@ -237,5 +243,27 @@ public class ExteraUtils {
             title = UserObject.getFirstName(user);
         }
         return title;
+    }
+
+    public static boolean hasGps() {
+        boolean hasGps;
+        try {
+            hasGps = ApplicationLoader.applicationContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
+        } catch (Throwable e) {
+            hasGps = false;
+        }
+        return hasGps;
+    }
+
+    public static CombinedDrawable createCircleDrawableWithIcon(Context context, int iconRes, int size) {
+        Drawable drawable = iconRes != 0 ? ContextCompat.getDrawable(context, iconRes).mutate() : null;
+        OvalShape ovalShape = new OvalShape();
+        ovalShape.resize(size, size);
+        ShapeDrawable defaultDrawable = new ShapeDrawable(ovalShape);
+        Paint paint = defaultDrawable.getPaint();
+        paint.setColor(0xffffffff);
+        CombinedDrawable combinedDrawable = new CombinedDrawable(defaultDrawable, drawable);
+        combinedDrawable.setCustomSize(size, size);
+        return combinedDrawable;
     }
 }

@@ -124,7 +124,7 @@ public interface INavigationLayout {
     default void rebuildAllFragmentViews(boolean last, boolean showLastAfter) {}
 
     default void drawHeaderShadow(Canvas canvas, int y) {
-        drawHeaderShadow(canvas, 0xFF, y);
+        drawHeaderShadow(canvas, Theme.dividerPaint.getAlpha(), y);
     }
 
     default BaseFragment getBackgroundFragment() {

@@ -890,8 +890,8 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
         invalidate();
 
         try {
-            if (bgView != null && fgView != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int navColor = ColorUtils.blendARGB(fgView.fragment.getNavigationBarColor(), bgView.fragment.getNavigationBarColor(), swipeProgress);
+            if (bgView != null && fgView != null) {
+                int navColor = ExteraConfig.transparentNavBar ? Theme.getColor(Theme.key_chat_messagePanelBackground) : ColorUtils.blendARGB(fgView.fragment.getNavigationBarColor(), bgView.fragment.getNavigationBarColor(), swipeProgress);
                 getParentActivity().getWindow().setNavigationBarColor(navColor);
                 AndroidUtilities.setLightNavigationBar(getParentActivity().getWindow(), AndroidUtilities.computePerceivedBrightness(navColor) > 0.721f);
             }
@@ -2005,8 +2005,12 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
 
     @Override
     public void drawHeaderShadow(Canvas canvas, int alpha, int y) {
+        int a = Theme.dividerPaint.getAlpha();
+        if (alpha > a) alpha = a;
+        Theme.dividerPaint.setAlpha(alpha);
         if (!ExteraConfig.disableDividers)
             canvas.drawLine(0, y, getMeasuredWidth(), y, Theme.dividerPaint);
+        Theme.dividerPaint.setAlpha(a);
     }
 
     @Override

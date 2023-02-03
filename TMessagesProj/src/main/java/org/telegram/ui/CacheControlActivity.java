@@ -8,10 +8,6 @@
 
 package org.telegram.ui;
 
-import static android.content.Context.ACTIVITY_SERVICE;
-import static org.webrtc.ContextUtils.getApplicationContext;
-
-import android.app.ActivityManager;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -56,6 +52,7 @@ import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BotWebViewVibrationEffect;
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.CacheByChatsController;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
@@ -1664,7 +1661,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
             valueTextView.setCallback(button);
             valueTextView.setTextSize(AndroidUtilities.dp(14));
             valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            valueTextView.setTextColor(Theme.adaptHSV(Theme.getColor(Theme.key_featuredStickers_addButton), -.46f, +.08f));
+            valueTextView.setTextColor(Theme.adaptHSV(Theme.getColor(Theme.key_featuredStickers_buttonText), -.46f, +.08f));
             valueTextView.setText("");
 
             setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));

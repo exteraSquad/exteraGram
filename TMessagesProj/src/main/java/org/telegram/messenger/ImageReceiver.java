@@ -388,7 +388,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
             if (user.photo != null) {
                 strippedBitmap = user.photo.strippedBitmap;
                 hasStripped = user.photo.stripped_thumb != null;
-                if (animationEnabled && MessagesController.getInstance(currentAccount).isPremiumUser(user) && user.photo.has_video && (!ExteraConfig.disableAnimatedAvatars || !SharedConfig.getLiteMode().enabled())) {
+                if (animationEnabled && MessagesController.getInstance(currentAccount).isPremiumUser(user) && user.photo.has_video && !ExteraConfig.disableAnimatedAvatars && !SharedConfig.getLiteMode().enabled()) {
                     final TLRPC.UserFull userFull = MessagesController.getInstance(currentAccount).getUserFull(user.id);
                     if (userFull == null) {
                         MessagesController.getInstance(currentAccount).loadFullUser(user, currentGuid, false);
@@ -2777,15 +2777,19 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         if (type == TYPE_MEDIA) {
             currentMediaKey = null;
             currentMediaDrawable = null;
+            mediaShader = null;
         } else if (type == TYPE_CROSSFDADE) {
             crossfadeKey = null;
             crossfadeImage = null;
+            crossfadeShader = null;
         } else if (type == TYPE_THUMB) {
             currentThumbDrawable = null;
             currentThumbKey = null;
+            thumbShader = null;
         } else {
             currentImageDrawable = null;
             currentImageKey = null;
+            imageShader = null;
         }
     }
 
