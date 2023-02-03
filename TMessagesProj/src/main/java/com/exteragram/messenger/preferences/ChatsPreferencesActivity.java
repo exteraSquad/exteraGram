@@ -428,7 +428,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     } else if (position == chatHeaderRow) {
                         headerCell.setText(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort));
                     } else if (position == mediaHeaderRow) {
-                        headerCell.setText(LocaleController.getString("Media", R.string.Media));
+                        headerCell.setText(LocaleController.getString("MediaTab", R.string.MediaTab));
                     } else if (position == stickerShapeHeaderRow) {
                         headerCell.setText(LocaleController.getString("StickerShape", R.string.StickerShape));
                     }

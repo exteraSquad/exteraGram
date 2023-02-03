@@ -814,6 +814,7 @@ public class ViewPagerFixed extends FrameLayout {
             public String title;
             public int titleWidth;
             public int counter;
+            public float alpha = 1f;
 
             public Tab(int i, String t) {
                 id = i;
@@ -853,6 +854,7 @@ public class ViewPagerFixed extends FrameLayout {
                 currentTab = tab;
                 currentPosition = position;
                 setContentDescription(tab.title);
+                setAlpha(tab.alpha);
                 requestLayout();
             }
 

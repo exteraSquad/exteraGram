@@ -78,6 +78,7 @@ public class BottomSheet extends Dialog {
     public boolean drawNavigationBar;
     public boolean drawDoubleNavigationBar;
     public boolean scrollNavBar;
+    protected boolean waitingKeyboard;
 
     protected boolean useSmoothKeyboard;
 
@@ -169,13 +170,14 @@ public class BottomSheet extends Dialog {
     private OnDismissListener onHideListener;
     protected Theme.ResourcesProvider resourcesProvider;
     protected boolean isPortrait;
+    public boolean pauseAllHeavyOperations = true;
 
     public void setDisableScroll(boolean b) {
         disableScroll = b;
     }
 
     private ValueAnimator keyboardContentAnimator;
-    protected boolean smoothKeyboardAnimationEnabled;
+    public boolean smoothKeyboardAnimationEnabled;
     private boolean openNoDelay;
 
     private float hideSystemVerticalInsetsProgress;
@@ -566,10 +568,17 @@ public class BottomSheet extends Dialog {
                     child.layout(childLeft, childTop, childLeft + width, childTop + height);
                 }
             }
-            if (layoutCount == 0 && startAnimationRunnable != null) {
+            if (layoutCount == 0 && startAnimationRunnable != null && !waitingKeyboard) {
                 AndroidUtilities.cancelRunOnUIThread(startAnimationRunnable);
                 startAnimationRunnable.run();
                 startAnimationRunnable = null;
+            }
+            if (waitingKeyboard && keyboardVisible) {
+                if (startAnimationRunnable != null) {
+                    AndroidUtilities.cancelRunOnUIThread(startAnimationRunnable);
+                    startAnimationRunnable.run();
+                }
+                waitingKeyboard = false;
             }
             keyboardChanged = false;
         }
@@ -1203,6 +1212,10 @@ public class BottomSheet extends Dialog {
         backDrawable.setAlpha(0);
         layoutCount = 2;
         containerView.setTranslationY(AndroidUtilities.statusBarHeight * (1f - hideSystemVerticalInsetsProgress) + containerView.getMeasuredHeight() + (scrollNavBar ? getBottomInset() : 0));
+        long delay = openNoDelay ? 0 : 150;
+        if (waitingKeyboard) {
+            delay = 500;
+        }
         AndroidUtilities.runOnUIThread(startAnimationRunnable = new Runnable() {
             @Override
             public void run() {
@@ -1212,7 +1225,7 @@ public class BottomSheet extends Dialog {
                 startAnimationRunnable = null;
                 startOpenAnimation();
             }
-        }, openNoDelay ? 0 : 150);
+        }, delay);
     }
 
     public ColorDrawable getBackDrawable() {
@@ -1339,7 +1352,7 @@ public class BottomSheet extends Dialog {
                     navigationBarAnimation
             );
             currentSheetAnimation.setDuration(400);
-            currentSheetAnimation.setStartDelay(20);
+            currentSheetAnimation.setStartDelay(waitingKeyboard ? 0 : 20);
             currentSheetAnimation.setInterpolator(openInterpolator);
             currentSheetAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -1360,7 +1373,9 @@ public class BottomSheet extends Dialog {
                             getWindow().setAttributes(params);
                         }
                     }
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.startAllHeavyOperations, 512);
+                    if (pauseAllHeavyOperations) {
+                        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.startAllHeavyOperations, 512);
+                    }
                 }
 
                 @Override
@@ -1371,7 +1386,9 @@ public class BottomSheet extends Dialog {
                     }
                 }
             });
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.stopAllHeavyOperations, 512);
+            if (pauseAllHeavyOperations) {
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.stopAllHeavyOperations, 512);
+            }
             currentSheetAnimation.start();
         }
     }

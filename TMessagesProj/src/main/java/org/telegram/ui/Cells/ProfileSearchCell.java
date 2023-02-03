@@ -292,7 +292,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
                 nameLeft = AndroidUtilities.dp(11);
             }
             nameLockTop = AndroidUtilities.dp(22.0f);
-            updateStatus(false, false,null, false);
+            updateStatus(false, false, null, false);
         } else {
             if (chat != null) {
                 dialog_id = -chat.id;
@@ -312,7 +312,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
                 }
                 nameLockTop = AndroidUtilities.dp(21);
                 drawCheck = user.verified;
-                drawPremium = !user.self && MessagesController.getInstance(currentAccount).isPremiumUser(user);
+                drawPremium = !savedMessages && MessagesController.getInstance(currentAccount).isPremiumUser(user);
                 updateStatus(drawCheck, ExteraConfig.isExteraDev(user), user, false);
             } else if (contact != null) {
                 if (!LocaleController.isRTL) {
@@ -554,16 +554,16 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
         if (verified) {
             statusDrawable.set(new CombinedDrawable(Theme.dialogs_verifiedDrawable, Theme.dialogs_verifiedCheckDrawable, 0, 0), animated);
             statusDrawable.setColor(null);
-        } else if (user != null && !user.self && user.emoji_status instanceof TLRPC.TL_emojiStatusUntil && ((TLRPC.TL_emojiStatusUntil) user.emoji_status).until > (int) (System.currentTimeMillis() / 1000)) {
+        } else if (user != null && !savedMessages && user.emoji_status instanceof TLRPC.TL_emojiStatusUntil && ((TLRPC.TL_emojiStatusUntil) user.emoji_status).until > (int) (System.currentTimeMillis() / 1000)) {
             statusDrawable.set(((TLRPC.TL_emojiStatusUntil) user.emoji_status).document_id, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
-        } else if (user != null && !user.self && user.emoji_status instanceof TLRPC.TL_emojiStatus) {
+        } else if (user != null && !savedMessages && user.emoji_status instanceof TLRPC.TL_emojiStatus) {
             statusDrawable.set(((TLRPC.TL_emojiStatus) user.emoji_status).document_id, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
         } else if (arrow) {
             statusDrawable.set(Theme.dialogs_outlineArrowDrawable, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
-        } else if (user != null && !user.self && MessagesController.getInstance(currentAccount).isPremiumUser(user)) {
+        } else if (user != null && !savedMessages && MessagesController.getInstance(currentAccount).isPremiumUser(user)) {
             statusDrawable.set(PremiumGradient.getInstance().premiumStarDrawableMini, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
         } else {

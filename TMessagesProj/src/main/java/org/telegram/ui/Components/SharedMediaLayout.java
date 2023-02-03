@@ -3258,7 +3258,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             Bundle args = new Bundle();
             args.putBoolean("onlySelect", true);
             args.putBoolean("canSelectTopics", true);
-            args.putInt("dialogsType", 3);
+            args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
             DialogsActivity fragment = new DialogsActivity(args);
             fragment.setDelegate((fragment1, dids, message, param) -> {
                 ArrayList<MessageObject> fmessages = new ArrayList<>();
@@ -3312,7 +3312,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                             args1.putLong("chat_id", -did);
                         }
                         if (!profileActivity.getMessagesController().checkCanOpenChat(args1, fragment1)) {
-                            return;
+                            return true;
                         }
                     }
 
@@ -3323,6 +3323,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                     fragment1.presentFragment(chatActivity, true);
                     chatActivity.showFieldPanelForForward(true, fmessages);
                 }
+                return true;
             });
             profileActivity.presentFragment(fragment);
         } else if (id == gotochat) {

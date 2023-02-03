@@ -261,6 +261,7 @@ public class ApplicationLoader extends Application {
         AndroidUtilities.runOnUIThread(ApplicationLoader::startPushService);
 
         LauncherIconController.tryFixLauncherIconIfNeeded();
+        ProxyRotationController.init();
     }
 
     public static void startPushService() {

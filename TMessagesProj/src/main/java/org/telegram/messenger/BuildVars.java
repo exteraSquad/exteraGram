@@ -25,6 +25,9 @@ public class BuildVars {
     public static String BUILD_VERSION_STRING;
     public static int APP_ID;
     public static String APP_HASH;
+
+    // SafetyNet key for Google Identity SDK, set it to empty to disable
+    public static String SAFETYNET_KEY = "";
     public static String SMS_HASH;
     public static String PLAYSTORE_APP_URL = "https://play.google.com/store/apps/details?id=com.exteragram.messenger";
     public static String GOOGLE_AUTH_CLIENT_ID = "760348033671-81kmi3pi84p11ub8hp9a1funsv0rn2p9.apps.googleusercontent.com";

@@ -6902,7 +6902,6 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
             cells[num].setChecked(!cells[num].isChecked(), true);
         });
 
-        builder.setCustomViewOffset(12);
         builder.setView(linearLayout);
         builder.setDialogButtonColorKey(Theme.key_voipgroup_listeningText);
         builder.setPositiveButton(LocaleController.getString("VoipGroupLeave", R.string.VoipGroupLeave), (dialogInterface, position) -> processOnLeave(call, cells[0].isChecked(), selfId, onLeave));
@@ -7081,7 +7080,9 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
             if (currentAvatarUpdater != null && currentAvatarUpdater.isUploadingImage()) {
                 return;
             }
-            currentAvatarUpdater = new ImageUpdater(true);
+            TLRPC.User user = accountInstance.getUserConfig().getCurrentUser();
+
+            currentAvatarUpdater = new ImageUpdater(true, ImageUpdater.FOR_TYPE_USER, true);
             currentAvatarUpdater.setOpenWithFrontfaceCamera(true);
             currentAvatarUpdater.setForceDarkTheme(true);
             currentAvatarUpdater.setSearchAvailable(true, true);
@@ -7089,7 +7090,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
             currentAvatarUpdater.parentFragment = parentActivity.getActionBarLayout().getLastFragment();
             currentAvatarUpdater.setDelegate(avatarUpdaterDelegate = new AvatarUpdaterDelegate(peerId));
 
-            TLRPC.User user = accountInstance.getUserConfig().getCurrentUser();
+
             currentAvatarUpdater.openMenu(user.photo != null && user.photo.photo_big != null && !(user.photo instanceof TLRPC.TL_userProfilePhotoEmpty), () -> accountInstance.getMessagesController().deleteUserPhoto(null), dialog -> {
 
             }, 0);
@@ -7430,7 +7431,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
             avatarsViewPager.setHasActiveVideo(hasAttachedRenderer);
             avatarsViewPager.setData(peerId, true);
             avatarsViewPager.setCreateThumbFromParent(true);
-            avatarsViewPager.initIfEmpty(imageLocation, thumbLocation, true);
+            avatarsViewPager.initIfEmpty(null, imageLocation, thumbLocation, true);
             if (scrimRenderer != null) {
                 scrimRenderer.setShowingAsScrimView(true, true);
             }
@@ -8331,9 +8332,9 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
         }
 
         @Override
-        public void didUploadPhoto(TLRPC.InputFile photo, TLRPC.InputFile video, double videoStartTimestamp, String videoPath, TLRPC.PhotoSize bigSize, TLRPC.PhotoSize smallSize, boolean isVideo) {
+        public void didUploadPhoto(TLRPC.InputFile photo, TLRPC.InputFile video, double videoStartTimestamp, String videoPath, TLRPC.PhotoSize bigSize, TLRPC.PhotoSize smallSize, boolean isVideo, TLRPC.VideoSize emojiMarkup) {
             AndroidUtilities.runOnUIThread(() -> {
-                if (photo != null || video != null) {
+                if (photo != null || video != null || emojiMarkup != null) {
                     if (peerId > 0) {
                         TLRPC.TL_photos_uploadProfilePhoto req = new TLRPC.TL_photos_uploadProfilePhoto();
                         if (photo != null) {
@@ -8345,6 +8346,10 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
                             req.flags |= 2;
                             req.video_start_ts = videoStartTimestamp;
                             req.flags |= 4;
+                        }
+                        if (emojiMarkup != null) {
+                            req.video_emoji_markup = emojiMarkup;
+                            req.flags |= 16;
                         }
 
                         accountInstance.getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
@@ -8415,7 +8420,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
                                     thumb = thumbLocation;
                                 }
                                 avatarsViewPager.setCreateThumbFromParent(false);
-                                avatarsViewPager.initIfEmpty(imageLocation, thumb, true);
+                                avatarsViewPager.initIfEmpty(null, imageLocation, thumb, true);
                                 avatar = null;
                                 avatarBig = null;
                                 AndroidUtilities.updateVisibleRows(listView);
@@ -8427,7 +8432,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
                             accountInstance.getUserConfig().saveConfig(true);
                         }));
                     } else {
-                        accountInstance.getMessagesController().changeChatAvatar(-peerId, null, photo, video, videoStartTimestamp, videoPath, smallSize.location, bigSize.location, () -> {
+                        accountInstance.getMessagesController().changeChatAvatar(-peerId, null, photo, video, emojiMarkup, videoStartTimestamp, videoPath, smallSize.location, bigSize.location, () -> {
                             if (uploadingImageLocation != null) {
                                 avatarsViewPager.removeUploadingImage(uploadingImageLocation);
                                 uploadingImageLocation = null;
@@ -8443,7 +8448,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
                                 thumb = thumbLocation;
                             }
                             avatarsViewPager.setCreateThumbFromParent(false);
-                            avatarsViewPager.initIfEmpty(imageLocation, thumb, true);
+                            avatarsViewPager.initIfEmpty(null, imageLocation, thumb, true);
                             avatar = null;
                             avatarBig = null;
                             AndroidUtilities.updateVisibleRows(listView);
