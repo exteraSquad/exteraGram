@@ -3583,6 +3583,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
             SharedConfig.saveConfig();
 
             recordingAudioFile = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), FileLoader.getAttachFileName(recordingAudio));
+            SharedConfig.lockFile(recordingAudioFile);
 
             try {
                 if (startRecord(recordingAudioFile.getAbsolutePath(), sampleRate) == 0) {
@@ -3608,6 +3609,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 FileLog.e(e);
                 recordingAudio = null;
                 stopRecord();
+                SharedConfig.unlockFile(recordingAudioFile);
                 recordingAudioFile.delete();
                 recordingAudioFile = null;
                 try {
@@ -3671,9 +3673,13 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         if (send != 0) {
             final TLRPC.TL_document audioToSend = recordingAudio;
             final File recordingAudioFileToSend = recordingAudioFile;
+            if (BuildVars.LOGS_ENABLED) {
+                FileLog.d("stop recording internal " + recordingAudioFileToSend.exists() + recordingAudioFileToSend.length());
+            }
             fileEncodingQueue.postRunnable(() -> {
                 stopRecord();
                 AndroidUtilities.runOnUIThread(() -> {
+
                     audioToSend.date = ConnectionsManager.getInstance(recordingCurrentAccount).getCurrentTime();
                     audioToSend.size = (int) recordingAudioFileToSend.length();
                     TLRPC.TL_documentAttributeAudio attributeAudio = new TLRPC.TL_documentAttributeAudio();
@@ -3692,12 +3698,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                         NotificationCenter.getInstance(recordingCurrentAccount).postNotificationName(NotificationCenter.audioDidSent, recordingGuid, send == 2 ? audioToSend : null, send == 2 ? recordingAudioFileToSend.getAbsolutePath() : null);
                     } else {
                         NotificationCenter.getInstance(recordingCurrentAccount).postNotificationName(NotificationCenter.audioRecordTooShort, recordingGuid, false, (int) duration);
+                        SharedConfig.unlockFile(recordingAudioFileToSend);
                         recordingAudioFileToSend.delete();
                     }
                     requestAudioFocus(false);
                 });
             });
         } else {
+            SharedConfig.unlockFile(recordingAudioFile);
             if (recordingAudioFile != null) {
                 recordingAudioFile.delete();
             }
