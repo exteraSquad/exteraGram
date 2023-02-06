@@ -1572,7 +1572,7 @@ public class ImageLoader {
                 bitmapDrawable = new BitmapDrawable(bitmap);
             }
 
-            lottieDrawable.recycle();
+            lottieDrawable.recycle(false);
             currentBitmap.recycle();
             onPostExecute(bitmapDrawable);
         }
@@ -1588,7 +1588,7 @@ public class ImageLoader {
                         lottieMemCache.put(cacheImage.key, lottieDrawable);
                         toSet = lottieDrawable;
                     } else {
-                        lottieDrawable.recycle();
+                        lottieDrawable.recycle(false);
                     }
                     if (toSet != null) {
                         incrementUseCount(cacheImage.key);
@@ -1977,7 +1977,7 @@ public class ImageLoader {
                         ((AnimatedFileDrawable) oldValue).recycle();
                     }
                     if (oldValue instanceof RLottieDrawable) {
-                        ((RLottieDrawable) oldValue).recycle();
+                        ((RLottieDrawable) oldValue).recycle(false);
                     }
                 }
             }
