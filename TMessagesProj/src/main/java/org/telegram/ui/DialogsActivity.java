@@ -149,6 +149,7 @@ import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.HintDialogCell;
 import org.telegram.ui.Cells.LoadingCell;
 import org.telegram.ui.Cells.ProfileSearchCell;
+import org.telegram.ui.Cells.RadioColorCell;
 import org.telegram.ui.Cells.RequestPeerRequirementsCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextCell;
@@ -9700,7 +9701,53 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         sendPopupLayout2.setShownFromBottom(false);
         sendPopupLayout2.setupRadialSelectors(getThemedColor(Theme.key_dialogButtonSelector));
 
-        ActionBarMenuSubItem sendWithoutSound = new ActionBarMenuSubItem(parentActivity, true, true, resourcesProvider);
+        if (commentView.getFieldText() != null && commentView.getFieldText().length() != 0) {
+            ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, false, resourcesProvider);
+            translateButton.setTextAndIcon(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")", R.drawable.msg_translate);
+            translateButton.setMinimumWidth(AndroidUtilities.dp(196));
+            translateButton.setOnClickListener(v -> {
+                if (sendPopupWindow != null && sendPopupWindow.isShowing())
+                    sendPopupWindow.dismiss();
+                ExteraUtils.translate(commentView.getFieldText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                    commentView.setFieldText(translated);
+                    commentView.setSelection(translated.length());
+                }, () -> {
+                });
+            });
+            translateButton.setOnLongClickListener(v -> {
+                if (getParentActivity() == null)
+                    return false;
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
+                builder.setTitle(LocaleController.getString("Language", R.string.Language));
+
+                LinearLayout linearLayout = new LinearLayout(parentActivity);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+                builder.setView(linearLayout);
+
+                for (int a = 0; a < ExteraConfig.supportedLanguages.length; a++) {
+                    RadioColorCell cell = new RadioColorCell(parentActivity);
+                    cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
+                    cell.setTag(a);
+                    cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
+                    cell.setTextAndValue(ExteraConfig.supportedLanguages[a], ExteraConfig.targetLanguage == ExteraConfig.supportedLanguages[a]);
+                    cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
+                    linearLayout.addView(cell);
+                    cell.setOnClickListener(v2 -> {
+                        Integer which = (Integer) v2.getTag();
+                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[which]).apply();
+                        translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
+                        builder.getDismissRunnable().run();
+                    });
+                }
+                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                builder.create().show();
+                return true;
+            });
+            sendPopupLayout2.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+        }
+
+        ActionBarMenuSubItem sendWithoutSound = new ActionBarMenuSubItem(parentActivity, !(commentView.getFieldText() != null && commentView.getFieldText().length() != 0), true, resourcesProvider);
         sendWithoutSound.setTextAndIcon(LocaleController.getString("SendWithoutSound", R.string.SendWithoutSound), R.drawable.input_notify_off);
         sendWithoutSound.setMinimumWidth(AndroidUtilities.dp(196));
         sendPopupLayout2.addView(sendWithoutSound, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));

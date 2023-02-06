@@ -282,7 +282,7 @@ public class UpdaterUtils {
         }
     }
 
-    public static SpannableStringBuilder replaceTags(String str) {
+    public static SpannableStringBuilder replaceTags(CharSequence str) {
         try {
             int start;
             int end;

@@ -174,7 +174,7 @@ public class ExteraUtils {
     }
 
     public interface OnTranslationSuccess {
-        void run(String translated);
+        void run(CharSequence translated);
     }
 
     public interface OnTranslationFail {

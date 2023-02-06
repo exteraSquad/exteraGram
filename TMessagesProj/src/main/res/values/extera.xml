@@ -154,6 +154,7 @@
     <string name="LastCheck">Last check</string>
 
     <!-- Other -->
+    <string name="MessageHistory">Message History</string>
     <string name="BoldItalic">Bold italic</string>
 
     <string name="OpenPremiumBot">Open official bot</string>

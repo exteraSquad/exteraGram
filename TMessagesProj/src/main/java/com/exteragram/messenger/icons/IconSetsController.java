@@ -6,7 +6,6 @@ import org.telegram.messenger.R;
 
 public class IconSetsController {
     public static final SparseIntArray solar = new SparseIntArray();
-
     static {
         solar.put(R.drawable.arrow_more, R.drawable.arrow_more_solar);
         solar.put(R.drawable.attach_send, R.drawable.attach_send_solar);
@@ -161,11 +160,34 @@ public class IconSetsController {
         solar.put(R.drawable.msg_emoji_question, R.drawable.msg_psa_solar);
         solar.put(R.drawable.msg_emoji_recent, R.drawable.msg_emoji_recent_solar);
         solar.put(R.drawable.msg_emoji_smiles, R.drawable.input_smile_solar);
+        solar.put(R.drawable.msg_emoji_stickers, R.drawable.msg_sticker_solar);
         solar.put(R.drawable.msg_emoji_travel, R.drawable.msg_emoji_travel_solar);
         solar.put(R.drawable.msg_endcall, R.drawable.msg_endcall_solar);
         solar.put(R.drawable.msg_fave, R.drawable.msg_fave_solar);
         solar.put(R.drawable.msg_filehq, R.drawable.msg_filehq_solar);
+        solar.put(R.drawable.msg_filled_autodelete, R.drawable.msg_filled_autodelete_solar);
+        solar.put(R.drawable.msg_filled_blocked, R.drawable.msg_filled_blocked_solar);
+        solar.put(R.drawable.msg_filled_data_calls, R.drawable.msg_filled_data_calls_solar);
+        solar.put(R.drawable.msg_filled_data_files, R.drawable.msg_filled_data_files_solar);
+        solar.put(R.drawable.msg_filled_data_messages, R.drawable.msg_filled_data_messages_solar);
+        solar.put(R.drawable.msg_filled_data_music, R.drawable.msg_filled_data_music_solar);
+        solar.put(R.drawable.msg_filled_data_photos, R.drawable.msg_filled_data_photos_solar);
+        solar.put(R.drawable.msg_filled_data_received, R.drawable.msg_filled_data_received_solar);
+        solar.put(R.drawable.msg_filled_data_sent, R.drawable.msg_filled_data_sent_solar);
+        solar.put(R.drawable.msg_filled_data_videos, R.drawable.msg_filled_data_videos_solar);
+        solar.put(R.drawable.msg_filled_data_voice, R.drawable.msg_filled_data_voice_solar);
+        solar.put(R.drawable.msg_filled_datausage, R.drawable.msg_filled_datausage_solar);
+        solar.put(R.drawable.msg_filled_devices, R.drawable.msg_filled_devices_solar);
+        solar.put(R.drawable.msg_filled_email, R.drawable.msg_filled_email_solar);
+        solar.put(R.drawable.msg_filled_menu_channels, R.drawable.msg_filled_menu_channels_solar);
+        solar.put(R.drawable.msg_filled_menu_groups, R.drawable.msg_filled_menu_groups_solar);
+        solar.put(R.drawable.msg_filled_menu_users, R.drawable.msg_filled_menu_users_solar);
+        solar.put(R.drawable.msg_filled_passcode_off, R.drawable.msg_filled_passcode_off_solar);
+        solar.put(R.drawable.msg_filled_passcode_on, R.drawable.msg_filled_passcode_on_solar);
+        solar.put(R.drawable.msg_filled_permissions, R.drawable.msg_filled_permissions_solar);
+        solar.put(R.drawable.msg_filled_sdcard, R.drawable.msg_filled_sdcard_solar);
         solar.put(R.drawable.msg_filled_shareout, R.drawable.msg_filled_shareout_solar);
+        solar.put(R.drawable.msg_filled_storageusage, R.drawable.msg_filled_storageusage_solar);
         solar.put(R.drawable.msg_folder, R.drawable.msg_folder_solar);
         solar.put(R.drawable.msg_folder_reorder, R.drawable.msg_folder_reorder_solar);
         solar.put(R.drawable.msg_folders, R.drawable.msg_folder_solar);
@@ -223,6 +245,7 @@ public class IconSetsController {
         solar.put(R.drawable.msg_message, R.drawable.msg_message_solar);
         solar.put(R.drawable.msg_mini_autodelete, R.drawable.msg_mini_autodelete_solar);
         solar.put(R.drawable.msg_mini_autodelete_empty, R.drawable.msg_mini_autodelete_empty_solar);
+        solar.put(R.drawable.msg_mini_customize, R.drawable.msg_mini_customize_solar);
         solar.put(R.drawable.msg_mini_qr, R.drawable.msg_mini_qr_solar);
         solar.put(R.drawable.msg_msgbubble, R.drawable.msg_msgbubble3_solar);
         solar.put(R.drawable.msg_msgbubble2, R.drawable.msg_msgbubble2_solar);
@@ -274,7 +297,7 @@ public class IconSetsController {
         solar.put(R.drawable.msg_reactions, R.drawable.msg_reactions_solar);
         solar.put(R.drawable.msg_reactions2, R.drawable.msg_reactions_solar);
         solar.put(R.drawable.msg_reactions_filled, R.drawable.msg_reactions_filled_solar);
-        solar.put(R.drawable.msg_recent, R.drawable.msg_emoji_recent_solar);
+        solar.put(R.drawable.msg_recent, R.drawable.msg_recent_solar);
         solar.put(R.drawable.msg_remove, R.drawable.msg_remove_solar);
         solar.put(R.drawable.msg_removefolder, R.drawable.msg_removefolder_solar);
         solar.put(R.drawable.msg_replace, R.drawable.msg_replace_solar);

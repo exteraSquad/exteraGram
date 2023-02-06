@@ -150,6 +150,7 @@
     <string name="LastCheck">Последняя проверка</string>
 
     <!-- Other -->
+    <string name="MessageHistory">История сообщений</string>
     <string name="BoldItalic">Жирный курсив</string>
 
     <string name="OpenPremiumBot">Открыть официального бота</string>

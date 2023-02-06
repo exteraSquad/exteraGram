@@ -142,12 +142,13 @@ public class AvatarPreviewer {
         void onMenuClick(MenuItem item);
     }
 
-    public static enum MenuItem {
+    public enum MenuItem {
         OPEN_PROFILE("OpenProfile", R.string.OpenProfile, R.drawable.msg_openprofile),
         OPEN_CHANNEL("OpenChannel2", R.string.OpenChannel2, R.drawable.msg_channel),
         OPEN_GROUP("OpenGroup2", R.string.OpenGroup2, R.drawable.msg_discussion),
         SEND_MESSAGE("SendMessage", R.string.SendMessage, R.drawable.msg_discussion),
-        MENTION("Mention", R.string.Mention, R.drawable.msg_mention);
+        MENTION("Mention", R.string.Mention, R.drawable.msg_mention),
+        MSG_HISTORY("MessageHistory", R.string.MessageHistory, R.drawable.msg_recent);
 
         private final String labelKey;
         private final int labelResId;
@@ -371,7 +372,7 @@ public class AvatarPreviewer {
             setFitsSystemWindows(true);
             imageReceiver.setAspectFit(true);
             imageReceiver.setInvalidateAll(true);
-            imageReceiver.setRoundRadius(AndroidUtilities.dp(6));
+            imageReceiver.setRoundRadius(ExteraConfig.getAvatarCorners(42));
             imageReceiver.setParentView(this);
             radialProgress = new RadialProgress2(this);
             radialProgress.setOverrideAlpha(0.0f);
@@ -493,7 +494,7 @@ public class AvatarPreviewer {
 
             backgroundDrawable.setBounds(0, 0, width, height);
 
-            final int padding = AndroidUtilities.dp(8);
+            final int padding = AndroidUtilities.dp(17);
 
             int lPadding = padding, rPadding = padding, vPadding = padding;
 

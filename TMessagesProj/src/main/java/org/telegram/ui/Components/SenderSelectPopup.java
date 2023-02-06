@@ -133,7 +133,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
         headerText.setTextColor(Theme.getColor(Theme.key_dialogTextBlue));
         headerText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         headerText.setText(LocaleController.getString("SendMessageAsTitle", R.string.SendMessageAsTitle));
-        headerText.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"), Typeface.BOLD);
+        headerText.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
         int dp = AndroidUtilities.dp(18);
         headerText.setPadding(dp, AndroidUtilities.dp(12), dp, AndroidUtilities.dp(12));
         recyclerContainer.addView(headerText);
@@ -515,6 +515,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
             title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
             title.setTag(this.title);
             title.setMaxLines(1);
+            title.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             textRow.addView(title);
 
             subtitle = new TextView(context);

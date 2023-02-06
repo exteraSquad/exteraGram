@@ -107,7 +107,7 @@ public class ExteraConfig {
     public static final CharSequence[] supportedLanguages = new CharSequence[]{
             "Arabic (AR)", "Azerbaijani (AZ)", "Belarusian (BE)", "Catalan (CA)", "Chinese (ZH)",
             "Croatian (HR)", "Czech (CS)", "Dutch (NL)", "English (EN)", "Finnish (FI)",
-            "French (FR)", "German (DE)", "Hungarian (HU)", "Indonesian (IN)", "Italian (IT)",
+            "French (FR)", "German (DE)", "Hungarian (HU)", "Indonesian (IN)", "Italian (IT)", "Japanese (JA)",
             "Korean (KO)", "Malay (MS)", "Norwegian (NO)", "Persian (FA)", "Polish (PL)",
             "Portuguese (PT)", "Russian (RU)", "Serbian (SR)", "Slovak (SK)",
             "Spanish (ES)", "Swedish (SV)", "Turkish (TR)", "Ukrainian (UK)", "Uzbek (UZ)"

@@ -1164,11 +1164,7 @@ public class ViewPagerFixed extends FrameLayout {
             }
 
             listView.setSelectorType(ExteraConfig.tabStyle >= 3 ? 100 : tabsSelectorType);
-            if (tabsSelectorType == 3) {
-                listView.setSelectorRadius(0);
-            } else {
-                listView.setSelectorRadius(6);
-            }
+            if (tabsSelectorType < 3) listView.setSelectorRadius(6);
             listView.setSelectorDrawableColor(ExteraConfig.tabStyle >= 3 ? 0x00 : Theme.getColor(selectorColorKey, resourcesProvider));
             listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false) {
                 @Override

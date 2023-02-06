@@ -27339,11 +27339,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     public boolean didLongPressUserAvatar(ChatMessageCell cell, TLRPC.User user, float touchX, float touchY) {
                         if (isAvatarPreviewerEnabled()) {
                             final boolean enableMention = currentChat != null && (bottomOverlayChat == null || bottomOverlayChat.getVisibility() != View.VISIBLE) && (bottomOverlay == null || bottomOverlay.getVisibility() != View.VISIBLE);
-                            final AvatarPreviewer.MenuItem[] menuItems = new AvatarPreviewer.MenuItem[2 + (enableMention ? 1 : 0)];
+                            final AvatarPreviewer.MenuItem[] menuItems = new AvatarPreviewer.MenuItem[3 + (enableMention ? 1 : 0)];
                             menuItems[0] = AvatarPreviewer.MenuItem.OPEN_PROFILE;
                             menuItems[1] = AvatarPreviewer.MenuItem.SEND_MESSAGE;
+                            menuItems[2] = AvatarPreviewer.MenuItem.MSG_HISTORY;
                             if (enableMention) {
-                                menuItems[2] = AvatarPreviewer.MenuItem.MENTION;
+                                menuItems[3] = AvatarPreviewer.MenuItem.MENTION;
                             }
                             final TLRPC.UserFull userFull = getMessagesController().getUserFull(user.id);
                             final AvatarPreviewer.Data data;
@@ -27360,6 +27361,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                             break;
                                         case OPEN_PROFILE:
                                             openProfile(user);
+                                            break;
+                                        case MSG_HISTORY:
+                                            if ((threadMessageId == 0 || isTopic) && !UserObject.isReplyUser(user)) {
+                                                openSearchWithText("");
+                                            } else {
+                                                searchItem.openSearch(false);
+                                            }
+                                            searchUserMessages(user, null);
+                                            showMessagesSearchListView(true);
                                             break;
                                         case MENTION:
                                             appendMention(user);
@@ -27404,10 +27414,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     @Override
                     public boolean didLongPressChannelAvatar(ChatMessageCell cell, TLRPC.Chat chat, int postId, float touchX, float touchY) {
                         if (isAvatarPreviewerEnabled()) {
-                            AvatarPreviewer.MenuItem[] menuItems = {AvatarPreviewer.MenuItem.OPEN_PROFILE};
+                            AvatarPreviewer.MenuItem[] menuItems = {AvatarPreviewer.MenuItem.OPEN_PROFILE, AvatarPreviewer.MenuItem.MSG_HISTORY};
                             if (currentChat == null || currentChat.id != chat.id || isThreadChat()) {
-                                menuItems = Arrays.copyOf(menuItems, 2);
-                                menuItems[1] = chat.broadcast ? AvatarPreviewer.MenuItem.OPEN_CHANNEL : AvatarPreviewer.MenuItem.OPEN_GROUP;
+                                menuItems = Arrays.copyOf(menuItems, 3);
+                                menuItems[2] = chat.broadcast ? AvatarPreviewer.MenuItem.OPEN_CHANNEL : AvatarPreviewer.MenuItem.OPEN_GROUP;
                             }
                             final TLRPC.ChatFull chatFull = getMessagesController().getChatFull(chat.id);
                             final AvatarPreviewer.Data data;
@@ -27421,6 +27431,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     switch (item) {
                                         case OPEN_PROFILE:
                                             openProfile(chat);
+                                            break;
+                                        case MSG_HISTORY:
+                                            if (threadMessageId == 0 || isTopic) {
+                                                openSearchWithText("");
+                                            } else {
+                                                searchItem.openSearch(false);
+                                            }
+                                            searchUserMessages(null, chat);
+                                            showMessagesSearchListView(true);
                                             break;
                                         case OPEN_GROUP:
                                         case OPEN_CHANNEL:

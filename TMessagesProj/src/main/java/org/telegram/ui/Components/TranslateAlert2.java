@@ -38,10 +38,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraUtils;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
@@ -85,6 +86,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
     private View buttonShadowView;
     private FrameLayout buttonView;
     private TextView buttonTextView;
+    private ImageView copyButton;
 
     private BaseFragment fragment;
     private Utilities.CallbackReturn<URLSpan, Boolean> onLinkPress;
@@ -219,10 +221,10 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         buttonView = new FrameLayout(context);
         buttonView.setBackgroundColor(getThemedColor(Theme.key_dialogBackground));
 
-        buttonShadowView = new View(context);
-        buttonShadowView.setBackgroundColor(getThemedColor(Theme.key_dialogShadowLine));
-        buttonShadowView.setAlpha(0);
-        buttonView.addView(buttonShadowView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight() / dpf2(1), Gravity.TOP | Gravity.FILL_HORIZONTAL));
+        //buttonShadowView = new View(context);
+        //buttonShadowView.setBackgroundColor(getThemedColor(Theme.key_dialogShadowLine));
+        //buttonShadowView.setAlpha(0);
+        //buttonView.addView(buttonShadowView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight() / dpf2(1), Gravity.TOP | Gravity.FILL_HORIZONTAL));
 
         buttonTextView = new TextView(context);
         buttonTextView.setLines(1);
@@ -236,7 +238,18 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         buttonTextView.setText(LocaleController.getString("CloseTranslation", R.string.CloseTranslation));
         buttonTextView.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 6));
         buttonTextView.setOnClickListener(e -> dismiss());
-        buttonView.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 16, 16, 16, 16));
+        buttonView.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 16, 16, 72, 16));
+
+        copyButton = new ImageView(context);
+        copyButton.setScaleType(ImageView.ScaleType.CENTER);
+        copyButton.setImageResource(R.drawable.msg_copy);
+        copyButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_featuredStickers_buttonText), PorterDuff.Mode.MULTIPLY));
+        copyButton.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 6));
+        copyButton.setOnClickListener(v -> {
+            AndroidUtilities.addToClipboard(textView.getText());
+            BulletinFactory.of(getContainer(), null).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+        });
+        buttonView.addView(copyButton, LayoutHelper.createFrame(48, 48, Gravity.BOTTOM | Gravity.RIGHT, 0, 16, 16, 16));
 
         containerView.addView(buttonView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
 
@@ -284,31 +297,44 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
             lang = "no";
         }
         req.to_lang = lang;
-        reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> {
-            AndroidUtilities.runOnUIThread(() -> {
-                reqId = null;
-                if (res instanceof TLRPC.TL_messages_translateResult &&
-                    !((TLRPC.TL_messages_translateResult) res).result.isEmpty() &&
-                    ((TLRPC.TL_messages_translateResult) res).result.get(0) != null &&
-                    ((TLRPC.TL_messages_translateResult) res).result.get(0).text != null
-                ) {
-                    firstTranslation = false;
-                    TLRPC.TL_textWithEntities text = preprocess(textWithEntities, ((TLRPC.TL_messages_translateResult) res).result.get(0));
-                    CharSequence translated = SpannableStringBuilder.valueOf(text.text);
-                    MessageObject.addEntitiesToText(translated, text.entities, false, true, false, false);
-                    translated = preprocessText(translated);
-                    textView.setText(translated);
-                    adapter.updateMainView(textViewContainer);
-                } else if (firstTranslation) {
-                    dismiss();
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2));
-                } else {
-                    BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createErrorBulletin(LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2)).show();
-                    headerView.toLanguageTextView.setText(languageName(toLanguage = prevToLanguage));
-                    adapter.updateMainView(textViewContainer);
-                }
-            });
+
+        ExteraUtils.translate(reqText == null ? "" : reqText.toString(), lang, translated -> {
+            if (translated != null) {
+                firstTranslation = false;
+                textView.setText(translated);
+                adapter.updateMainView(textViewContainer);
+            } else if (firstTranslation) {
+                dismiss();
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2));
+            }
+        }, () -> {
+            BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createErrorBulletin(LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2)).show();
+            headerView.toLanguageTextView.setText(languageName(toLanguage = prevToLanguage));
+            adapter.updateMainView(textViewContainer);
         });
+//        reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+//            reqId = null;
+//            if (res instanceof TLRPC.TL_messages_translateResult &&
+//                !((TLRPC.TL_messages_translateResult) res).result.isEmpty() &&
+//                ((TLRPC.TL_messages_translateResult) res).result.get(0) != null &&
+//                ((TLRPC.TL_messages_translateResult) res).result.get(0).text != null
+//            ) {
+//                firstTranslation = false;
+//                TLRPC.TL_textWithEntities text = preprocess(textWithEntities, ((TLRPC.TL_messages_translateResult) res).result.get(0));
+//                CharSequence translated = SpannableStringBuilder.valueOf(text.text);
+//                MessageObject.addEntitiesToText(translated, text.entities, false, true, false, false);
+//                translated = preprocessText(translated);
+//                textView.setText(translated);
+//                adapter.updateMainView(textViewContainer);
+//            } else if (firstTranslation) {
+//                dismiss();
+//                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2));
+//            } else {
+//                BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createErrorBulletin(LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2)).show();
+//                headerView.toLanguageTextView.setText(languageName(toLanguage = prevToLanguage));
+//                adapter.updateMainView(textViewContainer);
+//            }
+//        }));
     }
 
     public static TLRPC.TL_textWithEntities preprocess(TLRPC.TL_textWithEntities source, TLRPC.TL_textWithEntities received) {
@@ -1052,8 +1078,8 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
     private void updateButtonShadow(boolean show) {
         if (buttonShadowShown == null || buttonShadowShown != show) {
             buttonShadowShown = show;
-            buttonShadowView.animate().cancel();
-            buttonShadowView.animate().alpha(show ? 1f : 0f).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(320).start();
+            //buttonShadowView.animate().cancel();
+            //buttonShadowView.animate().alpha(show ? 1f : 0f).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(320).start();
         }
     }
 

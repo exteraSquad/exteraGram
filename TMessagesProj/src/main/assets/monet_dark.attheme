@@ -749,6 +749,15 @@ windowBackgroundWhiteRedText5=mRed200
 windowBackgroundWhiteRedText6=mRed200
 windowBackgroundWhiteRedText=mRed200
 windowBackgroundWhiteValueText=a1_200
+color_lightblue=a1_400
+color_blue=a1_400
+color_green=a1_400
+color_lightgreen=a1_400
+color_red=a1_400
+color_orange=a1_400
+color_yellow=a1_400
+color_purple=a1_400
+color_cyan=a1_400
 end
 
 //monet theme fixes by the8055u

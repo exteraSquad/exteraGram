@@ -136,9 +136,9 @@ public class UpdaterBottomSheet extends BottomSheet {
             changelogTextView.setText(UpdaterUtils.replaceTags(args[1]));
             changelogTextView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(10));
             changelogTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            changelogTextView.setOnClickListener(v -> ExteraUtils.translate(args[1], LocaleController.getInstance().getCurrentLocale().getLanguage(), (String translated) -> {
+            changelogTextView.setOnClickListener(v -> ExteraUtils.translate(args[1], LocaleController.getInstance().getCurrentLocale().getLanguage(), translated -> {
                 translatedC = translated;
-                animateView(changelogTextView, UpdaterUtils.replaceTags(isTranslated ? args[1] : (String) translatedC));
+                animateView(changelogTextView, UpdaterUtils.replaceTags(isTranslated ? args[1] : translatedC));
                 isTranslated ^= true;
             }, () -> {}));
             linearLayout.addView(changelogTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
@@ -248,11 +248,11 @@ public class UpdaterBottomSheet extends BottomSheet {
         if (v instanceof TextView)
             ((TextView) v).setText(text);
         animatorSet = new AnimatorSet();
-        animatorSet.setDuration(300);
+        animatorSet.setDuration(400);
         animatorSet.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         animatorSet.playTogether(
                 ObjectAnimator.ofFloat(v, View.ALPHA, 0.0f, 1.0f),
-                ObjectAnimator.ofFloat(v, View.TRANSLATION_Y, AndroidUtilities.dp(12), 0)
+                ObjectAnimator.ofFloat(v, View.TRANSLATION_Y, AndroidUtilities.dp(12 * (isTranslated ? -1 : 1)), 0)
         );
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override

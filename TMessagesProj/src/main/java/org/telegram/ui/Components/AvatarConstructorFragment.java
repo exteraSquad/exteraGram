@@ -34,6 +34,8 @@ import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.ImageLocation;
@@ -767,9 +769,11 @@ public class AvatarConstructorFragment extends BaseFragment {
         private void drawBackround(Canvas canvas, float cx, float cy, float radius, float size, Paint paint) {
             float p = expandProgress.get();
             if (p == 0) {
-                canvas.drawCircle(cx, cy, size, paint);
+                canvas.drawRoundRect(cx - size, cy - size, cx + size, cy + size, ExteraConfig.getAvatarCorners(size * 2, true), ExteraConfig.getAvatarCorners(size * 2, true), paint);
+                //canvas.drawCircle(cx, cy, size, paint);
             } else {
-                float roundRadius = AndroidUtilities.lerp(radius, 0, p);
+                float roundRadius = AndroidUtilities.lerp(ExteraConfig.getAvatarCorners(size * 2, true), 0, p);
+                //float roundRadius = AndroidUtilities.lerp(radius, 0, p);
                 AndroidUtilities.rectTmp.set(cx - size, cy - size, cx + size, cy + size);
                 canvas.drawRoundRect(AndroidUtilities.rectTmp, roundRadius, roundRadius, paint);
             }

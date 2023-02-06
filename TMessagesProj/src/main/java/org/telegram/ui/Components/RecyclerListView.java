@@ -1616,7 +1616,7 @@ public class RecyclerListView extends RecyclerView {
             selectorDrawable.setCallback(null);
         }
         if (selectorType == 100) {
-            selectorDrawable = Theme.createSimpleSelectorRoundRectDrawable(0, 0x00000000, 0x00000000, 0x00000000);
+            selectorDrawable = Theme.createSimpleSelectorRoundRectDrawable(0, 0x00, 0x00, 0x00);
         } else if (selectorType == 8) {
             selectorDrawable = Theme.createRadSelectorDrawable(color, selectorRadius, 0);
         } else if (topBottomSelectorRadius > 0) {

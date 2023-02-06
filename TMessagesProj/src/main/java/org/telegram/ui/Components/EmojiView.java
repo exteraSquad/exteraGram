@@ -866,16 +866,13 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                     showInputBoxGradient(scrolled > 0);
                     updateButton();
                 });
-                categoriesListView.setOnTouchListener(new OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                            ignorePagerScroll = true;
-                        } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                            ignorePagerScroll = false;
-                        }
-                        return false;
+                categoriesListView.setOnTouchListener((v, event) -> {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        ignorePagerScroll = true;
+                    } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                        ignorePagerScroll = false;
                     }
+                    return false;
                 });
                 categoriesListView.setOnCategoryClick(category -> {
                     if (category == recent) {

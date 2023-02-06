@@ -125,7 +125,9 @@ public class StickerCategoriesListView extends RecyclerListView {
 //        setSelectorType(Theme.RIPPLE_MASK_CIRCLE_20DP);
 //        setSelectorDrawableColor(getThemedColor(Theme.key_listSelector));
         selectedPaint.setColor(getThemedColor(Theme.key_listSelector));
-        setSelectorDrawableColor(0);
+        setSelectorRadius(0);
+        setSelectorType(100);
+        setSelectorDrawableColor(0x00);
 
         setWillNotDraw(false);
 
@@ -598,7 +600,7 @@ public class StickerCategoriesListView extends RecyclerListView {
             setImageColor(getThemedColor(Theme.key_chat_emojiPanelIcon));
             setScaleType(ScaleType.CENTER);
 
-            setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(15)));
+            //setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(15)));
 
             setLayerNum(layerNum);
         }

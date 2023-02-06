@@ -143,6 +143,8 @@ import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.BasePermissionsActivity;
+import org.telegram.ui.Cells.RadioColorCell;
+import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.ContentPreviewViewer;
@@ -3771,12 +3773,29 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 translateButton.setOnLongClickListener(v -> {
                     if (parentFragment == null)
                         return false;
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
                     builder.setTitle(LocaleController.getString("Language", R.string.Language));
-                    builder.setItems(ExteraConfig.supportedLanguages, (dialog, which) -> {
-                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[which]).apply();
-                        translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
-                    });
+
+                    LinearLayout linearLayout = new LinearLayout(parentActivity);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    builder.setView(linearLayout);
+
+                    for (int a = 0; a < ExteraConfig.supportedLanguages.length; a++) {
+                        RadioColorCell cell = new RadioColorCell(parentActivity);
+                        cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
+                        cell.setTag(a);
+                        cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
+                        cell.setTextAndValue(ExteraConfig.supportedLanguages[a], ExteraConfig.targetLanguage == ExteraConfig.supportedLanguages[a]);
+                        cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
+                        linearLayout.addView(cell);
+                        cell.setOnClickListener(v2 -> {
+                            Integer which = (Integer) v2.getTag();
+                            ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[which]).apply();
+                            translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
+                            builder.getDismissRunnable().run();
+                        });
+                    }
                     builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
                     builder.create().show();
                     return true;
