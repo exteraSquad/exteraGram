@@ -47,12 +47,9 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.core.graphics.ColorUtils;
-
-import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -83,8 +80,11 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL;
 
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.camera.BaseCameraView;
+
 @SuppressLint("NewApi")
-public class CameraView extends FrameLayout implements TextureView.SurfaceTextureListener {
+public class CameraView extends BaseCameraView implements TextureView.SurfaceTextureListener {
 
     private Size previewSize;
     private Size pictureSize;

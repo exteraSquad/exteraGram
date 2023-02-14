@@ -14,10 +14,13 @@ package com.exteragram.messenger;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
+import com.exteragram.messenger.camera.CameraXUtils;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.tgnet.TLRPC;
 
 import java.util.Arrays;
@@ -78,6 +81,11 @@ public class ExteraConfig {
     public static boolean pauseOnMinimize;
     public static boolean disablePlayback;
     public static boolean disableProximityEvents;
+
+    // camera
+    public static int cameraType;
+    public static boolean useCameraXOptimizedMode;
+    public static int cameraResolution;
 
     // updates
     public static long lastUpdateCheckTime;
@@ -154,6 +162,10 @@ public class ExteraConfig {
             pauseOnMinimize = preferences.getBoolean("pauseOnMinimize", true);
             disablePlayback = preferences.getBoolean("disablePlayback", true);
 
+            cameraType = preferences.getInt("cameraType", CameraXUtils.getDefault());
+            useCameraXOptimizedMode = preferences.getBoolean("useCameraXOptimizedMode", SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_HIGH);
+            cameraResolution = preferences.getInt("cameraResolution", CameraXUtils.getCameraResolution());
+
             changeStatus = preferences.getBoolean("changeStatus", true);
             newGroup = preferences.getBoolean("newGroup", true);
             newSecretChat = preferences.getBoolean("newSecretChat", false);
@@ -176,6 +188,18 @@ public class ExteraConfig {
 
             configLoaded = true;
         }
+    }
+
+    public static void saveCameraType(int type) {
+        editor.putInt("cameraType", cameraType = type);
+    }
+
+    public static void toggleCameraXOptimizedMode() {
+        editor.putBoolean("useCameraXOptimizedMode", useCameraXOptimizedMode ^= true);
+    }
+
+    public static void saveCameraResolution(int resolution) {
+        editor.putInt("cameraResolution", cameraResolution = resolution);
     }
 
     public static boolean isExtera(TLRPC.Chat chat) {

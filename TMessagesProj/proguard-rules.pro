@@ -27,6 +27,14 @@
 -keep class com.google.android.exoplayer2.metadata.flac.PictureFrame { *; }
 -keep class com.google.android.exoplayer2.decoder.SimpleOutputBuffer { *; }
 
+# Keep all class member names of CameraX
+-keep class androidx.camera.extensions.** { *; }
+-keep class androidx.camera.camera2.internal.** { *; }
+-keep class androidx.camera.camera2.interop.** { *; }
+-keep class androidx.camera.core.** { *; }
+-keep class androidx.camera.core.impl.** { *; }
+-keep class androidx.camera.video.** { *; }
+
 # https://developers.google.com/ml-kit/known-issues#android_issues
 -keep class com.google.mlkit.nl.languageid.internal.LanguageIdentificationJni { *; }
 
@@ -96,6 +104,7 @@
 # Don't warn about checkerframework and Kotlin annotations
 -dontwarn org.checkerframework.**
 -dontwarn javax.annotation.**
+-dontwarn androidx.camera.extensions.**
 
 # Use -keep to explicitly keep any other classes shrinking would remove
 -dontoptimize
