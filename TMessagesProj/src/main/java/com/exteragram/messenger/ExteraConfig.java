@@ -69,6 +69,8 @@ public class ExteraConfig {
     public static boolean hideStickerTime;
     public static boolean unlimitedRecentStickers;
     public static boolean stickersAutoReorder;
+    public static int doubleTapAction;
+    public static int doubleTapActionOutOwner;
     public static boolean premiumAutoPlayback;
     public static boolean hidePremiumStickersTab;
     public static boolean hideFeaturedEmoji;
@@ -79,7 +81,6 @@ public class ExteraConfig {
     public static boolean hideKeyboardOnScroll;
     public static boolean hideShareButton;
     public static boolean hideMuteUnmuteButton;
-    public static boolean disableReactions;
     public static boolean disableGreetingSticker;
     public static boolean disableJumpToNextChannel;
     public static boolean dateOfForwardedMsg;
@@ -163,6 +164,8 @@ public class ExteraConfig {
             hideStickerTime = preferences.getBoolean("hideStickerTime", false);
             unlimitedRecentStickers = preferences.getBoolean("unlimitedRecentStickers", false);
             stickersAutoReorder = preferences.getBoolean("stickersAutoReorder", false);
+            doubleTapAction = preferences.getInt("doubleTapAction", 1);
+            doubleTapActionOutOwner = preferences.getInt("doubleTapActionOutOwner", 1);
             premiumAutoPlayback = preferences.getBoolean("premiumAutoPlayback", false);
             hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", true);
             hideFeaturedEmoji = preferences.getBoolean("hideFeaturedEmoji", false);
@@ -173,7 +176,6 @@ public class ExteraConfig {
             hideShareButton = preferences.getBoolean("hideShareButton", true);
             hideMuteUnmuteButton = preferences.getBoolean("hideMuteUnmuteButton", false);
             hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
-            disableReactions = preferences.getBoolean("disableReactions", false);
             disableJumpToNextChannel = preferences.getBoolean("disableJumpToNextChannel", false);
             disableGreetingSticker = preferences.getBoolean("disableGreetingSticker", false);
             dateOfForwardedMsg = preferences.getBoolean("dateOfForwardedMsg", false);

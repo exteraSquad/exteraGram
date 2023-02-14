@@ -59,7 +59,7 @@ public class StickerShapeCell extends LinearLayout {
 
             outlinePaint.setStyle(Paint.Style.STROKE);
             outlinePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
-            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(0.5f)));
+            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(1f)));
 
             setSelected(!isRounded && !isRoundedAsMsg && ExteraConfig.stickerShape == 0 || isRounded && ExteraConfig.stickerShape == 1 || isRoundedAsMsg && ExteraConfig.stickerShape == 2, false);
         }
@@ -106,7 +106,7 @@ public class StickerShapeCell extends LinearLayout {
 
             textPaint.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), Theme.getColor(Theme.key_windowBackgroundWhiteValueText), progress));
             outlinePaint.setColor(ColorUtils.blendARGB(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F), Theme.getColor(Theme.key_windowBackgroundWhiteValueText), progress));
-            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(AndroidUtilities.lerp(0.5f, 2f, progress))));
+            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(AndroidUtilities.lerp(1f, 2f, progress))));
             invalidate();
         }
 
@@ -132,6 +132,7 @@ public class StickerShapeCell extends LinearLayout {
     public StickerShapeCell(Context context) {
         super(context);
         setOrientation(HORIZONTAL);
+        setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
         setPadding(AndroidUtilities.dp(13), AndroidUtilities.dp(10), AndroidUtilities.dp(13), 0);
 
         for (int a = 0; a < 3; a++) {

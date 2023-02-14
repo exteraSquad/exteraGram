@@ -346,6 +346,7 @@ public class IconSetsController {
         solar.put(R.drawable.msg_theme, R.drawable.msg_theme_solar);
         solar.put(R.drawable.msg_timeredit, R.drawable.msg_timeredit_solar);
         solar.put(R.drawable.msg_to_beginning, R.drawable.msg_to_beginning_solar);
+
         solar.put(R.drawable.msg_tone_add, R.drawable.msg_tone_add_solar);
         solar.put(R.drawable.msg_tone_off, R.drawable.msg_tone_off_solar);
         solar.put(R.drawable.msg_tone_on, R.drawable.msg_tone_on_solar);

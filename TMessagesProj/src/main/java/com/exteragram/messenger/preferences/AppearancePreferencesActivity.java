@@ -122,8 +122,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         mainScreenHeaderRow = newRow();
         actionBarSetupRow = newRow();
         hideActionBarStatusRow = getUserConfig().isPremium() ? newRow() : -1;
-        centerTitleRow = newRow();
         hideAllChatsRow = newRow();
+        centerTitleRow = newRow();
         tabStyleRow = newRow();
         actionBarTitle = newRow();
         mainScreenInfoRow = newRow();
@@ -137,10 +137,10 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         fabShapeRow = newRow();
         useSystemFontsRow = newRow();
         useSystemEmojiRow = newRow();
-        transparentStatusBarRow = newRow();
         blurForAllThemesRow = newRow();
         newSwitchStyleRow = newRow();
         disableDividersRow = newRow();
+        transparentStatusBarRow = newRow();
         transparentNavBarRow = newRow();
         transparentNavBarInfoRow = newRow();
 
@@ -404,12 +404,10 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                             parentLayout.rebuildAllFragmentViews(false, false);
                         }
                     };
-                    fabShapeCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     fabShapeCell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
                     return new RecyclerListView.Holder(fabShapeCell);
                 case 14:
                     mainScreenSetupCell = new MainScreenSetupCell(mContext, parentLayout);
-                    mainScreenSetupCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     mainScreenSetupCell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
                     return new RecyclerListView.Holder(mainScreenSetupCell);
                 case 15:
@@ -419,7 +417,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                             ((LaunchActivity) getParentActivity()).reloadIcons();
                         }
                     };
-                    solarIconsPreview.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     solarIconsPreview.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
                     return new RecyclerListView.Holder(solarIconsPreview);
                 default:
@@ -521,7 +518,9 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     if (position == transparentNavBarInfoRow) {
                         cell.setText(LocaleController.getString("TransparentNavBarInfo", R.string.TransparentNavBarInfo));
                     } else if (position == solarIconsInfoRow) {
-                        cell.setText(addLinkSpan(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), "@Design480"));
+                        cell.setText(addLinkSpan(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), "@Design480", "@TierOhneNation"));
+
+                        //cell.setText(addLinkSpan(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), "@Design480") × addLinkSpan("R4IN80W", "@TierOhneNation"));
                     } else if (position == mainScreenInfoRow) {
                         cell.setText(LocaleController.getString("MainScreenSetupInfo", R.string.MainScreenSetupInfo));
                     }

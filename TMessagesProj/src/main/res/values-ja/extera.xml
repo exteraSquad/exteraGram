@@ -44,7 +44,6 @@
     <string name="StickerSizeDialogMessage">うわ~かわいい!</string>
     <string name="HideSendAsChannel">「チャンネルとして送信」を非表示</string>
     <string name="HideKeyboardOnScroll">スクロール時にキーボードを隠す</string>
-    <string name="DisableReactions">リアクションを無効にする</string>
     <string name="DisableGreetingSticker">グリーティングステッカーを無効にする</string>
     <string name="DisableJumpToNextChannel">「次のチャンネルへジャンプ」を無効にする</string>
     <string name="DateOfForwardedMsg">転送メッセージの日付を表示</string>

@@ -64,7 +64,6 @@
     <string name="PremiumAutoPlayback">Авто анімація преміум стікерів</string>
     <string name="HideSendAsChannel">Сховати надсилання як канал</string>
     <string name="HideKeyboardOnScroll">Приховати клавіатуру на прокрутці чату</string>
-    <string name="DisableReactions">Вимкнути реакції</string>
     <string name="DisableGreetingSticker">Не слати вітальної наліпки</string>
     <string name="DisableJumpToNextChannel">Вимкнути гортання до наступного каналу</string>
     <string name="DateOfForwardedMsg">Показувати дату пересланого повідомлення</string>

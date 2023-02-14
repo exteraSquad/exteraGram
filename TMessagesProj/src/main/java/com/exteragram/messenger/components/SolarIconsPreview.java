@@ -18,16 +18,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.Easings;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.LaunchActivity;
-
-import java.util.Objects;
 
 @SuppressLint("ViewConstructor")
 public class SolarIconsPreview extends FrameLayout {
@@ -58,7 +55,7 @@ public class SolarIconsPreview extends FrameLayout {
     public SolarIconsPreview(Context context) {
         super(context);
         setWillNotDraw(false);
-
+        setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
         setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(15), AndroidUtilities.dp(21), AndroidUtilities.dp(21));
         preview = new FrameLayout(context) {
             @SuppressLint("DrawAllocation")
@@ -73,12 +70,12 @@ public class SolarIconsPreview extends FrameLayout {
 
                 for (int i = 0; i < iconsRes.length; i++) {
                     icons[i] = ContextCompat.getDrawable(context, iconsRes[i]);
-                    icons[i].setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(0x00, Theme.getColor(Theme.key_chats_menuItemIcon), iconChangingProgress[i]), PorterDuff.Mode.SRC_IN));
+                    icons[i].setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(0x00, Theme.getColor(Theme.key_chats_menuItemIcon), iconChangingProgress[i]), PorterDuff.Mode.MULTIPLY));
                 }
 
                 outlinePaint.setStyle(Paint.Style.STROKE);
                 outlinePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
-                outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(0.5f)));
+                outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(1f)));
 
                 rect.set(0, 0, w, h);
                 Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
@@ -150,7 +147,7 @@ public class SolarIconsPreview extends FrameLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (!ExteraConfig.disableDividers)
-            canvas.drawLine(AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
+            canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(21) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
     }
 
     @Override

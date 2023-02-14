@@ -69,6 +69,7 @@ public class MainScreenSetupCell extends FrameLayout {
     public MainScreenSetupCell(Context context, INavigationLayout fragment) {
         super(context);
         setWillNotDraw(false);
+        setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 
         sizeBar = new SeekBarView(context);
         sizeBar.setReportChanges(true);
@@ -100,7 +101,7 @@ public class MainScreenSetupCell extends FrameLayout {
 
                 outlinePaint.setStyle(Paint.Style.STROKE);
                 outlinePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
-                outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(0.5f)));
+                outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(1f)));
 
                 textPaint.setColor(ColorUtils.blendARGB(0x00, Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), titleProgress));
                 textPaint.setTextSize(AndroidUtilities.dp(20));
@@ -391,7 +392,7 @@ public class MainScreenSetupCell extends FrameLayout {
         canvas.drawText(String.valueOf(Math.round(ExteraConfig.avatarCorners)), getMeasuredWidth() - AndroidUtilities.dp(39), AndroidUtilities.dp(28), textPaint);
 
         if (!ExteraConfig.disableDividers)
-            canvas.drawLine(AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
+            canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(21) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
     }
 
     @Override

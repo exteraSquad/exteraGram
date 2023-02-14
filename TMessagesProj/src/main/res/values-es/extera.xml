@@ -44,7 +44,6 @@
     <string name="StickerSizeDialogMessage">¡woah, es tan lindo!</string>
     <string name="HideSendAsChannel">Ocultar \"Enviar como canal\"</string>
     <string name="HideKeyboardOnScroll">Ocultar teclado al desplazarse</string>
-    <string name="DisableReactions">Desactivar reacciones</string>
     <string name="DisableGreetingSticker">Desactivar Sticker de Saludo</string>
     <string name="DisableJumpToNextChannel">Desactivar \"Ir al canal siguiente\"</string>
     <string name="DateOfForwardedMsg">Mostrar fecha de un mensaje reenviado</string>

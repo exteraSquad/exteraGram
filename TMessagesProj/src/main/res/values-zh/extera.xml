@@ -64,7 +64,6 @@
     <string name="PremiumAutoPlayback">Premium自动播放</string>
     <string name="HideSendAsChannel">隐藏“以频道身份发言”</string>
     <string name="HideKeyboardOnScroll">在浏览对话时隐藏键盘</string>
-    <string name="DisableReactions">禁用表情回应</string>
     <string name="DisableGreetingSticker">禁用问候贴图</string>
     <string name="DisableJumpToNextChannel">禁用“跳转到下一个频道”</string>
     <string name="DateOfForwardedMsg">显示被转发原消息时间</string>

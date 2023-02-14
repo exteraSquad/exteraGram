@@ -44,7 +44,6 @@
     <string name="StickerSizeDialogMessage">woah, er ist so süß!</string>
     <string name="HideSendAsChannel">\"Als Kanal senden\" ausblenden</string>
     <string name="HideKeyboardOnScroll">Tastatur beim Scrollen ausblenden</string>
-    <string name="DisableReactions">Reaktionen deaktivieren</string>
     <string name="DisableGreetingSticker">Grußsticker deaktivieren</string>
     <string name="DisableJumpToNextChannel">Sprung zum nächsten Kanal - deaktivieren</string>
     <string name="DateOfForwardedMsg">Datum der weitergeleiteten Nachricht anzeigen</string>

@@ -64,7 +64,6 @@
     <string name="PremiumAutoPlayback">Reprodução automática premium</string>
     <string name="HideSendAsChannel">Ocultar \"Enviar como Canal\"</string>
     <string name="HideKeyboardOnScroll">Ocultar teclado ao rolar no chat</string>
-    <string name="DisableReactions">Desativar reações</string>
     <string name="DisableGreetingSticker">Desativar figurinha de saudação</string>
     <string name="DisableJumpToNextChannel">Desativar \"Pular para o Próximo Canal\"</string>
     <string name="DateOfForwardedMsg">Mostrar a data da mensagem encaminhada</string>

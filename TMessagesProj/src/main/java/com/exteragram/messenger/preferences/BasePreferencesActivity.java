@@ -15,7 +15,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -43,13 +42,13 @@ import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.URLSpanNoUnderline;
 
 public abstract class BasePreferencesActivity extends BaseFragment {
 
-    protected FrameLayout bulletinContainer;
     protected RecyclerListView listView;
     protected BaseListAdapter listAdapter;
     protected LinearLayoutManager layoutManager;
@@ -82,12 +81,8 @@ public abstract class BasePreferencesActivity extends BaseFragment {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     protected void updateRowsId() {
         rowCount = 0;
-        if (listAdapter != null) {
-            listAdapter.notifyDataSetChanged();
-        }
     }
 
     @Override
@@ -110,19 +105,17 @@ public abstract class BasePreferencesActivity extends BaseFragment {
         actionBar.setAllowOverlayTitle(false);
 
         listView = new RecyclerListView(context);
-        listView.setLayoutManager(layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
+
+        DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
+        itemAnimator.setDelayAnimations(false);
+        listView.setItemAnimator(itemAnimator);
+        frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
         listView.setAdapter(listAdapter = createAdapter(context));
-
-        frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP));
-        if (listView.getItemAnimator() != null) {
-            ((DefaultItemAnimator) listView.getItemAnimator()).setDelayAnimations(false);
-        }
-
         listView.setOnItemClickListener(this::onItemClick);
-
-        bulletinContainer = new FrameLayout(context);
-        frameLayout.addView(bulletinContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 73, Gravity.BOTTOM, 0, 0, 0, 68));
 
         return fragmentView;
     }
@@ -168,7 +161,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
             int type = holder.getItemViewType();
-            return type == 2 || type == 5 || type == 6 || type == 7;
+            return type == 2 || type == 5 || type == 7 || type == 16;
         }
 
         @NonNull
@@ -208,6 +201,8 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                 // case 12: Appearance > FabShapeCell
                 // case 13: General > DownloadSpeedChooser
                 // case 14: General > ActionBarSetupCell
+                // case 15: Chats > DoubleTapCell
+                // case 16: Chats > SetReactionCell
                 default:
                     throw new IllegalStateException("Unexpected value: " + viewType);
             }
@@ -216,25 +211,31 @@ public abstract class BasePreferencesActivity extends BaseFragment {
         }
     }
 
-    protected CharSequence addLinkSpan(String text, String username) {
-        int index = text.indexOf(username);
-        if (index != -1) {
-            try {
-                SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
-                URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
-                    @Override
-                    public void onClick(View widget) {
-                        MessagesController.getInstance(currentAccount).openByUserName(username.substring(1), BasePreferencesActivity.this, 1);
+    protected CharSequence addLinkSpan(String text, String... usernames) {
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
+        for (int i = 0; i < usernames.length; i++) {
+            String username = usernames[i];
+            int index = text.indexOf(username);
+            if (index != -1) {
+                try {
+                    URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
+                        @Override
+                        public void onClick(View widget) {
+                            MessagesController.getInstance(currentAccount).openByUserName(username.substring(1), BasePreferencesActivity.this, 1);
+                        }
+                    };
+                    stringBuilder.setSpan(urlSpan, index, index + username.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    if (i + 1 == usernames.length) {
+                        return stringBuilder;
                     }
-                };
-                stringBuilder.setSpan(urlSpan, index, index + username.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                return stringBuilder;
-            } catch (Exception e) {
-                FileLog.e(e);
+                } catch (Exception e) {
+                    FileLog.e(e);
+                    return text;
+                }
+            } else {
                 return text;
             }
-        } else {
-            return text;
         }
+        return text;
     }
 }

@@ -68,7 +68,6 @@
     <string name="UnlimitedRecentStickers">Sınırsız favori çıkartmaları</string>
     <string name="HideSendAsChannel">\"Kanal Olarak Gönder\"i Gizle</string>
     <string name="HideKeyboardOnScroll">Kaydırırken klavyeyi gizle</string>
-    <string name="DisableReactions">Reaksiyonları devre dışı bırak</string>
     <string name="DisableGreetingSticker">Tebrik çıkartmasını devre dışı bırak</string>
     <string name="DisableJumpToNextChannel">\"Sonraki Kanala Geç\"i devre dışı bırak</string>
     <string name="DateOfForwardedMsg">İletilen mesajın tarihini göster</string>

@@ -213,9 +213,9 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
         } else if (position == sourceCodeRow) {
             Browser.openUrl(getParentActivity(), "https://github.com/exteraSquad/exteraGram");
         } else if (position == channelRow) {
-            MessagesController.getInstance(currentAccount).openByUserName(("exteragram"), this, 1);
+            MessagesController.getInstance(currentAccount).openByUserName(("exteraGram"), this, 1);
         } else if (position == groupRow) {
-            MessagesController.getInstance(currentAccount).openByUserName(("exterachat"), this, 1);
+            MessagesController.getInstance(currentAccount).openByUserName(("exteraChat"), this, 1);
         } else if (position == crowdinRow) {
             Browser.openUrl(getParentActivity(), "https://crowdin.com/project/exteralocales");
         } else if (position == appearanceRow) {

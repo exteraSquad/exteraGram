@@ -16,7 +16,6 @@
     <string name="UpdateExteraGram">Это сообщение не поддерживается вашей версией exteraGram. Обновите приложение, чтобы увидеть: https://github.com/exteraSquad/exteraGram/releases/latest</string>
     <string name="MutualContact">взаимный контакт</string>
     <string name="ToBeginning">В начало</string>
-    <string name="SaveMessage">Сохранить сообщение</string>
 
     <!-- Main Menu (about) -->
     <string name="exteraPrivacy">Политика конфиденциальности и FAQ</string>
@@ -88,6 +87,12 @@
     <string name="StickerTime">Скрыть время под стикером</string>
     <string name="UnlimitedRecentStickers">Бесконечные недавние стикеры</string>
     <string name="StickersAutoReorder">Изменение порядка по использованию</string>
+    <string name="DoubleTap">Двойное нажатие</string>
+    <string name="DoubleTapIncoming">Входящие сообщения</string>
+    <string name="DoubleTapOutgoing">Исходящие сообщения</string>
+    <string name="DoubleTapInfo">Некоторые действия требуют наличия прав администратора в чате или канале.</string>
+    <string name="SaveMessage">Сохранить сообщение</string>
+    <string name="EmojiSuggestions2">Подсказки эмодзи</string>
     <string name="EmojiSuggestionsTap">Нажатие на подсказки эмодзи</string>
     <string name="EmojiSuggestionTapReplace">Заменять текст</string>
     <string name="EmojiSuggestionTapReplaceShort">Замена</string>
@@ -104,7 +109,6 @@
     <string name="HideShareButton">Скрыть боковую кнопку \"%1$s\"</string>
     <string name="DisableGreetingSticker">Скрыть приветственный стикер</string>
     <string name="DisableJumpToNextChannel">Отключить \"Перейти в новый канал\"</string>
-    <string name="DisableReactions">Отключить реакции</string>
     <string name="DateOfForwardedMsg">Дата пересланного сообщения</string>
     <string name="ShowMessageID">Показывать ID сообщения</string>
     <string name="ShowActionTimestamps">Показывать время у действий</string>

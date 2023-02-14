@@ -1008,7 +1008,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                 int bottom = Theme.chat_composeShadowDrawable.getIntrinsicHeight();
                 canvas.drawRect(0, bottom, getMeasuredWidth(), getMeasuredHeight(), Theme.chat_composeBackgroundPaint);
                 if (!ExteraConfig.disableDividers)
-                    canvas.drawLine(0, bottom + 1, getMeasuredWidth(), bottom + 1, Theme.dividerPaint);
+                    canvas.drawLine(0, bottom, getMeasuredWidth(), bottom, Theme.dividerPaint);
             }
         };
         bottomOverlayChat.setWillNotDraw(false);

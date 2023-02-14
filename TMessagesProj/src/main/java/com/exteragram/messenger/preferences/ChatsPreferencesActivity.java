@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.components.DoubleTapCell;
 import com.exteragram.messenger.components.StickerShapeCell;
 import com.exteragram.messenger.components.StickerSizePreviewCell;
 
@@ -36,6 +37,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.AlertDialog;
@@ -43,6 +45,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.RadioColorCell;
 import org.telegram.ui.Cells.TextCheckCell;
+import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
@@ -52,6 +55,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
     private ActionBarMenuItem resetItem;
     private StickerSizeCell stickerSizeCell;
+    private DoubleTapCell doubleTapCell;
 
     private final CharSequence[] suggestions = new CharSequence[]{
             LocaleController.getString("EmojiSuggestionTapReplace", R.string.EmojiSuggestionTapReplace),
@@ -61,6 +65,25 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             LocaleController.getString("EmojiSuggestionTapReplaceShort", R.string.EmojiSuggestionTapReplaceShort),
             LocaleController.getString("EmojiSuggestionTapAfterShort", R.string.EmojiSuggestionTapAfterShort),
             LocaleController.getString("EmojiSuggestionTapAfterSpaceShort", R.string.EmojiSuggestionTapAfterSpaceShort)
+    }, doubleTapActions = new CharSequence[]{
+            LocaleController.getString("Disable", R.string.Disable),
+            LocaleController.getString("Reactions", R.string.Reactions),
+            LocaleController.getString("Reply", R.string.Reply),
+            LocaleController.getString("Copy", R.string.Copy),
+            LocaleController.getString("Forward", R.string.Forward),
+            LocaleController.getString("Edit", R.string.Edit),
+            LocaleController.getString("Save", R.string.Save),
+            LocaleController.getString("Delete", R.string.Delete)
+    };
+    private final int[] doubleTapIcons = new int[]{
+            R.drawable.msg_block,
+            ExteraConfig.useSolarIcons ? R.drawable.msg_reactions : R.drawable.msg_saved_14,
+            R.drawable.msg_reply,
+            R.drawable.msg_copy,
+            R.drawable.msg_forward,
+            R.drawable.msg_edit,
+            R.drawable.msg_saved,
+            R.drawable.msg_delete
     };
 
     private int stickerSizeHeaderRow;
@@ -77,12 +100,18 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int emojiSuggestionTapRow;
     private int stickersDividerRow;
 
+    private int doubleTapHeaderRow;
+    private int doubleTapRow;
+    private int doubleTapActionOutOwnerRow;
+    private int doubleTapActionRow;
+    private int doubleTapReactionRow;
+    private int doubleTapDividerRow;
+
     private int chatHeaderRow;
     private int addCommaAfterMentionRow;
     private int hideKeyboardOnScrollRow;
     private int hideShareButtonRow;
     private int hideMuteUnmuteButtonRow;
-    private int disableReactionsRow;
     private int disableGreetingStickerRow;
     private int disableJumpToNextChannelRow;
     private int dateOfForwardedMsgRow;
@@ -111,7 +140,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
         public StickerSizeCell(Context context) {
             super(context);
-
+            setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             setWillNotDraw(false);
 
             textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -248,12 +277,27 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         emojiSuggestionTapRow = newRow();
         stickersDividerRow = newRow();
 
+        if (ExteraConfig.isExteraDev(getUserConfig().getCurrentUser())) {
+            doubleTapHeaderRow = newRow();
+            doubleTapRow = newRow();
+            doubleTapActionRow = newRow();
+            doubleTapActionOutOwnerRow = newRow();
+            doubleTapReactionRow = ExteraConfig.doubleTapAction == 1 || ExteraConfig.doubleTapActionOutOwner == 1 ? newRow() : -1;
+            doubleTapDividerRow = newRow();
+        } else {
+            doubleTapHeaderRow = -1;
+            doubleTapRow = -1;
+            doubleTapActionRow = -1;
+            doubleTapActionOutOwnerRow = -1;
+            doubleTapReactionRow = -1;
+            doubleTapDividerRow = -1;
+        }
+
         chatHeaderRow = newRow();
         addCommaAfterMentionRow = newRow();
         hideMuteUnmuteButtonRow = newRow();
         hideShareButtonRow = newRow();
         hideKeyboardOnScrollRow = newRow();
-        disableReactionsRow = newRow();
         disableGreetingStickerRow = newRow();
         disableJumpToNextChannelRow = newRow();
         dateOfForwardedMsgRow = newRow();
@@ -308,7 +352,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 cell.setOnClickListener(v -> {
                     Integer which = (Integer) v.getTag();
                     ExteraConfig.editor.putInt("emojiSuggestionTap", ExteraConfig.emojiSuggestionTap = which).apply();
-                    ((TextSettingsCell) view).setTextAndValue(LocaleController.getString("EmojiSuggestions", R.string.EmojiSuggestions), suggestionsValue[which], true, true);
+                    ((TextSettingsCell) view).setTextAndValue(LocaleController.getString("EmojiSuggestions2", R.string.EmojiSuggestions2), suggestionsValue[which], true, true);
                     builder.getDismissRunnable().run();
                 });
             }
@@ -323,10 +367,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == hideMuteUnmuteButtonRow) {
             ExteraConfig.editor.putBoolean("hideMuteUnmuteButton", ExteraConfig.hideMuteUnmuteButton ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideMuteUnmuteButton);
-        } else if (position == disableReactionsRow) {
-            ExteraConfig.editor.putBoolean("disableReactions", ExteraConfig.disableReactions ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.disableReactions);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == disableGreetingStickerRow) {
             ExteraConfig.editor.putBoolean("disableGreetingSticker", ExteraConfig.disableGreetingSticker ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableGreetingSticker);
@@ -364,6 +404,53 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             ExteraConfig.editor.putBoolean("disablePlayback", ExteraConfig.disablePlayback ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disablePlayback);
             showBulletin();
+        } else if (position == doubleTapActionRow || position == doubleTapActionOutOwnerRow) {
+            if (getParentActivity() == null) {
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+            builder.setTitle(LocaleController.getString("DoubleTap", R.string.DoubleTap));
+            if (position == doubleTapActionOutOwnerRow) {
+                builder.setItems(doubleTapActions, doubleTapIcons, (dialog, which) -> {
+                    int old = ExteraConfig.doubleTapActionOutOwner;
+                    if (old == which) return;
+                    doubleTapCell.updateIcons(2, true);
+                    ExteraConfig.editor.putInt("doubleTapActionOutOwner", ExteraConfig.doubleTapActionOutOwner = which).apply();
+                    if (old == 1 && ExteraConfig.doubleTapAction != 1) {
+                        listAdapter.notifyItemRemoved(doubleTapReactionRow);
+                        updateRowsId();
+                    } else if (which == 1 && ExteraConfig.doubleTapAction != 1) {
+                        updateRowsId();
+                        listAdapter.notifyItemInserted(doubleTapReactionRow);
+                    }
+                    ((TextSettingsCell) view).setTextAndValue(LocaleController.getString("DoubleTapOutgoing", R.string.DoubleTapOutgoing), doubleTapActions[which], true, doubleTapReactionRow != -1);
+                });
+            } else {
+                builder.setItems(doubleTapActions, doubleTapIcons, (dialog, which) -> {
+                    int old = ExteraConfig.doubleTapAction;
+                    if (old == which) return;
+                    doubleTapCell.updateIcons(1, true);
+                    ExteraConfig.editor.putInt("doubleTapAction", ExteraConfig.doubleTapAction = which).apply();
+                    if (old == 1 && ExteraConfig.doubleTapActionOutOwner != 1) {
+                        listAdapter.notifyItemRemoved(doubleTapReactionRow);
+                        listAdapter.notifyItemChanged(doubleTapActionOutOwnerRow);
+                        updateRowsId();
+                    } else if (which == 1 && ExteraConfig.doubleTapActionOutOwner != 1) {
+                        updateRowsId();
+                        listAdapter.notifyItemChanged(doubleTapActionOutOwnerRow);
+                        listAdapter.notifyItemInserted(doubleTapReactionRow);
+                    }
+                    ((TextSettingsCell) view).setTextAndValue(LocaleController.getString("DoubleTapIncoming", R.string.DoubleTapIncoming), doubleTapActions[which], true, true);
+                });
+            }
+            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+            showDialog(builder.create());
+        } else if (position == doubleTapReactionRow) {
+            int h = AndroidUtilities.dp(300);
+            if (view.getY() + h + AndroidUtilities.dp(50) >= listView.getBottom()) {
+                listView.smoothScrollBy(0, (int) Math.abs(listView.getBottom() - view.getY() - h - AndroidUtilities.dp(50)));
+            }
+            DoubleTapCell.SetReactionCell.showSelectStatusDialog((DoubleTapCell.SetReactionCell) view, this);
         }
     }
 
@@ -400,14 +487,21 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                             stickerSizeCell.invalidate();
                         }
                     };
-                    stickerShapeCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     stickerShapeCell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
                     return new RecyclerListView.Holder(stickerShapeCell);
                 case 11:
                     stickerSizeCell = new StickerSizeCell(mContext);
-                    stickerSizeCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     stickerSizeCell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
                     return new RecyclerListView.Holder(stickerSizeCell);
+                case 15:
+                    doubleTapCell = new DoubleTapCell(mContext);
+                    doubleTapCell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+                    return new RecyclerListView.Holder(doubleTapCell);
+                case 16:
+                    DoubleTapCell.SetReactionCell reactionCell = new DoubleTapCell.SetReactionCell(mContext);
+                    reactionCell.update(false);
+                    reactionCell.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+                    return new RecyclerListView.Holder(reactionCell);
                 default:
                     return super.onCreateViewHolder(parent, type);
             }
@@ -424,13 +518,15 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     if (position == stickerSizeHeaderRow) {
                         headerCell.setText(LocaleController.getString("StickerSize", R.string.StickerSize));
                     } else if (position == stickersHeaderRow) {
-                        headerCell.setText(LocaleController.getString("AccDescrStickers", R.string.AccDescrStickers) + " & " + LocaleController.getString("Emoji", R.string.Emoji));
+                        headerCell.setText(LocaleController.getString(R.string.StickersName));
                     } else if (position == chatHeaderRow) {
                         headerCell.setText(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort));
                     } else if (position == mediaHeaderRow) {
                         headerCell.setText(LocaleController.getString("MediaTab", R.string.MediaTab));
                     } else if (position == stickerShapeHeaderRow) {
                         headerCell.setText(LocaleController.getString("StickerShape", R.string.StickerShape));
+                    } else if (position == doubleTapHeaderRow) {
+                        headerCell.setText(LocaleController.getString("DoubleTap", R.string.DoubleTap));
                     }
                     break;
                 case 5:
@@ -450,8 +546,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndCheck(LocaleController.formatString("HideShareButton", R.string.HideShareButton, LocaleController.getString("ShareFile", R.string.ShareFile)), ExteraConfig.hideShareButton, true);
                     } else if (position == hideMuteUnmuteButtonRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.formatString("HideMuteUnmuteButton", R.string.HideMuteUnmuteButton, LocaleController.getString("ChannelMute", R.string.ChannelMute)), LocaleController.getString("HideMuteUnmuteButtonValue", R.string.HideMuteUnmuteButtonValue), ExteraConfig.hideMuteUnmuteButton, true, true);
-                    } else if (position == disableReactionsRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("DisableReactions", R.string.DisableReactions), ExteraConfig.disableReactions, true);
                     } else if (position == disableGreetingStickerRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableGreetingSticker", R.string.DisableGreetingSticker), ExteraConfig.disableGreetingSticker, true);
                     } else if (position == disableJumpToNextChannelRow) {
@@ -479,7 +573,17 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 case 7:
                     TextSettingsCell textSettingsCell = (TextSettingsCell) holder.itemView;
                     if (position == emojiSuggestionTapRow) {
-                        textSettingsCell.setTextAndValue(LocaleController.getString("EmojiSuggestions", R.string.EmojiSuggestions), suggestionsValue[ExteraConfig.emojiSuggestionTap], false);
+                        textSettingsCell.setTextAndValue(LocaleController.getString("EmojiSuggestions2", R.string.EmojiSuggestions2), suggestionsValue[ExteraConfig.emojiSuggestionTap], false);
+                    } else if (position == doubleTapActionOutOwnerRow) {
+                        textSettingsCell.setTextAndValue(LocaleController.getString("DoubleTapOutgoing", R.string.DoubleTapOutgoing), doubleTapActions[ExteraConfig.doubleTapActionOutOwner], false, doubleTapReactionRow != -1);
+                    } else if (position == doubleTapActionRow) {
+                        textSettingsCell.setTextAndValue(LocaleController.getString("DoubleTapIncoming", R.string.DoubleTapIncoming), doubleTapActions[ExteraConfig.doubleTapAction], false, true);
+                    }
+                    break;
+                case 8:
+                    TextInfoPrivacyCell cell = (TextInfoPrivacyCell) holder.itemView;
+                    if (position == doubleTapDividerRow) {
+                        cell.setText(LocaleController.getString("DoubleTapInfo", R.string.DoubleTapInfo));
                     }
                     break;
             }
@@ -489,14 +593,21 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         public int getItemViewType(int position) {
             if (position == stickersDividerRow || position == mediaDividerRow || position == stickerShapeDividerRow || position == chatDividerRow) {
                 return 1;
-            } else if (position == stickerSizeHeaderRow || position == stickersHeaderRow || position == chatHeaderRow || position == mediaHeaderRow || position == stickerShapeHeaderRow) {
+            } else if (position == stickerSizeHeaderRow || position == stickersHeaderRow || position == chatHeaderRow || position == mediaHeaderRow || position == stickerShapeHeaderRow ||
+                    position == doubleTapHeaderRow) {
                 return 3;
-            } else if (position == emojiSuggestionTapRow) {
+            } else if (position == emojiSuggestionTapRow || position == doubleTapActionRow || position == doubleTapActionOutOwnerRow) {
                 return 7;
+            } else if (position == doubleTapDividerRow) {
+                return 8;
             } else if (position == stickerShapeRow) {
                 return 10;
             } else if (position == stickerSizeRow) {
                 return 11;
+            } else if (position == doubleTapRow) {
+                return 15;
+            } else if (position == doubleTapReactionRow) {
+                return 16;
             }
             return 5;
         }

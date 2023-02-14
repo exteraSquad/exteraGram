@@ -42,6 +42,7 @@ import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.TextCell;
+import org.telegram.ui.Components.AnimatedTextView;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
@@ -50,9 +51,8 @@ import org.telegram.ui.Components.RLottieImageView;
 public class UpdaterBottomSheet extends BottomSheet {
 
     private RLottieImageView imageView;
-    private TextView changelogTextView;
+    private AnimatedTextView changelogTextView;
 
-    AnimatorSet animatorSet;
     private boolean isTranslated = false;
     private CharSequence translatedC;
 
@@ -121,7 +121,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             changelog.setOnClickListener(v -> copyText(changelog.getTextView().getText() + "\n" + (isTranslated ? translatedC : UpdaterUtils.replaceTags(args[1]))));
             linearLayout.addView(changelog);
 
-            changelogTextView = new TextView(context) {
+            changelogTextView = new AnimatedTextView(context, true, true, false) {
                 @Override
                 protected void onDraw(Canvas canvas) {
                     super.onDraw(canvas);
@@ -129,16 +129,17 @@ public class UpdaterBottomSheet extends BottomSheet {
                         canvas.drawLine(0, getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
                 }
             };
+            changelogTextView.setAnimationProperties(.3f, 0, 450, CubicBezierInterpolator.EASE_OUT_QUINT);
             changelogTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-            changelogTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            changelogTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
-            changelogTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
+            changelogTextView.setTextSize(AndroidUtilities.dp(14));
             changelogTextView.setText(UpdaterUtils.replaceTags(args[1]));
+            changelogTextView.setIgnoreRTL(!LocaleController.isRTL);
+            changelogTextView.adaptWidth = false;
             changelogTextView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(10));
             changelogTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             changelogTextView.setOnClickListener(v -> ExteraUtils.translate(args[1], LocaleController.getInstance().getCurrentLocale().getLanguage(), translated -> {
                 translatedC = translated;
-                animateView(changelogTextView, UpdaterUtils.replaceTags(isTranslated ? args[1] : translatedC));
+                changelogTextView.setText(UpdaterUtils.replaceTags(isTranslated ? args[1] : translatedC));
                 isTranslated ^= true;
             }, () -> {}));
             linearLayout.addView(changelogTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
@@ -216,21 +217,21 @@ public class UpdaterBottomSheet extends BottomSheet {
             checkUpdatesBackground.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 6));
             linearLayout.addView(checkUpdatesBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
 
-            TextView checkUpdates = new TextView(context);
-            checkUpdates.setLines(1);
-            checkUpdates.setSingleLine(true);
-            checkUpdates.setEllipsize(TextUtils.TruncateAt.END);
+            AnimatedTextView checkUpdates = new AnimatedTextView(context, true, true, false);
+            checkUpdates.setAnimationProperties(.3f, 0, 450, CubicBezierInterpolator.EASE_OUT_QUINT);
             checkUpdates.setGravity(Gravity.CENTER);
             checkUpdates.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
             checkUpdates.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            checkUpdates.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            checkUpdates.setTextSize(AndroidUtilities.dp(14));
+            checkUpdates.setIgnoreRTL(!LocaleController.isRTL);
+            checkUpdates.adaptWidth = false;
             checkUpdates.setText(LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
             checkUpdates.setOnClickListener(v -> {
-                animateView(checkUpdates, LocaleController.getString("CheckingForUpdates", R.string.CheckingForUpdates));
+                checkUpdates.setText(LocaleController.getString("CheckingForUpdates", R.string.CheckingForUpdates));
                 UpdaterUtils.checkUpdates(context, true, () -> {
                     BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates)).show();
                     timeView.setText(LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
-                    animateView(checkUpdates, LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
+                    checkUpdates.setText(LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
                 }, this::dismiss);
             });
             checkUpdatesBackground.addView(checkUpdates, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
@@ -239,36 +240,6 @@ public class UpdaterBottomSheet extends BottomSheet {
         ScrollView scrollView = new ScrollView(context);
         scrollView.addView(linearLayout);
         setCustomView(scrollView);
-    }
-
-    private void animateView(View v, CharSequence text) {
-        if (animatorSet != null) {
-            animatorSet.cancel();
-        }
-        if (v instanceof TextView)
-            ((TextView) v).setText(text);
-        animatorSet = new AnimatorSet();
-        animatorSet.setDuration(400);
-        animatorSet.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
-        animatorSet.playTogether(
-                ObjectAnimator.ofFloat(v, View.ALPHA, 0.0f, 1.0f),
-                ObjectAnimator.ofFloat(v, View.TRANSLATION_Y, AndroidUtilities.dp(12 * (isTranslated ? -1 : 1)), 0)
-        );
-        animatorSet.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(@NonNull Animator animation) {
-                if (animatorSet != null && animatorSet.equals(animation)) {
-                    animatorSet = null;
-                }
-            }
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                if (animatorSet != null && animatorSet.equals(animation)) {
-                    animatorSet = null;
-                }
-            }
-        });
-        animatorSet.start();
     }
 
     private void copyText(CharSequence text) {

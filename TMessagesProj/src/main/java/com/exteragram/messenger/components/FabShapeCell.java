@@ -30,6 +30,7 @@ import androidx.core.graphics.ColorUtils;
 import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.Easings;
@@ -52,7 +53,7 @@ public class FabShapeCell extends LinearLayout {
 
             outlinePaint.setStyle(Paint.Style.STROKE);
             outlinePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
-            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(0.5f)));
+            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(1f)));
 
             setSelected(square && ExteraConfig.squareFab || !square && !ExteraConfig.squareFab, false);
         }
@@ -99,7 +100,7 @@ public class FabShapeCell extends LinearLayout {
             this.progress = progress;
 
             outlinePaint.setColor(ColorUtils.blendARGB(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F), Theme.getColor(Theme.key_windowBackgroundWhiteValueText), progress));
-            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(AndroidUtilities.lerp(0.5f, 2f, progress))));
+            outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(AndroidUtilities.lerp(1f, 2f, progress))));
             invalidate();
         }
 
@@ -125,6 +126,7 @@ public class FabShapeCell extends LinearLayout {
     public FabShapeCell(Context context) {
         super(context);
         setOrientation(HORIZONTAL);
+        setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
         setPadding(AndroidUtilities.dp(13), AndroidUtilities.dp(15), AndroidUtilities.dp(13), AndroidUtilities.dp(21));
 
         for (int a = 0; a < 2; a++) {
@@ -157,7 +159,7 @@ public class FabShapeCell extends LinearLayout {
         super.onDraw(canvas);
 
         if (!ExteraConfig.disableDividers)
-            canvas.drawLine(AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
+            canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(21) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
     }
 
     @Override
