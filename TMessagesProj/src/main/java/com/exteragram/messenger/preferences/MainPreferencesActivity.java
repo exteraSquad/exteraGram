@@ -33,6 +33,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     private int generalRow;
     private int appearanceRow;
     private int chatsRow;
+    private int cameraRow;
 
     private int categoryDividerRow;
     private int aboutExteraDividerRow;
@@ -56,6 +57,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
         generalRow = newRow();
         appearanceRow = newRow();
         chatsRow = newRow();
+        cameraRow = newRow();
         categoryDividerRow = newRow();
 
         infoHeaderRow = newRow();
@@ -82,6 +84,8 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
             presentFragment(new AppearancePreferencesActivity());
         } else if (position == chatsRow) {
             presentFragment(new ChatsPreferencesActivity());
+        } else if (position == cameraRow) {
+            presentFragment(new CameraPreferencesEntry());
         } else if (position == generalRow) {
             presentFragment(new GeneralPreferencesActivity());
         }
@@ -126,6 +130,8 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                         textCell.setTextAndIcon(LocaleController.getString("Appearance", R.string.Appearance), R.drawable.msg_theme, true);
                     } else if (position == chatsRow) {
                         textCell.setTextAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), R.drawable.msg_discussion, true);
+                    } else if (position == cameraRow) {
+                        textCell.setTextAndIcon(LocaleController.getString("CP_Category_Camera", R.string.CP_Category_Camera), R.drawable.msg_camera, true);
                     } else if (position == channelRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Channel", R.string.Channel), "@exteragram", R.drawable.msg_channel, true);
                     } else if (position == groupRow) {

@@ -99,6 +99,18 @@
     <string name="DisablePlayback">Disable playback</string>
     <string name="DPDescription">Disables playback when volume button is pressed.</string>
 
+    <!--Camera Preferences-->
+    <string name="CP_Category_Camera">Camera</string>
+    <string name="CP_CameraType">Camera Type</string>
+    <string name="CP_CameraTypeDefault">Default</string>
+    <string name="CP_DefaultCameraDesc">Use the Telegram\'s built-in camera.</string>
+    <string name="CP_CameraXDesc">CameraX is only supported on <![CDATA[<a href="https://developer.android.com/training/camerax/devices">selected devices</a>]]>, effects and lenses support depends on your manufacturer.</string>
+    <string name="CP_PerformanceMode">Performance Mode</string>
+    <string name="CP_PerformanceModeDesc">CameraX\'s quality will be reduced in favor of performance</string>
+    <string name="CP_CameraQuality">Camera Quality</string>
+    <string name="CP_CameraTypeSystem">System</string>
+    <string name="CP_SystemCameraDesc">Access directly the system camera (not applicable for video messages).</string>
+
     <!-- Drawer -->
     <string name="DrawerElements">Drawer elements</string>
     <string name="DrawerOptions">Drawer options</string>
