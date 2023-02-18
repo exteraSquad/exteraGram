@@ -50,6 +50,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -570,11 +571,21 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
         }
         MediaController.getInstance().pauseMessage(MediaController.getInstance().getPlayingMessageObject());
 
-        cameraFile = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), SharedConfig.getLastLocalId() + ".mp4");
+        FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE).mkdirs();
+        cameraFile = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), SharedConfig.getLastLocalId() + ".mp4") {
+            @Override
+            public boolean delete() {
+                if (BuildVars.LOGS_ENABLED) {
+                    FileLog.e("delete camera file");
+                }
+                return super.delete();
+            }
+        };
+
         SharedConfig.saveConfig();
 
         if (BuildVars.LOGS_ENABLED) {
-            FileLog.d("show round camera");
+            FileLog.d("show round camera " + cameraFile.getAbsolutePath());
         }
 
         textureView = new TextureView(getContext());
@@ -836,6 +847,9 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             cameraThread = null;
         }
         if (cameraFile != null) {
+            if (BuildVars.LOGS_ENABLED) {
+                FileLog.e("delete camera file by cancel");
+            }
             cameraFile.delete();
             cameraFile = null;
         }
@@ -1042,7 +1056,11 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                             }
                         }
                     }
-                }, () -> cameraThread.setCurrentSession(cameraSession));
+                }, () -> {
+                    if (cameraThread != null) {
+                        cameraThread.setCurrentSession(cameraSession);
+                    }
+                });
             } else {
                 MeteringPointFactory factory = new SurfaceOrientedMeteringPointFactory(previewSize.getWidth(), previewSize.getHeight());
                 Preview.SurfaceProvider surfaceProvider = request -> {

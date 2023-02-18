@@ -138,6 +138,7 @@ public class ActionBar extends FrameLayout {
     private boolean centerScale;
     private CharSequence subtitle;
     private boolean drawBackButton;
+    private boolean attached;
 
     private View.OnTouchListener interceptTouchEventListener;
     private final Theme.ResourcesProvider resourcesProvider;
@@ -444,12 +445,15 @@ public class ActionBar extends FrameLayout {
         if (titleTextView[0] != null) {
             titleTextView[0].setVisibility(value != null && !isSearchFieldVisible ? VISIBLE : INVISIBLE);
             titleTextView[0].setText(lastTitle = value);
-            if (UserConfig.getInstance(UserConfig.selectedAccount).isPremium() && !ExteraConfig.hideActionBarStatus) {
-                titleTextView[0].setRightDrawable(lastRightDrawable = rightDrawable);
-                titleTextView[0].setRightDrawableOnClick(rightDrawableOnClickListener);
-                if (rightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
-                    ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) rightDrawable).setParentView(titleTextView[0]);
+            if (!ExteraConfig.hideActionBarStatus) {
+                if (attached && lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
+                    ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(null);
                 }
+                titleTextView[0].setRightDrawable(lastRightDrawable = rightDrawable);
+                if (attached && lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
+                    ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(titleTextView[0]);
+                }
+                titleTextView[0].setRightDrawableOnClick(rightDrawableOnClickListener);
             }
         }
         fromBottom = false;
@@ -1684,15 +1688,20 @@ public class ActionBar extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        attached = true;
         ellipsizeSpanAnimator.onAttachedToWindow();
         if (SharedConfig.noStatusBar && actionModeVisible) {
             AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionModeColor) < 0.7f));
+        }
+        if (lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
+            ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(titleTextView[0]);
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        attached = false;
         ellipsizeSpanAnimator.onDetachedFromWindow();
         if (SharedConfig.noStatusBar && actionModeVisible) {
             if (actionBarColor == 0) {
@@ -1700,6 +1709,9 @@ public class ActionBar extends FrameLayout {
             } else {
                 AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionBarColor) < 0.7f));
             }
+        }
+        if (lastRightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) {
+            ((AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) lastRightDrawable).setParentView(null);
         }
     }
 

@@ -1624,6 +1624,9 @@ public class LoginActivity extends BaseFragment {
     }
 
     private void resendCodeFromSafetyNet(Bundle params, TLRPC.auth_SentCode res) {
+        if (!isRequestingFirebaseSms) {
+            return;
+        }
         needHideProgress(false);
         isRequestingFirebaseSms = false;
 
@@ -3626,7 +3629,7 @@ public class LoginActivity extends BaseFragment {
 
             if (currentType != AUTH_TYPE_FRAGMENT_SMS) {
                 problemText.setOnClickListener(v -> {
-                    if (nextPressed || timeText.getVisibility() != View.GONE) {
+                    if (nextPressed || timeText.getVisibility() != View.GONE || isResendingCode) {
                         return;
                     }
                     boolean email = nextType == 0;
@@ -3713,7 +3716,7 @@ public class LoginActivity extends BaseFragment {
         }
 
         private void resendCode() {
-            if (nextPressed) {
+            if (nextPressed || isResendingCode || isRequestingFirebaseSms) {
                 return;
             }
 

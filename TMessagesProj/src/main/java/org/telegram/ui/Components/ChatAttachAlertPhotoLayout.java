@@ -607,8 +607,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
         parentAlert.selectedMenuItem.addSubItem(group, R.drawable.msg_ungroup, LocaleController.getString("SendWithoutGrouping", R.string.SendWithoutGrouping));
         spoilerItem = parentAlert.selectedMenuItem.addSubItem(spoiler, R.drawable.msg_spoiler, LocaleController.getString("EnablePhotoSpoiler", R.string.EnablePhotoSpoiler));
         parentAlert.selectedMenuItem.addSubItem(open_in, R.drawable.msg_openin, LocaleController.getString("OpenInExternalApp", R.string.OpenInExternalApp));
-        View gap = parentAlert.selectedMenuItem.addGap(preview_gap);
-        gap.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuSeparator, resourcesProvider));
+        parentAlert.selectedMenuItem.addGap(preview_gap);
         previewItem = parentAlert.selectedMenuItem.addSubItem(preview, R.drawable.msg_view_file, LocaleController.getString("AttachMediaPreviewButton", R.string.AttachMediaPreviewButton));
         parentAlert.selectedMenuItem.setFitSubItems(true);
 
@@ -713,15 +712,13 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             if (ExteraConfig.hideCameraTile) {
                 position++;
             }
-            if (Build.VERSION.SDK_INT >= 23) {
+            if (Build.VERSION.SDK_INT >= 23 && !ExteraConfig.hideCameraTile) {
                 if (adapter.needCamera && selectedAlbumEntry == galleryAlbumEntry && position == 0 && noCameraPermissions) {
                     try {
                         parentAlert.baseFragment.getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, 18);
-                    } catch (Exception ignore) {
-
-                    }
+                    } catch (Exception ignore) {}
                     return;
-                } else if (noGalleryPermissions) {
+                } else if (!PermissionUtils.isImagesAndVideoPermissionGranted()) {
                     PermissionUtils.requestImagesAndVideoPermission(parentAlert.baseFragment.getParentActivity());
                     return;
                 }
@@ -735,164 +732,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                         if (!(view instanceof AvatarConstructorPreviewCell)) {
                             return;
                         }
-                        AvatarConstructorFragment avatarConstructorFragment = new AvatarConstructorFragment(parentAlert.parentImageUpdater, parentAlert.getAvatarFor());
-                        avatarConstructorFragment.finishOnDone = !(parentAlert.getAvatarFor() != null && parentAlert.getAvatarFor().type == ImageUpdater.TYPE_SUGGEST_PHOTO_FOR_USER);
-                        AvatarConstructorPreviewCell previewCell = (AvatarConstructorPreviewCell) view;
-                        parentAlert.baseFragment.presentFragment(avatarConstructorFragment);
-                        avatarConstructorFragment.startFrom(previewCell);
-                        avatarConstructorFragment.setDelegate((gradient, documentId, document, previewView) -> {
-                            selectedPhotos.clear();
-                            Bitmap bitmap = Bitmap.createBitmap(800, 800, Bitmap.Config.ARGB_8888);
-                            Canvas canvas = new Canvas(bitmap);
-                            GradientTools gradientTools = new GradientTools();
-                            gradientTools.setColors(gradient.color1, gradient.color2, gradient.color3, gradient.color4);
-                            gradientTools.setBounds(0, 0, 800, 800);
-                            canvas.drawRect(0, 0, 800, 800, gradientTools.paint);
-
-                            File file = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), SharedConfig.getLastLocalId() + "avatar_background.png");
-                            try {
-                                file.createNewFile();
-
-                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-                                byte[] bitmapdata = bos.toByteArray();
-
-                                FileOutputStream fos = new FileOutputStream(file);
-                                fos.write(bitmapdata);
-                                fos.flush();
-                                fos.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            float scale = AvatarConstructorFragment.STICKER_DEFAULT_SCALE;
-                            int imageX, imageY;
-                            imageX = imageY = (int) (800 * (1f - scale) / 2f);
-                            int imageSize = (int) (800 * scale);
-
-                            ImageReceiver imageReceiver = previewView.getImageReceiver();
-                            if (imageReceiver.getAnimation() != null) {
-                                Bitmap firstFrame = imageReceiver.getAnimation().getFirstFrame(null);
-                                ImageReceiver firstFrameReceiver = new ImageReceiver();
-                                firstFrameReceiver.setImageBitmap(firstFrame);
-                                firstFrameReceiver.setImageCoords(imageX, imageY, imageSize, imageSize);
-                                firstFrameReceiver.setRoundRadius((int) (imageSize * AvatarConstructorFragment.STICKER_DEFAULT_ROUND_RADIUS));
-                                firstFrameReceiver.draw(canvas);
-                                firstFrameReceiver.clearImage();
-                                firstFrame.recycle();
-                            } else {
-                                if (imageReceiver.getLottieAnimation() != null) {
-                                    imageReceiver.getLottieAnimation().setCurrentFrame(0, false, true);
-                                }
-                                imageReceiver.setImageCoords(imageX, imageY, imageSize, imageSize);
-                                imageReceiver.setRoundRadius((int) (imageSize * AvatarConstructorFragment.STICKER_DEFAULT_ROUND_RADIUS));
-                                imageReceiver.draw(canvas);
-                            }
-
-                            File thumb = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), SharedConfig.getLastLocalId() + "avatar_background.png");
-                            try {
-                                thumb.createNewFile();
-
-                                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-                                byte[] bitmapdata = bos.toByteArray();
-
-                                FileOutputStream fos = new FileOutputStream(thumb);
-                                fos.write(bitmapdata);
-                                fos.flush();
-                                fos.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            MediaController.PhotoEntry photoEntry;
-                            if (previewView.hasAnimation()) {
-                                photoEntry = new MediaController.PhotoEntry(0, 0, 0, file.getPath(), 0, false, 0, 0, 0);
-                                photoEntry.thumbPath = thumb.getPath();
-
-                                if (previewView.documentId != 0) {
-                                    TLRPC.TL_videoSizeEmojiMarkup emojiMarkup = new TLRPC.TL_videoSizeEmojiMarkup();
-                                    emojiMarkup.emoji_id = previewView.documentId;
-                                    emojiMarkup.background_colors.add(previewView.backgroundGradient.color1);
-                                    if (previewView.backgroundGradient.color2 != 0) {
-                                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color2);
-                                    }
-                                    if (previewView.backgroundGradient.color3 != 0) {
-                                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color3);
-                                    }
-                                    if (previewView.backgroundGradient.color4 != 0) {
-                                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color4);
-                                    }
-                                    photoEntry.emojiMarkup = emojiMarkup;
-                                } else if (previewView.document != null) {
-                                    TLRPC.TL_videoSizeStickerMarkup emojiMarkup = new TLRPC.TL_videoSizeStickerMarkup();
-                                    emojiMarkup.sticker_id = previewView.document.id;
-                                    emojiMarkup.stickerset = MessageObject.getInputStickerSet(previewView.document);
-                                    emojiMarkup.background_colors.add(previewView.backgroundGradient.color1);
-                                    if (previewView.backgroundGradient.color2 != 0) {
-                                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color2);
-                                    }
-                                    if (previewView.backgroundGradient.color3 != 0) {
-                                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color3);
-                                    }
-                                    if (previewView.backgroundGradient.color4 != 0) {
-                                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color4);
-                                    }
-                                    photoEntry.emojiMarkup = emojiMarkup;
-                                }
-
-                                photoEntry.editedInfo = new VideoEditedInfo();
-                                photoEntry.editedInfo.originalPath = file.getPath();
-                                photoEntry.editedInfo.resultWidth = 800;
-                                photoEntry.editedInfo.resultHeight = 800;
-                                photoEntry.editedInfo.originalWidth = 800;
-                                photoEntry.editedInfo.originalHeight = 800;
-                                photoEntry.editedInfo.isPhoto = true;
-                                photoEntry.editedInfo.bitrate = -1;
-                                photoEntry.editedInfo.muted = true;
-
-                                photoEntry.editedInfo.start = photoEntry.editedInfo.startTime = 0;
-                                photoEntry.editedInfo.endTime = previewView.getDuration();
-                                photoEntry.editedInfo.framerate = 30;
-
-                                photoEntry.editedInfo.avatarStartTime = 0;
-                                photoEntry.editedInfo.estimatedSize = (int) (photoEntry.editedInfo.endTime / 1000.0f * 115200);
-                                photoEntry.editedInfo.estimatedDuration = photoEntry.editedInfo.endTime;
-
-                                VideoEditedInfo.MediaEntity mediaEntity = new VideoEditedInfo.MediaEntity();
-                                mediaEntity.type = 0;
-
-                                if (document == null) {
-                                    document = AnimatedEmojiDrawable.findDocument(UserConfig.selectedAccount, documentId);
-                                }
-                                if (document == null) {
-                                    return;
-                                }
-                                mediaEntity.viewWidth = (int) (800 * scale);
-                                mediaEntity.viewHeight = (int) (800 * scale);
-                                mediaEntity.width = scale;
-                                mediaEntity.height = scale;
-                                mediaEntity.x = (1f - scale) / 2f;
-                                mediaEntity.y = (1f - scale) / 2f;
-                                mediaEntity.document = document;
-                                mediaEntity.parentObject = null;
-                                mediaEntity.text = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(document, true).getAbsolutePath();
-                                mediaEntity.roundRadius = AvatarConstructorFragment.STICKER_DEFAULT_ROUND_RADIUS;
-                                if (MessageObject.isAnimatedStickerDocument(document, true) || MessageObject.isVideoStickerDocument(document)) {
-                                    boolean isAnimatedSticker = MessageObject.isAnimatedStickerDocument(document, true);
-                                    mediaEntity.subType |= isAnimatedSticker ? 1 : 4;
-                                }
-
-                                photoEntry.editedInfo.mediaEntities = new ArrayList<>();
-                                photoEntry.editedInfo.mediaEntities.add(mediaEntity);
-                            } else {
-                                photoEntry = new MediaController.PhotoEntry(0, 0, 0, thumb.getPath(), 0, false, 0, 0, 0);
-                            }
-                            selectedPhotos.put(-1, photoEntry);
-                            selectedPhotosOrder.add(-1);
-                            parentAlert.delegate.didPressedButton(7, true, false, 0, false);
-                        });
-
+                        showAvatarConstructorFragment((AvatarConstructorPreviewCell) view, null);
                         parentAlert.dismiss();
                     }
                     position--;
@@ -1609,6 +1449,174 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
         });
     }
 
+    public void showAvatarConstructorFragment(AvatarConstructorPreviewCell view, TLRPC.VideoSize emojiMarkupStrat) {
+        AvatarConstructorFragment avatarConstructorFragment = new AvatarConstructorFragment(parentAlert.parentImageUpdater, parentAlert.getAvatarFor());
+        avatarConstructorFragment.finishOnDone = !(parentAlert.getAvatarFor() != null && parentAlert.getAvatarFor().type == ImageUpdater.TYPE_SUGGEST_PHOTO_FOR_USER);
+        parentAlert.baseFragment.presentFragment(avatarConstructorFragment);
+        if (view != null) {
+            avatarConstructorFragment.startFrom(view);
+        }
+        if (emojiMarkupStrat != null) {
+            avatarConstructorFragment.startFrom(emojiMarkupStrat);
+        }
+        avatarConstructorFragment.setDelegate((gradient, documentId, document, previewView) -> {
+            selectedPhotos.clear();
+            Bitmap bitmap = Bitmap.createBitmap(800, 800, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            GradientTools gradientTools = new GradientTools();
+            if (gradient != null) {
+                gradientTools.setColors(gradient.color1, gradient.color2, gradient.color3, gradient.color4);
+            } else {
+                gradientTools.setColors(AvatarConstructorFragment.defaultColors[0][0], AvatarConstructorFragment.defaultColors[0][1],  AvatarConstructorFragment.defaultColors[0][2], AvatarConstructorFragment.defaultColors[0][3]);
+            }
+            gradientTools.setBounds(0, 0, 800, 800);
+            canvas.drawRect(0, 0, 800, 800, gradientTools.paint);
+
+            File file = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), SharedConfig.getLastLocalId() + "avatar_background.png");
+            try {
+                file.createNewFile();
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+                byte[] bitmapdata = bos.toByteArray();
+
+                FileOutputStream fos = new FileOutputStream(file);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            float scale = AvatarConstructorFragment.STICKER_DEFAULT_SCALE;
+            int imageX, imageY;
+            imageX = imageY = (int) (800 * (1f - scale) / 2f);
+            int imageSize = (int) (800 * scale);
+
+            ImageReceiver imageReceiver = previewView.getImageReceiver();
+            if (imageReceiver.getAnimation() != null) {
+                Bitmap firstFrame = imageReceiver.getAnimation().getFirstFrame(null);
+                ImageReceiver firstFrameReceiver = new ImageReceiver();
+                firstFrameReceiver.setImageBitmap(firstFrame);
+                firstFrameReceiver.setImageCoords(imageX, imageY, imageSize, imageSize);
+                firstFrameReceiver.setRoundRadius((int) (imageSize * AvatarConstructorFragment.STICKER_DEFAULT_ROUND_RADIUS));
+                firstFrameReceiver.draw(canvas);
+                firstFrameReceiver.clearImage();
+                firstFrame.recycle();
+            } else {
+                if (imageReceiver.getLottieAnimation() != null) {
+                    imageReceiver.getLottieAnimation().setCurrentFrame(0, false, true);
+                }
+                imageReceiver.setImageCoords(imageX, imageY, imageSize, imageSize);
+                imageReceiver.setRoundRadius((int) (imageSize * AvatarConstructorFragment.STICKER_DEFAULT_ROUND_RADIUS));
+                imageReceiver.draw(canvas);
+            }
+
+            File thumb = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), SharedConfig.getLastLocalId() + "avatar_background.png");
+            try {
+                thumb.createNewFile();
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+                byte[] bitmapdata = bos.toByteArray();
+
+                FileOutputStream fos = new FileOutputStream(thumb);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            MediaController.PhotoEntry photoEntry;
+            if (previewView.hasAnimation()) {
+                photoEntry = new MediaController.PhotoEntry(0, 0, 0, file.getPath(), 0, false, 0, 0, 0);
+                photoEntry.thumbPath = thumb.getPath();
+
+                if (previewView.documentId != 0) {
+                    TLRPC.TL_videoSizeEmojiMarkup emojiMarkup = new TLRPC.TL_videoSizeEmojiMarkup();
+                    emojiMarkup.emoji_id = previewView.documentId;
+                    emojiMarkup.background_colors.add(previewView.backgroundGradient.color1);
+                    if (previewView.backgroundGradient.color2 != 0) {
+                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color2);
+                    }
+                    if (previewView.backgroundGradient.color3 != 0) {
+                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color3);
+                    }
+                    if (previewView.backgroundGradient.color4 != 0) {
+                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color4);
+                    }
+                    photoEntry.emojiMarkup = emojiMarkup;
+                } else if (previewView.document != null) {
+                    TLRPC.TL_videoSizeStickerMarkup emojiMarkup = new TLRPC.TL_videoSizeStickerMarkup();
+                    emojiMarkup.sticker_id = previewView.document.id;
+                    emojiMarkup.stickerset = MessageObject.getInputStickerSet(previewView.document);
+                    emojiMarkup.background_colors.add(previewView.backgroundGradient.color1);
+                    if (previewView.backgroundGradient.color2 != 0) {
+                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color2);
+                    }
+                    if (previewView.backgroundGradient.color3 != 0) {
+                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color3);
+                    }
+                    if (previewView.backgroundGradient.color4 != 0) {
+                        emojiMarkup.background_colors.add(previewView.backgroundGradient.color4);
+                    }
+                    photoEntry.emojiMarkup = emojiMarkup;
+                }
+
+                photoEntry.editedInfo = new VideoEditedInfo();
+                photoEntry.editedInfo.originalPath = file.getPath();
+                photoEntry.editedInfo.resultWidth = 800;
+                photoEntry.editedInfo.resultHeight = 800;
+                photoEntry.editedInfo.originalWidth = 800;
+                photoEntry.editedInfo.originalHeight = 800;
+                photoEntry.editedInfo.isPhoto = true;
+                photoEntry.editedInfo.bitrate = -1;
+                photoEntry.editedInfo.muted = true;
+
+                photoEntry.editedInfo.start = photoEntry.editedInfo.startTime = 0;
+                photoEntry.editedInfo.endTime = previewView.getDuration();
+                photoEntry.editedInfo.framerate = 30;
+
+                photoEntry.editedInfo.avatarStartTime = 0;
+                photoEntry.editedInfo.estimatedSize = (int) (photoEntry.editedInfo.endTime / 1000.0f * 115200);
+                photoEntry.editedInfo.estimatedDuration = photoEntry.editedInfo.endTime;
+
+                VideoEditedInfo.MediaEntity mediaEntity = new VideoEditedInfo.MediaEntity();
+                mediaEntity.type = 0;
+
+                if (document == null) {
+                    document = AnimatedEmojiDrawable.findDocument(UserConfig.selectedAccount, documentId);
+                }
+                if (document == null) {
+                    return;
+                }
+                mediaEntity.viewWidth = (int) (800 * scale);
+                mediaEntity.viewHeight = (int) (800 * scale);
+                mediaEntity.width = scale;
+                mediaEntity.height = scale;
+                mediaEntity.x = (1f - scale) / 2f;
+                mediaEntity.y = (1f - scale) / 2f;
+                mediaEntity.document = document;
+                mediaEntity.parentObject = null;
+                mediaEntity.text = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(document, true).getAbsolutePath();
+                mediaEntity.roundRadius = AvatarConstructorFragment.STICKER_DEFAULT_ROUND_RADIUS;
+                if (MessageObject.isAnimatedStickerDocument(document, true) || MessageObject.isVideoStickerDocument(document)) {
+                    boolean isAnimatedSticker = MessageObject.isAnimatedStickerDocument(document, true);
+                    mediaEntity.subType |= isAnimatedSticker ? 1 : 4;
+                }
+
+                photoEntry.editedInfo.mediaEntities = new ArrayList<>();
+                photoEntry.editedInfo.mediaEntities.add(mediaEntity);
+            } else {
+                photoEntry = new MediaController.PhotoEntry(0, 0, 0, thumb.getPath(), 0, false, 0, 0, 0);
+            }
+            selectedPhotos.put(-1, photoEntry);
+            selectedPhotosOrder.add(-1);
+            parentAlert.delegate.didPressedButton(7, true, false, 0, false);
+        });
+    }
+
     private boolean checkSendMediaEnabled(MediaController.PhotoEntry photoEntry) {
         if (!videoEnabled && photoEntry.isVideo) {
             BulletinFactory.of(parentAlert.sizeNotifierFrameLayout, resourcesProvider).createErrorBulletin(
@@ -2149,7 +2157,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             }
             if (view instanceof PhotoAttachPhotoCell) {
                 PhotoAttachPhotoCell cell = (PhotoAttachPhotoCell) view;
-                if ((Integer) cell.getImageView().getTag() == index) {
+                if (cell.getImageView().getTag() != null && (Integer) cell.getImageView().getTag() == index) {
                     return cell;
                 }
             }
@@ -2175,7 +2183,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
     }
 
     public void checkCamera(boolean request) {
-        if (parentAlert.baseFragment == null || parentAlert.baseFragment.getParentActivity() == null) {
+        if (parentAlert.baseFragment == null || parentAlert.baseFragment.getParentActivity() == null || ExteraConfig.hideCameraTile) {
             return;
         }
         boolean old = deviceHasGoodCamera;

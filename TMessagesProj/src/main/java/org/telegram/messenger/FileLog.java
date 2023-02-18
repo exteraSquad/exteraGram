@@ -15,7 +15,6 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.telegram.SQLite.SQLiteException;
 import org.telegram.messenger.time.FastDateFormat;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
@@ -23,7 +22,9 @@ import org.telegram.ui.LaunchActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -70,7 +71,7 @@ public class FileLog {
     private static HashSet<String> excludeRequests;
 
     public static void dumpResponseAndRequest(TLObject request, TLObject response, TLRPC.TL_error error, long requestMsgId, long startRequestTimeInMillis, int requestToken) {
-        if (!BuildVars.DEBUG_VERSION || !BuildVars.LOGS_ENABLED || request == null || SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_LOW) {
+        if (!BuildVars.DEBUG_PRIVATE_VERSION || !BuildVars.LOGS_ENABLED || request == null || SharedConfig.getDevicePerformanceClass() == SharedConfig.PERFORMANCE_CLASS_LOW) {
             return;
         }
         String requestSimpleName = request.getClass().getSimpleName();
@@ -114,7 +115,7 @@ public class FileLog {
     }
 
     public static void dumpUnparsedMessage(TLObject message, long messageId) {
-        if (!BuildVars.DEBUG_VERSION || !BuildVars.LOGS_ENABLED || message == null) {
+        if (!BuildVars.DEBUG_PRIVATE_VERSION || !BuildVars.LOGS_ENABLED || message == null) {
             return;
         }
         try {
@@ -140,7 +141,6 @@ public class FileLog {
                 }
             });
         } catch (Throwable e) {
-            FileLog.e(e);
         }
     }
 
@@ -154,6 +154,7 @@ public class FileLog {
             privateFields.add("bytes");
             privateFields.add("secret");
             privateFields.add("stripped_thumb");
+            privateFields.add("strippedBitmap");
 
             privateFields.add("networkType");
             privateFields.add("disableFree");
@@ -300,13 +301,26 @@ public class FileLog {
         if (!BuildVars.LOGS_ENABLED) {
             return;
         }
-        if (BuildVars.DEBUG_VERSION && e instanceof SQLiteException && e.getMessage() != null && e.getMessage().contains("disk image is malformed")) {
+        if (BuildVars.DEBUG_VERSION && e.getMessage() != null && e.getMessage().contains("disk image is malformed") && !databaseIsMalformed) {
+            FileLog.d("copy malformed files");
             databaseIsMalformed = true;
+            File filesDir = ApplicationLoader.getFilesDirFixed();
+            filesDir = new File(filesDir, "malformed_database/");
+            filesDir.mkdirs();
+            ArrayList<File> malformedFiles = MessagesStorage.getInstance(UserConfig.selectedAccount).getDatabaseFiles();
+            for (int i = 0; i < malformedFiles.size(); i++) {
+                try {
+                    AndroidUtilities.copyFile(malformedFiles.get(i), new File(filesDir, malformedFiles.get(i).getName()));
+                } catch (IOException ex) {
+                    FileLog.e(ex);
+                }
+            }
         }
         ensureInitied();
         e.printStackTrace();
         if (getInstance().streamWriter != null) {
             getInstance().logQueue.postRunnable(() -> {
+
                 try {
                     getInstance().streamWriter.write(getInstance().dateFormat.format(System.currentTimeMillis()) + " E/tmessages: " + e + "\n");
                     StackTraceElement[] stack = e.getStackTrace();

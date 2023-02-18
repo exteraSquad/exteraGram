@@ -14034,7 +14034,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         object.imageReceiver.setVisible(false, true);
                     };
                     if (parentChatActivity != null && parentChatActivity.getFragmentView() != null) {
-                        parentChatActivity.getUndoView().hide(false, 1);
+                        if (parentChatActivity.getUndoView() != null) {
+                            parentChatActivity.getUndoView().hide(false, 1);
+                        }
                         parentChatActivity.getFragmentView().invalidate();
                     }
                     return true;
@@ -15407,12 +15409,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     private boolean shouldMessageObjectAutoPlayed(MessageObject messageObject) {
-        return messageObject != null && messageObject.isVideo() && (messageObject.mediaExists || messageObject.attachPathExists || messageObject.canStreamVideo() && SharedConfig.streamMedia) && SharedConfig.autoplayVideo;
+        return messageObject != null && messageObject.isVideo() && (messageObject.mediaExists || messageObject.attachPathExists || messageObject.canStreamVideo() && SharedConfig.streamMedia) && SharedConfig.isAutoplayVideo();
     }
 
     private boolean shouldIndexAutoPlayed(int index) {
         if (pageBlocksAdapter != null) {
-            if (pageBlocksAdapter.isVideo(index) && SharedConfig.autoplayVideo) {
+            if (pageBlocksAdapter.isVideo(index) && SharedConfig.isAutoplayVideo()) {
                 final File mediaFile = pageBlocksAdapter.getFile(index);
                 if (mediaFile != null && mediaFile.exists()) {
                     return true;
@@ -17524,7 +17526,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     final int index = ++gettingFrameIndex;
                     Utilities.globalQueue.postRunnable(() -> {
                         try {
-                            final AnimatedFileDrawable drawable = new AnimatedFileDrawable(new File(uri.getPath()), true, 0, null, null, null, 0, UserConfig.selectedAccount, false, AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y, null);
+                            final AnimatedFileDrawable drawable = new AnimatedFileDrawable(new File(uri.getPath()), true, 0, 0, null, null, null, 0, UserConfig.selectedAccount, false, AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y, null);
                             final Bitmap bitmap = drawable.getFrameAtTime(0);
                             drawable.recycle();
                             AndroidUtilities.runOnUIThread(() -> {

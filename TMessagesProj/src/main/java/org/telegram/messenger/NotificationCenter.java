@@ -277,14 +277,16 @@ public class NotificationCenter {
     public static int chatSwithcedToForum = totalEvents++;
     public static int didUpdateGlobalAutoDeleteTimer = totalEvents++;
 
-    private final SparseArray<ArrayList<NotificationCenterDelegate>> observers = new SparseArray<>();
-    private final SparseArray<ArrayList<NotificationCenterDelegate>> removeAfterBroadcast = new SparseArray<>();
-    private final SparseArray<ArrayList<NotificationCenterDelegate>> addAfterBroadcast = new SparseArray<>();
-    private final ArrayList<DelayedPost> delayedPosts = new ArrayList<>(10);
-    private final ArrayList<Runnable> delayedRunnables  = new ArrayList<>(10);
-    private final ArrayList<Runnable> delayedRunnablesTmp  = new ArrayList<>(10);
-    private final ArrayList<DelayedPost> delayedPostsTmp = new ArrayList<>(10);
-    private final ArrayList<PostponeNotificationCallback> postponeCallbackList = new ArrayList<>(10);
+    public static boolean alreadyLogged;
+
+    private SparseArray<ArrayList<NotificationCenterDelegate>> observers = new SparseArray<>();
+    private SparseArray<ArrayList<NotificationCenterDelegate>> removeAfterBroadcast = new SparseArray<>();
+    private SparseArray<ArrayList<NotificationCenterDelegate>> addAfterBroadcast = new SparseArray<>();
+    private ArrayList<DelayedPost> delayedPosts = new ArrayList<>(10);
+    private ArrayList<Runnable> delayedRunnables  = new ArrayList<>(10);
+    private ArrayList<Runnable> delayedRunnablesTmp  = new ArrayList<>(10);
+    private ArrayList<DelayedPost> delayedPostsTmp = new ArrayList<>(10);
+    private ArrayList<PostponeNotificationCallback> postponeCallbackList = new ArrayList<>(10);
 
     private Runnable checkForExpiredNotifications;
 
@@ -588,6 +590,12 @@ public class NotificationCenter {
             return;
         }
         objects.add(observer);
+        if (BuildVars.DEBUG_VERSION && !alreadyLogged) {
+            if (objects.size() > 1000) {
+                alreadyLogged = true;
+                FileLog.e(new RuntimeException("Total observers more than 1000, need check for memory leak. " + id));
+            }
+        }
     }
 
     private ArrayList<NotificationCenterDelegate> createArrayForId(int id) {

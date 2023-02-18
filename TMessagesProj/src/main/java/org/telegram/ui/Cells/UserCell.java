@@ -495,11 +495,10 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                 nameTextView.setRightDrawable(emojiStatus);
             } else {
                 if (ExteraConfig.isExteraDev(currentUser)) {
-                    if (exteraArrow == null) {
-                        exteraArrow = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
-                        exteraArrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
-                    }
-                    nameTextView.setRightDrawable(exteraArrow);
+                    Drawable arrow = Theme.dialogs_exteraArrowDrawable.getConstantState().newDrawable().mutate();
+                    arrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+                    nameTextView.setRightDrawable(arrow);
+                    nameTextView.setRightDrawableTopPadding(-AndroidUtilities.dp(0.5f));
                 } else {
                     if (premiumDrawable == null) {
                         premiumDrawable = getContext().getResources().getDrawable(R.drawable.msg_premium_liststar).mutate();
@@ -519,11 +518,9 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
             }
             nameTextView.setRightDrawableTopPadding(-AndroidUtilities.dp(0.5f));
         } else if (currentUser != null && ExteraConfig.isExteraDev(currentUser)) {
-            if (exteraArrow == null) {
-                exteraArrow = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
-                exteraArrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
-            }
-            nameTextView.setRightDrawable(exteraArrow);
+            Drawable arrow = Theme.dialogs_exteraArrowDrawable.getConstantState().newDrawable().mutate();
+            arrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+            nameTextView.setRightDrawable(arrow);
             nameTextView.setRightDrawableTopPadding(-AndroidUtilities.dp(0.5f));
         } else {
             nameTextView.setRightDrawable(null);

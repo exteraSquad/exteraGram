@@ -915,7 +915,7 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
                         long fileSize = cursor.getLong(3);
                         String mimeType = cursor.getString(4);
 
-                        if (duration > MessagesController.getInstance(UserConfig.selectedAccount).ringtoneDurationMax * 1000 || fileSize > MessagesController.getInstance(UserConfig.selectedAccount).ringtoneSizeMax || (!TextUtils.isEmpty(mimeType) && !("audio/mpeg".equals(mimeType) || !"audio/mpeg4".equals(mimeType)))) {
+                        if (duration > MessagesController.getInstance(UserConfig.selectedAccount).ringtoneDurationMax * 1000L || fileSize > MessagesController.getInstance(UserConfig.selectedAccount).ringtoneSizeMax || (!TextUtils.isEmpty(mimeType) && !("audio/mpeg".equals(mimeType) || !"audio/mpeg4".equals(mimeType)))) {
                             continue;
                         }
                         

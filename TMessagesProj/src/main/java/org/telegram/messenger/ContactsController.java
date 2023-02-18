@@ -1895,7 +1895,8 @@ public class ContactsController extends BaseController {
     private void performWriteContactsToPhoneBookInternal(ArrayList<TLRPC.TL_contact> contactsArray) {
         Cursor cursor = null;
         try {
-            if (!hasContactsPermission()) {
+            Account account = systemAccount;
+            if (!hasContactsPermission() || account == null) {
                 return;
             }
             final SharedPreferences settings = MessagesController.getMainSettings(currentAccount);
