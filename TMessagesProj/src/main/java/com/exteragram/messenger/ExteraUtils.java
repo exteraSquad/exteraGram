@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -14,11 +14,19 @@ package com.exteragram.messenger;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.URLSpan;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
 
@@ -31,14 +39,20 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.DispatchQueue;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.AlertDialog;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Cells.RadioColorCell;
 import org.telegram.ui.Components.CombinedDrawable;
+import org.telegram.ui.Components.URLSpanNoUnderline;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -46,6 +60,7 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class ExteraUtils {
@@ -71,10 +86,8 @@ public class ExteraUtils {
         return getDC(null, chat);
     }
 
-    // thx to @Owlgram for idea
     public static String getDC(TLRPC.User user, TLRPC.Chat chat) {
-        int DC = 0;
-        int myDC = AccountInstance.getInstance(UserConfig.selectedAccount).getConnectionsManager().getCurrentDatacenterId();
+        int DC = 0, myDC = AccountInstance.getInstance(UserConfig.selectedAccount).getConnectionsManager().getCurrentDatacenterId();
         if (user != null) {
             if (UserObject.isUserSelf(user) && myDC != -1) {
                 DC = myDC;
@@ -85,7 +98,7 @@ public class ExteraUtils {
             DC = chat.photo != null ? chat.photo.dc_id : -1;
         }
         if (DC == -1 || DC == 0) {
-            return getDCName(DC);
+            return getDCName(0);
         } else {
             return String.format(Locale.ROOT, "DC%d, %s", DC, getDCName(DC));
         }
@@ -102,13 +115,17 @@ public class ExteraUtils {
             case 5:
                 return "Singapore, SG";
             default:
-                return LocaleController.getString("NumberUnknown", R.string.NumberUnknown);
+                return null;
         }
     }
 
     public static String getAppName() {
-        String beta = BuildVars.isBetaApp() ? " β" : "";
-        return LocaleController.getString("exteraAppName", R.string.exteraAppName) + beta;
+        try {
+            return ApplicationLoader.applicationContext.getString(R.string.exteraAppName) + (BuildVars.isBetaApp() ? " β" : "");
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return "exteraGram";
     }
 
     public static boolean notSubbedTo(long id) {
@@ -226,6 +243,7 @@ public class ExteraUtils {
     public static String getActionBarTitle() {
         return getActionBarTitle(ExteraConfig.actionBarTitle);
     }
+
     public static String getActionBarTitle(int num) {
         TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
         String title;
@@ -265,5 +283,114 @@ public class ExteraUtils {
         CombinedDrawable combinedDrawable = new CombinedDrawable(defaultDrawable, drawable);
         combinedDrawable.setCustomSize(size, size);
         return combinedDrawable;
+    }
+
+    public static CharSequence formatWithUsernames(String text, BaseFragment fragment) {
+        int start = -1, end;
+        boolean parse = false;
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '@') {
+                start = i;
+                parse = true;
+            }
+            if (parse && (i + 1 == text.length() || text.charAt(i + 1) == ' ')) {
+                end = i + 1;
+                parse = false;
+                if (start != -1) {
+                    String username = text.substring(start, end);
+                    try {
+                        URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
+                            @Override
+                            public void onClick(View widget) {
+                                MessagesController.getInstance(UserConfig.selectedAccount).openByUserName(username.substring(1), fragment, 1);
+                            }
+                        };
+                        stringBuilder.setSpan(urlSpan, start, end, 0);
+                        if (i + 1 == text.length()) {
+                            return stringBuilder;
+                        }
+                    } catch (Exception e) {
+                        FileLog.e(e);
+                        return text;
+                    }
+                }
+            }
+        }
+        return text;
+    }
+
+    public static CharSequence formatWithURLs(CharSequence charSequence) {
+        Spannable spannable = new SpannableString(charSequence);
+        URLSpan[] spans = spannable.getSpans(0, charSequence.length(), URLSpan.class);
+        for (URLSpan urlSpan : spans) {
+            URLSpan span = urlSpan;
+            int start = spannable.getSpanStart(span), end = spannable.getSpanEnd(span);
+            spannable.removeSpan(span);
+            span = new URLSpanNoUnderline(span.getURL()) {
+                @Override
+                public void onClick(View widget) {
+                    super.onClick(widget);
+                }
+            };
+            spannable.setSpan(span, start, end, 0);
+        }
+        return spannable;
+    }
+
+    public static void showDialog(ArrayList<? extends CharSequence> items, String title, int selected, Context context, OnItemClickListener listener) {
+        showDialog(items.stream().map(String::valueOf).toArray(CharSequence[]::new), null, title, selected, context, listener, null);
+    }
+
+    public static void showDialog(ArrayList<? extends CharSequence> items, int[] icons, String title, int selected, Context context, OnItemClickListener listener) {
+        showDialog(items.stream().map(String::valueOf).toArray(CharSequence[]::new), icons, title, selected, context, listener, null);
+    }
+
+    public static void showDialog(CharSequence[] items, String title, int selected, Context context, OnItemClickListener listener) {
+        showDialog(items, null, title, selected, context, listener, null);
+    }
+
+    public static void showDialog(CharSequence[] items, int[] icons, String title, int selected, Context context, OnItemClickListener listener) {
+        showDialog(items, icons, title, selected, context, listener, null);
+    }
+
+    public static void showDialog(CharSequence[] items, int[] icons, String title, int selected, Context context, OnItemClickListener listener, Theme.ResourcesProvider resourcesProvider) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, resourcesProvider);
+        builder.setTitle(title);
+        if (icons == null) {
+            final LinearLayout linearLayout = new LinearLayout(context);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            builder.setView(linearLayout);
+            for (int a = 0; a < items.length; a++) {
+                RadioColorCell cell = new RadioColorCell(context);
+                cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
+                cell.setTag(a);
+                cell.setCheckColor(Theme.getColor(Theme.key_radioBackground, resourcesProvider), Theme.getColor(Theme.key_dialogRadioBackgroundChecked, resourcesProvider));
+                cell.setTextAndValue(items[a], selected == a);
+                cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
+                linearLayout.addView(cell);
+                cell.setOnClickListener(v -> {
+                    Integer which = (Integer) v.getTag();
+                    builder.getDismissRunnable().run();
+                    listener.onClick(which);
+                });
+            }
+        } else {
+            builder.setItems(items, icons, (dialog, which) -> {
+                builder.getDismissRunnable().run();
+                listener.onClick(which);
+            });
+            builder.create();
+        }
+        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+        builder.show();
+    }
+
+    public interface OnItemClickListener {
+        void onClick(int i);
+    }
+
+    public static String getNavigationBarColorKey() {
+        return SharedConfig.useLNavigation ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray;
     }
 }

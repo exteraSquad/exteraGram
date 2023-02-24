@@ -406,6 +406,7 @@ public class TextCell extends FrameLayout {
         imageView.setTranslationY(AndroidUtilities.dp(6));
         imageView.setImageResource(resId);
         imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
+        // not now imageView.setColorFilter(new PorterDuffColorFilter(Theme.getActiveTheme().isMonet() ? Theme.getColor(Theme.key_chats_actionIcon) : Color.WHITE, PorterDuff.Mode.SRC_IN));
         imageView.setBackground(Theme.createRoundRectDrawable(AndroidUtilities.dp(9), color));
     }
 

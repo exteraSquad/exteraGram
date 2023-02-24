@@ -523,22 +523,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                         }
                     }
                     int pos = i + replacingLength;
-                    if (Emoji.fullyConsistsOfEmojis(editable.subSequence(i, pos))) {
-                        editable.replace(i, pos, emoji);
-                    } else {
-                        switch (ExteraConfig.emojiSuggestionTap) {
-                            case 0:
-                                editable.replace(i, pos, emoji);
-                                break;
-                            case 1:
-                                editable.insert(pos, emoji);
-                                break;
-                            case 2:
-                                editable.insert(pos, emoji);
-                                editable.insert(pos, " ");
-                                break;
-                        }
-                    }
+                    editable.replace(i, pos, emoji);
                 } else {
                     break;
                 }

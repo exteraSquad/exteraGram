@@ -1704,7 +1704,9 @@ public class AndroidUtilities {
     }
 
     public static int getShadowHeight() {
-        if (density >= 4.0f) {
+        if (ExteraConfig.disableDividers) {
+            return 0;
+        } else if (density >= 4.0f) {
             return 3;
         } else if (density >= 2.0f) {
             return 2;
@@ -2113,7 +2115,8 @@ public class AndroidUtilities {
     }
 
     public static boolean isTabletInternal() {
-        if (ExteraConfig.forceTabletMode) isTablet = true;
+        if (ExteraConfig.tabletMode == 1) isTablet = true;
+        else if (ExteraConfig.tabletMode == 2) isTablet = false;
         if (isTablet == null) {
             isTablet = isTabletForce();
         }
@@ -2173,7 +2176,7 @@ public class AndroidUtilities {
 
     public static int getPhotoSize() {
         if (photoSize == null) {
-            photoSize = 1280;
+            photoSize = 2560;
         }
         return photoSize;
     }
@@ -4298,8 +4301,6 @@ public class AndroidUtilities {
             }
         }
 
-        if (ExteraConfig.transparentNavBar) color = Theme.getColor(Theme.key_chat_messagePanelBackground);
-
         if (!animated) {
             if (onUpdate != null) {
                 onUpdate.run(color);
@@ -4627,6 +4628,16 @@ public class AndroidUtilities {
             FileLog.e(e);
         }
         return null;
+    }
+
+    public static int getTransparentColor(int color, float opacity){
+        int alpha = Color.alpha(color);
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        // Set alpha based on your logic, here I'm making it 25% of it's initial value.
+        alpha *= opacity;
+        return Color.argb(alpha, red, green, blue);
     }
 
     public static boolean isNumeric(String str) {

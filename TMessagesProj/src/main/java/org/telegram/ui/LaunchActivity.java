@@ -8,6 +8,7 @@
 
 package org.telegram.ui;
 
+import static org.telegram.ui.ActionIntroActivity.CAMERA_PERMISSION_REQUEST_CODE;
 import static org.telegram.ui.Components.Premium.LimitReachedBottomSheet.TYPE_ACCOUNTS;
 
 import android.Manifest;
@@ -86,7 +87,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.extras.ExceptionHandler;
 import com.exteragram.messenger.ExteraResources;
-import com.exteragram.messenger.monet.MonetHelper;
+import com.exteragram.messenger.extras.MonetHelper;
 import com.exteragram.messenger.preferences.MainPreferencesActivity;
 import com.exteragram.messenger.updater.UpdaterUtils;
 import com.google.android.gms.common.api.Status;
@@ -606,31 +607,24 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 } else if (id == 15) {
                     showSelectStatusDialog();
                 } else if (id == 16) {
-                    ActionIntroActivity fragment = new ActionIntroActivity(ActionIntroActivity.ACTION_TYPE_QR_LOGIN);
-                    fragment.setQrLoginDelegate(code -> {
-                        AlertDialog progressDialog = new AlertDialog(LaunchActivity.this, 3);
-                        progressDialog.setCanCancel(false);
-                        progressDialog.show();
-                        byte[] token = Base64.decode(code.substring("tg://login?token=".length()), Base64.URL_SAFE);
-                        TLRPC.TL_auth_acceptLoginToken req = new TLRPC.TL_auth_acceptLoginToken();
-                        req.token = token;
-                        ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
-                            try {
-                                progressDialog.dismiss();
-                            } catch (Exception ignore) {
-                            }
-                            if (!(response instanceof TLRPC.TL_authorization)) {
-                                AndroidUtilities.runOnUIThread(() -> AlertsCreator.showSimpleAlert(fragment, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred) + "\n" + error.text));
-                            }
-                        }));
-                    });
-                    actionBarLayout.presentFragment(fragment, false, true, true, false);
+                    if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+                        return;
+                    }
+                    openCameraScanActivity();
                     if (AndroidUtilities.isTablet()) {
                         actionBarLayout.showLastFragment();
                         rightActionBarLayout.showLastFragment();
                         drawerLayoutContainer.setAllowOpenDrawer(false, false);
                     } else {
                         drawerLayoutContainer.setAllowOpenDrawer(true, false);
+                    }
+                    drawerLayoutContainer.closeDrawer(false);
+                } else if (id == 17) {
+                    BaseFragment fragment = actionBarLayout.getFragmentStack().get(0);
+                    if (fragment instanceof DialogsActivity) {
+                        ((DialogsActivity) fragment).showSearch(true, true, true);
+                        fragment.getActionBar().openSearchField(true);
                     }
                     drawerLayoutContainer.closeDrawer(false);
                 }
@@ -710,6 +704,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         });
         sideMenuTouchHelper.attachToRecyclerView(sideMenu);
         sideMenu.setOnItemLongClickListener((view, position) -> {
+            int id = drawerLayoutAdapter.getId(position);
             if (view instanceof DrawerUserCell) {
                 final int accountNumber = ((DrawerUserCell) view).getAccountNumber();
                 if (accountNumber == currentAccount || AndroidUtilities.isTablet()) {
@@ -739,6 +734,39 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     drawerLayoutContainer.setDrawCurrentPreviewFragmentAbove(true);
                     return true;
                 }
+            } else if (view instanceof DrawerActionCell && id == 14) {
+                Bundle args = new Bundle();
+                args.putInt("folderId", 1);
+                final BaseFragment fragment = new DialogsActivity(args) {
+                    @Override
+                    public void onTransitionAnimationEnd(boolean isOpen, boolean backward) {
+                        super.onTransitionAnimationEnd(isOpen, backward);
+                        if (!isOpen && backward) {
+                            drawerLayoutContainer.setDrawCurrentPreviewFragmentAbove(false);
+                            actionBarLayout.getView().invalidate();
+                        }
+                    }
+
+                    @Override
+                    public void onFragmentDestroy() {
+                        super.onFragmentDestroy();
+                        drawerLayoutContainer.setAllowOpenDrawer(true, false);
+                        actionBarLayout.getView().invalidate();
+                    }
+
+                    @Override
+                    public void onPreviewOpenAnimationEnd() {
+                        super.onPreviewOpenAnimationEnd();
+                        drawerLayoutContainer.setAllowOpenDrawer(false, false);
+                        drawerLayoutContainer.setDrawCurrentPreviewFragmentAbove(false);
+                        drawerLayoutContainer.closeDrawer(false);
+                        actionBarLayout.getView().invalidate();
+                    }
+                };
+                fragment.getActionBar();
+                actionBarLayout.presentFragmentAsPreview(fragment);
+                drawerLayoutContainer.setDrawCurrentPreviewFragmentAbove(true);
+                return true;
             }
             return false;
         });
@@ -1273,7 +1301,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && checkNavigationBar && (!useCurrentFragment || currentFragment == null || !currentFragment.isInPreviewMode())) {
                 final Window window = getWindow();
-                final int color = currentFragment != null && useCurrentFragment ? currentFragment.getNavigationBarColor() : Theme.getColor(ExteraConfig.transparentNavBar ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray, null, true);
+                final int color = currentFragment != null && useCurrentFragment ? currentFragment.getNavigationBarColor() : Theme.getColor(Theme.key_windowBackgroundGray, null, true);
 //                Theme.ResourcesProvider resourcesProvider = currentFragment != null ? currentFragment.getResourceProvider() : null;
 //                if (resourcesProvider != null) {
 //                    color = resourcesProvider.getColor(Theme.key_windowBackgroundGray);
@@ -1281,7 +1309,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 //                if (color == null) {
 //                    color = Theme.getColor(Theme.key_windowBackgroundGray, null, true);
 //                }
-                if (window.getNavigationBarColor() != color || ExteraConfig.transparentNavBar) {
+                if (window.getNavigationBarColor() != color) {
                     window.setNavigationBarColor(color);
                     final float brightness = AndroidUtilities.computePerceivedBrightness(color);
                     AndroidUtilities.setLightNavigationBar(getWindow(), brightness >= 0.721f);
@@ -7149,5 +7177,49 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
             }
         }
         drawerLayoutAdapter.notifyDataSetChanged();
+    }
+
+    private void openCameraScanActivity() {
+        CameraScanActivity.showAsSheet(this, true, CameraScanActivity.TYPE_QR_LOGIN, new CameraScanActivity.CameraScanActivityDelegate() {
+
+            private TLObject response = null;
+            private TLRPC.TL_error error = null;
+
+            @Override
+            public void didFindQr(String link) {
+
+            }
+
+            @Override
+            public boolean processQr(String link, Runnable onLoadEnd) {
+                this.response = null;
+                this.error = null;
+                AndroidUtilities.runOnUIThread(() -> {
+                    try {
+                        String code = link.substring("tg://login?token=".length());
+                        code = code.replaceAll("/", "_");
+                        code = code.replaceAll("\\+", "-");
+                        byte[] token = Base64.decode(code, Base64.URL_SAFE);
+                        TLRPC.TL_auth_acceptLoginToken req = new TLRPC.TL_auth_acceptLoginToken();
+                        req.token = token;
+                        ConnectionsManager.getInstance(UserConfig.selectedAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+                            this.response = response;
+                            this.error = error;
+                            onLoadEnd.run();
+                        }));
+                    } catch (Exception e) {
+                        FileLog.e("Failed to pass qr code auth", e);
+                        if (actionBarLayout.getFragmentStack().size() > 0) {
+                            BaseFragment fragment = actionBarLayout.getFragmentStack().get(0);
+                            AndroidUtilities.runOnUIThread(() -> {
+                                AlertsCreator.showSimpleAlert(fragment, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred));
+                            });
+                        }
+                        onLoadEnd.run();
+                    }
+                }, 750);
+                return true;
+            }
+        });
     }
 }

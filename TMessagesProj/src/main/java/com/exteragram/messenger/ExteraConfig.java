@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -14,14 +14,17 @@ package com.exteragram.messenger;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
-import com.exteragram.messenger.icons.EmptyIconSet;
+import com.exteragram.messenger.camera.CameraXUtils;
 import com.exteragram.messenger.icons.BaseIconSet;
+import com.exteragram.messenger.icons.EmptyIconSet;
 import com.exteragram.messenger.icons.SolarIconSet;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 
 import java.util.Arrays;
@@ -30,80 +33,92 @@ public class ExteraConfig {
 
     private static final Object sync = new Object();
 
-    // appearance
-    public static float avatarCorners = 30.0f;
+    // Appearance
+    public static float avatarCorners;
     public static boolean hideActionBarStatus;
-    public static int actionBarTitle;
-    public static int tabStyle;
     public static boolean hideAllChats;
-    public static boolean useSolarIcons;
-    public static boolean useSystemFonts;
-    public static boolean blurForAllThemes;
     public static boolean centerTitle;
+    public static int tabStyle;
+    public static int actionBarTitle;
+
+    public static boolean useSolarIcons;
+
+    public static boolean squareFab;
+    public static boolean forceBlur;
+    public static boolean useSystemFonts;
     public static boolean newSwitchStyle;
     public static boolean disableDividers;
-    public static boolean transparentNavBar;
-    public static boolean squareFab;
-    public static int eventType;
-    public static boolean forceDrawerSnow;
-    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures;
 
-    // general
-    public static int downloadSpeedBoost;
-    public static boolean uploadSpeedBoost;
+    public static int eventType;
+    public static boolean forceSnow;
+    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures, downloads;
+
+    // General
+    public static int cameraType;
+    public static boolean useCameraXOptimizedMode;
+    public static int cameraResolution;
+
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
-    public static boolean forceTabletMode;
-    public static boolean archiveOnPull;
-    public static boolean disableUnarchiveSwipe;
-    public static boolean alwaysExpandProfilePhoto;
-    public static boolean hidePhoneNumber;
-    public static boolean showID;
-    public static boolean showDC;
     public static boolean disableVibration;
-    public static boolean disableAnimatedAvatars;
+    public static boolean disableProximitySensor;
+    public static int tabletMode;
 
-    // chats
-    public static float stickerSize = 14.0f;
-    public static int stickerShape;
-    public static boolean hideStickerTime;
-    public static boolean unlimitedRecentStickers;
-    public static boolean stickersAutoReorder;
-    public static int doubleTapAction;
-    public static int doubleTapActionOutOwner;
+    public static int downloadSpeedBoost;
+    public static boolean uploadSpeedBoost;
+
+    public static boolean hidePhoneNumber;
+    public static int showIdAndDc;
+
+    public static boolean disableAnimatedAvatars;
     public static boolean premiumAutoPlayback;
     public static boolean hidePremiumStickersTab;
     public static boolean hideFeaturedEmoji;
     public static boolean hideSendAsChannel;
 
-    public static boolean addCommaAfterMention;
-    public static int emojiSuggestionTap;
-    public static boolean hideKeyboardOnScroll;
-    public static boolean hideShareButton;
+    public static boolean archiveOnPull;
+    public static boolean disableUnarchiveSwipe;
+
+    // Chats
+    public static float stickerSize;
+
+    public static int stickerShape;
+
+    public static boolean hideStickerTime;
+    public static boolean unlimitedRecentStickers;
+    public static boolean hideCategories;
+
+    public static int doubleTapAction;
+    public static int doubleTapActionOutOwner;
+
     public static boolean hideMuteUnmuteButton;
-    public static boolean disableGreetingSticker;
+    public static boolean hideKeyboardOnScroll;
     public static boolean disableJumpToNextChannel;
+    public static boolean showActionTimestamps;
+    public static boolean hideShareButton;
     public static boolean dateOfForwardedMsg;
     public static boolean showMessageID;
-    public static boolean showActionTimestamps;
+    public static boolean addCommaAfterMention;
 
+    public static int sendPhotosQuality;
+    public static boolean hideCameraTile;
+    public static boolean disableEdgeAction;
+
+    public static boolean staticZoom;
     public static boolean rearVideoMessages;
     public static boolean rememberLastUsedCamera;
-    public static boolean disableCamera;
     public static boolean pauseOnMinimize;
     public static boolean disablePlayback;
-    public static boolean disableProximityEvents;
 
-    // updates
+    // Updates
     public static long lastUpdateCheckTime;
     public static long updateScheduleTimestamp;
     public static boolean checkUpdatesOnLaunch;
 
-    // other
+    // Other
     private static final long[] OFFICIAL_CHANNELS = {1233768168, 1524581881, 1571726392, 1632728092, 1638754701, 1779596027, 1172503281};
     private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381};
     public static long channelToSave;
-
     public static String targetLanguage;
     public static final CharSequence[] supportedLanguages = new CharSequence[]{
             "Arabic (AR)", "Azerbaijani (AZ)", "Belarusian (BE)", "Catalan (CA)", "Chinese (ZH)",
@@ -130,64 +145,51 @@ public class ExteraConfig {
 
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("exteraconfig", Activity.MODE_PRIVATE);
             editor = preferences.edit();
-            
-            avatarCorners = preferences.getFloat("avatarCorners", 30.0f);
-            useSolarIcons = preferences.getBoolean("useSolarIcons", true);
-            useSystemFonts = preferences.getBoolean("useSystemFonts", true);
-            disableVibration = preferences.getBoolean("disableVibration", false);
-            blurForAllThemes = preferences.getBoolean("blurForAllThemes", false);
-            centerTitle = preferences.getBoolean("centerTitle", false);
-            disableDividers = preferences.getBoolean("disableDividers", false);
-            newSwitchStyle = preferences.getBoolean("newSwitchStyle", true);
-            transparentNavBar = preferences.getBoolean("transparentNavBar", false);
-            squareFab = preferences.getBoolean("squareFab", true);
 
-            hideActionBarStatus = preferences.getBoolean("hideActionBarStatus", false);
-            actionBarTitle = preferences.getInt("actionBarTitle", 0);
-            tabStyle = preferences.getInt("tabStyle", 1);
-            hideAllChats = preferences.getBoolean("hideAllChats", false);
-            downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);
-            uploadSpeedBoost = preferences.getBoolean("uploadSpeedBoost", false);
+            // General
+            cameraType = preferences.getInt("cameraType", CameraXUtils.isCameraXSupported() ? 1 : 0);
+            useCameraXOptimizedMode = preferences.getBoolean("useCameraXOptimizedMode", SharedConfig.getDevicePerformanceClass() != SharedConfig.PERFORMANCE_CLASS_HIGH);
+            cameraResolution = preferences.getInt("cameraResolution", CameraXUtils.getCameraResolution());
+
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
-            forceTabletMode = preferences.getBoolean("forceTabletMode", false);
-            disableAnimatedAvatars = preferences.getBoolean("disableAnimatedAvatars", false);
-            archiveOnPull = preferences.getBoolean("archiveOnPull", false);
-            disableUnarchiveSwipe = preferences.getBoolean("disableUnarchiveSwipe", true);
-            alwaysExpandProfilePhoto = preferences.getBoolean("alwaysExpandProfilePhoto", false);
-            hidePhoneNumber = preferences.getBoolean("hidePhoneNumber", false);
-            showID = preferences.getBoolean("showID", true);
-            showDC = preferences.getBoolean("showDC", false);
+            disableVibration = preferences.getBoolean("disableVibration", false);
+            disableProximitySensor = preferences.getBoolean("disableProximitySensor", false);
+            tabletMode = preferences.getInt("tabletMode", 0);
 
-            stickerSize = preferences.getFloat("stickerSize", 14.0f);
-            stickerShape = preferences.getInt("stickerShape", 0);
-            hideStickerTime = preferences.getBoolean("hideStickerTime", false);
-            unlimitedRecentStickers = preferences.getBoolean("unlimitedRecentStickers", false);
-            stickersAutoReorder = preferences.getBoolean("stickersAutoReorder", false);
-            doubleTapAction = preferences.getInt("doubleTapAction", 1);
-            doubleTapActionOutOwner = preferences.getInt("doubleTapActionOutOwner", 1);
+            downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);
+            uploadSpeedBoost = preferences.getBoolean("uploadSpeedBoost", false);
+
+            hidePhoneNumber = preferences.getBoolean("hidePhoneNumber", false);
+            showIdAndDc = preferences.getInt("showIdAndDc", 1);
+
+            disableAnimatedAvatars = preferences.getBoolean("disableAnimatedAvatars", false);
             premiumAutoPlayback = preferences.getBoolean("premiumAutoPlayback", false);
             hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", true);
             hideFeaturedEmoji = preferences.getBoolean("hideFeaturedEmoji", false);
             hideSendAsChannel = preferences.getBoolean("hideSendAsChannel", false);
 
-            addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
-            emojiSuggestionTap = preferences.getInt("emojiSuggestionTap", 0);
-            hideShareButton = preferences.getBoolean("hideShareButton", true);
-            hideMuteUnmuteButton = preferences.getBoolean("hideMuteUnmuteButton", false);
-            hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
-            disableJumpToNextChannel = preferences.getBoolean("disableJumpToNextChannel", false);
-            disableGreetingSticker = preferences.getBoolean("disableGreetingSticker", false);
-            dateOfForwardedMsg = preferences.getBoolean("dateOfForwardedMsg", false);
-            showMessageID = preferences.getBoolean("showMessageID", false);
-            showActionTimestamps = preferences.getBoolean("showActionTimestamps", true);
+            archiveOnPull = preferences.getBoolean("archiveOnPull", false);
+            disableUnarchiveSwipe = preferences.getBoolean("disableUnarchiveSwipe", true);
 
-            rememberLastUsedCamera = preferences.getBoolean("rememberLastUsedCamera", false);
-            rearVideoMessages = preferences.getBoolean("rearVideoMessages", false);
-            disableCamera = preferences.getBoolean("disableCamera", false);
-            disableProximityEvents = preferences.getBoolean("disableProximityEvents", false);
-            pauseOnMinimize = preferences.getBoolean("pauseOnMinimize", true);
-            disablePlayback = preferences.getBoolean("disablePlayback", true);
+            // Appearance
+            avatarCorners = preferences.getFloat("avatarCorners", 30.0f);
+            hideActionBarStatus = preferences.getBoolean("hideActionBarStatus", false);
+            hideAllChats = preferences.getBoolean("hideAllChats", false);
+            centerTitle = preferences.getBoolean("centerTitle", false);
+            tabStyle = preferences.getInt("tabStyle", 1);
+            actionBarTitle = preferences.getInt("actionBarTitle", 0);
+
+            useSolarIcons = preferences.getBoolean("useSolarIcons", true);
+
+            squareFab = preferences.getBoolean("squareFab", true);
+            forceBlur = preferences.getBoolean("forceBlur", false);
+            useSystemFonts = preferences.getBoolean("useSystemFonts", true);
+            newSwitchStyle = preferences.getBoolean("newSwitchStyle", true);
+            disableDividers = preferences.getBoolean("disableDividers", false);
+
+            eventType = preferences.getInt("eventType", 0);
+            forceSnow = preferences.getBoolean("forceSnow", false);
 
             changeStatus = preferences.getBoolean("changeStatus", true);
             newGroup = preferences.getBoolean("newGroup", true);
@@ -197,19 +199,50 @@ public class ExteraConfig {
             calls = preferences.getBoolean("calls", false);
             peopleNearby = preferences.getBoolean("peopleNearby", false);
             archivedChats = preferences.getBoolean("archivedChats", true);
+            downloads = preferences.getBoolean("downloads", true);
             savedMessages = preferences.getBoolean("savedMessages", true);
             scanQr = preferences.getBoolean("scanQr", true);
             inviteFriends = preferences.getBoolean("inviteFriends", false);
             telegramFeatures = preferences.getBoolean("telegramFeatures", true);
-            eventType = preferences.getInt("eventType", 0);
-            forceDrawerSnow = preferences.getBoolean("forceDrawerSnow", false);
 
+            // Chats
+            stickerSize = preferences.getFloat("stickerSize", 14.0f);
+
+            stickerShape = preferences.getInt("stickerShape", 0);
+
+            hideStickerTime = preferences.getBoolean("hideStickerTime", false);
+            unlimitedRecentStickers = preferences.getBoolean("unlimitedRecentStickers", false);
+            hideCategories = preferences.getBoolean("hideCategories", true);
+
+            doubleTapAction = preferences.getInt("doubleTapAction", 1);
+            doubleTapActionOutOwner = preferences.getInt("doubleTapActionOutOwner", 1);
+
+            hideMuteUnmuteButton = preferences.getBoolean("hideMuteUnmuteButton", false);
+            hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
+            disableJumpToNextChannel = preferences.getBoolean("disableJumpToNextChannel", false);
+            showActionTimestamps = preferences.getBoolean("showActionTimestamps", true);
+            hideShareButton = preferences.getBoolean("hideShareButton", true);
+            dateOfForwardedMsg = preferences.getBoolean("dateOfForwardedMsg", false);
+            showMessageID = preferences.getBoolean("showMessageID", false);
+            addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
+
+            sendPhotosQuality = preferences.getInt("sendPhotosQuality", 1);
+            disableEdgeAction = preferences.getBoolean("disableEdgeAction", false);
+            hideCameraTile = preferences.getBoolean("hideCameraTile", false);
+
+            staticZoom = preferences.getBoolean("staticZoom", false);
+            rememberLastUsedCamera = preferences.getBoolean("rememberLastUsedCamera", false);
+            rearVideoMessages = preferences.getBoolean("rearVideoMessages", false);
+            pauseOnMinimize = preferences.getBoolean("pauseOnMinimize", true);
+            disablePlayback = preferences.getBoolean("disablePlayback", true);
+
+            // Updates
             lastUpdateCheckTime = preferences.getLong("lastUpdateCheckTime", 0);
             updateScheduleTimestamp = preferences.getLong("updateScheduleTimestamp", 0);
             checkUpdatesOnLaunch = preferences.getBoolean("checkUpdatesOnLaunch", true);
 
+            // Other
             channelToSave = preferences.getLong("channelToSave", 0);
-
             targetLanguage = preferences.getString("targetLanguage", (String) supportedLanguages[8]);
 
             configLoaded = true;
@@ -231,9 +264,8 @@ public class ExteraConfig {
     public static int getAvatarCorners(float size, boolean toPx) {
         if (avatarCorners == 0) {
             return 0;
-        } else {
-            return (int) (avatarCorners * (size / 56.0f) * (toPx ? 1 : AndroidUtilities.density));
         }
+        return (int) (avatarCorners * (size / 56.0f) * (toPx ? 1 : AndroidUtilities.density));
     }
 
     public static void toggleDrawerElements(int id) {
@@ -274,6 +306,9 @@ public class ExteraConfig {
             case 12:
                 editor.putBoolean("changeStatus", changeStatus ^= true).apply();
                 break;
+            case 13:
+                editor.putBoolean("downloads", downloads ^= true).apply();
+                break;
         }
     }
 
@@ -287,7 +322,7 @@ public class ExteraConfig {
     }
 
     public static boolean getLogging() {
-        return ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Activity.MODE_PRIVATE).getBoolean("logsEnabled", BuildVars.DEBUG_VERSION);
+        return ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Activity.MODE_PRIVATE).getBoolean("logsEnabled", false); //BuildVars.DEBUG_VERSION);
     }
 
     public static String getCurrentLangCode() {
@@ -296,5 +331,18 @@ public class ExteraConfig {
 
     public static BaseIconSet getIconPack() {
         return useSolarIcons ? new SolarIconSet() : new EmptyIconSet();
+    }
+
+    public static int getPhotosQuality() {
+        switch (sendPhotosQuality) {
+            case 0:
+                return 800;
+            case 1:
+                return 1280;
+            case 2:
+                return 2560;
+            default:
+                return 1;
+        }
     }
 }

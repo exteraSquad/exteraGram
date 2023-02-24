@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -16,7 +16,6 @@ import android.content.Context;
 import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
@@ -24,18 +23,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.components.MainScreenSetupCell;
 import com.exteragram.messenger.components.FabShapeCell;
+import com.exteragram.messenger.components.MainScreenSetupCell;
 import com.exteragram.messenger.components.SolarIconsPreview;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
-import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
-import org.telegram.ui.Cells.RadioColorCell;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
@@ -76,7 +73,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int centerTitleRow;
     private int hideAllChatsRow;
     private int tabStyleRow;
-    private int actionBarTitle;
+    private int actionBarTitleRow;
     private int mainScreenInfoRow;
 
     private int solarIconsHeaderRow;
@@ -84,21 +81,21 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int solarIconsRow;
     private int solarIconsInfoRow;
 
-    private int applicationHeaderRow;
+    private int appearanceHeaderRow;
     private int fabShapeRow;
     private int useSystemFontsRow;
     private int useSystemEmojiRow;
     private int transparentStatusBarRow;
-    private int blurForAllThemesRow;
     private int newSwitchStyleRow;
     private int disableDividersRow;
-    private int transparentNavBarRow;
-    private int transparentNavBarInfoRow;
+    private int forceBlurRow;
+    private int alternativeNavigationRow;
+    private int appearanceDividerRow;
 
-    private int iconsHeaderRow;
+    private int drawerOptionsHeaderRow;
     private int eventChooserRow;
     private int forceSnowRow;
-    private int iconsDividerRow;
+    private int drawerOptionsDividerRow;
 
     private int drawerHeaderRow;
     private int statusRow;
@@ -109,6 +106,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int callsRow;
     private int peopleNearbyRow;
     private int archivedChatsRow;
+    private int downloadsRow;
     private int savedMessagesRow;
     private int scanQrRow;
     private int inviteFriendsRow;
@@ -125,7 +123,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         hideAllChatsRow = newRow();
         centerTitleRow = newRow();
         tabStyleRow = newRow();
-        actionBarTitle = newRow();
+        actionBarTitleRow = newRow();
         mainScreenInfoRow = newRow();
 
         solarIconsHeaderRow = newRow();
@@ -133,21 +131,21 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         solarIconsRow = newRow();
         solarIconsInfoRow = newRow();
 
-        applicationHeaderRow = newRow();
+        appearanceHeaderRow = newRow();
         fabShapeRow = newRow();
+        forceBlurRow = newRow();
         useSystemFontsRow = newRow();
         useSystemEmojiRow = newRow();
-        blurForAllThemesRow = newRow();
         newSwitchStyleRow = newRow();
         disableDividersRow = newRow();
         transparentStatusBarRow = newRow();
-        transparentNavBarRow = newRow();
-        transparentNavBarInfoRow = newRow();
+        alternativeNavigationRow = newRow();
+        appearanceDividerRow = newRow();
 
-        iconsHeaderRow = newRow();
+        drawerOptionsHeaderRow = newRow();
         eventChooserRow = newRow();
         forceSnowRow = newRow();
-        iconsDividerRow = newRow();
+        drawerOptionsDividerRow = newRow();
 
         drawerHeaderRow = newRow();
         statusRow = getUserConfig().isPremium() ? newRow() : -1;
@@ -159,6 +157,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         callsRow = newRow();
         peopleNearbyRow = ExteraUtils.hasGps() ? newRow() : -1;
         savedMessagesRow = newRow();
+        downloadsRow = newRow();
         scanQrRow = newRow();
         inviteFriendsRow = newRow();
         telegramFeaturesRow = newRow();
@@ -191,20 +190,27 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             statusBarColorAnimate.setDuration(200);
             statusBarColorAnimate.addUpdateListener(animation -> getParentActivity().getWindow().setStatusBarColor(ColorUtils.setAlphaComponent(0, (int) animation.getAnimatedValue())));
             statusBarColorAnimate.start();
-        } else if (position == blurForAllThemesRow) {
-            ExteraConfig.editor.putBoolean("blurForAllThemes", ExteraConfig.blurForAllThemes ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.blurForAllThemes);
+        } else if (position == forceBlurRow) {
+            ExteraConfig.editor.putBoolean("forceBlur", ExteraConfig.forceBlur ^= true).apply();
+            if (!SharedConfig.chatBlurEnabled() && ExteraConfig.forceBlur || SharedConfig.chatBlurEnabled() && !ExteraConfig.forceBlur) {
+                SharedConfig.toggleChatBlur();
+            }
+            ((TextCheckCell) view).setChecked(ExteraConfig.forceBlur);
+        } else if (position == alternativeNavigationRow) {
+            SharedConfig.editor.putBoolean("useLNavigation", SharedConfig.useLNavigation ^= true).apply();
+            ((TextCheckCell) view).setChecked(SharedConfig.useLNavigation);
+            parentLayout.rebuildAllFragmentViews(false, false);
             showBulletin();
         } else if (position == centerTitleRow) {
             ExteraConfig.editor.putBoolean("centerTitle", ExteraConfig.centerTitle ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.centerTitle);
             parentLayout.rebuildAllFragmentViews(false, false);
-            mainScreenSetupCell.setCenteredTitle(true);
+            mainScreenSetupCell.updateCenteredTitle(true);
         } else if (position == hideAllChatsRow) {
             ExteraConfig.editor.putBoolean("hideAllChats", ExteraConfig.hideAllChats ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideAllChats);
             parentLayout.rebuildAllFragmentViews(false, false);
-            mainScreenSetupCell.setTabName(true);
+            mainScreenSetupCell.updateTabName(true);
         } else if (position == newSwitchStyleRow) {
             ExteraConfig.editor.putBoolean("newSwitchStyle", ExteraConfig.newSwitchStyle ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.newSwitchStyle);
@@ -219,10 +225,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
             parentLayout.rebuildAllFragmentViews(true, true);
             getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
-        } else if (position == transparentNavBarRow) {
-            ExteraConfig.editor.putBoolean("transparentNavBar", ExteraConfig.transparentNavBar ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.transparentNavBar);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == statusRow) {
             ExteraConfig.toggleDrawerElements(12);
             ((TextCell) view).setChecked(ExteraConfig.changeStatus);
@@ -271,103 +273,56 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ExteraConfig.toggleDrawerElements(11);
             ((TextCell) view).setChecked(ExteraConfig.telegramFeatures);
             parentLayout.rebuildAllFragmentViews(false, false);
+        } else if (position == downloadsRow) {
+            ExteraConfig.toggleDrawerElements(13);
+            ((TextCell) view).setChecked(ExteraConfig.downloads);
+            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == forceSnowRow) {
-            ExteraConfig.editor.putBoolean("forceDrawerSnow", ExteraConfig.forceDrawerSnow ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.forceDrawerSnow);
+            ExteraConfig.editor.putBoolean("forceSnow", ExteraConfig.forceSnow ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.forceSnow);
             if (SharedConfig.useLNavigation) showBulletin();
         } else if (position == eventChooserRow) {
             if (getParentActivity() == null) {
                 return;
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-            builder.setTitle(LocaleController.getString("DrawerIconPack", R.string.DrawerIconPack));
-            builder.setItems(events, new int[]{
-                    R.drawable.msg_calendar2,
-                    R.drawable.msg_block,
-                    R.drawable.msg_settings_ny,
-                    R.drawable.msg_saved_14,
-                    R.drawable.msg_contacts_hw
-            }, (dialog, which) -> {
+            ExteraUtils.showDialog(events, new int[]{
+                    R.drawable.msg_calendar2, R.drawable.msg_block,
+                    R.drawable.msg_settings_ny, R.drawable.msg_saved_14, R.drawable.msg_contacts_hw
+            }, LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), ExteraConfig.eventType, getContext(), which -> {
                 ExteraConfig.editor.putInt("eventType", ExteraConfig.eventType = which).apply();
-                RecyclerView.ViewHolder holder = getListView().findViewHolderForAdapterPosition(eventChooserRow);
-                if (holder != null) {
-                    listAdapter.onBindViewHolder(holder, eventChooserRow);
-                }
-                if (getListView().getLayoutManager() != null)
-                    recyclerViewState = getListView().getLayoutManager().onSaveInstanceState();
-                parentLayout.rebuildAllFragmentViews(true, true);
-                getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
+                parentLayout.rebuildAllFragmentViews(false, false);
+                listAdapter.notifyItemChanged(eventChooserRow, payload);
+                listAdapter.notifyItemRangeChanged(statusRow, 13);
             });
-            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-            showDialog(builder.create());
         } else if (position == hideActionBarStatusRow) {
             ExteraConfig.editor.putBoolean("hideActionBarStatus", ExteraConfig.hideActionBarStatus ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hideActionBarStatus);
-            mainScreenSetupCell.setStatusVisibility(true);
+            mainScreenSetupCell.updateStatus(true);
             parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == actionBarTitle) {
+        } else if (position == actionBarTitleRow) {
             if (getParentActivity() == null) {
                 return;
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-            builder.setTitle(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle));
-
-            LinearLayout linearLayout = new LinearLayout(getParentActivity());
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            builder.setView(linearLayout);
-
-            for (int a = 0; a < titles.length; a++) {
-                RadioColorCell cell = new RadioColorCell(getParentActivity());
-                cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
-                cell.setTag(a);
-                cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
-                cell.setTextAndValue(titles[a], ExteraConfig.actionBarTitle == a);
-                cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
-                linearLayout.addView(cell);
-                cell.setOnClickListener(v -> {
-                    Integer which = (Integer) v.getTag();
-                    ExteraConfig.editor.putInt("actionBarTitle", ExteraConfig.actionBarTitle = which).apply();
-                    mainScreenSetupCell.setTitle(true);
-                    parentLayout.rebuildAllFragmentViews(false, false);
-                    ((TextSettingsCell) view).setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[which], true, false);
-                    builder.getDismissRunnable().run();
-                });
-            }
-            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-            showDialog(builder.create());
+            ExteraUtils.showDialog(titles, LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), ExteraConfig.actionBarTitle, getContext(), i -> {
+                ExteraConfig.editor.putInt("actionBarTitle", ExteraConfig.actionBarTitle = i).apply();
+                mainScreenSetupCell.updateTitle(true);
+                parentLayout.rebuildAllFragmentViews(false, false);
+                listAdapter.notifyItemChanged(actionBarTitleRow, payload);
+            });
         } else if (position == tabStyleRow) {
             if (getParentActivity() == null) {
                 return;
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-            builder.setTitle(LocaleController.getString("TabStyle", R.string.TabStyle));
-
-            LinearLayout linearLayout = new LinearLayout(getParentActivity());
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            builder.setView(linearLayout);
-
-            for (int a = 0; a < styles.length; a++) {
-                RadioColorCell cell = new RadioColorCell(getParentActivity());
-                cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
-                cell.setTag(a);
-                cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
-                cell.setTextAndValue(styles[a], ExteraConfig.tabStyle == a);
-                cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
-                linearLayout.addView(cell);
-                cell.setOnClickListener(v -> {
-                    Integer which = (Integer) v.getTag();
-                    ExteraConfig.editor.putInt("tabStyle", ExteraConfig.tabStyle = which).apply();
-                    mainScreenSetupCell.setTabStyle(true);
-                    parentLayout.rebuildAllFragmentViews(false, false);
-                    ((TextSettingsCell) view).setTextAndValue(LocaleController.getString("TabStyle", R.string.TabStyle), styles[which], true, true);
-                    builder.getDismissRunnable().run();
-                });
-            }
-            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-            showDialog(builder.create());
+            ExteraUtils.showDialog(styles, LocaleController.getString("TabStyle", R.string.TabStyle), ExteraConfig.tabStyle, getContext(), i -> {
+                ExteraConfig.editor.putInt("tabStyle", ExteraConfig.tabStyle = i).apply();
+                mainScreenSetupCell.updateTabStyle(true);
+                parentLayout.rebuildAllFragmentViews(false, false);
+                listAdapter.notifyItemChanged(tabStyleRow, payload);
+            });
         } else if (position == solarIconsRow) {
             ((TextCheckCell) view).setChecked(!ExteraConfig.useSolarIcons);
             solarIconsPreview.updateIcons(true);
+            mainScreenSetupCell.invalidate();
             parentLayout.rebuildAllFragmentViews(false, false);
         }
     }
@@ -425,18 +380,18 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, boolean payload) {
             switch (holder.getItemViewType()) {
                 case 1:
                     holder.itemView.setBackground(Theme.getThemedDrawable(mContext, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 3:
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
-                    if (position == applicationHeaderRow) {
+                    if (position == appearanceHeaderRow) {
                         headerCell.setText(LocaleController.getString("Appearance", R.string.Appearance));
                     } else if (position == drawerHeaderRow) {
                         headerCell.setText(LocaleController.getString("DrawerElements", R.string.DrawerElements));
-                    } else if (position == iconsHeaderRow) {
+                    } else if (position == drawerOptionsHeaderRow) {
                         headerCell.setText(LocaleController.getString("DrawerOptions", R.string.DrawerOptions));
                     } else if (position == mainScreenHeaderRow) {
                         headerCell.setText(LocaleController.getString("AvatarCorners", R.string.AvatarCorners));
@@ -453,8 +408,10 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UseSystemFonts", R.string.UseSystemFonts), ExteraConfig.useSystemFonts, true);
                     } else if (position == useSystemEmojiRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UseSystemEmoji", R.string.UseSystemEmoji), SharedConfig.useSystemEmoji, true);
-                    } else if (position == blurForAllThemesRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("BlurForAllThemes", R.string.BlurForAllThemes), ExteraConfig.blurForAllThemes, true);
+                    } else if (position == forceBlurRow) {
+                        textCheckCell.setTextAndValueAndCheck(LocaleController.getString("ForceBlur", R.string.ForceBlur), LocaleController.getString("ForceBlurInfo", R.string.ForceBlurInfo), ExteraConfig.forceBlur, true, true);
+                    } else if (position == alternativeNavigationRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("AlternativeNavigation", R.string.AlternativeNavigation), SharedConfig.useLNavigation, false);
                     } else if (position == centerTitleRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("CenterTitle", R.string.CenterTitle), ExteraConfig.centerTitle, true);
                     } else if (position == hideAllChatsRow) {
@@ -463,10 +420,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString("NewSwitchStyle", R.string.NewSwitchStyle), ExteraConfig.newSwitchStyle, true);
                     } else if (position == disableDividersRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableDividers", R.string.DisableDividers), ExteraConfig.disableDividers, true);
-                    } else if (position == transparentNavBarRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("TransparentNavBar", R.string.TransparentNavBar), ExteraConfig.transparentNavBar, false);
                     } else if (position == forceSnowRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("DrawerForceSnow", R.string.DrawerForceSnow), ExteraConfig.forceDrawerSnow, false);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("ForceSnow", R.string.ForceSnow), ExteraConfig.forceSnow, false);
                     } else if (position == hideActionBarStatusRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideActionBarStatus", R.string.HideActionBarStatus), ExteraConfig.hideActionBarStatus, true);
                     } else if (position == solarIconsRow) {
@@ -497,6 +452,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("SavedMessages", R.string.SavedMessages), ExteraConfig.savedMessages, icons[5], true);
                     } else if (position == scanQrRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), ExteraConfig.scanQr, R.drawable.msg_qrcode, true);
+                    } else if (position == downloadsRow) {
+                        textCell.setTextAndCheckAndIcon(LocaleController.getString("DownloadsTabs", R.string.DownloadsTabs), ExteraConfig.downloads, R.drawable.msg_download, true);
                     } else if (position == inviteFriendsRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("InviteFriends", R.string.InviteFriends), ExteraConfig.inviteFriends, icons[6], true);
                     } else if (position == telegramFeaturesRow) {
@@ -506,23 +463,23 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 case 7:
                     TextSettingsCell textSettingsCell = (TextSettingsCell) holder.itemView;
                     if (position == eventChooserRow) {
-                        textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconPack", R.string.DrawerIconPack), events[ExteraConfig.eventType], true);
-                    } else if (position == actionBarTitle) {
-                        textSettingsCell.setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[ExteraConfig.actionBarTitle], false);
+                        textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), events[ExteraConfig.eventType], payload, true);
+                    } else if (position == actionBarTitleRow) {
+                        textSettingsCell.setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[ExteraConfig.actionBarTitle], payload, false);
                     } else if (position == tabStyleRow) {
-                        textSettingsCell.setTextAndValue(LocaleController.getString("TabStyle", R.string.TabStyle), styles[ExteraConfig.tabStyle], true);
+                        textSettingsCell.setTextAndValue(LocaleController.getString("TabStyle", R.string.TabStyle), styles[ExteraConfig.tabStyle], payload, true);
                     }
                     break;
                 case 8:
                     TextInfoPrivacyCell cell = (TextInfoPrivacyCell) holder.itemView;
-                    if (position == transparentNavBarInfoRow) {
-                        cell.setText(LocaleController.getString("TransparentNavBarInfo", R.string.TransparentNavBarInfo));
+                    if (position == appearanceDividerRow) {
+                        cell.setText(LocaleController.getString("AlternativeNavigationInfo", R.string.AlternativeNavigationInfo));
                     } else if (position == solarIconsInfoRow) {
-                        cell.setText(addLinkSpan(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), "@Design480", "@TierOhneNation"));
-
-                        //cell.setText(addLinkSpan(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), "@Design480") × addLinkSpan("R4IN80W", "@TierOhneNation"));
+                        cell.setText(ExteraUtils.formatWithUsernames(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), AppearancePreferencesActivity.this));
                     } else if (position == mainScreenInfoRow) {
                         cell.setText(LocaleController.getString("MainScreenSetupInfo", R.string.MainScreenSetupInfo));
+                    } else if (position == drawerOptionsDividerRow) {
+                        cell.setText(LocaleController.getString("ForceSnowInfo", R.string.ForceSnowInfo));
                     }
                     break;
             }
@@ -530,17 +487,17 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == iconsDividerRow || position == drawerDividerRow) {
+            if (position == drawerDividerRow) {
                 return 1;
             } else if (position == statusRow || position == newGroupRow || position == newSecretChatRow || position == newChannelRow ||
                     position == contactsRow || position == callsRow || position == peopleNearbyRow || position == archivedChatsRow ||
-                    position == savedMessagesRow || position == scanQrRow || position == inviteFriendsRow || position == telegramFeaturesRow) {
+                    position == savedMessagesRow || position == scanQrRow || position == inviteFriendsRow || position == telegramFeaturesRow || position == downloadsRow) {
                 return 2;
-            } else if (position == applicationHeaderRow || position == drawerHeaderRow || position == iconsHeaderRow || position == mainScreenHeaderRow || position == solarIconsHeaderRow) {
+            } else if (position == appearanceHeaderRow || position == drawerHeaderRow || position == drawerOptionsHeaderRow || position == mainScreenHeaderRow || position == solarIconsHeaderRow) {
                 return 3;
-            } else if (position == eventChooserRow || position == actionBarTitle || position == tabStyleRow) {
+            } else if (position == eventChooserRow || position == actionBarTitleRow || position == tabStyleRow) {
                 return 7;
-            } else if (position == transparentNavBarInfoRow || position == solarIconsInfoRow || position == mainScreenInfoRow) {
+            } else if (position == appearanceDividerRow || position == solarIconsInfoRow || position == mainScreenInfoRow || position == drawerOptionsDividerRow) {
                 return 8;
             } else if (position == fabShapeRow) {
                 return 12;

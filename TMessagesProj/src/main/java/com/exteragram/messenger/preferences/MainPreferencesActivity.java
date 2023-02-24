@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -118,7 +118,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
             }
         });
 
-         actionBarBackground = new View(context) {
+        actionBarBackground = new View(context) {
 
             private final Paint paint = new Paint();
 
@@ -139,6 +139,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     }
 
     private final int[] location = new int[2];
+
     private void checkScroll(boolean animated) {
         int first = layoutManager.findFirstVisibleItemPosition();
         boolean show;

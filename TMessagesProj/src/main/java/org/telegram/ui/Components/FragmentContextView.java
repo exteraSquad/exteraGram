@@ -2454,13 +2454,13 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     public void updateButtonsVisibility(boolean animated) {
         boolean paused = MediaController.getInstance().isPaused();
         if (closeButton != null) {
-            AndroidUtilities.updateViewShow(closeButton, paused || isPlayingVoice() || isPlayingRoundVideo(), true, animated);
+            AndroidUtilities.updateViewVisibilityAnimated(closeButton, paused || isPlayingVoice() || isPlayingRoundVideo(), 0.5f, animated);
         }
         if (nextButton != null && !isPlayingVoice() && !isPlayingRoundVideo()) {
-            AndroidUtilities.updateViewShow(nextButton, !paused, true, animated);
+            AndroidUtilities.updateViewVisibilityAnimated(nextButton, !paused, 0.5f, animated);
         }
         if (prevButton != null && !isPlayingVoice() && !isPlayingRoundVideo()) {
-            AndroidUtilities.updateViewShow(prevButton, !paused, true, animated);
+            AndroidUtilities.updateViewVisibilityAnimated(prevButton, !paused, 0.5f, animated);
         }
     }
 }

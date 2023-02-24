@@ -4076,7 +4076,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                 scrollToPosition(0, 0);
             });
 
-            if (type == TYPE_REACTIONS || type == TYPE_EMOJI_STATUS || type == TYPE_AVATAR_CONSTRUCTOR) {
+            if (!ExteraConfig.hideCategories && type == TYPE_REACTIONS || type == TYPE_EMOJI_STATUS || type == TYPE_AVATAR_CONSTRUCTOR) {
                 int categoriesType;
                 switch (type) {
                     case TYPE_EMOJI_STATUS:

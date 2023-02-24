@@ -91,7 +91,7 @@ public class BackButtonMenu {
             if (chat == null && user == null) {
                 imageView.setRoundRadius(0);
             } else {
-                imageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 16 : 32));
+                imageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 32 * 0.65f : 32));
             }
             cell.addView(imageView, LayoutHelper.createFrameRelatively(32, 32, Gravity.START | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
 

@@ -407,7 +407,7 @@ public class GroupCreateUserCell extends FrameLayout {
         }
 
 
-        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(currentChat != null && currentChat.forum ? 34.5f : 46));
+        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(currentChat != null && currentChat.forum ? 46 * 0.65f : 46));
         if (currentStatus != null) {
             statusTextView.setText(currentStatus, true);
             statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);

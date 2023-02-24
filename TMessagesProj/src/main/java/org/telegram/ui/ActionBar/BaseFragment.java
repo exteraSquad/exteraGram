@@ -57,6 +57,7 @@ import java.util.ArrayList;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.extras.Vibrate;
+import com.exteragram.messenger.preferences.BasePreferencesActivity;
 
 public abstract class BaseFragment {
 
@@ -798,12 +799,11 @@ public abstract class BaseFragment {
     }
 
     public int getNavigationBarColor() {
-        return Theme.getColor(ExteraConfig.transparentNavBar ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray);
+        return getThemedColor(Theme.key_windowBackgroundGray);
     }
 
     public void setNavigationBarColor(int color) {
         Activity activity = getParentActivity();
-        if (ExteraConfig.transparentNavBar) color = Theme.getColor(Theme.key_chat_messagePanelBackground);
         if (activity != null) {
             Window window = activity.getWindow();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && window != null && window.getNavigationBarColor() != color) {

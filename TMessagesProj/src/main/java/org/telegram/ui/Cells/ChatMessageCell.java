@@ -53,7 +53,6 @@ import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.util.Property;
 import android.util.SparseArray;
 import android.util.StateSet;
@@ -79,6 +78,7 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -12516,7 +12516,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
 
                 if (ExteraConfig.dateOfForwardedMsg) {
-                    currentForwardNameString += " • " + LocaleController.formatDateTime((long) messageObject.messageOwner.fwd_from.date);
+                    currentForwardNameString += " • " + LocaleController.formatDateTime(messageObject.messageOwner.fwd_from.date);
                 }
 
                 forwardedNameWidth = getMaxNameWidth();
@@ -12788,7 +12788,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         }
 
                         if (ExteraConfig.dateOfForwardedMsg) {
-                            currentForwardNameString += " • " + LocaleController.formatDateTime((long) messageObject.messageOwner.fwd_from.date);
+                            currentForwardNameString += " • " + LocaleController.formatDateTime(messageObject.messageOwner.fwd_from.date);
                         }
 
                         name = getForwardedMessageText(messageObject);
@@ -12914,7 +12914,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             if (emojiStatusId != null) {
                 return emojiStatusId;
             } else if (ExteraConfig.isExteraDev(currentUser)) {
-                return ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.ic_outline_arrow).mutate();
+                return ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.ic_status_arrow).mutate();
             } else if (currentUser.premium) {
                 return ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.msg_premium_liststar).mutate();
             }
@@ -15173,7 +15173,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         endX = x + backgroundWidth - AndroidUtilities.dp(12);
                     }
                     Theme.chat_replyLinePaint.setAlpha((int) (Theme.chat_replyLinePaint.getAlpha() * ChatMessageCell.this.getAlpha()));
-                    canvas.drawLine(x, ly, endX - AndroidUtilities.dp(14), ly, Theme.chat_replyLinePaint);
+                    if (!ExteraConfig.disableDividers) canvas.drawLine(x, ly, endX - AndroidUtilities.dp(14), ly, Theme.chat_replyLinePaint);
                 }
                 if (commentLayout != null && drawSideButton != 3) {
                     Theme.chat_commentTextPaint.setColor(getThemedColor(currentMessageObject.isOutOwner() ? Theme.key_chat_outPreviewInstantText : Theme.key_chat_inPreviewInstantText));

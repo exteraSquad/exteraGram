@@ -1064,7 +1064,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             };
             editEnterID.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
             if (ExteraConfig.channelToSave == 0) ExteraConfig.setChannelToSave(uid);
-            editEnterID.setText(Long.toString(ExteraConfig.channelToSave));
+            editEnterID.setText(String.format("%s", ExteraConfig.channelToSave));
             editEnterID.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
             editEnterID.setHintText("ID");
             editEnterID.setHeaderHintColor(getThemedColor(Theme.key_windowBackgroundWhiteBlueHeader));
@@ -2048,8 +2048,10 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             final ImageLocation thumbImageLocation = getArtworkThumbImageLocation(messageObject);
             if (!TextUtils.isEmpty(artworkUrl)) {
                 imageView.setImage(ImageLocation.getForPath(artworkUrl), null, thumbImageLocation, null, null, 0, 1, messageObject);
+                noCover = false;
             } else if (thumbImageLocation != null) {
                 imageView.setImage(null, null, thumbImageLocation, null, null, 0, 1, messageObject);
+                noCover = false;
             } else {
                 imageView.setImageResource(R.drawable.nocover, Theme.getColor(Theme.key_player_button));
                 noCover = true;

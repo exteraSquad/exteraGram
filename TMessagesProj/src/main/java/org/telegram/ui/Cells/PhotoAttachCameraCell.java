@@ -17,6 +17,8 @@ import android.graphics.PorterDuffColorFilter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.core.graphics.ColorUtils;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.R;
@@ -80,18 +82,14 @@ public class PhotoAttachCameraCell extends FrameLayout {
 
     public void updateBitmap() {
         Bitmap bitmap = null;
-        // thx neko
-        if (!ExteraConfig.disableCamera) {
-            try {
-                File file = new File(ApplicationLoader.getFilesDirFixed(), "cthumb.jpg");
-                bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-            } catch (Throwable ignore) {
-            }
-        }
+        try {
+            File file = new File(ApplicationLoader.getFilesDirFixed(), "cthumb.jpg");
+            bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+        } catch (Throwable ignore) {}
         if (bitmap != null) {
             backgroundView.setImageBitmap(bitmap);
         } else {
-            backgroundView.setImageResource(R.drawable.icplaceholder);
+            backgroundView.setBackgroundColor(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_sheet_scrollUp),0x1F));
         }
     }
 

@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -68,17 +68,19 @@ public class FabShapeCell extends LinearLayout {
 
             rect.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
             Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
-            canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
+            canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), Theme.dialogs_onlineCirclePaint);
 
-            float stroke = outlinePaint.getStrokeWidth() - Math.max(1, AndroidUtilities.dp(0.25f));
+            float stroke = outlinePaint.getStrokeWidth() / 2;
             rect.set(stroke, stroke, getMeasuredWidth() - stroke, getMeasuredHeight() - stroke);
-            canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), outlinePaint);
+            canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), outlinePaint);
 
+            int cx = AndroidUtilities.dp(22);
             int cy = AndroidUtilities.dp(21);
+            int rad = cx / 2;
             for (int a = 0; a < 2; a++) {
                 cy += AndroidUtilities.dp(a == 0 ? 0 : 32);
                 Theme.dialogs_onlineCirclePaint.setColor(Color.argb(90, r, g, b));
-                canvas.drawCircle(AndroidUtilities.dp(22), cy, AndroidUtilities.dp(11), Theme.dialogs_onlineCirclePaint);
+                canvas.drawRoundRect(cx - rad, cy - rad, cx + rad, cy + rad, ExteraConfig.getAvatarCorners(rad * 2, true), ExteraConfig.getAvatarCorners(rad * 2, true), Theme.dialogs_onlineCirclePaint);
 
                 for (int i = 0; i < 2; i++) {
                     Theme.dialogs_onlineCirclePaint.setColor(Color.argb(i == 0 ? 204 : 90, r, g, b));

@@ -10,6 +10,8 @@ package org.telegram.ui.Cells;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
@@ -23,6 +25,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.NotificationsController;
+import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
@@ -36,6 +39,7 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Premium.PremiumGradient;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 public class DrawerUserCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -44,6 +48,8 @@ public class DrawerUserCell extends FrameLayout implements NotificationCenter.No
     private AvatarDrawable avatarDrawable;
     private GroupCreateCheckBox checkBox;
     private AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable status;
+
+    private Drawable exteraArrow = null;
 
     private int accountNumber;
     private RectF rect = new RectF();
@@ -145,6 +151,13 @@ public class DrawerUserCell extends FrameLayout implements NotificationCenter.No
         if (emojiStatusId != null) {
             textView.setDrawablePadding(AndroidUtilities.dp(4));
             status.set(emojiStatusId, true);
+            textView.setRightDrawableOutside(true);
+        } else if (ExteraConfig.isExteraDev(user)) {
+            textView.setDrawablePadding(AndroidUtilities.dp(2));
+            if (exteraArrow == null) {
+                exteraArrow = Theme.dialogs_exteraArrowDrawable;
+            }
+            status.set(exteraArrow, true);
             textView.setRightDrawableOutside(true);
         } else if (MessagesController.getInstance(account).isPremiumUser(user)) {
             textView.setDrawablePadding(AndroidUtilities.dp(6));

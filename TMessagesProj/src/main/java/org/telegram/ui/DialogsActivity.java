@@ -5835,7 +5835,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         actionBar.openSearchField(query, false);
     }
 
-    private void showSearch(boolean show, boolean startFromDownloads, boolean animated) {
+    void showSearch(boolean show, boolean startFromDownloads, boolean animated) {
         if (!show) {
             updateSpeedItem(false);
         }
@@ -9720,33 +9720,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 });
             });
             translateButton.setOnLongClickListener(v -> {
-                if (getParentActivity() == null)
-                    return false;
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
-                builder.setTitle(LocaleController.getString("Language", R.string.Language));
-
-                LinearLayout linearLayout = new LinearLayout(parentActivity);
-                linearLayout.setOrientation(LinearLayout.VERTICAL);
-                builder.setView(linearLayout);
-
-                for (int a = 0; a < ExteraConfig.supportedLanguages.length; a++) {
-                    RadioColorCell cell = new RadioColorCell(parentActivity);
-                    cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
-                    cell.setTag(a);
-                    cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
-                    cell.setTextAndValue(ExteraConfig.supportedLanguages[a], ExteraConfig.targetLanguage == ExteraConfig.supportedLanguages[a]);
-                    cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
-                    linearLayout.addView(cell);
-                    cell.setOnClickListener(v2 -> {
-                        Integer which = (Integer) v2.getTag();
-                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[which]).apply();
-                        translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
-                        builder.getDismissRunnable().run();
-                    });
-                }
-                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-                builder.create().show();
+                ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
+                    ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
+                    translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
+                });
                 return true;
             });
             sendPopupLayout2.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));

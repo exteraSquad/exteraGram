@@ -561,7 +561,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             statusDrawable.set(((TLRPC.TL_emojiStatus) user.emoji_status).document_id, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
         } else if (arrow) {
-            statusDrawable.set(Theme.dialogs_outlineArrowDrawable, animated);
+            statusDrawable.set(Theme.dialogs_exteraArrowDrawable, animated);
             statusDrawable.setColor(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider));
         } else if (user != null && !savedMessages && MessagesController.getInstance(currentAccount).isPremiumUser(user)) {
             statusDrawable.set(PremiumGradient.getInstance().premiumStarDrawableMini, animated);
@@ -610,7 +610,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             avatarImage.setImage(null, null, avatarDrawable, null, null, 0);
         }
 
-        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 34.5f : 46));
+        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 46 * 0.65f : 46));
         if (mask != 0) {
             boolean continueUpdate = false;
             if ((mask & MessagesController.UPDATE_MASK_AVATAR) != 0 && user != null || (mask & MessagesController.UPDATE_MASK_CHAT_AVATAR) != 0 && chat != null) {

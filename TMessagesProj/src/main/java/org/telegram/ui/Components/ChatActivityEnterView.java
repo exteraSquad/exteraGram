@@ -21,6 +21,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -43,6 +44,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.Layout;
 import android.text.Spannable;
@@ -86,6 +88,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 import androidx.core.os.BuildCompat;
@@ -161,6 +164,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -2662,6 +2666,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
                 delegate.didPressAttachButton();
             });
+            attachButton.setOnLongClickListener(l -> {
+                getParentFragment().processSelectedAttach(0);
+                return true;
+            });
             attachButton.setContentDescription(LocaleController.getString("AccDescrAttachButton", R.string.AccDescrAttachButton));
         }
 
@@ -2763,7 +2771,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         AndroidUtilities.setLightStatusBar(d.getWindow(), color == Color.WHITE);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            int color2 = Theme.getColor(Theme.key_windowBackgroundGray, null, true);
+                            int color2 = Theme.getColor(Theme.key_chat_emojiPanelBackground, null, true);
                             float brightness = AndroidUtilities.computePerceivedBrightness(color2);
                             AndroidUtilities.setLightNavigationBar(d.getWindow(), brightness >= 0.721f);
                         }
@@ -3759,7 +3767,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
             boolean scheduleButtonValue = parentFragment != null && parentFragment.canScheduleMessage();
             boolean sendWithoutSoundButtonValue = !(self || slowModeTimer > 0 && !isInScheduleMode());
-            if (true) {
+            boolean translate = messageEditText.getText() != null && messageEditText.getText().toString().trim().length() != 0;
+            if (translate) {
                 ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, !scheduleButtonValue && !sendWithoutSoundButtonValue, resourcesProvider);
                 translateButton.setTextAndIcon(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")", R.drawable.msg_translate);
                 translateButton.setMinimumWidth(AndroidUtilities.dp(196));
@@ -3772,39 +3781,16 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     }, () -> {});
                 });
                 translateButton.setOnLongClickListener(v -> {
-                    if (parentFragment == null)
-                        return false;
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
-                    builder.setTitle(LocaleController.getString("Language", R.string.Language));
-
-                    LinearLayout linearLayout = new LinearLayout(parentActivity);
-                    linearLayout.setOrientation(LinearLayout.VERTICAL);
-                    builder.setView(linearLayout);
-
-                    for (int a = 0; a < ExteraConfig.supportedLanguages.length; a++) {
-                        RadioColorCell cell = new RadioColorCell(parentActivity);
-                        cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
-                        cell.setTag(a);
-                        cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
-                        cell.setTextAndValue(ExteraConfig.supportedLanguages[a], ExteraConfig.targetLanguage == ExteraConfig.supportedLanguages[a]);
-                        cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
-                        linearLayout.addView(cell);
-                        cell.setOnClickListener(v2 -> {
-                            Integer which = (Integer) v2.getTag();
-                            ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[which]).apply();
-                            translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
-                            builder.getDismissRunnable().run();
-                        });
-                    }
-                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-                    builder.create().show();
+                    ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
+                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
+                        translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
+                    });
                     return true;
                 });
                 sendPopupLayout.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
             }
             if (scheduleButtonValue) {
-                ActionBarMenuSubItem scheduleButton = new ActionBarMenuSubItem(getContext(), false, !sendWithoutSoundButtonValue, resourcesProvider);
+                ActionBarMenuSubItem scheduleButton = new ActionBarMenuSubItem(getContext(), !translate, !sendWithoutSoundButtonValue, resourcesProvider);
                 if (self) {
                     scheduleButton.setTextAndIcon(LocaleController.getString("SetReminder", R.string.SetReminder), R.drawable.msg_calendar2);
                 } else {
@@ -8104,6 +8090,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     requestLayout();
                 }
             }
+            AndroidUtilities.setNavigationBarColor(parentActivity.getWindow(), getThemedColor(Theme.key_chat_emojiPanelBackground));
         } else {
             if (emojiButton != null) {
                 setEmojiButtonImage(false, true);
@@ -8210,6 +8197,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
             }
             updateBotButton(true);
+            AndroidUtilities.setNavigationBarColor(parentActivity.getWindow(), parentFragment.getNavigationBarColor());
         }
 
         if (stickersTabOpen || emojiTabOpen) {

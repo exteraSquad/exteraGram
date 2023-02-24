@@ -84,6 +84,8 @@
         </intent>
     </queries>
 
+    <uses-sdk tools:overrideLibrary="androidx.camera.view, androidx.camera.extensions, androidx.camera.lifecycle, androidx.camera.camera2, androidx.camera.core" />
+
     <application
         android:name=".ApplicationLoader"
         android:allowBackup="true"

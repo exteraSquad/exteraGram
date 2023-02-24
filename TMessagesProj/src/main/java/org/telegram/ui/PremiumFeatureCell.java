@@ -47,7 +47,7 @@ public class PremiumFeatureCell extends FrameLayout {
         addView(linearLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 62, 8, 48, 9));
 
         imageView = new ImageView(context);
-        if (Theme.getActiveTheme().isMonet()) imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
+        if (Theme.getActiveTheme().isMonet()) imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.SRC_IN));
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         addView(imageView, LayoutHelper.createFrame(28, 28, 0, 18, 12, 0, 0));
 

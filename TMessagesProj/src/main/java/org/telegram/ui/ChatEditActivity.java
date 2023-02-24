@@ -509,7 +509,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                 super.invalidate(l, t, r, b);
             }
         };
-        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(forum ? 28 : 56));
+        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(forum ? 56 * 0.65f : 56));
 
         if (ChatObject.canChangeChatInfo(currentChat)) {
             frameLayout.addView(avatarImage, LayoutHelper.createFrame(56, 56, Gravity.TOP | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 24, 20, LocaleController.isRTL ? 24 : 0, 12));

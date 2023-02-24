@@ -1,6 +1,6 @@
 // all credits to @Nekogram
 
-package com.exteragram.messenger.monet;
+package com.exteragram.messenger.extras;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,7 +15,6 @@ import androidx.core.graphics.ColorUtils;
 import com.google.android.exoplayer2.util.Log;
 
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.FileLog;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.LauncherIconController;
@@ -158,6 +157,7 @@ public class MonetHelper {
     public static void unregisterReceiver(Context context) {
         try {
             overlayChangeReceiver.unregister(context);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 }

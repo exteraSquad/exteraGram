@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 public class LocaleController {
 
@@ -991,19 +992,8 @@ public class LocaleController {
     }
 
     private String getStringInternal(String key, String fallback, int res) {
-        if (key.equals("AppName")) {
-            try {
-                return ApplicationLoader.applicationContext.getString(R.string.exteraAppName);
-            } catch (Exception e) {
-                FileLog.e(e);
-            }
-        }
-        if (key.equals("AppNameBeta")) {
-            try {
-                return ApplicationLoader.applicationContext.getString(R.string.exteraAppNameBeta);
-            } catch (Exception e) {
-                FileLog.e(e);
-            }
+        if (key.contains("AppName")) {
+            return ExteraUtils.getAppName();
         }
         String value = BuildVars.USE_CLOUD_STRINGS ? localeValues.get(key) : null;
         if (value == null) {

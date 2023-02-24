@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2023.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -76,7 +76,7 @@ public class DoubleTapCell extends LinearLayout {
             R.drawable.msg_delete
     };
 
-    private static final int[] ICON_WIDTH = new int[]{ AndroidUtilities.dp(12), AndroidUtilities.dp(12) };
+    private static final int[] ICON_WIDTH = new int[]{AndroidUtilities.dp(12), AndroidUtilities.dp(12)};
 
     private final ValueAnimator[] animator = new ValueAnimator[2];
     private final ValueAnimator[] circleAnimator = new ValueAnimator[2];
@@ -111,7 +111,7 @@ public class DoubleTapCell extends LinearLayout {
 
                 @SuppressLint("DrawAllocation") Rect rect1 = new Rect();
 
-                float stroke = outlinePaint.getStrokeWidth() - Math.max(1, AndroidUtilities.dp(0.25f));
+                float stroke = outlinePaint.getStrokeWidth() / 2;
                 Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
 
                 for (int i = 0; i < 2; i++) {
@@ -129,14 +129,16 @@ public class DoubleTapCell extends LinearLayout {
                     for (int j = 0; j < 2; j++) {
                         circleOutlinePaint[j] = new Paint(Paint.ANTI_ALIAS_FLAG);
                         circleOutlinePaint[j].setStyle(Paint.Style.STROKE);
-                        circleOutlinePaint[j].setColor(ColorUtils.blendARGB(0x00, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F), circleProgress[i + 2 * j]));
+                        circleOutlinePaint[j].setColor(ColorUtils.blendARGB(0x00, Color.argb(76, r, g, b), circleProgress[i + 2 * j]));
                         circleOutlinePaint[j].setStrokeWidth(AndroidUtilities.dp(1.5f) * circleProgress[i + 2 * j] * circleProgress[i + 2 * j]);
                         canvas.drawCircle((i == 0 ? 1 : 3) * getMeasuredWidth() / 4, getMeasuredHeight() / 4 + AndroidUtilities.dpf2(i == 0 ? 3f : -2f), AndroidUtilities.dp(25 - 6 * j) * circleSizeProgress[i + 2 * j], circleOutlinePaint[j]);
                     }
 
                     Drawable icon = ContextCompat.getDrawable(context, actionIcon[i]);
-                    if (i == 0) icon.setBounds(getMeasuredWidth() / 4 - ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 - ICON_WIDTH[i] + AndroidUtilities.dpf2(3f)), getMeasuredWidth() / 4 + ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 + ICON_WIDTH[i] + AndroidUtilities.dpf2(3f)));
-                    else icon.setBounds(3 * getMeasuredWidth() / 4 - ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 - ICON_WIDTH[i] - AndroidUtilities.dpf2(2f)), 3 * getMeasuredWidth() / 4 + ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 + ICON_WIDTH[i] - AndroidUtilities.dpf2(2f)));
+                    if (i == 0)
+                        icon.setBounds(getMeasuredWidth() / 4 - ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 - ICON_WIDTH[i] + AndroidUtilities.dpf2(3f)), getMeasuredWidth() / 4 + ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 + ICON_WIDTH[i] + AndroidUtilities.dpf2(3f)));
+                    else
+                        icon.setBounds(3 * getMeasuredWidth() / 4 - ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 - ICON_WIDTH[i] - AndroidUtilities.dpf2(2f)), 3 * getMeasuredWidth() / 4 + ICON_WIDTH[i], (int) (getMeasuredHeight() / 4 + ICON_WIDTH[i] - AndroidUtilities.dpf2(2f)));
 
                     icon.setBounds(
                             icon.getBounds().left - AndroidUtilities.dp(4 - 4 * iconChangingProgress[i]),
@@ -234,9 +236,8 @@ public class DoubleTapCell extends LinearLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         if (!ExteraConfig.disableDividers)
-            canvas.drawLine(AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
+            canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(21) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
     }
 
     @Override

@@ -5,20 +5,18 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
 package com.exteragram.messenger.components;
 
-import androidx.core.graphics.ColorUtils;
-
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
@@ -27,6 +25,10 @@ import android.text.TextPaint;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import androidx.core.graphics.ColorUtils;
+
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -34,8 +36,6 @@ import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.Easings;
 import org.telegram.ui.Components.LayoutHelper;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class StickerShapeCell extends LinearLayout {
 
@@ -73,11 +73,11 @@ public class StickerShapeCell extends LinearLayout {
 
             rect.set(0, 0, getMeasuredWidth(), AndroidUtilities.dp(80));
             Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
-            canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
+            canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), Theme.dialogs_onlineCirclePaint);
 
-            float stroke = outlinePaint.getStrokeWidth() - Math.max(1, AndroidUtilities.dp(0.25f));
+            float stroke = outlinePaint.getStrokeWidth() / 2;
             rect.set(stroke, stroke, getMeasuredWidth() - stroke, AndroidUtilities.dp(80) - stroke);
-            canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), outlinePaint);
+            canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), outlinePaint);
 
             String text = isRounded ? LocaleController.getString("StickerShapeRounded", R.string.StickerShapeRounded) : isRoundedAsMsg ? LocaleController.getString("StickerShapeRoundedMsg", R.string.StickerShapeRoundedMsg) : LocaleController.getString("Default", R.string.Default);
             int width = (int) Math.ceil(textPaint.measureText(text));
@@ -91,10 +91,10 @@ public class StickerShapeCell extends LinearLayout {
             } else if (isRounded) {
                 canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
             } else {
-                Rect rect1 = new Rect();
+                @SuppressLint("DrawAllocation") Rect rect1 = new Rect();
                 rect.round(rect1);
                 int rad = AndroidUtilities.dp(SharedConfig.bubbleRadius);
-                ShapeDrawable defaultDrawable = new ShapeDrawable(new RoundRectShape(new float[]{rad, rad, rad, rad, rad, rad, rad / 3, rad / 3}, null, null));
+                @SuppressLint("DrawAllocation") ShapeDrawable defaultDrawable = new ShapeDrawable(new RoundRectShape(new float[]{rad, rad, rad, rad, rad, rad, rad / 3, rad / 3}, null, null));
                 defaultDrawable.getPaint().setColor(Theme.dialogs_onlineCirclePaint.getColor());
                 defaultDrawable.setBounds(rect1);
                 defaultDrawable.draw(canvas);

@@ -46,7 +46,7 @@ public class LauncherIconController {
         MONET("MonetIcon", R.color.ic_background_monet, R.drawable.ic_foreground_monet, R.string.AppIconMonet),
         GRADIENT("GradientIcon", R.mipmap.ic_background_gradient, R.drawable.ic_foreground, R.string.AppIconGradient),
         GOOGLE("GoogleIcon", R.color.white, R.mipmap.ic_foreground_google, R.string.AppIconGoogle),
-        DSGN480("Dsgn480Icon", R.mipmap.ic_background_480dsgn, R.mipmap.ic_foreground_480dsgn, R.string.AppIcon480dsgn),
+        DSGN480("Dsgn480Icon", R.mipmap.ic_background_480dsgn, R.mipmap.ic_foreground_480dsgn, R.string.AppIcon480DSGN),
         GLOW("GlowIcon", R.mipmap.ic_background_glow, R.mipmap.ic_foreground_glow, R.string.AppIconGlow),
         SPACE("SpaceIcon", R.mipmap.ic_background_space, R.mipmap.ic_foreground_space, R.string.AppIconSpace),
         WINTER("WinterIcon", R.mipmap.ic_background_winter, R.drawable.ic_foreground, R.string.AppIconWinter),

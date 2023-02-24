@@ -1,3 +1,14 @@
+/*
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @immat0x1, 2023
+
+*/
+
 package com.exteragram.messenger.components;
 
 import android.animation.Animator;
@@ -88,6 +99,10 @@ public class MainScreenSetupCell extends FrameLayout {
         });
         addView(sizeBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.LEFT | Gravity.TOP, 5, 5, 43, 11));
 
+        outlinePaint.setStyle(Paint.Style.STROKE);
+        outlinePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
+        outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(1f)));
+
         preview = new FrameLayout(context) {
             @SuppressLint("DrawAllocation")
             @Override
@@ -99,10 +114,6 @@ public class MainScreenSetupCell extends FrameLayout {
                 float w = getMeasuredWidth();
                 float h = getMeasuredHeight();
 
-                outlinePaint.setStyle(Paint.Style.STROKE);
-                outlinePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
-                outlinePaint.setStrokeWidth(Math.max(2, AndroidUtilities.dp(1f)));
-
                 textPaint.setColor(ColorUtils.blendARGB(0x00, Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), titleProgress));
                 textPaint.setTextSize(AndroidUtilities.dp(20));
                 titleText = (String) TextUtils.ellipsize(titleText, textPaint, w - AndroidUtilities.dp(130 + 35 * statusProgress), TextUtils.TruncateAt.END);
@@ -111,11 +122,11 @@ public class MainScreenSetupCell extends FrameLayout {
 
                 rect.set(0, 0, w, h);
                 Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
-                canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
+                canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), Theme.dialogs_onlineCirclePaint);
 
-                float stroke = outlinePaint.getStrokeWidth() - Math.max(1, AndroidUtilities.dp(0.25f));
+                float stroke = outlinePaint.getStrokeWidth() / 2;
                 rect.set(stroke, stroke, w - stroke, h - stroke);
-                canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), outlinePaint);
+                canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), outlinePaint);
 
                 Drawable search = ContextCompat.getDrawable(context, R.drawable.ic_ab_search).mutate();
                 search.setColorFilter(new PorterDuffColorFilter(Color.argb(204, r, g, b), PorterDuff.Mode.MULTIPLY));
@@ -146,10 +157,11 @@ public class MainScreenSetupCell extends FrameLayout {
 
                 textPaint.setTextSize(AndroidUtilities.dp(15));
 
-                float startY = h - AndroidUtilities.dp(4) - Math.max(2, AndroidUtilities.dp(0.5f)) - AndroidUtilities.dp(87);
+                float startY = h - AndroidUtilities.dp(4) - stroke - AndroidUtilities.dp(87);
 
+                Theme.dialogs_onlineCirclePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
                 if (!ExteraConfig.disableDividers)
-                    canvas.drawLine(stroke, startY + AndroidUtilities.dp(4), getMeasuredWidth() - stroke, startY + AndroidUtilities.dp(4f), Theme.dividerPaint);
+                    canvas.drawLine(stroke * 2, startY + AndroidUtilities.dp(4), getMeasuredWidth() - stroke * 2, startY + AndroidUtilities.dp(4f), Theme.dialogs_onlineCirclePaint);
 
                 @SuppressLint("DrawAllocation") Path tab = new Path();
                 tab.addRect(0, startY + AndroidUtilities.dp(4), getMeasuredWidth(), startY + AndroidUtilities.dp(10), Path.Direction.CCW);
@@ -173,12 +185,12 @@ public class MainScreenSetupCell extends FrameLayout {
                 Theme.dialogs_onlineCirclePaint.setColor(ColorUtils.blendARGB(0x00, Theme.dialogs_onlineCirclePaint.getColor(), hideAllChatsProgress));
 
                 canvas.drawRoundRect(
-                        startX - allChatsPadding * hideAllChatsProgress - AndroidUtilities.dp(10) * chipsStyleProgress - AndroidUtilities.dp(3) * pillsStyleProgress,
-                        startY + AndroidUtilities.dp(6) * textStyleProgress - AndroidUtilities.dp(2) * chipsStyleProgress,
-                        startX + sw + allChatsPadding * hideAllChatsProgress + AndroidUtilities.dp(10) * chipsStyleProgress + AndroidUtilities.dp(3) * pillsStyleProgress,
-                        startY + AndroidUtilities.dp(8) - AndroidUtilities.dp(4) * roundedStyleProgress - AndroidUtilities.dp(45) * chipsStyleProgress,
-                        AndroidUtilities.dpf2(8 + 10 * pillsStyleProgress),
-                        AndroidUtilities.dpf2(8 + 10 * pillsStyleProgress),
+                        startX - allChatsPadding * hideAllChatsProgress - AndroidUtilities.dp(11) * chipsStyleProgress - AndroidUtilities.dp(3) * pillsStyleProgress,
+                        startY + AndroidUtilities.dp(6) * textStyleProgress - AndroidUtilities.dpf2(37.5f) * chipsStyleProgress,
+                        startX + sw + allChatsPadding * hideAllChatsProgress + AndroidUtilities.dp(11) * chipsStyleProgress + AndroidUtilities.dp(3) * pillsStyleProgress,
+                        startY + AndroidUtilities.dp(8) - AndroidUtilities.dp(4) * roundedStyleProgress - AndroidUtilities.dpf2(9.5f) * chipsStyleProgress,
+                        AndroidUtilities.dpf2(8 + 15 * pillsStyleProgress),
+                        AndroidUtilities.dpf2(8 + 15 * pillsStyleProgress),
                         Theme.dialogs_onlineCirclePaint);
                 canvas.drawText(tabName, startX, startY - AndroidUtilities.dp(14), textPaint);
 
@@ -201,18 +213,17 @@ public class MainScreenSetupCell extends FrameLayout {
         };
         preview.setWillNotDraw(false);
         addView(preview, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.CENTER, 21, 54, 21, 21));
-        setStatusVisibility(false);
-        setCenteredTitle(false);
-        setTabStyle(false);
-        setTabName(false);
-        setTitle(false);
+        updateStatus(false);
+        updateCenteredTitle(false);
+        updateTabStyle(false);
+        updateTabName(false);
+        updateTitle(false);
     }
 
-    public void setStatusVisibility(boolean animate) {
+    public void updateStatus(boolean animate) {
         float to = !ExteraConfig.hideActionBarStatus ? 1 : 0;
         if (to == statusProgress && animate || !UserConfig.getInstance(UserConfig.selectedAccount).isPremium())
             return;
-
         if (animate) {
             animator = ValueAnimator.ofFloat(statusProgress, to).setDuration(250);
             animator.setInterpolator(Easings.easeInOutQuad);
@@ -228,11 +239,10 @@ public class MainScreenSetupCell extends FrameLayout {
         }
     }
 
-    public void setCenteredTitle(boolean animate) {
+    public void updateCenteredTitle(boolean animate) {
         float to = ExteraConfig.centerTitle ? 1 : 0;
         if (to == centeredTitleProgress && animate)
             return;
-
         if (animate) {
             animator = ValueAnimator.ofFloat(centeredTitleProgress, to).setDuration(250);
             animator.setInterpolator(Easings.easeInOutQuad);
@@ -247,7 +257,7 @@ public class MainScreenSetupCell extends FrameLayout {
         }
     }
 
-    public void setTabName(boolean animate) {
+    public void updateTabName(boolean animate) {
         if (Objects.equals(tabName, getTabName()) && animate)
             return;
         if (animate) {
@@ -262,7 +272,7 @@ public class MainScreenSetupCell extends FrameLayout {
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     tabName = getTabName();
-                    allChatsPadding = isAllChatsTab() ? AndroidUtilities.dp(8) : 0;
+                    allChatsPadding = isAllChatsTab() ? AndroidUtilities.dp(6) : 0;
                     animator.setFloatValues(0f, 1f);
                     animator.removeAllListeners();
                     animator.start();
@@ -271,16 +281,15 @@ public class MainScreenSetupCell extends FrameLayout {
             animator.start();
         } else {
             tabName = getTabName();
-            allChatsPadding = isAllChatsTab() ? AndroidUtilities.dp(8) : 0;
+            allChatsPadding = isAllChatsTab() ? AndroidUtilities.dp(6) : 0;
             hideAllChatsProgress = 1f;
             invalidate();
         }
     }
 
-    public void setTitle(boolean animate) {
+    public void updateTitle(boolean animate) {
         if (Objects.equals(titleText, ExteraUtils.getActionBarTitle()) && animate)
             return;
-
         if (animate) {
             animator = ValueAnimator.ofFloat(1f, 0f).setDuration(250);
             animator.setInterpolator(Easings.easeInOutQuad);
@@ -306,7 +315,7 @@ public class MainScreenSetupCell extends FrameLayout {
         }
     }
 
-    public void setTabStyle(boolean animate) {
+    public void updateTabStyle(boolean animate) {
         if (Objects.equals(currentStyle, ExteraConfig.tabStyle) && animate)
             return;
 
@@ -340,10 +349,12 @@ public class MainScreenSetupCell extends FrameLayout {
                 } else if (oldStyle == 2) {
                     textStyleProgress = (Float) animation.getAnimatedValue();
                 } else if (oldStyle == 3) {
-                    if (currentStyle != 4) chipsStyleProgress = (Float) animation.getAnimatedValue();
+                    if (currentStyle != 4)
+                        chipsStyleProgress = (Float) animation.getAnimatedValue();
                 } else if (oldStyle == 4) {
                     pillsStyleProgress = (Float) animation.getAnimatedValue();
-                    if (currentStyle != 3) chipsStyleProgress = (Float) animation.getAnimatedValue();
+                    if (currentStyle != 3)
+                        chipsStyleProgress = (Float) animation.getAnimatedValue();
                 }
                 invalidate();
             });

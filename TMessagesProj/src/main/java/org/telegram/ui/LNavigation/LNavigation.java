@@ -891,7 +891,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
 
         try {
             if (bgView != null && fgView != null) {
-                int navColor = ExteraConfig.transparentNavBar ? Theme.getColor(Theme.key_chat_messagePanelBackground) : ColorUtils.blendARGB(fgView.fragment.getNavigationBarColor(), bgView.fragment.getNavigationBarColor(), swipeProgress);
+                int navColor = ColorUtils.blendARGB(fgView.fragment.getNavigationBarColor(), bgView.fragment.getNavigationBarColor(), swipeProgress);
                 getParentActivity().getWindow().setNavigationBarColor(navColor);
                 AndroidUtilities.setLightNavigationBar(getParentActivity().getWindow(), AndroidUtilities.computePerceivedBrightness(navColor) > 0.721f);
             }

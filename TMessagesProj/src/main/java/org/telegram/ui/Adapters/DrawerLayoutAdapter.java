@@ -257,10 +257,11 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         int newChannelIcon;
         int contactsIcon;
         int callsIcon;
-        int archiveIcon;
+        int archiveIcon = R.drawable.msg_archive;
+        int downloadsIcon = R.drawable.msg_download;
+        int scanQrIcon = R.drawable.msg_qrcode;;
         int savedIcon;
         int settingsIcon;
-        int scanQrIcon;
         int inviteIcon;
         int helpIcon;
         int peopleNearbyIcon;
@@ -270,8 +271,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             newChannelIcon = R.drawable.msg_channel_ny;
             contactsIcon = R.drawable.msg_contacts_ny;
             callsIcon = R.drawable.msg_calls_ny;
-            archiveIcon = R.drawable.msg_archive;
-            scanQrIcon = R.drawable.msg_qrcode;
             savedIcon = R.drawable.msg_saved_ny;
             settingsIcon = R.drawable.msg_settings_ny;
             inviteIcon = R.drawable.msg_invite_ny;
@@ -283,8 +282,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             newChannelIcon = R.drawable.msg_channel_14;
             contactsIcon = R.drawable.msg_contacts_14;
             callsIcon = R.drawable.msg_calls_14;
-            archiveIcon = R.drawable.msg_archive;
-            scanQrIcon = R.drawable.msg_qrcode;
             savedIcon = R.drawable.msg_saved_14;
             settingsIcon = R.drawable.msg_settings_14;
             inviteIcon = R.drawable.msg_invite_14;
@@ -296,8 +293,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             newChannelIcon = R.drawable.msg_channel_hw;
             contactsIcon = R.drawable.msg_contacts_hw;
             callsIcon = R.drawable.msg_calls_hw;
-            archiveIcon = R.drawable.msg_archive;
-            scanQrIcon = R.drawable.msg_qrcode;
             savedIcon = R.drawable.msg_saved_hw;
             settingsIcon = R.drawable.msg_settings_hw;
             inviteIcon = R.drawable.msg_invite_hw;
@@ -310,8 +305,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
             contactsIcon = R.drawable.msg_contacts;
             callsIcon = R.drawable.msg_calls;
             savedIcon = R.drawable.msg_saved;
-            archiveIcon = R.drawable.msg_archive;
-            scanQrIcon = R.drawable.msg_qrcode;
             settingsIcon = R.drawable.msg_settings_old;
             inviteIcon = R.drawable.msg_invite;
             helpIcon = R.drawable.msg_help;
@@ -337,6 +330,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         if (ExteraConfig.calls) items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
         if (ExteraConfig.peopleNearby && hasGps) items.add(new Item(12, LocaleController.getString("PeopleNearby", R.string.PeopleNearby), peopleNearbyIcon));
         if (ExteraConfig.savedMessages) items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
+        if (ExteraConfig.downloads) items.add(new Item(17, LocaleController.getString("DownloadsTabs", R.string.DownloadsTabs), downloadsIcon));
         items.add(new Item(8, LocaleController.getString("Settings", R.string.Settings), settingsIcon));
         if (ExteraConfig.inviteFriends || ExteraConfig.telegramFeatures || ExteraConfig.scanQr) items.add(null);
         if (ExteraConfig.scanQr) items.add(new Item(16, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), scanQrIcon));

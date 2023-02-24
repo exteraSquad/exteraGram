@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7201,6 +7202,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                         customViewCallback.onCustomViewHidden();
                     }
                     customView = null;
+                }
+
+                @Override
+                public Bitmap getDefaultVideoPoster() {
+                    return Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
                 }
             });
 

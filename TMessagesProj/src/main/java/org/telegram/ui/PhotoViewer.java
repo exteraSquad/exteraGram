@@ -5644,33 +5644,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     }
                 });
                 cell.setOnLongClickListener(v -> {
-                    if (parentFragment == null || a != 5)
-                        return false;
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
-                    builder.setTitle(LocaleController.getString("Language", R.string.Language));
-
-                    LinearLayout linearLayout = new LinearLayout(parentActivity);
-                    linearLayout.setOrientation(LinearLayout.VERTICAL);
-                    builder.setView(linearLayout);
-
-                    for (int b = 0; b < ExteraConfig.supportedLanguages.length; b++) {
-                        RadioColorCell radioColorCell = new RadioColorCell(parentActivity);
-                        radioColorCell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
-                        radioColorCell.setTag(b);
-                        radioColorCell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
-                        radioColorCell.setTextAndValue(ExteraConfig.supportedLanguages[b], ExteraConfig.targetLanguage == ExteraConfig.supportedLanguages[b]);
-                        radioColorCell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
-                        linearLayout.addView(radioColorCell);
-                        radioColorCell.setOnClickListener(v2 -> {
-                            Integer which = (Integer) v2.getTag();
-                            ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[which]).apply();
-                            cell.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
-                            builder.getDismissRunnable().run();
-                        });
-                    }
-                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-                    builder.create().show();
+                    ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), parentActivity, i2 -> {
+                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i2]).apply();
+                        cell.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
+                    });
                     return true;
                 });
             }
@@ -16420,7 +16397,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public boolean onDown(MotionEvent e) {
         if (!doubleTap && checkImageView.getVisibility() != View.VISIBLE && !drawPressedDrawable[0] && !drawPressedDrawable[1]) {
             float x = e.getX();
-            int side = Math.min(135, containerView.getMeasuredWidth() / 8);
+            int side = ExteraConfig.disableEdgeAction ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
             if (x < side) {
                 if (leftImage.hasImageSet()) {
                     drawPressedDrawable[0] = true;
@@ -16440,7 +16417,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public boolean canDoubleTap(MotionEvent e) {
         if (checkImageView.getVisibility() != View.VISIBLE && !drawPressedDrawable[0] && !drawPressedDrawable[1]) {
             float x = e.getX();
-            int side = Math.min(135, containerView.getMeasuredWidth() / 8);
+            int side = ExteraConfig.disableEdgeAction ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
             if (x < side || x > containerView.getMeasuredWidth() - side) {
                 return currentMessageObject == null || (currentMessageObject.isVideo() || photoViewerWebView != null && photoViewerWebView.isControllable()) && (SystemClock.elapsedRealtime() - lastPhotoSetTime) >= 500 && canDoubleTapSeekVideo(e);
             }
@@ -16538,7 +16515,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         float y = e.getY();
         if (checkImageView.getVisibility() != View.VISIBLE) {
             if (y > ActionBar.getCurrentActionBarHeight() + AndroidUtilities.statusBarHeight + AndroidUtilities.dp(40)) {
-                int side = Math.min(135, containerView.getMeasuredWidth() / 8);
+                int side = ExteraConfig.disableEdgeAction ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
                 if (x < side) {
                     if (leftImage.hasImageSet()) {
                         switchToNextIndex(-1, true);

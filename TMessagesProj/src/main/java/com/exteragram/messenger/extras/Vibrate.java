@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -19,10 +19,10 @@ import android.os.VibratorManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class Vibrate {
 

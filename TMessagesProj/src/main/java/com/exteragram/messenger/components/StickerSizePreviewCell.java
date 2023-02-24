@@ -13,6 +13,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.LocaleController;
@@ -21,10 +23,12 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.ChatMessageCell;
 import org.telegram.ui.Components.BackgroundGradientDrawable;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.MotionBackgroundDrawable;
 
@@ -41,7 +45,7 @@ public class StickerSizePreviewCell extends LinearLayout {
     private final Drawable shadowDrawable;
     private final INavigationLayout parentLayout;
 
-    public StickerSizePreviewCell(Context context, INavigationLayout layout) {
+    public StickerSizePreviewCell(Context context, BaseFragment fragment, INavigationLayout layout) {
         super(context);
 
         parentLayout = layout;
@@ -68,7 +72,7 @@ public class StickerSizePreviewCell extends LinearLayout {
         message.media.document.access_hash = 0;
         message.media.document.date = date;
         TLRPC.TL_documentAttributeSticker attributeSticker = new TLRPC.TL_documentAttributeSticker();
-        attributeSticker.alt = "🐾";
+        attributeSticker.alt = "\uD83D\uDC08\u200D\u2B1B";
         message.media.document.attributes.add(attributeSticker);
         TLRPC.TL_documentAttributeImageSize attributeImageSize = new TLRPC.TL_documentAttributeImageSize();
         attributeImageSize.h = 512;
@@ -105,8 +109,8 @@ public class StickerSizePreviewCell extends LinearLayout {
         message.peer_id = new TLRPC.TL_peerUser();
         message.peer_id.user_id = 1;
         messageObjects[1] = new MessageObject(UserConfig.selectedAccount, message, true, false);
-        TLRPC.User currentUser = MessagesController.getInstance(UserConfig.selectedAccount).getUser(UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId());
-        messageObjects[1].customReplyName = ContactsController.formatName(currentUser.first_name, currentUser.last_name);
+        //TLRPC.User currentUser = MessagesController.getInstance(UserConfig.selectedAccount).getUser(UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId());
+        messageObjects[1].customReplyName = "8055";//ContactsController.formatName(currentUser.first_name, currentUser.last_name);
         messageObjects[1].replyMessageObject = messageObjects[0];
 
         for (int a = 0; a < cells.length; a++) {

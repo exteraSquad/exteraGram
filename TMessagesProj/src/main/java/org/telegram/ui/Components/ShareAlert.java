@@ -106,6 +106,7 @@ import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.MessageStatisticActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -1468,9 +1469,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         });
         writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(56, 56, Gravity.LEFT | Gravity.TOP, 2, 0, 0, 0));
         writeButton.setOnClickListener(v -> sendInternal(true));
-        writeButton.setOnLongClickListener(v -> {
-            return onSendLongClick(writeButton);
-        });
+        writeButton.setOnLongClickListener(v -> onSendLongClick(writeButton));
 
         textPaint.setTextSize(AndroidUtilities.dp(12));
         textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -1886,6 +1885,28 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         });
         sendPopupLayout2.setShownFromBottom(false);
 
+        if (commentTextView.getText() != null && commentTextView.getText().toString().trim().length() != 0) {
+            ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, true, resourcesProvider);
+            translateButton.setTextAndIcon(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")", R.drawable.msg_translate);
+            translateButton.setMinimumWidth(AndroidUtilities.dp(196));
+            translateButton.setOnClickListener(v -> {
+                if (sendPopupWindow != null && sendPopupWindow.isShowing())
+                    sendPopupWindow.dismiss();
+                ExteraUtils.translate(commentTextView.getText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                    commentTextView.setText(translated);
+                    commentTextView.setSelection(translated.length());
+                }, () -> {
+                });
+            });
+            translateButton.setOnLongClickListener(v -> {
+                ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
+                    ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
+                    translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
+                });
+                return true;
+            });
+            sendPopupLayout2.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+        }
         ActionBarMenuSubItem sendWithoutSound = new ActionBarMenuSubItem(getContext(), true, true, resourcesProvider);
         if (darkTheme) {
             sendWithoutSound.setTextColor(getThemedColor(Theme.key_voipgroup_nameText));

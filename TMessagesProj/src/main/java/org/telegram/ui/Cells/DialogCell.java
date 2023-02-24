@@ -15,7 +15,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -114,6 +113,7 @@ import java.util.Objects;
 import java.util.Stack;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 public class DialogCell extends BaseCell {
 
@@ -1109,7 +1109,7 @@ public class DialogCell extends BaseCell {
                             drawScam = 2;
                             Theme.dialogs_fakeDrawable.checkText();
                         }
-                        drawArrow = user.id != UserConfig.getInstance(currentAccount).getClientUserId() && ExteraConfig.isExteraDev(user);
+                        drawArrow = user.id != 0 && user.id != UserConfig.getInstance(currentAccount).getClientUserId() && ExteraConfig.isExteraDev(user);
                         drawVerified = !forbidVerified && user.verified;
                         drawPremium = MessagesController.getInstance(currentAccount).isPremiumUser(user) && UserConfig.getInstance(currentAccount).clientUserId != user.id && user.id != 0;
                         if (drawPremium) {
@@ -1119,7 +1119,7 @@ public class DialogCell extends BaseCell {
                                 emojiStatus.set(emojiStatusId, false);
                             } else {
                                 if (drawArrow) {
-                                    Drawable arrow = Theme.dialogs_outlineArrowDrawable;
+                                    Drawable arrow = Theme.dialogs_exteraArrowDrawable;
                                     arrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
                                     emojiStatus.set(arrow, false);
                                 } else {
@@ -1127,6 +1127,10 @@ public class DialogCell extends BaseCell {
                                     emojiStatus.set(PremiumGradient.getInstance().premiumStarDrawableMini, false);
                                 }
                             }
+                        } else if (drawArrow) {
+                            Drawable arrow = Theme.dialogs_exteraArrowDrawable;
+                            arrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+                            emojiStatus.set(arrow, false);
                         }
                     }
                 }
@@ -1761,7 +1765,7 @@ public class DialogCell extends BaseCell {
                 nameLeft += w;
             }
         } else if (drawArrow) {
-            int w = AndroidUtilities.dp(6) + Theme.dialogs_outlineArrowDrawable.getIntrinsicWidth();
+            int w = AndroidUtilities.dp(6) + Theme.dialogs_exteraArrowDrawable.getIntrinsicWidth();
             nameWidth -= w;
             if (LocaleController.isRTL) {
                 nameLeft += w;
@@ -2127,7 +2131,7 @@ public class DialogCell extends BaseCell {
                 } else if (drawVerified) {
                     nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx) - AndroidUtilities.dp(6) - Theme.dialogs_verifiedDrawable.getIntrinsicWidth());
                 } else if (drawArrow) {
-                    nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx) - AndroidUtilities.dp(6) - Theme.dialogs_outlineArrowDrawable.getIntrinsicWidth());
+                    nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx) - AndroidUtilities.dp(6) - Theme.dialogs_exteraArrowDrawable.getIntrinsicWidth());
                 } else if (drawPremium) {
                     nameMuteLeft = (int) (nameLeft + (nameWidth - widthpx - left) - AndroidUtilities.dp(24));
                 } else if (drawScam != 0) {
@@ -2891,7 +2895,7 @@ public class DialogCell extends BaseCell {
                 reactionsMentionsAnimator.start();
             }
 
-            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum && currentDialogFolderId == 0 && !useFromUserAsAvatar ? 32 : 56));
+            avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum && currentDialogFolderId == 0 && !useFromUserAsAvatar ? 56 * 0.65f : 56));
         }
         if (!isTopic && (getMeasuredWidth() != 0 || getMeasuredHeight() != 0)) {
             buildLayout();
@@ -3546,10 +3550,10 @@ public class DialogCell extends BaseCell {
                 setDrawableBounds(Theme.dialogs_verifiedCheckDrawable, nameMuteLeft - AndroidUtilities.dp(1), AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 13.5f : 16.5f));
                 Theme.dialogs_verifiedDrawable.draw(canvas);
                 Theme.dialogs_verifiedCheckDrawable.draw(canvas);
-            } else if (drawArrow && emojiStatus == null || drawArrow && chat != null) {
-                Theme.dialogs_outlineArrowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
-                setDrawableBounds(Theme.dialogs_outlineArrowDrawable, nameMuteLeft - AndroidUtilities.dp(3), AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 10f : 13f));
-                Theme.dialogs_outlineArrowDrawable.draw(canvas);
+            } else if (drawArrow && !drawPremium || drawArrow && emojiStatus == null || drawArrow && chat != null) {
+                Theme.dialogs_exteraArrowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+                setDrawableBounds(Theme.dialogs_exteraArrowDrawable, nameMuteLeft - AndroidUtilities.dp(3), AndroidUtilities.dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 10f : 13f));
+                Theme.dialogs_exteraArrowDrawable.draw(canvas);
             } else if (drawPremium) {
                 if (emojiStatus != null) {
                     emojiStatus.setBounds(

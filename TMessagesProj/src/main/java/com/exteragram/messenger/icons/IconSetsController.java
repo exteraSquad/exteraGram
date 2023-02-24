@@ -1,3 +1,14 @@
+/*
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @immat0x1, 2023
+
+*/
+
 package com.exteragram.messenger.icons;
 
 import android.util.SparseIntArray;
@@ -6,6 +17,7 @@ import org.telegram.messenger.R;
 
 public class IconSetsController {
     public static final SparseIntArray solar = new SparseIntArray();
+
     static {
         solar.put(R.drawable.arrow_more, R.drawable.arrow_more_solar);
         solar.put(R.drawable.attach_send, R.drawable.attach_send_solar);

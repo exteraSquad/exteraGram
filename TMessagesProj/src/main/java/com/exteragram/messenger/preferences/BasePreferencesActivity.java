@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -13,8 +13,6 @@ package com.exteragram.messenger.preferences;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -28,9 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.exteragram.messenger.components.InfoSettingsCell;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
@@ -45,9 +41,11 @@ import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
-import org.telegram.ui.Components.URLSpanNoUnderline;
+import org.telegram.ui.Components.SlideChooseView;
 
 public abstract class BasePreferencesActivity extends BaseFragment {
+
+    protected static final Object payload = new Object();
 
     protected RecyclerListView listView;
     protected BaseListAdapter listAdapter;
@@ -121,7 +119,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
     }
 
     protected void showBulletin() {
-        BulletinFactory.of(this).createErrorBulletin(LocaleController.getString("RestartRequired", R.string.RestartRequired)).show();
+        BulletinFactory.of(this).createErrorBulletin(LocaleController.getString("RestartRequired", R.string.RestartRequired), resourcesProvider).show();
     }
 
     protected RecyclerListView getListView() {
@@ -164,6 +162,14 @@ public abstract class BasePreferencesActivity extends BaseFragment {
             return type == 2 || type == 5 || type == 7 || type == 16;
         }
 
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, boolean payload) {
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            onBindViewHolder(holder, position, payload.equals(holder.getPayload()));
+        }
+
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -199,43 +205,19 @@ public abstract class BasePreferencesActivity extends BaseFragment {
                 // case 10: Chats > StickerShapeCell
                 // case 11: Chats > StickerSizeCell
                 // case 12: Appearance > FabShapeCell
-                // case 13: General > DownloadSpeedChooser
+                case 13:
+                    view = new SlideChooseView(mContext);
+                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                    break;
                 // case 14: General > ActionBarSetupCell
                 // case 15: Chats > DoubleTapCell
                 // case 16: Chats > SetReactionCell
+                // case 17: General > CameraTypeSelector
                 default:
                     throw new IllegalStateException("Unexpected value: " + viewType);
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             return new RecyclerListView.Holder(view);
         }
-    }
-
-    protected CharSequence addLinkSpan(String text, String... usernames) {
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(text);
-        for (int i = 0; i < usernames.length; i++) {
-            String username = usernames[i];
-            int index = text.indexOf(username);
-            if (index != -1) {
-                try {
-                    URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
-                        @Override
-                        public void onClick(View widget) {
-                            MessagesController.getInstance(currentAccount).openByUserName(username.substring(1), BasePreferencesActivity.this, 1);
-                        }
-                    };
-                    stringBuilder.setSpan(urlSpan, index, index + username.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                    if (i + 1 == usernames.length) {
-                        return stringBuilder;
-                    }
-                } catch (Exception e) {
-                    FileLog.e(e);
-                    return text;
-                }
-            } else {
-                return text;
-            }
-        }
-        return text;
     }
 }

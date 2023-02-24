@@ -842,7 +842,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             attachButtonPaint.setStrokeWidth(AndroidUtilities.dp(3) * scale);
             attachButtonPaint.setAlpha(Math.round(255f * checkedState));
             float width = radius - 0.5f * attachButtonPaint.getStrokeWidth();
-            canvas.drawRoundRect(cx - width, cy - width, cx + width, cy + width, ExteraConfig.getAvatarCorners(48), ExteraConfig.getAvatarCorners(48), attachButtonPaint);
+            canvas.drawRoundRect(cx - width, cy - width, cx + width, cy + width, ExteraConfig.getAvatarCorners(50), ExteraConfig.getAvatarCorners(50), attachButtonPaint);
 
             width = radius - AndroidUtilities.dp(5) * checkedState;
             attachButtonPaint.setAlpha(255);
@@ -959,7 +959,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 attachButtonPaint.setStrokeWidth(AndroidUtilities.dp(3) * scale);
                 attachButtonPaint.setAlpha(Math.round(255f * checkedState));
                 float width = radius - 0.5f * attachButtonPaint.getStrokeWidth();
-                canvas.drawRoundRect(cx - width, cy - width, cx + width, cy + width, ExteraConfig.getAvatarCorners(48), ExteraConfig.getAvatarCorners(48), attachButtonPaint);
+                canvas.drawRoundRect(cx - width, cy - width, cx + width, cy + width, ExteraConfig.getAvatarCorners(50), ExteraConfig.getAvatarCorners(50), attachButtonPaint);
 
                 width = radius - AndroidUtilities.dp(5) * checkedState;
                 attachButtonPaint.setAlpha(255);
@@ -2625,7 +2625,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         openTransitionFinished = false;
         if (Build.VERSION.SDK_INT >= 30) {
             navBarColorKey = null;
-            navBarColor = ColorUtils.setAlphaComponent(getThemedColor(Theme.key_windowBackgroundGray), 0);
+            navBarColor = ColorUtils.setAlphaComponent(getThemedColor(Theme.key_dialogBackground), 0);
             AndroidUtilities.setNavigationBarColor(getWindow(), navBarColor, false);
             AndroidUtilities.setLightNavigationBar(getWindow(), AndroidUtilities.computePerceivedBrightness(navBarColor) > 0.721);
         }
@@ -3262,9 +3262,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 //        }, 75);
         ValueAnimator navigationBarAnimator = ValueAnimator.ofFloat(0, 1);
         setNavBarAlpha(0);
-        navigationBarAnimator.addUpdateListener(a -> {
-            setNavBarAlpha((float) a.getAnimatedValue());
-        });
+        navigationBarAnimator.addUpdateListener(a -> setNavBarAlpha((float) a.getAnimatedValue()));
         navigationBarAnimator.setStartDelay(25);
         navigationBarAnimator.setDuration(200);
         navigationBarAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
@@ -3274,7 +3272,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     private void setNavBarAlpha(float alpha) {
-        navBarColor = ColorUtils.setAlphaComponent(getThemedColor(Theme.key_windowBackgroundGray), Math.min(255, Math.max(0, (int) (255 * alpha))));
+        navBarColor = ColorUtils.setAlphaComponent(getThemedColor(Theme.key_dialogBackground), Math.min(255, Math.max(0, (int) (255 * alpha))));
         AndroidUtilities.setNavigationBarColor(getWindow(), navBarColor, false);
         AndroidUtilities.setLightNavigationBar(getWindow(), AndroidUtilities.computePerceivedBrightness(navBarColor) > 0.721);
         getContainer().invalidate();
@@ -4223,7 +4221,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 layouts[a].onDismiss();
             }
         }
-        AndroidUtilities.setNavigationBarColor(getWindow(), ColorUtils.setAlphaComponent(getThemedColor(Theme.key_windowBackgroundGray), 0), true, tcolor -> {
+        AndroidUtilities.setNavigationBarColor(getWindow(), ColorUtils.setAlphaComponent(getThemedColor(Theme.key_dialogBackground), 0), true, tcolor -> {
             navBarColorKey = null;
             navBarColor = tcolor;
             containerView.invalidate();

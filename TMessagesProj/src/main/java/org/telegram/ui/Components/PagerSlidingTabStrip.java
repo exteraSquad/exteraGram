@@ -27,8 +27,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.graphics.ColorUtils;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
@@ -195,7 +198,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             public void setSelected(boolean selected) {
                 super.setSelected(selected);
                 Drawable background = getBackground();
-                if (Build.VERSION.SDK_INT >= 21 && background != null) {
+                if (background != null) {
                     int color = getThemedColor(selected ? Theme.key_chat_emojiPanelIconSelected : Theme.key_chat_emojiBottomPanelIcon);
                     Theme.setSelectorDrawableColor(background, Color.argb(30, Color.red(color), Color.green(color), Color.blue(color)), true);
                 }
@@ -207,11 +210,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         tab.setTextColor(getThemedColor(Theme.key_chat_emojiPanelBackspace));
         tab.setFocusable(true);
         tab.setGravity(Gravity.CENTER);
-        if (Build.VERSION.SDK_INT >= 21) {
-            RippleDrawable rippleDrawable = (RippleDrawable) Theme.createSelectorDrawable(getThemedColor(Theme.key_chat_emojiBottomPanelIcon), Theme.RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE);
-            Theme.setRippleDrawableForceSoftware(rippleDrawable);
-            tab.setBackground(rippleDrawable);
-        }
+        RippleDrawable rippleDrawable = (RippleDrawable) Theme.createSelectorDrawable(getThemedColor(Theme.key_chat_emojiBottomPanelIcon), Theme.RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE);
+        Theme.setRippleDrawableForceSoftware(rippleDrawable);
+        if (ExteraConfig.tabStyle < 3) tab.setBackground(rippleDrawable);
         tab.setText(text);
         tab.setOnClickListener(v -> {
             if (pager.getAdapter() instanceof IconTabProvider) {
@@ -313,7 +314,15 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             if (indicatorHeight != 0) {
                 rectPaint.setColor(indicatorColor);
                 AndroidUtilities.rectTmp.set(lineLeft, height - indicatorHeight, lineRight, height);
-                canvas.drawRoundRect(AndroidUtilities.rectTmp, indicatorHeight / 2f, indicatorHeight / 2f, rectPaint);
+                if (ExteraConfig.tabStyle != 2) {
+                    if (ExteraConfig.tabStyle >= 3) {
+                        rectPaint.setAlpha(0x2F);
+                        int sideBound = (ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(8) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(10) : 0);
+                        AndroidUtilities.rectTmp.set(lineLeft - sideBound, ExteraConfig.tabStyle >= 3 ? height / 2 - AndroidUtilities.dp(ExteraConfig.tabStyle == 3 ? 14 : 15) : (height - indicatorHeight), lineRight + sideBound, ExteraConfig.tabStyle >= 3 ? height / 2 + AndroidUtilities.dp(ExteraConfig.tabStyle == 3 ? 14 : 15) : height);
+                    }
+                    float r = ExteraConfig.tabStyle == 3 ? AndroidUtilities.dp(8) : ExteraConfig.tabStyle == 4 ? AndroidUtilities.dp(30) : indicatorHeight / 2f;
+                    canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, rectPaint);
+                }
             }
         }
     }

@@ -211,26 +211,26 @@ public class SlideChooseView extends View {
             int color = ColorUtils.blendARGB(getThemedColor(Theme.key_switchTrack), getThemedColor(Theme.key_switchTrackChecked), ut);
             paint.setColor(color);
             linePaint.setColor(color);
-            canvas.drawCircle(cx, cy, AndroidUtilities.lerp(circleSize / 2, AndroidUtilities.dp(6), t), paint);
+            canvas.drawCircle(cx, cy, AndroidUtilities.lerp(circleSize / 2, AndroidUtilities.dpf2(6), t), paint);
             if (a != 0) {
                 int x = cx - circleSize / 2 - gapSize - lineSize;
                 int width = lineSize;
                 if (dashedFrom != -1 && a - 1 >= dashedFrom) {
-                    x += AndroidUtilities.dp(3);
-                    width -= AndroidUtilities.dp(3);
-                    int dash = width / AndroidUtilities.dp(13);
+                    x += AndroidUtilities.dpf2(3);
+                    width -= AndroidUtilities.dpf2(3);
+                    float dash = width / AndroidUtilities.dpf2(13);
                     if (lastDash != dash) {
-                        float gap = (width - dash * AndroidUtilities.dp(8)) / (float) (dash - 1);
-                        linePaint.setPathEffect(new DashPathEffect(new float[]{AndroidUtilities.dp(6), gap}, 0));
-                        lastDash = dash;
+                        float gap = (width - dash * AndroidUtilities.dpf2(8)) / (dash - 1);
+                        linePaint.setPathEffect(new DashPathEffect(new float[]{AndroidUtilities.dpf2(6), gap}, 0));
+                        lastDash = (int) dash;
                     }
-                    canvas.drawLine(x + AndroidUtilities.dp(1), cy, x + width - AndroidUtilities.dp(1), cy, linePaint);
+                    canvas.drawLine(x + AndroidUtilities.dpf2(1), cy, x + width - AndroidUtilities.dpf2(1), cy, linePaint);
                 } else {
                     float nt = MathUtils.clamp(1f - Math.abs(a - selectedIndexAnimated - 1), 0, 1);
                     float nct = MathUtils.clamp(1f - Math.min(Math.abs(a - selectedIndexAnimated), Math.abs(a - selectedIndexAnimated - 1)), 0, 1);
-                    width -= AndroidUtilities.dp(3) * nct;
-                    x += AndroidUtilities.dp(3) * nt;
-                    canvas.drawRect(x, cy - AndroidUtilities.dp(1), x + width, cy + AndroidUtilities.dp(1), paint);
+                    width -= AndroidUtilities.dpf2(3) * nct;
+                    x += AndroidUtilities.dpf2(3) * nt;
+                    canvas.drawRect(x, cy - AndroidUtilities.dpf2(1), x + width, cy + AndroidUtilities.dpf2(1), paint);
                 }
             }
             int size = optionsSizes[a];

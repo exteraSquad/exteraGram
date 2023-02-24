@@ -36,6 +36,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
@@ -246,7 +247,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
         });
         addView(darkThemeView, LayoutHelper.createFrame(48, 48, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 90));
 
-        if (Theme.getEventType() == 0 && ExteraConfig.eventType != 2 || ExteraConfig.forceDrawerSnow) {
+        if (Theme.getEventType() == 0 && ExteraConfig.eventType != 2 || ExteraConfig.forceSnow) {
             snowflakesEffect = new SnowflakesEffect(0);
             snowflakesEffect.setColorKey(Theme.key_chats_menuName);
         }
@@ -625,6 +626,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
     private int lastAccount = -1;
     private TLRPC.User lastUser = null;
     private Drawable premiumStar = null;
+    private Drawable exteraArrow = null;
     public void setUser(TLRPC.User user, boolean accounts) {
         int account = UserConfig.selectedAccount;
         if (account != lastAccount) {
@@ -654,6 +656,14 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
             animatedStatus.animate().alpha(1).setDuration(200).start();
             nameTextView.setDrawablePadding(AndroidUtilities.dp(4));
             status.set(emojiStatusId, true);
+        } else if (ExteraConfig.isExteraDev(user)) {
+            animatedStatus.animate().alpha(1).setDuration(200).start();
+            nameTextView.setDrawablePadding(AndroidUtilities.dp(2));
+            if (exteraArrow == null) {
+                exteraArrow = Theme.dialogs_exteraArrowDrawable;
+            }
+            exteraArrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuPhoneCats), PorterDuff.Mode.MULTIPLY));
+            status.set(exteraArrow, true);
         } else if (user.premium) {
             animatedStatus.animate().alpha(1).setDuration(200).start();
             nameTextView.setDrawablePadding(AndroidUtilities.dp(4));

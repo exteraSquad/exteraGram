@@ -5,18 +5,18 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
 package com.exteragram.messenger.extras;
 
-import androidx.annotation.RequiresApi;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.ui.BasePermissionsActivity;

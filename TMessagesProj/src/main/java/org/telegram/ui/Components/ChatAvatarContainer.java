@@ -17,7 +17,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -54,6 +53,7 @@ import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.TopicsFragment;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 public class ChatAvatarContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -595,9 +595,9 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             } else if (emojiStatus instanceof TLRPC.TL_emojiStatusUntil && ((TLRPC.TL_emojiStatusUntil) emojiStatus).until > (int) (System.currentTimeMillis() / 1000)) {
                 emojiStatusDrawable.set(((TLRPC.TL_emojiStatusUntil) emojiStatus).document_id, animated);
             } else if (arrow) {
-                Drawable exteraArrow = ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.ic_outline_arrow).mutate();
-                exteraArrow.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY));
-                emojiStatusDrawable.set(exteraArrow, animated);
+                Drawable drawable = ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.ic_status_arrow).mutate();
+                drawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY));
+                emojiStatusDrawable.set(drawable, animated);
             } else {
                 Drawable drawable = ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.msg_premium_liststar).mutate();
                 drawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY));
@@ -609,9 +609,9 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             rightDrawableIsScamOrVerified = true;
             rightDrawableContentDescription = LocaleController.getString("AccDescrPremium", R.string.AccDescrPremium);
         } else if (arrow) {
-            Drawable exteraArrow = getResources().getDrawable(R.drawable.ic_outline_arrow).mutate();
-            exteraArrow.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY));
-            titleTextView.setRightDrawable(exteraArrow);
+            Drawable drawable = ContextCompat.getDrawable(ApplicationLoader.applicationContext, R.drawable.ic_status_arrow).mutate();
+            drawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_profile_verifiedBackground), PorterDuff.Mode.MULTIPLY));
+            titleTextView.setRightDrawable(drawable);
             titleTextView.setRightDrawableTopPadding(-AndroidUtilities.dp(0.5f));
             rightDrawableIsScamOrVerified = true;
         } else if (titleTextView.getRightDrawable() instanceof ScamDrawable) {
@@ -893,7 +893,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
         avatarDrawable.setInfo(chat);
         if (avatarImageView != null) {
             avatarImageView.setForUserOrChat(chat, avatarDrawable);
-            avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 24 : 42));
+            avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat != null && chat.forum ? 42 * 0.65f : 42));
         }
     }
 
@@ -953,7 +953,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             avatarDrawable.setInfo(chat);
             if (avatarImageView != null) {
                 avatarImageView.setForUserOrChat(chat, avatarDrawable);
-                avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat.forum ? 24 : 42));
+                avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(chat.forum ? 42 * 0.65f : 42));
             }
         }
     }

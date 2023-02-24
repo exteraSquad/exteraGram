@@ -1,3 +1,14 @@
+/*
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @immat0x1, 2023
+
+*/
+
 package com.exteragram.messenger.components;
 
 import android.animation.Animator;
@@ -38,7 +49,7 @@ public class SolarIconsPreview extends FrameLayout {
 
     private final ValueAnimator[] animator = new ValueAnimator[6];
 
-    private static final int[] iconsRes = new int[] {
+    private static final int[] iconsRes = new int[]{
             R.drawable.msg_sticker,
             R.drawable.msg_link2,
             R.drawable.msg_voicechat,
@@ -48,7 +59,7 @@ public class SolarIconsPreview extends FrameLayout {
     };
 
     private static final Drawable[] icons = new Drawable[iconsRes.length];
-    private final float[] iconChangingProgress = new float[] {
+    private final float[] iconChangingProgress = new float[]{
             1f, 1f, 1f, 1f, 1f, 1f
     };
 
@@ -79,11 +90,11 @@ public class SolarIconsPreview extends FrameLayout {
 
                 rect.set(0, 0, w, h);
                 Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));
-                canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), Theme.dialogs_onlineCirclePaint);
+                canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), Theme.dialogs_onlineCirclePaint);
 
-                float stroke = outlinePaint.getStrokeWidth() - Math.max(1, AndroidUtilities.dp(0.25f));
+                float stroke = outlinePaint.getStrokeWidth() / 2;
                 rect.set(stroke, stroke, w - stroke, h - stroke);
-                canvas.drawRoundRect(rect, AndroidUtilities.dp(6), AndroidUtilities.dp(6), outlinePaint);
+                canvas.drawRoundRect(rect, AndroidUtilities.dp(8), AndroidUtilities.dp(8), outlinePaint);
 
                 float allIconsWidth = ICON_WIDTH * icons.length;
                 float distance = (w - allIconsWidth) / (icons.length + 1);

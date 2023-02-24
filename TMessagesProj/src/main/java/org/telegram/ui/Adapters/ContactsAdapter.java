@@ -422,6 +422,7 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
                     arr = usersSectionsDict.get(sortedUsersSectionsArray.get(section - (onlyUsers != 0 && !isAdmin ? 0 : 1)));
                 }
                 TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(arr.get(position).user_id);
+                userCell.setNeedMutualContact(user.mutual_contact && user.id != UserConfig.getInstance(currentAccount).getClientUserId());
                 userCell.setData(user, null, null, 0);
                 if (checkedMap != null) {
                     userCell.setChecked(checkedMap.indexOfKey(user.id) >= 0, !scrolling);

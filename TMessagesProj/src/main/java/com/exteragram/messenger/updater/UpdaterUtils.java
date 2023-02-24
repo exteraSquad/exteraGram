@@ -5,9 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
-
- cherrygram dev kys
+ Copyright @immat0x1, 2023
 
 */
 
@@ -94,7 +92,9 @@ public class UpdaterUtils {
     }
 
     public static void checkUpdates(Context context, boolean manual) {
-        checkUpdates(context, manual, () -> {}, () -> {});
+        checkUpdates(context, manual, () -> {
+        }, () -> {
+        });
     }
 
     public interface OnUpdateNotFound {
@@ -216,6 +216,7 @@ public class UpdaterUtils {
         }
     }
 
+    // TODO: not working with 9.x.x and 10.x.x
     public static boolean isNewVersion(String... v) {
         if (v.length != 2)
             return false;
@@ -238,15 +239,20 @@ public class UpdaterUtils {
             var info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
             switch (info.versionCode % 10) {
                 case 1:
-                case 3: return "armeabi-v7a";
+                case 3:
+                    return "armeabi-v7a";
                 case 2:
-                case 4: return "x86";
+                case 4:
+                    return "x86";
                 case 5:
-                case 7: return "arm64-v8a";
+                case 7:
+                    return "arm64-v8a";
                 case 6:
-                case 8: return "x86_64";
+                case 8:
+                    return "x86_64";
                 case 0:
-                case 9: return "universal";
+                case 9:
+                    return "universal";
             }
         } catch (Exception e) {
             return Build.SUPPORTED_ABIS[0];

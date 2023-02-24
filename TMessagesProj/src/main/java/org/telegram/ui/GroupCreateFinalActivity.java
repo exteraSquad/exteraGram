@@ -451,7 +451,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                 super.invalidate(l, t, r, b);
             }
         };
-        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(chatType == ChatObject.CHAT_TYPE_FORUM ? 42 : 56));
+        avatarImage.setRoundRadius(ExteraConfig.getAvatarCorners(chatType == ChatObject.CHAT_TYPE_FORUM ? 56 * 0.65f : 56));
         avatarDrawable.setInfo(5, null, null);
         avatarImage.setImageDrawable(avatarDrawable);
         avatarImage.setContentDescription(LocaleController.getString("ChoosePhoto", R.string.ChoosePhoto));

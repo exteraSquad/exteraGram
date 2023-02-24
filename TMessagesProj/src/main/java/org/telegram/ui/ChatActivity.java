@@ -109,6 +109,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.extras.PermissionUtils;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.zxing.common.detector.MathUtils;
@@ -4391,7 +4392,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         emptyViewContainer.setOnTouchListener((v, event) -> true);
 
         int distance = getArguments().getInt("nearby_distance", -1);
-        if (!ExteraConfig.disableGreetingSticker && (distance >= 0 || preloadedGreetingsSticker != null) && currentUser != null && !userBlocked) {
+        if ((distance >= 0 || preloadedGreetingsSticker != null) && currentUser != null && !userBlocked) {
             greetingsViewContainer = new ChatGreetingsView(context, currentUser, distance, currentAccount, preloadedGreetingsSticker, themeDelegate);
             greetingsViewContainer.setListener((sticker) -> {
                 animatingDocuments.put(sticker, 0);
@@ -4422,8 +4423,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 } else if (currentUser != null && currentUser.id != 777000 && currentUser.id != 429000 && currentUser.id != 4244000 && MessagesController.isSupportUser(currentUser)) {
                     emptyMessage = LocaleController.getString("GotAQuestion", R.string.GotAQuestion);
                 } else if (currentUser == null || currentUser.self || currentUser.deleted || userBlocked) {
-                    emptyMessage = LocaleController.getString("NoMessages", R.string.NoMessages);
-                } else if (ExteraConfig.disableGreetingSticker){
                     emptyMessage = LocaleController.getString("NoMessages", R.string.NoMessages);
                 }
                 if (emptyMessage == null) {
@@ -11718,7 +11717,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
     }
 
-    private void processSelectedAttach(int which) {
+    public void processSelectedAttach(int which) {
         if (which == attach_photo) {
             if (Build.VERSION.SDK_INT >= 23 && getParentActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, 19);
@@ -17692,7 +17691,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         if (chatMode == MODE_PINNED && avatarContainer != null) {
                             avatarContainer.setTitle(LocaleController.formatPluralString("PinnedMessagesCount", getPinnedMessagesCount()));
                         }
-                        Collections.sort(pinnedMessageIds, (o1, o2) -> o2.compareTo(o1));
+                        Collections.sort(pinnedMessageIds, Comparator.reverseOrder());
                         if (pinnedMessageIds.isEmpty()) {
                             hidePinnedMessageView(true);
                         } else {
@@ -29625,7 +29624,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (headerItem != null) {
                 headerItem.updateColor();
             }
-            setNavigationBarColor(getThemedColor(ExteraConfig.transparentNavBar ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray));
+            setNavigationBarColor(getThemedColor(ExteraUtils.getNavigationBarColorKey()));
             if (fragmentContextView != null) {
                 fragmentContextView.updateColors();
             }
@@ -30459,7 +30458,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     @Override
     public int getNavigationBarColor() {
-        return getThemedColor(ExteraConfig.transparentNavBar ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray);
+        return getThemedColor(ExteraUtils.getNavigationBarColorKey());
     }
 
     @Override

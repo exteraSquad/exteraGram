@@ -840,7 +840,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             });
             box.addView(clear, LayoutHelper.createFrame(36, 36, Gravity.RIGHT | Gravity.TOP));
 
-            if (type != 1 || allowAnimatedEmoji && UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) {
+            if ((type != 1 || allowAnimatedEmoji && UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) && !ExteraConfig.hideCategories) {
                 categoriesListView = new StickerCategoriesListView(context, null, StickerCategoriesListView.CategoriesType.DEFAULT, resourcesProvider) {
                     @Override
                     public void selectCategory(int categoryIndex) {
@@ -3955,7 +3955,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         private Paint dividerPaint;
         @Override
         protected void onDraw(Canvas canvas) {
-            if (divider) {
+            if (divider && !ExteraConfig.disableDividers) {
                 if (dividerPaint == null) {
                     dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                     dividerPaint.setStrokeWidth(1);

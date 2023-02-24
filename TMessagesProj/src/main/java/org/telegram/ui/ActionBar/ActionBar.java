@@ -300,7 +300,6 @@ public class ActionBar extends FrameLayout {
         if (supportsHolidayImage && !titleOverlayShown && !LocaleController.isRTL && (child == titleTextView[0] || child == titleTextView[1])) {
             Drawable drawable = Theme.getCurrentHolidayDrawable();
             if (drawable != null) {
-
                 SimpleTextView titleView = (SimpleTextView) child;
                 if (titleView.getVisibility() == View.VISIBLE && titleView.getText() instanceof String) {
                     TextPaint textPaint = titleView.getTextPaint();
@@ -316,21 +315,20 @@ public class ActionBar extends FrameLayout {
                         invalidate();
                     }
                 }
-
-                if (Theme.canStartHolidayAnimation()) {
-                    if (snowflakesEffect == null) {
-                        snowflakesEffect = new SnowflakesEffect(0);
-                    }
-                } else if (!manualStart) {
-                    if (snowflakesEffect != null) {
-                        snowflakesEffect = null;
-                    }
+            }
+            if (Theme.canStartHolidayAnimation()) {
+                if (snowflakesEffect == null) {
+                    snowflakesEffect = new SnowflakesEffect(0);
                 }
+            } else if (!manualStart) {
                 if (snowflakesEffect != null) {
-                    snowflakesEffect.onDraw(this, canvas);
-                } else if (fireworksEffect != null) {
-                    fireworksEffect.onDraw(this, canvas);
+                    snowflakesEffect = null;
                 }
+            }
+            if (snowflakesEffect != null) {
+                snowflakesEffect.onDraw(this, canvas);
+            } else if (fireworksEffect != null) {
+                fireworksEffect.onDraw(this, canvas);
             }
         }
         if (clip) {

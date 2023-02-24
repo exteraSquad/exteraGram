@@ -85,7 +85,7 @@ public class SessionCell extends FrameLayout {
             avatarDrawable.setTextSize(AndroidUtilities.dp(10));
 
             imageView = new BackupImageView(context);
-            imageView.setRoundRadius(ExteraConfig.getAvatarCorners(20));
+            imageView.setRoundRadius(AndroidUtilities.dp(10));
             addView(imageView, LayoutHelper.createFrame(20, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? 0 : 21), 13, (LocaleController.isRTL ? 21 : 0), 0));
         } else {
             placeholderImageView = new BackupImageView(context);

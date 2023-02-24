@@ -5,18 +5,12 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
-
- cherrygram dev kys
+ Copyright @immat0x1, 2023
 
 */
 
 package com.exteragram.messenger.updater;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.text.TextUtils;
@@ -28,8 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
@@ -51,7 +43,7 @@ import org.telegram.ui.Components.RLottieImageView;
 public class UpdaterBottomSheet extends BottomSheet {
 
     private RLottieImageView imageView;
-    private AnimatedTextView changelogTextView;
+    private TextView changelogTextView;
 
     private boolean isTranslated = false;
     private CharSequence translatedC;
@@ -89,9 +81,12 @@ public class UpdaterBottomSheet extends BottomSheet {
         nameView.setText(available ? LocaleController.getString("UpdateAvailable", R.string.UpdateAvailable) : ExteraUtils.getAppName());
         header.addView(nameView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 30, Gravity.LEFT, available ? 75 : 0, 5, 0, 0));
 
-        SimpleTextView timeView = new SimpleTextView(context);
+        AnimatedTextView timeView = new AnimatedTextView(context, true, true, false);
+        timeView.setAnimationProperties(0.7f, 0, 450, CubicBezierInterpolator.EASE_OUT_QUINT);
+        timeView.setIgnoreRTL(!LocaleController.isRTL);
+        timeView.adaptWidth = false;
         timeView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        timeView.setTextSize(13);
+        timeView.setTextSize(AndroidUtilities.dp(13));
         timeView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
         timeView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         timeView.setText(available ? args[4] : LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
@@ -107,6 +102,14 @@ public class UpdaterBottomSheet extends BottomSheet {
         version.setOnClickListener(v -> copyText(version.getTextView().getText() + ": " + version.getValueTextView().getText()));
         linearLayout.addView(version);
 
+        View divider = new View(context) {
+            @Override
+            protected void onDraw(Canvas canvas) {
+                super.onDraw(canvas);
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, AndroidUtilities.dp(1), getMeasuredWidth(), AndroidUtilities.dp(1), Theme.dividerPaint);
+            }
+        };
 
         if (available) {
             TextCell size = new TextCell(context);
@@ -121,28 +124,24 @@ public class UpdaterBottomSheet extends BottomSheet {
             changelog.setOnClickListener(v -> copyText(changelog.getTextView().getText() + "\n" + (isTranslated ? translatedC : UpdaterUtils.replaceTags(args[1]))));
             linearLayout.addView(changelog);
 
-            changelogTextView = new AnimatedTextView(context, true, true, false) {
-                @Override
-                protected void onDraw(Canvas canvas) {
-                    super.onDraw(canvas);
-                    if (!ExteraConfig.disableDividers)
-                        canvas.drawLine(0, getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
-                }
-            };
-            changelogTextView.setAnimationProperties(.3f, 0, 450, CubicBezierInterpolator.EASE_OUT_QUINT);
+            changelogTextView = new TextView(context);
+            changelogTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            changelogTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
+            changelogTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
             changelogTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-            changelogTextView.setTextSize(AndroidUtilities.dp(14));
             changelogTextView.setText(UpdaterUtils.replaceTags(args[1]));
-            changelogTextView.setIgnoreRTL(!LocaleController.isRTL);
-            changelogTextView.adaptWidth = false;
             changelogTextView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(10));
             changelogTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             changelogTextView.setOnClickListener(v -> ExteraUtils.translate(args[1], LocaleController.getInstance().getCurrentLocale().getLanguage(), translated -> {
                 translatedC = translated;
+                // TODO: add animation to changelog
                 changelogTextView.setText(UpdaterUtils.replaceTags(isTranslated ? args[1] : translatedC));
                 isTranslated ^= true;
-            }, () -> {}));
+            }, () -> {
+            }));
             linearLayout.addView(changelogTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
+            linearLayout.addView(divider, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(1)));
 
             TextView doneButton = new TextView(context);
             doneButton.setLines(1);
@@ -193,14 +192,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             });
             linearLayout.addView(checkOnLaunch);
 
-            TextCell clearUpdates = new TextCell(context) {
-                @Override
-                protected void onDraw(Canvas canvas) {
-                    super.onDraw(canvas);
-                    if (!ExteraConfig.disableDividers)
-                        canvas.drawLine(0, getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
-                }
-            };
+            TextCell clearUpdates = new TextCell(context);
             clearUpdates.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
             clearUpdates.setTextAndIcon(LocaleController.getString("ClearUpdatesCache", R.string.ClearUpdatesCache), R.drawable.msg_clear, false);
             clearUpdates.setOnClickListener(v -> {
@@ -213,12 +205,14 @@ public class UpdaterBottomSheet extends BottomSheet {
             });
             linearLayout.addView(clearUpdates);
 
+            linearLayout.addView(divider, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(1)));
+
             FrameLayout checkUpdatesBackground = new FrameLayout(context);
             checkUpdatesBackground.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 6));
             linearLayout.addView(checkUpdatesBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
 
             AnimatedTextView checkUpdates = new AnimatedTextView(context, true, true, false);
-            checkUpdates.setAnimationProperties(.3f, 0, 450, CubicBezierInterpolator.EASE_OUT_QUINT);
+            checkUpdates.setAnimationProperties(.5f, 0, 450, CubicBezierInterpolator.EASE_OUT_QUINT);
             checkUpdates.setGravity(Gravity.CENTER);
             checkUpdates.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
             checkUpdates.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -229,9 +223,9 @@ public class UpdaterBottomSheet extends BottomSheet {
             checkUpdates.setOnClickListener(v -> {
                 checkUpdates.setText(LocaleController.getString("CheckingForUpdates", R.string.CheckingForUpdates));
                 UpdaterUtils.checkUpdates(context, true, () -> {
-                    BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates)).show();
                     timeView.setText(LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
                     checkUpdates.setText(LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
+                    BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates)).show();
                 }, this::dismiss);
             });
             checkUpdatesBackground.addView(checkUpdates, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));

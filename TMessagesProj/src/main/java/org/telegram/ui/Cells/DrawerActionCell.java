@@ -8,8 +8,10 @@
 
 package org.telegram.ui.Cells;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
@@ -23,9 +25,12 @@ import android.widget.TextView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.MessagesStorage;
+import org.telegram.messenger.NotificationsController;
 import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AnimatedTextView;
+import org.telegram.ui.Components.BubbleCounterPath;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RLottieImageView;
@@ -87,6 +92,39 @@ public class DrawerActionCell extends FrameLayout {
                 Theme.dialogs_errorDrawable.setBounds((int) (rect.centerX() - w / 2), (int) (rect.centerY() - h / 2), (int) (rect.centerX() + w / 2), (int) (rect.centerY() + h / 2));
                 Theme.dialogs_errorDrawable.draw(canvas);
             }
+        }
+
+        if (currentId == 14) {
+            int counter = MessagesStorage.getInstance(UserConfig.selectedAccount).getArchiveUnreadCount();
+            if (counter <= 0) {
+                return;
+            }
+
+            String text = String.valueOf(counter);
+            int countTop = AndroidUtilities.dp(12.5f);
+            int textWidth = (int) Math.ceil(Theme.dialogs_countTextPaint.measureText(text));
+            int countWidth = Math.max(AndroidUtilities.dp(10), textWidth);
+            int countLeft = getMeasuredWidth() - countWidth - AndroidUtilities.dp(25);
+
+            int x = countLeft - AndroidUtilities.dp(5.5f);
+            rect.set(x, countTop, x + countWidth + AndroidUtilities.dp(14), countTop + AndroidUtilities.dp(23));
+
+            @SuppressLint("DrawAllocation") RectF counterPathRect = new RectF();
+            @SuppressLint("DrawAllocation") Path counterPath = new Path();
+            if (counterPath == null || counterPathRect == null || !counterPathRect.equals(rect)) {
+                if (counterPathRect == null) {
+                    counterPathRect = new RectF(rect);
+                } else {
+                    counterPathRect.set(rect);
+                }
+                if (counterPath == null) {
+                    counterPath = new Path();
+                }
+                BubbleCounterPath.addBubbleRect(counterPath, counterPathRect, AndroidUtilities.dp(11.5f));
+            }
+            //canvas.drawRoundRect(rect, 11.5f * AndroidUtilities.density, 11.5f * AndroidUtilities.density, Theme.dialogs_countGrayPaint);
+            canvas.drawPath(counterPath, Theme.dialogs_countGrayPaint);
+            canvas.drawText(text, rect.left + (rect.width() - textWidth) / 2, countTop + AndroidUtilities.dp(16), Theme.dialogs_countTextPaint);
         }
     }
 

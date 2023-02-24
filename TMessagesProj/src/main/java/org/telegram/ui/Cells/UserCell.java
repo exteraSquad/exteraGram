@@ -57,6 +57,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     private TextView adminTextView;
     private TextView addButton;
     private Drawable premiumDrawable;
+    private Drawable exteraArrow;
     private AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable emojiStatus;
     private Theme.ResourcesProvider resourcesProvider;
 
@@ -70,6 +71,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     private int currentDrawable;
 
     private boolean selfAsSavedMessages;
+    private boolean needMutualContact;
 
     private String lastName;
     private int lastStatus;
@@ -493,7 +495,11 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                 nameTextView.setRightDrawable(emojiStatus);
             } else {
                 if (ExteraConfig.isExteraDev(currentUser)) {
-                    nameTextView.setRightDrawable(Theme.dialogs_outlineArrowDrawable);
+                    if (exteraArrow == null) {
+                        exteraArrow = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+                        exteraArrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+                    }
+                    nameTextView.setRightDrawable(exteraArrow);
                 } else {
                     if (premiumDrawable == null) {
                         premiumDrawable = getContext().getResources().getDrawable(R.drawable.msg_premium_liststar).mutate();
@@ -513,7 +519,11 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
             }
             nameTextView.setRightDrawableTopPadding(-AndroidUtilities.dp(0.5f));
         } else if (currentUser != null && ExteraConfig.isExteraDev(currentUser)) {
-            nameTextView.setRightDrawable(Theme.dialogs_outlineArrowDrawable);
+            if (exteraArrow == null) {
+                exteraArrow = getContext().getResources().getDrawable(R.drawable.ic_status_arrow).mutate();
+                exteraArrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_verifiedBackground, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+            }
+            nameTextView.setRightDrawable(exteraArrow);
             nameTextView.setRightDrawableTopPadding(-AndroidUtilities.dp(0.5f));
         } else {
             nameTextView.setRightDrawable(null);
@@ -555,18 +565,23 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
             avatarImageView.setImageDrawable(avatarDrawable);
         }
 
-        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(currentChat != null && currentChat.forum ? 34.5f : 46));
+        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(currentChat != null && currentChat.forum ? 46 * 0.65f : 46));
 
         nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
         if (adminTextView != null) {
             adminTextView.setTextColor(Theme.getColor(Theme.key_profile_creatorIcon, resourcesProvider));
         }
 
-        if (currentUser != null && currentUser.id != UserConfig.getInstance(currentAccount).getClientUserId() && currentUser.mutual_contact) statusTextView.setText(statusTextView.getText() + " (" + LocaleController.getString("MutualContact", R.string.MutualContact) + ")");
+        // TODO: rework
+        if (needMutualContact) statusTextView.setText(statusTextView.getText() + " (" + LocaleController.getString("MutualContact", R.string.MutualContact) + ")");
     }
 
     public void setSelfAsSavedMessages(boolean value) {
         selfAsSavedMessages = value;
+    }
+
+    public void setNeedMutualContact(boolean value) {
+        needMutualContact = value;
     }
 
     @Override
@@ -576,7 +591,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (needDivider  && !ExteraConfig.disableDividers) {
+        if (needDivider && !ExteraConfig.disableDividers) {
             canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(68), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(68) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
         }
     }

@@ -5,7 +5,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2022.
+ Copyright @immat0x1, 2023
 
 */
 
@@ -22,8 +22,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.monet.MonetHelper;
+import com.exteragram.messenger.extras.MonetHelper;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -39,7 +41,7 @@ public class InfoSettingsCell extends FrameLayout {
     public InfoSettingsCell(Context context) {
         super(context);
 
-        Drawable arrow = getResources().getDrawable(R.drawable.ic_logo_foreground).mutate();
+        Drawable arrow = ContextCompat.getDrawable(context, R.drawable.ic_logo_foreground).mutate();
         Theme.ThemeInfo theme = Theme.getActiveTheme();
         int color = BuildVars.isBetaApp() ? 0xff747F9F : 0xffF54142;
 

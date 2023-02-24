@@ -201,6 +201,8 @@ public class SharedConfig {
     public static LiteMode liteMode;
     public static Set<String> usingFilePaths = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
+    public static SharedPreferences.Editor editor;
+
     static {
         loadConfig();
     }
@@ -351,6 +353,8 @@ public class SharedConfig {
             BackgroundActivityPrefs.prefs = ApplicationLoader.applicationContext.getSharedPreferences("background_activity", Context.MODE_PRIVATE);
 
             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("userconfing", Context.MODE_PRIVATE);
+            editor = preferences.edit();
+
             saveIncomingPhotos = preferences.getBoolean("saveIncomingPhotos", false);
             passcodeHash = preferences.getString("passcodeHash1", "");
             appLocked = preferences.getBoolean("appLocked", false);
@@ -487,7 +491,7 @@ public class SharedConfig {
             fastScrollHintCount = preferences.getInt("fastScrollHintCount", 3);
             dontAskManageStorage = preferences.getBoolean("dontAskManageStorage", false);
             hasEmailLogin = preferences.getBoolean("hasEmailLogin", false);
-            useLNavigation = preferences.getBoolean("useLNavigation", false);
+            useLNavigation = preferences.getBoolean("useLNavigation", true);
             isFloatingDebugActive = preferences.getBoolean("floatingDebugActive", false);
 
             preferences = ApplicationLoader.applicationContext.getSharedPreferences("Notifications", Activity.MODE_PRIVATE);
