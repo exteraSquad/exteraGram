@@ -42,10 +42,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
+import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessageObject;
@@ -327,6 +329,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                         customEmojiReactionsIconView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
                         customEmojiReactionsIconView.setBackground(Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(28), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_listSelector), 40)));
                         customEmojiReactionsIconView.setPadding(AndroidUtilities.dp(2), AndroidUtilities.dp(2), AndroidUtilities.dp(2), AndroidUtilities.dp(2));
+                        customEmojiReactionsIconView.setContentDescription(LocaleController.getString(R.string.AccDescrExpandPanel));
                         customReactionsContainer.addView(customEmojiReactionsIconView, LayoutHelper.createFrame(30, 30, Gravity.CENTER));
                         customEmojiReactionsIconView.setOnClickListener(v -> {
                             showCustomEmojiReactionDialog();
@@ -680,6 +683,9 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                 if (child instanceof ReactionHolderView) {
                     ReactionHolderView view = (ReactionHolderView) recyclerListView.getChildAt(i);
                     checkPressedProgress(canvas, view);
+                    if (child.getLeft() > lastReactionX) {
+                        lastReactionX = child.getLeft();
+                    }
                     if (view.hasEnterAnimation && view.enterImageView.getImageReceiver().getLottieAnimation() == null) {
                         continue;
                     }
@@ -691,9 +697,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                         lastVisibleViews.add(view);
                     } else if (!view.isEnter) {
                         view.resetAnimation();
-                    }
-                    if (view.getLeft() > lastReactionX) {
-                        lastReactionX = view.getLeft();
                     }
                 } else {
                     if (child == premiumLockContainer) {
@@ -716,7 +719,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                                 if (transitionProgress != 1f) {
                                     customEmojiReactionsIconView.resetAnimation();
                                 }
-                                customEmojiReactionsIconView.play(delay, SharedConfig.playEmojiInKeyboard || SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE);
+                                customEmojiReactionsIconView.play(delay, LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS) || SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE);
                                 delay += 30;
                             }
                             lastVisibleViews.add(child);
@@ -968,7 +971,9 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                     }
                 }
             } else {
-                throw new RuntimeException("Unknown chat reactions type: " + reactionsChat.available_reactions);
+                if (BuildVars.DEBUG_VERSION) {
+                    throw new RuntimeException("Unknown chat reactions type: " + reactionsChat.available_reactions);
+                }
             }
         } else {
             allReactionsAvailable = true;
@@ -1053,8 +1058,8 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
         setTransitionProgress(0);
         setAlpha(1f);
         if (allowSmoothEnterTransition()) {
-            ObjectAnimator animator = ObjectAnimator.ofFloat(this, ReactionsContainerLayout.TRANSITION_PROGRESS_VALUE, 0f, 1f).setDuration(400);
-            animator.setInterpolator(new OvershootInterpolator(1.004f));
+            ObjectAnimator animator = ObjectAnimator.ofFloat(this, ReactionsContainerLayout.TRANSITION_PROGRESS_VALUE, 0f, 1f).setDuration(250);
+            animator.setInterpolator(new OvershootInterpolator(0.5f));
             animator.start();
         } else {
             ObjectAnimator animator = ObjectAnimator.ofFloat(this, ReactionsContainerLayout.TRANSITION_PROGRESS_VALUE, 0f, 1f).setDuration(250);
@@ -1307,7 +1312,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
             resetAnimation();
             currentReaction = react;
             selected = selectedReactions.contains(react);
-            hasEnterAnimation = currentReaction.emojicon != null && (showCustomEmojiReaction() || allReactionsIsDefault) && SharedConfig.getLiteMode().animatedEmojiEnabled() && SharedConfig.getDevicePerformanceClass() > SharedConfig.PERFORMANCE_CLASS_LOW;
+            hasEnterAnimation = currentReaction.emojicon != null && (showCustomEmojiReaction() || allReactionsIsDefault) && LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS);
             if (currentReaction.emojicon != null) {
                 updateImage(react);
 
@@ -1349,12 +1354,14 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
             if (currentReaction.emojicon != null) {
                 TLRPC.TL_availableReaction defaultReaction = MediaDataController.getInstance(currentAccount).getReactionsMap().get(currentReaction.emojicon);
                 if (defaultReaction != null) {
-                    SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(defaultReaction.activate_animation, Theme.key_windowBackgroundGray, 1.0f);
-                    if (!SharedConfig.getLiteMode().animatedEmojiEnabled() || SharedConfig.getDevicePerformanceClass() <= SharedConfig.PERFORMANCE_CLASS_LOW && !SharedConfig.playEmojiInKeyboard) {
-                        loopImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.select_animation), "60_60_firstframe", null, null, hasEnterAnimation ? null : svgThumb, 0, "tgs", currentReaction, 0);
-                    } else if (!SharedConfig.playEmojiInKeyboard) {
-                        enterImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.appear_animation), ReactionsUtils.APPEAR_ANIMATION_FILTER, null, null, svgThumb, 0, "tgs", react, 0);
-                        loopImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.select_animation), "60_60_firstframe", null, null, hasEnterAnimation ? null : svgThumb, 0, "tgs", currentReaction, 0);
+                    SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(defaultReaction.activate_animation, Theme.key_windowBackgroundWhiteGrayIcon, 1.0f);
+                    if (!LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS)) {
+                        if (SharedConfig.getDevicePerformanceClass() <= SharedConfig.PERFORMANCE_CLASS_LOW) {
+                            loopImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.select_animation), "60_60_firstframe", null, null, hasEnterAnimation ? null : svgThumb, 0, "tgs", currentReaction, 0);
+                        } else {
+                            enterImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.appear_animation), ReactionsUtils.APPEAR_ANIMATION_FILTER, null, null, svgThumb, 0, "tgs", react, 0);
+                            loopImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.select_animation), "60_60_firstframe", null, null, hasEnterAnimation ? null : svgThumb, 0, "tgs", currentReaction, 0);
+                        }
                     } else {
                         enterImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.appear_animation), ReactionsUtils.APPEAR_ANIMATION_FILTER, null, null, svgThumb, 0, "tgs", react, 0);
                         loopImageView.getImageReceiver().setImage(ImageLocation.getForDocument(defaultReaction.select_animation), ReactionsUtils.SELECT_ANIMATION_FILTER, null, null, hasEnterAnimation ? null : svgThumb, 0, "tgs", currentReaction, 0);

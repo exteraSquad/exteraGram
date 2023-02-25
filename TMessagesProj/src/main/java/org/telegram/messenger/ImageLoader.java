@@ -2183,7 +2183,7 @@ public class ImageLoader {
                     if (dirs != null) {
                         for (int a = 0, N = dirs.size(); a < N; a++) {
                             File dir = dirs.get(a);
-                            if (dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
+                            if (dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir) && dir.canWrite()) {
                                 path = dir;
                                 break;
                             }
@@ -2192,26 +2192,32 @@ public class ImageLoader {
                 }
 
                 File publicMediaDir = null;
-                // because exteraGram's minapi 21 have all required methods
-                File newPath;
-                try {
-                    if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
-                        publicMediaDir = ApplicationLoader.applicationContext.getExternalMediaDirs()[0];
-                        publicMediaDir = new File(publicMediaDir, "exteraGram");
-                        publicMediaDir.mkdirs();
+                if (Build.VERSION.SDK_INT >= 30) {
+                    File newPath;
+                    try {
+                        if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
+                            publicMediaDir = ApplicationLoader.applicationContext.getExternalMediaDirs()[0];
+                            publicMediaDir = new File(publicMediaDir, "exteraGram");
+                            publicMediaDir.mkdirs();
+                        }
+                    } catch (Exception e) {
+                        FileLog.e(e);
                     }
-                } catch (Exception e) {
-                    FileLog.e(e);
+                    newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
+                    telegramPath = new File(newPath, "exteraGram");
+                } else {
+                    if (!(path.exists() ? path.isDirectory() : path.mkdirs()) || !path.canWrite()) {
+                        path = ApplicationLoader.applicationContext.getExternalFilesDir(null);
+                    }
+                    telegramPath = new File(path, "exteraGram");
                 }
-                newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
-                telegramPath = new File(newPath, "exteraGram");
                 telegramPath.mkdirs();
 
                 if (!telegramPath.isDirectory()) {
                     ArrayList<File> dirs = AndroidUtilities.getDataDirs();
                     for (int a = 0, N = dirs.size(); a < N; a++) {
                         File dir = dirs.get(a);
-                        if (dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
+                        if (dir != null && !TextUtils.isEmpty(SharedConfig.storageCacheDir) && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir) && dir.canWrite()) {
                             path = dir;
                             telegramPath = new File(path, "exteraGram");
                             telegramPath.mkdirs();

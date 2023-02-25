@@ -15,12 +15,10 @@
  */
 package com.google.android.exoplayer2.util;
 
-import android.annotation.TargetApi;
+import androidx.annotation.RequiresApi;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 
-/**
- * Calls through to {@link android.os.Trace} methods on supported API levels.
- */
+/** Calls through to {@link android.os.Trace} methods on supported API levels. */
 public final class TraceUtil {
 
   private TraceUtil() {}
@@ -33,7 +31,7 @@ public final class TraceUtil {
    *     Unicode code units long.
    */
   public static void beginSection(String sectionName) {
-    if (ExoPlayerLibraryInfo.TRACE_ENABLED) {
+    if (ExoPlayerLibraryInfo.TRACE_ENABLED && Util.SDK_INT >= 18) {
       beginSectionV18(sectionName);
     }
   }
@@ -44,17 +42,18 @@ public final class TraceUtil {
    * @see android.os.Trace#endSection()
    */
   public static void endSection() {
-    if (ExoPlayerLibraryInfo.TRACE_ENABLED) {
+    if (ExoPlayerLibraryInfo.TRACE_ENABLED && Util.SDK_INT >= 18) {
       endSectionV18();
     }
   }
 
+  @RequiresApi(18)
   private static void beginSectionV18(String sectionName) {
     android.os.Trace.beginSection(sectionName);
   }
 
+  @RequiresApi(18)
   private static void endSectionV18() {
     android.os.Trace.endSection();
   }
-
 }

@@ -14,8 +14,6 @@ package com.exteragram.messenger;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
@@ -63,7 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class ExteraUtils {
+public final class ExteraUtils {
 
     public static final DispatchQueue translateQueue = new DispatchQueue("translateQueue", false);
 

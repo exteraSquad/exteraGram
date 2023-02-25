@@ -724,7 +724,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                 }
             }
             if (position != 0 || selectedAlbumEntry != galleryAlbumEntry) {
-                if (selectedAlbumEntry == galleryAlbumEntry) {
+                if (selectedAlbumEntry == galleryAlbumEntry || ExteraConfig.hideCameraTile && selectedAlbumEntry != galleryAlbumEntry) {
                     position--;
                 }
                 if (showAvatarConstructor) {

@@ -1160,6 +1160,7 @@ public class CameraView extends BaseCameraView implements TextureView.SurfaceTex
 
     private void createCamera(final SurfaceTexture surfaceTexture) {
         AndroidUtilities.runOnUIThread(() -> {
+            CameraGLThread cameraThread = this.cameraThread;
             if (cameraThread == null) {
                 return;
             }

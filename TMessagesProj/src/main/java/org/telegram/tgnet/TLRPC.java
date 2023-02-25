@@ -671,6 +671,10 @@ public class TLRPC {
         public BitmapDrawable strippedBitmap;
 
         public static ChatPhoto TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
+            return TLdeserialize(stream, constructor, exception, true);
+        }
+
+        public static ChatPhoto TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception,  boolean allowStripedThumb) {
             ChatPhoto result = null;
             switch (constructor) {
                 case 0x1c6e1c11:
@@ -705,8 +709,11 @@ public class TLRPC {
     public static class TL_chatPhoto extends ChatPhoto {
         public static int constructor = 0x1c6e1c11;
 
-
         public void readParams(AbstractSerializedData stream, boolean exception) {
+            readParams(stream, exception, true);
+        }
+
+        public void readParams(AbstractSerializedData stream, boolean exception, boolean allowStripedThumbs) {
             flags = stream.readInt32(exception);
             has_video = (flags & 1) != 0;
             photo_id = stream.readInt64(exception);
@@ -721,7 +728,7 @@ public class TLRPC {
             photo_big.volume_id = -photo_id;
             photo_big.local_id = 'c';
 
-            if (stripped_thumb != null) {
+            if (allowStripedThumbs && stripped_thumb != null) {
                 try {
                     strippedBitmap = new BitmapDrawable(ImageLoader.getStrippedPhotoBitmap(stripped_thumb, "b"));
                 } catch (Throwable e) {
@@ -42718,6 +42725,10 @@ public class TLRPC {
         public ArrayList<TL_username> usernames = new ArrayList<>();
 
         public static Chat TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
+            return TLdeserialize(stream, constructor, exception, true);
+        }
+
+        public static Chat TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception, boolean allowStrippedThumb) {
             Chat result = null;
             switch (constructor) {
                 case 0x2d85832c:
@@ -42797,9 +42808,13 @@ public class TLRPC {
                 throw new RuntimeException(String.format("can't parse magic %x in Chat", constructor));
             }
             if (result != null) {
-                result.readParams(stream, exception);
+                result.readParams(stream, exception, allowStrippedThumb);
             }
             return result;
+        }
+
+        private void readParams(AbstractSerializedData stream, boolean exception, boolean allowStrippedThumb) {
+            readParams(stream, exception);
         }
 
         protected static TL_chatBannedRights mergeBannedRights(TL_channelBannedRights_layer92 rights) {
@@ -42894,8 +42909,11 @@ public class TLRPC {
     public static class TL_chat extends Chat {
         public static int constructor = 0x41cbf256;
 
-
         public void readParams(AbstractSerializedData stream, boolean exception) {
+            readParams(stream, exception, true);
+        }
+
+        public void readParams(AbstractSerializedData stream, boolean exception, boolean allowStrippedThumb) {
             flags = stream.readInt32(exception);
             creator = (flags & 1) != 0;
             kicked = (flags & 2) != 0;
@@ -42906,7 +42924,7 @@ public class TLRPC {
             noforwards = (flags & 33554432) != 0;
             id = stream.readInt64(exception);
             title = stream.readString(exception);
-            photo = ChatPhoto.TLdeserialize(stream, stream.readInt32(exception), exception);
+            photo = ChatPhoto.TLdeserialize(stream, stream.readInt32(exception), exception, allowStrippedThumb);
             participants_count = stream.readInt32(exception);
             date = stream.readInt32(exception);
             version = stream.readInt32(exception);
@@ -43166,6 +43184,10 @@ public class TLRPC {
         public static int constructor = 0x83259464;
 
         public void readParams(AbstractSerializedData stream, boolean exception) {
+            readParams(stream, exception, true);
+        }
+
+        public void readParams(AbstractSerializedData stream, boolean exception, boolean allowStrippedThumb) {
             flags = stream.readInt32(exception);
             creator = (flags & 1) != 0;
             left = (flags & 4) != 0;
@@ -43196,7 +43218,7 @@ public class TLRPC {
             if ((flags & 64) != 0) {
                 username = stream.readString(exception);
             }
-            photo = ChatPhoto.TLdeserialize(stream, stream.readInt32(exception), exception);
+            photo = ChatPhoto.TLdeserialize(stream, stream.readInt32(exception), exception, allowStrippedThumb);
             date = stream.readInt32(exception);
             if ((flags & 512) != 0) {
                 int magic = stream.readInt32(exception);

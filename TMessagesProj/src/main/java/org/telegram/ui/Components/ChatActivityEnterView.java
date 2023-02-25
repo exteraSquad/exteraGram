@@ -109,6 +109,7 @@ import com.exteragram.messenger.ExteraUtils;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
@@ -176,7 +177,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     public interface ChatActivityEnterViewDelegate {
 
         default void onEditTextScroll() {};
-        
+
         default void onContextMenuOpen() {};
 
         default void onContextMenuClose() {};
@@ -688,6 +689,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 slideText.setAlpha(1.0f);
                 slideText.setTranslationY(0);
             }
+            audioToSendPath = null;
+            audioToSend = null;
             if (isInVideoMode()) {
                 if (Build.VERSION.SDK_INT >= 23) {
                     boolean hasAudio = parentActivity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
@@ -1962,9 +1965,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             notifyButton.setContentDescription(silent ? LocaleController.getString("AccDescrChanSilentOn", R.string.AccDescrChanSilentOn) : LocaleController.getString("AccDescrChanSilentOff", R.string.AccDescrChanSilentOff));
             notifyButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
             notifyButton.setScaleType(ImageView.ScaleType.CENTER);
-            if (Build.VERSION.SDK_INT >= 21) {
-                notifyButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
-            }
+            notifyButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
             notifyButton.setVisibility(canWriteToChannel && (delegate == null || !delegate.hasScheduledMessages()) ? VISIBLE : GONE);
             attachLayout.addView(notifyButton, LayoutHelper.createLinear(48, 48));
             notifyButton.setOnClickListener(new OnClickListener() {
@@ -1978,7 +1979,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     notifyButton.setImageDrawable(notifySilentDrawable);
                     MessagesController.getNotificationsSettings(currentAccount).edit().putBoolean("silent_" + dialog_id, silent).commit();
                     NotificationsController.getInstance(currentAccount).updateServerNotificationsSettings(dialog_id, fragment == null ? 0 :fragment.getTopicId());
-                    fragment.getUndoView().showWithAction(0, !silent ? UndoView.ACTION_NOTIFY_ON : UndoView.ACTION_NOTIFY_OFF, null);
+                    UndoView undoView = fragment.getUndoView();
+                    if (undoView != null) {
+                        undoView.showWithAction(0, !silent ? UndoView.ACTION_NOTIFY_ON : UndoView.ACTION_NOTIFY_OFF, null);
+                    }
                     notifyButton.setContentDescription(silent ? LocaleController.getString("AccDescrChanSilentOn", R.string.AccDescrChanSilentOn) : LocaleController.getString("AccDescrChanSilentOff", R.string.AccDescrChanSilentOff));
                     updateFieldHint(true);
                 }
@@ -1988,9 +1992,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             attachButton.setScaleType(ImageView.ScaleType.CENTER);
             attachButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
             attachButton.setImageResource(R.drawable.input_attach);
-            if (Build.VERSION.SDK_INT >= 21) {
-                attachButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
-            }
+            attachButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
             attachLayout.addView(attachButton, LayoutHelper.createLinear(48, 48));
             attachButton.setOnClickListener(v -> {
                 if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress()) {
@@ -2218,9 +2220,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         cancelBotButton.setScaleX(0.1f);
         cancelBotButton.setScaleY(0.1f);
         cancelBotButton.setAlpha(0.0f);
-        if (Build.VERSION.SDK_INT >= 21) {
-            cancelBotButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
-        }
+        cancelBotButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
         sendButtonContainer.addView(cancelBotButton, LayoutHelper.createFrame(48, 48));
         cancelBotButton.setOnClickListener(view -> {
             String text = messageEditText != null ? messageEditText.getText().toString() : "";
@@ -2355,9 +2355,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         sendButton.setScaleX(0.1f);
         sendButton.setScaleY(0.1f);
         sendButton.setAlpha(0.0f);
-        if (Build.VERSION.SDK_INT >= 21) {
-            sendButton.setBackgroundDrawable(Theme.createSelectorDrawable(Color.argb(24, Color.red(color), Color.green(color), Color.blue(color)), 1));
-        }
+        sendButton.setBackground(Theme.createSelectorDrawable(Color.argb(24, Color.red(color), Color.green(color), Color.blue(color)), 1));
         sendButtonContainer.addView(sendButton, LayoutHelper.createFrame(48, 48));
         sendButton.setOnClickListener(view -> {
             if ((sendPopupWindow != null && sendPopupWindow.isShowing()) || (runningAnimationAudio != null && runningAnimationAudio.isRunning()) || moveToSendStateRunnable != null) {
@@ -2431,10 +2429,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         scheduledButton.setVisibility(GONE);
         scheduledButton.setContentDescription(LocaleController.getString("ScheduledMessages", R.string.ScheduledMessages));
         scheduledButton.setScaleType(ImageView.ScaleType.CENTER);
-        if (Build.VERSION.SDK_INT >= 21) {
-            scheduledButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
-        }
-        messageEditTextContainer.addView(scheduledButton, 1, LayoutHelper.createFrame(48, 48, Gravity.BOTTOM | Gravity.RIGHT));
+        scheduledButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
+        messageEditTextContainer.addView(scheduledButton, 2, LayoutHelper.createFrame(48, 48, Gravity.BOTTOM | Gravity.RIGHT));
         scheduledButton.setOnClickListener(v -> {
             if (delegate != null) {
                 delegate.openScheduledMessages();
@@ -2451,9 +2447,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         botButtonDrawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
         botButtonDrawable.setIcon(R.drawable.input_bot2, false);
         botButton.setScaleType(ImageView.ScaleType.CENTER);
-        if (Build.VERSION.SDK_INT >= 21) {
-            botButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
-        }
+        botButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
         botButton.setVisibility(GONE);
         AndroidUtilities.updateViewVisibilityAnimated(botButton, false, 0.1f, false);
         attachLayout.addView(botButton, 0, LayoutHelper.createLinear(48, 48));
@@ -2534,9 +2528,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         expandStickersButton.setScaleX(0.1f);
         expandStickersButton.setScaleY(0.1f);
         expandStickersButton.setAlpha(0.0f);
-        if (Build.VERSION.SDK_INT >= 21) {
-            expandStickersButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
-        }
+        expandStickersButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
         sendButtonContainer.addView(expandStickersButton, LayoutHelper.createFrame(48, 48));
         expandStickersButton.setOnClickListener(v -> {
             if (expandStickersButton.getVisibility() != VISIBLE || expandStickersButton.getAlpha() != 1.0f || waitingForKeyboardOpen || (keyboardVisible && messageEditText != null && messageEditText.isFocused())) {
@@ -2607,6 +2599,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
             }
             if (audioToSendPath != null) {
+                if (BuildVars.LOGS_ENABLED) {
+                    FileLog.d("delete file " + audioToSendPath);
+                }
                 new File(audioToSendPath).delete();
             }
             hideRecordedAudioPanel(false);
@@ -3676,7 +3671,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
 
         private void openPhotoViewerForEdit(ArrayList<Object> entries, File sourceFile) {
-            if (parentFragment.getParentActivity() == null) {
+            if (parentFragment == null || parentFragment.getParentActivity() == null) {
                 return;
             }
             MediaController.PhotoEntry photoEntry = (MediaController.PhotoEntry) entries.get(0);
@@ -3831,7 +3826,11 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                                 setStickersExpanded(false, true, false);
                             } else {
                                 if (stickersExpansionAnim == null) {
-                                    if (botButtonsMessageObject != null && currentPopupContentType != POPUP_CONTENT_BOT_KEYBOARD && TextUtils.isEmpty(messageEditText.getText())) {
+                                    boolean isBot = false;
+                                    if (!DialogObject.isChatDialog(dialog_id)) {
+                                        isBot = accountInstance.getMessagesController().getUser(dialog_id).bot;
+                                    }
+                                    if (isBot && botButton != null && botButton.getVisibility() == VISIBLE && botButtonsMessageObject != null && currentPopupContentType != POPUP_CONTENT_BOT_KEYBOARD && TextUtils.isEmpty(messageEditText.getText())) {
                                         showPopup(1, POPUP_CONTENT_BOT_KEYBOARD);
                                     } else {
                                         showPopup(0, 0);
@@ -7426,9 +7425,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
         boolean hasScheduled = delegate != null && !isInScheduleMode() && delegate.hasScheduledMessages();
         boolean visible = hasScheduled && !scheduleButtonHidden && !recordingAudioVideo;
-        if (hasScheduled) {
-            createScheduledButton();
-        }
+        createScheduledButton();
         if (scheduledButton != null) {
             if (scheduledButton.getTag() != null && visible || scheduledButton.getTag() == null && !visible) {
                 if (notifyButton != null) {
@@ -8470,7 +8467,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
                 createEmojiView();
             }
-
             View currentView = null;
             boolean anotherPanelWasVisible = false;
             boolean samePannelWasVisible = false;
@@ -8560,7 +8556,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     requestLayout();
                 }
             }
-            AndroidUtilities.setNavigationBarColor(parentActivity.getWindow(), getThemedColor(Theme.key_chat_emojiPanelBackground));
         } else {
             if (emojiButton != null) {
                 setEmojiButtonImage(false, true);
@@ -8667,7 +8662,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
             }
             updateBotButton(true);
-            AndroidUtilities.setNavigationBarColor(parentActivity.getWindow(), parentFragment.getNavigationBarColor());
         }
 
         if (stickersTabOpen || emojiTabOpen) {
@@ -8676,6 +8670,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         if (stickersExpanded && show != 1) {
             setStickersExpanded(false, false, false);
         }
+        if (getParentFragment() != null)
+            AndroidUtilities.runOnUIThread(() -> AndroidUtilities.setNavigationBarColor(parentActivity.getWindow(), show == 1 ? getThemedColor(Theme.key_chat_emojiPanelBackground) : getParentFragment().getNavigationBarColor()), show == 1 ? 0 : 200);
+
         updateFieldHint(false);
         checkBotMenu();
     }

@@ -748,7 +748,7 @@ public class BottomSheet extends Dialog {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private int getAdditionalMandatoryOffsets() {
-        if (!calcMandatoryInsets) {
+        if (!calcMandatoryInsets || lastInsets == null) {
             return 0;
         }
         Insets insets = lastInsets.getSystemGestureInsets();

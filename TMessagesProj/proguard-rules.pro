@@ -23,9 +23,9 @@
 -keep class org.telegram.tgnet.QuickAckDelegate { *; }
 -keep class org.telegram.tgnet.WriteToSocketDelegate { *; }
 -keep class com.google.android.exoplayer2.ext.** { *; }
--keep class com.google.android.exoplayer2.util.FlacStreamMetadata { *; }
+-keep class com.google.android.exoplayer2.extractor.FlacStreamMetadata { *; }
 -keep class com.google.android.exoplayer2.metadata.flac.PictureFrame { *; }
--keep class com.google.android.exoplayer2.decoder.SimpleOutputBuffer { *; }
+-keep class com.google.android.exoplayer2.decoder.SimpleDecoderOutputBuffer { *; }
 
 # Keep all class member names of CameraX
 -keep class androidx.camera.extensions.** { *; }
@@ -50,7 +50,7 @@
 }
 
 # Some members of this class are being accessed from native methods. Keep them unobfuscated.
--keep class com.google.android.exoplayer2.video.VideoDecoderOutputBuffer {
+-keep class com.google.android.exoplayer2.decoder.VideoDecoderOutputBuffer {
   *;
 }
 
@@ -76,15 +76,15 @@
 # Constructors accessed via reflection in DefaultDownloaderFactory
 -dontnote com.google.android.exoplayer2.source.dash.offline.DashDownloader
 -keepclassmembers class com.google.android.exoplayer2.source.dash.offline.DashDownloader {
-  <init>(android.net.Uri, java.util.List, com.google.android.exoplayer2.offline.DownloaderConstructorHelper);
+  <init>(android.net.Uri, java.util.List, com.google.android.exoplayer2.offline.ProgressiveDownloader);
 }
 -dontnote com.google.android.exoplayer2.source.hls.offline.HlsDownloader
 -keepclassmembers class com.google.android.exoplayer2.source.hls.offline.HlsDownloader {
-  <init>(android.net.Uri, java.util.List, com.google.android.exoplayer2.offline.DownloaderConstructorHelper);
+  <init>(android.net.Uri, java.util.List, com.google.android.exoplayer2.offline.ProgressiveDownloader);
 }
 -dontnote com.google.android.exoplayer2.source.smoothstreaming.offline.SsDownloader
 -keepclassmembers class com.google.android.exoplayer2.source.smoothstreaming.offline.SsDownloader {
-  <init>(android.net.Uri, java.util.List, com.google.android.exoplayer2.offline.DownloaderConstructorHelper);
+  <init>(android.net.Uri, java.util.List, com.google.android.exoplayer2.offline.ProgressiveDownloader);
 }
 
 # Constructors accessed via reflection in DownloadHelper

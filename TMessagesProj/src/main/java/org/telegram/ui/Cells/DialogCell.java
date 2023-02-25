@@ -61,6 +61,7 @@ import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
+import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessageObject;
@@ -693,6 +694,9 @@ public class DialogCell extends BaseCell {
         animatedEmojiStack2 = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, animatedEmojiStack2, messageNameLayout);
         animatedEmojiStack3 = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, animatedEmojiStack3, buttonLayout);
         animatedEmojiStackName =  AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, animatedEmojiStackName, nameLayout);
+        if (emojiStatus != null) {
+            emojiStatus.attach();
+        }
     }
 
     public void resetPinnedArchiveState() {
@@ -706,7 +710,7 @@ public class DialogCell extends BaseCell {
         cornerProgress = 0.0f;
         setTranslationX(0);
         setTranslationY(0);
-        if (emojiStatus != null) {
+        if (emojiStatus != null && attachedToWindow) {
             emojiStatus.attach();
         }
     }
@@ -3829,7 +3833,7 @@ public class DialogCell extends BaseCell {
 
                     float size1;
                     float size2;
-                    if (SharedConfig.getLiteMode().enabled()) {
+                    if (!LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
                         innerProgress = 0.65f;
                     }
                     if (progressStage == 0) {
@@ -3874,7 +3878,7 @@ public class DialogCell extends BaseCell {
                         canvas.restore();
                     }
 
-                    if (!SharedConfig.getLiteMode().enabled()) {
+                    if (!LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
                         innerProgress += 16f / 400.0f;
                         if (innerProgress >= 1.0f) {
                             innerProgress = 0.0f;
@@ -4397,6 +4401,14 @@ public class DialogCell extends BaseCell {
             sb.append(LocaleController.getString("AccDescrVerified", R.string.AccDescrVerified));
             sb.append(". ");
         }
+        if (dialogMuted) {
+            sb.append(LocaleController.getString("AccDescrNotificationsMuted", R.string.AccDescrNotificationsMuted));
+            sb.append(". ");
+        }
+        if (isOnline()) {
+            sb.append(LocaleController.getString("AccDescrUserOnline", R.string.AccDescrUserOnline));
+            sb.append(". ");
+        }
         if (unreadCount > 0) {
             sb.append(LocaleController.formatPluralString("NewMessages", unreadCount));
             sb.append(". ");
@@ -4410,7 +4422,8 @@ public class DialogCell extends BaseCell {
             sb.append(". ");
         }
         if (message == null || currentDialogFolderId != 0) {
-            event.setContentDescription(sb.toString());
+            event.setContentDescription(sb);
+            setContentDescription(sb);
             return;
         }
         int lastDate = lastMessageDate;
@@ -4457,7 +4470,8 @@ public class DialogCell extends BaseCell {
                 sb.append(messageString);
             }
         }
-        event.setContentDescription(sb.toString());
+        event.setContentDescription(sb);
+        setContentDescription(sb);
     }
 
     private MessageObject getCaptionMessage() {
