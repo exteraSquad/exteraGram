@@ -118,7 +118,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         generalHeaderRow = newRow();
         disableNumberRoundingRow = newRow();
         formatTimeWithSecondsRow = newRow();
-        disableVibrationRow = newRow();
+        disableVibrationRow = -1; // need to be refactored
         disableProximitySensorRow = newRow();
         tabletModeRow = newRow();
         generalDividerRow = newRow();

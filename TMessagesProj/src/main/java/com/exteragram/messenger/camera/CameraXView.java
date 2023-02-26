@@ -13,8 +13,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManager;
 import android.os.SystemClock;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.OrientationEventListener;
@@ -26,6 +24,8 @@ import android.widget.ImageView;
 
 import androidx.camera.core.ImageCapture;
 import androidx.camera.view.PreviewView;
+
+import com.exteragram.messenger.extras.Vibrate;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -490,12 +490,8 @@ public class CameraXView extends BaseCameraView {
     @SuppressLint("MissingPermission")
     @Override
     public void runHaptic() {
-        long[] vibrationWaveFormDurationPattern = {0, 1};
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            final Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-            VibrationEffect vibrationEffect = VibrationEffect.createWaveform(vibrationWaveFormDurationPattern, -1);
-            vibrator.cancel();
-            vibrator.vibrate(vibrationEffect);
+            Vibrate.vibrate();
         } else {
             performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         }

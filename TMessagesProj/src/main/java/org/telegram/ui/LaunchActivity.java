@@ -621,13 +621,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         drawerLayoutContainer.setAllowOpenDrawer(true, false);
                     }
                     drawerLayoutContainer.closeDrawer(false);
-                } else if (id == 17) {
-                    BaseFragment fragment = actionBarLayout.getFragmentStack().get(0);
-                    if (fragment instanceof DialogsActivity) {
-                        ((DialogsActivity) fragment).showSearch(true, true, true);
-                        fragment.getActionBar().openSearchField(true);
-                    }
-                    drawerLayoutContainer.closeDrawer(false);
                 }
             }
         });

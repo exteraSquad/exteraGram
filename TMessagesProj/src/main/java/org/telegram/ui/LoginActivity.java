@@ -437,6 +437,17 @@ public class LoginActivity extends BaseFragment {
     }
 
     @Override
+    public int getNavigationBarColor() {
+        return getThemedColor(Theme.key_windowBackgroundWhite);
+    }
+
+    @Override
+    public void setNavigationBarColor(int color) {
+        color = getNavigationBarColor();
+        super.setNavigationBarColor(color);
+    }
+
+    @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
         for (int a = 0; a < views.length; a++) {
@@ -1034,7 +1045,7 @@ public class LoginActivity extends BaseFragment {
     }
 
     private void onFieldError(View view, boolean allowErrorSelection) {
-        if (!ExteraConfig.disableVibration) view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         AndroidUtilities.shakeViewSpring(view, 3.5f);
 
         if (allowErrorSelection) {
@@ -4522,7 +4533,7 @@ public class LoginActivity extends BaseFragment {
 
         private void shakeWrongCode() {
             try {
-                if (!ExteraConfig.disableVibration) codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             } catch (Exception ignore) {}
 
             for (int a = 0; a < codeFieldContainer.codeField.length; a++) {
@@ -6370,12 +6381,10 @@ public class LoginActivity extends BaseFragment {
             if (getParentActivity() == null) {
                 return;
             }
-            if (!ExteraConfig.disableVibration) {
-                try {
-                    if (!ExteraConfig.disableVibration) codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
+            try {
+                codeFieldContainer.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            } catch (Exception e) {
+                FileLog.e(e);
             }
             if (clear) {
                 for (CodeNumberField f : codeFieldContainer.codeField) {
@@ -6712,7 +6721,7 @@ public class LoginActivity extends BaseFragment {
                 return;
             }
             try {
-                if (!ExteraConfig.disableVibration) codeField[num].performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                codeField[num].performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             } catch (Exception ignore) {}
             AndroidUtilities.shakeView(codeField[num]);
         }

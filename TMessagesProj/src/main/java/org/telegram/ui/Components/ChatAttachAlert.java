@@ -2490,7 +2490,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             view.getLocationInWindow(location);
             sendPopupWindow.showAtLocation(view, Gravity.LEFT | Gravity.TOP, location[0] + view.getMeasuredWidth() - sendPopupLayout.getMeasuredWidth() + AndroidUtilities.dp(8), location[1] - sendPopupLayout.getMeasuredHeight() - AndroidUtilities.dp(2));
             sendPopupWindow.dimBehind();
-            if (!ExteraConfig.disableVibration) view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
 
             return false;
         });
@@ -2624,8 +2624,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         }
         openTransitionFinished = false;
         if (Build.VERSION.SDK_INT >= 30) {
+            navBarColor = baseFragment.getNavigationBarColor();
             navBarColorKey = null;
-            navBarColor = ColorUtils.setAlphaComponent(getThemedColor(Theme.key_dialogBackground), 0);
             AndroidUtilities.setNavigationBarColor(getWindow(), navBarColor, false);
             AndroidUtilities.setLightNavigationBar(getWindow(), AndroidUtilities.computePerceivedBrightness(navBarColor) > 0.721);
         }
@@ -3260,8 +3260,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 //                ChatAttachAlert.this.delegate.needEnterComment();
 //            }
 //        }, 75);
+        AndroidUtilities.setNavigationBarColor(getWindow(), baseFragment.getNavigationBarColor(), false);
+
         ValueAnimator navigationBarAnimator = ValueAnimator.ofFloat(0, 1);
-        setNavBarAlpha(0);
         navigationBarAnimator.addUpdateListener(a -> setNavBarAlpha((float) a.getAnimatedValue()));
         navigationBarAnimator.setStartDelay(25);
         navigationBarAnimator.setDuration(200);
@@ -3272,7 +3273,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     private void setNavBarAlpha(float alpha) {
-        navBarColor = ColorUtils.setAlphaComponent(getThemedColor(Theme.key_dialogBackground), Math.min(255, Math.max(0, (int) (255 * alpha))));
+        navBarColor = ColorUtils.blendARGB(baseFragment.getNavigationBarColor(), getThemedColor(Theme.key_dialogBackground), alpha);
         AndroidUtilities.setNavigationBarColor(getWindow(), navBarColor, false);
         AndroidUtilities.setLightNavigationBar(getWindow(), AndroidUtilities.computePerceivedBrightness(navBarColor) > 0.721);
         getContainer().invalidate();
@@ -4221,7 +4222,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 layouts[a].onDismiss();
             }
         }
-        AndroidUtilities.setNavigationBarColor(getWindow(), ColorUtils.setAlphaComponent(getThemedColor(Theme.key_dialogBackground), 0), true, tcolor -> {
+        AndroidUtilities.setNavigationBarColor(getWindow(), ColorUtils.setAlphaComponent(baseFragment.getNavigationBarColor(), 0), true, tcolor -> {
             navBarColorKey = null;
             navBarColor = tcolor;
             containerView.invalidate();

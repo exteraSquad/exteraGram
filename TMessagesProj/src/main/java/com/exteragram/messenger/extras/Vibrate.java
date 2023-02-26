@@ -19,15 +19,19 @@ import android.os.VibratorManager;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.exteragram.messenger.ExteraConfig;
-
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
+import org.telegram.ui.ActionBar.BaseFragment;
 
-public class Vibrate {
+public final class Vibrate {
 
     private final static long time = 200L;
+    private static long[] vibrationWaveFormDurationPattern = {0, 1};
 
+    public static void disableHapticFeedback(BaseFragment fragment) {
+        disableHapticFeedback(fragment.getFragmentView());
+    }
     public static void disableHapticFeedback(View view) {
         if (view == null) {
             return;
@@ -42,32 +46,34 @@ public class Vibrate {
     }
 
     public static void vibrate() {
-
-        if (ExteraConfig.disableVibration) {
-            return;
-        }
-
         Vibrator vibrator;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             VibratorManager vibratorManager = (VibratorManager) ApplicationLoader.applicationContext.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
             vibrator = vibratorManager.getDefaultVibrator();
         } else {
-            vibrator = (Vibrator) ApplicationLoader.applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator = AndroidUtilities.getVibrator();
         }
         if (vibrator != null && !vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                try {
-                    vibrator.vibrate(VibrationEffect.createOneShot(time, VibrationEffect.DEFAULT_AMPLITUDE));
-                } catch (Exception e) {
-                    FileLog.e("Failed to vibrate");
-                }
-            } else {
-                try {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    VibrationEffect vibrationEffect = VibrationEffect.createWaveform(vibrationWaveFormDurationPattern, -1);
+                    vibrator.cancel();
+                    vibrator.vibrate(vibrationEffect);
+                    setDefaultPattern();
+                } else {
                     vibrator.vibrate(time);
-                } catch (Exception e) {
-                    FileLog.e("Failed to vibrate");
                 }
+            } catch (Exception e) {
+                FileLog.e("Failed to vibrate");
             }
         }
+    }
+
+    public static void setPattern(long[] pattern) {
+        vibrationWaveFormDurationPattern = pattern;
+    }
+
+    public static void setDefaultPattern() {
+        Vibrate.setPattern(new long[]{0, 1});
     }
 }

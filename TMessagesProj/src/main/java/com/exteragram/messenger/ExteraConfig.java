@@ -24,7 +24,6 @@ import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class ExteraConfig {
 
     public static int eventType;
     public static boolean forceSnow;
-    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures, downloads;
+    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures;
 
     // General
     public static int cameraType;
@@ -199,7 +198,6 @@ public class ExteraConfig {
             calls = preferences.getBoolean("calls", false);
             peopleNearby = preferences.getBoolean("peopleNearby", false);
             archivedChats = preferences.getBoolean("archivedChats", true);
-            downloads = preferences.getBoolean("downloads", true);
             savedMessages = preferences.getBoolean("savedMessages", true);
             scanQr = preferences.getBoolean("scanQr", true);
             inviteFriends = preferences.getBoolean("inviteFriends", false);
@@ -305,9 +303,6 @@ public class ExteraConfig {
                 break;
             case 12:
                 editor.putBoolean("changeStatus", changeStatus ^= true).apply();
-                break;
-            case 13:
-                editor.putBoolean("downloads", downloads ^= true).apply();
                 break;
         }
     }

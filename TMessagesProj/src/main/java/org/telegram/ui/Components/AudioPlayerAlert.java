@@ -2416,7 +2416,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                         onImageUpdated(imageReceiver);
                     }
                 });
-                imageViews[i].setRoundRadius(AndroidUtilities.dp(12));
+                imageViews[i].setRoundRadius(AndroidUtilities.dp(10));
                 if (i == 1) {
                     imageViews[i].setVisibility(GONE);
                 }

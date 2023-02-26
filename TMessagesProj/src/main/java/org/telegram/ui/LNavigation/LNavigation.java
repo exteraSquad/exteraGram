@@ -42,6 +42,7 @@ import androidx.dynamicanimation.animation.SpringForce;
 import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.extras.Vibrate;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageLoader;
@@ -655,6 +656,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
     @Override
     public boolean presentFragment(NavigationParams params) {
         BaseFragment fragment = params.fragment;
+        Vibrate.disableHapticFeedback(fragment);
         if (!params.isFromDelay && (fragment == null || checkTransitionAnimation() || delegate != null && params.checkPresentFromDelegate &&
                 !delegate.needPresentFragment(this, params) || !fragment.onFragmentCreate() || delayedPresentAnimation != null)) {
             return false;

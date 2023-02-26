@@ -66,6 +66,7 @@ import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -290,6 +291,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
         });
 
         return true;
+    }
+
+    @Override
+    public int getNavigationBarColor() {
+        return getThemedColor(ExteraUtils.getNavigationBarColorKey());
     }
 
     @Override

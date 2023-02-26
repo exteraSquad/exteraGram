@@ -112,6 +112,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.extras.PermissionUtils;
+import com.exteragram.messenger.extras.Vibrate;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.zxing.common.detector.MathUtils;
 
@@ -1350,7 +1351,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         return;
                     }
                     if (messageObject.contentType == 0) {
-                        limitReached = selected && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 200;
+                        limitReached = selected && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 100;
                         RecyclerView.ViewHolder holder = chatListView.findViewHolderForAdapterPosition(position);
                         if (holder != null && holder.itemView instanceof ChatMessageCell) {
                             processRowSelect(holder.itemView, false, x, y);
@@ -3923,7 +3924,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         if (Math.abs(dx) >= AndroidUtilities.dp(50)) {
                             if (!wasTrackingVibrate) {
                                 try {
-                                    if (!ExteraConfig.disableVibration) performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                 } catch (Exception ignore) {}
                                 wasTrackingVibrate = true;
                             }
@@ -5804,7 +5805,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             getMessagesController().markMentionsAsRead(dialog_id, getTopicId());
             hasAllMentionsLocal = true;
             showMentionDownButton(false, true);
-            if (!ExteraConfig.disableVibration) view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             return true;
         });
 
@@ -6217,7 +6218,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             reactionsMentionCount = 0;
             updateReactionsMentionButton(true);
             getMessagesController().markReactionsAsRead(dialog_id, getTopicId());
-            if (!ExteraConfig.disableVibration) view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             return false;
         });
         reactionsMentiondownButton.setVisibility(View.INVISIBLE);
@@ -14265,12 +14266,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                 }
             } else {
-                if (selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 200) {
+                if (selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 100) {
                     AndroidUtilities.shakeView(selectedMessagesCountTextView);
-                    Vibrator vibrator = (Vibrator) ApplicationLoader.applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
-                    if (vibrator != null) {
-                        vibrator.vibrate(200);
-                    }
+                    Vibrate.vibrate();
                     return;
                 }
                 selectedMessagesIds[index].put(messageObject.getId(), messageObject);
@@ -17462,7 +17460,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     showPollSolution(cell.getMessageObject(), results);
                                     cell.showHintButton(false, true, 0);
                                 }
-                                if (!ExteraConfig.disableVibration) pollView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                                pollView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                 break;
                             }
                         }
@@ -29248,7 +29246,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
             if (longpress) {
                 if (!ChatObject.isChannelAndNotMegaGroup(currentChat) || dialog_id >= 0) {
-                    if (!ExteraConfig.disableVibration) cell.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                    cell.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                     FrameLayout scrimPopupContainerLayout = new FrameLayout(getParentActivity()) {
                         @Override
                         public boolean dispatchKeyEvent(KeyEvent event) {
@@ -31045,6 +31043,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     @Override
     public int getNavigationBarColor() {
         return getThemedColor(ExteraUtils.getNavigationBarColorKey());
+    }
+
+    @Override
+    public void setNavigationBarColor(int color) {
+        color = getNavigationBarColor();
+        super.setNavigationBarColor(color);
     }
 
     @Override

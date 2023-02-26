@@ -258,7 +258,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         int contactsIcon;
         int callsIcon;
         int archiveIcon = R.drawable.msg_archive;
-        int downloadsIcon = R.drawable.msg_download;
         int scanQrIcon = R.drawable.msg_qrcode;;
         int savedIcon;
         int settingsIcon;
@@ -330,7 +329,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         if (ExteraConfig.calls) items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
         if (ExteraConfig.peopleNearby && hasGps) items.add(new Item(12, LocaleController.getString("PeopleNearby", R.string.PeopleNearby), peopleNearbyIcon));
         if (ExteraConfig.savedMessages) items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
-        if (ExteraConfig.downloads) items.add(new Item(17, LocaleController.getString("DownloadsTabs", R.string.DownloadsTabs), downloadsIcon));
         items.add(new Item(8, LocaleController.getString("Settings", R.string.Settings), settingsIcon));
         if (ExteraConfig.inviteFriends || ExteraConfig.telegramFeatures || ExteraConfig.scanQr) items.add(null);
         if (ExteraConfig.scanQr) items.add(new Item(16, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), scanQrIcon));

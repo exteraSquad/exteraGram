@@ -7052,7 +7052,6 @@ public class RecyclerView extends ViewGroup implements ScrollingView,
             try {
                 TraceCompat.beginSection(TRACE_CREATE_VIEW_TAG);
                 final VH holder = onCreateViewHolder(parent, viewType);
-                if (ExteraConfig.disableVibration) Vibrate.disableHapticFeedback(holder.itemView);
                 if (holder.itemView.getParent() != null) {
                     throw new IllegalStateException("ViewHolder views must not be attached when"
                             + " created. Ensure that you are not passing 'true' to the attachToRoot"

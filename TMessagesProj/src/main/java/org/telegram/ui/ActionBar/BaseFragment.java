@@ -55,10 +55,6 @@ import org.telegram.ui.Components.LayoutHelper;
 
 import java.util.ArrayList;
 
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
-import com.exteragram.messenger.preferences.BasePreferencesActivity;
-
 public abstract class BaseFragment {
 
     private boolean isFinished;
@@ -218,7 +214,6 @@ public abstract class BaseFragment {
     public void setParentFragment(BaseFragment fragment) {
         setParentLayout(fragment.parentLayout);
         fragmentView = createView(parentLayout.getView().getContext());
-        if (ExteraConfig.disableVibration) Vibrate.disableHapticFeedback(fragmentView);
     }
 
     public void setParentLayout(INavigationLayout layout) {

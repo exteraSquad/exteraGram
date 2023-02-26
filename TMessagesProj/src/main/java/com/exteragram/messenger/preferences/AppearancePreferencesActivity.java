@@ -106,7 +106,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int callsRow;
     private int peopleNearbyRow;
     private int archivedChatsRow;
-    private int downloadsRow;
     private int savedMessagesRow;
     private int scanQrRow;
     private int inviteFriendsRow;
@@ -157,7 +156,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         callsRow = newRow();
         peopleNearbyRow = ExteraUtils.hasGps() ? newRow() : -1;
         savedMessagesRow = newRow();
-        downloadsRow = newRow();
         scanQrRow = newRow();
         inviteFriendsRow = newRow();
         telegramFeaturesRow = newRow();
@@ -273,10 +271,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ExteraConfig.toggleDrawerElements(11);
             ((TextCell) view).setChecked(ExteraConfig.telegramFeatures);
             parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == downloadsRow) {
-            ExteraConfig.toggleDrawerElements(13);
-            ((TextCell) view).setChecked(ExteraConfig.downloads);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == forceSnowRow) {
             ExteraConfig.editor.putBoolean("forceSnow", ExteraConfig.forceSnow ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.forceSnow);
@@ -292,7 +286,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 ExteraConfig.editor.putInt("eventType", ExteraConfig.eventType = which).apply();
                 parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(eventChooserRow, payload);
-                listAdapter.notifyItemRangeChanged(statusRow, 13);
+                listAdapter.notifyItemRangeChanged(statusRow, 12);
             });
         } else if (position == hideActionBarStatusRow) {
             ExteraConfig.editor.putBoolean("hideActionBarStatus", ExteraConfig.hideActionBarStatus ^= true).apply();
@@ -452,8 +446,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("SavedMessages", R.string.SavedMessages), ExteraConfig.savedMessages, icons[5], true);
                     } else if (position == scanQrRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), ExteraConfig.scanQr, R.drawable.msg_qrcode, true);
-                    } else if (position == downloadsRow) {
-                        textCell.setTextAndCheckAndIcon(LocaleController.getString("DownloadsTabs", R.string.DownloadsTabs), ExteraConfig.downloads, R.drawable.msg_download, true);
                     } else if (position == inviteFriendsRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("InviteFriends", R.string.InviteFriends), ExteraConfig.inviteFriends, icons[6], true);
                     } else if (position == telegramFeaturesRow) {
@@ -491,7 +483,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 return 1;
             } else if (position == statusRow || position == newGroupRow || position == newSecretChatRow || position == newChannelRow ||
                     position == contactsRow || position == callsRow || position == peopleNearbyRow || position == archivedChatsRow ||
-                    position == savedMessagesRow || position == scanQrRow || position == inviteFriendsRow || position == telegramFeaturesRow || position == downloadsRow) {
+                    position == savedMessagesRow || position == scanQrRow || position == inviteFriendsRow || position == telegramFeaturesRow) {
                 return 2;
             } else if (position == appearanceHeaderRow || position == drawerHeaderRow || position == drawerOptionsHeaderRow || position == mainScreenHeaderRow || position == solarIconsHeaderRow) {
                 return 3;

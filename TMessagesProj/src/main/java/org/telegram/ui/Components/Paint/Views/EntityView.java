@@ -89,7 +89,7 @@ public class EntityView extends FrameLayout {
 
                 recognizedLongPress = true;
                 if (delegate != null) {
-                    if (!ExteraConfig.disableVibration) performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                    performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                     delegate.onEntityLongClicked(EntityView.this);
                 }
             }

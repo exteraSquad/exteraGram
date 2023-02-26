@@ -2556,8 +2556,8 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                 } else if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
                     backspacePressed = false;
                     if (!backspaceOnce) {
-                        if (delegate != null && delegate.onBackspace() && !ExteraConfig.disableVibration) {
-                            if (!ExteraConfig.disableVibration) backspaceButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                        if (delegate != null && delegate.onBackspace()) {
+                            backspaceButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
                         }
                     }
                 }
@@ -5159,8 +5159,8 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             if (!backspacePressed) {
                 return;
             }
-            if (delegate != null && delegate.onBackspace() && !ExteraConfig.disableVibration) {
-                if (!ExteraConfig.disableVibration) backspaceButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+            if (delegate != null && delegate.onBackspace()) {
+                backspaceButton.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
             }
             backspaceOnce = true;
             postBackspaceRunnable(Math.max(50, time - 100));

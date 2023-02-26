@@ -20,8 +20,6 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -71,7 +69,7 @@ import org.telegram.ui.Components.SuggestEmojiView;
 
 import java.util.ArrayList;
 
-import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.extras.Vibrate;
 
 public class ContentPreviewViewer {
 
@@ -879,18 +877,9 @@ public class ContentPreviewViewer {
         return false;
     }
 
-    VibrationEffect vibrationEffect;
-
     protected void runSmoothHaptic() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            final Vibrator vibrator = (Vibrator) containerView.getContext().getSystemService(Context.VIBRATOR_SERVICE);
-            if (vibrationEffect == null) {
-                long[] vibrationWaveFormDurationPattern = {0, 2};
-                vibrationEffect = VibrationEffect.createWaveform(vibrationWaveFormDurationPattern, -1);
-            }
-            vibrator.cancel();
-            vibrator.vibrate(vibrationEffect);
-        }
+        Vibrate.setPattern(new long[]{0, 2});
+        Vibrate.vibrate();
     }
 
     public boolean onInterceptTouchEvent(MotionEvent event, final RecyclerListView listView, final int height, ContentPreviewViewerDelegate contentPreviewViewerDelegate, Theme.ResourcesProvider resourcesProvider) {
