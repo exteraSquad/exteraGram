@@ -39,6 +39,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.Surface;
@@ -50,7 +52,6 @@ import android.widget.ImageView;
 import androidx.core.graphics.ColorUtils;
 
 import com.exteragram.messenger.camera.BaseCameraView;
-import com.exteragram.messenger.extras.Vibrate;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
@@ -647,11 +648,7 @@ public class CameraView extends BaseCameraView implements TextureView.SurfaceTex
     }
 
     public void runHaptic() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Vibrate.vibrate();
-        } else {
-            performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-        }
+        performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
     }
 
 

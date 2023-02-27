@@ -59,7 +59,6 @@ public class ExteraConfig {
 
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
-    public static boolean disableVibration;
     public static boolean disableProximitySensor;
     public static int tabletMode;
 
@@ -152,7 +151,6 @@ public class ExteraConfig {
 
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
-            disableVibration = preferences.getBoolean("disableVibration", false);
             disableProximitySensor = preferences.getBoolean("disableProximitySensor", false);
             tabletMode = preferences.getInt("tabletMode", 0);
 

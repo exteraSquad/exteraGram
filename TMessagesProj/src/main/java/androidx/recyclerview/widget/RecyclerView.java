@@ -97,9 +97,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
-
 /**
  * A flexible view for providing a limited window into a large data set.
  *

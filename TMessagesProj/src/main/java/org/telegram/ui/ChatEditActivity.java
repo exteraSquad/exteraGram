@@ -20,8 +20,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -84,7 +84,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 
 public class ChatEditActivity extends BaseFragment implements ImageUpdater.ImageUpdaterDelegate, NotificationCenter.NotificationCenterDelegate {
 
@@ -1192,7 +1191,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
             return;
         }
         if (nameTextView.length() == 0) {
-            Vibrate.vibrate();
+            nameTextView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             AndroidUtilities.shakeView(nameTextView);
             return;
         }

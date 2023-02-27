@@ -39,9 +39,9 @@ public class LiteMode {
 
     public static final int PRESET_LOW = 0;
     public static final int PRESET_MEDIUM = (
-        FLAGS_ANIMATED_STICKERS |
-        FLAGS_ANIMATED_EMOJI |
-        FLAGS_CHAT |
+        FLAG_ANIMATED_STICKERS_CHAT |
+        FLAG_ANIMATED_EMOJI_CHAT |
+        FLAG_CHAT_FORUM_TWOCOLUMN |
         FLAG_CALLS_ANIMATIONS |
         FLAG_AUTOPLAY_VIDEOS |
         FLAG_AUTOPLAY_GIFS

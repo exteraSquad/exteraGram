@@ -28,6 +28,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
@@ -73,7 +74,6 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Components.AlertsCreator;
-import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.CustomPhoneKeyboardView;
 import org.telegram.ui.Components.EditTextBoldCursor;
@@ -91,7 +91,6 @@ import org.telegram.ui.Components.spoilers.SpoilersTextView;
 import java.util.ArrayList;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 import com.exteragram.messenger.ExteraUtils;
 
 public class TwoStepVerificationSetupActivity extends BaseFragment {
@@ -2102,7 +2101,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
         if (getParentActivity() == null) {
             return;
         }
-        Vibrate.vibrate();
+        shakeView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         if (clear) {
             field.setText("");
         }

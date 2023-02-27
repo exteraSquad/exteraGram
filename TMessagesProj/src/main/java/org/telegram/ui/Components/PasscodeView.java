@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -71,9 +72,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 
 public class PasscodeView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
     private final static float BACKGROUND_SPRING_STIFFNESS = 300f;
@@ -1065,8 +1063,10 @@ public class PasscodeView extends FrameLayout implements NotificationCenter.Noti
     }
 
     private void onPasscodeError() {
-        Vibrate.vibrate();
-        shakeTextView(2, 0);
+        Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (v != null) {
+            v.vibrate(200);
+        }        shakeTextView(2, 0);
     }
 
     public void onResume() {
@@ -1517,7 +1517,7 @@ public class PasscodeView extends FrameLayout implements NotificationCenter.Noti
         fingerprintImageView.setImageResource(R.drawable.ic_fingerprint_error);
         fingerprintStatusTextView.setText(error);
         fingerprintStatusTextView.setTextColor(0xfff4511e);
-        Vibrate.vibrate();
+        fingerprintStatusTextView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         AndroidUtilities.shakeView(fingerprintStatusTextView);
     }
 

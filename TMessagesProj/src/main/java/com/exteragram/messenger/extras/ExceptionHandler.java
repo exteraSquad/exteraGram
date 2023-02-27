@@ -15,7 +15,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.exteragram.messenger.ExteraConfig;
+
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.UserConfig;
 
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     private final Thread.UncaughtExceptionHandler defHandler;
@@ -26,8 +30,9 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(@NonNull Thread th, @NonNull Throwable ex) {
-        // TODO
-        // for now just log crashes into telegram logs
+        // TODO rework
+        if (ExteraConfig.isExteraDev(UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser()))
+            AndroidUtilities.addToClipboard(Log.getStackTraceString(ex));
         FileLog.e(Log.getStackTraceString(ex));
         defHandler.uncaughtException(th, ex);
     }

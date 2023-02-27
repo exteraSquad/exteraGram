@@ -196,6 +196,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ((TextCheckCell) view).setChecked(ExteraConfig.forceBlur);
         } else if (position == alternativeNavigationRow) {
             SharedConfig.editor.putBoolean("useLNavigation", SharedConfig.useLNavigation ^= true).apply();
+            SharedConfig.saveConfig();
             ((TextCheckCell) view).setChecked(SharedConfig.useLNavigation);
             parentLayout.rebuildAllFragmentViews(false, false);
             showBulletin();
@@ -274,7 +275,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         } else if (position == forceSnowRow) {
             ExteraConfig.editor.putBoolean("forceSnow", ExteraConfig.forceSnow ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.forceSnow);
-            if (SharedConfig.useLNavigation) showBulletin();
+            showBulletin();
         } else if (position == eventChooserRow) {
             if (getParentActivity() == null) {
                 return;

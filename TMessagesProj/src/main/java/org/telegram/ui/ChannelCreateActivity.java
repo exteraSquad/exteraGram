@@ -22,6 +22,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -34,6 +35,7 @@ import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -44,7 +46,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 
 import androidx.annotation.NonNull;
 
@@ -346,7 +347,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                             return;
                         }
                         if (nameTextView.length() == 0) {
-                            Vibrate.vibrate();
+                            nameTextView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                             AndroidUtilities.shakeView(nameTextView);
                             return;
                         }
@@ -368,7 +369,7 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                                 return;
                             } else {
                                 if (!lastNameAvailable) {
-                                    Vibrate.vibrate();
+                                    checkTextView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                                     AndroidUtilities.shakeView(checkTextView);
                                     return;
                                 } else {

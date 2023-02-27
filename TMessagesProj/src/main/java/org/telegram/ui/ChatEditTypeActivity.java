@@ -27,6 +27,7 @@ import android.text.TextWatcher;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
+import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,8 +82,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
-import com.exteragram.messenger.extras.Vibrate;
 
 public class ChatEditTypeActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -1126,7 +1125,7 @@ public class ChatEditTypeActivity extends BaseFragment implements NotificationCe
         String wasUsername = ChatObject.getPublicUsername(currentChat, true);
         if (!isPrivate && ((wasUsername == null && usernameTextView.length() != 0) || (wasUsername != null && !wasUsername.equalsIgnoreCase(usernameTextView.getText().toString())))) {
             if (usernameTextView.length() != 0 && !lastNameAvailable) {
-                Vibrate.vibrate();
+                checkTextView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                 AndroidUtilities.shakeView(checkTextView);
                 updateDoneProgress(false);
                 return false;

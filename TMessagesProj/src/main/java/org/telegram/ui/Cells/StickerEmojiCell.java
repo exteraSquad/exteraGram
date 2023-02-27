@@ -14,13 +14,12 @@ import android.graphics.Paint;
 import android.os.Vibrator;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.exteragram.messenger.extras.Vibrate;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.DocumentObject;
@@ -317,8 +316,7 @@ public class StickerEmojiCell extends FrameLayout implements NotificationCenter.
 
     public void showRequirePremiumAnimation() {
         if (premiumIconView != null) {
-            Vibrate.vibrate();
-            AndroidUtilities.shakeView(premiumIconView);
+            premiumIconView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         }
     }
 

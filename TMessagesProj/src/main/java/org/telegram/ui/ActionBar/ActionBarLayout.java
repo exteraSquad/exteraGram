@@ -48,7 +48,6 @@ import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.Components.BackButtonMenu;
 import org.telegram.ui.Components.Bulletin;
@@ -63,7 +62,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 
 public class ActionBarLayout extends FrameLayout implements INavigationLayout, FloatingDebugProvider {
 
@@ -1154,7 +1152,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     @Override
     public boolean presentFragment(NavigationParams params) {
         BaseFragment fragment = params.fragment;
-        Vibrate.disableHapticFeedback(fragment);
         boolean removeLast = params.removeLast;
         boolean forceWithoutAnimation = params.noAnimation;
         boolean check = params.checkPresentFromDelegate;

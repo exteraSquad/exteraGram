@@ -72,7 +72,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int generalHeaderRow;
     private int formatTimeWithSecondsRow;
     private int disableNumberRoundingRow;
-    private int disableVibrationRow;
     private int disableProximitySensorRow;
     private int tabletModeRow;
     private int generalDividerRow;
@@ -118,7 +117,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         generalHeaderRow = newRow();
         disableNumberRoundingRow = newRow();
         formatTimeWithSecondsRow = newRow();
-        disableVibrationRow = -1; // need to be refactored
         disableProximitySensorRow = newRow();
         tabletModeRow = newRow();
         generalDividerRow = newRow();
@@ -158,10 +156,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
             ((TextCheckCell) view).setChecked(ExteraConfig.formatTimeWithSeconds);
             LocaleController.getInstance().recreateFormatters();
             parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == disableVibrationRow) {
-            ExteraConfig.editor.putBoolean("disableVibration", ExteraConfig.disableVibration ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.disableVibration);
-            showBulletin();
         } else if (position == disableProximitySensorRow) {
             ExteraConfig.editor.putBoolean("disableProximitySensor", ExteraConfig.disableProximitySensor ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableProximitySensor);
@@ -307,8 +301,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("DisableNumberRounding", R.string.DisableNumberRounding), "1.23K -> 1,234", ExteraConfig.disableNumberRounding, true, true);
                     } else if (position == formatTimeWithSecondsRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("FormatTimeWithSeconds", R.string.FormatTimeWithSeconds), "12:34 -> 12:34:56", ExteraConfig.formatTimeWithSeconds, true, true);
-                    } else if (position == disableVibrationRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("DisableVibration", R.string.DisableVibration), ExteraConfig.disableVibration, true);
                     } else if (position == disableProximitySensorRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableProximitySensor", R.string.DisableProximitySensor), ExteraConfig.disableProximitySensor, true);
                     } else if (position == disableAnimatedAvatarsRow) {

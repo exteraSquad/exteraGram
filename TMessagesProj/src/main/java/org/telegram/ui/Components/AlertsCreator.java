@@ -126,7 +126,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 
 public class AlertsCreator {
     public final static int PERMISSIONS_REQUEST_TOP_ICON_SIZE = 72;
@@ -5565,7 +5564,7 @@ public class AlertsCreator {
                 return;
             }
             if (editText.length() == 0) {
-                Vibrate.vibrate();
+                editText.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                 AndroidUtilities.shakeView(editText);
                 return;
             }

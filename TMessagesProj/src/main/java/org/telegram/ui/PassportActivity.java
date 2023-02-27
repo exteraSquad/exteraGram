@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
@@ -45,6 +46,7 @@ import android.util.Base64;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -141,7 +143,6 @@ import java.util.TimerTask;
 import javax.crypto.Cipher;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.Vibrate;
 
 public class PassportActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -2233,14 +2234,14 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
                 TLRPC.TL_secureValue value = getValueByType(requiredType, true);
                 if (value == null) {
-                    Vibrate.vibrate();
+                    getViewByType(requiredType).performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                     AndroidUtilities.shakeView(getViewByType(requiredType));
                     return;
                 }
                 String key = getNameForType(requiredType.type);
                 HashMap<String, String> errors = errorsMap.get(key);
                 if (errors != null && !errors.isEmpty()) {
-                    Vibrate.vibrate();
+                    getViewByType(requiredType).performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                     AndroidUtilities.shakeView(getViewByType(requiredType));
                     return;
                 }
@@ -3575,7 +3576,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         if (field == null) {
             return;
         }
-        Vibrate.vibrate();
+        field.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         AndroidUtilities.shakeView(field);
         scrollToField(field);
     }
@@ -6252,7 +6253,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         if (getParentActivity() == null) {
             return;
         }
-        Vibrate.vibrate();
+        inputFields[FIELD_PASSWORD].performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
         if (clear) {
             inputFields[FIELD_PASSWORD].setText("");
         }

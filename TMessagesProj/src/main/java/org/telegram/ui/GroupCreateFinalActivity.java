@@ -25,10 +25,11 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.InputFilter;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -80,10 +81,6 @@ import org.telegram.ui.Components.VerticalPositionAutoAnimator;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.exteragram.messenger.extras.Vibrate;
 import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.ExteraConfig;
 
@@ -634,7 +631,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                 return;
             }
             if (editText.length() == 0) {
-                Vibrate.vibrate();
+                editText.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                 AndroidUtilities.shakeView(editText);
                 return;
             }

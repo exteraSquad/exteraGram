@@ -313,6 +313,17 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
     }
 
     @Override
+    public int getNavigationBarColor() {
+        return getThemedColor(/*ExteraUtils.getNavigationBarColorKey()*/ Theme.key_windowBackgroundWhite);
+    }
+
+    @Override
+    public void setNavigationBarColor(int color) {
+        color = getNavigationBarColor();
+        super.setNavigationBarColor(color);
+    }
+
+    @Override
     public View createView(Context context) {
         fragmentView = contentView = new SizeNotifierFrameLayout(context) {
             {
@@ -1157,10 +1168,10 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
         bottomOverlayContainer = new FrameLayout(context) {
             @Override
             protected void dispatchDraw(Canvas canvas) {
-                int bottom = Theme.chat_composeShadowDrawable.getIntrinsicHeight();
-                Theme.chat_composeShadowDrawable.setBounds(0, 0, getMeasuredWidth(), bottom);
-                Theme.chat_composeShadowDrawable.draw(canvas);
                 super.dispatchDraw(canvas);
+                int bottom = Theme.chat_composeShadowDrawable.getIntrinsicHeight();
+                if (!ExteraConfig.disableDividers)
+                    canvas.drawLine(0, bottom, getWidth(), bottom, Theme.dividerPaint);
             }
         };
         bottomOverlayChatText = new UnreadCounterTextView(context);

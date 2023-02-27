@@ -16,12 +16,13 @@ import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,8 +79,6 @@ import org.telegram.ui.Components.RecyclerListView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-
-import com.exteragram.messenger.extras.Vibrate;
 
 public class ChatRightsEditActivity extends BaseFragment {
 
@@ -1206,8 +1205,8 @@ public class ChatRightsEditActivity extends BaseFragment {
         if (currentType == TYPE_ADMIN || currentType == TYPE_ADD_BOT) {
             if (rankRow != -1 && currentRank.codePointCount(0, currentRank.length()) > MAX_RANK_LENGTH) {
                 listView.smoothScrollToPosition(rankRow);
-                Vibrate.vibrate();
                 RecyclerView.ViewHolder holder = listView.findViewHolderForAdapterPosition(rankHeaderRow);
+                holder.itemView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                 if (holder != null) {
                     AndroidUtilities.shakeView(holder.itemView);
                 }
