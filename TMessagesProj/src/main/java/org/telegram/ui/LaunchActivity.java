@@ -1139,7 +1139,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     private BaseFragment getClientNotActivatedFragment() {
-        if (LoginActivity.loadCurrentState(false).getInt("currentViewNum", 0) != 0) {
+        if (LoginActivity.loadCurrentState(false, currentAccount).getInt("currentViewNum", 0) != 0) {
             return new LoginActivity();
         }
         return new IntroActivity();
@@ -3050,7 +3050,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     }
                 }
             }
-            actionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
+            if (SharedConfig.useLNavigation) {
+                actionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
+            }
             if (AndroidUtilities.isTablet()) {
                 layersActionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
                 rightActionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
