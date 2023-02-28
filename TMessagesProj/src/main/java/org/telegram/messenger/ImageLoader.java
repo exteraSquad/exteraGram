@@ -2183,7 +2183,7 @@ public class ImageLoader {
                     if (dirs != null) {
                         for (int a = 0, N = dirs.size(); a < N; a++) {
                             File dir = dirs.get(a);
-                            if (dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir) && dir.canWrite()) {
+                            if (dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
                                 path = dir;
                                 break;
                             }
@@ -2217,7 +2217,7 @@ public class ImageLoader {
                     ArrayList<File> dirs = AndroidUtilities.getDataDirs();
                     for (int a = 0, N = dirs.size(); a < N; a++) {
                         File dir = dirs.get(a);
-                        if (dir != null && !TextUtils.isEmpty(SharedConfig.storageCacheDir) && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir) && dir.canWrite()) {
+                        if (dir != null && !TextUtils.isEmpty(SharedConfig.storageCacheDir) && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
                             path = dir;
                             telegramPath = new File(path, "exteraGram");
                             telegramPath.mkdirs();

@@ -1899,9 +1899,6 @@ public class AndroidUtilities {
                             result = new ArrayList<>();
                         }
                         File file = new File(path.substring(0, idx));
-                        if (!file.canWrite()) {
-                            continue;
-                        }
                         for (int i = 0; i < result.size(); i++) {
                             if (result.get(i).getPath().equals(file.getPath())) {
                                 continue;
@@ -1936,7 +1933,7 @@ public class AndroidUtilities {
                 file = dirs[0];
                 if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
                     for (File dir : dirs) {
-                        if (dir != null && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir) && dir.canWrite()) {
+                        if (dir != null && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
                             file = dir;
                             break;
                         }
