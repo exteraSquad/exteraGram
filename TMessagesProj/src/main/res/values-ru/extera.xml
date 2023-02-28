@@ -182,5 +182,6 @@
     <string name="AppIconGlow">Свечение</string>
     <string name="AppIconSpace">Космос</string>
     <string name="AppIconWinter">Зима</string>
+    <string name="AppIconVK">ВК</string>
     <string name="AppIconRed">Красный бля</string>
 </resources>

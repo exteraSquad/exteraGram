@@ -191,5 +191,6 @@
     <string name="AppIconGlow">Glow</string>
     <string name="AppIconSpace">Space</string>
     <string name="AppIconWinter">Winter</string>
+    <string name="AppIconVK">ВК</string>
     <string name="AppIconRed">RedEbalo</string>
 </resources>

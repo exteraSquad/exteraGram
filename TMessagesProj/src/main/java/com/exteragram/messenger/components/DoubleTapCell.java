@@ -164,7 +164,7 @@ public class DoubleTapCell extends LinearLayout {
                 int finalI = i;
                 for (int j = 0; j < 2; j++) {
                     int finalJ = j;
-                    circleSizeAnimator[j] = ValueAnimator.ofFloat(0f, 1f).setDuration(1500);
+                    circleSizeAnimator[j] = ValueAnimator.ofFloat(0f, 1f).setDuration(1300);
                     circleSizeAnimator[j].setStartDelay(j * 60L);
                     circleSizeAnimator[j].setInterpolator(Easings.easeInOutQuad);
                     circleSizeAnimator[j].addUpdateListener(animation -> {
@@ -172,7 +172,7 @@ public class DoubleTapCell extends LinearLayout {
                         invalidate();
                     });
 
-                    circleAnimator[j] = ValueAnimator.ofFloat(0f, 1f).setDuration(900);
+                    circleAnimator[j] = ValueAnimator.ofFloat(0f, 1f).setDuration(700);
                     circleAnimator[j].setStartDelay(150 + j * 80L);
                     circleAnimator[j].setInterpolator(Easings.easeInOutQuad);
                     circleAnimator[j].addUpdateListener(animation -> {
@@ -184,7 +184,7 @@ public class DoubleTapCell extends LinearLayout {
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
                             circleAnimator[finalJ].setFloatValues(1f, 0f);
-                            circleAnimator[finalJ].setDuration(650);
+                            circleAnimator[finalJ].setDuration(700);
                             circleAnimator[finalJ].removeAllListeners();
                             circleAnimator[finalJ].start();
                         }

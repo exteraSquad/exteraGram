@@ -10,6 +10,7 @@
     <color name="widget_edit_text">#999999</color>
     <color name="ic_background">#F54142</color>
     <color name="ic_background_beta">#747F9F</color>
+    <color name="ic_background_vk">#0079FF</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
