@@ -29,6 +29,7 @@ import com.exteragram.messenger.components.SolarIconsPreview;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.Theme;
@@ -59,6 +60,10 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort),
             LocaleController.getString("ActionBarTitleUsername", R.string.ActionBarTitleUsername),
             LocaleController.getString("ActionBarTitleName", R.string.ActionBarTitleName)
+    }, tabIcons = new CharSequence[]{
+            "Titles with Icons",
+            "Titles",
+            "Icons"
     }, events = new CharSequence[]{
             LocaleController.getString("DependsOnTheDate", R.string.DependsOnTheDate),
             LocaleController.getString("Default", R.string.Default),
@@ -72,6 +77,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int hideActionBarStatusRow;
     private int centerTitleRow;
     private int hideAllChatsRow;
+    private int tabIconsRow;
     private int tabStyleRow;
     private int actionBarTitleRow;
     private int mainScreenInfoRow;
@@ -121,6 +127,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         hideActionBarStatusRow = getUserConfig().isPremium() ? newRow() : -1;
         hideAllChatsRow = newRow();
         centerTitleRow = newRow();
+        tabIconsRow = ExteraConfig.isExteraDev(getUserConfig().getCurrentUser()) ? newRow() : -1;
         tabStyleRow = newRow();
         actionBarTitleRow = newRow();
         mainScreenInfoRow = newRow();
@@ -285,9 +292,9 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     R.drawable.msg_settings_ny, R.drawable.msg_saved_14, R.drawable.msg_contacts_hw
             }, LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), ExteraConfig.eventType, getContext(), which -> {
                 ExteraConfig.editor.putInt("eventType", ExteraConfig.eventType = which).apply();
-                parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(eventChooserRow, payload);
                 listAdapter.notifyItemRangeChanged(statusRow, 12);
+                getNotificationCenter().postNotificationName(NotificationCenter.mainUserInfoChanged);
             });
         } else if (position == hideActionBarStatusRow) {
             ExteraConfig.editor.putBoolean("hideActionBarStatus", ExteraConfig.hideActionBarStatus ^= true).apply();
@@ -304,6 +311,15 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(actionBarTitleRow, payload);
             });
+        } else if (position == tabIconsRow) {
+            if (getParentActivity() == null) {
+                return;
+            }
+            ExteraUtils.showDialog(tabIcons, LocaleController.getString("TabIcons", R.string.TabIcons), ExteraConfig.tabIcons, getContext(), i -> {
+                ExteraConfig.editor.putInt("tabIcons", ExteraConfig.tabIcons = i).apply();
+                listAdapter.notifyItemChanged(tabIconsRow, payload);
+                getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
+            });
         } else if (position == tabStyleRow) {
             if (getParentActivity() == null) {
                 return;
@@ -311,8 +327,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ExteraUtils.showDialog(styles, LocaleController.getString("TabStyle", R.string.TabStyle), ExteraConfig.tabStyle, getContext(), i -> {
                 ExteraConfig.editor.putInt("tabStyle", ExteraConfig.tabStyle = i).apply();
                 mainScreenSetupCell.updateTabStyle(true);
-                parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(tabStyleRow, payload);
+                getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
             });
         } else if (position == solarIconsRow) {
             ((TextCheckCell) view).setChecked(!ExteraConfig.useSolarIcons);
@@ -459,6 +475,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), events[ExteraConfig.eventType], payload, true);
                     } else if (position == actionBarTitleRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[ExteraConfig.actionBarTitle], payload, false);
+                    } else if (position == tabIconsRow) {
+                        textSettingsCell.setTextAndValue(LocaleController.getString("TabIcons", R.string.TabIcons), tabIcons[ExteraConfig.tabIcons], payload, true);
                     } else if (position == tabStyleRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("TabStyle", R.string.TabStyle), styles[ExteraConfig.tabStyle], payload, true);
                     }
@@ -488,7 +506,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 return 2;
             } else if (position == appearanceHeaderRow || position == drawerHeaderRow || position == drawerOptionsHeaderRow || position == mainScreenHeaderRow || position == solarIconsHeaderRow) {
                 return 3;
-            } else if (position == eventChooserRow || position == actionBarTitleRow || position == tabStyleRow) {
+            } else if (position == eventChooserRow || position == actionBarTitleRow || position == tabStyleRow || position == tabIconsRow) {
                 return 7;
             } else if (position == appearanceDividerRow || position == solarIconsInfoRow || position == mainScreenInfoRow || position == drawerOptionsDividerRow) {
                 return 8;

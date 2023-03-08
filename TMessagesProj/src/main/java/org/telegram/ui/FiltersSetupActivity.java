@@ -59,6 +59,7 @@ import org.telegram.ui.Components.RecyclerListView;
 import java.util.ArrayList;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.extras.FolderIcons;
 
 public class FiltersSetupActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -448,7 +449,12 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
         rowCount = 0;
         filterHelpRow = rowCount++;
         int count = getMessagesController().dialogFilters.size();
-        showAllChats = true;
+        if (!getUserConfig().isPremium()) {
+            count--;
+            showAllChats = false;
+        } else {
+            showAllChats = true;
+        }
         if (!suggestedFilters.isEmpty() && count < 10) {
             recommendedHeaderRow = rowCount++;
             recommendedStartRow = rowCount;
@@ -588,7 +594,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
             if (rowCount != this.rowCount) {
                 adapter.notifyDataSetChanged();
             } else {
-               adapter.notifyItemRangeChanged(0, rowCount);
+                adapter.notifyItemRangeChanged(0, rowCount);
             }
         } else if (id == NotificationCenter.suggestedFiltersLoaded) {
             updateRows(true);
@@ -784,8 +790,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
                         if (suggested.filter.exclude_muted) {
                             filter.flags |= MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_MUTED;
                         }
+                        filter.emoticon = TextUtils.isEmpty(suggested.filter.emoticon) ? FolderIcons.getEmoticonFromFlags(filter.flags).second : suggested.filter.emoticon;
                         ignoreUpdates = true;
-                        FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, true, true, true, true, false, FiltersSetupActivity.this, () -> {
+                        FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.emoticon, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, true, true, true, true, false, FiltersSetupActivity.this, () -> {
                             getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
                             ignoreUpdates = false;
                             ArrayList<TLRPC.TL_dialogFilterSuggested> suggestedFilters = getMessagesController().suggestedFilters;
@@ -956,7 +963,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
 
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-            boolean canMove = getUserConfig().isPremium() || !((viewHolder.itemView instanceof FilterCell) && ((FilterCell) viewHolder.itemView).currentFilter.isDefault()) || true;
+            boolean canMove = getUserConfig().isPremium() || !((viewHolder.itemView instanceof FilterCell) && ((FilterCell) viewHolder.itemView).currentFilter.isDefault());
             if (viewHolder.getItemViewType() != 2 || !canMove) {
                 return makeMovementFlags(0, 0);
             }
@@ -965,7 +972,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source, RecyclerView.ViewHolder target) {
-            boolean canMove = getUserConfig().isPremium() || !((target.itemView instanceof FilterCell) && ((FilterCell) target.itemView).currentFilter.isDefault()) || true;
+            boolean canMove = getUserConfig().isPremium() || !((target.itemView instanceof FilterCell) && ((FilterCell) target.itemView).currentFilter.isDefault());
             if (source.getItemViewType() != target.getItemViewType() || !canMove) {
                 return false;
             }

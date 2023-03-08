@@ -712,8 +712,8 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             if (ExteraConfig.hideCameraTile) {
                 position++;
             }
-            if (Build.VERSION.SDK_INT >= 23 && !ExteraConfig.hideCameraTile) {
-                if (adapter.needCamera && selectedAlbumEntry == galleryAlbumEntry && position == 0 && noCameraPermissions) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (adapter.needCamera && selectedAlbumEntry == galleryAlbumEntry && position == 0 && noCameraPermissions && !ExteraConfig.hideCameraTile) {
                     try {
                         parentAlert.baseFragment.getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, 18);
                     } catch (Exception ignore) {}

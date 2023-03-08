@@ -30,6 +30,7 @@
     <string name="HideAllChats">Hide \"%1$s\" Tab</string>
     <string name="CenterTitle">Center Title in Action Bar</string>
     <string name="ActionBarTitle">Title Text</string>
+    <string name="TabIcons">Tab Icons</string>
     <string name="TabStyle">Tab Style</string>
     <string name="TabStyleTextOnly">Text</string>
     <string name="TabStyleRounded">Rounded</string>
@@ -191,6 +192,6 @@
     <string name="AppIconGlow">Glow</string>
     <string name="AppIconSpace">Space</string>
     <string name="AppIconWinter">Winter</string>
-    <string name="AppIconVK">ВК</string>
+    <string name="AppIconVK">VK</string>
     <string name="AppIconRed">RedEbalo</string>
 </resources>

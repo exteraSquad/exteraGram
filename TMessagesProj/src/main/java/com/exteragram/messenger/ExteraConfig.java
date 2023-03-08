@@ -37,6 +37,7 @@ public class ExteraConfig {
     public static boolean hideActionBarStatus;
     public static boolean hideAllChats;
     public static boolean centerTitle;
+    public static int tabIcons; // icons with titles - 0, titles - 1, icons - 2
     public static int tabStyle;
     public static int actionBarTitle;
 
@@ -174,6 +175,7 @@ public class ExteraConfig {
             hideActionBarStatus = preferences.getBoolean("hideActionBarStatus", false);
             hideAllChats = preferences.getBoolean("hideAllChats", false);
             centerTitle = preferences.getBoolean("centerTitle", false);
+            tabIcons = preferences.getInt("tabIcons", 1);
             tabStyle = preferences.getInt("tabStyle", 1);
             actionBarTitle = preferences.getInt("actionBarTitle", 0);
 

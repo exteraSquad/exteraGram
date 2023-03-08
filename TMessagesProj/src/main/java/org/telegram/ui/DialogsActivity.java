@@ -2747,10 +2747,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (folderId != 0) {
                 actionBar.setTitle(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
             } else {
-                statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
-                statusDrawable.center = true;
-                actionBar.setTitle(ExteraUtils.getActionBarTitle(), statusDrawable);
-                updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
+                if (UserConfig.getInstance(currentAccount).isPremium()) {
+                    statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
+                    statusDrawable.center = true;
+                    actionBar.setTitle(ExteraUtils.getActionBarTitle(), statusDrawable);
+                    updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
+                } else {
+                    actionBar.setTitle(ExteraUtils.getActionBarTitle());
+                }
             }
             if (folderId == 0) {
                 actionBar.setSupportsHolidayImage(true);
@@ -3137,6 +3141,27 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 public void onDeletePressed(int id) {
                     showDeleteAlert(getMessagesController().dialogFilters.get(id));
                 }
+
+//                private int lastTitleType = ExteraConfig.tabIcons;
+//
+//                @Override
+//                public void onTabSelected(FilterTabsView.Tab tab, boolean forward, boolean animated) {
+//                    if (ExteraConfig.tabIcons != 2) {
+//                        if (lastTitleType == 2) {
+//                            actionBar.setTitle(actionBarDefaultTitle);
+//                            lastTitleType = ExteraConfig.tabIcons;
+//                        }
+//                        return;
+//                    }
+//                    if (!selectedDialogs.isEmpty()) {
+//                        return;
+//                    }
+//                    if (animated) {
+//                        actionBar.setTitleAnimatedX(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null, forward, 200);
+//                    } else {
+//                        actionBar.setTitle(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null);
+//                    }
+//                }
             });
         }
 
@@ -5320,7 +5345,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                         filter.neverShow.remove(alwaysShow.get(a));
                                     }
                                     filter.alwaysShow.addAll(alwaysShow);
-                                    FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
+                                    FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.emoticon, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
                                 }
                                 long did;
                                 if (alwaysShow.size() == 1) {
@@ -5356,7 +5381,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 filter.alwaysShow.remove(did);
                                 filter.pinnedDialogs.delete(did);
                             }
-                            FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, false, false, DialogsActivity.this, null);
+                            FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.emoticon, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, false, false, DialogsActivity.this, null);
                         }
                         long did;
                         if (neverShow.size() == 1) {
@@ -5449,9 +5474,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 filterTabsView.removeTabs();
                 for (int a = 0, N = filters.size(); a < N; a++) {
                     if (filters.get(a).isDefault()) {
-                        if (!ExteraConfig.hideAllChats) filterTabsView.addTab(a, 0, LocaleController.getString("FilterAllChats", R.string.FilterAllChats), true,  filters.get(a).locked);
+                        if (!ExteraConfig.hideAllChats) filterTabsView.addTab(a, 0, LocaleController.getString("FilterAllChats", R.string.FilterAllChats), "\uD83D\uDCAC", true,  filters.get(a).locked);
                     } else {
-                        filterTabsView.addTab(a, filters.get(a).localId, filters.get(a).name, false,  filters.get(a).locked);
+                        filterTabsView.addTab(a, filters.get(a).localId, filters.get(a).name, filters.get(a).emoticon == null ? "\uD83D\uDCC1" : filters.get(a).emoticon, false,  filters.get(a).locked);
                     }
                 }
                 if (ExteraConfig.hideAllChats && stableId <= 0) {
@@ -7058,7 +7083,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         getUndoView().showWithAction(0, UndoView.ACTION_UNPIN_DIALOGS, 1, 1600, null, null);
                     }
                     if (filter != null) {
-                        FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
+                        FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.emoticon, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
                     }
                     getMessagesController().reorderPinnedDialogs(folderId, null, 0);
                     updateCounters(true);
@@ -7279,7 +7304,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (!movingDialogFilters.isEmpty()) {
             for (int a = 0, N = movingDialogFilters.size(); a < N; a++) {
                 MessagesController.DialogFilter filter = movingDialogFilters.get(a);
-                FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
+                FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.emoticon, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
             }
             movingDialogFilters.clear();
         }
@@ -7665,7 +7690,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
         if (action == pin || action == pin2) {
             if (filter != null) {
-                FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
+                FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.emoticon, filter.name, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
             } else {
                 getMessagesController().reorderPinnedDialogs(folderId, null, 0);
             }

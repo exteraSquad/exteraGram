@@ -27,9 +27,12 @@ import android.view.inputmethod.InputConnection;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.CheckBox2;
@@ -39,13 +42,12 @@ import org.telegram.ui.Components.LayoutHelper;
 
 import java.util.ArrayList;
 
-import com.exteragram.messenger.ExteraConfig;
-
 public class PollEditTextCell extends FrameLayout {
 
     private EditTextBoldCursor textView;
     private ImageView deleteImageView;
     private ImageView moveImageView;
+    private ImageView[] iconImageView = new ImageView[2];
     private SimpleTextView textView2;
     private CheckBox2 checkBox;
     private boolean showNextButton;
@@ -58,6 +60,10 @@ public class PollEditTextCell extends FrameLayout {
     }
 
     public PollEditTextCell(Context context, boolean caption, OnClickListener onDelete) {
+        this(context, caption, onDelete, null);
+    }
+
+    public PollEditTextCell(Context context, boolean caption, OnClickListener onDelete, OnClickListener onChangeIcon) {
         super(context);
 
         if (caption) {
@@ -180,9 +186,33 @@ public class PollEditTextCell extends FrameLayout {
                 }
                 onCheckBoxClick(PollEditTextCell.this, !checkBox.isChecked());
             });
+        } else if (onChangeIcon != null && ExteraConfig.isExteraDev(UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser())) {
+            addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 19 : 66, 0, !LocaleController.isRTL ? 19 : 66, 0));
+            for (int i = 0; i < iconImageView.length; i++) {
+                iconImageView[i] = new ImageView(context);
+                iconImageView[i].setFocusable(true);
+                iconImageView[i].setVisibility(i == 0 ? VISIBLE : GONE);
+                iconImageView[i].setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_stickers_menuSelector)));
+                iconImageView[i].setScaleType(ImageView.ScaleType.CENTER);
+                iconImageView[i].setOnClickListener(onChangeIcon);
+                iconImageView[i].setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
+                iconImageView[i].setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+                addView(iconImageView[i], LayoutHelper.createFrame(48, 48, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 8, 2, 8, 0));
+            }
         } else {
             addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, 19, 0, 19, 0));
         }
+    }
+
+    public void setIcon(int icon, boolean animated) {
+        iconImageView[animated ? 1 : 0].setImageResource(icon);
+        if (animated) {
+            ImageView tmp = iconImageView[0];
+            iconImageView[0] = iconImageView[1];
+            iconImageView[1] = tmp;
+        }
+        AndroidUtilities.updateViewVisibilityAnimated(iconImageView[0], true, 0.5f, animated);
+        AndroidUtilities.updateViewVisibilityAnimated(iconImageView[1], false, 0.5f, animated);
     }
 
     public void createErrorTextView() {
@@ -201,6 +231,9 @@ public class PollEditTextCell extends FrameLayout {
         }
         if (moveImageView != null) {
             moveImageView.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48), MeasureSpec.EXACTLY));
+        }
+        if (iconImageView[0] != null) {
+            iconImageView[0].measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48), MeasureSpec.EXACTLY));
         }
         if (textView2 != null) {
             textView2.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(24), MeasureSpec.EXACTLY));

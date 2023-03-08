@@ -167,6 +167,7 @@ public class MainScreenSetupCell extends FrameLayout {
                 tab.addRect(0, startY + AndroidUtilities.dp(4), getMeasuredWidth(), startY + AndroidUtilities.dp(10), Path.Direction.CCW);
                 canvas.clipPath(tab, Region.Op.DIFFERENCE);
 
+                // tabs start
                 textPaint.setColor(color);
                 textPaint.setTextSize(AndroidUtilities.dp(15));
 
@@ -193,6 +194,7 @@ public class MainScreenSetupCell extends FrameLayout {
                         AndroidUtilities.dpf2(8 + 15 * pillsStyleProgress),
                         Theme.dialogs_onlineCirclePaint);
                 canvas.drawText(tabName, startX, startY - AndroidUtilities.dp(14), textPaint);
+                // tabs end //
 
                 h -= startY + AndroidUtilities.dp(4);
                 canvas.translate(0, startY + AndroidUtilities.dp(4));

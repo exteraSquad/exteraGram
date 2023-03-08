@@ -134,6 +134,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
     public final static int TYPE_SET_DEFAULT_REACTION = 2;
     public static final int TYPE_TOPIC_ICON = 3;
     public static final int TYPE_AVATAR_CONSTRUCTOR = 4;
+    public static final int TYPE_FOLDER_ICON = 100;
 
     private final int SPAN_COUNT_FOR_EMOJI = 8;
     private final int SPAN_COUNT_FOR_STICKER = 5;
@@ -1043,6 +1044,9 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
     private void updateSearchBox() {
         if (searchBox == null) {
             return;
+        }
+        if (type == TYPE_FOLDER_ICON) {
+            searchBox.setVisibility(View.INVISIBLE);
         }
         if (searched) {
             searchBox.clearAnimation();
