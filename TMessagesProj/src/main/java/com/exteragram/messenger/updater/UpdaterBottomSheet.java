@@ -185,7 +185,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             TextCell checkOnLaunch = new TextCell(context);
             checkOnLaunch.setEnabled(true);
             checkOnLaunch.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
-            checkOnLaunch.setTextAndCheckAndIcon(LocaleController.getString("CheckOnLaunch", R.string.CheckOnLaunch), ExteraConfig.checkUpdatesOnLaunch, R.drawable.msg_timeredit, true);
+            checkOnLaunch.setTextAndCheckAndIcon(LocaleController.getString("CheckOnLaunch", R.string.CheckOnLaunch), ExteraConfig.checkUpdatesOnLaunch, R.drawable.msg_recent, true);
             checkOnLaunch.setOnClickListener(v -> {
                 ExteraConfig.editor.putBoolean("checkUpdatesOnLaunch", ExteraConfig.checkUpdatesOnLaunch ^= true).apply();
                 checkOnLaunch.setChecked(!checkOnLaunch.getCheckBox().isChecked());

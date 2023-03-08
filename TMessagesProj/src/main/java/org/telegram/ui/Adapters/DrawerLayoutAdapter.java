@@ -9,19 +9,19 @@
 package org.telegram.ui.Adapters;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
+
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
-import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.DrawerLayoutContainer;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.DividerCell;
@@ -35,9 +35,6 @@ import org.telegram.ui.Components.SideMenultItemAnimator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 
 public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
 

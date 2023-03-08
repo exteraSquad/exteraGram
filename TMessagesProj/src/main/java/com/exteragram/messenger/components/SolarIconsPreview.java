@@ -55,7 +55,7 @@ public class SolarIconsPreview extends FrameLayout {
             R.drawable.msg_voicechat,
             R.drawable.msg_pin,
             R.drawable.msg_photos,
-            R.drawable.msg_folder
+            R.drawable.msg_saved
     };
 
     private static final Drawable[] icons = new Drawable[iconsRes.length];

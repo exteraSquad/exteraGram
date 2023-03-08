@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.Components.BackButtonMenu;
@@ -49,7 +50,7 @@ public interface INavigationLayout {
     void expandPreviewFragment();
     void finishPreviewFragment();
     void setFragmentPanTranslationOffset(int offset);
-    ViewGroup getOverlayContainerView();
+    FrameLayout getOverlayContainerView();
     void setHighlightActionButtons(boolean highlight);
     float getCurrentPreviewFragmentAlpha();
     void drawCurrentPreviewFragment(Canvas canvas, Drawable foregroundDrawable);

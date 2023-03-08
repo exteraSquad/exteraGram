@@ -342,7 +342,7 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
             showPopup(0);
         }
         if (byBackButton) {
-            if (SharedConfig.smoothKeyboard && emojiView != null && emojiView.getVisibility() == View.VISIBLE && !waitingForKeyboardOpen) {
+            if (emojiView != null && emojiView.getVisibility() == View.VISIBLE && !waitingForKeyboardOpen) {
                 int height = emojiView.getMeasuredHeight();
                 ValueAnimator animator = ValueAnimator.ofFloat(0, height);
                 animator.addUpdateListener(animation -> {
@@ -441,24 +441,23 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
             }
 
             if (!keyboardVisible && !emojiWasVisible) {
-                if (SharedConfig.smoothKeyboard) {
-                    ValueAnimator animator = ValueAnimator.ofFloat(emojiPadding, 0);
-                    animator.addUpdateListener(animation -> {
-                        float v = (float) animation.getAnimatedValue();
-                        emojiView.setTranslationY(v);
-                        bottomPanelTranslationY(v);
-                    });
-                    animator.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            emojiView.setTranslationY(0);
-                            bottomPanelTranslationY(0);
-                        }
-                    });
-                    animator.setDuration(AdjustPanLayoutHelper.keyboardDuration);
-                    animator.setInterpolator(AdjustPanLayoutHelper.keyboardInterpolator);
-                    animator.start();
-                }
+                ValueAnimator animator = ValueAnimator.ofFloat(emojiPadding, 0);
+                animator.addUpdateListener(animation -> {
+                    float v = (float) animation.getAnimatedValue();
+                    emojiView.setTranslationY(v);
+                    bottomPanelTranslationY(v);
+                });
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        emojiView.setTranslationY(0);
+                        bottomPanelTranslationY(0);
+                    }
+                });
+                animator.setDuration(AdjustPanLayoutHelper.keyboardDuration);
+                animator.setInterpolator(AdjustPanLayoutHelper.keyboardInterpolator);
+                animator.start();
+
             }
         } else {
             if (emojiButton != null) {

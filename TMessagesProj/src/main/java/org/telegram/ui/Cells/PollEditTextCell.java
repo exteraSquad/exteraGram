@@ -205,6 +205,9 @@ public class PollEditTextCell extends FrameLayout {
     }
 
     public void setIcon(int icon, boolean animated) {
+        if (iconImageView[0] == null || iconImageView[1] == null)
+            return;
+
         iconImageView[animated ? 1 : 0].setImageResource(icon);
         if (animated) {
             ImageView tmp = iconImageView[0];

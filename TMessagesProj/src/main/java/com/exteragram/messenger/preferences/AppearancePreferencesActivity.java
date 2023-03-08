@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
@@ -91,7 +90,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int fabShapeRow;
     private int useSystemFontsRow;
     private int useSystemEmojiRow;
-    private int transparentStatusBarRow;
     private int newSwitchStyleRow;
     private int disableDividersRow;
     private int forceBlurRow;
@@ -144,7 +142,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         useSystemEmojiRow = newRow();
         newSwitchStyleRow = newRow();
         disableDividersRow = newRow();
-        transparentStatusBarRow = newRow();
         alternativeNavigationRow = newRow();
         appearanceDividerRow = newRow();
 
@@ -183,19 +180,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             SharedConfig.toggleUseSystemEmoji();
             ((TextCheckCell) view).setChecked(SharedConfig.useSystemEmoji);
             parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == transparentStatusBarRow) {
-            SharedConfig.toggleNoStatusBar();
-            ((TextCheckCell) view).setChecked(SharedConfig.noStatusBar);
-            int color = Theme.getColor(Theme.key_actionBarDefault, null, true);
-            int alpha = ColorUtils.calculateLuminance(color) > 0.7f ? 0x0f : 0x33;
-            if (statusBarColorAnimate != null && statusBarColorAnimate.isRunning()) {
-                statusBarColorAnimate.end();
-            }
-            statusBarColorAnimate = SharedConfig.noStatusBar ? ValueAnimator.ofInt(alpha, 0) : ValueAnimator.ofInt(0, alpha);
-            statusBarColorAnimate.setDuration(200);
-            statusBarColorAnimate.addUpdateListener(animation -> getParentActivity().getWindow().setStatusBarColor(ColorUtils.setAlphaComponent(0, (int) animation.getAnimatedValue())));
-            statusBarColorAnimate.start();
-        } else if (position == forceBlurRow) {
+        }  else if (position == forceBlurRow) {
             ExteraConfig.editor.putBoolean("forceBlur", ExteraConfig.forceBlur ^= true).apply();
             if (!SharedConfig.chatBlurEnabled() && ExteraConfig.forceBlur || SharedConfig.chatBlurEnabled() && !ExteraConfig.forceBlur) {
                 SharedConfig.toggleChatBlur();
@@ -413,9 +398,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 case 5:
                     TextCheckCell textCheckCell = (TextCheckCell) holder.itemView;
                     textCheckCell.setEnabled(true, null);
-                    if (position == transparentStatusBarRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("TransparentStatusBar", R.string.TransparentStatusBar), SharedConfig.noStatusBar, true);
-                    } else if (position == useSystemFontsRow) {
+                    if (position == useSystemFontsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UseSystemFonts", R.string.UseSystemFonts), ExteraConfig.useSystemFonts, true);
                     } else if (position == useSystemEmojiRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UseSystemEmoji", R.string.UseSystemEmoji), SharedConfig.useSystemEmoji, true);
@@ -444,7 +427,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     textCell.setEnabled(true);
                     int[] icons = ExteraUtils.getDrawerIconPack();
                     if (position == statusRow) {
-                        textCell.setTextAndCheckAndIcon(LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), ExteraConfig.changeStatus, R.drawable.msg_status_edit, true);
+                        textCell.setTextAndCheckAndIcon(LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), ExteraConfig.changeStatus, R.drawable.msg_smile_status, true);
                     } else if (position == newGroupRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("NewGroup", R.string.NewGroup), ExteraConfig.newGroup, icons[0], true);
                     } else if (position == newSecretChatRow) {

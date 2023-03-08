@@ -1,6 +1,7 @@
 package com.exteragram.messenger.camera;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.TextureView;
 import android.widget.FrameLayout;
@@ -57,6 +58,12 @@ public abstract class BaseCameraView extends FrameLayout {
     public abstract boolean hasFrontFaceCamera();
 
     public abstract TextureView getTextureView();
+
+    public abstract void initTexture();
+
+    public abstract void showTexture(boolean show, boolean animated);
+
+    public abstract void setThumbDrawable(Drawable drawable);
 
     public abstract float getTextureHeight(float width, float height);
 

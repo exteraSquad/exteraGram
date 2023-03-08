@@ -271,7 +271,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == channelRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Channel", R.string.Channel), "@exteraGram", R.drawable.msg_channel, true);
                     } else if (position == groupRow) {
-                        textCell.setTextAndValueAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), "@exteraChat", R.drawable.msg_ask_question, true);
+                        textCell.setTextAndValueAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), "@exteraChat", R.drawable.msg_groups, true);
                     } else if (position == crowdinRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Crowdin", R.string.Crowdin), "Crowdin", R.drawable.msg_translate, true);
                     } else if (position == sourceCodeRow) {

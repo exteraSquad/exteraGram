@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -89,8 +90,13 @@ public class PhotoAttachCameraCell extends FrameLayout {
         if (bitmap != null) {
             backgroundView.setImageBitmap(bitmap);
         } else {
-            backgroundView.setBackgroundColor(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_sheet_scrollUp),0x1F));
+            backgroundView.setImageResource(R.drawable.icplaceholder);
+            //backgroundView.setBackgroundColor(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_sheet_scrollUp),0x1F));
         }
+    }
+
+    public Drawable getDrawable() {
+        return backgroundView.getDrawable();
     }
 
     protected int getThemedColor(String key) {

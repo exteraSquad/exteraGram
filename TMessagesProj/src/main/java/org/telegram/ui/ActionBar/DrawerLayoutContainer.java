@@ -40,6 +40,8 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.vision.Frame;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
@@ -50,7 +52,7 @@ public class DrawerLayoutContainer extends FrameLayout {
 
     private static final int MIN_DRAWER_MARGIN = 64;
 
-    private ViewGroup drawerLayout;
+    private FrameLayout drawerLayout;
     private INavigationLayout parentActionBarLayout;
 
     private boolean maybeStartTracking;
@@ -167,7 +169,7 @@ public class DrawerLayoutContainer extends FrameLayout {
         return insets != null ? ((WindowInsets) insets).getSystemWindowInsetTop() : 0;
     }
 
-    public void setDrawerLayout(ViewGroup layout) {
+    public void setDrawerLayout(FrameLayout layout) {
         drawerLayout = layout;
         addView(drawerLayout);
         drawerLayout.setVisibility(INVISIBLE);
@@ -292,7 +294,7 @@ public class DrawerLayoutContainer extends FrameLayout {
         return scrimOpacity;
     }
 
-    public View getDrawerLayout() {
+    public FrameLayout getDrawerLayout() {
         return drawerLayout;
     }
 
@@ -305,6 +307,10 @@ public class DrawerLayoutContainer extends FrameLayout {
             parentActionBarLayout.presentFragment(fragment);
         }
         closeDrawer(false);
+    }
+
+    public INavigationLayout getParentActionBarLayout() {
+        return parentActionBarLayout;
     }
 
     public void openStatusSelect() {

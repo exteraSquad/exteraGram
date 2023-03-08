@@ -138,11 +138,9 @@ public class SharedConfig {
     public static boolean streamAllVideo = false;
     public static boolean streamMkv = false;
     public static boolean saveStreamMedia = true;
-    public static boolean smoothKeyboard = true;
     public static boolean pauseMusicOnRecord = false;
     public static boolean noiseSupression;
-    public static boolean noStatusBar = true;
-    public static boolean forceRtmpStream;
+    public static final boolean noStatusBar = true;
     public static boolean debugWebView;
     public static boolean sortContactsByName;
     public static boolean sortFilesByName;
@@ -480,7 +478,6 @@ public class SharedConfig {
             useSystemEmoji = preferences.getBoolean("useSystemEmoji", false);
             streamMedia = preferences.getBoolean("streamMedia", true);
             saveStreamMedia = preferences.getBoolean("saveStreamMedia", true);
-            smoothKeyboard = preferences.getBoolean("smoothKeyboard2", true);
             pauseMusicOnRecord = preferences.getBoolean("pauseMusicOnRecord", false);
             forceDisableTabletMode = preferences.getBoolean("forceDisableTabletMode", false);
             streamAllVideo = preferences.getBoolean("streamAllVideo", BuildVars.DEBUG_VERSION);
@@ -497,8 +494,6 @@ public class SharedConfig {
             archiveHidden = preferences.getBoolean("archiveHidden", false);
             distanceSystemType = preferences.getInt("distanceSystemType", 0);
             keepMedia = preferences.getInt("keep_media", CacheByChatsController.KEEP_MEDIA_ONE_MONTH);
-            noStatusBar = preferences.getBoolean("noStatusBar", true);
-            forceRtmpStream = preferences.getBoolean("forceRtmpStream", false);
             debugWebView = preferences.getBoolean("debugWebView", false);
             lastKeepMediaCheckTime = preferences.getInt("lastKeepMediaCheckTime", 0);
             lastLogsCheckTime = preferences.getInt("lastLogsCheckTime", 0);
@@ -850,28 +845,12 @@ public class SharedConfig {
         editor.apply();
     }
 
-    public static void toggleForceRTMPStream() {
-        forceRtmpStream = !forceRtmpStream;
-        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("forceRtmpStream", forceRtmpStream);
-        editor.apply();
-    }
-
     public static void toggleDebugWebView() {
         debugWebView = !debugWebView;
         WebView.setWebContentsDebuggingEnabled(debugWebView);
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("debugWebView", debugWebView);
-        editor.apply();
-    }
-
-    public static void toggleNoStatusBar() {
-        noStatusBar = !noStatusBar;
-        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("noStatusBar", noStatusBar);
         editor.apply();
     }
 
@@ -1052,14 +1031,6 @@ public class SharedConfig {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("saveStreamMedia", saveStreamMedia);
-        editor.apply();
-    }
-
-    public static void toggleSmoothKeyboard() {
-        smoothKeyboard = !smoothKeyboard;
-        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("smoothKeyboard2", smoothKeyboard);
         editor.apply();
     }
 

@@ -317,6 +317,21 @@ public class CameraXView extends BaseCameraView {
         return (TextureView) (previewView.getChildAt(0));
     }
 
+    @Override
+    public void initTexture() {
+
+    }
+
+    @Override
+    public void showTexture(boolean show, boolean animated) {
+
+    }
+
+    @Override
+    public void setThumbDrawable(Drawable drawable) {
+
+    }
+
     public Bitmap getBitmap() {
         return previewView.getBitmap();
     }
