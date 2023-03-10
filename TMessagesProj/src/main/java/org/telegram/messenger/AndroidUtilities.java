@@ -1885,6 +1885,7 @@ public class AndroidUtilities {
     }
 
     public static ArrayList<File> getRootDirs() {
+        HashSet<String> pathes = new HashSet<>();
         ArrayList<File> result = null;
         File[] dirs = ApplicationLoader.applicationContext.getExternalFilesDirs(null);
         if (dirs != null) {
@@ -1898,17 +1899,27 @@ public class AndroidUtilities {
                     if (result == null) {
                         result = new ArrayList<>();
                     }
-                    result.add(new File(path.substring(0, idx)));
+                    File file = new File(path.substring(0, idx));
+                    for (int i = 0; i < result.size(); i++) {
+                        if (result.get(i).getPath().equals(file.getPath())) {
+                            continue;
+                        }
+                    }
+                    if (!pathes.contains(file.getAbsolutePath())) {
+                        pathes.add(file.getAbsolutePath());
+                        result.add(file);
+                    }
                 }
-                assert result != null;
-                result.add(new File(path.substring(0, idx)));
             }
         }
         if (result == null) {
             result = new ArrayList<>();
         }
         if (result.isEmpty()) {
-            result.add(Environment.getExternalStorageDirectory());
+            File dir = Environment.getExternalStorageDirectory();
+            if (dir != null && !pathes.contains(dir.getAbsolutePath())) {
+                result.add(dir);
+            }
         }
         return (ArrayList<File>) result.stream().distinct().collect(Collectors.toList());
     }
@@ -1920,7 +1931,9 @@ public class AndroidUtilities {
         } catch (Exception e) {
             FileLog.e(e);
         }
+
         if (state == null || state.startsWith(Environment.MEDIA_MOUNTED)) {
+            FileLog.d("external dir mounted");
             try {
                 File file;
                 File[] dirs = ApplicationLoader.applicationContext.getExternalCacheDirs();
@@ -1933,16 +1946,20 @@ public class AndroidUtilities {
                         }
                     }
                 }
+                FileLog.d("check dir " + (file == null ? null : file.getPath()) + " ");
                 if (file != null && (file.exists() || file.mkdirs()) && file.canWrite()) {
-                    boolean canWrite = true;
-                    try {
-                        AndroidUtilities.createEmptyFile(new File(file, ".nomedia"));
-                    } catch (Exception e) {
-                        canWrite = false;
-                    }
-                    if (canWrite) {
-                        return file;
-                    }
+//                    boolean canWrite = true;
+//                    try {
+//                        AndroidUtilities.createEmptyFile(new File(file, ".nomedia"));
+//                    } catch (Exception e) {
+//                        canWrite = false;
+//                    }
+//                    if (canWrite) {
+//                        return file;
+//                    }
+                    return file;
+                } else if (file != null) {
+                    FileLog.d("check dir file exist " + file.exists() + " can write " + file.canWrite());
                 }
             } catch (Exception e) {
                 FileLog.e(e);

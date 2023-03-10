@@ -2529,12 +2529,11 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
     }
 
     @Override
-    public void finishFragment(boolean animated) {
+    public boolean finishFragment(boolean animated) {
         if (onCheckGlScreenshot()) {
-            return;
+            return false;
         }
-
-        super.finishFragment(animated);
+        return super.finishFragment(animated);
     }
 
     private boolean onCheckGlScreenshot() {

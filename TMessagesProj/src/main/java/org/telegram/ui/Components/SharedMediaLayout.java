@@ -3841,7 +3841,11 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                             photoVideoAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        adapter.notifyDataSetChanged();
+                        try {
+                            adapter.notifyDataSetChanged();
+                        } catch (Throwable e) {
+
+                        }
                     }
                     if (sharedMediaData[type].messages.isEmpty() && !sharedMediaData[type].loading) {
                         if (listView != null) {

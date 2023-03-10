@@ -3582,7 +3582,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         showDialog(builder.create());
                     } else {
                         try {
-                            Toast.makeText(getParentActivity(), LocaleController.getString("exteraDebugMenu", R.string.exteraDebugMenu), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getParentActivity(), LocaleController.getString("DebugMenuLongPress", R.string.DebugMenuLongPress), Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
                             FileLog.e(e);
                         }
