@@ -13,15 +13,9 @@ package com.exteragram.messenger.preferences;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.os.Bundle;
-import android.text.TextPaint;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -29,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.components.AltSeekbar;
 import com.exteragram.messenger.components.DoubleTapCell;
 import com.exteragram.messenger.components.StickerShapeCell;
 import com.exteragram.messenger.components.StickerSizePreviewCell;
@@ -46,7 +41,6 @@ import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
-import org.telegram.ui.Components.SeekBarView;
 import org.telegram.ui.Components.SlideChooseView;
 
 public class ChatsPreferencesActivity extends BasePreferencesActivity implements NotificationCenter.NotificationCenterDelegate {
@@ -76,7 +70,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             R.drawable.msg_delete
     };
 
-    private int stickerSizeHeaderRow;
     private int stickerSizeRow;
 
     private int stickerShapeHeaderRow;
@@ -123,11 +116,10 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private class StickerSizeCell extends FrameLayout {
 
         private final StickerSizePreviewCell messagesCell;
-        private final SeekBarView sizeBar;
+        private final AltSeekbar seekBar;
         private final int startStickerSize = 4;
         private final int endStickerSize = 20;
 
-        private final TextPaint textPaint;
         private int lastWidth;
 
         public StickerSizeCell(Context context) {
@@ -135,39 +127,19 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             setWillNotDraw(false);
 
-            textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-            textPaint.setTextSize(AndroidUtilities.dp(16));
-
-            sizeBar = new SeekBarView(context);
-            sizeBar.setReportChanges(true);
-            sizeBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
-                @Override
-                public void onSeekBarDrag(boolean stop, float progress) {
-                    sizeBar.getSeekBarAccessibilityDelegate().postAccessibilityEventRunnable(StickerSizeCell.this);
-                    ExteraConfig.editor.putFloat("stickerSize", ExteraConfig.stickerSize = startStickerSize + (endStickerSize - startStickerSize) * progress).apply();
-                    StickerSizeCell.this.invalidate();
-                    if (resetItem.getVisibility() != VISIBLE) {
-                        AndroidUtilities.updateViewVisibilityAnimated(resetItem, true, 0.5f, true);
-                    }
+            seekBar = new AltSeekbar(context, (float p) -> {
+                ExteraConfig.editor.putFloat("stickerSize", ExteraConfig.stickerSize = p).apply();
+                StickerSizeCell.this.invalidate();
+                if (resetItem.getVisibility() != VISIBLE) {
+                    AndroidUtilities.updateViewVisibilityAnimated(resetItem, true, 0.5f, true);
                 }
-
-                @Override
-                public void onSeekBarPressed(boolean pressed) {
-
-                }
-            });
-            sizeBar.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-            addView(sizeBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.LEFT | Gravity.TOP, 5, 5, 43, 11));
-
+            }, false, startStickerSize, endStickerSize, LocaleController.getString("StickerSize", R.string.StickerSize), LocaleController.getString("StickerSizeLeft", R.string.StickerSizeLeft), LocaleController.getString("StickerSizeRight", R.string.StickerSizeRight));
+            seekBar.setProgress((ExteraConfig.stickerSize - startStickerSize) / (float) (endStickerSize - startStickerSize));
+            addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+            
             messagesCell = new StickerSizePreviewCell(context, ChatsPreferencesActivity.this, parentLayout);
             messagesCell.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-            addView(messagesCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 53, 0, 0));
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            textPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText));
-            canvas.drawText(String.valueOf(Math.round(ExteraConfig.stickerSize)), getMeasuredWidth() - AndroidUtilities.dp(39), AndroidUtilities.dp(28), textPaint);
+            addView(messagesCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 112, 0, 0));
         }
 
         @Override
@@ -175,7 +147,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             int width = MeasureSpec.getSize(widthMeasureSpec);
             if (lastWidth != width) {
-                sizeBar.setProgress((ExteraConfig.stickerSize - startStickerSize) / (float) (endStickerSize - startStickerSize));
                 lastWidth = width;
             }
         }
@@ -185,24 +156,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             super.invalidate();
             lastWidth = -1;
             messagesCell.invalidate();
-            sizeBar.invalidate();
-        }
-
-        @Override
-        public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
-            super.onInitializeAccessibilityEvent(event);
-            sizeBar.getSeekBarAccessibilityDelegate().onInitializeAccessibilityEvent(this, event);
-        }
-
-        @Override
-        public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
-            super.onInitializeAccessibilityNodeInfo(info);
-            sizeBar.getSeekBarAccessibilityDelegate().onInitializeAccessibilityNodeInfoInternal(this, info);
-        }
-
-        @Override
-        public boolean performAccessibilityAction(int action, Bundle arguments) {
-            return super.performAccessibilityAction(action, arguments) || sizeBar.getSeekBarAccessibilityDelegate().performAccessibilityActionInternal(this, action, arguments);
+            seekBar.invalidate();
         }
     }
 
@@ -255,7 +209,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     protected void updateRowsId() {
         super.updateRowsId();
 
-        stickerSizeHeaderRow = newRow();
         stickerSizeRow = newRow();
 
         stickerShapeHeaderRow = newRow();
@@ -461,9 +414,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     break;
                 case 3:
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
-                    if (position == stickerSizeHeaderRow) {
-                        headerCell.setText(LocaleController.getString("StickerSize", R.string.StickerSize));
-                    } else if (position == stickersHeaderRow) {
+                    if (position == stickersHeaderRow) {
                         headerCell.setText(LocaleController.getString(R.string.StickersName));
                     } else if (position == chatHeaderRow) {
                         headerCell.setText(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort));
@@ -553,7 +504,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         public int getItemViewType(int position) {
             if (position == stickerShapeDividerRow) {
                 return 1;
-            } else if (position == stickerSizeHeaderRow || position == stickersHeaderRow || position == chatHeaderRow || position == videosHeaderRow || position == stickerShapeHeaderRow ||
+            } else if (position == stickersHeaderRow || position == chatHeaderRow || position == videosHeaderRow || position == stickerShapeHeaderRow ||
                     position == doubleTapHeaderRow || position == photosHeaderRow) {
                 return 3;
             } else if (position == doubleTapActionRow || position == doubleTapActionOutOwnerRow) {

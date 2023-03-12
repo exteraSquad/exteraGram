@@ -28126,6 +28126,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                             ObjectAnimator.ofFloat(cameraContainer, View.SCALE_Y, scale),
                                             ObjectAnimator.ofFloat(cameraContainer, View.TRANSLATION_Y, position[1] - rect.y),
                                             ObjectAnimator.ofFloat(instantCameraView.getSwitchButtonView(), View.ALPHA, 0.0f),
+                                            ObjectAnimator.ofFloat(instantCameraView.getFlashlightButtonView(), View.ALPHA, 0.0f),
                                             ObjectAnimator.ofInt(instantCameraView.getPaint(), AnimationProperties.PAINT_ALPHA, 0),
                                             ObjectAnimator.ofFloat(instantCameraView.getMuteImageView(), View.ALPHA, 0.0f)
                                     );

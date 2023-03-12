@@ -1,5 +1,6 @@
 package com.exteragram.messenger.components;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,8 +11,11 @@ import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+
+import androidx.core.content.ContextCompat;
 
 import com.exteragram.messenger.extras.FolderIcons;
 
@@ -54,22 +58,26 @@ public class IconSelectorAlert {
         gridLayout.setColumnCount(columnCount);
 
         for (String icon : FolderIcons.folderIcons.keySet().toArray(new String[0])) {
-            ImageView imageView = new ImageView(context) {
+            FrameLayout imageView = new FrameLayout(context) {
+                @SuppressLint("DrawAllocation")
                 @Override
                 protected void onDraw(Canvas canvas) {
+                    int p = AndroidUtilities.dp(6);
+                    Drawable d = ContextCompat.getDrawable(context, FolderIcons.getTabIcon(icon));
+                    assert d != null;
+                    d.setColorFilter(new PorterDuffColorFilter(Theme.getColor(isSelected() ? Theme.key_windowBackgroundWhiteValueText : Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
+                    d.setBounds(p, p, getMeasuredWidth() - p, getMeasuredHeight() - p);
                     if (isSelected()) {
                         AndroidUtilities.rectTmp.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
                         selectedPaint.setAlpha(40);
                         canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(7), AndroidUtilities.dp(7), selectedPaint);
                     }
+                    d.draw(canvas);
                     super.onDraw(canvas);
                 }
             };
-            imageView.setScaleType(ImageView.ScaleType.CENTER);
             imageView.setBackground(Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector), 7, 7));
             imageView.setSelected(icon.equals(selectedIcon));
-            imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(imageView.isSelected() ? Theme.key_windowBackgroundWhiteValueText : Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
-            imageView.setImageResource(FolderIcons.getTabIcon(icon));
             imageView.setOnClickListener(v -> {
                 if (selectedIcon.equals(icon)) {
                     return;

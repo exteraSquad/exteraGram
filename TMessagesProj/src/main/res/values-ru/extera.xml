@@ -24,6 +24,8 @@
 
     <!-- Appearance -->
     <string name="AvatarCorners">Закругление аватарок</string>
+    <string name="AvatarCornersLeft">Квадрат</string>
+    <string name="AvatarCornersRight">Круг</string>
     <string name="HideActionBarStatus">Скрыть статус</string>
     <string name="HideAllChats">Скрыть папку \"%1$s\"</string>
     <string name="CenterTitle">Заголовок по центру</string>
@@ -99,6 +101,8 @@
 
     <!-- Chats -->
     <string name="StickerSize">Размер стикеров</string>
+    <string name="StickerSizeLeft">Маленький</string>
+    <string name="StickerSizeRight">Большой</string>
     <string name="StickerSizeDialogMessageReplyTo">жесть</string>
     <string name="StickerSizeDialogMessage">ого, он такой милый!</string>
 

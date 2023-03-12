@@ -1970,24 +1970,21 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             notifyButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
             notifyButton.setVisibility(canWriteToChannel && (delegate == null || !delegate.hasScheduledMessages()) ? VISIBLE : GONE);
             attachLayout.addView(notifyButton, LayoutHelper.createLinear(48, 48));
-            notifyButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    silent = !silent;
-                    if (notifySilentDrawable == null) {
-                        notifySilentDrawable = new CrossOutDrawable(context, R.drawable.input_notify_on, Theme.key_chat_messagePanelIcons);
-                    }
-                    notifySilentDrawable.setCrossOut(silent, true);
-                    notifyButton.setImageDrawable(notifySilentDrawable);
-                    MessagesController.getNotificationsSettings(currentAccount).edit().putBoolean("silent_" + dialog_id, silent).commit();
-                    NotificationsController.getInstance(currentAccount).updateServerNotificationsSettings(dialog_id, fragment == null ? 0 :fragment.getTopicId());
-                    UndoView undoView = fragment.getUndoView();
-                    if (undoView != null) {
-                        undoView.showWithAction(0, !silent ? UndoView.ACTION_NOTIFY_ON : UndoView.ACTION_NOTIFY_OFF, null);
-                    }
-                    notifyButton.setContentDescription(silent ? LocaleController.getString("AccDescrChanSilentOn", R.string.AccDescrChanSilentOn) : LocaleController.getString("AccDescrChanSilentOff", R.string.AccDescrChanSilentOff));
-                    updateFieldHint(true);
+            notifyButton.setOnClickListener(v -> {
+                silent = !silent;
+                if (notifySilentDrawable == null) {
+                    notifySilentDrawable = new CrossOutDrawable(context, R.drawable.input_notify_on, Theme.key_chat_messagePanelIcons);
                 }
+                notifySilentDrawable.setCrossOut(silent, true);
+                notifyButton.setImageDrawable(notifySilentDrawable);
+                MessagesController.getNotificationsSettings(currentAccount).edit().putBoolean("silent_" + dialog_id, silent).commit();
+                NotificationsController.getInstance(currentAccount).updateServerNotificationsSettings(dialog_id, fragment == null ? 0 :fragment.getTopicId());
+                UndoView undoView = fragment.getUndoView();
+                if (undoView != null) {
+                    undoView.showWithAction(0, !silent ? UndoView.ACTION_NOTIFY_ON : UndoView.ACTION_NOTIFY_OFF, null);
+                }
+                notifyButton.setContentDescription(silent ? LocaleController.getString("AccDescrChanSilentOn", R.string.AccDescrChanSilentOn) : LocaleController.getString("AccDescrChanSilentOff", R.string.AccDescrChanSilentOff));
+                updateFieldHint(true);
             });
 
             attachButton = new ImageView(context);

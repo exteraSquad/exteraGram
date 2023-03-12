@@ -119,10 +119,10 @@ public class FolderIcons {
     }
 
     public static int getPaddingTab() {
-        if (ExteraConfig.tabIcons != 2) {
+        if (ExteraConfig.tabIcons != 2 || ExteraConfig.tabStyle >= 3) {
             return AndroidUtilities.dp(32);
         }
-        return AndroidUtilities.dp(32);
+        return AndroidUtilities.dp(16);
     }
 
     public static int getTabIcon(String emoji) {

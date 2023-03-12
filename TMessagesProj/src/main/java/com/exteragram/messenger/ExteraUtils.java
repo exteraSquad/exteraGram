@@ -17,7 +17,10 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.hardware.biometrics.BiometricManager;
+import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
+import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -390,5 +393,26 @@ public final class ExteraUtils {
 
     public static String getNavigationBarColorKey() {
         return SharedConfig.useLNavigation ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray;
+    }
+
+    public static boolean hasBiometrics() {
+        if (Build.VERSION.SDK_INT >= 29) {
+            BiometricManager biometricManager = ApplicationLoader.applicationContext.getSystemService(BiometricManager.class);
+            if (biometricManager == null) {
+                return false;
+            }
+            if (Build.VERSION.SDK_INT >= 30) {
+                return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
+            } else {
+                return biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS;
+            }
+        } else if (Build.VERSION.SDK_INT >= 23) {
+            FingerprintManager fingerprintManager = ApplicationLoader.applicationContext.getSystemService(FingerprintManager.class);
+            if (fingerprintManager == null) {
+                return false;
+            }
+            return fingerprintManager.isHardwareDetected() && fingerprintManager.hasEnrolledFingerprints();
+        }
+        return false;
     }
 }

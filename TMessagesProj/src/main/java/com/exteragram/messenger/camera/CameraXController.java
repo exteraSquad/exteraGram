@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Range;
 import android.view.Surface;
@@ -68,6 +69,8 @@ import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class CameraXController {
@@ -76,7 +79,7 @@ public class CameraXController {
     private boolean isInitiated = false;
     private final CameraLifecycle lifecycle;
     private ProcessCameraProvider provider;
-    private Camera camera;
+    private static Camera camera;
     private CameraSelector cameraSelector;
     private CameraXView.VideoSavedCallback videoSavedCallback;
     private boolean abandonCurrentVideo = false;
@@ -235,8 +238,14 @@ public class CameraXController {
         return iCapture.getFlashMode();
     }
 
-    public boolean isFlashAvailable() {
+    public static boolean isFlashAvailable() {
         return camera.getCameraInfo().hasFlashUnit();
+    }
+
+    public static void setTorchEnabled(boolean enabled) {
+        if (isFlashAvailable()) {
+            camera.getCameraControl().enableTorch(enabled);
+        }
     }
 
     public boolean isAvailableHdrMode() {
@@ -306,7 +315,6 @@ public class CameraXController {
                 case CAMERA_AUTO:
                     cameraSelector = extensionsManager.getExtensionEnabledCameraSelector(cameraSelector, ExtensionMode.AUTO);
                     break;
-                case CAMERA_NONE:
                 default:
                     cameraSelector = extensionsManager.getExtensionEnabledCameraSelector(cameraSelector, ExtensionMode.NONE);
                     break;

@@ -14,7 +14,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothProfile;
@@ -26,13 +25,9 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Outline;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimatedVectorDrawable;
-import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -51,7 +46,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -65,13 +59,14 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
+import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.camera.CameraXController;
 import com.exteragram.messenger.camera.CameraXUtils;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -125,8 +120,6 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL;
 
-import com.exteragram.messenger.ExteraConfig;
-
 public class InstantCameraView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private int currentAccount = UserConfig.selectedAccount;
@@ -135,6 +128,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
     private Paint paint;
     private RectF rect;
     private ImageView switchCameraButton;
+    private ImageView flashlightButton;
+    private CrossOutDrawable flashlightButtonDrawable;
     AnimatedVectorDrawable switchCameraDrawable = null;
     private ImageView muteImageView;
     private float progress;
@@ -283,6 +278,16 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
 
         addView(cameraContainer, new LayoutParams(AndroidUtilities.roundPlayingMessageSize, AndroidUtilities.roundPlayingMessageSize, Gravity.CENTER));
 
+        flashlightButton = new ImageView(context);
+        flashlightButton.setScaleType(ImageView.ScaleType.CENTER);
+        addView(flashlightButton, LayoutHelper.createFrame(62, 62, Gravity.LEFT | Gravity.BOTTOM, 70, 0, 0, 0));
+        flashlightButton.setOnClickListener(v -> {
+            if (!isFrontface) {
+                enableTorch();
+                flashlightButtonDrawable.setCrossOut(flashlightButton.getTag() == null, true);
+            }
+        });
+
         switchCameraButton = new ImageView(context);
         switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
         switchCameraButton.setContentDescription(LocaleController.getString("AccDescrSwitchCamera", R.string.AccDescrSwitchCamera));
@@ -294,7 +299,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                 }
                 switchCamera();
             } else {
-                if(!cameraXController.isInitied() || cameraThread == null){
+                if (!cameraXController.isInitied() || cameraThread == null){
                     return;
                 }
                 switchCameraX();
@@ -306,21 +311,20 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1f);
             valueAnimator.setDuration(300);
             valueAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    float p = (float) valueAnimator.getAnimatedValue();
-                    if (p < 0.5f) {
-                        p = (1f - p / 0.5f);
-                    } else {
-                        p = (p - 0.5f) / 0.5f;
-                    }
-                    float scaleDown = 0.9f + 0.1f * p;
-                    cameraContainer.setScaleX(p * scaleDown);
-                    cameraContainer.setScaleY(scaleDown);
-                    textureOverlayView.setScaleX(p * scaleDown);
-                    textureOverlayView.setScaleY(scaleDown);
+            valueAnimator.addUpdateListener(valueAnimator1 -> {
+                float p = (float) valueAnimator1.getAnimatedValue();
+                if (p < 0.5f) {
+                    p = (1f - p / 0.5f);
+                } else {
+                    p = (p - 0.5f) / 0.5f;
                 }
+                float scaleDown = 0.9f + 0.1f * p;
+                cameraContainer.setScaleX(p * scaleDown);
+                cameraContainer.setScaleY(scaleDown);
+                textureOverlayView.setScaleX(p * scaleDown);
+                textureOverlayView.setScaleY(scaleDown);
+                float a = (float) valueAnimator1.getAnimatedValue();
+                flashlightButton.setAlpha(isFrontface ? 1f - a : a);
             });
             valueAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -330,6 +334,11 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                     cameraContainer.setScaleY(1f);
                     textureOverlayView.setScaleY(1f);
                     textureOverlayView.setScaleX(1f);
+                    flashlightButton.setAlpha(isFrontface ? 0f : 1f);
+                    if (isFrontface) {
+                        flashlightButton.setTag(null);
+                        flashlightButtonDrawable.setCrossOut(true, false);
+                    }
                     flipAnimationInProgress = false;
                     invalidate();
                 }
@@ -452,11 +461,13 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
     public void destroy(boolean async, final Runnable beforeDestroyRunnable) {
         if (!CameraXUtils.isCameraXSupported() || ExteraConfig.cameraType != 1) {
             if (cameraSession != null) {
+                flashlightButton.setTag(null);
                 cameraSession.destroy();
                 CameraController.getInstance().close(cameraSession, !async ? new CountDownLatch(1) : null, beforeDestroyRunnable);
             }
         } else {
             try {
+                flashlightButton.setTag(null);
                 cameraXController.stopVideoRecording(true);
                 cameraXController.closeCamera();
             }  catch (Exception ignored) {}
@@ -507,6 +518,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             blurBehindDrawable.clear();
         }
         switchCameraButton.setAlpha(0.0f);
+        flashlightButton.setAlpha(0.0f);
         cameraContainer.setAlpha(0.0f);
         textureOverlayView.setAlpha(0.0f);
         muteImageView.setAlpha(0.0f);
@@ -541,6 +553,12 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
 
         switchCameraDrawable = (AnimatedVectorDrawable) ContextCompat.getDrawable(getContext(), R.drawable.avd_flip);
         switchCameraButton.setImageDrawable(switchCameraDrawable);
+
+        flashlightButtonDrawable = new CrossOutDrawable(getContext(), R.drawable.flash_on, null);
+        flashlightButtonDrawable.setCrossOut(true, false);
+        if (ExteraConfig.useSolarIcons) flashlightButtonDrawable.setPaddings(0, AndroidUtilities.dp(2), 0, -AndroidUtilities.dp(2));
+        else flashlightButtonDrawable.setPaddings(AndroidUtilities.dp(5), AndroidUtilities.dp(8), AndroidUtilities.dp(5), AndroidUtilities.dp(2));
+        flashlightButton.setImageDrawable(flashlightButtonDrawable);
 
         textureOverlayView.setAlpha(1.0f);
         textureOverlayView.invalidate();
@@ -688,6 +706,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
         });
         animatorSet.playTogether(
                 ObjectAnimator.ofFloat(switchCameraButton, View.ALPHA, open ? 1.0f : 0.0f),
+                ObjectAnimator.ofFloat(flashlightButton, View.ALPHA, !isFrontface && open ? 1.0f : 0.0f),
                 ObjectAnimator.ofFloat(muteImageView, View.ALPHA, 0.0f),
                 ObjectAnimator.ofInt(paint, AnimationProperties.PAINT_ALPHA, open ? 255 : 0),
                 ObjectAnimator.ofFloat(cameraContainer, View.ALPHA, open ? 1.0f : 0.0f),
@@ -868,6 +887,10 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
 
     public View getSwitchButtonView() {
         return switchCameraButton;
+    }
+
+    public View getFlashlightButtonView() {
+        return flashlightButton;
     }
 
     public View getMuteImageView() {
@@ -2302,6 +2325,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                         AnimatorSet animatorSet = new AnimatorSet();
                         animatorSet.playTogether(
                                 ObjectAnimator.ofFloat(switchCameraButton, View.ALPHA, 0.0f),
+                                ObjectAnimator.ofFloat(flashlightButton, View.ALPHA, 0.0f),
                                 ObjectAnimator.ofInt(paint, AnimationProperties.PAINT_ALPHA, 0),
                                 ObjectAnimator.ofFloat(muteImageView, View.ALPHA, 1.0f));
                         animatorSet.setDuration(180);
@@ -2900,6 +2924,28 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             finishZoomTransition.setDuration(350);
             finishZoomTransition.setInterpolator(CubicBezierInterpolator.DEFAULT);
             finishZoomTransition.start();
+        }
+    }
+
+    public void enableTorch() {
+        if (!CameraXUtils.isCameraXSupported() || ExteraConfig.cameraType != 1) {
+            if (cameraSession != null) {
+                if (flashlightButton.getTag() == null) {
+                    flashlightButton.setTag(1);
+                    cameraSession.setTorchEnabled(true);
+                } else {
+                    flashlightButton.setTag(null);
+                    cameraSession.setTorchEnabled(false);
+                }
+            }
+        } else {
+            if (flashlightButton.getTag() == null) {
+                flashlightButton.setTag(1);
+                CameraXController.setTorchEnabled(true);
+            } else {
+                flashlightButton.setTag(null);
+                CameraXController.setTorchEnabled(false);
+            }
         }
     }
 }

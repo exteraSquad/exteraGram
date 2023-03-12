@@ -17315,10 +17315,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         if (BuildVars.LOGS_ENABLED) {
                             FileLog.d("compressionsCount = " + compressionsCount + " w = " + originalWidth + " h = " + originalHeight + " r = " + rotationValue);
                         }
-                        if (false && compressItem.getTag() != null) {
-                            videoConvertSupported = false;
-                            setCompressItemEnabled(false, true);
-                        }
                         qualityChooseView.invalidate();
                     } else {
                         setCompressItemEnabled(false, true);

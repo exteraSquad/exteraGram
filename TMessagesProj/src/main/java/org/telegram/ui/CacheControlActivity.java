@@ -1618,7 +1618,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
             loadingDrawable.setAlpha((int) (0xFF * barAlpha * loading));
             loadingDrawable.draw(canvas);
 
-            usedPercentPaint.setColor(Theme.percentSV(Theme.getColor(Theme.key_radioBackgroundChecked), Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), .922f, 1.8f));
+            usedPercentPaint.setColor(Theme.getActiveTheme().isMonet() ? Theme.getColor(Theme.key_statisticChartLine_red) : Theme.percentSV(Theme.getColor(Theme.key_radioBackgroundChecked), Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), .922f, 1.8f));
             usedPercentPaint.setAlpha((int) (usedPercentPaint.getAlpha() * barAlpha));
             AndroidUtilities.rectTmp.set(
                 progressRect.left + (1f - loading) * Math.max(AndroidUtilities.dp(4), percent * progressRect.width()) + AndroidUtilities.dp(1),

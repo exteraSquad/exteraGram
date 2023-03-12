@@ -71,7 +71,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             LocaleController.getString("Halloween", R.string.Halloween)
     };
 
-    private int mainScreenHeaderRow;
     private int actionBarSetupRow;
     private int hideActionBarStatusRow;
     private int centerTitleRow;
@@ -120,7 +119,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     protected void updateRowsId() {
         super.updateRowsId();
 
-        mainScreenHeaderRow = newRow();
         actionBarSetupRow = newRow();
         hideActionBarStatusRow = getUserConfig().isPremium() ? newRow() : -1;
         hideAllChatsRow = newRow();
@@ -318,7 +316,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         } else if (position == solarIconsRow) {
             ((TextCheckCell) view).setChecked(!ExteraConfig.useSolarIcons);
             solarIconsPreview.updateIcons(true);
-            mainScreenSetupCell.invalidate();
             parentLayout.rebuildAllFragmentViews(false, false);
         }
     }
@@ -389,8 +386,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         headerCell.setText(LocaleController.getString("DrawerElements", R.string.DrawerElements));
                     } else if (position == drawerOptionsHeaderRow) {
                         headerCell.setText(LocaleController.getString("DrawerOptions", R.string.DrawerOptions));
-                    } else if (position == mainScreenHeaderRow) {
-                        headerCell.setText(LocaleController.getString("AvatarCorners", R.string.AvatarCorners));
                     } else if (position == solarIconsHeaderRow) {
                         headerCell.setText(LocaleController.getString("IconPack", R.string.IconPack));
                     }
@@ -487,7 +482,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     position == contactsRow || position == callsRow || position == peopleNearbyRow || position == archivedChatsRow ||
                     position == savedMessagesRow || position == scanQrRow || position == inviteFriendsRow || position == telegramFeaturesRow) {
                 return 2;
-            } else if (position == appearanceHeaderRow || position == drawerHeaderRow || position == drawerOptionsHeaderRow || position == mainScreenHeaderRow || position == solarIconsHeaderRow) {
+            } else if (position == appearanceHeaderRow || position == drawerHeaderRow || position == drawerOptionsHeaderRow || position == solarIconsHeaderRow) {
                 return 3;
             } else if (position == eventChooserRow || position == actionBarTitleRow || position == tabStyleRow || position == tabIconsRow) {
                 return 7;

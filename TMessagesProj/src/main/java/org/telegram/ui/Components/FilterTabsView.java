@@ -357,11 +357,10 @@ public class FilterTabsView extends FrameLayout {
             } else {
                 tabWidth = currentTab.iconWidth + ((countWidth != 0 && !animateCounterRemove) ? countWidth + AndroidUtilities.dp(6 * (counterText != null ? 1.0f : editingStartAnimationProgress)) : 0);
             }
-            float textX = ((getMeasuredWidth() - tabWidth) / 2f) + currentTab.iconWidth;
+            float textX = ((getMeasuredWidth() - tabWidth) / 2f) + currentTab.iconWidth - (ExteraConfig.tabIcons == 0 ? AndroidUtilities.dp(2) : 0);
             if (animateTextX) {
                 textX = textX * changeProgress + animateFromTextX * (1f - changeProgress);
             }
-            textX -= ExteraConfig.tabIcons == 0 ? AndroidUtilities.dp(2) : 0;
             if (!TextUtils.equals(currentTab.title, currentText)) {
                 currentText = currentTab.title;
                 CharSequence text = Emoji.replaceEmoji(currentText, textPaint.getFontMetricsInt(), AndroidUtilities.dp(15), false);
@@ -474,7 +473,7 @@ public class FilterTabsView extends FrameLayout {
                 if (animateTextChange) {
                     titleWidth = animateFromTitleWidth * (1f - changeProgress) + currentTab.titleWidth * changeProgress;
                 }
-                int textSpace = AndroidUtilities.dp(6);
+                int textSpace = AndroidUtilities.dp(ExteraConfig.tabIcons == 2 && ExteraConfig.tabStyle <= 2 ? 3 : 6);
                 if (animateTextChange && titleAnimateOutLayout == null) {
                     x = textX - titleXOffset + titleOffsetX + titleWidth + textSpace;
                 } else {

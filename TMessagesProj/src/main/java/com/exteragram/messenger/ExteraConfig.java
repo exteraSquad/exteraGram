@@ -116,7 +116,7 @@ public class ExteraConfig {
 
     // Other
     private static final long[] OFFICIAL_CHANNELS = {1233768168, 1524581881, 1571726392, 1632728092, 1638754701, 1779596027, 1172503281};
-    private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381};
+    private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381, 1773117711};
     public static long channelToSave;
     public static String targetLanguage;
     public static final CharSequence[] supportedLanguages = new CharSequence[]{

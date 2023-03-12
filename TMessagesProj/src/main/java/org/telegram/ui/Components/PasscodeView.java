@@ -54,6 +54,8 @@ import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 
+import com.exteragram.messenger.ExteraUtils;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
@@ -1257,15 +1259,7 @@ public class PasscodeView extends FrameLayout implements NotificationCenter.Noti
         Activity parentActivity = (Activity) getContext();
         if (Build.VERSION.SDK_INT >= 23 && parentActivity != null && SharedConfig.useFingerprint) {
             try {
-                if (fingerprintDialog != null && fingerprintDialog.isShowing()) {
-                    return;
-                }
-            } catch (Exception e) {
-                FileLog.e(e);
-            }
-            try {
-                FingerprintManagerCompat fingerprintManager = FingerprintManagerCompat.from(ApplicationLoader.applicationContext);
-                if (fingerprintManager.isHardwareDetected() && fingerprintManager.hasEnrolledFingerprints() && FingerprintController.isKeyReady() && !FingerprintController.checkDeviceFingerprintsChanged()) {
+                if (ExteraUtils.hasBiometrics() && FingerprintController.isKeyReady() && !FingerprintController.checkDeviceFingerprintsChanged()) {
                     fingerprintView.setVisibility(VISIBLE);
                 } else {
                     fingerprintView.setVisibility(GONE);

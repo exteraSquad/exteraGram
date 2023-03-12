@@ -15,6 +15,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -27,7 +28,10 @@ import android.view.inputmethod.InputConnection;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.core.content.ContextCompat;
+
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.extras.FolderIcons;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -193,7 +197,9 @@ public class PollEditTextCell extends FrameLayout {
                 iconImageView[i].setFocusable(true);
                 iconImageView[i].setVisibility(i == 0 ? VISIBLE : GONE);
                 iconImageView[i].setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_stickers_menuSelector)));
-                iconImageView[i].setScaleType(ImageView.ScaleType.CENTER);
+                iconImageView[i].setScaleType(ImageView.ScaleType.FIT_XY);
+                int p = AndroidUtilities.dp(8);
+                iconImageView[i].setPadding(p, p, p, p);
                 iconImageView[i].setOnClickListener(onChangeIcon);
                 iconImageView[i].setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
                 iconImageView[i].setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);

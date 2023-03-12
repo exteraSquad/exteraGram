@@ -1,7 +1,6 @@
 package org.telegram.ui;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
-import static org.telegram.messenger.AndroidUtilities.dpf2;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,17 +9,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -38,14 +29,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.extractor.mkv.MatroskaExtractor;
-import com.google.zxing.common.detector.MathUtils;
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LiteMode;
@@ -59,7 +48,6 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCell;
-import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AnimatedTextView;
@@ -72,13 +60,9 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.ListView.AdapterWithDiffUtils;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SeekBarView;
-import org.telegram.ui.Components.SlideChooseView;
-import org.telegram.ui.Components.SlideView;
-import org.telegram.ui.Components.SpannableStringLight;
 import org.telegram.ui.Components.Switch;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class LiteModeSettingsActivity extends BaseFragment {
 
@@ -147,7 +131,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean("view_animations", !animations);
                     SharedConfig.setAnimationsEnabled(!animations);
-                    editor.commit();
+                    editor.apply();
                     ((TextCell) view).setChecked(!animations);
                 }
             }
@@ -195,16 +179,14 @@ public class LiteModeSettingsActivity extends BaseFragment {
         oldItems.addAll(items);
 
         items.clear();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            items.add(Item.asSlider());
-            items.add(Item.asInfo(
-                LiteMode.getPowerSaverLevel() <= 0 ?
-                    LocaleController.getString(R.string.LiteBatteryInfoDisabled) :
-                LiteMode.getPowerSaverLevel() >= 100 ?
-                    LocaleController.getString(R.string.LiteBatteryInfoEnabled) :
-                    LocaleController.formatString(R.string.LiteBatteryInfoBelow, String.format("%d%%", LiteMode.getPowerSaverLevel()))
-            ));
-        }
+        items.add(Item.asSlider());
+        items.add(Item.asInfo(
+            LiteMode.getPowerSaverLevel() <= 0 ?
+                LocaleController.getString(R.string.LiteBatteryInfoDisabled) :
+            LiteMode.getPowerSaverLevel() >= 100 ?
+                LocaleController.getString(R.string.LiteBatteryInfoEnabled) :
+                LocaleController.formatString(R.string.LiteBatteryInfoBelow, String.format("%d%%", LiteMode.getPowerSaverLevel()))
+        ));
 
         items.add(Item.asHeader(LocaleController.getString("LiteOptionsTitle")));
         items.add(Item.asSwitch(R.drawable.msg2_sticker, LocaleController.getString("LiteOptionsStickers", R.string.LiteOptionsStickers), LiteMode.FLAGS_ANIMATED_STICKERS));
@@ -240,9 +222,6 @@ public class LiteModeSettingsActivity extends BaseFragment {
     }
 
     private void updateInfo() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return;
-        }
 
         if (items.isEmpty()) {
             updateItems();
@@ -573,7 +552,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     float x = dp(19 + 37 + 19);
                     canvas.drawRect(x - dp(0.66f), (getMeasuredHeight() - dp(20)) / 2f, x, (getMeasuredHeight() + dp(20)) / 2f, Theme.dividerPaint);
                 }
-                if (needDivider) {
+                if (needDivider && !ExteraConfig.disableDividers) {
                     canvas.drawLine(getMeasuredWidth() - dp(64) + (textView.getTranslationX() < 0 ? dp(-32) : 0), getMeasuredHeight() - 1, 0, getMeasuredHeight() - 1, Theme.dividerPaint);
                 }
             } else {
@@ -581,7 +560,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     float x = getMeasuredWidth() - dp(19 + 37 + 19);
                     canvas.drawRect(x - dp(0.66f), (getMeasuredHeight() - dp(20)) / 2f, x, (getMeasuredHeight() + dp(20)) / 2f, Theme.dividerPaint);
                 }
-                if (needDivider) {
+                if (needDivider && !ExteraConfig.disableDividers) {
                     canvas.drawLine(dp(64) + textView.getTranslationX(), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
                 }
             }
@@ -770,13 +749,11 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 }
 
                 onActiveAnimator = ValueAnimator.ofFloat(onActiveT, activeT);
-                onActiveAnimator.addUpdateListener(anm -> {
-                    rightTextView.setTextColor(ColorUtils.blendARGB(
-                        Theme.getColor(Theme.key_windowBackgroundWhiteGrayText),
-                        Theme.getColor(Theme.key_windowBackgroundWhiteBlueText),
-                        onActiveT = (float) anm.getAnimatedValue()
-                    ));
-                });
+                onActiveAnimator.addUpdateListener(anm -> rightTextView.setTextColor(ColorUtils.blendARGB(
+                    Theme.getColor(Theme.key_windowBackgroundWhiteGrayText),
+                    Theme.getColor(Theme.key_windowBackgroundWhiteBlueText),
+                    onActiveT = (float) anm.getAnimatedValue()
+                )));
                 onActiveAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -806,13 +783,11 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 }
 
                 offActiveAnimator = ValueAnimator.ofFloat(offActiveT, activeT);
-                offActiveAnimator.addUpdateListener(anm -> {
-                    leftTextView.setTextColor(ColorUtils.blendARGB(
-                            Theme.getColor(Theme.key_windowBackgroundWhiteGrayText),
-                            Theme.getColor(Theme.key_windowBackgroundWhiteBlueText),
-                            offActiveT = (float) anm.getAnimatedValue()
-                    ));
-                });
+                offActiveAnimator.addUpdateListener(anm -> leftTextView.setTextColor(ColorUtils.blendARGB(
+                        Theme.getColor(Theme.key_windowBackgroundWhiteGrayText),
+                        Theme.getColor(Theme.key_windowBackgroundWhiteBlueText),
+                        offActiveT = (float) anm.getAnimatedValue()
+                )));
                 offActiveAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -903,9 +878,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 }
             }
             if (viewType == VIEW_TYPE_HEADER || viewType == VIEW_TYPE_INFO || viewType == VIEW_TYPE_SWITCH || viewType == VIEW_TYPE_CHECKBOX || viewType == VIEW_TYPE_SWITCH2) {
-                if (!TextUtils.equals(item.text, text)) {
-                    return false;
-                }
+                return TextUtils.equals(item.text, text);
             }
             return true;
         }

@@ -922,6 +922,7 @@ public class CameraScanActivity extends BaseFragment {
             cameraView.destroy(async, beforeDestroyRunnable);
             cameraView = null;
         }
+        flashButton.setTag(null);
         backgroundHandlerThread.quitSafely();
     }
 

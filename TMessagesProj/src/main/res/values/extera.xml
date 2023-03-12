@@ -26,6 +26,8 @@
 
     <!-- Appearance -->
     <string name="AvatarCorners">Avatar Corners</string>
+    <string name="AvatarCornersLeft">Square</string>
+    <string name="AvatarCornersRight">Circle</string>
     <string name="HideActionBarStatus">Hide Status</string>
     <string name="HideAllChats">Hide \"%1$s\" Tab</string>
     <string name="CenterTitle">Center Title in Action Bar</string>
@@ -103,6 +105,8 @@
 
     <!-- Chats -->
     <string name="StickerSize">Stickers Size</string>
+    <string name="StickerSizeLeft">Small</string>
+    <string name="StickerSizeRight">Big</string>
     <string name="StickerSizeDialogMessageReplyTo">wow</string>
     <string name="StickerSizeDialogMessage">woah, he is so cute!</string>
 

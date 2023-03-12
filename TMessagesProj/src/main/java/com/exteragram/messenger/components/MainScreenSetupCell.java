@@ -44,7 +44,6 @@ import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.Easings;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.SeekBarView;
 
 import java.util.Objects;
 
@@ -52,7 +51,7 @@ import java.util.Objects;
 public class MainScreenSetupCell extends FrameLayout {
 
     private final FrameLayout preview;
-    private final SeekBarView sizeBar;
+    //private final SeekBarView sizeBar;
 
     private final RectF rect = new RectF();
     private final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -77,27 +76,24 @@ public class MainScreenSetupCell extends FrameLayout {
     private final int endCornersSize = 30;
     private int lastWidth;
 
+    private final AltSeekbar seekBar;
+
+    public interface onDrag {
+        void run(float progress);
+    }
+
     public MainScreenSetupCell(Context context, INavigationLayout fragment) {
         super(context);
         setWillNotDraw(false);
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 
-        sizeBar = new SeekBarView(context);
-        sizeBar.setReportChanges(true);
-        sizeBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
-            @Override
-            public void onSeekBarDrag(boolean stop, float progress) {
-                ExteraConfig.editor.putFloat("avatarCorners", ExteraConfig.avatarCorners = startCornersSize + (endCornersSize - startCornersSize) * progress).apply();
-                invalidate();
-                fragment.rebuildAllFragmentViews(false, false);
-            }
-
-            @Override
-            public void onSeekBarPressed(boolean pressed) {
-
-            }
-        });
-        addView(sizeBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.LEFT | Gravity.TOP, 5, 5, 43, 11));
+        seekBar = new AltSeekbar(context, (float p) -> {
+            ExteraConfig.editor.putFloat("avatarCorners", ExteraConfig.avatarCorners = p).apply();
+            invalidate();
+            fragment.rebuildAllFragmentViews(false, false);
+        }, false, startCornersSize, endCornersSize, LocaleController.getString("AvatarCorners", R.string.AvatarCorners), LocaleController.getString("AvatarCornersLeft", R.string.AvatarCornersLeft), LocaleController.getString("AvatarCornersRight", R.string.AvatarCornersRight));
+        seekBar.setProgress((ExteraConfig.avatarCorners - startCornersSize) / (float) (endCornersSize - startCornersSize));
+        addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         outlinePaint.setStyle(Paint.Style.STROKE);
         outlinePaint.setColor(ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_switchTrack), 0x3F));
@@ -214,7 +210,7 @@ public class MainScreenSetupCell extends FrameLayout {
             }
         };
         preview.setWillNotDraw(false);
-        addView(preview, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.CENTER, 21, 54, 21, 21));
+        addView(preview, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.CENTER, 21, 112, 21, 21));
         updateStatus(false);
         updateCenteredTitle(false);
         updateTabStyle(false);
@@ -391,29 +387,22 @@ public class MainScreenSetupCell extends FrameLayout {
     public void invalidate() {
         super.invalidate();
         preview.invalidate();
-        sizeBar.invalidate();
+        seekBar.invalidate();
         lastWidth = -1;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        textPaint.setTextSize(AndroidUtilities.dp(16));
-        textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
-        textPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText));
-        textPaint.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(String.valueOf(Math.round(ExteraConfig.avatarCorners)), getMeasuredWidth() - AndroidUtilities.dp(39), AndroidUtilities.dp(28), textPaint);
-
         if (!ExteraConfig.disableDividers)
             canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(21), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(21) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(273), MeasureSpec.EXACTLY));
+        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(331), MeasureSpec.EXACTLY));
         int width = MeasureSpec.getSize(widthMeasureSpec);
         if (lastWidth != width) {
-            sizeBar.setProgress((ExteraConfig.avatarCorners - startCornersSize) / (float) (endCornersSize - startCornersSize));
             lastWidth = width;
         }
     }
