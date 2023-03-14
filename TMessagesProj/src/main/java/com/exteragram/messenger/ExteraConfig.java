@@ -45,12 +45,13 @@ public class ExteraConfig {
 
     public static boolean squareFab;
     public static boolean forceBlur;
+    public static boolean forceSnow;
     public static boolean useSystemFonts;
     public static boolean newSwitchStyle;
     public static boolean disableDividers;
 
     public static int eventType;
-    public static boolean forceSnow;
+    public static boolean alternativeOpenAnimation;
     public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures;
 
     // General
@@ -183,12 +184,13 @@ public class ExteraConfig {
 
             squareFab = preferences.getBoolean("squareFab", true);
             forceBlur = preferences.getBoolean("forceBlur", false);
+            forceSnow = preferences.getBoolean("forceSnow", false);
             useSystemFonts = preferences.getBoolean("useSystemFonts", true);
             newSwitchStyle = preferences.getBoolean("newSwitchStyle", true);
             disableDividers = preferences.getBoolean("disableDividers", false);
 
             eventType = preferences.getInt("eventType", 0);
-            forceSnow = preferences.getBoolean("forceSnow", false);
+            alternativeOpenAnimation = preferences.getBoolean("alternativeOpenAnimation", true);
 
             changeStatus = preferences.getBoolean("changeStatus", true);
             newGroup = preferences.getBoolean("newGroup", true);

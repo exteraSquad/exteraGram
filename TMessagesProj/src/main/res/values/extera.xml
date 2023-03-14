@@ -48,6 +48,8 @@
 
     <string name="ForceBlur">Force Blur</string>
     <string name="ForceBlurInfo">Blur will be applied to absolutely all themes.</string>
+    <string name="ForceSnow">Force Snow</string>
+    <string name="ForceSnowInfo">Snow will appear in the action bar, drawer and background of chats.</string>
     <string name="UseSystemFonts">Use System Fonts</string>
     <string name="UseSystemEmoji">Use System Emoji</string>
     <string name="NewSwitchStyle">MD3 Switch Style</string>
@@ -58,8 +60,8 @@
 
     <string name="DrawerOptions">Drawer Options</string>
     <string name="DrawerIconSet">Icon Set</string>
-    <string name="ForceSnow">Force Snow</string>
-    <string name="ForceSnowInfo">Snow will also appear in the action bar and background of chats.</string>
+    <string name="DrawerAlternativeOpeningAnimation">Alternative Opening Animation</string>
+
     <string name="DependsOnTheDate">Depends on the Date</string>
     <string name="NewYear">New Year</string>
     <string name="ValentinesDay">Valentine\'s Day</string>
@@ -178,10 +180,8 @@
     <string name="OpenPremiumBot">Open Official Bot</string>
     <string name="SaveMessage">Save Message</string>
 
-    <string name="EnterID">Enter the ID</string>
     <string name="TrackSaved">Track saved to **%1$s**.</string>
-    <string name="ChannelToSaveDescription">Enter the ID of the Channel/Chat/User where the tracks will be saved.</string>
-    <string name="Unknown">Unknown</string>
+    <string name="ChannelToSaveChanged">Tracks will be saved to **%1$s**.</string>
 
     <string name="ConfirmCall">Confirm Call</string>
     <string name="CallTo">Call to **%1$s**?</string>

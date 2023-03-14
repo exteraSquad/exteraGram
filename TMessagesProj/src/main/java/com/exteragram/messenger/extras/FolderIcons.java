@@ -2,14 +2,14 @@ package com.exteragram.messenger.extras;
 
 import androidx.core.util.Pair;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 
 import java.util.LinkedHashMap;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class FolderIcons {
     public static LinkedHashMap<String, Integer> folderIcons = new LinkedHashMap<>();

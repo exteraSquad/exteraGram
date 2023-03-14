@@ -570,8 +570,8 @@ public class LimitReachedBottomSheet extends BottomSheetWithRecyclerListView {
                     descriptionStr = (UserConfig.getInstance(currentAccount).isPremium() || isVeryLargeFile) ? limitParams.descriptionStrPremium : limitParams.descriptionStr;
                 }
             }
-            int defaultLimit = limitParams.defaultLimit;
-            int premiumLimit = limitParams.premiumLimit;
+            int defaultLimit = UserConfig.MAX_ACCOUNT_DEFAULT_COUNT;
+            int premiumLimit = UserConfig.MAX_ACCOUNT_COUNT;
             int currentValue = LimitReachedBottomSheet.this.currentValue;
             float position = 0.5f;
 

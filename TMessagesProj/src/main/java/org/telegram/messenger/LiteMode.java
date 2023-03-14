@@ -4,12 +4,7 @@ package org.telegram.messenger;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
-import android.os.Build;
-import android.os.PowerManager;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.math.MathUtils;
 
 import org.telegram.tgnet.TLRPC;
@@ -18,10 +13,6 @@ import org.telegram.ui.Components.AnimatedEmojiDrawable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.AnimatedEmojiDrawable;
 
 public class LiteMode {
 
@@ -93,7 +84,7 @@ public class LiteMode {
         if (!loaded) {
             loadPreference();
         }
-        if (!ignorePowerSaving && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (!ignorePowerSaving) {
             if (getBatteryLevel() <= powerSaverLevel && powerSaverLevel > 0) {
                 if (!lastPowerSaverApplied) {
                     onPowerSaverApplied(lastPowerSaverApplied = true);
@@ -110,7 +101,6 @@ public class LiteMode {
     private static int lastBatteryLevelCached = -1;
     private static long lastBatteryLevelChecked;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static int getBatteryLevel() {
         if (lastBatteryLevelCached < 0 || System.currentTimeMillis() - lastBatteryLevelChecked > 1000 * 12) {
             BatteryManager batteryManager = (BatteryManager) ApplicationLoader.applicationContext.getSystemService(Context.BATTERY_SERVICE);
@@ -285,9 +275,7 @@ public class LiteMode {
         }
         if (onPowerSaverAppliedListeners != null) {
             AndroidUtilities.runOnUIThread(() -> {
-                Iterator<Utilities.Callback<Boolean>> i = onPowerSaverAppliedListeners.iterator();
-                while (i.hasNext()) {
-                    Utilities.Callback<Boolean> callback = i.next();
+                for (Utilities.Callback<Boolean> callback : onPowerSaverAppliedListeners) {
                     if (callback != null) {
                         callback.run(powerSaverApplied);
                     }

@@ -1,0 +1,164 @@
+    <!--
+
+     This is the source code of exteraGram for Android.
+
+     We do not and cannot prevent the use of our code,
+     but be respectful and credit the original author.
+
+     Copyright @immat0x1, 2023
+
+     -->
+<resources>
+    <string name="Preferences">Preferencje exteraGram</string>
+    <!--  Main Menu  -->
+    <string name="Links">Linki</string>
+    <string name="AboutExteraDescription">Eksperymentalny klient Telegram oparty na oficjalnym kodzie źródłowym!</string>
+    <string name="Channel">Kanał</string>
+    <string name="Crowdin">Tłumacz</string>
+    <string name="SourceCode">Kod źródłowy</string>
+    <string name="Categories">Kategorie</string>
+    <!--  Appearance  -->
+    <string name="AvatarCorners">Narożniki awatarów</string>
+    <string name="AvatarCornersLeft">Square</string>
+    <string name="AvatarCornersRight">Circle</string>
+    <string name="HideActionBarStatus">Ukryj status</string>
+    <string name="HideAllChats">Ukryj zakładkę „%1$s”</string>
+    <string name="CenterTitle">Wyśrodkuj tytuł na pasku akcji</string>
+    <string name="ActionBarTitle">Tekst tytułu</string>
+    <string name="TabIcons">Tab Icons</string>
+    <string name="TabStyle">Styl zakładek</string>
+    <string name="TabStyleTextOnly">Tekst</string>
+    <string name="TabStyleRounded">Zaokrąklony</string>
+    <string name="TabStyleChips">Czipy</string>
+    <string name="TabStylePills">Pigułki</string>
+    <string name="ActionBarTitleUsername">Nazwa użytkownika</string>
+    <string name="ActionBarTitleName">Imię</string>
+    <string name="MainScreenSetupInfo">Większość funkcji wymaga ponownego uruchomienia klienta w celu poprawnego działania.</string>
+    <string name="IconPack">Ikony</string>
+    <string name="SolarIcons">Używaj ikon „Solar”</string>
+    <string name="ForceBlur">Wymuś rozmycie</string>
+    <string name="ForceBlurInfo">Rozmycie zostanie zastosowane do wszystkich motywów.</string>
+    <string name="UseSystemFonts">Używaj czcionek systemowych</string>
+    <string name="UseSystemEmoji">Używaj systemowych emoji</string>
+    <string name="NewSwitchStyle">Styl przełączników MD3</string>
+    <string name="DisableDividers">Wyłącz separatory</string>
+    <string name="TransparentStatusBar">Przezroczysty pasek statusu</string>
+    <string name="AlternativeNavigation">Alternatywna nawigacja</string>
+    <string name="AlternativeNavigationInfo">Eksperymentalna opcja, która obejmuje nowe, płynniejsze animacje przejścia między ekranami.\n\nZ tą opcją pasek nawigacyjny w czatach będzie miał taki sam kolor, jak panel wiadomości.</string>
+    <string name="DrawerOptions">Opcje szuflady</string>
+    <string name="DrawerIconSet">Zestaw ikon</string>
+    <string name="ForceSnow">Wymuś śnieg</string>
+    <string name="ForceSnowInfo">Śnieg pojawi się również na pasku akcji i w tle czatów.</string>
+    <string name="DependsOnTheDate">Zależnie od daty</string>
+    <string name="NewYear">Nowy rok</string>
+    <string name="ValentinesDay">Walentynki</string>
+    <string name="Halloween">Halloween</string>
+    <string name="DrawerElements">Elementy szuflady</string>
+    <!--  General  -->
+    <string name="CameraType">Typ aparatu</string>
+    <string name="CameraTypeSystem">Systemowy</string>
+    <string name="DefaultCameraInfo">Używaj wbudowanego w Telegram aparatu.</string>
+    <string name="CameraXInfo">
+CameraX wspierana jest tylko na
+<![CDATA[ <a href="https://developer.android.com/training/camerax/devices">wybranych urządzeniach</a> ]]>
+, wsparcie efektów i obiektywów zależy od twojego producenta.
+</string>
+    <string name="SystemCameraInfo">Bezpośredni dostęp do aparatu systemowego (nie dotyczy wiadomości wideo).</string>
+    <string name="PerformanceMode">Tryb wydajności</string>
+    <string name="PerformanceModeInfo">Jakość CameraX zostanie obniżona na korzyść wydajności.</string>
+    <string name="CameraQuality">Jakość aparatu</string>
+    <string name="DisableNumberRounding">Wyłącz zaokrąglanie liczb</string>
+    <string name="FormatTimeWithSeconds">Formatuj czas z sekundami</string>
+    <string name="DisableVibration">Wyłącz wibracje</string>
+    <string name="DisableProximitySensor">Wyłącz czujnik zbliżeniowy</string>
+    <string name="TabletMode">Tryb tabletu</string>
+    <string name="DownloadSpeedBoost">Zwiększ szybkość pobierania</string>
+    <string name="UploadSpeedBoost">Zwiększ szybkość wysyłania</string>
+    <string name="Ultra">Ultra</string>
+    <string name="SpeedBoostInfo">Ultra przyśpieszenie może powodować problemy z pobieraniem plików i strumieniowaniem wideo na wolnym połączeniu internetowym.</string>
+    <string name="Profile">Profil</string>
+    <string name="HidePhoneNumber">Ukryj numer telefonu</string>
+    <string name="ShowIdAndDc">Pokaż ID i DC</string>
+    <string name="ShowIdAndDcInfo">Telegram APl pokazuje ID w oryginalnej postaci, a Bot API dodaje znak minus dla grup i -100 dla supergrup, grup rozgłoszeniowychi kanałów.</string>
+    <string name="DisableAnimatedAvatars">Wyłącz animowane awatary</string>
+    <string name="PremiumAutoPlayback">Automatyczne odtwarzanie Premium</string>
+    <string name="HidePremiumStickersTab">Ukryj zakładkę naklejek Premium</string>
+    <string name="HideFeaturedEmoji">Ukryj polecane emoji Premium</string>
+    <string name="HideSendAsChannel">Ukryj „Wyślij jako kanał”</string>
+    <string name="ArchiveOnPull">Otwórz Archiwum przy pociągnięciu</string>
+    <string name="DisableUnarchiveSwipe">Wyłącz przesunięcie „Przywróć”</string>
+    <string name="DisableUnarchiveSwipeInfo">Przesunięcie w lewo nie usunie czatów z archiwum.</string>
+    <!--  Chats  -->
+    <string name="StickerSize">Rozmiar naklejek</string>
+    <string name="StickerSizeLeft">Small</string>
+    <string name="StickerSizeRight">Big</string>
+    <string name="StickerSizeDialogMessageReplyTo">wow</string>
+    <string name="StickerSizeDialogMessage">on jest taki uroczy!</string>
+    <string name="StickerShape">Kształt naklejek</string>
+    <string name="StickerShapeRounded">Zaokrąglony</string>
+    <string name="StickerShapeRoundedMsg">Wiadomość</string>
+    <string name="StickerTime">Ukryj czas na naklejkach</string>
+    <string name="UnlimitedRecentStickers">Nieograniczona liczba ostatnich naklejek</string>
+    <string name="HideCategories">Ukryj kategorie</string>
+    <string name="HideCategoriesInfo">Kategorie znikną z paska wyszukiwania w oknie wyboru reakcji i panelu emoji.</string>
+    <string name="DoubleTap">Podwójne dotknięcie</string>
+    <string name="DoubleTapIncoming">Wiadomości przychodzące</string>
+    <string name="DoubleTapOutgoing">Wiadomości wychodzące</string>
+    <string name="DoubleTapInfo">Niektóre działania wymagają uprawnień administratora w czacie lub kanale.</string>
+    <string name="HideMuteUnmuteButton">Ukryj przycisk „%1$s”</string>
+    <string name="HideMuteUnmuteButtonInfo">na dole kanałów.</string>
+    <string name="HideKeyboardOnScroll">Ukryj klawiaturę podczas przewijania</string>
+    <string name="DisableJumpToNextChannel">Wyłącz „Przejdź do następnego kanału”</string>
+    <string name="ShowActionTimestamps">Pokaż czas na działaniach</string>
+    <string name="HideShareButton">Ukryj boczny przycisk „%1$s”</string>
+    <string name="DateOfForwardedMsg">Pokaż datę przekazanych wiadomości</string>
+    <string name="ShowMessageID">Pokaż ID wiadomości</string>
+    <string name="AddCommaAfterMention">Dodaj przecinek po wzmiance</string>
+    <string name="AddCommaAfterMentionInfo">Przecinek zostanie dodany automatycznie po wybraniu użytkownika.</string>
+    <string name="DisableEdgeAction">Wyłącz akcję krawędzi</string>
+    <string name="DisableEdgeActionInfo">Wyłącza przełączanie zdjęć przed dotknięcie krawędzi.</string>
+    <string name="HideCameraTile">Ukryj kafelek błyskawicznego aparatu</string>
+    <string name="HideCameraTileInfo">Nadal możesz otworzyć aparat systemowy przez długie naciśnięcie przycisku załącznika w panelu wiadomości.</string>
+    <string name="StaticZoom">Statyczne powiększenie</string>
+    <string name="StaticZoomInfo">Podczas nagrywania wiadomości wideo, powiększenie nie zresetuje się po puszczeniu palców.</string>
+    <string name="RememberLastUsedCamera">Pamiętaj ostatnio używany aparat</string>
+    <string name="RememberLastUsedCameraInfo">Podczas nagrywania wiadomości wideo, wybrany zostanie ostatnia używany aparat.</string>
+    <string name="PauseOnMinimize">Auto-pauza</string>
+    <string name="PauseOnMinimizeInfo">Wstrzymuje odtwarzanie wideo, gdy urządzenie jest zablokowane lub exteraGram jest zminimalizowany.</string>
+    <string name="DisablePlayback">Wyłącz odtwarzanie</string>
+    <string name="DisablePlaybackInfo">Wyłącz odtwarzanie po naciśnięciu przycisku głośności.</string>
+    <!--  Updates  -->
+    <string name="LastCheck">Ostatnie sprawdzenie</string>
+    <string name="CurrentVersion">Bieżąca wersja</string>
+    <string name="BuildType">Typ kompilacji</string>
+    <string name="BTRelease">Wydanie</string>
+    <string name="BTBeta">Beta</string>
+    <string name="CheckOnLaunch">Sprawdź po uruchomieniu</string>
+    <string name="ClearUpdatesCache">Wyczyść pamięć podręczną aktualizacji</string>
+    <string name="ClearedUpdatesCache">Wyczyszczono **%1$s** pamięci podręcznej.</string>
+    <string name="NothingToClear">Nic do wyczyszczenia.</string>
+    <string name="CheckForUpdates">Sprawdź dostępność aktualizacji</string>
+    <string name="CheckingForUpdates">Sprawdzanie aktualizacji…</string>
+    <string name="NoUpdates">Nie znaleziono aktualizacji.</string>
+    <string name="UpdateAvailable">Aktualizacja dostępna!</string>
+    <string name="Version">Wersja</string>
+    <string name="UpdateSize">Rozmiar aktualizacji</string>
+    <string name="Changelog">Lista zmian:</string>
+    <!--  Other  -->
+    <string name="RestartRequired">Zrestartuj aplikację, aby zastosować zmiany.</string>
+    <string name="MutualContact">wzajemny kontakt</string>
+    <string name="ToBeginning">Do początku</string>
+    <string name="MessageHistory">Historia wiadomości</string>
+    <string name="BoldItalic">Pogrubiona kursywa</string>
+    <string name="OpenPremiumBot">Otwórz oficjalnego bota</string>
+    <string name="SaveMessage">Zapisz wiadomość</string>
+    <string name="TrackSaved">Utwór zapisany do **%1$s**.</string>
+    <string name="ConfirmCall">Potwierdź połączenie</string>
+    <string name="CallTo">Zadzwonić do **%1$s**?</string>
+    <string name="AppIconGradient">Gradient</string>
+    <string name="AppIconGlow">Poświata</string>
+    <string name="AppIconSpace">Kosmos</string>
+    <string name="AppIconWinter">Zima</string>
+    <string name="AppIconVK">VK</string>
+    <string name="AppIconRed">RedEbalo</string>
+</resources>

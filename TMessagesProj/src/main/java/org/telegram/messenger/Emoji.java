@@ -28,6 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.exteragram.messenger.ExteraUtils;
+
 import org.telegram.ui.Components.AnimatedEmojiSpan;
 
 import java.io.InputStream;
@@ -267,7 +269,7 @@ public class Emoji {
 
         @Override
         public void draw(Canvas canvas) {
-            if (!isLoaded() && !SharedConfig.useSystemEmoji) {
+            if (!SharedConfig.useSystemEmoji && !isLoaded()) {
                 loadEmoji(info.page, info.page2);
                 placeholderPaint.setColor(placeholderColor);
                 Rect bounds = getBounds();
@@ -285,7 +287,8 @@ public class Emoji {
             if (SharedConfig.useSystemEmoji) {
                 String emoji = fixEmoji(EmojiData.data[info.page][info.emojiIndex]);
                 textPaint.setTextSize(b.height() * 0.8f);
-                canvas.drawText(emoji, 0, emoji.length(), b.left, b.bottom - b.height() * 0.225f, textPaint);
+                textPaint.setTypeface(ExteraUtils.getSystemEmojiTypeface());
+                canvas.drawText(emoji,  0, emoji.length(), b.left, b.bottom - b.height() * 0.225f, textPaint);
                 return;
             }
 

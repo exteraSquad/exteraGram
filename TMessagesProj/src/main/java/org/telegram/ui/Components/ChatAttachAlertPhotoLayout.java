@@ -2211,8 +2211,13 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                         }
                     }
                     deviceHasGoodCamera = false;
-                } else {
+                } else if (CameraXUtils.isCameraXSupported() && ExteraConfig.cameraType == 1) {
                     deviceHasGoodCamera = CameraXView.hasGoodCamera(getContext());
+                } else {
+                    if (request || SharedConfig.hasCameraCache) {
+                        CameraController.getInstance().initCamera(null);
+                    }
+                    deviceHasGoodCamera = CameraController.getInstance().isCameraInitied();
                 }
             } else if (CameraXUtils.isCameraXSupported() && ExteraConfig.cameraType == 1) {
                 deviceHasGoodCamera = CameraXView.hasGoodCamera(getContext());
@@ -2237,6 +2242,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
     boolean cameraExpanded;
     private void openCamera(boolean animated) {
         if (cameraView == null || cameraInitAnimation != null || parentAlert.isDismissed()) {
+            return;
+        }
+        if (!cameraView.isInited() && LiteMode.isEnabled(LiteMode.FLAGS_CHAT)) {
             return;
         }
         cameraView.initTexture();
@@ -2365,7 +2373,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             return;
         }
         if (cameraView == null) {
-            final boolean lazy = false; //!LiteMode.isEnabled(LiteMode.FLAGS_CHAT);
+            final boolean lazy = !LiteMode.isEnabled(LiteMode.FLAGS_CHAT);
             if (!CameraXUtils.isCameraXSupported() || ExteraConfig.cameraType != 1) {
                 cameraView = new CameraView(parentAlert.baseFragment.getParentActivity(), parentAlert.openWithFrontFaceCamera, lazy) {
 
@@ -2393,8 +2401,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                     }
                 };
             } else {
-                cameraView = new CameraXView(parentAlert.baseFragment.getParentActivity(), parentAlert.openWithFrontFaceCamera);
-                ((CameraXView) cameraView).initCamera();
+                cameraView = new CameraXView(parentAlert.baseFragment.getParentActivity(), parentAlert.openWithFrontFaceCamera, lazy);
             }
             if (cameraCell != null && lazy) {
                 cameraView.setThumbDrawable(cameraCell.getDrawable());
@@ -2446,9 +2453,14 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                         }
                     }
                 } else {
+                    if (cameraOpened && ((CameraXView) cameraView).isExposureCompensationSupported()) {
+                        isExposureCompensationSupported = true;
+                        evControlView.setVisibility(View.VISIBLE);
+                        evControlView.setAlpha(0.0f);
+                    }
                     effectSelector.loadEffects((CameraXView) cameraView);
                     if (cameraOpened) {
-                        effectSelector.setVisibility(cameraView.isFrontface() ? GONE:VISIBLE);
+                        effectSelector.setVisibility(cameraView.isFrontface() ? GONE : VISIBLE);
                         lockAnimationView.setVisibility(VISIBLE);
                         lockAnimationView.setAlpha(0.0f);
                     }
@@ -2538,9 +2550,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             }
             parentAlert.getContainer().addView(cameraIcon, 2, new FrameLayout.LayoutParams(itemSize, itemSize));
 
-            cameraView.setAlpha(mediaEnabled ? 0.0f : 0.2f);
+            cameraView.setAlpha(mediaEnabled ? 1.0f : 0.2f);
             cameraView.setEnabled(mediaEnabled);
-            cameraIcon.setAlpha(mediaEnabled ? 0.0f : 0.2f);
+            cameraIcon.setAlpha(mediaEnabled ? 1.0f : 0.2f);
             cameraIcon.setEnabled(mediaEnabled);
             if (isHidden) {
                 cameraView.setVisibility(GONE);

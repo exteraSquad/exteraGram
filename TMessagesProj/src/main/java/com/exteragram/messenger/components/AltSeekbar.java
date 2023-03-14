@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.HapticFeedbackConstants;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,6 +33,8 @@ public class AltSeekbar extends FrameLayout {
 
     private final int min, max;
     private float currentValue;
+    private int vibro = -1;
+    private boolean round;
 
     public interface OnDrag {
         void run(float progress);
@@ -42,6 +45,7 @@ public class AltSeekbar extends FrameLayout {
 
         this.max = max;
         this.min = min;
+        this.round = round;
 
         LinearLayout headerLayout = new LinearLayout(context);
         headerLayout.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
@@ -65,7 +69,7 @@ public class AltSeekbar extends FrameLayout {
                 super.onDraw(canvas);
             }
         };
-        headerValue.setAnimationProperties(.45f, 0, 80, CubicBezierInterpolator.EASE_OUT_QUINT);
+        headerValue.setAnimationProperties(1f, 0, 75, CubicBezierInterpolator.EASE_OUT_QUINT);
         headerValue.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         headerValue.setPadding(AndroidUtilities.dp(5.33f), AndroidUtilities.dp(2), AndroidUtilities.dp(5.33f), AndroidUtilities.dp(2));
         headerValue.setTextSize(AndroidUtilities.dp(12));
@@ -133,9 +137,15 @@ public class AltSeekbar extends FrameLayout {
     }
 
     public void setProgress(float progress) {
-        currentValue = Math.round(min + (max - min) * progress);
+        currentValue = round ? Math.round(min + (max - min) * progress) : (min + (max - min) * progress);
         seekBarView.setProgress(progress);
         headerValue.setText(String.valueOf((int) currentValue), true);
+        if ((currentValue == min || currentValue == max) && currentValue != vibro) {
+            vibro = (int) currentValue;
+            performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        } else if (currentValue > min && currentValue < max) {
+            vibro = -1;
+        }
         updateValues();
     }
 

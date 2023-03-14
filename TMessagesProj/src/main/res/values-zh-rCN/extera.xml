@@ -1,0 +1,165 @@
+    <!--
+
+     This is the source code of exteraGram for Android.
+
+     We do not and cannot prevent the use of our code,
+     but be respectful and credit the original author.
+
+     Copyright @immat0x1, 2023
+
+     -->
+<resources>
+    <string name="Preferences">exteraGram 设置</string>
+    <!--  Main Menu  -->
+    <string name="Links">链接</string>
+    <string name="AboutExteraDescription">基于官方Telegram源码制作的第三方客户端</string>
+    <string name="Channel">通知频道</string>
+    <string name="Crowdin">翻译</string>
+    <string name="SourceCode">exteraGram 源码</string>
+    <string name="Categories">设置分类</string>
+    <!--  Appearance  -->
+    <string name="AvatarCorners">头像圆角</string>
+    <string name="AvatarCornersLeft">Square</string>
+    <string name="AvatarCornersRight">Circle</string>
+    <string name="HideActionBarStatus">隐藏状态</string>
+    <string name="HideAllChats">隐藏 %1$s 选项卡</string>
+    <string name="CenterTitle">标题居中</string>
+    <string name="ActionBarTitle">标题文本</string>
+    <string name="TabIcons">Tab Icons</string>
+    <string name="TabStyle">Tab风格</string>
+    <string name="TabStyleTextOnly">仅文本</string>
+    <string name="TabStyleRounded">圆角</string>
+    <string name="TabStyleChips">椭圆</string>
+    <string name="TabStylePills">药丸</string>
+    <string name="ActionBarTitleUsername">用户名</string>
+    <string name="ActionBarTitleName">姓名</string>
+    <string name="MainScreenSetupInfo">大多数特性需要客户端重新启动才能正常生效。</string>
+    <string name="IconPack">图标</string>
+    <string name="SolarIcons">使用“Solar”风格图标</string>
+    <string name="ForceBlur">强制模糊</string>
+    <string name="ForceBlurInfo">模糊将应用于绝大多数的主题。</string>
+    <string name="UseSystemFonts">使用系统字体</string>
+    <string name="UseSystemEmoji">使用系统Emoji</string>
+    <string name="NewSwitchStyle">Material Design 3 开关样式</string>
+    <string name="DisableDividers">禁用分隔线</string>
+    <string name="TransparentStatusBar">使用完全透明的状态栏</string>
+    <string name="AlternativeNavigation">备选导航动画</string>
+    <string name="AlternativeNavigationInfo">一个实验性选项，包括屏幕切换过程中新的、更加舒适的过渡动画。\n\n通过此选项，聊天中的导航栏颜色将与消息面板相同。</string>
+    <string name="DrawerOptions">侧栏选项</string>
+    <string name="DrawerIconSet">图标集</string>
+    <string name="ForceSnow">强制\"飘雪\"动画</string>
+    <string name="ForceSnowInfo">雪花也会出现在操作栏和聊天背景中。</string>
+    <string name="DependsOnTheDate">根据日期</string>
+    <string name="NewYear">新年</string>
+    <string name="ValentinesDay">情人节</string>
+    <string name="Halloween">万圣节</string>
+    <string name="DrawerElements">侧栏元素</string>
+    <!--  General  -->
+    <string name="CameraType">相机类型</string>
+    <string name="CameraTypeSystem">系统</string>
+    <string name="DefaultCameraInfo">使用Telegram的官方内置相机</string>
+    <string name="CameraXInfo">
+CameraX仅支持
+<![CDATA[ <a href="https://developer.android.com/training/camerax/devices">该列表</a> ]]>
+中的设备，拍摄质量与兼容性取决于硬件性能。
+</string>
+    <string name="SystemCameraInfo">直接使用系统相机(不适用于视频消息)</string>
+    <string name="PerformanceMode">性能模式</string>
+    <string name="PerformanceModeInfo">CameraX的拍摄质量会有所降低，以提高性能</string>
+    <string name="CameraQuality">相机清晰度</string>
+    <string name="DisableNumberRounding">禁用数字舍入</string>
+    <string name="FormatTimeWithSeconds">时间精确到秒</string>
+    <string name="DisableVibration">关闭振动</string>
+    <string name="DisableProximitySensor">禁用距离传感器</string>
+    <string name="TabletMode">平板模式</string>
+    <string name="DownloadSpeedBoost">下载加速</string>
+    <string name="UploadSpeedBoost">上传加速</string>
+    <string name="Ultra">极大</string>
+    <string name="SpeedBoostInfo">下载加速可能会导致下载文件和在网络连接缓慢时的流媒体产生问题</string>
+    <string name="Profile">个人资料</string>
+    <string name="HidePhoneNumber">隐藏手机号码</string>
+    <string name="ShowIdAndDc">显示用户ID和DC(数据中心)</string>
+    <string name="ShowIdAndDcInfo">按照Telegram APl的返回表示ID，而Bot API为群组的ID之前添加负号，为超级群组、广播群组和频道的ID之前添加-100。</string>
+    <string name="DisableAnimatedAvatars">禁用动态头像</string>
+    <string name="PremiumAutoPlayback">Premium自动播放</string>
+    <string name="HidePremiumStickersTab">隐藏Premium贴纸选项卡</string>
+    <string name="HideFeaturedEmoji">隐藏Premium专属表情</string>
+    <string name="HideSendAsChannel">隐藏“以频道身份发言”</string>
+    <string name="ArchiveOnPull">下拉打开已归档对话</string>
+    <string name="DisableUnarchiveSwipe">禁用\"取消存档\"滑动动作</string>
+    <string name="DisableUnarchiveSwipeInfo">向左滑动不会删除归档中的聊天。</string>
+    <!--  Chats  -->
+    <string name="StickerSize">贴纸大小</string>
+    <string name="StickerSizeLeft">Small</string>
+    <string name="StickerSizeRight">Big</string>
+    <string name="StickerSizeDialogMessageReplyTo">喵喵喵~</string>
+    <string name="StickerSizeDialogMessage">哇，好可爱的猫猫!</string>
+    <string name="StickerShape">贴纸形状</string>
+    <string name="StickerShapeRounded">圆角</string>
+    <string name="StickerShapeRoundedMsg">留言</string>
+    <string name="StickerTime">隐藏贴纸发送时间</string>
+    <string name="UnlimitedRecentStickers">无限的最近贴纸</string>
+    <string name="HideCategories">隐藏类别</string>
+    <string name="HideCategoriesInfo">类别将从回应选择对话框和表情面板中的搜索栏中消失。</string>
+    <string name="DoubleTap">双击</string>
+    <string name="DoubleTapIncoming">收到的消息</string>
+    <string name="DoubleTapOutgoing">发送的消息</string>
+    <string name="DoubleTapInfo">某些操作需要在聊天或频道中拥有管理员权限。</string>
+    <string name="HideMuteUnmuteButton">隐藏“%1$s”按钮</string>
+    <string name="HideMuteUnmuteButtonInfo">从频道的底部</string>
+    <string name="HideKeyboardOnScroll">在浏览对话时隐藏键盘</string>
+    <string name="DisableJumpToNextChannel">禁用“跳转至下一个频道”</string>
+    <string name="ShowActionTimestamps">显示操作的时间戳</string>
+    <string name="HideShareButton">隐藏消息右侧的“%1$s”按钮</string>
+    <string name="DateOfForwardedMsg">显示被转发原消息时间</string>
+    <string name="ShowMessageID">显示消息ID</string>
+    <string name="AddCommaAfterMention">选定@ 后自动添加逗号后缀</string>
+    <string name="AddCommaAfterMentionInfo">点击您想要提及的用户后，将自动放置一个逗号。</string>
+    <string name="DisableEdgeAction">禁用边缘操作</string>
+    <string name="DisableEdgeActionInfo">禁用点击边缘跳转至下一张照片。</string>
+    <string name="HideCameraTile">隐藏即时相机</string>
+    <string name="HideCameraTileInfo">您仍然可以通过长按消息面板中的相机按钮来打开系统相机。</string>
+    <string name="StaticZoom">静态缩放</string>
+    <string name="StaticZoomInfo">当录制视频消息时，如果您放开手指，缩放将不会重置。</string>
+    <string name="RememberLastUsedCamera">保留上次相机状态</string>
+    <string name="RememberLastUsedCameraInfo">录制视频留言时，使用上次的摄像头设置</string>
+    <string name="PauseOnMinimize">自动暂停视频播放</string>
+    <string name="PauseOnMinimizeInfo">当锁屏/切换到后台时暂停视频播放</string>
+    <string name="DisablePlayback">禁用快捷播放</string>
+    <string name="DisablePlaybackInfo">按动音量键时，禁止音频外放</string>
+    <!--  Updates  -->
+    <string name="LastCheck">最后检查</string>
+    <string name="CurrentVersion">当前版本</string>
+    <string name="BuildType">构建类型</string>
+    <string name="BTRelease">发布</string>
+    <string name="BTBeta">β</string>
+    <string name="CheckOnLaunch">启动时检测</string>
+    <string name="ClearUpdatesCache">清除更新缓存</string>
+    <string name="ClearedUpdatesCache">清除了**%1$s**的缓存。</string>
+    <string name="NothingToClear">没有需要清理的.</string>
+    <string name="CheckForUpdates">检查更新</string>
+    <string name="CheckingForUpdates">检测更新中...</string>
+    <string name="NoUpdates">没有找到更新。</string>
+    <string name="UpdateAvailable">更新可用!</string>
+    <string name="Version">版本</string>
+    <string name="UpdateSize">更新大小</string>
+    <string name="Changelog">更新日志</string>
+    <!--  Other  -->
+    <string name="RestartRequired">重启应用以保证设置生效.</string>
+    <string name="MutualContact">双向联系人</string>
+    <string name="ToBeginning">首条消息</string>
+    <string name="MessageHistory">消息历史</string>
+    <string name="BoldItalic">粗体斜体</string>
+    <string name="OpenPremiumBot">打开官方Premium Bot</string>
+    <string name="SaveMessage">我的收藏</string>
+    <string name="TrackSaved">ID超链接已保存</string>
+    <string name="Unknown">Unknown</string>
+    <string name="ConfirmCall">呼叫前确认</string>
+    <string name="CallTo">是否呼叫**%1$s**？</string>
+    <string name="AppIconGradient">渐变</string>
+    <string name="AppIconGlow">荧光</string>
+    <string name="AppIconSpace">太空</string>
+    <string name="AppIconWinter">冬日</string>
+    <string name="AppIconVK">VК</string>
+    <string name="AppIconRed">红色</string>
+</resources>

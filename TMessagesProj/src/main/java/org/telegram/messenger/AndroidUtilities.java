@@ -1921,7 +1921,7 @@ public class AndroidUtilities {
                 result.add(dir);
             }
         }
-        return (ArrayList<File>) result.stream().distinct().collect(Collectors.toList());
+        return result;
     }
 
     public static File getCacheDir() {

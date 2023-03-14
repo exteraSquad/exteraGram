@@ -144,8 +144,8 @@ public class CameraXUtils {
     public static Size getPreviewBestSize() {
         int suggestedRes = getSuggestedResolution(true);
         return getAvailableVideoSizes().values().parallelStream()
-                .filter(size -> size.getHeight() <= ExteraConfig.cameraResolution && size.getHeight() < suggestedRes)
-                .findFirst()
+                .filter(size -> size.getHeight() <= ExteraConfig.cameraResolution && size.getHeight() <= suggestedRes)
+                .max(Comparator.comparingInt(Size::getHeight))
                 .orElse(new Size(0, 0));
     }
 

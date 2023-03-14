@@ -222,6 +222,13 @@ public class DrawerLayoutContainer extends FrameLayout {
         }
     }
 
+    public int getDrawerWidth() {
+        if (drawerLayout == null) {
+            return 0;
+        }
+        return drawerLayout.getMeasuredWidth();
+    }
+
     public void openDrawer(boolean fast) {
         if (!allowOpenDrawer || drawerLayout == null) {
             return;
@@ -473,7 +480,7 @@ public class DrawerLayoutContainer extends FrameLayout {
                     if (startedTracking || drawerPosition != 0 && drawerPosition != drawerLayout.getMeasuredWidth()) {
                         float velX = velocityTracker.getXVelocity();
                         float velY = velocityTracker.getYVelocity();
-                        boolean backAnimation = drawerPosition < drawerLayout.getMeasuredWidth() / 2.0f && (velX < 3500 || Math.abs(velX) < Math.abs(velY)) || velX < 0 && Math.abs(velX) >= 3500;
+                        boolean backAnimation = drawerPosition < drawerLayout.getMeasuredWidth() / 4.0f && (velX < 3500 || Math.abs(velX) < Math.abs(velY)) || velX < 0 && Math.abs(velX) >= 3500;
                         if (!backAnimation) {
                             openDrawer(!drawerOpened && Math.abs(velX) >= 3500);
                         } else {

@@ -1,0 +1,164 @@
+    <!--
+
+     This is the source code of exteraGram for Android.
+
+     We do not and cannot prevent the use of our code,
+     but be respectful and credit the original author.
+
+     Copyright @immat0x1, 2023
+
+     -->
+<resources>
+    <string name="Preferences">exteraGram Einstellungen</string>
+    <!--  Main Menu  -->
+    <string name="Links">Links</string>
+    <string name="AboutExteraDescription">Experimenteller Telegram-Client basierend auf offiziellen Telegram-Quellen!</string>
+    <string name="Channel">Kanal</string>
+    <string name="Crowdin">Übersetzen</string>
+    <string name="SourceCode">Quellcode</string>
+    <string name="Categories">Kategorien</string>
+    <!--  Appearance  -->
+    <string name="AvatarCorners">Avatar-Ecken</string>
+    <string name="AvatarCornersLeft">Square</string>
+    <string name="AvatarCornersRight">Circle</string>
+    <string name="HideActionBarStatus">Status ausblenden</string>
+    <string name="HideAllChats">Ordner \"%1$s\" ausblenden</string>
+    <string name="CenterTitle">Titel in Aktionsleiste zentrieren</string>
+    <string name="ActionBarTitle">Titelleistentext</string>
+    <string name="TabIcons">Tab Icons</string>
+    <string name="TabStyle">Ordnerdesign</string>
+    <string name="TabStyleTextOnly">Text</string>
+    <string name="TabStyleRounded">Abgerundet</string>
+    <string name="TabStyleChips">Boxförmig</string>
+    <string name="TabStylePills">Pillenförmig</string>
+    <string name="ActionBarTitleUsername">Nutzername</string>
+    <string name="ActionBarTitleName">Vorname</string>
+    <string name="MainScreenSetupInfo">Die meisten Funktionen erfordern einen Neustart der Anwendung, um korrekt zu funktionieren.</string>
+    <string name="IconPack">Symbole</string>
+    <string name="SolarIcons">\"Solar\"-Symbole verwenden</string>
+    <string name="ForceBlur">Unschärfe erzwingen</string>
+    <string name="ForceBlurInfo">Unschärfe wird auf alle Farbthemen angewandt.</string>
+    <string name="UseSystemFonts">Systemschriftarten verwenden</string>
+    <string name="UseSystemEmoji">System-Emojis verwenden</string>
+    <string name="NewSwitchStyle">MD3-Schalterdesign</string>
+    <string name="DisableDividers">Trennlinien ausblenden</string>
+    <string name="TransparentStatusBar">Statusleistentransparenz</string>
+    <string name="AlternativeNavigation">Alternative Navigation</string>
+    <string name="AlternativeNavigationInfo">Eine experimentelle Option, die neue, flüssigere Übergangsanimationen zwischen Bildschirmen beinhaltet.\n\nMit dieser Option wird die Navigationsleiste in Chats die gleiche Farbe wie das Eingabefeld haben.</string>
+    <string name="DrawerOptions">Drawer-Optionen</string>
+    <string name="DrawerIconSet">Symbolsatz</string>
+    <string name="ForceSnow">Schnee erzwingen</string>
+    <string name="ForceSnowInfo">Schnee wird auch in der Aktionsleiste und im Hintergrund von Chats angezeigt.</string>
+    <string name="DependsOnTheDate">Abhängig vom Datum</string>
+    <string name="NewYear">Neujahr</string>
+    <string name="ValentinesDay">Valentinstag</string>
+    <string name="Halloween">Halloween</string>
+    <string name="DrawerElements">Drawer-Elemente</string>
+    <!--  General  -->
+    <string name="CameraType">Kameratyp</string>
+    <string name="CameraTypeSystem">System</string>
+    <string name="DefaultCameraInfo">In Telegram eingebaute Kamera verwenden.</string>
+    <string name="CameraXInfo">
+CameraX wird nur auf
+<![CDATA[ <a href="https://developer.android.com/training/camerax/devices">ausgewählten Geräten unterstützt</a> ]]>
+, Effekte und Objektivunterstützung hängen von Ihrem Hersteller ab.
+</string>
+    <string name="SystemCameraInfo">Direkter Zugriff auf die Systemkamera(gilt nicht für Videomitteilungen).</string>
+    <string name="PerformanceMode">Hochleistungsmodus</string>
+    <string name="PerformanceModeInfo">Die Qualität von CameraX wird zugunsten der Leistung reduziert.</string>
+    <string name="CameraQuality">Kameraqualität</string>
+    <string name="DisableNumberRounding">Zahlen nicht runden</string>
+    <string name="FormatTimeWithSeconds">Zeit mit Sekunden formatieren</string>
+    <string name="DisableVibration">Vibration deaktivieren</string>
+    <string name="DisableProximitySensor">Näherungssensor deaktivieren</string>
+    <string name="TabletMode">Tablet-Modus</string>
+    <string name="DownloadSpeedBoost">Beschleunigtes Herunterladen</string>
+    <string name="UploadSpeedBoost">Beschleunigtes Hochladen</string>
+    <string name="Ultra">Extrem</string>
+    <string name="SpeedBoostInfo">Extreme Beschleunigung kann beim Herunterladen von Dateien und beim Streaming von Videos mit einer langsamen Internetverbindung Probleme hervorrufen.</string>
+    <string name="Profile">Profil</string>
+    <string name="HidePhoneNumber">Meine Telefonnummer ausblenden</string>
+    <string name="ShowIdAndDc">ID und DC anzeigen</string>
+    <string name="ShowIdAndDcInfo">Die Telegram-API zeigt die IDs so an, wie sie sind, während die Bot-API ein Minuszeichen für Gruppen und -100 für Supergruppen, Broadcast-Gruppen und Kanäle hinzufügt.</string>
+    <string name="DisableAnimatedAvatars">Animierte Profilbilder deaktivieren</string>
+    <string name="PremiumAutoPlayback">Premium-Auto-Wiedergabe</string>
+    <string name="HidePremiumStickersTab">Premium-Stickerordner ausblenden</string>
+    <string name="HideFeaturedEmoji">Empfohlene Premium-Emoji ausblenden</string>
+    <string name="HideSendAsChannel">\"Als Kanal senden\" ausblenden</string>
+    <string name="ArchiveOnPull">Archiv beim Herunterziehen öffnen</string>
+    <string name="DisableUnarchiveSwipe">\"Einblenden\"-Geste deaktivieren</string>
+    <string name="DisableUnarchiveSwipeInfo">Wischen nach links wird Chats nicht aus dem Archiv entfernen.</string>
+    <!--  Chats  -->
+    <string name="StickerSize">Stickergröße</string>
+    <string name="StickerSizeLeft">Small</string>
+    <string name="StickerSizeRight">Big</string>
+    <string name="StickerSizeDialogMessageReplyTo">wow</string>
+    <string name="StickerSizeDialogMessage">woah, er ist so süß!</string>
+    <string name="StickerShape">Stickerform</string>
+    <string name="StickerShapeRounded">Abgerundet</string>
+    <string name="StickerShapeRoundedMsg">Nachricht</string>
+    <string name="StickerTime">Zeit auf Stickern ausblenden</string>
+    <string name="UnlimitedRecentStickers">Unbegrenzte zuletzt verwendete Sticker</string>
+    <string name="HideCategories">Kategorien ausblenden</string>
+    <string name="HideCategoriesInfo">Die Kategorien verschwinden aus der Suchleiste im Reaktionsauswahldialog und dem Emoji-Panel.</string>
+    <string name="DoubleTap">Doppeltipp</string>
+    <string name="DoubleTapIncoming">Eingehende Nachrichten</string>
+    <string name="DoubleTapOutgoing">Ausgehende Nachrichten</string>
+    <string name="DoubleTapInfo">Einige Aktionen erfordern Administratorrechte im Chat oder Kanal.</string>
+    <string name="HideMuteUnmuteButton">\"%1$s\"-Knopf ausblenden</string>
+    <string name="HideMuteUnmuteButtonInfo">Unten in Kanälen.</string>
+    <string name="HideKeyboardOnScroll">Tastatur beim Scrollen ausblenden</string>
+    <string name="DisableJumpToNextChannel">\"Zum nächsten Kanal springen\" deaktivieren</string>
+    <string name="ShowActionTimestamps">Zeitstempel für Aktionen anzeigen</string>
+    <string name="HideShareButton">\"%1$s\"-Knopf ausblenden</string>
+    <string name="DateOfForwardedMsg">Datum der weitergeleiteten Nachricht anzeigen</string>
+    <string name="ShowMessageID">Nachrichten-ID anzeigen</string>
+    <string name="AddCommaAfterMention">Komma nach Erwähnung hinzufügen</string>
+    <string name="AddCommaAfterMentionInfo">Ein Komma wird automatisch platziert, nachdem Sie auf den Benutzer getippt haben, den Sie erwähnen möchten.</string>
+    <string name="DisableEdgeAction">Kantenaktion deaktivieren</string>
+    <string name="DisableEdgeActionInfo">Deaktiviert das Wechseln zwischen Fotos durch Tippen auf die Kanten.</string>
+    <string name="HideCameraTile">Kamerakachel ausblenden</string>
+    <string name="HideCameraTileInfo">Sie können die Systemkamera immer noch öffnen, indem Sie auf den Anhang-Knopf im Eingabefeld gedrückt halten.</string>
+    <string name="StaticZoom">Statischer Zoom</string>
+    <string name="StaticZoomInfo">Beim Aufnehmen von Videonachrichten wird der Zoom nicht zurückgesetzt, wenn Sie den Bildschirm loslassen.</string>
+    <string name="RememberLastUsedCamera">Zuletzt verwendete Kamera merken</string>
+    <string name="RememberLastUsedCameraInfo">Beim Aufnehmen von Videonachrichten wird die zuletzt verwendete Kamera ausgewählt.</string>
+    <string name="PauseOnMinimize">Auto-Pause</string>
+    <string name="PauseOnMinimizeInfo">Pausiert eine Videowiedergabe, wenn das Gerät gesperrt ist oder exteraGram minimiert wird.</string>
+    <string name="DisablePlayback">Wiedergabe deaktivieren</string>
+    <string name="DisablePlaybackInfo">Deaktiviert die Wiedergabe beim Drücken von Lautstärketasten.</string>
+    <!--  Updates  -->
+    <string name="LastCheck">Zuletzt geprüft</string>
+    <string name="CurrentVersion">Aktuelle Version</string>
+    <string name="BuildType">Build-Typ</string>
+    <string name="BTRelease">Release (stabile Versionen)</string>
+    <string name="BTBeta">Beta</string>
+    <string name="CheckOnLaunch">Beim Start prüfen</string>
+    <string name="ClearUpdatesCache">Update Cache löschen</string>
+    <string name="ClearedUpdatesCache">**%1$s** aus Cache geleert.</string>
+    <string name="NothingToClear">Nichts zu bereinigen.</string>
+    <string name="CheckForUpdates">Nach Updates suchen</string>
+    <string name="CheckingForUpdates">Es wird nach verfügbaren Updates gesucht…</string>
+    <string name="NoUpdates">Keine Updates gefunden.</string>
+    <string name="UpdateAvailable">Update verfügbar!</string>
+    <string name="Version">Version</string>
+    <string name="UpdateSize">Updategröße</string>
+    <string name="Changelog">Neuerungen:</string>
+    <!--  Other  -->
+    <string name="RestartRequired">Starten Sie die App neu, um Änderungen anzuwenden.</string>
+    <string name="MutualContact">gemeinsamer Kontakt</string>
+    <string name="ToBeginning">Zum Anfang</string>
+    <string name="MessageHistory">Nachrichtenverlauf</string>
+    <string name="BoldItalic">Fett Kursiv</string>
+    <string name="OpenPremiumBot">Offiziellen Bot öffnen</string>
+    <string name="SaveMessage">Nachricht speichern</string>
+    <string name="TrackSaved">Track wurde in **%1$s ** gespeichert.</string>
+    <string name="ConfirmCall">Anruf bestätigen</string>
+    <string name="CallTo">Anruf an **%1$s**?</string>
+    <string name="AppIconGradient">Farbverlauf</string>
+    <string name="AppIconGlow">Glow</string>
+    <string name="AppIconSpace">Weltall</string>
+    <string name="AppIconWinter">Winter</string>
+    <string name="AppIconVK">VK</string>
+    <string name="AppIconRed">RedEbalo</string>
+</resources>

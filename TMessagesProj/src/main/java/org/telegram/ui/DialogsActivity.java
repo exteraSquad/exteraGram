@@ -150,7 +150,6 @@ import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.HintDialogCell;
 import org.telegram.ui.Cells.LoadingCell;
 import org.telegram.ui.Cells.ProfileSearchCell;
-import org.telegram.ui.Cells.RadioColorCell;
 import org.telegram.ui.Cells.RequestPeerRequirementsCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextCell;
@@ -645,11 +644,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 canvas.clipRect(0, -getY() + actionBar.getY() + getActionBarFullHeight(), getMeasuredWidth(), getMeasuredHeight());
                 if (slideFragmentProgress != 1f) {
                     if (slideFragmentLite) {
-                        canvas.translate((isDrawerTransition ? 1 : -1) * AndroidUtilities.dp(slideAmplitudeDp) * (1f - slideFragmentProgress), 0);
+                        canvas.translate((isDrawerTransition ? 1 : -1) * getSlideAmplitude() * (1f - slideFragmentProgress), 0);
                     } else {
                         final float s = 1f - 0.05f * (1f - slideFragmentProgress);
-                        canvas.translate((isDrawerTransition ? AndroidUtilities.dp(4) : -AndroidUtilities.dp(4)) * (1f - slideFragmentProgress), 0);
-                        canvas.scale(s, s, isDrawerTransition ? getMeasuredWidth() : 0, -getY() + actionBar.getY() + getActionBarFullHeight());
+                        canvas.translate(getSlideAmplitude() * (1f - slideFragmentProgress), 0);
+                        if (allowToScale())
+                            canvas.scale(s, s, isDrawerTransition ? getMeasuredWidth() : 0, -getY() + actionBar.getY() + getActionBarFullHeight());
                     }
                 }
                 result = super.drawChild(canvas, child, drawingTime);
@@ -657,11 +657,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else if (child == actionBar && slideFragmentProgress != 1f) {
                 canvas.save();
                 if (slideFragmentLite) {
-                    canvas.translate((isDrawerTransition ? 1 : -1) * AndroidUtilities.dp(slideAmplitudeDp) * (1f - slideFragmentProgress), 0);
+                    canvas.translate((isDrawerTransition ? 1 : -1) * getSlideAmplitude() * (1f - slideFragmentProgress), 0);
                 } else {
                     float s = 1f - 0.05f * (1f - slideFragmentProgress);
-                    canvas.translate((isDrawerTransition ? AndroidUtilities.dp(4) : -AndroidUtilities.dp(4)) * (1f - slideFragmentProgress), 0);
-                    canvas.scale(s, s, isDrawerTransition ? getMeasuredWidth() : 0, (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2f);
+                    canvas.translate(getSlideAmplitude() * (1f - slideFragmentProgress), 0);
+                    if (allowToScale())
+                        canvas.scale(s, s, isDrawerTransition ? getMeasuredWidth() : 0, (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2f);
                 }
                 result = super.drawChild(canvas, child, drawingTime);
                 canvas.restore();
@@ -783,11 +784,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 canvas.translate(fragmentContextView.getX(), fragmentContextView.getY());
                 if (slideFragmentProgress != 1f) {
                     if (slideFragmentLite) {
-                        canvas.translate((isDrawerTransition ? 1 : -1) * AndroidUtilities.dp(slideAmplitudeDp) * (1f - slideFragmentProgress), 0);
+                        canvas.translate((isDrawerTransition ? 1 : -1) * getSlideAmplitude() * (1f - slideFragmentProgress), 0);
                     } else {
                         final float s = 1f - 0.05f * (1f - slideFragmentProgress);
-                        canvas.translate((isDrawerTransition ? AndroidUtilities.dp(4) : -AndroidUtilities.dp(4)) * (1f - slideFragmentProgress), 0);
-                        canvas.scale(s, 1f, isDrawerTransition ? getMeasuredWidth() : 0, fragmentContextView.getY());
+                        canvas.translate(getSlideAmplitude() * (1f - slideFragmentProgress), 0);
+                        if (allowToScale())
+                            canvas.scale(s, 1f, isDrawerTransition ? getMeasuredWidth() : 0, fragmentContextView.getY());
                     }
                 }
                 fragmentContextView.setDrawOverlay(true);
@@ -10396,29 +10398,41 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         if (slideFragmentLite) {
             if (filterTabsView != null) {
-                filterTabsView.getListView().setTranslationX((isDrawerTransition ? 1 : -1) * AndroidUtilities.dp(slideAmplitudeDp) * (1f - slideFragmentProgress));
+                filterTabsView.getListView().setTranslationX((isDrawerTransition ? 1 : -1) * getSlideAmplitude() * (1f - slideFragmentProgress));
                 filterTabsView.invalidate();
+            }
+            if (floatingButtonContainer != null) {
+                floatingButtonContainer.setTranslationX((isDrawerTransition ? 1 : -1) * getSlideAmplitude() * (1f - slideFragmentProgress));
+                floatingButtonContainer.invalidate();
             }
             if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.getFragmentView() != null) {
                 if (!rightFragmentTransitionInProgress) {
-                    rightSlidingDialogContainer.getFragmentView().setTranslationX((isDrawerTransition ? 1 : -1) * AndroidUtilities.dp(slideAmplitudeDp) * (1f - slideFragmentProgress));
+                    rightSlidingDialogContainer.getFragmentView().setTranslationX((isDrawerTransition ? 1 : -1) * getSlideAmplitude() * (1f - slideFragmentProgress));
                 }
             }
         } else {
             final float s = 1f - 0.05f * (1f - slideFragmentProgress);
             if (filterTabsView != null) {
-                filterTabsView.getListView().setScaleX(s);
-                filterTabsView.getListView().setScaleY(s);
-                filterTabsView.getListView().setTranslationX((isDrawerTransition ? AndroidUtilities.dp(4) : -AndroidUtilities.dp(4)) * (1f - slideFragmentProgress));
-                filterTabsView.getListView().setPivotX(isDrawerTransition ? filterTabsView.getMeasuredWidth() : 0);
-                filterTabsView.getListView().setPivotY(0);
+                if (allowToScale()) {
+                    filterTabsView.getListView().setScaleX(s);
+                    filterTabsView.getListView().setScaleY(s);
+                    filterTabsView.getListView().setPivotX(isDrawerTransition ? filterTabsView.getMeasuredWidth() : 0);
+                    filterTabsView.getListView().setPivotY(0);
+                }
+                filterTabsView.getListView().setTranslationX(getSlideAmplitude() * (1f - slideFragmentProgress));
                 filterTabsView.invalidate();
+            }
+            if (floatingButtonContainer != null) {
+                floatingButtonContainer.setTranslationX(getSlideAmplitude() * (1f - slideFragmentProgress));
+                floatingButtonContainer.invalidate();
             }
             if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.getFragmentView() != null) {
                 if (!rightFragmentTransitionInProgress) {
-                    rightSlidingDialogContainer.getFragmentView().setScaleX(s);
-                    rightSlidingDialogContainer.getFragmentView().setScaleY(s);
-                    rightSlidingDialogContainer.getFragmentView().setTranslationX((isDrawerTransition ? AndroidUtilities.dp(4) : -AndroidUtilities.dp(4)) * (1f - slideFragmentProgress));
+                    if (allowToScale()) {
+                        rightSlidingDialogContainer.getFragmentView().setScaleX(s);
+                        rightSlidingDialogContainer.getFragmentView().setScaleY(s);
+                    }
+                    rightSlidingDialogContainer.getFragmentView().setTranslationX(getSlideAmplitude() * (1f - slideFragmentProgress));
                 }
                 rightSlidingDialogContainer.getFragmentView().setPivotX(isDrawerTransition ? rightSlidingDialogContainer.getMeasuredWidth() : 0);
                 rightSlidingDialogContainer.getFragmentView().setPivotY(0);
@@ -10517,5 +10531,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     public boolean canBeginSlide() {
         return !rightSlidingDialogContainer.hasFragment();
+    }
+
+    public int getSlideAmplitude() {
+        if (isDrawerTransition && ExteraConfig.alternativeOpenAnimation) {
+            return parentLayout.getDrawerLayoutContainer().getDrawerWidth();
+        }
+        return AndroidUtilities.dp(slideFragmentLite ? slideAmplitudeDp : 4) * (isDrawerTransition ? 1 : -1);
+    }
+
+    public boolean allowToScale() {
+        return !isDrawerTransition || !ExteraConfig.alternativeOpenAnimation;
     }
 }

@@ -14,6 +14,7 @@ package com.exteragram.messenger;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
@@ -39,6 +40,8 @@ import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
+import org.telegram.messenger.ContactsController;
+import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.DispatchQueue;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
@@ -56,6 +59,8 @@ import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.URLSpanNoUnderline;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
@@ -63,10 +68,14 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public final class ExteraUtils {
 
     public static final DispatchQueue translateQueue = new DispatchQueue("translateQueue", false);
+
+    private static Typeface systemEmojiTypeface;
+    public static boolean loadSystemEmojiFailed = false;
 
     public static Drawable drawFab() {
         return drawFab(false);
@@ -191,6 +200,56 @@ public final class ExteraUtils {
         return BuildVars.isBetaApp() ? 0xff747f9f : 0xfff54142;
     }
 
+    public static File getSystemEmojiFontPath() {
+        try (var br = new BufferedReader(new FileReader("/system/etc/fonts.xml"))) {
+            String line;
+            var ignored = false;
+            while ((line = br.readLine()) != null) {
+                var trimmed = line.trim();
+                if (trimmed.startsWith("<family") && trimmed.contains("ignore=\"true\"")) {
+                    ignored = true;
+                } else if (trimmed.startsWith("</family>")) {
+                    ignored = false;
+                } else if (trimmed.startsWith("<font") && !ignored) {
+                    var start = trimmed.indexOf(">");
+                    var end = trimmed.indexOf("<", 1);
+                    if (start > 0 && end > 0) {
+                        var font = trimmed.substring(start + 1, end);
+                        if (font.toLowerCase().contains("emoji")) {
+                            File file = new File("/system/fonts/" + font);
+                            if (file.exists()) {
+                                FileLog.d("emoji font file fonts.xml = " + font);
+                                return file;
+                            }
+                        }
+                    }
+                }
+            }
+            br.close();
+
+            var fileAOSP = new File("/system/fonts/NotoColorEmoji.ttf");
+            if (fileAOSP.exists()) {
+                return fileAOSP;
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return null;
+    }
+
+    public static Typeface getSystemEmojiTypeface() {
+        if (!loadSystemEmojiFailed && systemEmojiTypeface == null) {
+            var font = getSystemEmojiFontPath();
+            if (font != null) {
+                systemEmojiTypeface = Typeface.createFromFile(font);
+            }
+            if (systemEmojiTypeface == null) {
+                loadSystemEmojiFailed = true;
+            }
+        }
+        return systemEmojiTypeface;
+    }
+
     public interface OnTranslationSuccess {
         void run(CharSequence translated);
     }
@@ -275,7 +334,7 @@ public final class ExteraUtils {
     }
 
     public static CombinedDrawable createCircleDrawableWithIcon(Context context, int iconRes, int size) {
-        Drawable drawable = iconRes != 0 ? ContextCompat.getDrawable(context, iconRes).mutate() : null;
+        Drawable drawable = iconRes != 0 ? Objects.requireNonNull(ContextCompat.getDrawable(context, iconRes)).mutate() : null;
         OvalShape ovalShape = new OvalShape();
         ovalShape.resize(size, size);
         ShapeDrawable defaultDrawable = new ShapeDrawable(ovalShape);
@@ -298,23 +357,21 @@ public final class ExteraUtils {
             if (parse && (i + 1 == text.length() || text.charAt(i + 1) == ' ')) {
                 end = i + 1;
                 parse = false;
-                if (start != -1) {
-                    String username = text.substring(start, end);
-                    try {
-                        URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
-                            @Override
-                            public void onClick(View widget) {
-                                MessagesController.getInstance(UserConfig.selectedAccount).openByUserName(username.substring(1), fragment, 1);
-                            }
-                        };
-                        stringBuilder.setSpan(urlSpan, start, end, 0);
-                        if (i + 1 == text.length()) {
-                            return stringBuilder;
+                String username = text.substring(start, end);
+                try {
+                    URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
+                        @Override
+                        public void onClick(View widget) {
+                            MessagesController.getInstance(UserConfig.selectedAccount).openByUserName(username.substring(1), fragment, 1);
                         }
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        return text;
+                    };
+                    stringBuilder.setSpan(urlSpan, start, end, 0);
+                    if (i + 1 == text.length()) {
+                        return stringBuilder;
                     }
+                } catch (Exception e) {
+                    FileLog.e(e);
+                    return text;
                 }
             }
         }
@@ -404,6 +461,7 @@ public final class ExteraUtils {
             if (Build.VERSION.SDK_INT >= 30) {
                 return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
             } else {
+                //noinspection deprecation
                 return biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS;
             }
         } else if (Build.VERSION.SDK_INT >= 23) {
@@ -414,5 +472,24 @@ public final class ExteraUtils {
             return fingerprintManager.isHardwareDetected() && fingerprintManager.hasEnrolledFingerprints();
         }
         return false;
+    }
+
+    public static String getName(long did) {
+        int currentAccount = UserConfig.selectedAccount;
+        String name = null;
+        if (DialogObject.isEncryptedDialog(did)) {
+            TLRPC.EncryptedChat encryptedChat = MessagesController.getInstance(currentAccount).getEncryptedChat(DialogObject.getEncryptedChatId(did));
+            if (encryptedChat != null) {
+                TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(encryptedChat.user_id);
+                if (user != null) name = ContactsController.formatName(user.first_name, user.last_name);
+            }
+        } else if (DialogObject.isUserDialog(did)) {
+            TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(did);
+            if (user != null) name = ContactsController.formatName(user.first_name, user.last_name);
+        } else {
+            TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-did);
+            if (chat != null) name = chat.title;
+        }
+        return did == UserConfig.getInstance(currentAccount).getClientUserId() ? LocaleController.getString("SavedMessages", R.string.SavedMessages) : name;
     }
 }

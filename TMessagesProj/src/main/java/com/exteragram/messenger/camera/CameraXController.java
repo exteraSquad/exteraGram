@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Range;
 import android.view.Surface;
@@ -69,8 +68,6 @@ import java.io.InputStream;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class CameraXController {
@@ -375,6 +372,9 @@ public class CameraXController {
 
     @SuppressLint("UnsafeExperimentalUsageError")
     public boolean isExposureCompensationSupported() {
+        if (camera == null) {
+            return false;
+        }
         return camera.getCameraInfo().getExposureState().isExposureCompensationSupported();
     }
 

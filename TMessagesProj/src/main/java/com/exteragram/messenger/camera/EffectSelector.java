@@ -53,17 +53,17 @@ public class EffectSelector extends LinearLayout {
         if (getChildCount() == 0) {
             boolean fuckup = Arrays.asList(GOOGLE_FUCKUPS).contains(Build.DEVICE);
             ArrayList<Integer> list_effect = new ArrayList<>();
-            if (cameraXView.isNightModeSupported() && !fuckup) {
+            if (!fuckup && cameraXView.isNightModeSupported()) {
                 list_effect.add(CameraXController.CAMERA_NIGHT);
             }
-            if (cameraXView.isAutoModeSupported() && !fuckup) {
+            if (!fuckup && cameraXView.isAutoModeSupported()) {
                 list_effect.add(CameraXController.CAMERA_AUTO);
             }
             list_effect.add(CameraXController.CAMERA_NONE);
             if (cameraXView.isWideModeSupported()) {
                 list_effect.add(CameraXController.CAMERA_WIDE);
             }
-            if (cameraXView.isHdrModeSupported() && !fuckup) {
+            if (!fuckup && cameraXView.isHdrModeSupported()) {
                 list_effect.add(CameraXController.CAMERA_HDR);
             }
             if (list_effect.size() == 1) {

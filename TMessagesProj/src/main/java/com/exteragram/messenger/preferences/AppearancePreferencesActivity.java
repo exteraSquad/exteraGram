@@ -11,7 +11,6 @@
 
 package com.exteragram.messenger.preferences;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Parcelable;
 import android.view.View;
@@ -42,7 +41,6 @@ import org.telegram.ui.LaunchActivity;
 
 public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
-    private ValueAnimator statusBarColorAnimate;
     private Parcelable recyclerViewState = null;
 
     SolarIconsPreview solarIconsPreview;
@@ -60,9 +58,9 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             LocaleController.getString("ActionBarTitleUsername", R.string.ActionBarTitleUsername),
             LocaleController.getString("ActionBarTitleName", R.string.ActionBarTitleName)
     }, tabIcons = new CharSequence[]{
-            "Titles with Icons",
-            "Titles",
-            "Icons"
+            "Titles and Icons",
+            "Titles Only",
+            "Icons Only"
     }, events = new CharSequence[]{
             LocaleController.getString("DependsOnTheDate", R.string.DependsOnTheDate),
             LocaleController.getString("Default", R.string.Default),
@@ -87,17 +85,18 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
     private int appearanceHeaderRow;
     private int fabShapeRow;
+    private int forceBlurRow;
+    private int forceSnowRow;
     private int useSystemFontsRow;
     private int useSystemEmojiRow;
     private int newSwitchStyleRow;
     private int disableDividersRow;
-    private int forceBlurRow;
     private int alternativeNavigationRow;
     private int appearanceDividerRow;
 
     private int drawerOptionsHeaderRow;
     private int eventChooserRow;
-    private int forceSnowRow;
+    private int alternativeOpenAnimationRow;
     private int drawerOptionsDividerRow;
 
     private int drawerHeaderRow;
@@ -123,7 +122,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         hideActionBarStatusRow = getUserConfig().isPremium() ? newRow() : -1;
         hideAllChatsRow = newRow();
         centerTitleRow = newRow();
-        tabIconsRow = ExteraConfig.isExteraDev(getUserConfig().getCurrentUser()) ? newRow() : -1;
+        tabIconsRow = newRow();
         tabStyleRow = newRow();
         actionBarTitleRow = newRow();
         mainScreenInfoRow = newRow();
@@ -136,6 +135,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         appearanceHeaderRow = newRow();
         fabShapeRow = newRow();
         forceBlurRow = newRow();
+        forceSnowRow = newRow();
         useSystemFontsRow = newRow();
         useSystemEmojiRow = newRow();
         newSwitchStyleRow = newRow();
@@ -145,7 +145,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
         drawerOptionsHeaderRow = newRow();
         eventChooserRow = newRow();
-        forceSnowRow = newRow();
+        alternativeOpenAnimationRow = newRow();
         drawerOptionsDividerRow = newRow();
 
         drawerHeaderRow = newRow();
@@ -184,8 +184,15 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 SharedConfig.toggleChatBlur();
             }
             ((TextCheckCell) view).setChecked(ExteraConfig.forceBlur);
+        } else if (position == alternativeOpenAnimationRow) {
+            ExteraConfig.editor.putBoolean("alternativeOpenAnimation", ExteraConfig.alternativeOpenAnimation ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.alternativeOpenAnimation);
         } else if (position == alternativeNavigationRow) {
             SharedConfig.editor.putBoolean("useLNavigation", SharedConfig.useLNavigation ^= true).apply();
+            if (SharedConfig.useLNavigation) {
+                SharedConfig.editor.putBoolean("view_animations", true).apply();
+                SharedConfig.setAnimationsEnabled(true);
+            }
             SharedConfig.saveConfig();
             ((TextCheckCell) view).setChecked(SharedConfig.useLNavigation);
             parentLayout.rebuildAllFragmentViews(false, false);
@@ -399,6 +406,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UseSystemEmoji", R.string.UseSystemEmoji), SharedConfig.useSystemEmoji, true);
                     } else if (position == forceBlurRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("ForceBlur", R.string.ForceBlur), LocaleController.getString("ForceBlurInfo", R.string.ForceBlurInfo), ExteraConfig.forceBlur, true, true);
+                    } else if (position == forceSnowRow) {
+                        textCheckCell.setTextAndValueAndCheck(LocaleController.getString("ForceSnow", R.string.ForceSnow), LocaleController.getString("ForceSnowInfo", R.string.ForceSnowInfo), ExteraConfig.forceSnow, true, true);
                     } else if (position == alternativeNavigationRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("AlternativeNavigation", R.string.AlternativeNavigation), SharedConfig.useLNavigation, false);
                     } else if (position == centerTitleRow) {
@@ -409,12 +418,12 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndCheck(LocaleController.getString("NewSwitchStyle", R.string.NewSwitchStyle), ExteraConfig.newSwitchStyle, true);
                     } else if (position == disableDividersRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableDividers", R.string.DisableDividers), ExteraConfig.disableDividers, true);
-                    } else if (position == forceSnowRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("ForceSnow", R.string.ForceSnow), ExteraConfig.forceSnow, false);
                     } else if (position == hideActionBarStatusRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HideActionBarStatus", R.string.HideActionBarStatus), ExteraConfig.hideActionBarStatus, true);
                     } else if (position == solarIconsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("SolarIcons", R.string.SolarIcons), ExteraConfig.useSolarIcons, false);
+                    } else if (position == alternativeOpenAnimationRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("DrawerAlternativeOpeningAnimation", R.string.DrawerAlternativeOpeningAnimation), ExteraConfig.alternativeOpenAnimation, false);
                     }
                     break;
                 case 2:
@@ -454,7 +463,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     } else if (position == actionBarTitleRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[ExteraConfig.actionBarTitle], payload, false);
                     } else if (position == tabIconsRow) {
-                        textSettingsCell.setTextAndValue(LocaleController.getString("TabIcons", R.string.TabIcons), tabIcons[ExteraConfig.tabIcons], payload, true);
+                        textSettingsCell.setTextAndValue("Tab Title Style", tabIcons[ExteraConfig.tabIcons], payload, true);
                     } else if (position == tabStyleRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("TabStyle", R.string.TabStyle), styles[ExteraConfig.tabStyle], payload, true);
                     }
@@ -467,8 +476,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         cell.setText(ExteraUtils.formatWithUsernames(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), AppearancePreferencesActivity.this));
                     } else if (position == mainScreenInfoRow) {
                         cell.setText(LocaleController.getString("MainScreenSetupInfo", R.string.MainScreenSetupInfo));
-                    } else if (position == drawerOptionsDividerRow) {
-                        cell.setText(LocaleController.getString("ForceSnowInfo", R.string.ForceSnowInfo));
                     }
                     break;
             }
@@ -476,7 +483,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == drawerDividerRow) {
+            if (position == drawerDividerRow || position == drawerOptionsDividerRow) {
                 return 1;
             } else if (position == statusRow || position == newGroupRow || position == newSecretChatRow || position == newChannelRow ||
                     position == contactsRow || position == callsRow || position == peopleNearbyRow || position == archivedChatsRow ||
@@ -486,7 +493,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 return 3;
             } else if (position == eventChooserRow || position == actionBarTitleRow || position == tabStyleRow || position == tabIconsRow) {
                 return 7;
-            } else if (position == appearanceDividerRow || position == solarIconsInfoRow || position == mainScreenInfoRow || position == drawerOptionsDividerRow) {
+            } else if (position == appearanceDividerRow || position == solarIconsInfoRow || position == mainScreenInfoRow) {
                 return 8;
             } else if (position == fabShapeRow) {
                 return 12;

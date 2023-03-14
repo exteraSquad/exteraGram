@@ -190,7 +190,7 @@ public class PollEditTextCell extends FrameLayout {
                 }
                 onCheckBoxClick(PollEditTextCell.this, !checkBox.isChecked());
             });
-        } else if (onChangeIcon != null && ExteraConfig.isExteraDev(UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser())) {
+        } else if (onChangeIcon != null) {
             addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 19 : 66, 0, !LocaleController.isRTL ? 19 : 66, 0));
             for (int i = 0; i < iconImageView.length; i++) {
                 iconImageView[i] = new ImageView(context);
@@ -211,9 +211,6 @@ public class PollEditTextCell extends FrameLayout {
     }
 
     public void setIcon(int icon, boolean animated) {
-        if (iconImageView[0] == null || iconImageView[1] == null)
-            return;
-
         iconImageView[animated ? 1 : 0].setImageResource(icon);
         if (animated) {
             ImageView tmp = iconImageView[0];

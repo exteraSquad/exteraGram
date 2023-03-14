@@ -26,7 +26,7 @@ actionBarTabSelector=n2_200(50)
 actionBarTabUnactiveText=n1_500
 actionBarTipBackground=n1_100
 actionBarWhiteSelector=n1_200(80)
-avatar_actionBarIconBlue=n1_900
+avatar_actionBarIconBlue=a1_10
 avatar_actionBarSelectorBlue=n1_200(80)
 avatar_backgroundActionBarBlue=mWhite
 avatar_backgroundArchived=a1_600
@@ -745,7 +745,7 @@ windowBackgroundWhiteGrayText5=n1_400
 windowBackgroundWhiteGrayText6=n1_400
 windowBackgroundWhiteGrayText7=n1_400
 windowBackgroundWhiteGrayText8=n1_400
-windowBackgroundWhiteGreenText=a3_600
+windowBackgroundWhiteGreenText=mGreen500
 windowBackgroundWhiteGreenText2=mBlack
 windowBackgroundWhiteHintText=n1_400
 windowBackgroundWhiteInputField=a1_300
@@ -760,4 +760,5 @@ windowBackgroundWhiteRedText5=mRed500
 windowBackgroundWhiteRedText6=mRed500
 windowBackgroundWhiteValueText=a1_600
 end
+
 //monet theme fixes by the8055u & reNightly

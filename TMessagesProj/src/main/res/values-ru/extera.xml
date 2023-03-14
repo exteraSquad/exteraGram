@@ -54,8 +54,9 @@
 
     <string name="DrawerOptions">Настройки бокового меню</string>
     <string name="DrawerIconSet">Cтиль иконок</string>
+    <string name="DrawerAlternativeOpeningAnimation">Новая анимация открытия</string>
     <string name="ForceSnow">Принудительный снег</string>
-    <string name="ForceSnowInfo">Снег также появится в заголовке и на заднем фоне чатов.</string>
+    <string name="ForceSnowInfo">Снег появится в заголовке, боковом меню и на заднем фоне чатов.</string>
     <string name="DependsOnTheDate">Зависит от даты</string>
     <string name="NewYear">Новый год</string>
     <string name="ValentinesDay">День святого Валентина</string>
@@ -174,10 +175,8 @@
     <string name="OpenPremiumBot">Открыть официального бота</string>
     <string name="SaveMessage">Сохранить сообщение</string>
 
-    <string name="EnterID">Введите ID</string>
     <string name="TrackSaved">Трек сохранен в **%1$s**.</string>
-    <string name="ChannelToSaveDescription">Введите ID канала/чата/пользователя, куда будет сохраняться музыка.</string>
-    <string name="Unknown">Неизвестно</string>
+    <string name="ChannelToSaveChanged">Треки будут сохраняться в **%1$s**.</string>
 
     <string name="ConfirmCall">Подтверждение звонка</string>
     <string name="CallTo">Позвонить **%1$s**?</string>

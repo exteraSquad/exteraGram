@@ -25,9 +25,12 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Outline;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -2932,22 +2935,12 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
     public void enableTorch() {
         if (!CameraXUtils.isCameraXSupported() || ExteraConfig.cameraType != 1) {
             if (cameraSession != null) {
-                if (flashlightButton.getTag() == null) {
-                    flashlightButton.setTag(1);
-                    cameraSession.setTorchEnabled(true);
-                } else {
-                    flashlightButton.setTag(null);
-                    cameraSession.setTorchEnabled(false);
-                }
+                cameraSession.setTorchEnabled(flashlightButton.getTag() == null);
+                flashlightButton.setTag(flashlightButton.getTag() == null ? 1 : null);
             }
         } else {
-            if (flashlightButton.getTag() == null) {
-                flashlightButton.setTag(1);
-                CameraXController.setTorchEnabled(true);
-            } else {
-                flashlightButton.setTag(null);
-                CameraXController.setTorchEnabled(false);
-            }
+            CameraXController.setTorchEnabled(flashlightButton.getTag() == null);
+            flashlightButton.setTag(flashlightButton.getTag() == null ? 1 : null);
         }
     }
 }
