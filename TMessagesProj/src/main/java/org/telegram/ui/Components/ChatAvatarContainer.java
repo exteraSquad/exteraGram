@@ -1091,6 +1091,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
         sb.append("\n");
         sb.append(subtitleTextView.getText());
         info.setContentDescription(sb);
+        setContentDescription(sb);
         if (info.isClickable()) {
             info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, LocaleController.getString("OpenProfile", R.string.OpenProfile)));
         }
