@@ -35,13 +35,18 @@ import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Cells.CheckBoxCell;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCheckCell;
+import org.telegram.ui.Cells.TextCheckCell2;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
+import org.telegram.ui.ChatUsersActivity;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SlideChooseView;
+
+import java.util.Locale;
 
 public class ChatsPreferencesActivity extends BasePreferencesActivity implements NotificationCenter.NotificationCenterDelegate {
 
@@ -92,9 +97,14 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int chatHeaderRow;
     private int hideKeyboardOnScrollRow;
     private int hideMuteUnmuteButtonRow;
+    private int hideShareButtonRow;
+    private int adminShortcutsRow;
+    private int permissionsRow;
+    private int administratorsRow;
+    private int membersRow;
+    private int recentActionsRow;
     private int disableJumpToNextChannelRow;
     private int showActionTimestampsRow;
-    private int hideShareButtonRow;
     private int dateOfForwardedMsgRow;
     private int showMessageIDRow;
     private int addCommaAfterMentionRow;
@@ -113,12 +123,12 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int disablePlaybackRow;
     private int videosDividerRow;
 
+    private boolean adminShortcutsExpanded;
+
     private class StickerSizeCell extends FrameLayout {
 
         private final StickerSizePreviewCell messagesCell;
         private final AltSeekbar seekBar;
-        private final int startStickerSize = 4;
-        private final int endStickerSize = 20;
 
         private int lastWidth;
 
@@ -127,6 +137,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             setWillNotDraw(false);
 
+            int startStickerSize = 4, endStickerSize = 20;
             seekBar = new AltSeekbar(context, (float p) -> {
                 ExteraConfig.editor.putFloat("stickerSize", ExteraConfig.stickerSize = p).apply();
                 StickerSizeCell.this.invalidate();
@@ -136,7 +147,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             }, false, startStickerSize, endStickerSize, LocaleController.getString("StickerSize", R.string.StickerSize), LocaleController.getString("StickerSizeLeft", R.string.StickerSizeLeft), LocaleController.getString("StickerSizeRight", R.string.StickerSizeRight));
             seekBar.setProgress((ExteraConfig.stickerSize - startStickerSize) / (float) (endStickerSize - startStickerSize));
             addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-            
+
             messagesCell = new StickerSizePreviewCell(context, ChatsPreferencesActivity.this, parentLayout);
             messagesCell.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
             addView(messagesCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 112, 0, 0));
@@ -231,9 +242,21 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         chatHeaderRow = newRow();
         hideMuteUnmuteButtonRow = newRow();
         hideKeyboardOnScrollRow = newRow();
+        hideShareButtonRow = newRow();
+        adminShortcutsRow = newRow();
+        if (adminShortcutsExpanded) {
+            permissionsRow = newRow();
+            administratorsRow = newRow();
+            membersRow = newRow();
+            recentActionsRow = newRow();
+        } else {
+            permissionsRow = -1;
+            administratorsRow = -1;
+            membersRow = -1;
+            recentActionsRow = -1;
+        }
         disableJumpToNextChannelRow = newRow();
         showActionTimestampsRow = newRow();
-        hideShareButtonRow = newRow();
         dateOfForwardedMsgRow = newRow();
         showMessageIDRow = newRow();
         addCommaAfterMentionRow = newRow();
@@ -346,10 +369,35 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 }
             });
         } else if (position == doubleTapReactionRow) {
+            //noinspection IntegerDivisionInFloatingPointContext
             if (view.getY() >= listView.getBottom() / 3) {
                 listView.smoothScrollBy(0, (int) Math.abs(view.getY()));
             }
             DoubleTapCell.SetReactionCell.showSelectStatusDialog((DoubleTapCell.SetReactionCell) view, this);
+        } else if (position == adminShortcutsRow) {
+            adminShortcutsExpanded ^= true;
+            updateRowsId();
+            listAdapter.notifyItemChanged(adminShortcutsRow, payload);
+            if (adminShortcutsExpanded) {
+                listAdapter.notifyItemRangeInserted(adminShortcutsRow + 1, 4);
+            } else {
+                listAdapter.notifyItemRangeRemoved(adminShortcutsRow + 1, 4);
+            }
+        } else if (view instanceof CheckBoxCell) {
+            if (position == permissionsRow) {
+                ExteraConfig.editor.putBoolean("permissionsShortcut", ExteraConfig.permissionsShortcut ^= true).apply();
+                listAdapter.notifyItemChanged(permissionsRow, payload);
+            } else if (position == administratorsRow) {
+                ExteraConfig.editor.putBoolean("administratorsShortcut", ExteraConfig.administratorsShortcut ^= true).apply();
+                listAdapter.notifyItemChanged(administratorsRow, payload);
+            } else if (position == membersRow) {
+                ExteraConfig.editor.putBoolean("membersShortcut", ExteraConfig.membersShortcut ^= true).apply();
+                listAdapter.notifyItemChanged(membersRow, payload);
+            } else if (position == recentActionsRow) {
+                ExteraConfig.editor.putBoolean("recentActionsShortcut", ExteraConfig.recentActionsShortcut ^= true).apply();
+                listAdapter.notifyItemChanged(recentActionsRow, payload);
+            }
+            listAdapter.notifyItemChanged(adminShortcutsRow, payload);
         }
     }
 
@@ -361,6 +409,31 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     @Override
     protected BaseListAdapter createAdapter(Context context) {
         return new ListAdapter(context);
+    }
+
+    private void setShortcutsEnabled(boolean enabled) {
+        ExteraConfig.editor.putBoolean("permissionsShortcut", ExteraConfig.permissionsShortcut = enabled).apply();
+        ExteraConfig.editor.putBoolean("administratorsShortcut", ExteraConfig.administratorsShortcut = enabled).apply();
+        ExteraConfig.editor.putBoolean("membersShortcut", ExteraConfig.membersShortcut = enabled).apply();
+        ExteraConfig.editor.putBoolean("recentActionsShortcut", ExteraConfig.recentActionsShortcut = enabled).apply();
+        AndroidUtilities.updateVisibleRows(listView);
+    }
+
+    private int getShortcutsSelectedCount() {
+        int i = 0;
+        if (ExteraConfig.permissionsShortcut) {
+            i++;
+        }
+        if (ExteraConfig.administratorsShortcut) {
+            i++;
+        }
+        if (ExteraConfig.membersShortcut) {
+            i++;
+        }
+        if (ExteraConfig.recentActionsShortcut) {
+            i++;
+        }
+        return i;
     }
 
     private class ListAdapter extends BaseListAdapter {
@@ -458,7 +531,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     } else if (position == rememberLastUsedCameraRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("RememberLastUsedCamera", R.string.RememberLastUsedCamera), LocaleController.getString("RememberLastUsedCameraInfo", R.string.RememberLastUsedCameraInfo), ExteraConfig.rememberLastUsedCamera, true, true);
                     } else if (position == hideCameraTileRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("HideCameraTile", R.string.HideCameraTile), ExteraConfig.hideCameraTile,false);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("HideCameraTile", R.string.HideCameraTile), ExteraConfig.hideCameraTile, false);
                     } else if (position == pauseOnMinimizeRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("PauseOnMinimize", R.string.PauseOnMinimize), LocaleController.getString("PauseOnMinimizeInfo", R.string.PauseOnMinimizeInfo), ExteraConfig.pauseOnMinimize, true, true);
                     } else if (position == disablePlaybackRow) {
@@ -497,6 +570,33 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         slide.setOptions(ExteraConfig.sendPhotosQuality, "800px", "1280px", "2560px");
                     }
                     break;
+                case 18:
+                    TextCheckCell2 checkCell = (TextCheckCell2) holder.itemView;
+                    if (position == adminShortcutsRow) {
+                        int shortcutsSelectedCount = getShortcutsSelectedCount();
+                        checkCell.setTextAndCheck(LocaleController.getString("AdminShortcuts", R.string.AdminShortcuts), shortcutsSelectedCount > 0, true, true);
+                        checkCell.setCollapseArrow(String.format(Locale.US, "%d/4", shortcutsSelectedCount), !adminShortcutsExpanded, () -> {
+                            boolean checked = !checkCell.isChecked();
+                            checkCell.setChecked(checked);
+                            setShortcutsEnabled(checked);
+                        });
+                        checkCell.getCheckBox().setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
+                        checkCell.getCheckBox().setDrawIconType(0);
+                    }
+                    break;
+                case 19:
+                    CheckBoxCell checkBoxCell = (CheckBoxCell) holder.itemView;
+                    if (position == permissionsRow) {
+                        checkBoxCell.setText(LocaleController.getString("ChannelPermissions", R.string.ChannelPermissions), "", ExteraConfig.permissionsShortcut, true, true);
+                    } else if (position == administratorsRow) {
+                        checkBoxCell.setText(LocaleController.getString("ChannelAdministrators", R.string.ChannelAdministrators), "", ExteraConfig.administratorsShortcut, true, true);
+                    } else if (position == membersRow) {
+                        checkBoxCell.setText(LocaleController.getString("ChannelMembers", R.string.ChannelMembers), "", ExteraConfig.membersShortcut, true, true);
+                    } else if (position == recentActionsRow) {
+                        checkBoxCell.setText(LocaleController.getString("EventLog", R.string.EventLog), "", ExteraConfig.recentActionsShortcut, true, true);
+                    }
+                    checkBoxCell.setPad(1);
+                    break;
             }
         }
 
@@ -521,6 +621,10 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 return 15;
             } else if (position == doubleTapReactionRow) {
                 return 16;
+            } else if (position == adminShortcutsRow) {
+                return 18;
+            } else if (position == administratorsRow || position == permissionsRow || position == membersRow || position == recentActionsRow) {
+                return 19;
             }
             return 5;
         }

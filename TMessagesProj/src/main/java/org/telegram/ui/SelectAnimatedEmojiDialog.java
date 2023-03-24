@@ -4123,7 +4123,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
         }
 
         private void createCategoriesListView() {
-            if (categoriesListView != null || getContext() == null || ExteraConfig.hideCategories) {
+            if (categoriesListView != null || getContext() == null || ExteraConfig.hideCategories && type != TYPE_AVATAR_CONSTRUCTOR) {
                 return;
             }
             if (type != TYPE_REACTIONS && type != TYPE_SET_DEFAULT_REACTION && type != TYPE_EMOJI_STATUS && type != TYPE_AVATAR_CONSTRUCTOR) {

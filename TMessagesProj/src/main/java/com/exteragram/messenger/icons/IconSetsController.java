@@ -81,12 +81,14 @@ public class IconSetsController {
         solar.put(R.drawable.input_calendar2, R.drawable.input_calendar2_solar);
         solar.put(R.drawable.input_forward, R.drawable.input_forward_solar);
         solar.put(R.drawable.input_keyboard, R.drawable.input_keyboard_solar);
+        solar.put(R.drawable.input_mic, R.drawable.input_mic_solar);
         solar.put(R.drawable.input_mic_pressed, R.drawable.input_mic_pressed_solar);
         solar.put(R.drawable.input_notify_off, R.drawable.msg_bell_mute_solar);
         solar.put(R.drawable.input_notify_on, R.drawable.msg_notifications_solar);
         solar.put(R.drawable.input_reply, R.drawable.input_reply_solar);
         solar.put(R.drawable.input_schedule, R.drawable.input_schedule_solar);
         solar.put(R.drawable.input_smile, R.drawable.input_smile_solar);
+        solar.put(R.drawable.input_video, R.drawable.input_video_solar);
         solar.put(R.drawable.input_video_pressed, R.drawable.input_video_pressed_solar);
         solar.put(R.drawable.instant_camera, R.drawable.instant_camera_solar);
         solar.put(R.drawable.list_mute, R.drawable.list_mute_solar);
@@ -168,6 +170,7 @@ public class IconSetsController {
         solar.put(R.drawable.msg_contacts_time, R.drawable.msg_contacts_time_solar);
         solar.put(R.drawable.msg_copy, R.drawable.msg_copy_solar);
         solar.put(R.drawable.msg_copy_filled, R.drawable.msg_copy_filled_solar);
+        solar.put(R.drawable.msg_copy_photo, R.drawable.msg_copy_photo_solar);
         solar.put(R.drawable.msg_current_location, R.drawable.msg_current_location_solar);
         solar.put(R.drawable.msg_customize, R.drawable.msg_photo_settings_solar);
         solar.put(R.drawable.msg_delete, R.drawable.msg_delete_solar);

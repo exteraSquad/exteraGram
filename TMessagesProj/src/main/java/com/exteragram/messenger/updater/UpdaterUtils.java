@@ -17,6 +17,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
@@ -35,6 +36,7 @@ import org.telegram.messenger.DispatchQueue;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.Utilities;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.TypefaceSpan;
 
@@ -58,43 +60,29 @@ public class UpdaterUtils {
     public static String version, changelog, size, uploadDate;
     public static File otaPath, versionPath, apkFile;
 
-    private static long id = 0L;
+    private static long id = 1L;
     private static final long updateCheckInterval = 3600000L; // 1 hour
 
     private static boolean updateDownloaded;
     private static boolean checkingForUpdates;
-
-    private static final String[] userAgents = {
-            "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X) AppleWebKit/602.1.38 (KHTML, like Gecko) Version/10.0 Mobile/14A5297c Safari/602.1",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36,gzip(gfe)",
-            "Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20150101 Firefox/47.0 (Chrome)",
-            "Mozilla/5.0 (Linux; Android 6.0; Nexus 7 Build/MRA51D) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.133 Safari/537.36",
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/600.8.9 (KHTML, like Gecko) Version/8.0.8 Safari/600.8.9",
-            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/44.0.2403.89 Chrome/44.0.2403.89 Safari/537.36",
-            "Mozilla/5.0 (Linux; Android 5.0.2; SAMSUNG SM-G920F Build/LRX22G) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/3.0 Chrome/38.0.2125.102 Mobile Safari/537.36",
-            "Mozilla/5.0 (Windows NT 10.0; rv:40.0) Gecko/20100101 Firefox/40.0"
-    };
-
-    public static String getRandomUserAgent() {
-        int randomNum = Utilities.random.nextInt(userAgents.length);
-        return userAgents[randomNum];
-    }
 
     public static void checkDirs() {
         otaPath = new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), "ota");
         if (version != null) {
             versionPath = new File(otaPath, version);
             apkFile = new File(versionPath, "update.apk");
-            if (!versionPath.exists())
-                versionPath.mkdirs();
+            try {
+                if (!versionPath.exists())
+                    versionPath.mkdirs();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
             updateDownloaded = apkFile.exists();
         }
     }
 
-    public static void checkUpdates(Context context, boolean manual) {
-        checkUpdates(context, manual, () -> {
-        }, () -> {
-        });
+    public static void checkUpdates(BaseFragment fragment, boolean manual) {
+        checkUpdates(fragment, manual, null, null);
     }
 
     public interface OnUpdateNotFound {
@@ -105,10 +93,11 @@ public class UpdaterUtils {
         void run();
     }
 
-    public static void checkUpdates(Context context, boolean manual, OnUpdateNotFound onUpdateNotFound, OnUpdateFound onUpdateFound) {
+    public static void checkUpdates(BaseFragment fragment, boolean manual, OnUpdateNotFound onUpdateNotFound, OnUpdateFound onUpdateFound) {
 
-        if (BuildVars.PM_BUILD || checkingForUpdates || id != 0L || (System.currentTimeMillis() - ExteraConfig.updateScheduleTimestamp < updateCheckInterval && !manual))
+        if (BuildVars.PM_BUILD || checkingForUpdates || id != 1L || (System.currentTimeMillis() - ExteraConfig.updateScheduleTimestamp < updateCheckInterval && !manual))
             return;
+
         checkingForUpdates = true;
         otaQueue.postRunnable(() -> {
             ExteraConfig.editor.putLong("lastUpdateCheckTime", ExteraConfig.lastUpdateCheckTime = System.currentTimeMillis()).apply();
@@ -117,7 +106,7 @@ public class UpdaterUtils {
                     uri = uri.replace("/exteraGram/", "/exteraGram-Beta/");
                 var connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
                 connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", getRandomUserAgent());
+                connection.setRequestProperty("User-Agent", UserAgentGenerator.generate());
                 connection.setRequestProperty("Content-Type", "application/json");
 
                 var textBuilder = new StringBuilder();
@@ -134,17 +123,18 @@ public class UpdaterUtils {
                     return;
 
                 String link, installedApkType = getInstalledApkType();
-
+                String[] supportedTypes = {"arm64-v8a", "armeabi-v7a", "x86", "x86_64", "universal"};
+                loop:
                 for (int i = 0; i < arr.length(); i++) {
                     downloadURL = link = arr.getJSONObject(i).getString("browser_download_url");
                     size = AndroidUtilities.formatFileSize(arr.getJSONObject(i).getLong("size"));
-                    if (link.contains("arm64-v8a") && Objects.equals(installedApkType, "arm64-v8a") ||
-                            link.contains("armeabi-v7a") && Objects.equals(installedApkType, "armeabi-v7a") ||
-                            link.contains("x86") && Objects.equals(installedApkType, "x86") ||
-                            link.contains("x86_64") && Objects.equals(installedApkType, "x86_64") ||
-                            link.contains("universal") && Objects.equals(installedApkType, "universal") ||
-                            link.contains("beta") && BuildVars.isBetaApp()) {
+                    if (link.contains("beta") && BuildVars.isBetaApp()) {
                         break;
+                    }
+                    for (String type : supportedTypes) {
+                        if (link.contains(type) && Objects.equals(installedApkType, type)) {
+                            break loop;
+                        }
                     }
                 }
                 version = obj.getString("tag_name");
@@ -152,10 +142,10 @@ public class UpdaterUtils {
                 uploadDate = obj.getString("published_at").replaceAll("[TZ]", " ");
                 uploadDate = LocaleController.formatDateTime(getMillisFromDate(uploadDate, "yyyy-M-dd hh:mm:ss") / 1000);
 
-                if (isNewVersion(BuildVars.BUILD_VERSION_STRING, version)) {
+                if (isNewVersion(BuildVars.BUILD_VERSION_STRING, version) && fragment != null) {
                     checkDirs();
                     AndroidUtilities.runOnUIThread(() -> {
-                        (new UpdaterBottomSheet(context, true, version, changelog, size, downloadURL, uploadDate)).show();
+                        (new UpdaterBottomSheet(fragment.getContext(), fragment, true, version, changelog, size, downloadURL, uploadDate)).show();
                         if (onUpdateFound != null)
                             onUpdateFound.run();
                     });
@@ -164,7 +154,7 @@ public class UpdaterUtils {
                         AndroidUtilities.runOnUIThread(onUpdateNotFound::run);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                FileLog.e(e);
             }
             checkingForUpdates = false;
         }, 200);
@@ -216,17 +206,21 @@ public class UpdaterUtils {
         }
     }
 
-    // TODO: not working with 9.x.x and 10.x.x
-    public static boolean isNewVersion(String... v) {
-        if (v.length != 2)
-            return false;
-        for (int i = 0; i < 2; i++) {
-            v[i] = v[i].replaceAll("[^0-9]+", "");
-            if (Integer.parseInt(v[i]) <= 999) {
-                v[i] += "0";
+    public static boolean isNewVersion(String currentVersion, String newVersion) {
+        String[] current = currentVersion.split("\\.");
+        String[] latest = newVersion.split("\\.");
+
+        int length = Math.max(current.length, latest.length);
+        for (int i = 0; i < length; i++) {
+            int v1 = i < current.length ? Integer.parseInt(current[i]) : 0;
+            int v2 = i < latest.length ? Integer.parseInt(latest[i]) : 0;
+            if (v1 < v2) {
+                return true;
+            } else if (v1 > v2) {
+                return false;
             }
         }
-        return Integer.parseInt(v[0]) < Integer.parseInt(v[1]);
+        return false;
     }
 
     public static String getOtaDirSize() {
@@ -265,15 +259,16 @@ public class UpdaterUtils {
         cleanFolder(otaPath);
     }
 
-    public static void cleanFolder(File file) {
-        File[] files = file.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (f.isDirectory())
-                    cleanFolder(f);
-                f.delete();
+    public static void cleanFolder(File folder) {
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    cleanFolder(file);
+                }
             }
         }
+        folder.delete();
     }
 
     public static long getMillisFromDate(String d, String format) {
@@ -329,22 +324,34 @@ public class UpdaterUtils {
     }
 
     public static class DownloadReceiver extends BroadcastReceiver {
-
         @Override
-        public void onReceive(Context context, @NonNull Intent intent) {
-            if (Objects.equals(intent.getAction(), DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
-                if (id == intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)) {
-                    installApk(context, apkFile.getAbsolutePath());
-                    id = 0L;
-                    updateDownloaded = false;
+        public void onReceive(Context context, Intent intent){
+            String action = intent.getAction();
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 1L);
+                DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(downloadId);
+                Cursor cursor = downloadManager.query(query);
+                if (cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                    int status = cursor.getInt(columnIndex);
+                    if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                        installApk(context, apkFile.getAbsolutePath());
+                        id = 1L;
+                        updateDownloaded = false;
+                    } else {
+                        // ignore for now
+                    }
                 }
-            } else if (Objects.equals(intent.getAction(), DownloadManager.ACTION_NOTIFICATION_CLICKED)) {
+                cursor.close();
+            } else if (DownloadManager.ACTION_NOTIFICATION_CLICKED.equals(action)) {
                 try {
-                    var viewDownloadIntent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+                    Intent viewDownloadIntent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
                     viewDownloadIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(viewDownloadIntent);
                 } catch (Exception e) {
-                    FileLog.e("Downloads activity not found: ", e);
+                    FileLog.e(e);
                 }
             }
         }

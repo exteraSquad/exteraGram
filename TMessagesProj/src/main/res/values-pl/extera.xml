@@ -25,7 +25,7 @@
     <string name="HideAllChats">Ukryj zakładkę „%1$s”</string>
     <string name="CenterTitle">Wyśrodkuj tytuł na pasku akcji</string>
     <string name="ActionBarTitle">Tekst tytułu</string>
-    <string name="TabIcons">Tab Icons</string>
+    <string name="TabTitleStyle">Tab Icons</string>
     <string name="TabStyle">Styl zakładek</string>
     <string name="TabStyleTextOnly">Tekst</string>
     <string name="TabStyleRounded">Zaokrąklony</string>
@@ -42,7 +42,6 @@
     <string name="UseSystemEmoji">Używaj systemowych emoji</string>
     <string name="NewSwitchStyle">Styl przełączników MD3</string>
     <string name="DisableDividers">Wyłącz separatory</string>
-    <string name="TransparentStatusBar">Przezroczysty pasek statusu</string>
     <string name="AlternativeNavigation">Alternatywna nawigacja</string>
     <string name="AlternativeNavigationInfo">Eksperymentalna opcja, która obejmuje nowe, płynniejsze animacje przejścia między ekranami.\n\nZ tą opcją pasek nawigacyjny w czatach będzie miał taki sam kolor, jak panel wiadomości.</string>
     <string name="DrawerOptions">Opcje szuflady</string>
@@ -69,7 +68,6 @@ CameraX wspierana jest tylko na
     <string name="CameraQuality">Jakość aparatu</string>
     <string name="DisableNumberRounding">Wyłącz zaokrąglanie liczb</string>
     <string name="FormatTimeWithSeconds">Formatuj czas z sekundami</string>
-    <string name="DisableVibration">Wyłącz wibracje</string>
     <string name="DisableProximitySensor">Wyłącz czujnik zbliżeniowy</string>
     <string name="TabletMode">Tryb tabletu</string>
     <string name="DownloadSpeedBoost">Zwiększ szybkość pobierania</string>

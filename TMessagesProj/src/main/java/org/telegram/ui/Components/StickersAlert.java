@@ -24,6 +24,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputType;
@@ -95,6 +96,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 
 public class StickersAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 
@@ -811,6 +813,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
         containerView.addView(optionsButton, LayoutHelper.createFrame(40, 40, Gravity.TOP | Gravity.RIGHT, 0, 5, 5, 0));
         optionsButton.addSubItem(1, R.drawable.msg_share, LocaleController.getString("StickersShare", R.string.StickersShare));
         optionsButton.addSubItem(2, R.drawable.msg_link, LocaleController.getString("CopyLink", R.string.CopyLink));
+        optionsButton.addSubItem(3, R.drawable.msg_openprofile, LocaleController.getString("ChannelCreator", R.string.ChannelCreator));
         optionsButton.setOnClickListener(v -> optionsButton.toggleSubMenu());
         optionsButton.setDelegate(this::onSubItemClick);
         optionsButton.setContentDescription(LocaleController.getString("AccDescrMoreOptions", R.string.AccDescrMoreOptions));
@@ -1019,6 +1022,23 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
             try {
                 AndroidUtilities.addToClipboard(stickersUrl);
                 BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyLinkBulletin().show();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        } else if (id == 3) {
+            try {
+                ExteraUtils.openById(stickerSet.set.id >> 32, parentFragment.getParentActivity(), uid -> {
+                    Bundle args = new Bundle();
+                    args.putLong("user_id", uid);
+                    ProfileActivity fragment = new ProfileActivity(args);
+                    AndroidUtilities.runOnUIThread(() -> {
+                        parentFragment.presentFragment(fragment, false, false);
+                        dismiss();
+                    });
+                }, uid -> {
+                    AndroidUtilities.addToClipboard("" + uid);
+                    BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+                });
             } catch (Exception e) {
                 FileLog.e(e);
             }

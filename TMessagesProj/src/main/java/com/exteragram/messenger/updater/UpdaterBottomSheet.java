@@ -30,10 +30,12 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.TextCell;
+import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Components.AnimatedTextView;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
@@ -43,12 +45,8 @@ import org.telegram.ui.Components.RLottieImageView;
 public class UpdaterBottomSheet extends BottomSheet {
 
     private RLottieImageView imageView;
-    private TextView changelogTextView;
 
-    private boolean isTranslated = false;
-    private CharSequence translatedC;
-
-    public UpdaterBottomSheet(Context context, boolean available, String... args) {
+    public UpdaterBottomSheet(Context context, BaseFragment fragment, boolean available, String... args) {
         // args = {version, changelog, size, downloadUrl, uploadDate}
         super(context, false);
         setOpenNoDelay(true);
@@ -121,24 +119,12 @@ public class UpdaterBottomSheet extends BottomSheet {
             TextCell changelog = new TextCell(context);
             changelog.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
             changelog.setTextAndIcon(LocaleController.getString("Changelog", R.string.Changelog), R.drawable.msg_log, false);
-            changelog.setOnClickListener(v -> copyText(changelog.getTextView().getText() + "\n" + (isTranslated ? translatedC : UpdaterUtils.replaceTags(args[1]))));
+            changelog.setOnClickListener(v -> copyText(changelog.getTextView().getText() + "\n"));
             linearLayout.addView(changelog);
 
-            changelogTextView = new TextView(context);
-            changelogTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            changelogTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
-            changelogTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
+            TextInfoPrivacyCell changelogTextView = new TextInfoPrivacyCell(context);
             changelogTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
             changelogTextView.setText(UpdaterUtils.replaceTags(args[1]));
-            changelogTextView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(10));
-            changelogTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            changelogTextView.setOnClickListener(v -> ExteraUtils.translate(args[1], LocaleController.getInstance().getCurrentLocale().getLanguage(), translated -> {
-                translatedC = translated;
-                // TODO: add animation to changelog
-                changelogTextView.setText(UpdaterUtils.replaceTags(isTranslated ? args[1] : translatedC));
-                isTranslated ^= true;
-            }, () -> {
-            }));
             linearLayout.addView(changelogTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             linearLayout.addView(divider, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(1)));
@@ -196,7 +182,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             clearUpdates.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
             clearUpdates.setTextAndIcon(LocaleController.getString("ClearUpdatesCache", R.string.ClearUpdatesCache), R.drawable.msg_clear, false);
             clearUpdates.setOnClickListener(v -> {
-                if (UpdaterUtils.getOtaDirSize().replaceAll("[^0-9]+", "").equals("0")) {
+                if (UpdaterUtils.getOtaDirSize().replaceAll("\\D+", "").equals("0")) {
                     BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.getString("NothingToClear", R.string.NothingToClear)).show();
                 } else {
                     BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.formatString("ClearedUpdatesCache", R.string.ClearedUpdatesCache, UpdaterUtils.getOtaDirSize())).show();
@@ -222,7 +208,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             checkUpdates.setText(LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
             checkUpdates.setOnClickListener(v -> {
                 checkUpdates.setText(LocaleController.getString("CheckingForUpdates", R.string.CheckingForUpdates));
-                UpdaterUtils.checkUpdates(context, true, () -> {
+                UpdaterUtils.checkUpdates(fragment, true, () -> {
                     timeView.setText(LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
                     checkUpdates.setText(LocaleController.getString("CheckForUpdates", R.string.CheckForUpdates));
                     BulletinFactory.of(getContainer(), null).createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates)).show();

@@ -25,7 +25,7 @@
     <string name="HideAllChats">Ocultar a tab \"%1$s\"</string>
     <string name="CenterTitle">Centralizar título na barra de ação</string>
     <string name="ActionBarTitle">Texto do título</string>
-    <string name="TabIcons">Tab Icons</string>
+    <string name="TabTitleStyle">Tab Icons</string>
     <string name="TabStyle">Estilo da tab</string>
     <string name="TabStyleTextOnly">Texto</string>
     <string name="TabStyleRounded">Arredondado</string>
@@ -42,7 +42,6 @@
     <string name="UseSystemEmoji">Usar emojis do sistema</string>
     <string name="NewSwitchStyle">Estilo do interruptor MD3</string>
     <string name="DisableDividers">Desativar divisores</string>
-    <string name="TransparentStatusBar">Barra de status transparente</string>
     <string name="AlternativeNavigation">Navegação Alternativa</string>
     <string name="AlternativeNavigationInfo">Uma opção experimental que inclui novas animações de transição mais suaves entre as telas.\n\n Com essa opção, a barra de navegação nas conversas será a mesma cor do painel de mensagens.</string>
     <string name="DrawerOptions">Opções do menu</string>
@@ -69,7 +68,6 @@ CameraX só é suportada nos
     <string name="CameraQuality">Qualidade da Câmera</string>
     <string name="DisableNumberRounding">Desativar arredondamento de números</string>
     <string name="FormatTimeWithSeconds">Formatar a hora com segundos</string>
-    <string name="DisableVibration">Desabilitar vibração</string>
     <string name="DisableProximitySensor">Desativar sensor de proximidade</string>
     <string name="TabletMode">Modo Tablet</string>
     <string name="DownloadSpeedBoost">Otimizar velocidade de download</string>

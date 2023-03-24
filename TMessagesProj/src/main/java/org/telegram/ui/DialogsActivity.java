@@ -10586,7 +10586,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (isDrawerTransition && ExteraConfig.alternativeOpenAnimation) {
             return parentLayout.getDrawerLayoutContainer().getDrawerWidth();
         }
-        return AndroidUtilities.dp(slideFragmentLite ? slideAmplitudeDp : 4) * (isDrawerTransition ? 1 : -1);
+        return AndroidUtilities.dp(slideFragmentLite ? slideAmplitudeDp : 4) * (!slideFragmentLite ? (isDrawerTransition ? 1 : -1) : 1);
     }
 
     public boolean allowToScale() {

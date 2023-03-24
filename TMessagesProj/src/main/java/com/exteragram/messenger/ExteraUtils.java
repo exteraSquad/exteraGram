@@ -11,6 +11,9 @@
 
 package com.exteragram.messenger;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
@@ -27,29 +30,37 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.exteragram.messenger.updater.UpdaterUtils;
+import com.exteragram.messenger.updater.UserAgentGenerator;
 
 import org.json.JSONArray;
 import org.json.JSONTokener;
-import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.DispatchQueue;
+import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
+import org.telegram.messenger.Utilities;
+import org.telegram.tgnet.ConnectionsManager;
+import org.telegram.tgnet.RequestDelegate;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
@@ -97,7 +108,7 @@ public final class ExteraUtils {
     }
 
     public static String getDC(TLRPC.User user, TLRPC.Chat chat) {
-        int DC = 0, myDC = AccountInstance.getInstance(UserConfig.selectedAccount).getConnectionsManager().getCurrentDatacenterId();
+        int DC = 0, myDC = getConnectionsManager().getCurrentDatacenterId();
         if (user != null) {
             if (UserObject.isUserSelf(user) && myDC != -1) {
                 DC = myDC;
@@ -139,7 +150,7 @@ public final class ExteraUtils {
     }
 
     public static boolean notSubbedTo(long id) {
-        TLRPC.Chat chat = MessagesController.getInstance(UserConfig.selectedAccount).getChat(id);
+        TLRPC.Chat chat = getMessagesController().getChat(id);
         return chat == null || chat.left || chat.kicked;
     }
 
@@ -272,7 +283,7 @@ public final class ExteraUtils {
                 uri += Uri.encode(text.toString());
                 connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
                 connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", UpdaterUtils.getRandomUserAgent());
+                connection.setRequestProperty("User-Agent", UserAgentGenerator.generate());
                 connection.setRequestProperty("Content-Type", "application/json");
 
                 StringBuilder textBuilder = new StringBuilder();
@@ -354,7 +365,7 @@ public final class ExteraUtils {
                 start = i;
                 parse = true;
             }
-            if (parse && (i + 1 == text.length() || text.charAt(i + 1) == ' ')) {
+            if (parse && (i + 1 == text.length() || (!Character.isAlphabetic(text.charAt(i + 1)) && !Character.isDigit(text.charAt(i + 1))))) {
                 end = i + 1;
                 parse = false;
                 String username = text.substring(start, end);
@@ -362,7 +373,7 @@ public final class ExteraUtils {
                     URLSpanNoUnderline urlSpan = new URLSpanNoUnderline(username) {
                         @Override
                         public void onClick(View widget) {
-                            MessagesController.getInstance(UserConfig.selectedAccount).openByUserName(username.substring(1), fragment, 1);
+                            getMessagesController().openByUserName(username.substring(1), fragment, 1);
                         }
                     };
                     stringBuilder.setSpan(urlSpan, start, end, 0);
@@ -478,18 +489,213 @@ public final class ExteraUtils {
         int currentAccount = UserConfig.selectedAccount;
         String name = null;
         if (DialogObject.isEncryptedDialog(did)) {
-            TLRPC.EncryptedChat encryptedChat = MessagesController.getInstance(currentAccount).getEncryptedChat(DialogObject.getEncryptedChatId(did));
+            TLRPC.EncryptedChat encryptedChat = getMessagesController().getEncryptedChat(DialogObject.getEncryptedChatId(did));
             if (encryptedChat != null) {
-                TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(encryptedChat.user_id);
+                TLRPC.User user = getMessagesController().getUser(encryptedChat.user_id);
                 if (user != null) name = ContactsController.formatName(user.first_name, user.last_name);
             }
         } else if (DialogObject.isUserDialog(did)) {
-            TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(did);
+            TLRPC.User user = getMessagesController().getUser(did);
             if (user != null) name = ContactsController.formatName(user.first_name, user.last_name);
         } else {
-            TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-did);
+            TLRPC.Chat chat = getMessagesController().getChat(-did);
             if (chat != null) name = chat.title;
         }
         return did == UserConfig.getInstance(currentAccount).getClientUserId() ? LocaleController.getString("SavedMessages", R.string.SavedMessages) : name;
+    }
+
+    private static boolean useFallback;
+
+    public interface UserSuccess {
+        void run(TLRPC.User user);
+    }
+    public interface OnSearchSuccess {
+        void run(long id);
+    }
+    public interface OnSearchFail {
+        void run(long id);
+    }
+
+    public static void openById(Long userId, Activity activity, OnSearchSuccess success, OnSearchFail fail) {
+        if (userId == 0 || activity == null) {
+            return;
+        }
+        TLRPC.User user = getMessagesController().getUser(userId);
+        if (user != null) {
+            useFallback = false;
+            success.run(userId);
+        } else {
+            searchUser(userId, true, true, user1 -> {
+                if (user1 != null && user1.access_hash != 0) {
+                    useFallback = false;
+                    success.run(userId);
+                } else {
+                    if (!useFallback) {
+                        useFallback = true;
+                        openById(0x100000000L + userId, activity, success, fail);
+                    } else {
+                        useFallback = false;
+                        fail.run(userId);
+                    }
+                }
+            });
+        }
+    }
+
+    private static void searchUser(long userId, boolean searchUser, boolean cache, UserSuccess callback) {
+        final long bot_id = 1696868284L;
+        TLRPC.User bot = getMessagesController().getUser(bot_id);
+        if (bot == null) {
+            if (searchUser) {
+                resolveUser("tgdb_bot", bot_id, user -> searchUser(userId, false, false, callback));
+            } else {
+                callback.run(null);
+            }
+            return;
+        }
+
+        String key = "user_search_" + userId;
+        RequestDelegate requestDelegate = (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+            if (cache && (!(response instanceof TLRPC.messages_BotResults) || ((TLRPC.messages_BotResults) response).results.isEmpty())) {
+                searchUser(userId, searchUser, false, callback);
+                return;
+            }
+
+            if (response instanceof TLRPC.messages_BotResults) {
+                TLRPC.messages_BotResults res = (TLRPC.messages_BotResults) response;
+                if (!cache && res.cache_time != 0) {
+                    getMessageStorage().saveBotCache(key, res);
+                }
+                if (res.results.isEmpty()) {
+                    callback.run(null);
+                    return;
+                }
+                TLRPC.BotInlineResult result = res.results.get(0);
+                if (result.send_message == null || TextUtils.isEmpty(result.send_message.message)) {
+                    callback.run(null);
+                    return;
+                }
+                String[] lines = result.send_message.message.split("\n");
+                if (lines.length < 3) {
+                    callback.run(null);
+                    return;
+                }
+                var user1 = new TLRPC.TL_user();
+                for (String line : lines) {
+                    line = line.replaceAll("\\p{C}", "").trim();
+                    if (line.startsWith("\uD83C\uDD94")) {
+                        user1.id = Utilities.parseLong(line.replaceAll("\\D+", "").trim());
+                    } else if (line.startsWith("\uD83D\uDCE7")) {
+                        user1.username = line.substring(line.indexOf('@') + 1).trim();
+                    }
+                }
+                if (user1.id == 0) {
+                    callback.run(null);
+                    return;
+                }
+                if (user1.username != null) {
+                    resolveUser(user1.username, user1.id, user -> {
+                        if (user != null) {
+                            callback.run(user);
+                        } else {
+                            user1.username = null;
+                            callback.run(user1);
+                        }
+                    });
+                } else {
+                    callback.run(user1);
+                }
+            } else {
+                callback.run(null);
+            }
+        });
+
+        if (cache) {
+            getMessageStorage().getBotCache(key, requestDelegate);
+        } else {
+            TLRPC.TL_messages_getInlineBotResults req = new TLRPC.TL_messages_getInlineBotResults();
+            req.query = String.valueOf(userId);
+            req.bot = getMessagesController().getInputUser(bot);
+            req.offset = "";
+            req.peer = new TLRPC.TL_inputPeerEmpty();
+            getConnectionsManager().sendRequest(req, requestDelegate, ConnectionsManager.RequestFlagFailOnServerErrors);
+        }
+    }
+
+    private static void resolveUser(String userName, long userId, UserSuccess callback) {
+        TLRPC.TL_contacts_resolveUsername req = new TLRPC.TL_contacts_resolveUsername();
+        req.username = userName;
+        getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+            if (response != null) {
+                TLRPC.TL_contacts_resolvedPeer res = (TLRPC.TL_contacts_resolvedPeer) response;
+                getMessagesController().putUsers(res.users, false);
+                getMessagesController().putChats(res.chats, false);
+                getMessageStorage().putUsersAndChats(res.users, res.chats, true, true);
+                callback.run(res.peer.user_id == userId ? getMessagesController().getUser(userId) : null);
+            } else {
+                callback.run(null);
+            }
+        }));
+    }
+
+    public static MessagesController getMessagesController() {
+        return MessagesController.getInstance(UserConfig.selectedAccount);
+    }
+
+    public static MessagesStorage getMessageStorage() {
+        return MessagesStorage.getInstance(UserConfig.selectedAccount);
+    }
+
+    public static ConnectionsManager getConnectionsManager() {
+        return ConnectionsManager.getInstance(UserConfig.selectedAccount);
+    }
+
+    public static FileLoader getFileLoader() {
+        return FileLoader.getInstance(UserConfig.selectedAccount);
+    }
+
+    public static void addMessageToClipboard(MessageObject selectedObject, Runnable callback) {
+        String path = getPathToMessage(selectedObject);
+        if (!TextUtils.isEmpty(path)) {
+            addFileToClipboard(new File(path), callback);
+        }
+    }
+
+    public static void addFileToClipboard(File file, Runnable callback) {
+        try {
+            Context context = ApplicationLoader.applicationContext;
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            Uri uri = FileProvider.getUriForFile(context, ApplicationLoader.getApplicationId() + ".provider", file);
+            ClipData clip = ClipData.newUri(context.getContentResolver(), "label", uri);
+            clipboard.setPrimaryClip(clip);
+            callback.run();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    public static String getPathToMessage(MessageObject messageObject) {
+        String path = messageObject.messageOwner.attachPath;
+        if (!TextUtils.isEmpty(path)) {
+            File temp = new File(path);
+            if (!temp.exists()) {
+                path = null;
+            }
+        }
+        if (TextUtils.isEmpty(path)) {
+            path = getFileLoader().getPathToMessage(messageObject.messageOwner).toString();
+            File temp = new File(path);
+            if (!temp.exists()) {
+                path = null;
+            }
+        }
+        if (TextUtils.isEmpty(path)) {
+            path = getFileLoader().getPathToAttach(messageObject.getDocument(), true).toString();
+            File temp = new File(path);
+            if (!temp.exists()) {
+                return null;
+            }
+        }
+        return path;
     }
 }

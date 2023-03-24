@@ -1498,13 +1498,14 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         vcardFirstName = arguments.getString("vcard_first_name");
         vcardLastName = arguments.getString("vcard_last_name");
         reportSpam = arguments.getBoolean("reportSpam", false);
-        if (!expandPhoto) {
+        if (false && !expandPhoto) {
             expandPhoto = arguments.getBoolean("expandPhoto", false);
             if (expandPhoto) {
                 currentExpandAnimatorValue = 1f;
                 needSendMessage = false;
             }
         }
+        expandPhoto = false;
         if (userId != 0) {
             dialogId = arguments.getLong("dialog_id", 0);
             if (dialogId != 0) {
@@ -3008,7 +3009,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (position == idDcRow && did != 0) {
                 try {
                     AndroidUtilities.addToClipboard(((TextDetailCell) view).getTextView().getText());
-                    BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
+                    BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
                 } catch (Exception ignore) {}
                 return;
             } else if (position == notificationsSimpleRow) {

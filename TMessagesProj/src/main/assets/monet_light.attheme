@@ -1,4 +1,4 @@
-\actionBarActionModeDefault=mWhite
+actionBarActionModeDefault=mWhite
 actionBarActionModeDefaultIcon=n1_900
 actionBarActionModeDefaultSelector=n1_50
 actionBarActionModeDefaultTop=n2_200
@@ -26,7 +26,7 @@ actionBarTabSelector=n2_200(50)
 actionBarTabUnactiveText=n1_500
 actionBarTipBackground=n1_100
 actionBarWhiteSelector=n1_200(80)
-avatar_actionBarIconBlue=a1_10
+avatar_actionBarIconBlue=n1_900
 avatar_actionBarSelectorBlue=n1_200(80)
 avatar_backgroundActionBarBlue=mWhite
 avatar_backgroundArchived=a1_600

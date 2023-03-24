@@ -27,6 +27,7 @@ import com.exteragram.messenger.components.SolarIconsPreview;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
@@ -58,9 +59,9 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             LocaleController.getString("ActionBarTitleUsername", R.string.ActionBarTitleUsername),
             LocaleController.getString("ActionBarTitleName", R.string.ActionBarTitleName)
     }, tabIcons = new CharSequence[]{
-            "Titles and Icons",
-            "Titles Only",
-            "Icons Only"
+            LocaleController.getString("TabTitleStyleTextWithIcons", R.string.TabTitleStyleTextWithIcons),
+            LocaleController.getString("TabTitleStyleTextOnly", R.string.TabTitleStyleTextOnly),
+            LocaleController.getString("TabTitleStyleIconsOnly", R.string.TabTitleStyleIconsOnly)
     }, events = new CharSequence[]{
             LocaleController.getString("DependsOnTheDate", R.string.DependsOnTheDate),
             LocaleController.getString("Default", R.string.Default),
@@ -190,7 +191,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         } else if (position == alternativeNavigationRow) {
             SharedConfig.editor.putBoolean("useLNavigation", SharedConfig.useLNavigation ^= true).apply();
             if (SharedConfig.useLNavigation) {
-                SharedConfig.editor.putBoolean("view_animations", true).apply();
+                MessagesController.getGlobalMainSettings().edit().putBoolean("view_animations", true).apply();
                 SharedConfig.setAnimationsEnabled(true);
             }
             SharedConfig.saveConfig();
@@ -305,7 +306,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(tabIcons, LocaleController.getString("TabIcons", R.string.TabIcons), ExteraConfig.tabIcons, getContext(), i -> {
+            ExteraUtils.showDialog(tabIcons, LocaleController.getString("TabTitleStyle", R.string.TabTitleStyle), ExteraConfig.tabIcons, getContext(), i -> {
                 ExteraConfig.editor.putInt("tabIcons", ExteraConfig.tabIcons = i).apply();
                 listAdapter.notifyItemChanged(tabIconsRow, payload);
                 getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);

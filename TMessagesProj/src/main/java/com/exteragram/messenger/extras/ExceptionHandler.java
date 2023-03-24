@@ -11,15 +11,13 @@
 
 package com.exteragram.messenger.extras;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.exteragram.messenger.ExteraConfig;
-
-import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.UserConfig;
 
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     private final Thread.UncaughtExceptionHandler defHandler;
@@ -31,8 +29,13 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(@NonNull Thread th, @NonNull Throwable ex) {
         // TODO rework
-        if (ExteraConfig.isExteraDev(UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser()))
-            AndroidUtilities.addToClipboard(Log.getStackTraceString(ex));
+        try {
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("label", Log.getStackTraceString(ex));
+            clipboard.setPrimaryClip(clip);
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
         FileLog.e(Log.getStackTraceString(ex));
         defHandler.uncaughtException(th, ex);
     }

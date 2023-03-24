@@ -25,7 +25,7 @@
     <string name="HideAllChats">Сховати теку \"%1$s\"</string>
     <string name="CenterTitle">Центрувати заголовок в панелі дій</string>
     <string name="ActionBarTitle">Заголовок</string>
-    <string name="TabIcons">Tab Icons</string>
+    <string name="TabTitleStyle">Tab Icons</string>
     <string name="TabStyle">Стилі тек</string>
     <string name="TabStyleTextOnly">Текст</string>
     <string name="TabStyleRounded">Округлі</string>
@@ -42,7 +42,6 @@
     <string name="UseSystemEmoji">Використовувати системні емодзі</string>
     <string name="NewSwitchStyle">Перемикачі в стилі MD3</string>
     <string name="DisableDividers">Відключити розділювачі</string>
-    <string name="TransparentStatusBar">Прозорий рядок стану</string>
     <string name="AlternativeNavigation">Альтернативна навігація</string>
     <string name="AlternativeNavigationInfo">Експериментальна опція, яка включає нові, більш плавні анімації переходу між екранами.\n\nУ цьому режимі навігаційна панель в чатах буде мати такий самий колір, як і панель повідомлення.</string>
     <string name="DrawerOptions">Параметри меню</string>
@@ -69,7 +68,6 @@ CameraX підтримується тільки на
     <string name="CameraQuality">Якість камери</string>
     <string name="DisableNumberRounding">Вимкнути округлення чисел</string>
     <string name="FormatTimeWithSeconds">Форматувати час з секундами</string>
-    <string name="DisableVibration">Вимкнути вібрацію</string>
     <string name="DisableProximitySensor">Вимкнути датчик наближення</string>
     <string name="TabletMode">Режим планшета</string>
     <string name="DownloadSpeedBoost">Прискорення швидкості завантаження</string>

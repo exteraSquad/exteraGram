@@ -30,6 +30,10 @@
     <string name="HideAllChats">Скрыть папку \"%1$s\"</string>
     <string name="CenterTitle">Заголовок по центру</string>
     <string name="ActionBarTitle">Текст заголовка</string>
+    <string name="TabTitleStyle">Заголовки папок</string>
+    <string name="TabTitleStyleTextWithIcons">Текст с иконками</string>
+    <string name="TabTitleStyleIconsOnly">Только иконки</string>
+    <string name="TabTitleStyleTextOnly">Только текст</string>
     <string name="TabStyle">Стиль папок</string>
     <string name="TabStyleTextOnly">Текст</string>
     <string name="TabStyleRounded">Закруглённый</string>
@@ -48,7 +52,6 @@
     <string name="UseSystemEmoji">Системные эмодзи</string>
     <string name="NewSwitchStyle">Переключатели в стиле MD3</string>
     <string name="DisableDividers">Отключить разделители</string>
-    <string name="TransparentStatusBar">Прозрачная строка состояния</string>
     <string name="AlternativeNavigation">Альтернативная навигация</string>
     <string name="AlternativeNavigationInfo">Экспериментальная опция, включающая новые, более плавные анимации перехода между экранами.\n\nС этой опцией панель навигации в чатах будет того же цвета, что и панель сообщений.</string>
 
@@ -81,7 +84,6 @@
 
     <string name="DisableNumberRounding">Отключить округление чисел</string>
     <string name="FormatTimeWithSeconds">Показывать время с секундами</string>
-    <string name="DisableVibration">Отключить вибрацию</string>
     <string name="DisableProximitySensor">Отключить датчик приближения</string>
     <string name="TabletMode">Планшетный режим</string>
 
@@ -124,6 +126,7 @@
     <string name="HideMuteUnmuteButton">Скрыть кнопку \"%1$s\"</string>
     <string name="HideMuteUnmuteButtonInfo">в нижней части каналов.</string>
     <string name="HideKeyboardOnScroll">Скрывать клавиатуру при скролле</string>
+    <string name="AdminShortcuts">Быстрые админ-действия</string>
     <string name="DisableJumpToNextChannel">Отключить \"Перейти в новый канал\"</string>
     <string name="ShowActionTimestamps">Показывать время у действий</string>
     <string name="HideShareButton">Скрыть боковую кнопку \"%1$s\"</string>
@@ -168,11 +171,16 @@
 
     <!-- Other -->
     <string name="RestartRequired">Перезагрузите приложение, чтобы изменения вступили в силу.</string>
+    <string name="UserNotFound">Пользователь с этим **ID** не найден.</string>
+    <string name="PhotoCopied">Фото скопировано в буфер обмена.</string>
+
     <string name="MutualContact">взаимный контакт</string>
     <string name="ToBeginning">В начало</string>
     <string name="MessageHistory">История сообщений</string>
     <string name="BoldItalic">Жирный курсив</string>
     <string name="OpenPremiumBot">Открыть официального бота</string>
+    <string name="CopyPhoto">Копировать фото</string>
+    <string name="CopySticker">Копировать стикер</string>
     <string name="SaveMessage">Сохранить сообщение</string>
 
     <string name="TrackSaved">Трек сохранен в **%1$s**.</string>

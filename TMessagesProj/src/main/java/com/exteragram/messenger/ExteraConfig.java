@@ -93,6 +93,10 @@ public class ExteraConfig {
 
     public static boolean hideMuteUnmuteButton;
     public static boolean hideKeyboardOnScroll;
+    public static boolean permissionsShortcut;
+    public static boolean administratorsShortcut;
+    public static boolean membersShortcut;
+    public static boolean recentActionsShortcut;
     public static boolean disableJumpToNextChannel;
     public static boolean showActionTimestamps;
     public static boolean hideShareButton;
@@ -128,6 +132,7 @@ public class ExteraConfig {
             "Portuguese (PT)", "Russian (RU)", "Serbian (SR)", "Slovak (SK)",
             "Spanish (ES)", "Swedish (SV)", "Turkish (TR)", "Ukrainian (UK)", "Uzbek (UZ)"
     };
+    public static int voiceHintShowcases;
 
     private static boolean configLoaded;
 
@@ -219,6 +224,10 @@ public class ExteraConfig {
 
             hideMuteUnmuteButton = preferences.getBoolean("hideMuteUnmuteButton", false);
             hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
+            permissionsShortcut = preferences.getBoolean("permissionsShortcut", false);
+            administratorsShortcut = preferences.getBoolean("administratorsShortcut", false);
+            membersShortcut = preferences.getBoolean("membersShortcut", false);
+            recentActionsShortcut = preferences.getBoolean("recentActionsShortcut", true);
             disableJumpToNextChannel = preferences.getBoolean("disableJumpToNextChannel", false);
             showActionTimestamps = preferences.getBoolean("showActionTimestamps", true);
             hideShareButton = preferences.getBoolean("hideShareButton", true);
@@ -244,6 +253,7 @@ public class ExteraConfig {
             // Other
             channelToSave = preferences.getLong("channelToSave", 0);
             targetLanguage = preferences.getString("targetLanguage", (String) supportedLanguages[8]);
+            voiceHintShowcases = preferences.getInt("voiceHintShowcases", 0);
 
             configLoaded = true;
         }

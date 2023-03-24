@@ -2,6 +2,7 @@ package org.telegram.ui.Components;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -10,19 +11,20 @@ import org.telegram.messenger.R;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
     private State currentState;
     private TransitState animatingState;
 
-    private Map<TransitState, RLottieDrawable> stateMap = new HashMap<TransitState, RLottieDrawable>() {
-        @Nullable
+    private final Map<TransitState, RLottieDrawable> stateMap = new HashMap<>() {
+        @NonNull
         @Override
         public RLottieDrawable get(@Nullable Object key) {
             RLottieDrawable obj = super.get(key);
             if (obj == null) {
                 TransitState state = (TransitState) key;
-                int res = state.resource;
+                int res = Objects.requireNonNull(state).resource;
                 return new RLottieDrawable(res, String.valueOf(res), AndroidUtilities.dp(32), AndroidUtilities.dp(32));
             }
             return obj;
@@ -41,7 +43,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
         currentState = state;
         if (!animate || fromState == null || getState(fromState, currentState) == null) {
             RLottieDrawable drawable = stateMap.get(getAnyState(currentState));
-            drawable.stop();
+            Objects.requireNonNull(drawable).stop();
 
             drawable.setProgress(0, false);
             setAnimation(drawable);
@@ -53,7 +55,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
 
             animatingState = transitState;
             RLottieDrawable drawable = stateMap.get(transitState);
-            drawable.stop();
+            Objects.requireNonNull(drawable).stop();
             drawable.setProgress(0, false);
             drawable.setAutoRepeat(0);
             drawable.setOnAnimationEndListener(() -> animatingState = null);

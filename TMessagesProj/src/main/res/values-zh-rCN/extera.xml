@@ -25,7 +25,7 @@
     <string name="HideAllChats">隐藏 %1$s 选项卡</string>
     <string name="CenterTitle">标题居中</string>
     <string name="ActionBarTitle">标题文本</string>
-    <string name="TabIcons">Tab Icons</string>
+    <string name="TabTitleStyle">Tab Icons</string>
     <string name="TabStyle">Tab风格</string>
     <string name="TabStyleTextOnly">仅文本</string>
     <string name="TabStyleRounded">圆角</string>
@@ -42,7 +42,6 @@
     <string name="UseSystemEmoji">使用系统Emoji</string>
     <string name="NewSwitchStyle">Material Design 3 开关样式</string>
     <string name="DisableDividers">禁用分隔线</string>
-    <string name="TransparentStatusBar">使用完全透明的状态栏</string>
     <string name="AlternativeNavigation">备选导航动画</string>
     <string name="AlternativeNavigationInfo">一个实验性选项，包括屏幕切换过程中新的、更加舒适的过渡动画。\n\n通过此选项，聊天中的导航栏颜色将与消息面板相同。</string>
     <string name="DrawerOptions">侧栏选项</string>
@@ -69,7 +68,6 @@ CameraX仅支持
     <string name="CameraQuality">相机清晰度</string>
     <string name="DisableNumberRounding">禁用数字舍入</string>
     <string name="FormatTimeWithSeconds">时间精确到秒</string>
-    <string name="DisableVibration">关闭振动</string>
     <string name="DisableProximitySensor">禁用距离传感器</string>
     <string name="TabletMode">平板模式</string>
     <string name="DownloadSpeedBoost">下载加速</string>
@@ -153,7 +151,6 @@ CameraX仅支持
     <string name="OpenPremiumBot">打开官方Premium Bot</string>
     <string name="SaveMessage">我的收藏</string>
     <string name="TrackSaved">ID超链接已保存</string>
-    <string name="Unknown">Unknown</string>
     <string name="ConfirmCall">呼叫前确认</string>
     <string name="CallTo">是否呼叫**%1$s**？</string>
     <string name="AppIconGradient">渐变</string>

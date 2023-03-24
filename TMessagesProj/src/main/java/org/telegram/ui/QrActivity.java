@@ -54,6 +54,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.components.VerticalImageSpan;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
@@ -1147,7 +1148,7 @@ public class QrActivity extends BaseFragment {
 
                     SpannableStringBuilder string = new SpannableStringBuilder(" " + userText);
                     if (!isPhone) {
-                        string.setSpan(new SettingsSearchCell.VerticalImageSpan(drawable), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        string.setSpan(new VerticalImageSpan(drawable), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     float textWidth = textPaint.measureText(string, 1, string.length()) + drawable.getBounds().width();
                     if (i <= 1 && textWidth > textMaxWidth) {

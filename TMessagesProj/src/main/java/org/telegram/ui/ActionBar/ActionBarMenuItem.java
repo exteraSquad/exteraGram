@@ -2341,7 +2341,7 @@ public class ActionBarMenuItem extends FrameLayout {
 
     private Item putLazyItem(Item item) {
         if (item == null) {
-            return item;
+            return null;
         }
         if (lazyList == null) {
             lazyList = new ArrayList<>();

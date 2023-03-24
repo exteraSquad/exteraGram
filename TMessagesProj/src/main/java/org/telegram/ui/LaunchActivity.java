@@ -85,6 +85,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.extras.ExceptionHandler;
 import com.exteragram.messenger.ExteraResources;
 import com.exteragram.messenger.extras.MonetHelper;
@@ -951,7 +952,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
 
         if (ExteraConfig.checkUpdatesOnLaunch)
-            UpdaterUtils.checkUpdates(this, false);
+            UpdaterUtils.checkUpdates(actionBarLayout.getFragmentStack().size() > 0 ? actionBarLayout.getFragmentStack().get(0) : layersActionBarLayout.getFragmentStack().get(0), false);
 
         if (BuildVars.DEBUG_VERSION)
             Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
@@ -1691,6 +1692,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         int push_topic_id = 0;
         int push_enc_id = 0;
         int push_msg_id = 0;
+        long profile_user_id = 0;
         int open_settings = 0;
         int open_widget_edit = -1;
         int open_widget_edit_type = -1;
@@ -2491,6 +2493,16 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                         if (intCode != 0) {
                                             code = "" + intCode;
                                         }
+                                    } else if (url.startsWith("tg:user") || url.startsWith("tg://user")) {
+                                        url = url.replace("tg:user", "tg://telegram.org").replace("tg://user", "tg://telegram.org");
+                                        data = Uri.parse(url);
+                                        String userID = data.getQueryParameter("id");
+                                        if (userID != null) {
+                                            try {
+                                                profile_user_id = Long.parseLong(userID);
+                                            } catch (NumberFormatException ignore) {
+                                            }
+                                        }
                                     } else if (url.startsWith("tg:openmessage") || url.startsWith("tg://openmessage")) {
                                         url = url.replace("tg:openmessage", "tg://telegram.org").replace("tg://openmessage", "tg://telegram.org");
                                         data = Uri.parse(url);
@@ -2822,6 +2834,20 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     pushOpened = true;
                     drawerLayoutContainer.closeDrawer();
                 }
+            } else if (profile_user_id != 0) {
+                Bundle args = new Bundle();
+                args.putLong("user_id", profile_user_id);
+                ProfileActivity fragment = new ProfileActivity(args);
+                ExteraUtils.openById(profile_user_id, this, uid -> {
+                    AndroidUtilities.runOnUIThread(() -> presentFragment(fragment, false, false));
+                    if (AndroidUtilities.isTablet()) {
+                        actionBarLayout.showLastFragment();
+                        rightActionBarLayout.showLastFragment();
+                        drawerLayoutContainer.setAllowOpenDrawer(false, false);
+                    } else {
+                        drawerLayoutContainer.setAllowOpenDrawer(true, false);
+                    }
+                }, uid -> showBulletin(factory -> factory.createErrorBulletin(LocaleController.getString("UserNotFound", R.string.UserNotFound))));
             } else if (showDialogsList) {
                 if (!AndroidUtilities.isTablet()) {
                     actionBarLayout.removeAllFragments();
@@ -3004,7 +3030,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 if (currentFragment != null && (currentFragment.isRemovingFromStack() || currentFragment.isInPreviewMode())) {
                     currentFragment = mainFragmentsStack.size() > 1 ? mainFragmentsStack.get(mainFragmentsStack.size() - 2) : null;
                 }
-                UpdaterUtils.checkUpdates(currentFragment.getParentActivity(), true, () -> showBulletin(factory -> factory.createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates))), null);
+                UpdaterUtils.checkUpdates(currentFragment, true, () -> showBulletin(factory -> factory.createErrorBulletin(LocaleController.getString("NoUpdates", R.string.NoUpdates))), null);
             } else if (newContact) {
                 final NewContactBottomSheet fragment = new NewContactBottomSheet(actionBarLayout.getLastFragment(), this);
                 if (newContactName != null) {
@@ -5366,7 +5392,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     private void onPowerSaver(boolean applied) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || actionBarLayout == null || !applied || LiteMode.getPowerSaverLevel() >= 100) {
+        if (actionBarLayout == null || !applied || LiteMode.getPowerSaverLevel() >= 100) {
             return;
         }
         BaseFragment lastFragment = actionBarLayout.getLastFragment();

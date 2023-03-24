@@ -34,7 +34,7 @@ public class AltSeekbar extends FrameLayout {
     private final int min, max;
     private float currentValue;
     private int vibro = -1;
-    private boolean round;
+    private final boolean round;
 
     public interface OnDrag {
         void run(float progress);
@@ -83,7 +83,7 @@ public class AltSeekbar extends FrameLayout {
         seekBarView.setDelegate(new SeekBarView.SeekBarViewDelegate() {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
-                currentValue = round ? Math.round(min + (max - min) * progress) : (min + (max - min) * progress);
+                currentValue = round ? Math.round((min + (max - min) * progress)) : (min + (max - min) * progress);
                 onDrag.run(currentValue);
                 setProgress(progress);
             }

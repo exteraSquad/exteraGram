@@ -12,7 +12,7 @@ import android.os.PatternMatcher;
 import androidx.annotation.RequiresApi;
 import androidx.core.graphics.ColorUtils;
 
-import com.google.android.exoplayer2.util.Log;
+import android.util.Log;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.R;

@@ -29,12 +29,9 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
+
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.components.VerticalImageSpan;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -47,9 +44,6 @@ import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.Switch;
 
 import java.util.ArrayList;
-import java.util.Locale;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class TextCheckCell extends FrameLayout {
     private boolean isAnimatingToThumbInsteadOfTouch;
@@ -83,47 +77,6 @@ public class TextCheckCell extends FrameLayout {
             return object.animationProgress;
         }
     };
-
-    public static class VerticalImageSpan extends ImageSpan {
-
-        public VerticalImageSpan(Drawable drawable) {
-            super(drawable);
-        }
-
-        @Override
-        public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fontMetricsInt) {
-            Drawable drawable = getDrawable();
-            Rect rect = drawable.getBounds();
-            if (fontMetricsInt != null) {
-                Paint.FontMetricsInt fmPaint = paint.getFontMetricsInt();
-                int fontHeight = fmPaint.descent - fmPaint.ascent;
-                int drHeight = rect.bottom - rect.top;
-                int centerY = fmPaint.ascent + fontHeight / 2;
-
-                fontMetricsInt.ascent = centerY - drHeight / 2;
-                fontMetricsInt.top = fontMetricsInt.ascent;
-                fontMetricsInt.bottom = centerY + drHeight / 2;
-                fontMetricsInt.descent = fontMetricsInt.bottom;
-            }
-            return rect.right;
-        }
-
-        @Override
-        public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-            Drawable drawable = getDrawable();
-            canvas.save();
-            Paint.FontMetricsInt fmPaint = paint.getFontMetricsInt();
-            int fontHeight = fmPaint.descent - fmPaint.ascent;
-            int centerY = y + fmPaint.descent - fontHeight / 2;
-            int transY = centerY - (drawable.getBounds().bottom - drawable.getBounds().top) / 2;
-            canvas.translate(x, transY);
-            if (LocaleController.isRTL) {
-                canvas.scale(-1, 1, drawable.getIntrinsicWidth() / 2, drawable.getIntrinsicHeight() / 2);
-            }
-            drawable.draw(canvas);
-            canvas.restore();
-        }
-    }
 
     public TextCheckCell(Context context) {
         this(context, 21);
@@ -267,20 +220,8 @@ public class TextCheckCell extends FrameLayout {
     }
 
     public void setTextAndValueAndCheck(String text, String value, boolean checked, boolean multiline, boolean divider) {
-        if (value != null && value.contains(" -> ")) {
-            String[] value2 = value.split(" -> ");
-            SpannableStringBuilder builder = new SpannableStringBuilder();
-            for (int a = 0; a < value2.length; a++) {
-                if (a != 0) {
-                    builder.append(" > ");
-                    Drawable drawable = getContext().getResources().getDrawable(R.drawable.search_arrow).mutate();
-                    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-                    drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2), PorterDuff.Mode.MULTIPLY));
-                    builder.setSpan(new VerticalImageSpan(drawable), builder.length() - 2, builder.length() - 1, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-                builder.append(value2[a]);
-            }
-            valueTextView.setText(builder);
+        if (value != null && value.contains("->")) {
+            valueTextView.setText(VerticalImageSpan.createSpan(getContext(), R.drawable.search_arrow, value, "->", Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
         } else {
             valueTextView.setText(value);
         }

@@ -13,7 +13,6 @@
 
 <resources>
     <string name="exteraAppName" translatable="false">exteraGram</string>
-    <string name="exteraDebugMenu" translatable="false">bop</string>
     <string name="Preferences">exteraGram Preferences</string>
 
     <!-- Main Menu -->
@@ -32,7 +31,10 @@
     <string name="HideAllChats">Hide \"%1$s\" Tab</string>
     <string name="CenterTitle">Center Title in Action Bar</string>
     <string name="ActionBarTitle">Title Text</string>
-    <string name="TabIcons">Tab Icons</string>
+    <string name="TabTitleStyle">Tab Title</string>
+    <string name="TabTitleStyleTextWithIcons">Text with Icons</string>
+    <string name="TabTitleStyleIconsOnly">Icons only</string>
+    <string name="TabTitleStyleTextOnly">Text only</string>
     <string name="TabStyle">Tab Style</string>
     <string name="TabStyleTextOnly">Text</string>
     <string name="TabStyleRounded">Rounded</string>
@@ -54,7 +56,6 @@
     <string name="UseSystemEmoji">Use System Emoji</string>
     <string name="NewSwitchStyle">MD3 Switch Style</string>
     <string name="DisableDividers">Disable Dividers</string>
-    <string name="TransparentStatusBar">Transparent Status Bar</string>
     <string name="AlternativeNavigation">Alternative Navigation</string>
     <string name="AlternativeNavigationInfo">An experimental option that includes new, smoother transition animations between screens.\n\nWith this option, the navigation bar in chats will be the same color as the message panel.</string>
 
@@ -81,7 +82,6 @@
 
     <string name="DisableNumberRounding">Disable Number Rounding</string>
     <string name="FormatTimeWithSeconds">Format Time with Seconds</string>
-    <string name="DisableVibration">Disable Vibration</string>
     <string name="DisableProximitySensor">Disable Proximity Sensor</string>
     <string name="TabletMode">Tablet Mode</string>
 
@@ -129,6 +129,7 @@
     <string name="HideMuteUnmuteButton">Hide \"%1$s\" Button</string>
     <string name="HideMuteUnmuteButtonInfo">from the bottom of the channels.</string>
     <string name="HideKeyboardOnScroll">Hide Keyboard on Scroll</string>
+    <string name="AdminShortcuts">Quick Admin Shortcuts</string>
     <string name="DisableJumpToNextChannel">Disable \"Jump to the Next Channel\"</string>
     <string name="ShowActionTimestamps">Show Timestamps for Actions</string>
     <string name="HideShareButton">Hide Side \"%1$s\" Button</string>
@@ -173,11 +174,16 @@
 
     <!-- Other -->
     <string name="RestartRequired">Restart the App to take effect.</string>
+    <string name="UserNotFound">User with this **ID** not found.</string>
+    <string name="PhotoCopied">Photo copied to clipboard.</string>
+
     <string name="MutualContact">mutual contact</string>
     <string name="ToBeginning">To Beginning</string>
     <string name="MessageHistory">Message History</string>
     <string name="BoldItalic">Bold Italic</string>
     <string name="OpenPremiumBot">Open Official Bot</string>
+    <string name="CopyPhoto">Copy Photo</string>
+    <string name="CopySticker">Copy Sticker</string>
     <string name="SaveMessage">Save Message</string>
 
     <string name="TrackSaved">Track saved to **%1$s**.</string>

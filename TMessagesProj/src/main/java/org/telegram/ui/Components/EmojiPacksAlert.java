@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.Selection;
@@ -44,6 +45,8 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.exteragram.messenger.ExteraUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
@@ -1415,6 +1418,23 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
             } catch (Exception e) {
                 FileLog.e(e);
             }
+        } else if (id == 3) {
+            try {
+                ExteraUtils.openById(stickerSet.set.id >> 32, fragment.getParentActivity(), uid -> {
+                    Bundle args = new Bundle();
+                    args.putLong("user_id", uid);
+                    ProfileActivity newFragment = new ProfileActivity(args);
+                    AndroidUtilities.runOnUIThread(() -> {
+                        fragment.presentFragment(newFragment, false, false);
+                        dismiss();
+                    });
+                }, uid -> {
+                    AndroidUtilities.addToClipboard("" + uid);
+                    BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+                });
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
         }
     }
 
@@ -1630,6 +1650,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
                 addView(optionsButton, LayoutHelper.createFrame(40, 40, Gravity.TOP | Gravity.RIGHT, 0, 5, 5 - backgroundPaddingLeft / AndroidUtilities.density, 0));
                 optionsButton.addSubItem(1, R.drawable.msg_share, LocaleController.getString("StickersShare", R.string.StickersShare));
                 optionsButton.addSubItem(2, R.drawable.msg_link, LocaleController.getString("CopyLink", R.string.CopyLink));
+                optionsButton.addSubItem(3, R.drawable.msg_openprofile, LocaleController.getString("ChannelCreator", R.string.ChannelCreator));
                 optionsButton.setOnClickListener(v -> optionsButton.toggleSubMenu());
                 optionsButton.setDelegate(EmojiPacksAlert.this::onSubItemClick);
                 optionsButton.setContentDescription(LocaleController.getString("AccDescrMoreOptions", R.string.AccDescrMoreOptions));

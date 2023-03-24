@@ -210,7 +210,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     protected void onItemClick(View view, int position, float x, float y) {
         if (position == aboutExteraRow) {
             if (!BuildVars.PM_BUILD)
-                (new UpdaterBottomSheet(getParentActivity(), false)).show();
+                (new UpdaterBottomSheet(getParentActivity(), this, false)).show();
         } else if (position == sourceCodeRow) {
             Browser.openUrl(getParentActivity(), "https://github.com/exteraSquad/exteraGram");
         } else if (position == channelRow) {
