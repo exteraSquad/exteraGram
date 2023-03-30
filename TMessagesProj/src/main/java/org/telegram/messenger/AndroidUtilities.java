@@ -1957,13 +1957,14 @@ public class AndroidUtilities {
                 File[] dirs = ApplicationLoader.applicationContext.getExternalCacheDirs();
                 file = dirs[0];
                 if (!TextUtils.isEmpty(SharedConfig.storageCacheDir)) {
-                    for (File dir : dirs) {
-                        if (dir != null && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
-                            file = dir;
+                    for (int a = 0; a < dirs.length; a++) {
+                        if (dirs[a] != null && dirs[a].getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
+                            file = dirs[a];
                             break;
                         }
                     }
                 }
+
                 FileLog.d("check dir " + (file == null ? null : file.getPath()) + " ");
                 if (file != null && (file.exists() || file.mkdirs()) && file.canWrite()) {
 //                    boolean canWrite = true;
