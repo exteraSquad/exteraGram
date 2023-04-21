@@ -51,7 +51,7 @@ public class TimerDrawable extends Drawable {
     public TimerDrawable(Context context, Theme.ResourcesProvider resourcesProvider) {
         this.context = context;
         this.resourcesProvider = resourcesProvider;
-        timePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rcondensedbold.ttf"));
+        timePaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_CONDENSED_BOLD));
 
         linePaint.setStrokeWidth(AndroidUtilities.dp(1));
         linePaint.setStyle(Paint.Style.STROKE);

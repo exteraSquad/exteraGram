@@ -14,6 +14,8 @@ package com.exteragram.messenger;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
 import com.exteragram.messenger.camera.CameraXUtils;
 import com.exteragram.messenger.icons.BaseIconSet;
 import com.exteragram.messenger.icons.EmptyIconSet;
@@ -91,7 +93,7 @@ public class ExteraConfig {
     public static int doubleTapAction;
     public static int doubleTapActionOutOwner;
 
-    public static boolean hideMuteUnmuteButton;
+    public static int bottomButton;
     public static boolean hideKeyboardOnScroll;
     public static boolean permissionsShortcut;
     public static boolean administratorsShortcut;
@@ -109,7 +111,7 @@ public class ExteraConfig {
     public static boolean disableEdgeAction;
 
     public static boolean staticZoom;
-    public static boolean rearVideoMessages;
+    public static int videoMessagesCamera; // front rear ask
     public static boolean rememberLastUsedCamera;
     public static boolean pauseOnMinimize;
     public static boolean disablePlayback;
@@ -121,7 +123,7 @@ public class ExteraConfig {
 
     // Other
     private static final long[] OFFICIAL_CHANNELS = {1233768168, 1524581881, 1571726392, 1632728092, 1638754701, 1779596027, 1172503281};
-    private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381, 1773117711};
+    private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381, 1773117711, 5330087923L};
     public static long channelToSave;
     public static String targetLanguage;
     public static final CharSequence[] supportedLanguages = new CharSequence[]{
@@ -133,9 +135,12 @@ public class ExteraConfig {
             "Spanish (ES)", "Swedish (SV)", "Turkish (TR)", "Ukrainian (UK)", "Uzbek (UZ)"
     };
     public static int voiceHintShowcases;
+    public static boolean useGoogleCrashlytics;
+    public static boolean useGoogleAnalytics;
 
     private static boolean configLoaded;
 
+    public static SharedPreferences preferences;
     public static SharedPreferences.Editor editor;
 
     static {
@@ -148,7 +153,7 @@ public class ExteraConfig {
                 return;
             }
 
-            SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("exteraconfig", Activity.MODE_PRIVATE);
+            preferences = ApplicationLoader.applicationContext.getSharedPreferences("exteraconfig", Activity.MODE_PRIVATE);
             editor = preferences.edit();
 
             // General
@@ -212,8 +217,7 @@ public class ExteraConfig {
 
             // Chats
             stickerSize = preferences.getFloat("stickerSize", 14.0f);
-
-            stickerShape = preferences.getInt("stickerShape", 0);
+            stickerShape = preferences.getInt("stickerShape", 1);
 
             hideStickerTime = preferences.getBoolean("hideStickerTime", false);
             unlimitedRecentStickers = preferences.getBoolean("unlimitedRecentStickers", false);
@@ -222,7 +226,7 @@ public class ExteraConfig {
             doubleTapAction = preferences.getInt("doubleTapAction", 1);
             doubleTapActionOutOwner = preferences.getInt("doubleTapActionOutOwner", 1);
 
-            hideMuteUnmuteButton = preferences.getBoolean("hideMuteUnmuteButton", false);
+            bottomButton = preferences.getInt("bottomButton", 2);
             hideKeyboardOnScroll = preferences.getBoolean("hideKeyboardOnScroll", true);
             permissionsShortcut = preferences.getBoolean("permissionsShortcut", false);
             administratorsShortcut = preferences.getBoolean("administratorsShortcut", false);
@@ -240,8 +244,8 @@ public class ExteraConfig {
             hideCameraTile = preferences.getBoolean("hideCameraTile", false);
 
             staticZoom = preferences.getBoolean("staticZoom", false);
+            videoMessagesCamera = preferences.getInt("videoMessagesCamera", 0);
             rememberLastUsedCamera = preferences.getBoolean("rememberLastUsedCamera", false);
-            rearVideoMessages = preferences.getBoolean("rearVideoMessages", false);
             pauseOnMinimize = preferences.getBoolean("pauseOnMinimize", true);
             disablePlayback = preferences.getBoolean("disablePlayback", true);
 
@@ -254,16 +258,18 @@ public class ExteraConfig {
             channelToSave = preferences.getLong("channelToSave", 0);
             targetLanguage = preferences.getString("targetLanguage", (String) supportedLanguages[8]);
             voiceHintShowcases = preferences.getInt("voiceHintShowcases", 0);
+            useGoogleCrashlytics = preferences.getBoolean("useGoogleCrashlytics", true);
+            useGoogleAnalytics = preferences.getBoolean("useGoogleAnalytics", true);
 
             configLoaded = true;
         }
     }
 
-    public static boolean isExtera(TLRPC.Chat chat) {
+    public static boolean isExtera(@NonNull TLRPC.Chat chat) {
         return Arrays.stream(OFFICIAL_CHANNELS).anyMatch(id -> id == chat.id);
     }
 
-    public static boolean isExteraDev(TLRPC.User user) {
+    public static boolean isExteraDev(@NonNull TLRPC.User user) {
         return Arrays.stream(DEVS).anyMatch(id -> id == user.id);
     }
 
@@ -332,6 +338,10 @@ public class ExteraConfig {
         return ApplicationLoader.applicationContext.getSharedPreferences("systemConfig", Activity.MODE_PRIVATE).getBoolean("logsEnabled", false); //BuildVars.DEBUG_VERSION);
     }
 
+    public static String getCurrentLangName() {
+        return targetLanguage.substring(0, targetLanguage.indexOf("(") - 1);
+    }
+
     public static String getCurrentLangCode() {
         return targetLanguage.substring(targetLanguage.indexOf("(") + 1, targetLanguage.indexOf(")"));
     }
@@ -351,5 +361,11 @@ public class ExteraConfig {
             default:
                 return 1;
         }
+    }
+
+    public static void clearPreferences() {
+        configLoaded = false;
+        ExteraConfig.editor.clear().apply();
+        ExteraConfig.loadConfig();
     }
 }

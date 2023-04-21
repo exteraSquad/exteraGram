@@ -25,12 +25,9 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Outline;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -307,7 +304,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
                 }
                 switchCamera();
             } else {
-                if (!cameraXController.isInitied() || cameraThread == null){
+                if (!cameraReady || !cameraXController.isInitied() || cameraThread == null){
                     return;
                 }
                 switchCameraX();
@@ -553,6 +550,10 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
         }
     }
 
+    public void setFrontface(boolean isFrontface) {
+        this.isFrontface = isFrontface;
+    }
+
     public void showCamera() {
         if (textureView != null) {
             return;
@@ -584,7 +585,10 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             textureOverlayView.setImageResource(R.drawable.icplaceholder);
         }
         cameraReady = false;
-        isFrontface = !ExteraConfig.rearVideoMessages;
+        if (ExteraConfig.videoMessagesCamera != 2) {
+            isFrontface = ExteraConfig.videoMessagesCamera == 0;
+        }
+
         selectedCamera = null;
         recordedTime = 0;
         progress = 0;
@@ -929,13 +933,16 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
 
     private void switchCameraX(){
         saveLastCameraBitmap();
+        if (cameraZoom > 0) {
+            cameraZoom = 0;
+        }
         if (lastBitmap != null) {
             needDrawFlickerStub = false;
             textureOverlayView.setImageBitmap(lastBitmap);
             textureOverlayView.setAlpha(1f);
         }
-        if (ExteraConfig.rememberLastUsedCamera) {
-            ExteraConfig.editor.putBoolean("rearVideoMessages", ExteraConfig.rearVideoMessages = isFrontface).apply();
+        if (ExteraConfig.rememberLastUsedCamera && ExteraConfig.videoMessagesCamera != 2) {
+            ExteraConfig.editor.putInt("videoMessagesCamera", ExteraConfig.videoMessagesCamera = isFrontface ? 1 : 0).apply();
         }
         isFrontface ^= true;
         cameraReady = false;
@@ -944,6 +951,9 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
 
     private void switchCamera() {
         saveLastCameraBitmap();
+        if (cameraZoom > 0) {
+            cameraZoom = 0;
+        }
         if (lastBitmap != null) {
             needDrawFlickerStub = false;
             textureOverlayView.setImageBitmap(lastBitmap);
@@ -954,8 +964,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
             CameraController.getInstance().close(cameraSession, null, null);
             cameraSession = null;
         }
-        if (ExteraConfig.rememberLastUsedCamera) {
-            ExteraConfig.editor.putBoolean("rearVideoMessages", ExteraConfig.rearVideoMessages = isFrontface).apply();
+        if (ExteraConfig.rememberLastUsedCamera && ExteraConfig.videoMessagesCamera != 2) {
+            ExteraConfig.editor.putInt("videoMessagesCamera", ExteraConfig.videoMessagesCamera = isFrontface ? 1 : 0).apply();
         }
         isFrontface ^= true;
         initCamera();

@@ -1,6 +1,5 @@
 package com.exteragram.messenger.updater;
 
-import org.telegram.messenger.FileLog;
 import org.telegram.messenger.Utilities;
 
 public class UserAgentGenerator {

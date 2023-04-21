@@ -30,6 +30,9 @@ import android.util.Base64;
 
 import androidx.collection.LongSparseArray;
 
+import com.exteragram.messenger.premium.encryption.BaseEncryptor;
+import com.exteragram.messenger.premium.filter.ZalgoFilter;
+
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.browser.Browser;
 import org.telegram.messenger.ringtone.RingtoneDataStore;
@@ -275,6 +278,25 @@ public class MessageObject {
             " . "
     };
     public Drawable customAvatarDrawable;
+
+    public boolean isDecrypted;
+    public BaseEncryptor currentEncryptor;
+    public String originalText;
+
+    public void updateMessage(boolean reset) {
+        if (reset) {
+            if (caption != null) {
+                caption = originalText;
+            }
+            if (messageOwner.message != null) {
+                messageOwner.message = originalText;
+            }
+            applyNewText(originalText);
+        } else {
+            applyNewText();
+        }
+        generateCaption();
+    }
 
     private byte[] randomWaveform;
     public boolean drawServiceWithDefaultTypeface;
@@ -2328,7 +2350,6 @@ public class MessageObject {
         } else {
             messageText = "unsupported " + event.action;
         }
-
         if (messageOwner == null) {
             messageOwner = new TLRPC.TL_messageService();
         }
@@ -5983,6 +6004,18 @@ public class MessageObject {
                 TLRPC.DocumentAttribute attribute = document.attributes.get(a);
                 if (attribute instanceof TLRPC.TL_documentAttributeSticker) {
                     return "image/webp".equals(document.mime_type) || "video/webm".equals(document.mime_type);
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isStaticStickerDocument(TLRPC.Document document) {
+        if (document != null) {
+            for (int a = 0; a < document.attributes.size(); a++) {
+                TLRPC.DocumentAttribute attribute = document.attributes.get(a);
+                if (attribute instanceof TLRPC.TL_documentAttributeSticker) {
+                    return "image/webp".equals(document.mime_type);
                 }
             }
         }

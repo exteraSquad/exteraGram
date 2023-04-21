@@ -4162,6 +4162,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
 
                 @Override
+                public void setFrontface(boolean frontface) {
+
+                }
+
+                @Override
                 public void needChangeVideoPreviewState(int state, float seekProgress) {
 
                 }
@@ -4211,7 +4216,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             contentView.addView(writeButtonContainer, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 10));
 
             textPaint.setTextSize(AndroidUtilities.dp(12));
-            textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             selectedCountView = new View(context) {
                 @Override
                 protected void onDraw(Canvas canvas) {
@@ -4363,7 +4368,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             updateTextView = new TextView(context);
             updateTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-            updateTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            updateTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             updateTextView.setText(LocaleController.getString("AppUpdateNow", R.string.AppUpdateNow).toUpperCase());
             updateTextView.setTextColor(0xffffffff);
             updateTextView.setPadding(AndroidUtilities.dp(30), 0, 0, 0);
@@ -5250,7 +5255,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         selectedDialogsCountTextView = new NumberTextView(actionMode.getContext());
         selectedDialogsCountTextView.setTextSize(18);
-        selectedDialogsCountTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        selectedDialogsCountTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         selectedDialogsCountTextView.setTextColor(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon));
         actionMode.addView(selectedDialogsCountTextView, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1.0f, 72, 0, 0, 0));
         selectedDialogsCountTextView.setOnTouchListener((v, event) -> true);
@@ -9759,8 +9764,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         if (commentView.getFieldText() != null && commentView.getFieldText().length() != 0) {
             ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, false, resourcesProvider);
-            translateButton.setTextAndIcon(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")", R.drawable.msg_translate);
+            translateButton.setTextAndIcon(LocaleController.getString("TranslateTo", R.string.TranslateTo), R.drawable.msg_translate);
+            translateButton.setSubtext(ExteraConfig.getCurrentLangName());
             translateButton.setMinimumWidth(AndroidUtilities.dp(196));
+            translateButton.setItemHeight(56);
             translateButton.setOnClickListener(v -> {
                 if (sendPopupWindow != null && sendPopupWindow.isShowing())
                     sendPopupWindow.dismiss();
@@ -9770,13 +9777,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }, () -> {
                 });
             });
-            translateButton.setOnLongClickListener(v -> {
-                ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
-                    ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
-                    translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
-                });
-                return true;
-            });
+            translateButton.setRightIcon(R.drawable.msg_arrowright);
+            translateButton.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
+                ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
+                translateButton.setSubtext(ExteraConfig.getCurrentLangName());
+            }));
             sendPopupLayout2.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
         }
 

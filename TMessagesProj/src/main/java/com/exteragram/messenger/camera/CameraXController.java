@@ -185,9 +185,6 @@ public class CameraXController {
     }
 
     public void switchCamera() {
-        if (ExteraConfig.rememberLastUsedCamera) {
-            ExteraConfig.editor.putBoolean("rearVideoMessages", ExteraConfig.rearVideoMessages = isFrontface).apply();
-        }
         isFrontface ^= true;
         bindUseCases();
     }

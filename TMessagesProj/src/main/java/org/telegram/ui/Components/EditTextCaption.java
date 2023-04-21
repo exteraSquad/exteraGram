@@ -429,7 +429,7 @@ public class EditTextCaption extends EditTextBoldCursor {
                 int index = TextUtils.indexOf(text, ' ');
                 if (index != -1) {
                     TextPaint paint = getPaint();
-                    paint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+                    paint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
                     CharSequence str = text.subSequence(0, index + 1);
                     int size = (int) Math.ceil(paint.measureText(text, 0, index + 1));
                     int width = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();

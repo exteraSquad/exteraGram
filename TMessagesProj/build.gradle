@@ -1,9 +1,7 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
     google()
 }
 
@@ -17,23 +15,26 @@ configurations.all {
 }
 
 dependencies {
-    implementation 'androidx.core:core:1.9.0'
+    implementation 'androidx.core:core:1.10.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.exifinterface:exifinterface:1.3.6'
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.sharetarget:sharetarget:1.2.0"
-    implementation 'com.google.android.gms:play-services-measurement:21.2.0'
+    implementation 'com.google.android.gms:play-services-measurement:21.2.1'
 
     compileOnly 'org.checkerframework:checker-qual:2.5.2'
     compileOnly 'org.checkerframework:checker-compat-qual:2.5.5'
 
-    implementation 'com.google.firebase:firebase-messaging:23.1.1'
-    implementation 'com.google.firebase:firebase-config:21.2.1'
-    implementation 'com.google.firebase:firebase-datatransport:18.1.7'
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    implementation 'com.google.firebase:firebase-config:21.3.0'
+    implementation 'com.google.firebase:firebase-datatransport:18.1.8'
     implementation 'com.google.firebase:firebase-appindexing:20.0.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
     implementation 'com.google.android.gms:play-services-wearable:18.0.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
@@ -42,11 +43,11 @@ dependencies {
     implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
     implementation 'com.stripe:stripe-android:2.0.2'
     implementation 'com.google.mlkit:language-id:16.1.1'
-    implementation 'com.android.billingclient:billing:5.1.0'
+    implementation 'com.android.billingclient:billing:5.2.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.google.guava:guava:31.1-android'
 
-    def camerax_version = "1.3.0-alpha04"
+    def camerax_version = "1.3.0-alpha05"
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     implementation "androidx.camera:camera-core:${camerax_version}"
     implementation "androidx.camera:camera-extensions:${camerax_version}"
@@ -55,9 +56,10 @@ dependencies {
     implementation "androidx.camera:camera-video:${camerax_version}"
     implementation 'androidx.interpolator:interpolator:1.0.0'
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
-    //implementation 'com.github.KieronQuinn:MonetCompat:0.4.1'
+    // GPT
+    implementation 'com.theokanning.openai-gpt3-java:service:0.12.0'
 
     implementation files('libs/libgsaverification-client.aar')
 }
@@ -87,6 +89,7 @@ android {
         // Obtain your own keys at: https://core.telegram.org/api/obtaining_api_id
         buildConfigField 'int', 'APP_ID', localProperties.getProperty("APP_ID")
         buildConfigField 'String', 'APP_HASH', localProperties.getProperty("APP_HASH")
+        buildConfigField 'String', 'YANDEX_METRICA_KEY', localProperties.getProperty("YANDEX_METRICA_KEY")
 
         // Google Console: https://console.cloud.google.com/google/maps-apis/credentials
         resValue 'string', 'MAPS_V2_API', localProperties.getProperty("MAPS_V2_API")
@@ -212,3 +215,6 @@ android {
     bundle.language.enableSplit false
     dependenciesInfo.includeInApk false
 }
+
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'

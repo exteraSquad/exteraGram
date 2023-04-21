@@ -52,6 +52,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     private int generalRow;
     private int appearanceRow;
     private int chatsRow;
+    private int otherRow;
 
     private int categoryDividerRow;
     private int aboutExteraDividerRow;
@@ -196,6 +197,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
         generalRow = newRow();
         appearanceRow = newRow();
         chatsRow = newRow();
+        otherRow = newRow();
         categoryDividerRow = newRow();
 
         infoHeaderRow = newRow();
@@ -223,6 +225,8 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
             presentFragment(new AppearancePreferencesActivity());
         } else if (position == chatsRow) {
             presentFragment(new ChatsPreferencesActivity());
+        } else if (position == otherRow) {
+            presentFragment(new OtherPreferencesActivity());
         } else if (position == generalRow) {
             presentFragment(new GeneralPreferencesActivity());
         }
@@ -267,7 +271,9 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == appearanceRow) {
                         textCell.setTextAndIcon(LocaleController.getString("Appearance", R.string.Appearance), R.drawable.msg_theme, true);
                     } else if (position == chatsRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), R.drawable.msg_discussion, false);
+                        textCell.setTextAndIcon(LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort), R.drawable.msg_discussion, true);
+                    } else if (position == otherRow) {
+                        textCell.setTextAndIcon(LocaleController.getString("LocalOther", R.string.LocalOther), R.drawable.msg_fave, false);
                     } else if (position == channelRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Channel", R.string.Channel), "@exteraGram", R.drawable.msg_channel, true);
                     } else if (position == groupRow) {
@@ -275,9 +281,8 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                     } else if (position == crowdinRow) {
                         textCell.setTextAndValueAndIcon(LocaleController.getString("Crowdin", R.string.Crowdin), "Crowdin", R.drawable.msg_translate, true);
                     } else if (position == sourceCodeRow) {
-                        textCell.setTextAndValueAndIcon(LocaleController.getString("SourceCode", R.string.SourceCode), "Github", R.drawable.msg_delete, false);
+                        textCell.setTextAndValueAndIcon(LocaleController.getString("SourceCode", R.string.SourceCode), "GitHub", R.drawable.msg_delete, false);
                     }
-                    textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                     break;
                 case 3:
                     HeaderCell headerCell = (HeaderCell) holder.itemView;

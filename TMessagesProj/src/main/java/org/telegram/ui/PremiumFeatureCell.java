@@ -33,7 +33,7 @@ public class PremiumFeatureCell extends FrameLayout {
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         title = new TextView(context);
-        title.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        title.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         title.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         linearLayout.addView(title, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));

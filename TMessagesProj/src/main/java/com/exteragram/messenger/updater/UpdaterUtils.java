@@ -23,7 +23,6 @@ import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
 import com.exteragram.messenger.ExteraConfig;
@@ -212,8 +211,8 @@ public class UpdaterUtils {
 
         int length = Math.max(current.length, latest.length);
         for (int i = 0; i < length; i++) {
-            int v1 = i < current.length ? Integer.parseInt(current[i]) : 0;
-            int v2 = i < latest.length ? Integer.parseInt(latest[i]) : 0;
+            int v1 = i < current.length ? Utilities.parseInt(current[i]) : 0;
+            int v2 = i < latest.length ? Utilities.parseInt(latest[i]) : 0;
             if (v1 < v2) {
                 return true;
             } else if (v1 > v2) {
@@ -289,20 +288,20 @@ public class UpdaterUtils {
             int end;
             StringBuilder stringBuilder = new StringBuilder(str);
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str);
-            String symbol = "", font = "fonts/rregular.ttf";
+            String symbol = "", font = AndroidUtilities.TYPEFACE_ROBOTO_REGULAR;
             for (int i = 0; i < 3; i++) {
                 switch (i) {
                     case 0:
                         symbol = "**";
-                        font = "fonts/rmedium.ttf";
+                        font = AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM;
                         break;
                     case 1:
                         symbol = "_";
-                        font = "fonts/ritalic.ttf";
+                        font = AndroidUtilities.TYPEFACE_ROBOTO_ITALIC;
                         break;
                     case 2:
                         symbol = "`";
-                        font = "fonts/rmono.ttf";
+                        font = AndroidUtilities.TYPEFACE_ROBOTO_MONO;
                         break;
                 }
                 while ((start = stringBuilder.indexOf(symbol)) != -1) {

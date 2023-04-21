@@ -612,7 +612,7 @@ public class CameraScanActivity extends BaseFragment {
                             index1 += 1;
                             index2 += 1;
                             spanned.setSpan(new URLSpanNoUnderline(links[i], true), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            spanned.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            spanned.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM)), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         } else {
                             break;
                         }

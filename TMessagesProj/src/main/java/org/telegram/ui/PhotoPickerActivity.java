@@ -1155,7 +1155,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
             });
 
             textPaint.setTextSize(AndroidUtilities.dp(12));
-            textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
 
             selectedCountView = new View(context) {
                 @Override

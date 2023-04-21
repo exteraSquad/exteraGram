@@ -25,6 +25,7 @@ public class BuildVars {
     public static String BUILD_VERSION_STRING;
     public static int APP_ID;
     public static String APP_HASH;
+    public static String YANDEX_METRICA_KEY = BuildConfig.YANDEX_METRICA_KEY;
 
     // SafetyNet key for Google Identity SDK, set it to empty to disable
     public static String SAFETYNET_KEY = "";

@@ -2972,7 +2972,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
         } else if (type == TYPE_EMOJI_STATUS) {
             ArrayList<TLRPC.EmojiStatus> recentEmojiStatuses = MediaDataController.getInstance(currentAccount).getRecentEmojiStatuses();
             TLRPC.TL_messages_stickerSet defaultSet = MediaDataController.getInstance(currentAccount).getStickerSet(new TLRPC.TL_inputStickerSetEmojiDefaultStatuses(), false);
-            TLRPC.TL_messages_stickerSet exteraSet = MediaDataController.getInstance(currentAccount).getStickerSetById(5903149394043076636L);
             if (defaultSet == null) {
                 defaultSetLoading = true;
             } else {
@@ -2988,9 +2987,6 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
                         if (recent.size() + (includeEmpty ? 1 : 0) >= maxrecentlen) {
                             break;
                         }
-                    }
-                    if (exteraSet != null) {
-                        recent.add(new AnimatedEmojiSpan(exteraSet.documents.get(3), null));
                     }
                 }
                 if (recentEmojiStatuses != null && !recentEmojiStatuses.isEmpty()) {

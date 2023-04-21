@@ -1073,7 +1073,7 @@ public class Bulletin {
             textView = new TextView(context);
             textView.setSingleLine();
             textView.setTextColor(undoInfoColor);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             addView(textView, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.START | Gravity.CENTER_VERTICAL, 56, 0, 16, 0));
         }
@@ -1137,7 +1137,7 @@ public class Bulletin {
             subtitleTextView.setTextColor(undoInfoColor);
             subtitleTextView.setLinkTextColor(getThemedColor(Theme.key_undo_cancelColor));
             subtitleTextView.setMovementMethod(new LinkMovementMethod());
-            subtitleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            subtitleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
             linearLayout.addView(subtitleTextView);
         }
@@ -1189,7 +1189,7 @@ public class Bulletin {
             subtitleTextView.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
             subtitleTextView.setTextColor(undoInfoColor);
             subtitleTextView.setLinkTextColor(undoLinkColor);
-            subtitleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            subtitleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
             linearLayout.addView(subtitleTextView);
         }
@@ -1245,7 +1245,7 @@ public class Bulletin {
             NotificationCenter.listenEmojiLoading(textView);
             textView.setDisablePaddingsOffset(true);
             textView.setSingleLine();
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setPadding(0, AndroidUtilities.dp(8), 0, AndroidUtilities.dp(8));

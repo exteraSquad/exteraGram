@@ -114,7 +114,7 @@ import java.util.Objects;
 import java.util.Stack;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.premium.filter.ZalgoFilter;
 
 public class DialogCell extends BaseCell {
 
@@ -878,7 +878,7 @@ public class DialogCell extends BaseCell {
             Theme.dialogs_namePaint[1].setTextSize(AndroidUtilities.dp(16));
             Theme.dialogs_nameEncryptedPaint[1].setTextSize(AndroidUtilities.dp(16));
             Theme.dialogs_messagePaint[1].setTextSize(AndroidUtilities.dp(15));
-            Theme.dialogs_messagePaint[1].setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            Theme.dialogs_messagePaint[1].setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             Theme.dialogs_messagePrintingPaint[1].setTextSize(AndroidUtilities.dp(15));
 
             Theme.dialogs_messagePaint[1].setColor(Theme.dialogs_messagePaint[1].linkColor = Theme.getColor(Theme.key_chats_message_threeLines, resourcesProvider));
@@ -888,7 +888,7 @@ public class DialogCell extends BaseCell {
             Theme.dialogs_namePaint[0].setTextSize(AndroidUtilities.dp(17));
             Theme.dialogs_nameEncryptedPaint[0].setTextSize(AndroidUtilities.dp(17));
             Theme.dialogs_messagePaint[0].setTextSize(AndroidUtilities.dp(16));
-            Theme.dialogs_messagePaint[0].setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            Theme.dialogs_messagePaint[0].setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             Theme.dialogs_messagePrintingPaint[0].setTextSize(AndroidUtilities.dp(16));
 
             Theme.dialogs_messagePaint[0].setColor(Theme.dialogs_messagePaint[0].linkColor = Theme.getColor(Theme.key_chats_message, resourcesProvider));
@@ -931,22 +931,12 @@ public class DialogCell extends BaseCell {
         }
 
         String messageFormat;
-        if (Build.VERSION.SDK_INT >= 18) {
-            if ((!useForceThreeLines && !SharedConfig.useThreeLinesLayout || currentDialogFolderId != 0) || isForumCell()) {
-                messageFormat = "%2$s: \u2068%1$s\u2069";
-                hasNameInMessage = true;
-            } else {
-                messageFormat = "\u2068%1$s\u2069";
-                hasNameInMessage = false;
-            }
+        if ((!useForceThreeLines && !SharedConfig.useThreeLinesLayout || currentDialogFolderId != 0) || isForumCell()) {
+            messageFormat = "%2$s: \u2068%1$s\u2069";
+            hasNameInMessage = true;
         } else {
-            if ((!useForceThreeLines && !SharedConfig.useThreeLinesLayout || currentDialogFolderId != 0) || isForumCell()) {
-                messageFormat = "%2$s: %1$s";
-                hasNameInMessage = true;
-            } else {
-                messageFormat = "%1$s";
-                hasNameInMessage = false;
-            }
+            messageFormat = "\u2068%1$s\u2069";
+            hasNameInMessage = false;
         }
 
         if (message != null) {
@@ -4688,7 +4678,7 @@ public class DialogCell extends BaseCell {
                 }
                 SpannableStringBuilder msgBuilder = new SpannableStringBuilder(mess);
                 MediaDataController.addTextStyleRuns(message.messageOwner.entities, mess, msgBuilder, TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_STRIKE);
-                if (message != null && message.messageOwner != null) {
+                if (message.messageOwner != null) {
                     MediaDataController.addAnimatedEmojiSpans(message.messageOwner.entities, msgBuilder, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
                 }
                 CharSequence charSequence = new SpannableStringBuilder(emoji).append(AndroidUtilities.replaceNewLines(msgBuilder));
@@ -4703,25 +4693,13 @@ public class DialogCell extends BaseCell {
             String colorKey = Theme.key_chats_attachMessage;
             if (message.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                 TLRPC.TL_messageMediaPoll mediaPoll = (TLRPC.TL_messageMediaPoll) message.messageOwner.media;
-                if (Build.VERSION.SDK_INT >= 18) {
-                    innerMessage = String.format("\uD83D\uDCCA \u2068%s\u2069", mediaPoll.poll.question);
-                } else {
-                    innerMessage = String.format("\uD83D\uDCCA %s", mediaPoll.poll.question);
-                }
+                innerMessage = String.format("\uD83D\uDCCA \u2068%s\u2069", mediaPoll.poll.question);
             } else if (message.messageOwner.media instanceof TLRPC.TL_messageMediaGame) {
-                if (Build.VERSION.SDK_INT >= 18) {
-                    innerMessage = String.format("\uD83C\uDFAE \u2068%s\u2069", message.messageOwner.media.game.title);
-                } else {
-                    innerMessage = String.format("\uD83C\uDFAE %s", message.messageOwner.media.game.title);
-                }
+                innerMessage = String.format("\uD83C\uDFAE \u2068%s\u2069", message.messageOwner.media.game.title);
             } else if (message.messageOwner.media instanceof TLRPC.TL_messageMediaInvoice) {
                 innerMessage = message.messageOwner.media.title;
             } else if (message.type == MessageObject.TYPE_MUSIC) {
-                if (Build.VERSION.SDK_INT >= 18) {
-                    innerMessage = String.format("\uD83C\uDFA7 \u2068%s - %s\u2069", message.getMusicAuthor(), message.getMusicTitle());
-                } else {
-                    innerMessage = String.format("\uD83C\uDFA7 %s - %s", message.getMusicAuthor(), message.getMusicTitle());
-                }
+                innerMessage = String.format("\uD83C\uDFA7 \u2068%s - %s\u2069", message.getMusicAuthor(), message.getMusicTitle());
             } else if (thumbsCount > 1) {
                 if (hasVideoThumb) {
                     innerMessage = LocaleController.formatPluralString("Media", groupMessages == null ? 0 : groupMessages.size());

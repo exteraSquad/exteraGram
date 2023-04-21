@@ -11,17 +11,13 @@
 
 package com.exteragram.messenger;
 
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.exteragram.messenger.icons.BaseIconSet;
-
-import java.io.InputStream;
 
 public class ExteraResources extends Resources {
 

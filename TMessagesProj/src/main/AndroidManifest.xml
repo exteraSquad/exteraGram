@@ -523,6 +523,24 @@
             android:taskAffinity="${applicationId}.voip_feedback"
             android:theme="@style/Theme.TMessages.TransparentWithAlerts" />
 
+        <service
+            android:enabled="true"
+            android:exported="false"
+            android:name="com.google.android.gms.measurement.AppMeasurementService" />
+        <service
+            android:enabled="true"
+            android:exported="false"
+            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
+                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".AutoMessageHeardReceiver"
             android:exported="false">

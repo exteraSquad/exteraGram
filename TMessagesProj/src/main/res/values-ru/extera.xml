@@ -31,9 +31,9 @@
     <string name="CenterTitle">Заголовок по центру</string>
     <string name="ActionBarTitle">Текст заголовка</string>
     <string name="TabTitleStyle">Заголовки папок</string>
-    <string name="TabTitleStyleTextWithIcons">Текст с иконками</string>
+    <string name="TabTitleStyleTextWithIcons">Название и иконки</string>
     <string name="TabTitleStyleIconsOnly">Только иконки</string>
-    <string name="TabTitleStyleTextOnly">Только текст</string>
+    <string name="TabTitleStyleTextOnly">Только название</string>
     <string name="TabStyle">Стиль папок</string>
     <string name="TabStyleTextOnly">Текст</string>
     <string name="TabStyleRounded">Закруглённый</string>
@@ -102,6 +102,11 @@
     <string name="DisableUnarchiveSwipe">Отключить жест \"Вернуть\"</string>
     <string name="DisableUnarchiveSwipeInfo">Свайп влево не будет убирать чаты из архива.</string>
 
+    <!-- Other -->
+    <string name="AnalyticsInfo">Когда эти опции включены, данные об устройстве собираются и отправляются в Google Analytics и Crashlytics, что позволяет нам вести статистику использования и отслеживать ошибки в приложении. \n\nОднако если опции выключены, сбор данных прекращается, а отправленные данные мгновенно удаляются.</string>
+    <string name="DeleteAccount">Удалить аккаунт</string>
+    <string name="ResetSettings">Сбросить настройки</string>
+
     <!-- Chats -->
     <string name="StickerSize">Размер стикеров</string>
     <string name="StickerSizeLeft">Маленький</string>
@@ -123,8 +128,7 @@
     <string name="DoubleTapOutgoing">Исходящие сообщения</string>
     <string name="DoubleTapInfo">Некоторые действия требуют наличия прав администратора в чате или канале.</string>
 
-    <string name="HideMuteUnmuteButton">Скрыть кнопку \"%1$s\"</string>
-    <string name="HideMuteUnmuteButtonInfo">в нижней части каналов.</string>
+    <string name="BottomButton">Нижняя кнопка</string>
     <string name="HideKeyboardOnScroll">Скрывать клавиатуру при скролле</string>
     <string name="AdminShortcuts">Быстрые админ-действия</string>
     <string name="DisableJumpToNextChannel">Отключить \"Перейти в новый канал\"</string>
@@ -138,16 +142,28 @@
     <string name="DisableEdgeAction">Отключить нажатия по краям</string>
     <string name="DisableEdgeActionInfo">Отключает перелистывание фотографий при помощи нажатий на края экрана.</string>
     <string name="HideCameraTile">Скрыть плитку камеры в галерее</string>
-    <string name="HideCameraTileInfo">Вы по-прежнему сможете открыть системную камеру, зажав \"скрепку\" в панели ввода сообщения.</string>
+    <string name="HideCameraTileInfo">Плитка камеры будет заменена плавающей кнопкой. При нажатии на кнопку запустится камера Telegram, при удержании - системная камера.</string>
 
     <string name="StaticZoom">Статический зум</string>
     <string name="StaticZoomInfo">Зум при записи видеосообщений не будет сбрасываться, если вы отпустите пальцы.</string>
+    <string name="VideoMessagesCamera">Камера в видеосообщениях</string>
+    <string name="VideoMessagesCameraRear">Основная</string>
+    <string name="VideoMessagesCameraFront">Фронтальная</string>
+    <string name="VideoMessagesCameraAsk">Спрашивать</string>
+    <string name="RearCamera">Основная</string>
+    <string name="FrontCamera">Фронтальная</string>
     <string name="RememberLastUsedCamera">Запоминать выбранную камеру</string>
     <string name="RememberLastUsedCameraInfo">При записи видеосообщений будет использоваться последняя выбранная камера.</string>
     <string name="PauseOnMinimize">Авто-пауза</string>
     <string name="PauseOnMinimizeInfo">Останавливает видео, когда девайс блокируется или приложение сворачивается.</string>
     <string name="DisablePlayback">Отключить авто-проигрывание</string>
     <string name="DisablePlaybackInfo">Отключает автоматическое проигрывание видео при нажатии на кнопку громкости.</string>
+
+    <!-- Boost -->
+    <string name="Encryptors">Методы шифрования</string>
+    <string name="Encrypt">Зашифровать</string>
+    <string name="Decrypt">Расшифровать</string>
+    <string name="EncryptionKeyInfo">Данный ключ будет использоваться для шифровки и расшифровки сообщений в этом чате.</string>
 
     <!-- Updates -->
     <string name="LastCheck">Последняя проверка</string>
@@ -171,6 +187,7 @@
 
     <!-- Other -->
     <string name="RestartRequired">Перезагрузите приложение, чтобы изменения вступили в силу.</string>
+    <string name="ResetSettingsBulletin">Настройки **exteraGram** сброшены.</string>
     <string name="UserNotFound">Пользователь с этим **ID** не найден.</string>
     <string name="PhotoCopied">Фото скопировано в буфер обмена.</string>
 

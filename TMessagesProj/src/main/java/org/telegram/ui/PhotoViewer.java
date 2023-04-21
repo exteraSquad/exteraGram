@@ -5656,7 +5656,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         cell.setTextAndIcon(LocaleController.getString(R.string.SendAsFile), R.drawable.msg_sendfile);
                     }
                 } else if (a == 5) {
-                    cell.setTextAndIcon(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")", R.drawable.msg_translate);
+                    cell.setTextAndIcon(LocaleController.getString("TranslateTo", R.string.TranslateTo), R.drawable.msg_translate);
+                    cell.setSubtext(ExteraConfig.getCurrentLangName());
+                    cell.setItemHeight(56);
+                    cell.setRightIcon(R.drawable.msg_arrowright);
+                    cell.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), parentActivity, i2 -> {
+                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i2]).apply();
+                        cell.setSubtext(ExteraConfig.getCurrentLangName());
+                    }));
                 }
                 cell.setMinimumWidth(AndroidUtilities.dp(196));
                 cell.setColors(0xffffffff, 0xffffffff);
@@ -5681,13 +5688,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                             setCurrentCaption(null, translated, false);
                         }, () -> {});
                     }
-                });
-                cell.setOnLongClickListener(v -> {
-                    ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), parentActivity, i2 -> {
-                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i2]).apply();
-                        cell.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
-                    });
-                    return true;
                 });
             }
             if (sendPopupLayout.getChildCount() == 0) {

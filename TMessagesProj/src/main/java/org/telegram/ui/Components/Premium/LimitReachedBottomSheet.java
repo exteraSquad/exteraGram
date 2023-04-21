@@ -570,8 +570,8 @@ public class LimitReachedBottomSheet extends BottomSheetWithRecyclerListView {
                     descriptionStr = (UserConfig.getInstance(currentAccount).isPremium() || isVeryLargeFile) ? limitParams.descriptionStrPremium : limitParams.descriptionStr;
                 }
             }
-            int defaultLimit = UserConfig.MAX_ACCOUNT_DEFAULT_COUNT;
-            int premiumLimit = UserConfig.MAX_ACCOUNT_COUNT;
+            int defaultLimit = limitParams.defaultLimit;
+            int premiumLimit = limitParams.premiumLimit;
             int currentValue = LimitReachedBottomSheet.this.currentValue;
             float position = 0.5f;
 
@@ -707,8 +707,8 @@ public class LimitReachedBottomSheet extends BottomSheetWithRecyclerListView {
             limitParams.descriptionStrPremium = LocaleController.formatString("LimitReachedFileSizePremium", R.string.LimitReachedFileSizePremium, "4 GB");
             limitParams.descriptionStrLocked = LocaleController.formatString("LimitReachedFileSizeLocked", R.string.LimitReachedFileSizeLocked, "2 GB");
         } else if (type == TYPE_ACCOUNTS) {
-            limitParams.defaultLimit = 3;
-            limitParams.premiumLimit = 4;
+            limitParams.defaultLimit = UserConfig.MAX_ACCOUNT_DEFAULT_COUNT;
+            limitParams.premiumLimit = UserConfig.MAX_ACCOUNT_COUNT;
             limitParams.icon = R.drawable.msg_limit_accounts;
             limitParams.descriptionStr = LocaleController.formatString("LimitReachedAccounts", R.string.LimitReachedAccounts, limitParams.defaultLimit, limitParams.premiumLimit);
             limitParams.descriptionStrPremium = LocaleController.formatString("LimitReachedAccountsPremium", R.string.LimitReachedAccountsPremium, limitParams.premiumLimit);

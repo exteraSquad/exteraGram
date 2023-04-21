@@ -1049,6 +1049,13 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 				return;
 			}
 		}
+		if (privateCall == null) {
+			if (BuildVars.LOGS_ENABLED) {
+				FileLog.e("privateCall = null");
+			}
+			stopSelf();
+			return;
+		}
 		TLRPC.TL_phone_receivedCall req = new TLRPC.TL_phone_receivedCall();
 		req.peer = new TLRPC.TL_inputPhoneCall();
 		req.peer.id = privateCall.id;

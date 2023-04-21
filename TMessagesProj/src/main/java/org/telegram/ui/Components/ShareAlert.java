@@ -1887,8 +1887,10 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
 
         if (commentTextView.getText() != null && commentTextView.getText().toString().trim().length() != 0) {
             ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, true, resourcesProvider);
-            translateButton.setTextAndIcon(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")", R.drawable.msg_translate);
+            translateButton.setTextAndIcon(LocaleController.getString("TranslateTo", R.string.TranslateTo), R.drawable.msg_translate);
+            translateButton.setSubtext(ExteraConfig.getCurrentLangName());
             translateButton.setMinimumWidth(AndroidUtilities.dp(196));
+            translateButton.setItemHeight(56);
             translateButton.setOnClickListener(v -> {
                 if (sendPopupWindow != null && sendPopupWindow.isShowing())
                     sendPopupWindow.dismiss();
@@ -1898,13 +1900,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                 }, () -> {
                 });
             });
-            translateButton.setOnLongClickListener(v -> {
-                ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
-                    ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
-                    translateButton.setText(LocaleController.getString("TranslateMessage", R.string.TranslateMessage) + " (" + ExteraConfig.getCurrentLangCode() + ")");
-                });
-                return true;
-            });
+            translateButton.setRightIcon(R.drawable.msg_arrowright);
+            translateButton.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
+                ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
+                translateButton.setSubtext(ExteraConfig.getCurrentLangName());
+            }));
             sendPopupLayout2.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
         }
         ActionBarMenuSubItem sendWithoutSound = new ActionBarMenuSubItem(getContext(), true, true, resourcesProvider);

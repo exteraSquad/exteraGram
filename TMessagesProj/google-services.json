@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "153744097257-im0ojht00spocd0u5m6kdh3koqp9tn9u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.exteragram.messenger",
+            "certificate_hash": "a7c039d9e45f7f5821a3c3cec990ab9cafde0bf8"
+          }
+        },
+        {
+          "client_id": "153744097257-vsi7pja1j573424icdpstf1h9l9jg2om.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.exteragram.messenger",
+            "certificate_hash": "3578a10913493222899e04a6dc946f036cf0daeb"
+          }
+        },
+        {
           "client_id": "153744097257-ql35jfprr95tp6gv203fegtte392iqto.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -36,12 +52,20 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:153744097257:android:ef81854abb1cb095589578",
+        "mobilesdk_app_id": "1:153744097257:android:075a50b5ec07ddfe589578",
         "android_client_info": {
-          "package_name": "com.exteragram.messenger.beta"
+          "package_name": "moe.kirao.mgx"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "153744097257-3v7q4mlric15bf6laq8n551bm42583hb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "moe.kirao.mgx",
+            "certificate_hash": "0f9fd63cd0965ce224005a1812cc43c4614d4bf4"
+          }
+        },
         {
           "client_id": "153744097257-ql35jfprr95tp6gv203fegtte392iqto.apps.googleusercontent.com",
           "client_type": 3

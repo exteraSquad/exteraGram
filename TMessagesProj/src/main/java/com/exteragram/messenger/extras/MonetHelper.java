@@ -8,11 +8,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.PatternMatcher;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.graphics.ColorUtils;
-
-import android.util.Log;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.R;

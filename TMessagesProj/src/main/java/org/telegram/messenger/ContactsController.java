@@ -28,6 +28,8 @@ import android.util.SparseArray;
 
 import androidx.collection.LongSparseArray;
 
+import com.exteragram.messenger.premium.filter.ZalgoFilter;
+
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
@@ -2828,10 +2830,10 @@ public class ContactsController extends BaseController {
             return LocaleController.getString("HiddenName", R.string.HiddenName);
         }*/
         if (firstName != null) {
-            firstName = firstName.trim();
+            firstName = (String) ZalgoFilter.filterMessage(firstName.trim());
         }
         if (lastName != null) {
-            lastName = lastName.trim();
+            lastName = (String) ZalgoFilter.filterMessage(lastName.trim());
         }
         StringBuilder result = new StringBuilder((firstName != null ? firstName.length() : 0) + (lastName != null ? lastName.length() : 0) + 1);
         if (LocaleController.nameDisplayOrder == 1) {

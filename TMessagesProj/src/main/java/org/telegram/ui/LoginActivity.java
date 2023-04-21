@@ -1838,7 +1838,7 @@ public class LoginActivity extends BaseFragment {
 
             titleView = new TextView(context);
             titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleView.setText(LocaleController.getString(activityMode == MODE_CHANGE_PHONE_NUMBER ? R.string.ChangePhoneNewNumber : R.string.YourNumber));
             titleView.setGravity(Gravity.CENTER);
             titleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
@@ -2255,7 +2255,7 @@ public class LoginActivity extends BaseFragment {
             proxySettings.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
             proxySettings.setGravity(Gravity.CENTER);
             proxySettings.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            proxySettings.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            proxySettings.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
 
             proxySettings.setText(LocaleController.getString("ProxySettings", R.string.ProxySettings));
             proxySettings.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
@@ -3322,7 +3322,7 @@ public class LoginActivity extends BaseFragment {
 
             titleTextView = new TextView(context);
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleTextView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
             titleTextView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
             titleTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
@@ -3373,7 +3373,7 @@ public class LoginActivity extends BaseFragment {
                 prefixTextView = new TextView(context);
                 prefixTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
                 prefixTextView.setMaxLines(1);
-                prefixTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                prefixTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
                 prefixTextView.setPadding(0, 0, 0, 0);
                 prefixTextView.setGravity(Gravity.CENTER_VERTICAL);
 
@@ -4804,7 +4804,7 @@ public class LoginActivity extends BaseFragment {
 
             titleView = new TextView(context);
             titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleView.setText(LocaleController.getString(R.string.YourPasswordHeader));
             titleView.setGravity(Gravity.CENTER);
             titleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
@@ -5151,7 +5151,7 @@ public class LoginActivity extends BaseFragment {
 
             titleView = new TextView(context);
             titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleView.setText(LocaleController.getString(R.string.ResetAccount));
             titleView.setGravity(Gravity.CENTER);
             titleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
@@ -5175,14 +5175,14 @@ public class LoginActivity extends BaseFragment {
             resetAccountTime = new TextView(context);
             resetAccountTime.setGravity(Gravity.CENTER_HORIZONTAL);
             resetAccountTime.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-            resetAccountTime.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            resetAccountTime.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             resetAccountTime.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
             addView(resetAccountTime, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0, 8, 0, 0));
 
             resetAccountButton = new TextView(context);
             resetAccountButton.setGravity(Gravity.CENTER);
             resetAccountButton.setText(LocaleController.getString(R.string.ResetAccount));
-            resetAccountButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            resetAccountButton.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             resetAccountButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             resetAccountButton.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
             resetAccountButton.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
@@ -6513,7 +6513,7 @@ public class LoginActivity extends BaseFragment {
 
             titleView = new TextView(context);
             titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleView.setText(LocaleController.getString(R.string.EnterCode));
             titleView.setGravity(Gravity.CENTER);
             titleView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
@@ -6804,7 +6804,7 @@ public class LoginActivity extends BaseFragment {
 
             titleTextView = new TextView(context);
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleTextView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
             titleTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
             titleTextView.setText(LocaleController.getString(R.string.SetNewPassword));
@@ -7376,7 +7376,7 @@ public class LoginActivity extends BaseFragment {
             titleTextView = new TextView(context);
             titleTextView.setText(LocaleController.getString(R.string.RegistrationProfileInfo));
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-            titleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             titleTextView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
             titleTextView.setGravity(Gravity.CENTER_HORIZONTAL);
             addView(titleTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 8, 12, 8, 0));

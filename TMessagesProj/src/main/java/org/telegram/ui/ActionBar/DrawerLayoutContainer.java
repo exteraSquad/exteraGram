@@ -472,7 +472,7 @@ public class DrawerLayoutContainer extends FrameLayout {
                         moveDrawerByX(dx);
                         startedTrackingX = (int) ev.getX();
                     }
-                } else if (ev == null || ev != null && ev.getPointerId(0) == startedTrackingPointerId && (ev.getAction() == MotionEvent.ACTION_CANCEL || ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_POINTER_UP)) {
+                } else if (ev == null || ev.getPointerId(0) == startedTrackingPointerId && (ev.getAction() == MotionEvent.ACTION_CANCEL || ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_POINTER_UP)) {
                     if (velocityTracker == null) {
                         velocityTracker = VelocityTracker.obtain();
                     }
@@ -480,7 +480,7 @@ public class DrawerLayoutContainer extends FrameLayout {
                     if (startedTracking || drawerPosition != 0 && drawerPosition != drawerLayout.getMeasuredWidth()) {
                         float velX = velocityTracker.getXVelocity();
                         float velY = velocityTracker.getYVelocity();
-                        boolean backAnimation = drawerPosition < drawerLayout.getMeasuredWidth() / 4.0f && (velX < 3500 || Math.abs(velX) < Math.abs(velY)) || velX < 0 && Math.abs(velX) >= 3500;
+                        boolean backAnimation = drawerPosition < drawerLayout.getMeasuredWidth() / 2f && (velX < 3500 || Math.abs(velX) < Math.abs(velY)) || velX < 0 && Math.abs(velX) >= 3500;
                         if (!backAnimation) {
                             openDrawer(!drawerOpened && Math.abs(velX) >= 3500);
                         } else {

@@ -549,9 +549,8 @@ public class RestrictedLanguagesSelectActivity extends BaseFragment implements N
                 edit.putInt("translate_button_restricted_languages_version", LAST_DO_NOT_TRANSLATE_VERSION).apply();
 
                 for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; ++i) {
-                    final int account = i;
                     try {
-                        MessagesController.getInstance(account).getTranslateController().checkRestrictedLanguagesUpdate();
+                        MessagesController.getInstance(i).getTranslateController().checkRestrictedLanguagesUpdate();
                     } catch (Exception ignore) {}
                 }
             });

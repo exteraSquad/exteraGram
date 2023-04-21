@@ -112,7 +112,7 @@ public class SessionCell extends FrameLayout {
 
         onlineTextView = new TextView(context);
         onlineTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, type == 0 ? 12 : 13);
-        onlineTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        onlineTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         onlineTextView.setGravity((LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP);
 
         if (LocaleController.isRTL) {
@@ -136,7 +136,7 @@ public class SessionCell extends FrameLayout {
         detailTextView = new TextView(context);
         detailTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         detailTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, type == 0 ? 13 : 14);
-        detailTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        detailTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         detailTextView.setLines(1);
         detailTextView.setMaxLines(1);
         detailTextView.setSingleLine(true);
@@ -147,7 +147,7 @@ public class SessionCell extends FrameLayout {
         detailExTextView = new TextView(context);
         detailExTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText3));
         detailExTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, type == 0 ? 13 : 14);
-        detailExTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        detailExTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         detailExTextView.setLines(1);
         detailExTextView.setMaxLines(1);
         detailExTextView.setSingleLine(true);

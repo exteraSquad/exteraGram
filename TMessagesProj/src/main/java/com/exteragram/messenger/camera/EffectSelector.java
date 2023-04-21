@@ -47,7 +47,7 @@ public class EffectSelector extends LinearLayout {
         }
     }
 
-    private static final String[] GOOGLE_FUCKUPS = {"oriole", "raven", "bluejay", "panther", "cheetah", "lynx"};
+    private static final String[] GOOGLE_FUCKUPS = {"raven", "bluejay", "panther", "cheetah", "lynx"};
 
     public void loadEffects(CameraXView cameraXView) {
         if (getChildCount() == 0) {

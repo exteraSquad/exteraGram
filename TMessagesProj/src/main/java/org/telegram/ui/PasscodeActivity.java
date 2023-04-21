@@ -427,7 +427,7 @@ public class PasscodeActivity extends BaseFragment implements NotificationCenter
 
                 titleTextView = new TextView(context);
                 titleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-                titleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                titleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
                 if (type == TYPE_SETUP_CODE) {
                     if (SharedConfig.passcodeHash.length() != 0) {
                         titleTextView.setText(LocaleController.getString("EnterNewPasscode", R.string.EnterNewPasscode));

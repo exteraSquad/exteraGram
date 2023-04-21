@@ -61,7 +61,7 @@ public class InfoSettingsCell extends FrameLayout {
 
         textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
         textView.setText(String.format("%s | %s", ExteraUtils.getAppName(), BuildVars.BUILD_VERSION_STRING));
         textView.setLines(1);
@@ -73,7 +73,7 @@ public class InfoSettingsCell extends FrameLayout {
 
         TextView valueTextView = new TextView(context);
         valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        valueTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         valueTextView.setText(LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription));
         valueTextView.setGravity(Gravity.CENTER);

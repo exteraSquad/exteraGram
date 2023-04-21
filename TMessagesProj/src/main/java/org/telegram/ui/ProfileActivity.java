@@ -3028,8 +3028,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             listView.stopScroll();
             if (position == idDcRow && did != 0) {
                 try {
+                    BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied), resourcesProvider).show();
                     AndroidUtilities.addToClipboard(((TextDetailCell) view).getTextView().getText());
-                    BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
                 } catch (Exception ignore) {}
                 return;
             } else if (position == notificationsSimpleRow) {
@@ -3758,7 +3758,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             textView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteRedText));
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
             textView.setGravity(Gravity.CENTER);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             textView.setText(LocaleController.getString("BanFromTheGroup", R.string.BanFromTheGroup));
             frameLayout1.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 0, 1, 0, 0));
 
@@ -4043,7 +4043,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             nameTextView[a].setPadding(0, AndroidUtilities.dp(6), 0, AndroidUtilities.dp(a == 0 ? 12 : 4));
             nameTextView[a].setTextSize(18);
             nameTextView[a].setGravity(Gravity.LEFT);
-            nameTextView[a].setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            nameTextView[a].setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
             nameTextView[a].setLeftDrawableTopPadding(-AndroidUtilities.dp(1.3f));
             nameTextView[a].setPivotX(0);
             nameTextView[a].setPivotY(0);
@@ -4055,7 +4055,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     builder.setItems(new CharSequence[]{LocaleController.getString("Copy", R.string.Copy)}, (dialogInterface, i) -> {
                         if (i == 0) {
                             AndroidUtilities.addToClipboard(((SimpleTextView) v).getText());
-                            BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied)).show();
+                            BulletinFactory.of(this).createCopyBulletin(LocaleController.formatString("TextCopied", R.string.TextCopied, resourcesProvider)).show();
                         }
                     });
                     showDialog(builder.create());
@@ -8090,8 +8090,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         editItemVisible = true;
                     }
                 } else {
-                    if (ChatObject.hasAdminRights(chat) || chat.megagroup && ChatObject.canChangeChatInfo(chat)) {
+                    if (ChatObject.hasAdminRights(chat) || chat.megagroup) {
                         editItemVisible = true;
+                        if (!ChatObject.hasAdminRights(chat) && !(chat.megagroup && ChatObject.canChangeChatInfo(chat))) {
+                            editItem.setIcon(R.drawable.msg_info_filled);
+                        }
                     }
                 }
                 if (chatInfo != null) {

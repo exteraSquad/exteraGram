@@ -71,7 +71,7 @@ public class TextCheckCell2 extends FrameLayout {
                 protected void onDraw(Canvas canvas) {
                     super.onDraw(canvas);
                     if (!ExteraConfig.disableDividers)
-                        canvas.drawLine(0, AndroidUtilities.dp(14), 2, getMeasuredHeight()- AndroidUtilities.dp(14), Theme.dividerPaint);
+                        canvas.drawLine(0, AndroidUtilities.dp(14), 0, getMeasuredHeight()- AndroidUtilities.dp(14), Theme.dividerPaint);
                 }
             };
             //checkBoxClickArea.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
@@ -93,7 +93,7 @@ public class TextCheckCell2 extends FrameLayout {
         textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -104,7 +104,7 @@ public class TextCheckCell2 extends FrameLayout {
         valueTextView = new TextView(context);
         valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
         valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
-        valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        valueTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         valueTextView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         valueTextView.setLines(1);
         valueTextView.setMaxLines(1);
@@ -189,14 +189,23 @@ public class TextCheckCell2 extends FrameLayout {
         textView.clearAnimation();
         valueTextView.clearAnimation();
         checkBox.clearAnimation();
+        if (collapseViewContainer != null) {
+            collapseViewContainer.clearAnimation();
+        }
         if (value) {
             textView.setAlpha(1.0f);
             valueTextView.setAlpha(1.0f);
             checkBox.setAlpha(1.0f);
+            if (collapseViewContainer != null) {
+                collapseViewContainer.setAlpha(1.0f);
+            }
         } else {
             checkBox.setAlpha(0.5f);
             textView.setAlpha(0.5f);
             valueTextView.setAlpha(0.5f);
+            if (collapseViewContainer != null) {
+                collapseViewContainer.setAlpha(0.5f);
+            }
         }
     }
 
@@ -206,6 +215,10 @@ public class TextCheckCell2 extends FrameLayout {
             textView.clearAnimation();
             valueTextView.clearAnimation();
             checkBox.clearAnimation();
+            if (collapseViewContainer != null) {
+                collapseViewContainer.clearAnimation();
+                collapseViewContainer.animate().alpha(value ? 1 : .5f).start();
+            }
             textView.animate().alpha(value ? 1 : .5f).start();
             valueTextView.animate().alpha(value ? 1 : .5f).start();
             checkBox.animate().alpha(value ? 1 : .5f).start();
@@ -214,10 +227,16 @@ public class TextCheckCell2 extends FrameLayout {
                 textView.setAlpha(1.0f);
                 valueTextView.setAlpha(1.0f);
                 checkBox.setAlpha(1.0f);
+                if (collapseViewContainer != null) {
+                    collapseViewContainer.setAlpha(1.0f);
+                }
             } else {
                 checkBox.setAlpha(0.5f);
                 textView.setAlpha(0.5f);
                 valueTextView.setAlpha(0.5f);
+                if (collapseViewContainer != null) {
+                    collapseViewContainer.setAlpha(0.5f);
+                }
             }
         }
     }

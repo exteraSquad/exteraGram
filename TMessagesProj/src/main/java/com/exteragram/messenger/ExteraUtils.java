@@ -25,25 +25,27 @@ import android.hardware.biometrics.BiometricManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
-import com.exteragram.messenger.updater.UpdaterUtils;
 import com.exteragram.messenger.updater.UserAgentGenerator;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.json.JSONArray;
 import org.json.JSONTokener;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
@@ -492,7 +494,8 @@ public final class ExteraUtils {
             TLRPC.EncryptedChat encryptedChat = getMessagesController().getEncryptedChat(DialogObject.getEncryptedChatId(did));
             if (encryptedChat != null) {
                 TLRPC.User user = getMessagesController().getUser(encryptedChat.user_id);
-                if (user != null) name = ContactsController.formatName(user.first_name, user.last_name);
+                if (user != null)
+                    name = ContactsController.formatName(user.first_name, user.last_name);
             }
         } else if (DialogObject.isUserDialog(did)) {
             TLRPC.User user = getMessagesController().getUser(did);
@@ -509,9 +512,11 @@ public final class ExteraUtils {
     public interface UserSuccess {
         void run(TLRPC.User user);
     }
+
     public interface OnSearchSuccess {
         void run(long id);
     }
+
     public interface OnSearchFail {
         void run(long id);
     }
@@ -697,5 +702,54 @@ public final class ExteraUtils {
             }
         }
         return path;
+    }
+
+    public static String capitalize(String s) {
+        if (s == null)
+            return null;
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (i == 0) {
+                chars[i] = Character.toUpperCase(chars[i]);
+            } else if (Character.isLetter(chars[i])) {
+                chars[i] = Character.toLowerCase(chars[i]);
+            }
+        }
+        return new String(chars);
+    }
+
+    public static boolean isGooglePlayServicesAvailable(Context context) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(context);
+        return resultCode == ConnectionResult.SUCCESS;
+    }
+
+    private static String getPerformanceClassString() {
+        switch (SharedConfig.getDevicePerformanceClass()) {
+            case SharedConfig.PERFORMANCE_CLASS_LOW:
+                return "Low";
+            case SharedConfig.PERFORMANCE_CLASS_AVERAGE:
+                return "Average";
+            case SharedConfig.PERFORMANCE_CLASS_HIGH:
+                return "High";
+            default:
+                return "N/A";
+        }
+    }
+
+    public static void logEvents(Context context) {
+        if (ApplicationLoader.getFirebaseAnalytics() == null) {
+            return;
+        }
+        Bundle params = new Bundle();
+        params.putString("android_version", Build.VERSION.RELEASE);
+        params.putString("version", BuildConfig.VERSION_NAME);
+        params.putInt("version_code", BuildConfig.VERSION_CODE);
+        params.putBoolean("has_play_services", isGooglePlayServicesAvailable(context));
+        params.putString("device", Build.MANUFACTURER + " " + Build.MODEL);
+        params.putString("os_version", Build.VERSION.RELEASE);
+        params.putString("performance_class", getPerformanceClassString());
+        params.putString("locale", LocaleController.getSystemLocaleStringIso639());
+        ApplicationLoader.getFirebaseAnalytics().logEvent("stats", params);
     }
 }

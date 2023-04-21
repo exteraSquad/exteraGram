@@ -109,6 +109,7 @@ public abstract class BasePreferencesActivity extends BaseFragment {
         listView.setVerticalScrollBarEnabled(false);
 
         DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setChangeDuration(350);
         itemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         itemAnimator.setDelayAnimations(false);
         listView.setItemAnimator(itemAnimator);

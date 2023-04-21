@@ -8690,9 +8690,9 @@ public class Theme {
                 dialogs_nameEncryptedPaint[a] = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
                 dialogs_nameEncryptedPaint[a].setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
                 dialogs_messagePaint[a] = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                dialogs_messagePaint[a].setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+                dialogs_messagePaint[a].setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
                 dialogs_messagePrintingPaint[a] = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-                dialogs_messagePrintingPaint[a].setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+                dialogs_messagePrintingPaint[a].setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             }
             dialogs_searchNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             dialogs_searchNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
@@ -8701,7 +8701,7 @@ public class Theme {
             dialogs_messageNamePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             dialogs_messageNamePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
             dialogs_timePaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-            dialogs_timePaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            dialogs_timePaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             dialogs_archiveTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
             dialogs_archiveTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
             dialogs_archiveTextPaintSmall = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
@@ -8875,7 +8875,7 @@ public class Theme {
             chat_msgTextPaintTwoEmoji.setTextSize(AndroidUtilities.dp(24 + 14));
             chat_msgTextPaintThreeEmoji.setTextSize(AndroidUtilities.dp(20 + 10));
             chat_msgTextPaint.setTextSize(AndroidUtilities.dp(SharedConfig.fontSize));
-            chat_msgTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+            chat_msgTextPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
             chat_msgGameTextPaint.setTextSize(AndroidUtilities.dp(14));
             chat_msgBotButtonPaint.setTextSize(AndroidUtilities.dp(15));
             float smallerDp = (2 * SharedConfig.fontSize + 10) / 3f; // 6f + SharedConfig.fontSize / 2f;
@@ -9660,7 +9660,7 @@ public class Theme {
         }
 
         profile_aboutTextPaint.setTextSize(AndroidUtilities.dp(16));
-        profile_aboutTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        profile_aboutTextPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
     }
 
     private static ColorFilter currentShareColorFilter;

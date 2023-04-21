@@ -31,7 +31,13 @@ import android.telephony.TelephonyManager;
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDex;
 
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.camera.CameraXUtils;
+import com.exteragram.messenger.extras.ExceptionHandler;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.telegram.messenger.voip.VideoCapturerDevice;
 import org.telegram.tgnet.ConnectionsManager;
@@ -69,6 +75,8 @@ public class ApplicationLoader extends Application {
     private static PushListenerController.IPushListenerServiceProvider pushProvider;
     private static IMapsProvider mapsProvider;
     private static ILocationServiceProvider locationServiceProvider;
+
+
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -129,7 +137,7 @@ public class ApplicationLoader extends Application {
         } catch (Exception e) {
             FileLog.e(e);
         }
-        return new File(String.format("/data/data/com.exteragram.messenger%s/files", BuildVars.isBetaApp() ? ".beta" : ""));
+        return new File("/data/data/com.exteragram.messenger/files");
     }
 
     public static void postInitApplication() {
@@ -263,12 +271,19 @@ public class ApplicationLoader extends Application {
             FileLog.d("load libs time = " + (SystemClock.elapsedRealtime() - startTime));
         }
 
+        if (BuildVars.DEBUG_VERSION) {
+            Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        }
+
         applicationHandler = new Handler(applicationContext.getMainLooper());
 
         AndroidUtilities.runOnUIThread(ApplicationLoader::startPushService);
 
         LauncherIconController.tryFixLauncherIconIfNeeded();
         ProxyRotationController.init();
+
+        ApplicationLoader app = (ApplicationLoader) ApplicationLoader.applicationContext;
+        app.initFirebase();
     }
 
     public static void startPushService() {
@@ -301,6 +316,27 @@ public class ApplicationLoader extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static FirebaseAnalytics firebaseAnalytics;
+    private static FirebaseCrashlytics firebaseCrashlytics;
+
+    private void initFirebase() {
+        AndroidUtilities.runOnUIThread(() -> {
+            firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+            firebaseCrashlytics = FirebaseCrashlytics.getInstance();
+            firebaseAnalytics.setAnalyticsCollectionEnabled(ExteraConfig.useGoogleAnalytics);
+            firebaseCrashlytics.setCrashlyticsCollectionEnabled(ExteraConfig.useGoogleCrashlytics);
+            ExteraUtils.logEvents(applicationContext);
+        });
+    }
+
+    public static FirebaseAnalytics getFirebaseAnalytics() {
+        return firebaseAnalytics;
+    }
+
+    public static FirebaseCrashlytics getFirebaseCrashlytics() {
+        return firebaseCrashlytics;
     }
 
     private void initPushServices() {

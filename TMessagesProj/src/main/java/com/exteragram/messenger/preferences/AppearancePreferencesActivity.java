@@ -74,7 +74,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int hideActionBarStatusRow;
     private int centerTitleRow;
     private int hideAllChatsRow;
-    private int tabIconsRow;
+    private int tabTitleRow;
     private int tabStyleRow;
     private int actionBarTitleRow;
     private int mainScreenInfoRow;
@@ -123,8 +123,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         hideActionBarStatusRow = getUserConfig().isPremium() ? newRow() : -1;
         hideAllChatsRow = newRow();
         centerTitleRow = newRow();
-        tabIconsRow = newRow();
         tabStyleRow = newRow();
+        tabTitleRow = newRow();
         actionBarTitleRow = newRow();
         mainScreenInfoRow = newRow();
 
@@ -302,13 +302,13 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(actionBarTitleRow, payload);
             });
-        } else if (position == tabIconsRow) {
+        } else if (position == tabTitleRow) {
             if (getParentActivity() == null) {
                 return;
             }
             ExteraUtils.showDialog(tabIcons, LocaleController.getString("TabTitleStyle", R.string.TabTitleStyle), ExteraConfig.tabIcons, getContext(), i -> {
                 ExteraConfig.editor.putInt("tabIcons", ExteraConfig.tabIcons = i).apply();
-                listAdapter.notifyItemChanged(tabIconsRow, payload);
+                listAdapter.notifyItemChanged(tabTitleRow, payload);
                 getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
             });
         } else if (position == tabStyleRow) {
@@ -324,7 +324,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         } else if (position == solarIconsRow) {
             ((TextCheckCell) view).setChecked(!ExteraConfig.useSolarIcons);
             solarIconsPreview.updateIcons(true);
-            parentLayout.rebuildAllFragmentViews(false, false);
         }
     }
 
@@ -371,6 +370,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         @Override
                         protected void reloadResources() {
                             ((LaunchActivity) getParentActivity()).reloadIcons();
+                            Theme.reloadAllResources(getParentActivity());
+                            parentLayout.rebuildAllFragmentViews(false, false);
                         }
                     };
                     solarIconsPreview.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
@@ -463,8 +464,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                         textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), events[ExteraConfig.eventType], payload, true);
                     } else if (position == actionBarTitleRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[ExteraConfig.actionBarTitle], payload, false);
-                    } else if (position == tabIconsRow) {
-                        textSettingsCell.setTextAndValue("Tab Title Style", tabIcons[ExteraConfig.tabIcons], payload, true);
+                    } else if (position == tabTitleRow) {
+                        textSettingsCell.setTextAndValue(LocaleController.getString("TabTitleStyle", R.string.TabTitleStyle), tabIcons[ExteraConfig.tabIcons], payload, true);
                     } else if (position == tabStyleRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("TabStyle", R.string.TabStyle), styles[ExteraConfig.tabStyle], payload, true);
                     }
@@ -492,7 +493,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 return 2;
             } else if (position == appearanceHeaderRow || position == drawerHeaderRow || position == drawerOptionsHeaderRow || position == solarIconsHeaderRow) {
                 return 3;
-            } else if (position == eventChooserRow || position == actionBarTitleRow || position == tabStyleRow || position == tabIconsRow) {
+            } else if (position == eventChooserRow || position == actionBarTitleRow || position == tabStyleRow || position == tabTitleRow) {
                 return 7;
             } else if (position == appearanceDividerRow || position == solarIconsInfoRow || position == mainScreenInfoRow) {
                 return 8;

@@ -2630,17 +2630,19 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (act == MotionEvent.ACTION_DOWN) {
             if (x >= textX && y >= textY && x <= textX + currentMessageObject.textWidth && y <= textY + currentMessageObject.textHeight) {
                 List<MessageObject.TextLayoutBlock> blocks = currentMessageObject.textLayoutBlocks;
-                for (int i = 0; i < blocks.size(); i++) {
-                    if (blocks.get(i).textYOffset > y) {
-                        break;
-                    }
-                    MessageObject.TextLayoutBlock block = blocks.get(i);
-                    int offX = block.isRtl() ? (int) currentMessageObject.textXOffset : 0;
-                    for (SpoilerEffect eff : block.spoilers) {
-                        if (eff.getBounds().contains(x - textX + offX, (int) (y - textY - block.textYOffset))) {
-                            spoilerPressed = eff;
-                            isCaptionSpoilerPressed = false;
-                            return true;
+                if (blocks != null && !blocks.isEmpty()) {
+                    for (int i = 0; i < blocks.size(); i++) {
+                        if (blocks.get(i).textYOffset > y) {
+                            break;
+                        }
+                        MessageObject.TextLayoutBlock block = blocks.get(i);
+                        int offX = block.isRtl() ? (int) currentMessageObject.textXOffset : 0;
+                        for (SpoilerEffect eff : block.spoilers) {
+                            if (eff.getBounds().contains(x - textX + offX, (int) (y - textY - block.textYOffset))) {
+                                spoilerPressed = eff;
+                                isCaptionSpoilerPressed = false;
+                                return true;
+                            }
                         }
                     }
                 }
@@ -3747,6 +3749,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         return currentMessageObject.getRepliesCount();
     }
 
+    private int getForwardsCount() {
+        if (currentMessagesGroup != null && !currentMessagesGroup.messages.isEmpty()) {
+            MessageObject messageObject = currentMessagesGroup.messages.get(0);
+            return messageObject.messageOwner.forwards;
+        }
+        return currentMessageObject.messageOwner.forwards;
+    }
+
+    private int getRepliesOrForwards() {
+        return shouldShowForwards() ? getForwardsCount() : getRepliesCount();
+    }
+
+    private boolean shouldShowForwards() {
+        return false && currentMessageObject.messageOwner.forwards > 0 && ChatObject.isChannel(currentChat);
+    }
+
     private ArrayList<TLRPC.Peer> getRecentRepliers() {
         if (currentMessagesGroup != null && !currentMessagesGroup.messages.isEmpty()) {
             MessageObject messageObject = currentMessagesGroup.messages.get(0);
@@ -3797,7 +3815,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (lastViewsCount != currentMessageObject.messageOwner.views) {
             return true;
         }
-        if (lastRepliesCount != getRepliesCount()) {
+        if (lastRepliesCount != getRepliesOrForwards()) {
             return true;
         }
         if (lastReactions != currentMessageObject.messageOwner.reactions) {
@@ -4246,7 +4264,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             lastSendState = messageObject.messageOwner.send_state;
             lastDeleteDate = messageObject.messageOwner.destroyTime;
             lastViewsCount = messageObject.messageOwner.views;
-            lastRepliesCount = getRepliesCount();
+            lastRepliesCount = getRepliesOrForwards();
             if (messageIdChanged) {
                 isPressed = false;
                 isCheckPressed = true;
@@ -5568,7 +5586,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             }
                             String price = LocaleController.getInstance().formatCurrencyString(MessageObject.getMedia(messageObject.messageOwner).total_amount, MessageObject.getMedia(messageObject.messageOwner).currency);
                             SpannableStringBuilder stringBuilder = new SpannableStringBuilder(price + " " + str);
-                            stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), 0, price.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM)), 0, price.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                             durationWidth = (int) Math.ceil(Theme.chat_shipmentPaint.measureText(stringBuilder, 0, stringBuilder.length()));
                             videoInfoLayout = new StaticLayout(stringBuilder, Theme.chat_shipmentPaint, durationWidth + AndroidUtilities.dp(10), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
                             if (!drawPhotoImage) {
@@ -5759,10 +5777,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     if (!reactionsLayoutInBubble.isEmpty) {
                         reactionsLayoutInBubble.measure(backgroundWidth - AndroidUtilities.dp(32), Gravity.LEFT);
                         reactionsLayoutInBubble.totalHeight = reactionsLayoutInBubble.height + AndroidUtilities.dp(12);
-                        reactionsLayoutInBubble.positionOffsetY += -AndroidUtilities.dp(4);
+                        reactionsLayoutInBubble.positionOffsetY -= AndroidUtilities.dp(4);
                         if (backgroundWidth - AndroidUtilities.dp(32) - reactionsLayoutInBubble.lastLineX < timeWidth) {
                             reactionsLayoutInBubble.totalHeight += AndroidUtilities.dp(12);
-                            reactionsLayoutInBubble.positionOffsetY += -AndroidUtilities.dp(12);
+                            reactionsLayoutInBubble.positionOffsetY -= AndroidUtilities.dp(12);
                         }
                         totalHeight += reactionsLayoutInBubble.totalHeight;
                     }
@@ -12221,6 +12239,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (ExteraConfig.showMessageID && messageObject.messageOwner != null && (isChat || isMegagroup || ChatObject.isChannel(currentChat)) && !messageObject.isSponsored()) {
             timeString = timeString + ", " + messageObject.messageOwner.id;
         }
+        if (currentMessageObject.isDecrypted && currentMessageObject.currentEncryptor != null) {
+            timeString = currentMessageObject.currentEncryptor.getName() + " " + timeString;
+        }
         if (signString != null) {
             if (messageObject.messageOwner.fwd_from != null && messageObject.messageOwner.fwd_from.imported) {
                 currentTimeString = " " + timeString;
@@ -12245,8 +12266,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             currentUnlockString = str.length() >= 2 ? str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1).toLowerCase(Locale.ROOT) : str;
             unlockTextWidth = (int) Math.ceil(Theme.chat_unlockExtendedMediaTextPaint.measureText(currentUnlockString));
         }
-        if (isChat && isMegagroup && !isThreadChat && hasReplies) {
-            currentRepliesString = String.format("%s", LocaleController.formatShortNumber(getRepliesCount(), null));
+        if (isChat && isMegagroup && !isThreadChat && hasReplies || shouldShowForwards()) {
+            currentRepliesString = String.format("%s", LocaleController.formatShortNumber(getRepliesOrForwards(), null));
             repliesTextWidth = (int) Math.ceil(Theme.chat_timePaint.measureText(currentRepliesString));
             float drawableWidth = Theme.chat_msgInRepliesDrawable.getIntrinsicWidth() * (Theme.chat_timePaint.getTextSize() - AndroidUtilities.dp(2)) / Theme.chat_msgInRepliesDrawable.getIntrinsicHeight();
             timeWidth += repliesTextWidth + drawableWidth + AndroidUtilities.dp(10);
@@ -16283,7 +16304,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 float cx = repliesX + (w + AndroidUtilities.dp(3) + repliesTextWidth) / 2f;
                 canvas.scale(scale, scale, cx, repliesDrawable.getBounds().centerY());
             }
+            canvas.save();
+            if (shouldShowForwards()) {
+                float cx = repliesX + w / 2f;
+                canvas.scale(-1, 1, cx, repliesDrawable.getBounds().centerY());
+            }
             repliesDrawable.draw(canvas);
+            canvas.restore();
             repliesDrawable.setAlpha(255);
 
             if (transitionParams.animateReplies) {
@@ -17145,10 +17172,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
                 if (time > 60000 || timerTransitionProgress != 0.0f) {
                     Theme.chat_pollTimerPaint.setAlpha((int) (255 * timerTransitionProgress));
-                    if (!ExteraConfig.disableDividers) {
-                        canvas.drawLine(tx - AndroidUtilities.dp(2.1f) * timerTransitionProgress, ty - AndroidUtilities.dp(7.5f), tx + AndroidUtilities.dp(2.1f) * timerTransitionProgress, ty - AndroidUtilities.dp(7.5f), Theme.chat_pollTimerPaint);
-                        canvas.drawLine(tx, ty - AndroidUtilities.dp(3) * timerTransitionProgress, tx, ty, Theme.chat_pollTimerPaint);
-                    }
+                    canvas.drawLine(tx - AndroidUtilities.dp(2.1f) * timerTransitionProgress, ty - AndroidUtilities.dp(7.5f), tx + AndroidUtilities.dp(2.1f) * timerTransitionProgress, ty - AndroidUtilities.dp(7.5f), Theme.chat_pollTimerPaint);
+                    canvas.drawLine(tx, ty - AndroidUtilities.dp(3) * timerTransitionProgress, tx, ty, Theme.chat_pollTimerPaint);
                     if (time <= 60000) {
                         timerTransitionProgress -= dt / 180.0f;
                         if (timerTransitionProgress < 0) {
@@ -18977,7 +19002,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 lastDrawCommentNumber = drawCommentNumber;
             }
 
-            lastRepliesCount = getRepliesCount();
+            lastRepliesCount = getRepliesOrForwards();
             this.lastViewsCount = getMessageObject().messageOwner.views;
             lastRepliesLayout = repliesLayout;
             lastViewsLayout = viewsLayout;
@@ -19190,7 +19215,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 accessibilityText = null;
             }
 
-            if ((lastRepliesLayout != null || repliesLayout != null) && lastRepliesCount != getRepliesCount()) {
+            if ((lastRepliesLayout != null || repliesLayout != null) && lastRepliesCount != getRepliesOrForwards()) {
                 animateRepliesLayout = lastRepliesLayout;
                 animateReplies = true;
                 changed = true;

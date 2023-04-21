@@ -92,9 +92,12 @@ import com.exteragram.messenger.extras.MonetHelper;
 import com.exteragram.messenger.preferences.MainPreferencesActivity;
 import com.exteragram.messenger.updater.UpdaterUtils;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.AssistActionBuilder;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -954,9 +957,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         if (ExteraConfig.checkUpdatesOnLaunch)
             UpdaterUtils.checkUpdates(actionBarLayout.getFragmentStack().size() > 0 ? actionBarLayout.getFragmentStack().get(0) : layersActionBarLayout.getFragmentStack().get(0), false);
 
-        if (BuildVars.DEBUG_VERSION)
-            Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
-            
         BackupAgent.requestBackup(this);
 
         RestrictedLanguagesSelectActivity.checkRestrictedLanguages(false);
@@ -1470,7 +1470,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
         if (!AndroidUtilities.isInMultiwindow && (!AndroidUtilities.isSmallTablet() || getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
             tabletFullSize = false;
-            List<BaseFragment> fragmentStack = actionBarLayout.getFragmentStack();
+            List<BaseFragment> fragmentStack = new ArrayList<>(actionBarLayout.getFragmentStack());
             if (fragmentStack.size() >= 2) {
                 for (int a = 1; a < fragmentStack.size(); a++) {
                     BaseFragment chatFragment = fragmentStack.get(a);
@@ -4888,7 +4888,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
         updateTextView = new SimpleTextView(this);
         updateTextView.setTextSize(15);
-        updateTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        updateTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         updateTextView.setText(LocaleController.getString("AppUpdate", R.string.AppUpdate));
         updateTextView.setTextColor(0xffffffff);
         updateTextView.setGravity(Gravity.LEFT);
@@ -4896,7 +4896,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
         updateSizeTextView = new TextView(this);
         updateSizeTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        updateSizeTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        updateSizeTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         updateSizeTextView.setGravity(Gravity.RIGHT);
         updateSizeTextView.setTextColor(0xffffffff);
         updateLayout.addView(updateSizeTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL | Gravity.RIGHT, 0, 0, 17, 0));
@@ -7318,10 +7318,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     }
 
     private void openCameraScanActivity() {
-        CameraScanActivity.showAsSheet(this, true, CameraScanActivity.TYPE_QR_LOGIN, new CameraScanActivity.CameraScanActivityDelegate() {
-
-            private TLObject response = null;
-            private TLRPC.TL_error error = null;
+        CameraScanActivity.showAsSheet(this, false, CameraScanActivity.TYPE_QR_LOGIN, new CameraScanActivity.CameraScanActivityDelegate() {
 
             @Override
             public void didFindQr(String link) {
@@ -7330,8 +7327,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
             @Override
             public boolean processQr(String link, Runnable onLoadEnd) {
-                this.response = null;
-                this.error = null;
                 AndroidUtilities.runOnUIThread(() -> {
                     try {
                         String code = link.substring("tg://login?token=".length());
@@ -7340,11 +7335,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         byte[] token = Base64.decode(code, Base64.URL_SAFE);
                         TLRPC.TL_auth_acceptLoginToken req = new TLRPC.TL_auth_acceptLoginToken();
                         req.token = token;
-                        ConnectionsManager.getInstance(UserConfig.selectedAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
-                            this.response = response;
-                            this.error = error;
-                            onLoadEnd.run();
-                        }));
+                        ConnectionsManager.getInstance(UserConfig.selectedAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(onLoadEnd::run));
                     } catch (Exception e) {
                         FileLog.e("Failed to pass qr code auth", e);
                         if (actionBarLayout.getFragmentStack().size() > 0) {

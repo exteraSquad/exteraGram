@@ -114,7 +114,7 @@ public class MainScreenSetupCell extends FrameLayout {
                 textPaint.setTextSize(AndroidUtilities.dp(20));
                 titleText = (String) TextUtils.ellipsize(titleText, textPaint, w - AndroidUtilities.dp(130 + 35 * statusProgress), TextUtils.TruncateAt.END);
                 textPaint.setTextSize(AndroidUtilities.dp(18 + 2 * titleProgress));
-                textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                textPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
 
                 rect.set(0, 0, w, h);
                 Theme.dialogs_onlineCirclePaint.setColor(Color.argb(20, r, g, b));

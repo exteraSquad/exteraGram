@@ -32,9 +32,9 @@
     <string name="CenterTitle">Center Title in Action Bar</string>
     <string name="ActionBarTitle">Title Text</string>
     <string name="TabTitleStyle">Tab Title</string>
-    <string name="TabTitleStyleTextWithIcons">Text with Icons</string>
+    <string name="TabTitleStyleTextWithIcons">Names with Icons</string>
     <string name="TabTitleStyleIconsOnly">Icons only</string>
-    <string name="TabTitleStyleTextOnly">Text only</string>
+    <string name="TabTitleStyleTextOnly">Names only</string>
     <string name="TabStyle">Tab Style</string>
     <string name="TabStyleTextOnly">Text</string>
     <string name="TabStyleRounded">Rounded</string>
@@ -105,6 +105,11 @@
     <string name="DisableUnarchiveSwipe">Disable \"Unarchive\" swipe</string>
     <string name="DisableUnarchiveSwipeInfo">Swiping to the left will not remove chats from the archive.</string>
 
+    <!-- Other -->
+    <string name="AnalyticsInfo">When these options are enabled, data about the device is collected and sent to Google Analytics and Crashlytics, allowing us to keep usage statistics and track errors in the app. \n\nHowever, if the options are switched off, the data collection stops and the sent data is instantly deleted.</string>
+    <string name="DeleteAccount">Delete Account</string>
+    <string name="ResetSettings">Reset Settings</string>
+
     <!-- Chats -->
     <string name="StickerSize">Stickers Size</string>
     <string name="StickerSizeLeft">Small</string>
@@ -126,12 +131,12 @@
     <string name="DoubleTapOutgoing">Outgoing Messages</string>
     <string name="DoubleTapInfo">Some actions require administrator rights in the chat or channel.</string>
 
-    <string name="HideMuteUnmuteButton">Hide \"%1$s\" Button</string>
-    <string name="HideMuteUnmuteButtonInfo">from the bottom of the channels.</string>
-    <string name="HideKeyboardOnScroll">Hide Keyboard on Scroll</string>
+    <string name="BottomButton">Bottom Button</string>
     <string name="AdminShortcuts">Quick Admin Shortcuts</string>
+    <string name="HideKeyboardOnScroll">Hide Keyboard on Scroll</string>
     <string name="DisableJumpToNextChannel">Disable \"Jump to the Next Channel\"</string>
     <string name="ShowActionTimestamps">Show Timestamps for Actions</string>
+    <string name="ShowActionTimestampsInfo">Show Timestamps for Actions</string>
     <string name="HideShareButton">Hide Side \"%1$s\" Button</string>
     <string name="DateOfForwardedMsg">Show Date of Forwarded Message</string>
     <string name="ShowMessageID">Show Message ID</string>
@@ -141,16 +146,28 @@
     <string name="DisableEdgeAction">Disable Edge Action</string>
     <string name="DisableEdgeActionInfo">Disables photo flipping by tapping on the edges.</string>
     <string name="HideCameraTile">Hide Instant Camera Tile</string>
-    <string name="HideCameraTileInfo">You\'ll still be able to open the system camera by long-tapping on the attach button in the message panel.</string>
+    <string name="HideCameraTileInfo">The camera tile will be replaced by a floating button. Pressing the button will launch the Telegram camera, holding it down will launch the system camera.</string>
 
     <string name="StaticZoom">Static Zoom</string>
     <string name="StaticZoomInfo">When recording video messages, the zoom will not reset if you release your fingers.</string>
+    <string name="VideoMessagesCamera">Camera in Video Messages</string>
+    <string name="VideoMessagesCameraRear">Rear</string>
+    <string name="VideoMessagesCameraFront">Front</string>
+    <string name="VideoMessagesCameraAsk">Ask</string>
+    <string name="RearCamera">Rear Camera</string>
+    <string name="FrontCamera">Front Camera</string>
     <string name="RememberLastUsedCamera">Remember last used Camera</string>
     <string name="RememberLastUsedCameraInfo">When recording video messages, the last used camera will be selected.</string>
     <string name="PauseOnMinimize">Auto-Pause</string>
     <string name="PauseOnMinimizeInfo">Pauses a video playback when device is locked or exteraGram is minimized.</string>
     <string name="DisablePlayback">Disable Playback</string>
     <string name="DisablePlaybackInfo">Disables playback when volume button is pressed.</string>
+
+    <!-- Boost -->
+    <string name="Encryptors">Encryptors</string>
+    <string name="Encrypt">Encrypt</string>
+    <string name="Decrypt">Decrypt</string>
+    <string name="EncryptionKeyInfo">This key will be used to encrypt and decrypt messages in this chat room.</string>
 
     <!-- Updates -->
     <string name="LastCheck">Last Check</string>
@@ -174,6 +191,7 @@
 
     <!-- Other -->
     <string name="RestartRequired">Restart the App to take effect.</string>
+    <string name="ResetSettingsBulletin">**exteraGram** Preferences have been reset.</string>
     <string name="UserNotFound">User with this **ID** not found.</string>
     <string name="PhotoCopied">Photo copied to clipboard.</string>
 

@@ -1094,7 +1094,7 @@ public class FileLoadOperation {
                     return false;
                 } else if (AndroidUtilities.isEROFS(e)) {
                     SharedConfig.checkSdCard(cacheFileFinal);
-                    FileLog.e(e, false);
+                    FileLog.e(e);
                     onFail(true, -1);
                     return false;
                 }

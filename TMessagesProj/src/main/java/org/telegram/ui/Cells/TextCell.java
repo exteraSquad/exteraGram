@@ -81,7 +81,7 @@ public class TextCell extends FrameLayout {
         textView = new SimpleTextView(context);
         textView.setTextColor(Theme.getColor(dialog ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
         textView.setTextSize(16);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         textView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         textView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT));
@@ -97,7 +97,7 @@ public class TextCell extends FrameLayout {
         valueTextView.setTextColor(Theme.getColor(dialog ? Theme.key_dialogTextBlue2 : Theme.key_windowBackgroundWhiteValueText, resourcesProvider));
         valueTextView.setPadding(0, AndroidUtilities.dp(18), 0, AndroidUtilities.dp(18));
         valueTextView.setTextSize(AndroidUtilities.dp(16));
-        valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rregular.ttf"));
+        valueTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         valueTextView.setGravity(LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT);
         valueTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         valueTextView.setTranslationY(AndroidUtilities.dp(-2));
@@ -266,7 +266,7 @@ public class TextCell extends FrameLayout {
 
     private CharSequence valueText;
 
-    public void setText(String text, boolean divider) {
+    public void setText(CharSequence text, boolean divider) {
         imageLeft = 21;
         textView.setText(text);
         valueTextView.setText(valueText = null, false);

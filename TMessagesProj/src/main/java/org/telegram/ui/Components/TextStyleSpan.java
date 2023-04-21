@@ -78,11 +78,11 @@ public class TextStyleSpan extends MetricAffectingSpan {
             if ((flags & FLAG_STYLE_MONO) != 0 || (flags & FLAG_STYLE_QUOTE) != 0) {
                 return Typeface.MONOSPACE;
             } else if ((flags & FLAG_STYLE_BOLD) != 0 && (flags & FLAG_STYLE_ITALIC) != 0) {
-                return AndroidUtilities.getTypeface("fonts/rmediumitalic.ttf");
+                return AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM_ITALIC);
             } else if ((flags & FLAG_STYLE_BOLD) != 0) {
                 return AndroidUtilities.getTypeface("fonts/rmedium.ttf");
             } else if ((flags & FLAG_STYLE_ITALIC) != 0) {
-                return AndroidUtilities.getTypeface("fonts/ritalic.ttf");
+                return AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_ITALIC);
             } else {
                 return null;
             }
@@ -156,11 +156,11 @@ public class TextStyleSpan extends MetricAffectingSpan {
     }
 
     public boolean isItalic() {
-        return style.getTypeface() == AndroidUtilities.getTypeface("fonts/ritalic.ttf");
+        return style.getTypeface() == AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_ITALIC);
     }
 
     public boolean isBoldItalic() {
-        return style.getTypeface() == AndroidUtilities.getTypeface("fonts/rmediumitalic.ttf");
+        return style.getTypeface() == AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM_ITALIC);
     }
 
     @Override

@@ -33,6 +33,8 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BotWebViewVibrationEffect;
 import org.telegram.messenger.ChatObject;
@@ -364,7 +366,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 slowmodeSelectRow = rowCount++;
                 slowmodeInfoRow = rowCount++;
             }
-            if (ChatObject.isChannel(currentChat)) {
+            if (ChatObject.isChannel(currentChat) && ChatObject.hasAdminRights(currentChat)) {
                 if (participantsDivider2Row == -1) {
                     participantsDivider2Row = rowCount++;
                 }
@@ -444,7 +446,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 loadingUserCellRow = rowCount++;
             }
         } else if (type == TYPE_USERS) {
-            if (!ChatObject.isChannelAndNotMegaGroup(currentChat) && !needOpenSearch) {
+            if (!ChatObject.isChannelAndNotMegaGroup(currentChat) && !needOpenSearch && ChatObject.hasAdminRights(currentChat)) {
                 hideMembersRow = rowCount++;
                 hideMembersInfoRow = rowCount++;
             }
@@ -545,7 +547,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 }
             }
         });
-        if (selectType != SELECT_TYPE_MEMBERS || type == TYPE_USERS || type == TYPE_BANNED || type == TYPE_KICKED) {
+        if (selectType != SELECT_TYPE_MEMBERS || type == TYPE_USERS || ChatObject.hasAdminRights(currentChat) && (type == TYPE_BANNED || type == TYPE_KICKED)) {
             searchListViewAdapter = new SearchAdapter(context);
             ActionBarMenu menu = actionBar.createMenu();
             searchItem = menu.addItem(search_button, R.drawable.ic_ab_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {

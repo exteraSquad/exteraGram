@@ -190,7 +190,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class AndroidUtilities {
     public final static int LIGHT_STATUS_BAR_OVERLAY = 0x0f000000, DARK_STATUS_BAR_OVERLAY = 0x33000000;
@@ -198,6 +197,9 @@ public class AndroidUtilities {
     public final static int REPLACING_TAG_TYPE_LINK = 0;
     public final static int REPLACING_TAG_TYPE_BOLD = 1;
 
+    public final static String TYPEFACE_ROBOTO_CONDENSED_BOLD = "fonts/rcondensedbold.ttf";
+    public final static String TYPEFACE_ROBOTO_REGULAR = "fonts/rregular.ttf";
+    public final static String TYPEFACE_ROBOTO_ITALIC = "fonts/ritalic.ttf";
     public final static String TYPEFACE_ROBOTO_MEDIUM = "fonts/rmedium.ttf";
     public final static String TYPEFACE_ROBOTO_MEDIUM_ITALIC = "fonts/rmediumitalic.ttf";
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";
@@ -478,7 +480,7 @@ public class AndroidUtilities {
                 spannableStringBuilder.setSpan(new CharacterStyle() {
                     @Override
                     public void updateDrawState(TextPaint textPaint) {
-                        textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                        textPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
                         int wasAlpha = textPaint.getAlpha();
                         textPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText));
                         textPaint.setAlpha(wasAlpha);
@@ -1667,55 +1669,52 @@ public class AndroidUtilities {
 
     public static Typeface getTypeface(String assetPath) {
         synchronized (typefaceCache) {
-            if (ExteraConfig.useSystemFonts) {
-                if (assetPath.contains("mono")) {
-                    return Typeface.MONOSPACE;
-                } else if (assetPath.contains("mw_bold")) {
-                    return Typeface.create(Typeface.SERIF, Typeface.BOLD);
-                } else if (Build.VERSION.SDK_INT >= 28) {
-                    if (assetPath.contains("medium") && assetPath.contains("italic")) {
-                        return Typeface.create(Typeface.SANS_SERIF, 500, true);
-                    } else if (assetPath.contains("medium")) {
-                        return Typeface.create(Typeface.SANS_SERIF, 500, false);
-                    } else if (assetPath.contains("italic")) {
-                        return Typeface.create(Typeface.SANS_SERIF, 400, true);
-                    } else {
-                        return Typeface.create(Typeface.SANS_SERIF, 400, false);
-                    }
-                } else {
-                    if (assetPath.contains("medium") && assetPath.contains("italic")) {
-                        return Typeface.create("sans-serif-medium", Typeface.ITALIC);
-                    } else if (assetPath.contains("medium")) {
-                        return Typeface.create("sans-serif-medium", Typeface.NORMAL);
-                    } else if (assetPath.contains("italic")) {
-                        return Typeface.create("sans-serif", Typeface.ITALIC);
-                    } else {
-                        return Typeface.create("sans-serif", Typeface.NORMAL);
-                    }
-                }
-            }
             if (!typefaceCache.containsKey(assetPath)) {
+                Typeface t = null;
                 try {
-                    Typeface t;
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), assetPath);
-                        if (assetPath.contains("medium")) {
-                            builder.setWeight(700);
+                    if (ExteraConfig.useSystemFonts) {
+                        switch (assetPath) {
+                            case TYPEFACE_ROBOTO_MONO:
+                                t = Typeface.MONOSPACE;
+                                break;
+                            case TYPEFACE_ROBOTO_CONDENSED_BOLD:
+                                t = Typeface.create("sans-serif-condensed", Typeface.BOLD);
+                                break;
+                            case TYPEFACE_ROBOTO_MEDIUM_ITALIC:
+                                t = Build.VERSION.SDK_INT >= 28 ? Typeface.create(Typeface.SANS_SERIF, 500, true) : Typeface.create("sans-serif-medium", Typeface.ITALIC);
+                                break;
+                            case TYPEFACE_ROBOTO_MEDIUM:
+                                t = Build.VERSION.SDK_INT >= 28 ? Typeface.create(Typeface.SANS_SERIF, 500, false) : Typeface.create("sans-serif-medium", Typeface.NORMAL);
+                                break;
+                            case TYPEFACE_ROBOTO_ITALIC:
+                                t = Build.VERSION.SDK_INT >= 28 ? Typeface.create(Typeface.SANS_SERIF, 400, true) : Typeface.create("sans-serif", Typeface.ITALIC);
+                                break;
+                            default:
+                                t = Build.VERSION.SDK_INT >= 28 ? Typeface.create(Typeface.SANS_SERIF, 400, false) : Typeface.create("sans-serif", Typeface.NORMAL);
+                                break;
                         }
-                        if (assetPath.contains("italic")) {
-                            builder.setItalic(true);
-                        }
-                        t = builder.build();
                     } else {
-                        t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
+                        if (Build.VERSION.SDK_INT >= 26) {
+                            Typeface.Builder builder = new Typeface.Builder(ApplicationLoader.applicationContext.getAssets(), assetPath);
+                            if (assetPath.contains("medium")) {
+                                builder.setWeight(700);
+                            }
+                            if (assetPath.contains("italic")) {
+                                builder.setItalic(true);
+                            }
+                            t = builder.build();
+                        } else {
+                            t = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), assetPath);
+                        }
                     }
-                    typefaceCache.put(assetPath, t);
                 } catch (Exception e) {
                     if (BuildVars.LOGS_ENABLED) {
                         FileLog.e("Could not get typeface '" + assetPath + "' because " + e.getMessage());
                     }
                     return null;
                 }
+                typefaceCache.put(assetPath, t);
+                return t;
             }
             return typefaceCache.get(assetPath);
         }
@@ -2599,7 +2598,7 @@ public class AndroidUtilities {
             }
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(stringBuilder);
             for (int a = 0; a < bolds.size() / 2; a++) {
-                spannableStringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), bolds.get(a * 2), bolds.get(a * 2 + 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM)), bolds.get(a * 2), bolds.get(a * 2 + 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             return spannableStringBuilder;
         } catch (Exception e) {
@@ -2756,7 +2755,7 @@ public class AndroidUtilities {
     }*/
 
     public static boolean shouldShowClipboardToast() {
-        return (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !OneUIUtilities.hasBuiltInClipboardToasts()) && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU;
+        return (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || !OneUIUtilities.hasBuiltInClipboardToasts()) && (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || XiaomiUtilities.isMIUI());
     }
 
     public static boolean addToClipboard(CharSequence str) {
