@@ -272,6 +272,8 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
         firstNameField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         firstNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
         firstNameField.setBackground(null);
+        firstNameField.setMaxLines(1);
+        firstNameField.setLines(1);
         firstNameField.setSingleLine(true);
         firstNameField.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         firstNameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
@@ -306,6 +308,8 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
         lastNameField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         lastNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
         lastNameField.setBackground(null);
+        lastNameField.setMaxLines(1);
+        lastNameField.setLines(1);
         lastNameField.setSingleLine(true);
         lastNameField.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         lastNameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
@@ -363,7 +367,6 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
             suggestPhoto.setBackgroundDrawable(Theme.getSelectorDrawable(false));
             suggestPhoto.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
             RLottieDrawable suggestDrawable = new RLottieDrawable(R.raw.photo_suggest_icon, "" + R.raw.photo_suggest_icon, AndroidUtilities.dp(50), AndroidUtilities.dp(50), false, null);
-            suggestPhoto.imageView.setTranslationY(-AndroidUtilities.dp(9));
             suggestPhoto.imageView.setTranslationX(-AndroidUtilities.dp(8));
             suggestPhoto.imageView.setAnimation(suggestDrawable);
             suggestPhoto.setOnClickListener(v -> {
@@ -392,7 +395,6 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
             setAvatarCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
             setAvatarCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
             RLottieDrawable cameraDrawable = new RLottieDrawable(R.raw.camera_outline, "" + R.raw.camera_outline, AndroidUtilities.dp(50), AndroidUtilities.dp(50), false, null);
-            setAvatarCell.imageView.setTranslationY(-AndroidUtilities.dp(9));
             setAvatarCell.imageView.setTranslationX(-AndroidUtilities.dp(8));
             setAvatarCell.imageView.setAnimation(cameraDrawable);
             setAvatarCell.setOnClickListener(v -> {

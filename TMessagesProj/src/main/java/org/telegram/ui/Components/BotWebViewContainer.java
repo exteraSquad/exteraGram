@@ -1556,7 +1556,7 @@ public class BotWebViewContainer extends FrameLayout implements NotificationCent
                 }
                 case "destructive": {
                     textRequired = true;
-                    textColorKey = Theme.key_dialogTextRed;
+                    textColorKey = Theme.key_text_RedBold;
                     break;
                 }
             }

@@ -488,5 +488,17 @@ public class IconSetsController {
         solar.put(R.drawable.filter_channels, R.drawable.filter_channels_solar);
         solar.put(R.drawable.filter_custom, R.drawable.filter_custom_solar);
         solar.put(R.drawable.filter_setup, R.drawable.filter_setup_solar);
+
+        solar.put(R.drawable.msg2_chats_add, R.drawable.msg_chats_add_solar);
+        solar.put(R.drawable.msg2_link2, R.drawable.msg_link2_solar);
+        solar.put(R.drawable.msg2_night_auto, R.drawable.msg_night_auto_solar);
+        solar.put(R.drawable.msg_online, R.drawable.msg_online_solar);
+        solar.put(R.drawable.msg_link_folder, R.drawable.msg_link2_solar);
+        solar.put(R.drawable.msg_bot, R.drawable.msg_bots_solar);
+        solar.put(R.drawable.msg_bots, R.drawable.msg_bots_solar);
+        solar.put(R.drawable.msg_brightness_high, R.drawable.msg_brightness_high_solar);
+        solar.put(R.drawable.msg_brightness_low, R.drawable.msg_brightness_low_solar);
+        solar.put(R.drawable.msg_header_share, R.drawable.msg_share_filled_solar);
+        solar.put(R.drawable.msg_header_draw, R.drawable.msg_header_draw_solar);
     }
 }

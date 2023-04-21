@@ -143,8 +143,8 @@
     <string name="AddCommaAfterMention">Add Comma after Mention</string>
     <string name="AddCommaAfterMentionInfo">A comma will be placed automatically after tapping on the user you want to mention.</string>
 
-    <string name="DisableEdgeAction">Disable Edge Action</string>
-    <string name="DisableEdgeActionInfo">Disables photo flipping by tapping on the edges.</string>
+    <string name="HidePhotoCounter">Hide Photo Counter</string>
+    <string name="HidePhotoCounterInfo">The annoying photo counter at the top of the screen will disappear from your view.</string>
     <string name="HideCameraTile">Hide Instant Camera Tile</string>
     <string name="HideCameraTileInfo">The camera tile will be replaced by a floating button. Pressing the button will launch the Telegram camera, holding it down will launch the system camera.</string>
 

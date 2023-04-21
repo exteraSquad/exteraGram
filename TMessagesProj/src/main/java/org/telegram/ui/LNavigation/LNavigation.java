@@ -47,7 +47,9 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
@@ -266,6 +268,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
     private Theme.MessageDrawable messageDrawableOutMediaStart;
     private ThemeAnimationSettings.onAnimationProgress animationProgressListener;
     private ArrayList<ThemeDescription.ThemeDescriptionDelegate> themeAnimatorDelegate = new ArrayList<>();
+    int animationIndex = -1;
     private ArrayList<ThemeDescription> presentingFragmentDescriptions;
 
     private float themeAnimationValue;
@@ -987,10 +990,12 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
             FragmentHolderView holderView = onCreateHolderView(fragment);
             addView(holderView, getChildCount() - 1);
 
-            fragment.setPaused(false);
-            fragment.onTransitionAnimationStart(true, false);
-            fragment.onTransitionAnimationEnd(true, false);
-            fragment.onBecomeFullyVisible();
+            if (position != INavigationLayout.FORCE_NOT_ATTACH_VIEW) {
+                fragment.setPaused(false);
+                fragment.onTransitionAnimationStart(true, false);
+                fragment.onTransitionAnimationEnd(true, false);
+                fragment.onBecomeFullyVisible();
+            }
 
             if (getBackgroundView() != null) {
                 getBackgroundView().setVisibility(GONE);
@@ -1416,6 +1421,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
             swipeProgress = 0f;
             removeFragmentFromStack(getLastFragment());
         }
+        getLastFragment().onFragmentClosed();
     }
 
     private void onCloseAnimationEnd(BaseFragment lastFragment, BaseFragment newLastFragment) {
@@ -1620,6 +1626,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
                     return;
                 }
                 Theme.setAnimatingColor(true);
+                setThemeAnimationValue(0f);
                 if (settings.beforeAnimationRunnable != null) {
                     settings.beforeAnimationRunnable.run();
                 }
@@ -1627,12 +1634,16 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
                 if (animationProgressListener != null) {
                     animationProgressListener.setProgress(0);
                 }
+                int currentAccount = UserConfig.selectedAccount;
+                animationIndex = NotificationCenter.getInstance(currentAccount).setAnimationInProgress(animationIndex, null);
+
                 fromBackgroundColor = getBackground() instanceof ColorDrawable ? ((ColorDrawable) getBackground()).getColor() : 0;
                 themeAnimator = ValueAnimator.ofFloat(0, 1).setDuration(settings.duration);
                 themeAnimator.addUpdateListener(animation -> setThemeAnimationValue((float) animation.getAnimatedValue()));
                 themeAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        NotificationCenter.getInstance(currentAccount).onAnimationFinish(animationIndex);
                         if (animation.equals(themeAnimator)) {
                             themeAnimatorDescriptions.clear();
                             animateStartColors.clear();
@@ -2297,6 +2308,9 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
             }
             if (v != null && v.getParent() instanceof ViewGroup) {
                 ((ViewGroup) v.getParent()).removeView(v);
+            }
+            if (!fragment.hasOwnBackground() && v.getBackground() == null) {
+                v.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             }
             addView(v);
 

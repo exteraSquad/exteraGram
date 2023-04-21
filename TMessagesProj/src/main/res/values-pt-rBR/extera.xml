@@ -113,8 +113,6 @@ CameraX só é suportada nos
     <string name="ShowMessageID">Mostrar ID da mensagem</string>
     <string name="AddCommaAfterMention">Adicionar vírgula após a menção</string>
     <string name="AddCommaAfterMentionInfo">Uma vírgula será colocada automaticamente após tocar no usuário que você deseja mencionar.</string>
-    <string name="DisableEdgeAction">Desativar ação Edge</string>
-    <string name="DisableEdgeActionInfo">Desativa a inversão de fotos tocando no Edge.</string>
     <string name="HideCameraTile">Ocultar Título de Câmera Instantânea</string>
     <string name="HideCameraTileInfo">Você ainda conseguirá abrir a câmera do sistema com um toque longo no botão de anexação no painel de mensagens.</string>
     <string name="StaticZoom">Zoom estático</string>

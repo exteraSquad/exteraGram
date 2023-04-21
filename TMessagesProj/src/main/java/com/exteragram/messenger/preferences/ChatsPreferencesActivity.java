@@ -122,7 +122,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
     private int photosHeaderRow;
     private int photosQualityChooserRow;
-    private int disableEdgeActionRow;
+    private int hideCounterRow;
     private int hideCameraTileRow;
     private int photosDividerRow;
 
@@ -278,7 +278,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
         photosHeaderRow = newRow();
         photosQualityChooserRow = newRow();
-        disableEdgeActionRow = newRow();
+        hideCounterRow = newRow();
         hideCameraTileRow = newRow();
         photosDividerRow = newRow();
 
@@ -369,9 +369,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             ExteraConfig.editor.putBoolean("disablePlayback", ExteraConfig.disablePlayback ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disablePlayback);
             showBulletin();
-        } else if (position == disableEdgeActionRow) {
-            ExteraConfig.editor.putBoolean("disableEdgeAction", ExteraConfig.disableEdgeAction ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.disableEdgeAction);
+        } else if (position == hideCounterRow) {
+            ExteraConfig.editor.putBoolean("hidePhotoCounter", ExteraConfig.hidePhotoCounter ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.hidePhotoCounter);
         } else if (position == doubleTapActionRow || position == doubleTapActionOutOwnerRow) {
             if (getParentActivity() == null) {
                 return;
@@ -574,8 +574,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("PauseOnMinimize", R.string.PauseOnMinimize), LocaleController.getString("PauseOnMinimizeInfo", R.string.PauseOnMinimizeInfo), ExteraConfig.pauseOnMinimize, true, true);
                     } else if (position == disablePlaybackRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisablePlayback", R.string.DisablePlayback), ExteraConfig.disablePlayback, false);
-                    } else if (position == disableEdgeActionRow) {
-                        textCheckCell.setTextAndValueAndCheck(LocaleController.getString("DisableEdgeAction", R.string.DisableEdgeAction), LocaleController.getString("DisableEdgeActionInfo", R.string.DisableEdgeActionInfo), ExteraConfig.disableEdgeAction, true, true);
+                    } else if (position == hideCounterRow) {
+                        textCheckCell.setTextAndValueAndCheck(LocaleController.getString("HidePhotoCounter", R.string.HidePhotoCounter), LocaleController.getString("HidePhotoCounterInfo", R.string.HidePhotoCounterInfo), ExteraConfig.hidePhotoCounter, true, true);
                     }
                     break;
                 case 7:

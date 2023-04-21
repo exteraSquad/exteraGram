@@ -139,12 +139,12 @@
     <string name="AddCommaAfterMention">Запятая после упоминания</string>
     <string name="AddCommaAfterMentionInfo">Запятая будет ставиться автоматически после нажатия на пользователя, которого вы хотите упомянуть.</string>
 
-    <string name="DisableEdgeAction">Отключить нажатия по краям</string>
-    <string name="DisableEdgeActionInfo">Отключает перелистывание фотографий при помощи нажатий на края экрана.</string>
+    <string name="HidePhotoCounter">Скрыть счетчик фотографий</string>
+    <string name="HidePhotoCounterInfo">Надоедливый счетчик фотографий в верхней части экрана исчезнет из вашего поля зрения.</string>
     <string name="HideCameraTile">Скрыть плитку камеры в галерее</string>
     <string name="HideCameraTileInfo">Плитка камеры будет заменена плавающей кнопкой. При нажатии на кнопку запустится камера Telegram, при удержании - системная камера.</string>
 
-    <string name="StaticZoom">Статический зум</string>
+    <string name="StaticZoom">Статичный зум</string>
     <string name="StaticZoomInfo">Зум при записи видеосообщений не будет сбрасываться, если вы отпустите пальцы.</string>
     <string name="VideoMessagesCamera">Камера в видеосообщениях</string>
     <string name="VideoMessagesCameraRear">Основная</string>

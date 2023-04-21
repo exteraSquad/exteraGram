@@ -104,6 +104,8 @@ public class ChangeNameActivity extends BaseFragment {
         firstNameField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         firstNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
         firstNameField.setBackground(null);
+        firstNameField.setMaxLines(1);
+        firstNameField.setLines(1);
         firstNameField.setSingleLine(true);
         firstNameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
         firstNameField.setImeOptions(EditorInfo.IME_ACTION_NEXT);
@@ -137,6 +139,8 @@ public class ChangeNameActivity extends BaseFragment {
         lastNameField.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
         lastNameField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
         lastNameField.setBackground(null);
+        lastNameField.setMaxLines(1);
+        lastNameField.setLines(1);
         lastNameField.setSingleLine(true);
         lastNameField.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
         lastNameField.setImeOptions(EditorInfo.IME_ACTION_NEXT);

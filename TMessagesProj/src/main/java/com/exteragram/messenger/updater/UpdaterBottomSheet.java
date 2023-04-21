@@ -140,7 +140,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             doneButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             doneButton.setText(LocaleController.getString("AppUpdateDownloadNow", R.string.AppUpdateDownloadNow));
             doneButton.setOnClickListener(v -> {
-                UpdaterUtils.downloadApk(context, args[3], "exteraGram " + args[0]);
+                UpdaterUtils.downloadApk(fragment.getContext(), args[3], "exteraGram " + args[0]);
                 dismiss();
             });
             linearLayout.addView(doneButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 5));

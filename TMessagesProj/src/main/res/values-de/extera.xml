@@ -113,8 +113,6 @@ CameraX wird nur auf
     <string name="ShowMessageID">Nachrichten-ID anzeigen</string>
     <string name="AddCommaAfterMention">Komma nach Erwähnung hinzufügen</string>
     <string name="AddCommaAfterMentionInfo">Ein Komma wird automatisch platziert, nachdem Sie auf den Benutzer getippt haben, den Sie erwähnen möchten.</string>
-    <string name="DisableEdgeAction">Kantenaktion deaktivieren</string>
-    <string name="DisableEdgeActionInfo">Deaktiviert das Wechseln zwischen Fotos durch Tippen auf die Kanten.</string>
     <string name="HideCameraTile">Kamerakachel ausblenden</string>
     <string name="HideCameraTileInfo">Sie können die Systemkamera immer noch öffnen, indem Sie auf den Anhang-Knopf im Eingabefeld gedrückt halten.</string>
     <string name="StaticZoom">Statischer Zoom</string>

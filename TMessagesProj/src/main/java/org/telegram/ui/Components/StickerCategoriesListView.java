@@ -157,6 +157,11 @@ public class StickerCategoriesListView extends RecyclerListView {
         });
     }
 
+    @Override
+    public Integer getSelectorColor(int position) {
+        return 0;
+    }
+
     public void setShownButtonsAtStart(float buttonsCount) {
         shownButtonsAtStart = buttonsCount;
     }

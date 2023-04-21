@@ -113,8 +113,6 @@ CameraX wspierana jest tylko na
     <string name="ShowMessageID">Pokaż ID wiadomości</string>
     <string name="AddCommaAfterMention">Dodaj przecinek po wzmiance</string>
     <string name="AddCommaAfterMentionInfo">Przecinek zostanie dodany automatycznie po wybraniu użytkownika.</string>
-    <string name="DisableEdgeAction">Wyłącz akcję krawędzi</string>
-    <string name="DisableEdgeActionInfo">Wyłącza przełączanie zdjęć przed dotknięcie krawędzi.</string>
     <string name="HideCameraTile">Ukryj kafelek błyskawicznego aparatu</string>
     <string name="HideCameraTileInfo">Nadal możesz otworzyć aparat systemowy przez długie naciśnięcie przycisku załącznika w panelu wiadomości.</string>
     <string name="StaticZoom">Statyczne powiększenie</string>

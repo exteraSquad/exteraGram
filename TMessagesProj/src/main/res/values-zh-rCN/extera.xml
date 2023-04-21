@@ -113,8 +113,6 @@ CameraX仅支持
     <string name="ShowMessageID">显示消息ID</string>
     <string name="AddCommaAfterMention">选定@ 后自动添加逗号后缀</string>
     <string name="AddCommaAfterMentionInfo">点击您想要提及的用户后，将自动放置一个逗号。</string>
-    <string name="DisableEdgeAction">禁用边缘操作</string>
-    <string name="DisableEdgeActionInfo">禁用点击边缘跳转至下一张照片。</string>
     <string name="HideCameraTile">隐藏即时相机</string>
     <string name="HideCameraTileInfo">您仍然可以通过长按消息面板中的相机按钮来打开系统相机。</string>
     <string name="StaticZoom">静态缩放</string>

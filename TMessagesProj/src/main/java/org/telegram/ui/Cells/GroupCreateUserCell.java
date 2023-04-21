@@ -137,6 +137,14 @@ public class GroupCreateUserCell extends FrameLayout {
         update(0);
     }
 
+    public void setForbiddenCheck(boolean forbidden) {
+        checkBox.setForbidden(forbidden);
+    }
+
+    public CheckBox2 getCheckBox() {
+        return checkBox;
+    }
+
     public void setChecked(boolean checked, boolean animated) {
         if (checkBox != null) {
             checkBox.setChecked(checked, animated);

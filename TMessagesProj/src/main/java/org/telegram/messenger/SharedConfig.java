@@ -147,6 +147,7 @@ public class SharedConfig {
     public static boolean forwardingOptionsHintShown;
     public static boolean searchMessagesAsListUsed;
     public static boolean stickersReorderingHintUsed;
+    public static int dayNightWallpaperSwitchHint;
     public static boolean disableVoiceAudioEffects;
     public static boolean forceDisableTabletMode;
     public static boolean useLNavigation;
@@ -169,6 +170,7 @@ public class SharedConfig {
     public static boolean chatBubbles = Build.VERSION.SDK_INT >= 30;
     public static boolean raiseToSpeak = false;
     public static boolean raiseToListen = true;
+    public static boolean nextMediaTap = true;
     public static boolean recordViaSco = false;
     public static boolean customTabs = true;
     public static boolean directShare = true;
@@ -243,35 +245,6 @@ public class SharedConfig {
             2067362117, // MSM8952
             2067361998, // MSM8917
             -1853602818 // SDM439
-    };
-
-    private static final int[] LOW_DEVICES = {
-            1903542002, // XIAOMI NIKEL (Redmi Note 4)
-            1904553494, // XIAOMI OLIVE (Redmi 8)
-            1616144535, // OPPO CPH2273 (Oppo A54s)
-            -713271737, // OPPO OP4F2F (Oppo A54)
-            -1394191140, // SAMSUNG A12 (Galaxy A12)
-            -270252297, // SAMSUNG A12S (Galaxy A12)
-            -270251367, // SAMSUNG A21S (Galaxy A21s)
-            -270252359  // SAMSUNG A10S (Galaxy A10s)
-    };
-
-    private static final int[] AVERAGE_DEVICES = {
-            812981419, // XIAOMI ANGELICA (Redmi 9C)
-            -993913431 // XIAOMI DANDELION (Redmi 9A)
-    };
-
-    private static final int[] HIGH_DEVICES = {
-            1908570923, // XIAOMI SWEET (Redmi Note 10 Pro)
-            -980514379, // XIAOMI SECRET (Redmi Note 10S)
-            577463889, // XIAOMI JOYEUSE (Redmi Note 9 Pro)
-            1764745014, // XIAOMI BEGONIA (Redmi Note 8 Pro)
-            1908524435, // XIAOMI SURYA (Poco X3 NFC)
-            -215787089, // XIAOMI KAMA (Poco X3)
-            -215458996, // XIAOMI VAYU (Poco X3 Pro)
-            -1394179578, // SAMSUNG M21
-            220599115, // SAMSUNG J6LTE
-            1737652784 // SAMSUNG J6PRIMELTE
     };
 
     static {
@@ -504,6 +477,7 @@ public class SharedConfig {
             mapPreviewType = preferences.getInt("mapPreviewType", 2);
             raiseToListen = preferences.getBoolean("raise_to_listen", true);
             raiseToSpeak = preferences.getBoolean("raise_to_speak", false);
+            nextMediaTap = preferences.getBoolean("next_media_on_tap", true);
             recordViaSco = preferences.getBoolean("record_via_sco", false);
             customTabs = preferences.getBoolean("custom_tabs", true);
             directShare = preferences.getBoolean("direct_share", true);
@@ -561,6 +535,7 @@ public class SharedConfig {
             useLNavigation = preferences.getBoolean("useLNavigation", false);
             isFloatingDebugActive = preferences.getBoolean("floatingDebugActive", false);
             updateStickersOrderOnSend = preferences.getBoolean("updateStickersOrderOnSend", true);
+            dayNightWallpaperSwitchHint = preferences.getInt("dayNightWallpaperSwitchHint", 0);
             bigCameraForRound = preferences.getBoolean("bigCameraForRound", false);
 
             preferences = ApplicationLoader.applicationContext.getSharedPreferences("Notifications", Activity.MODE_PRIVATE);
@@ -748,6 +723,7 @@ public class SharedConfig {
         messageSeenHintCount = 3;
         emojiInteractionsHintCount = 3;
         dayNightThemeSwitchHintCount = 3;
+        dayNightWallpaperSwitchHint = 0;
         saveConfig();
     }
 
@@ -779,6 +755,13 @@ public class SharedConfig {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("textSelectionHintShows", ++textSelectionHintShows);
+        editor.apply();
+    }
+
+    public static void increaseDayNightWallpaperSiwtchHint() {
+        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("dayNightWallpaperSwitchHint", ++dayNightWallpaperSwitchHint);
         editor.apply();
     }
 
@@ -844,7 +827,7 @@ public class SharedConfig {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("updateStickersOrderOnSend", updateStickersOrderOnSend = !updateStickersOrderOnSend);
-        editor.commit();
+        editor.apply();
     }
 
     public static void checkLogsToDelete() {
@@ -950,7 +933,7 @@ public class SharedConfig {
     }
 
     public static void overrideDevicePerformanceClass(int performanceClass) {
-        MessagesController.getGlobalMainSettings().edit().putInt("overrideDevicePerformanceClass", overrideDevicePerformanceClass = performanceClass).remove("lite_mode").commit();
+        MessagesController.getGlobalMainSettings().edit().putInt("overrideDevicePerformanceClass", overrideDevicePerformanceClass = performanceClass).remove("lite_mode").apply();
         if (liteMode != null) {
             liteMode.loadPreference();
         }
@@ -1018,7 +1001,15 @@ public class SharedConfig {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("raise_to_listen", raiseToListen);
-        editor.commit();
+        editor.apply();
+    }
+
+    public static void toggleNextMediaTap() {
+        nextMediaTap = !nextMediaTap;
+        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("next_media_on_tap", nextMediaTap);
+        editor.apply();
     }
 
     public static boolean enabledRaiseTo(boolean speak) {
@@ -1104,7 +1095,7 @@ public class SharedConfig {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("pauseMusicOnMedia", pauseMusicOnMedia);
-        editor.commit();
+        editor.apply();
     }
 
     public static void toggleChatBlur() {
@@ -1383,25 +1374,6 @@ public class SharedConfig {
         int androidVersion = Build.VERSION.SDK_INT;
         int cpuCount = ConnectionsManager.CPU_COUNT;
         int memoryClass = ((ActivityManager) ApplicationLoader.applicationContext.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
-
-        if (Build.DEVICE != null && Build.MANUFACTURER != null) {
-            int hash = (Build.MANUFACTURER + " " + Build.DEVICE).toUpperCase().hashCode();
-            for (int i = 0; i < LOW_DEVICES.length; ++i) {
-                if (LOW_DEVICES[i] == hash) {
-                    return PERFORMANCE_CLASS_LOW;
-                }
-            }
-            for (int i = 0; i < AVERAGE_DEVICES.length; ++i) {
-                if (AVERAGE_DEVICES[i] == hash) {
-                    return PERFORMANCE_CLASS_AVERAGE;
-                }
-            }
-            for (int i = 0; i < HIGH_DEVICES.length; ++i) {
-                if (HIGH_DEVICES[i] == hash) {
-                    return PERFORMANCE_CLASS_HIGH;
-                }
-            }
-        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && Build.SOC_MODEL != null) {
             int hash = Build.SOC_MODEL.toUpperCase().hashCode();

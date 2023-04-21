@@ -108,7 +108,7 @@ public class ExteraConfig {
 
     public static int sendPhotosQuality;
     public static boolean hideCameraTile;
-    public static boolean disableEdgeAction;
+    public static boolean hidePhotoCounter;
 
     public static boolean staticZoom;
     public static int videoMessagesCamera; // front rear ask
@@ -240,7 +240,7 @@ public class ExteraConfig {
             addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
 
             sendPhotosQuality = preferences.getInt("sendPhotosQuality", 1);
-            disableEdgeAction = preferences.getBoolean("disableEdgeAction", false);
+            hidePhotoCounter = preferences.getBoolean("hidePhotoCounter", false);
             hideCameraTile = preferences.getBoolean("hideCameraTile", false);
 
             staticZoom = preferences.getBoolean("staticZoom", false);

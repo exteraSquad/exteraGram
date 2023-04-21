@@ -128,7 +128,7 @@ public class OtherPreferencesActivity extends BasePreferencesActivity {
             AlertDialog dialog = builder.create();
             dialog.setOnShowListener(dialog1 -> {
                 var button = (TextView) dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setTextColor(Theme.getColor(Theme.key_dialogTextRed));
+                button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
                 button.setEnabled(false);
                 var buttonText = button.getText();
                 new CountDownTimer(30000, 100) {
@@ -183,7 +183,7 @@ public class OtherPreferencesActivity extends BasePreferencesActivity {
                         textCell.setTextAndCheckAndIcon("Analytics", ExteraConfig.useGoogleAnalytics, R.drawable.msg_data, false);
                     } else if (position == deleteAccountRow) {
                         textCell.setTextAndIcon(LocaleController.getString("DeleteAccount", R.string.DeleteAccount), R.drawable.msg_clearcache, false);
-                        textCell.setColors(Theme.key_windowBackgroundWhiteRedText, Theme.key_windowBackgroundWhiteRedText);
+                        textCell.setColors(Theme.key_text_RedBold, Theme.key_text_RedBold);
                     } else if (position == resetSettingsRow) {
                         textCell.setTextAndIcon(LocaleController.getString("ResetSettings", R.string.ResetSettings), R.drawable.msg_reset, true);
                     }
