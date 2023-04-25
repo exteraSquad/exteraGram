@@ -434,7 +434,7 @@ public class AvatarConstructorFragment extends BaseFragment {
 
 
         button = new FrameLayout(getContext());
-        button.setBackground(Theme.AdaptiveRipple.filledRect(Theme.key_featuredStickers_addButton, 8));
+        button.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 8));
 
         TextView textView = new TextView(getContext());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
@@ -1110,7 +1110,7 @@ public class AvatarConstructorFragment extends BaseFragment {
         colorPickerContainer.addView(colorPicker);
 
         FrameLayout button = new FrameLayout(getContext());
-        button.setBackground(Theme.AdaptiveRipple.filledRect(Theme.key_featuredStickers_addButton, 8));
+        button.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 8));
 
         TextView textView = new TextView(getContext());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);

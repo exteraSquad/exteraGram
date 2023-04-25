@@ -59,14 +59,17 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
 
     private int titleY = AndroidUtilities.dp(9);
     private StaticLayout titleLayout;
+    private float titleLayoutLeft, titleLayoutWidth;
     AnimatedEmojiSpan.EmojiGroupedSpans titleLayoutEmojis;
 
     private int descriptionY = AndroidUtilities.dp(29);
     AnimatedEmojiSpan.EmojiGroupedSpans descriptionLayoutEmojis;
+    private float descriptionLayoutLeft, descriptionLayoutWidth;
     private StaticLayout descriptionLayout;
 
     private int captionY = AndroidUtilities.dp(29);
     AnimatedEmojiSpan.EmojiGroupedSpans captionLayoutEmojis;
+    private float captionLayoutLeft, captionLayoutWidth;
     private StaticLayout captionLayout;
 
     private MessageObject currentMessageObject;
@@ -111,14 +114,14 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
 
         radialProgress = new RadialProgress2(this, resourcesProvider);
-        radialProgress.setColors(Theme.key_chat_inLoader, Theme.key_chat_inLoaderSelected, Theme.key_chat_inMediaIcon, Theme.key_chat_inMediaIconSelected);
+        radialProgress.setColorKeys(Theme.key_chat_inLoader, Theme.key_chat_inLoaderSelected, Theme.key_chat_inMediaIcon, Theme.key_chat_inMediaIconSelected);
 
         TAG = DownloadController.getInstance(currentAccount).generateObserverTag();
         setWillNotDraw(false);
 
         checkBox = new CheckBox2(context, 22, resourcesProvider);
         checkBox.setVisibility(INVISIBLE);
-        checkBox.setColor(null, Theme.key_windowBackgroundWhite, Theme.key_checkboxCheck);
+        checkBox.setColor(-1, Theme.key_windowBackgroundWhite, Theme.key_checkboxCheck);
         checkBox.setDrawUnchecked(false);
         checkBox.setDrawBackgroundAsArc(3);
         addView(checkBox, LayoutHelper.createFrame(24, 24, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 38.1f, 32.1f, LocaleController.isRTL ? 6 : 0, 0));
@@ -168,6 +171,8 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
             }
             CharSequence titleFinal = TextUtils.ellipsize(title, Theme.chat_contextResult_titleTextPaint, maxWidth - dateWidth, TextUtils.TruncateAt.END);
             titleLayout = new StaticLayout(titleFinal, Theme.chat_contextResult_titleTextPaint, maxWidth + AndroidUtilities.dp(4) - dateWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            titleLayoutLeft = titleLayout.getLineCount() > 0 ? titleLayout.getLineLeft(0) : 0;
+            titleLayoutWidth = titleLayout.getLineCount() > 0 ? titleLayout.getLineWidth(0) : 0;
             titleLayoutEmojis = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, titleLayoutEmojis, titleLayout);
         } catch (Exception e) {
             FileLog.e(e);
@@ -179,6 +184,8 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
             if (sequence != null) {
                 sequence = TextUtils.ellipsize(AndroidUtilities.ellipsizeCenterEnd(sequence, currentMessageObject.highlightedWords.get(0), maxWidth, captionTextPaint, 130), captionTextPaint, maxWidth, TextUtils.TruncateAt.END);
                 captionLayout = new StaticLayout(sequence, captionTextPaint, maxWidth + AndroidUtilities.dp(4), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+                captionLayoutLeft = captionLayout.getLineCount() > 0 ? captionLayout.getLineLeft(0) : 0;
+                captionLayoutWidth = captionLayout.getLineCount() > 0 ? captionLayout.getLineWidth(0) : 0;
             }
             captionLayoutEmojis = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, captionLayoutEmojis, captionLayout);
         }
@@ -201,6 +208,8 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
                 author = TextUtils.ellipsize(author, paint, maxWidth, TextUtils.TruncateAt.END);
                 descriptionLayout = new StaticLayout(author, paint, maxWidth + AndroidUtilities.dp(4), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
             }
+            descriptionLayoutLeft = descriptionLayout.getLineCount() > 0 ? descriptionLayout.getLineLeft(0) : 0;
+            descriptionLayoutWidth = descriptionLayout.getLineCount() > 0 ? descriptionLayout.getLineWidth(0) : 0;
             descriptionLayoutEmojis = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, descriptionLayoutEmojis, descriptionLayout);
         } catch (Exception e) {
             FileLog.e(e);
@@ -574,9 +583,8 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
         updateButtonState(false, true);
     }
 
-    private int getThemedColor(String key) {
-        Integer color = resourcesProvider != null ? resourcesProvider.getColor(key) : null;
-        return color != null ? color : Theme.getColor(key);
+    private int getThemedColor(int key) {
+        return Theme.getColor(key, resourcesProvider);
     }
 
     float enterAlpha = 1f;
@@ -612,8 +620,6 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
             drawReorder(canvas);
             super.dispatchDraw(canvas);
         }
-
-
     }
 
     private void drawReorder(Canvas canvas) {
@@ -644,7 +650,7 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
         }
         if (dateLayout != null) {
             canvas.save();
-            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 8 : AndroidUtilities.leftBaseline) + (LocaleController.isRTL ? 0 : dateLayoutX), titleY);
+            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 24 : AndroidUtilities.leftBaseline) + (LocaleController.isRTL ? 0 : dateLayoutX), titleY);
             dateLayout.draw(canvas);
             canvas.restore();
         }
@@ -655,7 +661,7 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
                 Theme.chat_contextResult_titleTextPaint.setAlpha((int) (oldAlpha * showNameProgress));
             }
             canvas.save();
-            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 8 : AndroidUtilities.leftBaseline) + (LocaleController.isRTL && dateLayout != null ? dateLayout.getWidth() + AndroidUtilities.dp(4) : 0), titleY);
+            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 24 : AndroidUtilities.leftBaseline) + (LocaleController.isRTL && dateLayout != null ? dateLayout.getWidth() + AndroidUtilities.dp(LocaleController.isRTL ? 12 : 4) : 0) + (LocaleController.isRTL ? titleLayout.getWidth() - titleLayoutWidth : 0) - titleLayoutLeft, titleY);
             titleLayout.draw(canvas);
             AnimatedEmojiSpan.drawAnimatedEmojis(canvas, titleLayout, titleLayoutEmojis, 0, null, 0, 0, 0, 1f);
             canvas.restore();
@@ -667,7 +673,7 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
         if (captionLayout != null) {
             captionTextPaint.setColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
             canvas.save();
-            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 8 : AndroidUtilities.leftBaseline), captionY);
+            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 24 : AndroidUtilities.leftBaseline) + (LocaleController.isRTL ? captionLayout.getWidth() - captionLayoutWidth : 0) - captionLayoutLeft, captionY);
             captionLayout.draw(canvas);
             canvas.restore();
         }
@@ -679,7 +685,7 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
                 Theme.chat_contextResult_descriptionTextPaint.setAlpha((int) (oldAlpha * showNameProgress));
             }
             canvas.save();
-            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 8 : AndroidUtilities.leftBaseline), descriptionY);
+            canvas.translate(AndroidUtilities.dp(LocaleController.isRTL ? 24 : AndroidUtilities.leftBaseline) + (LocaleController.isRTL ? descriptionLayout.getWidth() - descriptionLayoutWidth : 0) - descriptionLayoutLeft, descriptionY);
             descriptionLayout.draw(canvas);
             AnimatedEmojiSpan.drawAnimatedEmojis(canvas, descriptionLayout, descriptionLayoutEmojis, 0, null, 0, 0, 0, 1f);
             canvas.restore();
@@ -693,7 +699,11 @@ public class SharedAudioCell extends FrameLayout implements DownloadController.F
         radialProgress.draw(canvas);
 
         if (needDivider && !ExteraConfig.disableDividers) {
-            canvas.drawLine(AndroidUtilities.dp(72), getHeight() - 1, getWidth() - getPaddingRight(), getHeight() - 1, Theme.dividerPaint);
+            if (LocaleController.isRTL) {
+                canvas.drawLine(0, getHeight() - 1, getWidth() - AndroidUtilities.dp(72) - getPaddingRight(), getHeight() - 1, Theme.dividerPaint);
+            } else {
+                canvas.drawLine(AndroidUtilities.dp(72), getHeight() - 1, getWidth() - getPaddingRight(), getHeight() - 1, Theme.dividerPaint);
+            }
         }
     }
 

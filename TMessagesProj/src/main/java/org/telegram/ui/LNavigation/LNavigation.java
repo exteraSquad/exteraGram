@@ -1734,7 +1734,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
         if (presentingFragmentDescriptions != null) {
             for (int i = 0, N = presentingFragmentDescriptions.size(); i < N; i++) {
                 ThemeDescription description = presentingFragmentDescriptions.get(i);
-                String key = description.getCurrentKey();
+                int key = description.getCurrentKey();
                 description.setColor(Theme.getColor(key), false, false);
             }
         }

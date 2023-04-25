@@ -269,7 +269,7 @@ public class FilesMigrationService extends Service {
             buttonTextView.setText(LocaleController.getString("MigrateOldFolderButton", R.string.MigrateOldFolderButton));
 
             buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-            buttonTextView.setBackground(Theme.AdaptiveRipple.filledRect(Theme.key_featuredStickers_addButton, 6));
+            buttonTextView.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 6));
 
             linearLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
 

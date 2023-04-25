@@ -56,11 +56,11 @@ public class VerticalImageSpan extends ImageSpan {
         canvas.restore();
     }
 
-    public static SpannableStringBuilder createSpan(Context context, int resId, String text, String replace, String color) {
+    public static SpannableStringBuilder createSpan(Context context, int resId, String text, String replace, int color) {
         return createSpan(context, resId, text, replace, color, null);
     }
 
-    public static SpannableStringBuilder createSpan(Context context, int resId, String text, String replace, String color, Theme.ResourcesProvider resourcesProvider) {
+    public static SpannableStringBuilder createSpan(Context context, int resId, String text, String replace, int color, Theme.ResourcesProvider resourcesProvider) {
         SpannableStringBuilder builder = new SpannableStringBuilder(text);
         List<Integer> beginIndexes = new ArrayList<>();
         int index = text.indexOf(replace);

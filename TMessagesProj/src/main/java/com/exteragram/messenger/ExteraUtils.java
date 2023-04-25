@@ -461,7 +461,7 @@ public final class ExteraUtils {
         void onClick(int i);
     }
 
-    public static String getNavigationBarColorKey() {
+    public static int getNavigationBarColorKey() {
         return SharedConfig.useLNavigation ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray;
     }
 

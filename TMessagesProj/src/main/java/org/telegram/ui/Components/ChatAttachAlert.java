@@ -182,7 +182,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     }
 
                     @Override
-                    public void onWebAppSetActionBarColor(String colorKey) {
+                    public void onWebAppSetActionBarColor(int colorKey) {
                         int from = ((ColorDrawable) actionBar.getBackground()).getColor();
                         int to = getThemedColor(colorKey);
 
@@ -669,9 +669,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             return false;
         }
 
-        protected int getThemedColor(String key) {
-            Integer color = resourcesProvider != null ? resourcesProvider.getColor(key) : null;
-            return color != null ? color : Theme.getColor(key);
+        protected int getThemedColor(int key) {
+            return Theme.getColor(key, resourcesProvider);
         }
 
         boolean shouldHideBottomButtons() {
@@ -809,8 +808,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         private TextView textView;
         private RLottieImageView imageView;
         private boolean checked;
-        private String backgroundKey;
-        private String textKey;
+        private int backgroundKey;
+        private int textKey;
         private float checkedState;
         private Animator checkAnimator;
         private int currentId;
@@ -897,7 +896,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             super.onMeasure(MeasureSpec.makeMeasureSpec(attachItemSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(84), MeasureSpec.EXACTLY));
         }
 
-        public void setTextAndIcon(int id, CharSequence text, RLottieDrawable drawable, String background, String textColor) {
+        public void setTextAndIcon(int id, CharSequence text, RLottieDrawable drawable, int background, int textColor) {
             currentId = id;
             textView.setText(text);
             imageView.setAnimation(drawable);
@@ -1173,6 +1172,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     @SuppressLint("ClickableViewAccessibility")
     public ChatAttachAlert(Context context, final BaseFragment parentFragment, boolean forceDarkTheme, boolean showingFromDialog, boolean needCamera, Theme.ResourcesProvider resourcesProvider) {
         super(context, false, resourcesProvider);
+        if (parentFragment instanceof ChatActivity) {
+            setImageReceiverNumLevel(0, 4);
+        }
         this.forceDarkTheme = forceDarkTheme;
         this.showingFromDialog = showingFromDialog;
         drawNavigationBar = true;
@@ -2659,7 +2661,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
         if (forceDarkTheme) {
             checkColors();
-            navBarColorKey = null;
+            navBarColorKey = -1;
         }
 
         passcodeView = new PasscodeView(context);
@@ -2766,7 +2768,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         openTransitionFinished = false;
         if (Build.VERSION.SDK_INT >= 30) {
             navBarColor = baseFragment.getNavigationBarColor();
-            navBarColorKey = null;
+            navBarColorKey = -1;
+            //navBarColorKey = -1;
+            //navBarColor = ColorUtils.setAlphaComponent(getThemedColor(Theme.key_windowBackgroundGray), 0);
             AndroidUtilities.setNavigationBarColor(getWindow(), navBarColor, false);
             AndroidUtilities.setLightNavigationBar(getWindow(), AndroidUtilities.computePerceivedBrightness(navBarColor) > 0.721);
         }
@@ -3573,7 +3577,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         }
 
         if (Build.VERSION.SDK_INT >= 30) {
-            navBarColorKey = null;
+            navBarColorKey = -1;
             navBarColor = getThemedColor(Theme.key_dialogBackgroundGray);
             AndroidUtilities.setNavigationBarColor(getWindow(), getThemedColor(Theme.key_dialogBackground), false);
             AndroidUtilities.setLightNavigationBar(getWindow(), AndroidUtilities.computePerceivedBrightness(navBarColor) > 0.721);
@@ -4431,8 +4435,10 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 layouts[a].onDismiss();
             }
         }
+        //AndroidUtilities.setNavigationBarColor(getWindow(), ColorUtils.setAlphaComponent(getThemedColor(Theme.key_windowBackgroundGray), 0), true, tcolor -> {
+        //    navBarColorKey = -1;
         AndroidUtilities.setNavigationBarColor(getWindow(), ColorUtils.setAlphaComponent(baseFragment.getNavigationBarColor(), 0), true, tcolor -> {
-            navBarColorKey = null;
+            navBarColorKey = -1;
             navBarColor = tcolor;
             containerView.invalidate();
         });

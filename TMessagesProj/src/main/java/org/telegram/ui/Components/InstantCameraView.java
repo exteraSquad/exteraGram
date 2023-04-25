@@ -564,7 +564,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
         switchCameraDrawable = (AnimatedVectorDrawable) ContextCompat.getDrawable(getContext(), R.drawable.avd_flip);
         switchCameraButton.setImageDrawable(switchCameraDrawable);
 
-        flashlightButtonDrawable = new CrossOutDrawable(getContext(), R.drawable.flash_on, null);
+        flashlightButtonDrawable = new CrossOutDrawable(getContext(), R.drawable.flash_on, -1);
         flashlightButtonDrawable.setCrossOut(true, false);
         if (ExteraConfig.useSolarIcons) flashlightButtonDrawable.setPaddings(0, AndroidUtilities.dp(2), 0, -AndroidUtilities.dp(2));
         else flashlightButtonDrawable.setPaddings(AndroidUtilities.dp(5), AndroidUtilities.dp(8), AndroidUtilities.dp(5), AndroidUtilities.dp(2));

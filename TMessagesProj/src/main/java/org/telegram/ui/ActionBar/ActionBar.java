@@ -23,7 +23,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -43,12 +42,13 @@ import android.widget.ImageView;
 
 import androidx.core.graphics.ColorUtils;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.UserConfig;
 import org.telegram.ui.Adapters.FiltersView;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.BackupImageView;
@@ -58,8 +58,6 @@ import org.telegram.ui.Components.FireworksEffect;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.SnowflakesEffect;
-
-import com.exteragram.messenger.ExteraConfig;
 
 import java.util.ArrayList;
 
@@ -139,6 +137,8 @@ public class ActionBar extends FrameLayout {
     private CharSequence subtitle;
     private boolean drawBackButton;
     private boolean attached;
+    private boolean resumed;
+    private boolean attachState;
 
     private View.OnTouchListener interceptTouchEventListener;
     private final Theme.ResourcesProvider resourcesProvider;
@@ -1410,7 +1410,14 @@ public class ActionBar extends FrameLayout {
         }
     }
 
+    public void onResume() {
+        resumed = true;
+        updateAttachState();
+    }
+
     protected void onPause() {
+        resumed = false;
+        updateAttachState();
         if (menu != null) {
             menu.hideAllPopupMenus();
         }
@@ -1689,7 +1696,7 @@ public class ActionBar extends FrameLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         attached = true;
-        ellipsizeSpanAnimator.onAttachedToWindow();
+        updateAttachState();
         if (SharedConfig.noStatusBar && actionModeVisible) {
             AndroidUtilities.setLightStatusBar(((Activity) getContext()).getWindow(), !(ColorUtils.calculateLuminance(actionModeColor) < 0.7f));
         }
@@ -1702,7 +1709,7 @@ public class ActionBar extends FrameLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         attached = false;
-        ellipsizeSpanAnimator.onDetachedFromWindow();
+        updateAttachState();
         if (SharedConfig.noStatusBar && actionModeVisible) {
             if (actionBarColor == 0) {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
@@ -1715,6 +1722,18 @@ public class ActionBar extends FrameLayout {
         }
     }
 
+    private void updateAttachState() {
+        boolean attachState = attached && resumed;
+        if (this.attachState != attachState) {
+            this.attachState = attachState;
+            if (attachState) {
+                ellipsizeSpanAnimator.onAttachedToWindow();
+            } else {
+                ellipsizeSpanAnimator.onDetachedFromWindow();
+            }
+        }
+    }
+
     public ActionBarMenu getActionMode() {
         return actionMode;
     }
@@ -1724,75 +1743,71 @@ public class ActionBar extends FrameLayout {
     }
 
     public void beginDelayedTransition() {
-        TransitionSet transitionSet = new TransitionSet();
-        transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
-        transitionSet.addTransition(new Fade());
-        transitionSet.addTransition(new ChangeBounds() {
-
-
-            public void captureStartValues(TransitionValues transitionValues) {
-                super.captureStartValues(transitionValues);
-                if (transitionValues.view instanceof SimpleTextView) {
-                    float textSize = ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
-                    transitionValues.values.put("text_size", textSize);
-                }
-            }
-
-            public void captureEndValues(TransitionValues transitionValues) {
-                super.captureEndValues(transitionValues);
-                if (transitionValues.view instanceof SimpleTextView) {
-                    float textSize= ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
-                    transitionValues.values.put("text_size", textSize);
-                }
-            }
-
-            @Override
-            public Animator createAnimator(ViewGroup sceneRoot, TransitionValues startValues, TransitionValues endValues) {
-                if (startValues != null && startValues.view instanceof SimpleTextView) {
-                    AnimatorSet animatorSet = new AnimatorSet();
-                    if (endValues != null) {
-                        Animator animator = super.createAnimator(sceneRoot, startValues, endValues);
-                        float s = (float) startValues.values.get("text_size") / (float) endValues.values.get("text_size");
-                        startValues.view.setScaleX(s);
-                        startValues.view.setScaleY(s);
-                        if (animator != null) {
-                            animatorSet.playTogether(animator);
-                        }
+        if (!LocaleController.isRTL) {
+            TransitionSet transitionSet = new TransitionSet();
+            transitionSet.setOrdering(TransitionSet.ORDERING_TOGETHER);
+            transitionSet.addTransition(new Fade());
+            transitionSet.addTransition(new ChangeBounds() {
+                public void captureStartValues(TransitionValues transitionValues) {
+                    super.captureStartValues(transitionValues);
+                    if (transitionValues.view instanceof SimpleTextView) {
+                        float textSize = ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
+                        transitionValues.values.put("text_size", textSize);
                     }
-                    animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_X, 1f));
-                    animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_Y, 1f));
-                    animatorSet.addListener(new AnimatorListenerAdapter() {
-
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            super.onAnimationStart(animation);
-                            startValues.view.setLayerType(LAYER_TYPE_HARDWARE, null);
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            startValues.view.setLayerType(LAYER_TYPE_NONE, null);
-                        }
-                    });
-                    return animatorSet;
-                } else {
-                    return super.createAnimator(sceneRoot, startValues, endValues);
                 }
-            }
-        });
-        centerScale = false;
-        transitionSet.setDuration(220);
-        transitionSet.setInterpolator(CubicBezierInterpolator.DEFAULT);
-        TransitionManager.beginDelayedTransition(this, transitionSet);
+
+                public void captureEndValues(TransitionValues transitionValues) {
+                    super.captureEndValues(transitionValues);
+                    if (transitionValues.view instanceof SimpleTextView) {
+                        float textSize = ((SimpleTextView) transitionValues.view).getTextPaint().getTextSize();
+                        transitionValues.values.put("text_size", textSize);
+                    }
+                }
+
+                @Override
+                public Animator createAnimator(ViewGroup sceneRoot, TransitionValues startValues, TransitionValues endValues) {
+                    if (startValues != null && startValues.view instanceof SimpleTextView) {
+                        AnimatorSet animatorSet = new AnimatorSet();
+                        if (endValues != null) {
+                            Animator animator = super.createAnimator(sceneRoot, startValues, endValues);
+                            float s = (float) startValues.values.get("text_size") / (float) endValues.values.get("text_size");
+                            startValues.view.setScaleX(s);
+                            startValues.view.setScaleY(s);
+                            if (animator != null) {
+                                animatorSet.playTogether(animator);
+                            }
+                        }
+                        animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_X, 1f));
+                        animatorSet.playTogether(ObjectAnimator.ofFloat(startValues.view, SCALE_Y, 1f));
+                        animatorSet.addListener(new AnimatorListenerAdapter() {
+
+                            @Override
+                            public void onAnimationStart(Animator animation) {
+                                super.onAnimationStart(animation);
+                                startValues.view.setLayerType(LAYER_TYPE_HARDWARE, null);
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                startValues.view.setLayerType(LAYER_TYPE_NONE, null);
+                            }
+                        });
+                        return animatorSet;
+                    } else {
+                        return super.createAnimator(sceneRoot, startValues, endValues);
+                    }
+                }
+            });
+            centerScale = false;
+            transitionSet.setDuration(220);
+            transitionSet.setInterpolator(CubicBezierInterpolator.DEFAULT);
+            TransitionManager.beginDelayedTransition(this, transitionSet);
+        }
     }
 
-    private int getThemedColor(String key) {
-        Integer color = resourcesProvider != null ? resourcesProvider.getColor(key) : null;
-        if (color == null) {
-            color = parentFragment != null ? parentFragment.getThemedColor(key) : null;
-        }
-        return color != null ? color : Theme.getColor(key);
+    private int getThemedColor(int key) {
+        return Theme.getColor(key, resourcesProvider);
     }
 
     public void setDrawBlurBackground(SizeNotifierFrameLayout contentView) {

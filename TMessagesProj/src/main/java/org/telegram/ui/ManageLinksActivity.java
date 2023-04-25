@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.AnimationNotificationsLocker;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
@@ -1682,7 +1683,7 @@ public class ManageLinksActivity extends BaseFragment {
         return true;
     }
 
-    int animationIndex = -1;
+    AnimationNotificationsLocker notificationsLocker = new AnimationNotificationsLocker();
 
     @Override
     public void onTransitionAnimationEnd(boolean isOpen, boolean backward) {
@@ -1693,12 +1694,12 @@ public class ManageLinksActivity extends BaseFragment {
                 inviteLinkBottomSheet.show();
             }
         }
-        NotificationCenter.getInstance(currentAccount).onAnimationFinish(animationIndex);
+        notificationsLocker.unlock();
     }
 
     @Override
     public void onTransitionAnimationStart(boolean isOpen, boolean backward) {
         super.onTransitionAnimationStart(isOpen, backward);
-        animationIndex = NotificationCenter.getInstance(currentAccount).setAnimationInProgress(animationIndex, null);
+        notificationsLocker.lock();
     }
 }

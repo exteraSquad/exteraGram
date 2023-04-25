@@ -33,7 +33,7 @@ public class ChatUnreadCell extends FrameLayout {
         textView.setPadding(AndroidUtilities.dp(12), AndroidUtilities.dp(6), AndroidUtilities.dp(12), AndroidUtilities.dp(6));
         textView.setTextSize(14);
         textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(getColor());
+        textView.setTextColor(getColor(Theme.key_chat_unreadMessagesStartText));
         textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
         addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
     }
@@ -51,8 +51,8 @@ public class ChatUnreadCell extends FrameLayout {
         super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(46), MeasureSpec.EXACTLY));
     }
 
-    private int getColor() {
-        Integer color = resourcesProvider != null ? resourcesProvider.getColor(Theme.key_chat_unreadMessagesStartText) : null;
-        return color != null ? color : Theme.getColor(Theme.key_chat_unreadMessagesStartText);
+    private int getColor(int key) {
+        Integer color = resourcesProvider != null ? resourcesProvider.getColor(key) : null;
+        return color != null ? color : Theme.getColor(key);
     }
 }
