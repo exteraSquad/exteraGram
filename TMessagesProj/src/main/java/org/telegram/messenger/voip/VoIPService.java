@@ -4097,11 +4097,16 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 		}
 		Bitmap avatar = getRoundAvatarBitmap(userOrChat);
 		if (Build.VERSION.SDK_INT >= 31) {
+			String presonName = ContactsController.formatName(userOrChat);
+			if (TextUtils.isEmpty(presonName)) {
+				//java.lang.IllegalArgumentException: person must have a non-empty a name
+				presonName = "___";
+			}
 			builder.setColor(0xff282e31);
 			builder.setColorized(true);
 			Person caller = new Person.Builder()
-					.setIcon(Icon.createWithBitmap(avatar))
-					.setName(name)
+					.setIcon(Icon.createWithAdaptiveBitmap(avatar))
+					.setName(presonName)
 					.build();
 			Notification.CallStyle callStyle = Notification.CallStyle.forIncomingCall(caller, endPendingIntent, answerPendingIntent);
 			callStyle.setIsVideo(videoCall);
