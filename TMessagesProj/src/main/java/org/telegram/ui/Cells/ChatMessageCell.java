@@ -79,7 +79,6 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -3755,22 +3754,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         return currentMessageObject.getRepliesCount();
     }
 
-    private int getForwardsCount() {
-        if (currentMessagesGroup != null && !currentMessagesGroup.messages.isEmpty()) {
-            MessageObject messageObject = currentMessagesGroup.messages.get(0);
-            return messageObject.messageOwner.forwards;
-        }
-        return currentMessageObject.messageOwner.forwards;
-    }
-
-    private int getRepliesOrForwards() {
-        return shouldShowForwards() ? getForwardsCount() : getRepliesCount();
-    }
-
-    private boolean shouldShowForwards() {
-        return false && currentMessageObject.messageOwner.forwards > 0 && ChatObject.isChannel(currentChat);
-    }
-
     private ArrayList<TLRPC.Peer> getRecentRepliers() {
         if (currentMessagesGroup != null && !currentMessagesGroup.messages.isEmpty()) {
             MessageObject messageObject = currentMessagesGroup.messages.get(0);
@@ -3821,7 +3804,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (lastViewsCount != currentMessageObject.messageOwner.views) {
             return true;
         }
-        if (lastRepliesCount != getRepliesOrForwards()) {
+        if (lastRepliesCount != getRepliesCount()) {
             return true;
         }
         if (lastReactions != currentMessageObject.messageOwner.reactions) {
@@ -4270,7 +4253,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             lastSendState = messageObject.messageOwner.send_state;
             lastDeleteDate = messageObject.messageOwner.destroyTime;
             lastViewsCount = messageObject.messageOwner.views;
-            lastRepliesCount = getRepliesOrForwards();
+            lastRepliesCount = getRepliesCount();
             if (messageIdChanged) {
                 isPressed = false;
                 isCheckPressed = true;
@@ -5824,9 +5807,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     backgroundWidth = maxWidth = Math.min(AndroidUtilities.getMinTabletSide() - AndroidUtilities.dp(drawAvatar ? 102 : 50), AndroidUtilities.dp(270));
                 } else {
                     backgroundWidth = maxWidth = Math.min(getParentWidth() - AndroidUtilities.dp(drawAvatar ? 102 : 50), AndroidUtilities.dp(270));
-                }
-                if (ExteraConfig.showMessageID) {
-                    backgroundWidth += Theme.chat_timePaint.measureText(", " + messageObject.messageOwner.id);
                 }
                 createDocumentLayout(backgroundWidth, messageObject);
 
@@ -12259,9 +12239,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         } else {
             timeString = LocaleController.getInstance().formatterDay.format((long) (messageObject.messageOwner.date) * 1000);
         }
-        if (ExteraConfig.showMessageID && messageObject.messageOwner != null && (isChat || isMegagroup || ChatObject.isChannel(currentChat)) && !messageObject.isSponsored()) {
-            timeString = timeString + ", " + messageObject.messageOwner.id;
-        }
         if (currentMessageObject.isDecrypted && currentMessageObject.currentEncryptor != null) {
             timeString = currentMessageObject.currentEncryptor.getName() + " " + timeString;
         }
@@ -12289,8 +12266,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             currentUnlockString = str.length() >= 2 ? str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1).toLowerCase(Locale.ROOT) : str;
             unlockTextWidth = (int) Math.ceil(Theme.chat_unlockExtendedMediaTextPaint.measureText(currentUnlockString));
         }
-        if (isChat && isMegagroup && !isThreadChat && hasReplies || shouldShowForwards()) {
-            currentRepliesString = String.format("%s", LocaleController.formatShortNumber(getRepliesOrForwards(), null));
+        if (isChat && isMegagroup && !isThreadChat && hasReplies) {
+            currentRepliesString = String.format("%s", LocaleController.formatShortNumber(getRepliesCount(), null));
             repliesTextWidth = (int) Math.ceil(Theme.chat_timePaint.measureText(currentRepliesString));
             float drawableWidth = Theme.chat_msgInRepliesDrawable.getIntrinsicWidth() * (Theme.chat_timePaint.getTextSize() - AndroidUtilities.dp(2)) / Theme.chat_msgInRepliesDrawable.getIntrinsicHeight();
             timeWidth += repliesTextWidth + drawableWidth + AndroidUtilities.dp(10);
@@ -12620,10 +12597,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     currentForwardNameString = currentForwardName;
                 }
 
-                if (ExteraConfig.dateOfForwardedMsg) {
-                    currentForwardNameString += " • " + LocaleController.formatDateTime(messageObject.messageOwner.fwd_from.date);
-                }
-
                 forwardedNameWidth = getMaxNameWidth();
                 String forwardedString = getForwardedMessageText(messageObject);
                 if (hasPsaHint) {
@@ -12890,10 +12863,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             currentForwardNameString = UserObject.getUserName(currentForwardUser);
                         } else {
                             currentForwardNameString = currentForwardName;
-                        }
-
-                        if (ExteraConfig.dateOfForwardedMsg) {
-                            currentForwardNameString += " • " + LocaleController.formatDateTime(messageObject.messageOwner.fwd_from.date);
                         }
 
                         name = getForwardedMessageText(messageObject);
@@ -16332,10 +16301,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 canvas.scale(scale, scale, cx, repliesDrawable.getBounds().centerY());
             }
             canvas.save();
-            if (shouldShowForwards()) {
-                float cx = repliesX + w / 2f;
-                canvas.scale(-1, 1, cx, repliesDrawable.getBounds().centerY());
-            }
             repliesDrawable.draw(canvas);
             canvas.restore();
             repliesDrawable.setAlpha(255);
@@ -19029,7 +18994,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 lastDrawCommentNumber = drawCommentNumber;
             }
 
-            lastRepliesCount = getRepliesOrForwards();
+            lastRepliesCount = getRepliesCount();
             this.lastViewsCount = getMessageObject().messageOwner.views;
             lastRepliesLayout = repliesLayout;
             lastViewsLayout = viewsLayout;
@@ -19246,7 +19211,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 accessibilityText = null;
             }
 
-            if ((lastRepliesLayout != null || repliesLayout != null) && lastRepliesCount != getRepliesOrForwards()) {
+            if ((lastRepliesLayout != null || repliesLayout != null) && lastRepliesCount != getRepliesCount()) {
                 animateRepliesLayout = lastRepliesLayout;
                 animateReplies = true;
                 changed = true;

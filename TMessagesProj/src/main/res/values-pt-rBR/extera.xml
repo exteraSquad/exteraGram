@@ -109,8 +109,7 @@ CameraX só é suportada nos
     <string name="DisableJumpToNextChannel">Desativar \"Ir para o próximo canal\"</string>
     <string name="ShowActionTimestamps">Mostrar data e hora de ações</string>
     <string name="HideShareButton">Ocultar botão \"%1$s\"</string>
-    <string name="DateOfForwardedMsg">Mostrar a data da mensagem encaminhada</string>
-    <string name="ShowMessageID">Mostrar ID da mensagem</string>
+    <string name="ShowDetailsButton">Mostrar a data da mensagem encaminhada</string>
     <string name="AddCommaAfterMention">Adicionar vírgula após a menção</string>
     <string name="AddCommaAfterMentionInfo">Uma vírgula será colocada automaticamente após tocar no usuário que você deseja mencionar.</string>
     <string name="HideCameraTile">Ocultar Título de Câmera Instantânea</string>

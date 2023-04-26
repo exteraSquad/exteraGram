@@ -138,8 +138,7 @@
     <string name="ShowActionTimestamps">Show Timestamps for Actions</string>
     <string name="ShowActionTimestampsInfo">Show Timestamps for Actions</string>
     <string name="HideShareButton">Hide Side \"%1$s\" Button</string>
-    <string name="DateOfForwardedMsg">Show Date of Forwarded Message</string>
-    <string name="ShowMessageID">Show Message ID</string>
+    <string name="MessageMenu">Message Menu</string>
     <string name="AddCommaAfterMention">Add Comma after Mention</string>
     <string name="AddCommaAfterMentionInfo">A comma will be placed automatically after tapping on the user you want to mention.</string>
 
@@ -188,6 +187,17 @@
     <string name="Version">Version</string>
     <string name="UpdateSize">Update Size</string>
     <string name="Changelog">Changelog:</string>
+
+    <!-- Message Details -->
+    <string name="Details">Details</string>
+    <string name="Date">Date</string>
+    <string name="EditedDate">Edit Date</string>
+    <string name="ForwardedDate">Forwarding Date</string>
+    <string name="FileSize">File Size</string>
+    <string name="FileName">File Name</string>
+    <string name="FilePath">File Path</string>
+    <string name="MimeType">Mime Type</string>
+    <string name="Datacenter">Datacenter</string>
 
     <!-- Other -->
     <string name="RestartRequired">Restart the App to take effect.</string>

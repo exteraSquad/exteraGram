@@ -116,8 +116,12 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
     private int messagesHeaderRow;
     private int hideShareButtonRow;
-    private int dateOfForwardedMsgRow;
-    private int showMessageIDRow;
+    private int messageMenuRow;
+    private int copyPhotoRow;
+    private int saveRow;
+    private int clearRow;
+    private int reportRow;
+    private int detailsRow;
     private int messagesDividerRow;
 
     private int photosHeaderRow;
@@ -135,6 +139,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int videosDividerRow;
 
     private boolean adminShortcutsExpanded;
+    private boolean messageMenuExpanded;
 
     private class StickerSizeCell extends FrameLayout {
 
@@ -271,8 +276,20 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
         messagesHeaderRow = newRow();
         hideShareButtonRow = newRow();
-        dateOfForwardedMsgRow = newRow();
-        showMessageIDRow = newRow();
+        messageMenuRow = newRow();
+        if (messageMenuExpanded) {
+            copyPhotoRow = newRow();
+            saveRow = newRow();
+            clearRow = newRow();
+            reportRow = newRow();
+            detailsRow = newRow();
+        } else {
+            copyPhotoRow = -1;
+            saveRow = -1;
+            clearRow = -1;
+            reportRow = -1;
+            detailsRow = -1;
+        }
         showActionTimestampsRow = newRow();
         messagesDividerRow = newRow();
 
@@ -324,12 +341,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             ExteraConfig.editor.putBoolean("disableJumpToNextChannel", ExteraConfig.disableJumpToNextChannel ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disableJumpToNextChannel);
             parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == dateOfForwardedMsgRow) {
-            ExteraConfig.editor.putBoolean("dateOfForwardedMsg", ExteraConfig.dateOfForwardedMsg ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.dateOfForwardedMsg);
-        } else if (position == showMessageIDRow) {
-            ExteraConfig.editor.putBoolean("showMessageID", ExteraConfig.showMessageID ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.showMessageID);
         } else if (position == showActionTimestampsRow) {
             ExteraConfig.editor.putBoolean("showActionTimestamps", ExteraConfig.showActionTimestamps ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.showActionTimestamps);
@@ -421,7 +432,16 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             } else {
                 listAdapter.notifyItemRangeRemoved(adminShortcutsRow + 1, 4);
             }
-        } else if (view instanceof CheckBoxCell) {
+        } else if (position == messageMenuRow) {
+            messageMenuExpanded ^= true;
+            updateRowsId();
+            listAdapter.notifyItemChanged(messageMenuRow, payload);
+            if (messageMenuExpanded) {
+                listAdapter.notifyItemRangeInserted(messageMenuRow + 1, 3);
+            } else {
+                listAdapter.notifyItemRangeRemoved(messageMenuRow + 1, 3);
+            }
+        } else if (position >= permissionsRow && position <= recentActionsRow) {
             if (position == permissionsRow) {
                 ExteraConfig.editor.putBoolean("permissionsShortcut", ExteraConfig.permissionsShortcut ^= true).apply();
                 listAdapter.notifyItemChanged(permissionsRow, payload);
@@ -436,6 +456,24 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 listAdapter.notifyItemChanged(recentActionsRow, payload);
             }
             listAdapter.notifyItemChanged(adminShortcutsRow, payload);
+        } else if (position >= copyPhotoRow && position <= detailsRow) {
+            if (position == copyPhotoRow) {
+                ExteraConfig.editor.putBoolean("showCopyPhotoButton", ExteraConfig.showCopyPhotoButton ^= true).apply();
+                listAdapter.notifyItemChanged(copyPhotoRow, payload);
+            } else if (position == clearRow) {
+                ExteraConfig.editor.putBoolean("showClearButton", ExteraConfig.showClearButton ^= true).apply();
+                listAdapter.notifyItemChanged(clearRow, payload);
+            } else if (position == saveRow) {
+                ExteraConfig.editor.putBoolean("showSaveMessageButton", ExteraConfig.showSaveMessageButton ^= true).apply();
+                listAdapter.notifyItemChanged(saveRow, payload);
+            } else if (position == reportRow) {
+                ExteraConfig.editor.putBoolean("showReportButton", ExteraConfig.showReportButton ^= true).apply();
+                listAdapter.notifyItemChanged(reportRow, payload);
+            } else if (position == detailsRow) {
+                ExteraConfig.editor.putBoolean("showDetailsButton", ExteraConfig.showDetailsButton ^= true).apply();
+                listAdapter.notifyItemChanged(detailsRow, payload);
+            }
+            listAdapter.notifyItemChanged(messageMenuRow, payload);
         }
     }
 
@@ -459,18 +497,38 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
 
     private int getShortcutsSelectedCount() {
         int i = 0;
-        if (ExteraConfig.permissionsShortcut) {
+        if (ExteraConfig.permissionsShortcut)
             i++;
-        }
-        if (ExteraConfig.administratorsShortcut) {
+        if (ExteraConfig.administratorsShortcut)
             i++;
-        }
-        if (ExteraConfig.membersShortcut) {
+        if (ExteraConfig.membersShortcut)
             i++;
-        }
-        if (ExteraConfig.recentActionsShortcut) {
+        if (ExteraConfig.recentActionsShortcut)
             i++;
-        }
+        return i;
+    }
+
+    private void setMessageMenuEnabled(boolean enabled) {
+        ExteraConfig.editor.putBoolean("showCopyPhotoButton", ExteraConfig.showCopyPhotoButton = enabled).apply();
+        ExteraConfig.editor.putBoolean("showClearButton", ExteraConfig.showClearButton = enabled).apply();
+        ExteraConfig.editor.putBoolean("showSaveMessageButton", ExteraConfig.showSaveMessageButton = enabled).apply();
+        ExteraConfig.editor.putBoolean("showReportButton", ExteraConfig.showReportButton = enabled).apply();
+        ExteraConfig.editor.putBoolean("showDetailsButton", ExteraConfig.showDetailsButton = enabled).apply();
+        AndroidUtilities.updateVisibleRows(listView);
+    }
+
+    private int getMessageMenuSelectedCount() {
+        int i = 0;
+        if (ExteraConfig.showCopyPhotoButton)
+            i++;
+        if (ExteraConfig.showSaveMessageButton)
+            i++;
+        if (ExteraConfig.showClearButton)
+            i++;
+        if (ExteraConfig.showReportButton)
+            i++;
+        if (ExteraConfig.showDetailsButton)
+            i++;
         return i;
     }
 
@@ -558,10 +616,6 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textCheckCell.setTextAndCheck(LocaleController.formatString("HideShareButton", R.string.HideShareButton, LocaleController.getString("ShareFile", R.string.ShareFile)), ExteraConfig.hideShareButton, true);
                     } else if (position == disableJumpToNextChannelRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableJumpToNextChannel", R.string.DisableJumpToNextChannel), ExteraConfig.disableJumpToNextChannel, true);
-                    } else if (position == dateOfForwardedMsgRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("DateOfForwardedMsg", R.string.DateOfForwardedMsg), ExteraConfig.dateOfForwardedMsg, true);
-                    } else if (position == showMessageIDRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("ShowMessageID", R.string.ShowMessageID), ExteraConfig.showMessageID, true);
                     } else if (position == showActionTimestampsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("ShowActionTimestamps", R.string.ShowActionTimestamps), ExteraConfig.showActionTimestamps, false);
                     } else if (position == staticZoomRow) {
@@ -629,9 +683,17 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                             checkCell.setChecked(checked);
                             setShortcutsEnabled(checked);
                         });
-                        checkCell.getCheckBox().setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
-                        checkCell.getCheckBox().setDrawIconType(0);
+                    } else if (position == messageMenuRow) {
+                        int messageMenuSelectedCount = getMessageMenuSelectedCount();
+                        checkCell.setTextAndCheck(LocaleController.getString("MessageMenu", R.string.MessageMenu), messageMenuSelectedCount > 0, true, true);
+                        checkCell.setCollapseArrow(String.format(Locale.US, "%d/5", messageMenuSelectedCount), !messageMenuExpanded, () -> {
+                            boolean checked = !checkCell.isChecked();
+                            checkCell.setChecked(checked);
+                            setMessageMenuEnabled(checked);
+                        });
                     }
+                    checkCell.getCheckBox().setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
+                    checkCell.getCheckBox().setDrawIconType(0);
                     break;
                 case 19:
                     CheckBoxCell checkBoxCell = (CheckBoxCell) holder.itemView;
@@ -643,6 +705,16 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         checkBoxCell.setText(LocaleController.getString("ChannelMembers", R.string.ChannelMembers), "", ExteraConfig.membersShortcut, true, true);
                     } else if (position == recentActionsRow) {
                         checkBoxCell.setText(LocaleController.getString("EventLog", R.string.EventLog), "", ExteraConfig.recentActionsShortcut, true, true);
+                    } else if (position == copyPhotoRow) {
+                        checkBoxCell.setText(LocaleController.getString("CopyPhoto", R.string.CopyPhoto), "", ExteraConfig.showCopyPhotoButton, true, true);
+                    } else if (position == clearRow) {
+                        checkBoxCell.setText(LocaleController.getString("Clear", R.string.Clear), "", ExteraConfig.showClearButton, true, true);
+                    } else if (position == saveRow) {
+                        checkBoxCell.setText(LocaleController.getString("Save", R.string.Save), "", ExteraConfig.showSaveMessageButton, true, true);
+                    } else if (position == reportRow) {
+                        checkBoxCell.setText(LocaleController.getString("ReportChat", R.string.ReportChat), "", ExteraConfig.showReportButton, true, true);
+                    } else if (position == detailsRow) {
+                        checkBoxCell.setText(LocaleController.getString("Details", R.string.Details), "", ExteraConfig.showDetailsButton, true, true);
                     }
                     checkBoxCell.setPad(1);
                     break;
@@ -670,9 +742,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                 return 15;
             } else if (position == doubleTapReactionRow) {
                 return 16;
-            } else if (position == adminShortcutsRow) {
+            } else if (position == adminShortcutsRow || position == messageMenuRow) {
                 return 18;
-            } else if (position == administratorsRow || position == permissionsRow || position == membersRow || position == recentActionsRow) {
+            } else if (position >= permissionsRow && position <= recentActionsRow || position >= copyPhotoRow && position <= detailsRow) {
                 return 19;
             }
             return 5;

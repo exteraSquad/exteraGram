@@ -1420,7 +1420,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
             }
         } else if (id == 3) {
             try {
-                ExteraUtils.openById(stickerSet.set.id >> 32, fragment.getParentActivity(), uid -> {
+                ExteraUtils.openById(stickerSet.set.id >> 32, fragment.getParentActivity(), (uid, un) -> {
                     Bundle args = new Bundle();
                     args.putLong("user_id", uid);
                     ProfileActivity newFragment = new ProfileActivity(args);
@@ -1429,7 +1429,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
                         dismiss();
                     });
                 }, uid -> {
-                    AndroidUtilities.addToClipboard("" + uid);
+                    AndroidUtilities.addToClipboard(ExteraUtils.getOwnerIds(stickerSet.set.id));
                     BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
                 });
             } catch (Exception e) {

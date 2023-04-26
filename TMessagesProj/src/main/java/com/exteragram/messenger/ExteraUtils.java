@@ -514,11 +514,37 @@ public final class ExteraUtils {
     }
 
     public interface OnSearchSuccess {
-        void run(long id);
+        void run(long id, String username);
     }
 
     public interface OnSearchFail {
         void run(long id);
+    }
+
+    public static void getInfoAboutOwner(Long userId, OnSearchSuccess success, OnSearchFail fail) {
+        if (userId == 0) {
+            return;
+        }
+        TLRPC.User user = getMessagesController().getUser(userId);
+        if (user != null) {
+            useFallback = false;
+            success.run(userId, UserObject.getPublicUsername(user));
+        } else {
+            searchUser(userId, true, true, user1 -> {
+                if (user1 != null && user1.access_hash != 0) {
+                    useFallback = false;
+                    success.run(userId, UserObject.getPublicUsername(user1));
+                } else {
+                    if (!useFallback) {
+                        useFallback = true;
+                        getInfoAboutOwner(0x100000000L + userId, success, fail);
+                    } else {
+                        useFallback = false;
+                        fail.run(userId);
+                    }
+                }
+            });
+        }
     }
 
     public static void openById(Long userId, Activity activity, OnSearchSuccess success, OnSearchFail fail) {
@@ -528,12 +554,12 @@ public final class ExteraUtils {
         TLRPC.User user = getMessagesController().getUser(userId);
         if (user != null) {
             useFallback = false;
-            success.run(userId);
+            success.run(userId, "");
         } else {
             searchUser(userId, true, true, user1 -> {
                 if (user1 != null && user1.access_hash != 0) {
                     useFallback = false;
-                    success.run(userId);
+                    success.run(userId, "");
                 } else {
                     if (!useFallback) {
                         useFallback = true;
@@ -643,6 +669,10 @@ public final class ExteraUtils {
         }));
     }
 
+    public static String getOwnerIds(long stickerSetId) {
+        return "int32: " + (stickerSetId >> 32) + '\n' +
+                "int64: " + (0x100000000L + (stickerSetId >> 32));
+    }
     public static MessagesController getMessagesController() {
         return MessagesController.getInstance(UserConfig.selectedAccount);
     }
@@ -747,7 +777,6 @@ public final class ExteraUtils {
         params.putInt("version_code", BuildConfig.VERSION_CODE);
         params.putBoolean("has_play_services", isGooglePlayServicesAvailable(context));
         params.putString("device", Build.MANUFACTURER + " " + Build.MODEL);
-        params.putString("os_version", Build.VERSION.RELEASE);
         params.putString("performance_class", getPerformanceClassString());
         params.putString("locale", LocaleController.getSystemLocaleStringIso639());
         ApplicationLoader.getFirebaseAnalytics().logEvent("stats", params);

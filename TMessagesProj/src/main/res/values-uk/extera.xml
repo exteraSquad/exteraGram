@@ -109,7 +109,7 @@ CameraX підтримується тільки на
     <string name="DisableJumpToNextChannel">Вимкнути \"Перейти до наступного каналу\"</string>
     <string name="ShowActionTimestamps">Показувати час для дій</string>
     <string name="HideShareButton">Приховати бокову кнопку %1$s</string>
-    <string name="DateOfForwardedMsg">Показувати дату пересланого повідомлення</string>
+    <string name="ShowDetailsButton">Показувати дату пересланого повідомлення</string>
     <string name="ShowMessageID">Показати ідентифікатор повідомлення</string>
     <string name="AddCommaAfterMention">Додати кому після згадування</string>
     <string name="AddCommaAfterMentionInfo">Кома буде розміщуватися автоматично після натискання на користувача, якого ви хочете згадати.</string>

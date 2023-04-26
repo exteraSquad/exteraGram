@@ -102,8 +102,11 @@ public class ExteraConfig {
     public static boolean disableJumpToNextChannel;
     public static boolean showActionTimestamps;
     public static boolean hideShareButton;
-    public static boolean dateOfForwardedMsg;
-    public static boolean showMessageID;
+    public static boolean showCopyPhotoButton;
+    public static boolean showClearButton;
+    public static boolean showSaveMessageButton;
+    public static boolean showDetailsButton;
+    public static boolean showReportButton;
     public static boolean addCommaAfterMention;
 
     public static int sendPhotosQuality;
@@ -235,8 +238,12 @@ public class ExteraConfig {
             disableJumpToNextChannel = preferences.getBoolean("disableJumpToNextChannel", false);
             showActionTimestamps = preferences.getBoolean("showActionTimestamps", true);
             hideShareButton = preferences.getBoolean("hideShareButton", true);
-            dateOfForwardedMsg = preferences.getBoolean("dateOfForwardedMsg", false);
-            showMessageID = preferences.getBoolean("showMessageID", false);
+            showDetailsButton = preferences.getBoolean("showDetailsButton", true);
+            showSaveMessageButton = preferences.getBoolean("showSaveMessageButton", true);
+            showCopyPhotoButton = preferences.getBoolean("showCopyPhotoButton", true);
+            showClearButton = preferences.getBoolean("showClearButton", true);
+            showReportButton = preferences.getBoolean("showReportButton", true);
+
             addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
 
             sendPhotosQuality = preferences.getInt("sendPhotosQuality", 1);

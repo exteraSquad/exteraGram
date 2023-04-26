@@ -134,8 +134,7 @@
     <string name="DisableJumpToNextChannel">Отключить \"Перейти в новый канал\"</string>
     <string name="ShowActionTimestamps">Показывать время у действий</string>
     <string name="HideShareButton">Скрыть боковую кнопку \"%1$s\"</string>
-    <string name="DateOfForwardedMsg">Дата пересланного сообщения</string>
-    <string name="ShowMessageID">Показывать ID сообщения</string>
+    <string name="MessageMenu">Меню сообщения</string>
     <string name="AddCommaAfterMention">Запятая после упоминания</string>
     <string name="AddCommaAfterMentionInfo">Запятая будет ставиться автоматически после нажатия на пользователя, которого вы хотите упомянуть.</string>
 
@@ -185,8 +184,19 @@
     <string name="UpdateSize">Размер обновления</string>
     <string name="Changelog">Список изменений:</string>
 
+    <!-- Message Details -->
+    <string name="Details">Детали</string>
+    <string name="Date">Дата</string>
+    <string name="EditedDate">Дата изменения</string>
+    <string name="ForwardedDate">Дата пересылки</string>
+    <string name="FileSize">Размер файла</string>
+    <string name="FileName">Название файла</string>
+    <string name="FilePath">Путь к файлу</string>
+    <string name="MimeType">Тип медиа</string>
+    <string name="Datacenter">Датацентр</string>
+
     <!-- Other -->
-    <string name="RestartRequired">Перезагрузите приложение, чтобы изменения вступили в силу.</string>
+    <string name="RestartRequired">Перезапустите приложение, чтобы изменения вступили в силу.</string>
     <string name="ResetSettingsBulletin">Настройки **exteraGram** сброшены.</string>
     <string name="UserNotFound">Пользователь с этим **ID** не найден.</string>
     <string name="PhotoCopied">Фото скопировано в буфер обмена.</string>

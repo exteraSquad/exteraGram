@@ -109,8 +109,7 @@ CameraX wird nur auf
     <string name="DisableJumpToNextChannel">\"Zum nächsten Kanal springen\" deaktivieren</string>
     <string name="ShowActionTimestamps">Zeitstempel für Aktionen anzeigen</string>
     <string name="HideShareButton">\"%1$s\"-Knopf ausblenden</string>
-    <string name="DateOfForwardedMsg">Datum der weitergeleiteten Nachricht anzeigen</string>
-    <string name="ShowMessageID">Nachrichten-ID anzeigen</string>
+    <string name="ShowDetailsButton">Datum der weitergeleiteten Nachricht anzeigen</string>
     <string name="AddCommaAfterMention">Komma nach Erwähnung hinzufügen</string>
     <string name="AddCommaAfterMentionInfo">Ein Komma wird automatisch platziert, nachdem Sie auf den Benutzer getippt haben, den Sie erwähnen möchten.</string>
     <string name="HideCameraTile">Kamerakachel ausblenden</string>

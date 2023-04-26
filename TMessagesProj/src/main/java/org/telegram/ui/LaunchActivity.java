@@ -2857,7 +2857,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 Bundle args = new Bundle();
                 args.putLong("user_id", profile_user_id);
                 ProfileActivity fragment = new ProfileActivity(args);
-                ExteraUtils.openById(profile_user_id, this, uid -> {
+                ExteraUtils.openById(profile_user_id, this, (uid, un) -> {
                     AndroidUtilities.runOnUIThread(() -> presentFragment(fragment, false, false));
                     if (AndroidUtilities.isTablet()) {
                         actionBarLayout.showLastFragment();

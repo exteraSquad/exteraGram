@@ -110,6 +110,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.extras.MessageDetailsPopupWrapper;
 import com.exteragram.messenger.extras.PermissionUtils;
 import com.exteragram.messenger.premium.BoostController;
 import com.exteragram.messenger.premium.encryption.EncryptionHelper;
@@ -966,7 +967,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int OPTION_CLEAR_FROM_CACHE = 201;
     private final static int OPTION_COPY_PHOTO = 202;
     private final static int OPTION_DECRYPT = 203;
-
+    private final static int OPTION_DETAILS = 204;
 
     private final static int[] allowedNotificationsDuringChatListAnimations = new int[]{
             NotificationCenter.messagesRead,
@@ -23602,7 +23603,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             options.add(OPTION_EDIT);
                             icons.add(R.drawable.msg_edit);
                         }
-                        if (selectedObject.contentType == 0 && !selectedObject.isMediaEmptyWebpage() && selectedObject.getId() > 0 && !selectedObject.isOut() && (currentChat != null || currentUser != null && currentUser.bot)) {
+                        if (ExteraConfig.showReportButton && selectedObject.contentType == 0 && !selectedObject.isMediaEmptyWebpage() && selectedObject.getId() > 0 && !selectedObject.isOut() && (currentChat != null || currentUser != null && currentUser.bot)) {
                             items.add(LocaleController.getString("ReportChat", R.string.ReportChat));
                             options.add(OPTION_REPORT_CHAT);
                             icons.add(R.drawable.msg_report);
@@ -23714,7 +23715,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_gif);
                             }
                         } else if (type == 4) {
-                            if (!selectedObject.needDrawBluredPreview() && selectedObject.getDocument() != null) {
+                            if (!selectedObject.needDrawBluredPreview() && selectedObject.getDocument() != null && ExteraConfig.showClearButton) {
                                 items.add(LocaleController.getString("Clear", R.string.Clear));
                                 options.add(OPTION_CLEAR_FROM_CACHE);
                                 icons.add(R.drawable.msg_clear);
@@ -23753,9 +23754,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                         items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
                                         options.add(OPTION_SAVE_TO_GALLERY);
                                         icons.add(R.drawable.msg_gallery);
-                                        items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
-                                        options.add(OPTION_COPY_PHOTO);
-                                        icons.add(R.drawable.msg_copy_photo);
+                                        if (ExteraConfig.showCopyPhotoButton) {
+                                            items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
+                                            options.add(OPTION_COPY_PHOTO);
+                                            icons.add(R.drawable.msg_copy_photo);
+                                        }
                                     }
                                 }
                             }
@@ -23784,9 +23787,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_shareout);
                             }
                         } else if (type == 6) {
-                            items.add(LocaleController.getString("Clear", R.string.Clear));
-                            options.add(OPTION_CLEAR_FROM_CACHE);
-                            icons.add(R.drawable.msg_clear);
+                            if (ExteraConfig.showClearButton) {
+                                items.add(LocaleController.getString("Clear", R.string.Clear));
+                                options.add(OPTION_CLEAR_FROM_CACHE);
+                                icons.add(R.drawable.msg_clear);
+                            }
                             if (!noforwards && !selectedObject.hasRevealedExtendedMedia()) {
                                 items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
                                 options.add(OPTION_SAVE_TO_GALLERY2);
@@ -23819,7 +23824,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     options.add(OPTION_DELETE_STICKER_FROM_FAVORITES);
                                     icons.add(R.drawable.msg_unfave);
                                 }
-                                if (MessageObject.isStaticStickerDocument(selectedObject.getDocument())) {
+                                if (MessageObject.isStaticStickerDocument(selectedObject.getDocument()) && ExteraConfig.showCopyPhotoButton) {
                                     items.add(LocaleController.getString("CopySticker", R.string.CopySticker));
                                     options.add(OPTION_COPY_PHOTO);
                                     icons.add(R.drawable.msg_copy_photo);
@@ -23859,7 +23864,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 options.add(OPTION_DELETE_STICKER_FROM_FAVORITES);
                                 icons.add(R.drawable.msg_unfave);
                             }
-                            if (MessageObject.isStaticStickerDocument(selectedObject.getDocument())) {
+                            if (MessageObject.isStaticStickerDocument(selectedObject.getDocument()) && ExteraConfig.showCopyPhotoButton) {
                                 items.add(LocaleController.getString("CopySticker", R.string.CopySticker));
                                 options.add(OPTION_COPY_PHOTO);
                                 icons.add(R.drawable.msg_copy_photo);
@@ -23871,6 +23876,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             items.add(LocaleController.getString("Forward", R.string.Forward));
                             options.add(OPTION_FORWARD);
                             icons.add(R.drawable.msg_forward);
+                            if (ExteraConfig.showSaveMessageButton && !UserObject.isUserSelf(currentUser)) {
+                                items.add(LocaleController.getString("Save", R.string.Save));
+                                options.add(OPTION_SAVE_MESSAGE);
+                                icons.add(R.drawable.msg_saved);
+                            }
                         }
                         if (allowUnpin) {
                             items.add(LocaleController.getString("UnpinMessage", R.string.UnpinMessage));
@@ -23921,7 +23931,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 items.add(LocaleController.getString("BlockContact", R.string.BlockContact));
                                 options.add(OPTION_REPORT_CHAT);
                                 icons.add(R.drawable.msg_block2);
-                            } else {
+                            } else if (ExteraConfig.showReportButton) {
                                 items.add(LocaleController.getString("ReportChat", R.string.ReportChat));
                                 options.add(OPTION_REPORT_CHAT);
                                 icons.add(R.drawable.msg_report);
@@ -24023,6 +24033,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         icons.add(selectedObject.messageOwner.ttl_period != 0 ? R.drawable.msg_delete_auto : R.drawable.msg_delete);
                     }
                 }
+                if (!selectedObject.isSponsored() && ExteraConfig.showDetailsButton) {
+                    items.add(LocaleController.getString("Details", R.string.Details));
+                    options.add(OPTION_DETAILS);
+                    icons.add(R.drawable.msg_info);
+                }
             }
 
             if (options.isEmpty() && optionsView == null) {
@@ -24058,7 +24073,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             boolean showSponsorInfo = selectedObject != null && selectedObject.isSponsored() && (selectedObject.sponsoredInfo != null || selectedObject.sponsoredAdditionalInfo != null);
 
             int flags = 0;
-            if (isReactionsViewAvailable || showMessageSeen || showSponsorInfo) {
+            if (isReactionsViewAvailable || showMessageSeen || showSponsorInfo || options.contains(OPTION_DETAILS)) {
                 flags |= ActionBarPopupWindow.ActionBarPopupWindowLayout.FLAG_USE_SWIPEBACK;
             }
 
@@ -24757,6 +24772,26 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         } else {
                             cell.setVisibility(View.GONE);
                         }
+                    } else if (option == OPTION_DETAILS) {
+                        if (selectedObject == null) {
+                            continue;
+                        }
+                        MessageDetailsPopupWrapper messageDetailsPopup = new MessageDetailsPopupWrapper(this, popupLayout.getSwipeBack(), selectedObject, getResourceProvider()) {
+                            @Override
+                            protected void copy(String text) {
+                                if (AndroidUtilities.addToClipboard(text)) {
+                                    BulletinFactory.of(Bulletin.BulletinWindow.make(getParentActivity()), themeDelegate).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+                                }
+                            }
+                        };
+                        int foregroundIndex = popupLayout.addViewToSwipeBack(messageDetailsPopup.windowLayout);
+                        cell.setRightIcon(R.drawable.msg_arrowright);
+                        cell.setOnClickListener(view -> {
+                            if (selectedObject == null || i >= options.size() || getParentActivity() == null) {
+                                return;
+                            }
+                            popupLayout.getSwipeBack().openForeground(foregroundIndex);
+                        });
                     }
                 }
             }

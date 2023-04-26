@@ -1027,7 +1027,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
             }
         } else if (id == 3) {
             try {
-                ExteraUtils.openById(stickerSet.set.id >> 32, parentFragment.getParentActivity(), uid -> {
+                ExteraUtils.openById(stickerSet.set.id >> 32, parentFragment.getParentActivity(), (uid, un) -> {
                     Bundle args = new Bundle();
                     args.putLong("user_id", uid);
                     ProfileActivity fragment = new ProfileActivity(args);
@@ -1036,7 +1036,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
                         dismiss();
                     });
                 }, uid -> {
-                    AndroidUtilities.addToClipboard("" + uid);
+                    AndroidUtilities.addToClipboard(ExteraUtils.getOwnerIds(stickerSet.set.id));
                     BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
                 });
             } catch (Exception e) {

@@ -109,8 +109,7 @@ CameraX仅支持
     <string name="DisableJumpToNextChannel">禁用“跳转至下一个频道”</string>
     <string name="ShowActionTimestamps">显示操作的时间戳</string>
     <string name="HideShareButton">隐藏消息右侧的“%1$s”按钮</string>
-    <string name="DateOfForwardedMsg">显示被转发原消息时间</string>
-    <string name="ShowMessageID">显示消息ID</string>
+    <string name="ShowDetailsButton">显示被转发原消息时间</string>
     <string name="AddCommaAfterMention">选定@ 后自动添加逗号后缀</string>
     <string name="AddCommaAfterMentionInfo">点击您想要提及的用户后，将自动放置一个逗号。</string>
     <string name="HideCameraTile">隐藏即时相机</string>

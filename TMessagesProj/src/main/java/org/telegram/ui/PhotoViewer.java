@@ -12327,7 +12327,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
             boolean isIndexInvalid = (switchingToIndex < 0 || switchingToIndex >= avatarsArr.size());
             if (!avatarsArr.isEmpty() && !isIndexInvalid) {
-                if (avatarsArr.get(switchingToIndex).date > 100) {
+                if (avatarsArr.get(switchingToIndex).date != 0) {
                     String dateString = LocaleController.formatDateAudio(avatarsArr.get(switchingToIndex).date, false);
                     actionBarContainer.setSubtitle(dateString + ", DC" + avatarsArr.get(switchingToIndex).dc_id);
                     if (avatarsDialogId != 0) {

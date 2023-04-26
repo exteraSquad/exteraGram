@@ -1083,6 +1083,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
             args.putBoolean("onlySelect", true);
             args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_DEFAULT);
             args.putBoolean("allowGlobalSearch", false);
+            args.putBoolean("canSelectTopics", true);
             DialogsActivity activity = new DialogsActivity(args);
             activity.setDelegate((fragment, dids, message, param, topicsFragment) -> {
                 ExteraConfig.setChannelToSave(dids.get(0).dialogId);

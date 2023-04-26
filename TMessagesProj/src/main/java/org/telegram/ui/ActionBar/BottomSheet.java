@@ -1002,7 +1002,7 @@ public class BottomSheet extends Dialog {
     }
 
     public void fixNavigationBar() {
-        fixNavigationBar(getThemedColor(Theme.key_windowBackgroundGray));
+        fixNavigationBar(getThemedColor(Theme.key_dialogBackground));
     }
 
     public void fixNavigationBar(int bgColor) {

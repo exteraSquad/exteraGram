@@ -109,8 +109,7 @@ CameraX wspierana jest tylko na
     <string name="DisableJumpToNextChannel">Wyłącz „Przejdź do następnego kanału”</string>
     <string name="ShowActionTimestamps">Pokaż czas na działaniach</string>
     <string name="HideShareButton">Ukryj boczny przycisk „%1$s”</string>
-    <string name="DateOfForwardedMsg">Pokaż datę przekazanych wiadomości</string>
-    <string name="ShowMessageID">Pokaż ID wiadomości</string>
+    <string name="ShowDetailsButton">Pokaż datę przekazanych wiadomości</string>
     <string name="AddCommaAfterMention">Dodaj przecinek po wzmiance</string>
     <string name="AddCommaAfterMentionInfo">Przecinek zostanie dodany automatycznie po wybraniu użytkownika.</string>
     <string name="HideCameraTile">Ukryj kafelek błyskawicznego aparatu</string>
