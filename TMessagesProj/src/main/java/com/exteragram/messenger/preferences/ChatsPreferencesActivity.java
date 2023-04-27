@@ -120,6 +120,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int copyPhotoRow;
     private int saveRow;
     private int clearRow;
+    private int historyRow;
     private int reportRow;
     private int detailsRow;
     private int messagesDividerRow;
@@ -281,12 +282,14 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             copyPhotoRow = newRow();
             saveRow = newRow();
             clearRow = newRow();
+            historyRow = newRow();
             reportRow = newRow();
             detailsRow = newRow();
         } else {
             copyPhotoRow = -1;
             saveRow = -1;
             clearRow = -1;
+            historyRow = -1;
             reportRow = -1;
             detailsRow = -1;
         }
@@ -437,9 +440,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             updateRowsId();
             listAdapter.notifyItemChanged(messageMenuRow, payload);
             if (messageMenuExpanded) {
-                listAdapter.notifyItemRangeInserted(messageMenuRow + 1, 3);
+                listAdapter.notifyItemRangeInserted(messageMenuRow + 1, 6);
             } else {
-                listAdapter.notifyItemRangeRemoved(messageMenuRow + 1, 3);
+                listAdapter.notifyItemRangeRemoved(messageMenuRow + 1, 6);
             }
         } else if (position >= permissionsRow && position <= recentActionsRow) {
             if (position == permissionsRow) {
@@ -469,6 +472,9 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             } else if (position == reportRow) {
                 ExteraConfig.editor.putBoolean("showReportButton", ExteraConfig.showReportButton ^= true).apply();
                 listAdapter.notifyItemChanged(reportRow, payload);
+            } else if (position == historyRow) {
+                ExteraConfig.editor.putBoolean("showHistoryButton", ExteraConfig.showHistoryButton ^= true).apply();
+                listAdapter.notifyItemChanged(historyRow, payload);
             } else if (position == detailsRow) {
                 ExteraConfig.editor.putBoolean("showDetailsButton", ExteraConfig.showDetailsButton ^= true).apply();
                 listAdapter.notifyItemChanged(detailsRow, payload);
@@ -513,6 +519,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         ExteraConfig.editor.putBoolean("showClearButton", ExteraConfig.showClearButton = enabled).apply();
         ExteraConfig.editor.putBoolean("showSaveMessageButton", ExteraConfig.showSaveMessageButton = enabled).apply();
         ExteraConfig.editor.putBoolean("showReportButton", ExteraConfig.showReportButton = enabled).apply();
+        ExteraConfig.editor.putBoolean("showHistoryButton", ExteraConfig.showHistoryButton = enabled).apply();
         ExteraConfig.editor.putBoolean("showDetailsButton", ExteraConfig.showDetailsButton = enabled).apply();
         AndroidUtilities.updateVisibleRows(listView);
     }
@@ -526,6 +533,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         if (ExteraConfig.showClearButton)
             i++;
         if (ExteraConfig.showReportButton)
+            i++;
+        if (ExteraConfig.showHistoryButton)
             i++;
         if (ExteraConfig.showDetailsButton)
             i++;
@@ -686,7 +695,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     } else if (position == messageMenuRow) {
                         int messageMenuSelectedCount = getMessageMenuSelectedCount();
                         checkCell.setTextAndCheck(LocaleController.getString("MessageMenu", R.string.MessageMenu), messageMenuSelectedCount > 0, true, true);
-                        checkCell.setCollapseArrow(String.format(Locale.US, "%d/5", messageMenuSelectedCount), !messageMenuExpanded, () -> {
+                        checkCell.setCollapseArrow(String.format(Locale.US, "%d/6", messageMenuSelectedCount), !messageMenuExpanded, () -> {
                             boolean checked = !checkCell.isChecked();
                             checkCell.setChecked(checked);
                             setMessageMenuEnabled(checked);
@@ -713,6 +722,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         checkBoxCell.setText(LocaleController.getString("Save", R.string.Save), "", ExteraConfig.showSaveMessageButton, true, true);
                     } else if (position == reportRow) {
                         checkBoxCell.setText(LocaleController.getString("ReportChat", R.string.ReportChat), "", ExteraConfig.showReportButton, true, true);
+                    } else if (position == historyRow) {
+                        checkBoxCell.setText(LocaleController.getString("MessageHistory", R.string.MessageHistory), "", ExteraConfig.showHistoryButton, true, true);
                     } else if (position == detailsRow) {
                         checkBoxCell.setText(LocaleController.getString("Details", R.string.Details), "", ExteraConfig.showDetailsButton, true, true);
                     }

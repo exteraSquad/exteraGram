@@ -100,7 +100,6 @@ import androidx.core.graphics.ColorUtils;
 import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManagerFixed;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -116,13 +115,11 @@ import com.exteragram.messenger.extras.PermissionUtils;
 import com.exteragram.messenger.premium.BoostController;
 import com.exteragram.messenger.premium.encryption.EncryptionHelper;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.util.Log;
 import com.google.zxing.common.detector.MathUtils;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.AnimationNotificationsLocker;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BotWebViewVibrationEffect;
 import org.telegram.messenger.BuildVars;
@@ -981,6 +978,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int OPTION_COPY_PHOTO = 202;
     private final static int OPTION_DECRYPT = 203;
     private final static int OPTION_DETAILS = 204;
+    private final static int OPTION_HISTORY = 205;
 
     private final static int[] allowedNotificationsDuringChatListAnimations = new int[]{
             NotificationCenter.messagesRead,
@@ -1279,7 +1277,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int delete_chat = 16;
     private final static int share_contact = 17;
     private final static int mute = 18;
-    private final static int save = 19;
     private final static int report = 21;
     private final static int star = 22;
     private final static int edit = 23;
@@ -2932,30 +2929,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                 } else if (id == view_as_topics) {
                     TopicsFragment.prepareToSwitchAnimation(ChatActivity.this);
-                } else if (id == save) {
-                    ArrayList<MessageObject> messages = new ArrayList<>();
-                    for (int a = 1; a >= 0; a--) {
-                        for (int b = 0; b < selectedMessagesIds[a].size(); b++) {
-                            messages.add(selectedMessagesIds[a].valueAt(b));
-                        }
-                    }
-                    if (messages.isEmpty()) {
-                        return;
-                    }
-                    if (!checkSlowModeAlert()) {
-                        return;
-                    }
-                    int result = getSendMessagesHelper().sendMessage(messages, getUserConfig().getClientUserId(), false, false, true, 0);
-                    AlertsCreator.showSendMediaAlert(result, ChatActivity.this, themeDelegate);
-                    if (result != 0) {
-                        AndroidUtilities.runOnUIThread(() -> {
-                            waitingForSendingMessageLoad = false;
-                            hideFieldPanel(true);
-                        });
-                    }
-                    createUndoView();
-                    undoView.showWithAction(getUserConfig().getClientUserId(), UndoView.ACTION_FWD_MESSAGES, messages.size());
-                    clearSelectionMode();
                 } else if (id == copy) {
                     SpannableStringBuilder str = new SpannableStringBuilder();
                     long previousUid = 0;
@@ -7377,7 +7350,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (searchFromUserId != 0) {
             TLRPC.User user = getMessagesController().getUser(searchFromUserId);
             if (user != null) {
-                openSearchWithText("");
+                openSearchWithText();
                 if (searchUserButton != null) {
                     searchUserButton.callOnClick();
                 }
@@ -7388,7 +7361,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (searchFromChatId != 0) {
                 TLRPC.Chat chat = getMessagesController().getChat(searchFromChatId);
                 if (chat != null) {
-                    openSearchWithText("");
+                    openSearchWithText();
                     if (searchUserButton != null) {
                         searchUserButton.callOnClick();
                     }
@@ -7682,7 +7655,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         actionMode.addView(selectedMessagesCountTextView, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1.0f, 65, 0, 0, 0));
 
         if (currentEncryptedChat == null) {
-            actionModeViews.add(actionMode.addItemWithWidth(save, R.drawable.msg_saved, AndroidUtilities.dp(54), LocaleController.getString("SaveMessage", R.string.SaveMessage)));
             actionModeViews.add(actionMode.addItemWithWidth(save_to, R.drawable.msg_download, AndroidUtilities.dp(54), LocaleController.getString("SaveToMusic", R.string.SaveToMusic)));
             actionModeViews.add(actionMode.addItemWithWidth(edit, R.drawable.msg_edit, AndroidUtilities.dp(54), LocaleController.getString("Edit", R.string.Edit)));
             actionModeViews.add(actionMode.addItemWithWidth(star, R.drawable.msg_fave, AndroidUtilities.dp(54), LocaleController.getString("AddToFavorites", R.string.AddToFavorites)));
@@ -23894,6 +23866,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 icons.add(R.drawable.msg_saved);
                             }
                         }
+                        if (chatMode != MODE_SCHEDULED) {
+                            if (ExteraConfig.showHistoryButton && currentChat != null && chatMode == 0 && !currentChat.broadcast && !(threadMessageObjects != null && threadMessageObjects.contains(message))) {
+                                items.add(LocaleController.getString("MessageHistory", R.string.MessageHistory));
+                                options.add(OPTION_HISTORY);
+                                icons.add(R.drawable.msg_recent);
+                            }
+                        }
                         if (allowUnpin) {
                             items.add(LocaleController.getString("UnpinMessage", R.string.UnpinMessage));
                             options.add(OPTION_UNPIN);
@@ -25646,6 +25625,26 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 break;
             }
+            case OPTION_HISTORY: {
+                TLRPC.Peer peer = selectedObject.messageOwner.from_id;
+                if ((threadMessageId == 0 || isTopic) && !UserObject.isReplyUser(currentUser)) {
+                    openSearchWithText();
+                } else {
+                    searchItem.openSearch(false);
+                }
+                if (peer.user_id != 0) {
+                    TLRPC.User user = getMessagesController().getUser(peer.user_id);
+                    searchUserMessages(user, null);
+                } else if (peer.chat_id != 0) {
+                    TLRPC.Chat chat = getMessagesController().getChat(peer.chat_id);
+                    searchUserMessages(null, chat);
+                } else if (peer.channel_id != 0) {
+                    TLRPC.Chat chat = getMessagesController().getChat(peer.channel_id);
+                    searchUserMessages(null, chat);
+                }
+                showMessagesSearchListView(true);
+                break;
+            }
             case OPTION_DELETE: {
                 if (getParentActivity() == null) {
                     selectedObject = null;
@@ -26756,6 +26755,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             builder.setMessage(LocaleController.formatString("NoHandleAppInstalled", R.string.NoHandleAppInstalled, message.getDocument().mime_type));
         }
         showDialog(builder.create());
+    }
+
+    private void openSearchWithText() {
+        openSearchWithText("");
     }
 
     private void openSearchWithText(String text) {
@@ -29424,7 +29427,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 break;
                             case MSG_HISTORY:
                                 if ((threadMessageId == 0 || isTopic) && !UserObject.isReplyUser(user)) {
-                                    openSearchWithText("");
+                                    openSearchWithText();
                                 } else {
                                     searchItem.openSearch(false);
                                 }

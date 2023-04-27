@@ -107,6 +107,7 @@ public class ExteraConfig {
     public static boolean showSaveMessageButton;
     public static boolean showDetailsButton;
     public static boolean showReportButton;
+    public static boolean showHistoryButton;
     public static boolean addCommaAfterMention;
 
     public static int sendPhotosQuality;
@@ -243,6 +244,7 @@ public class ExteraConfig {
             showCopyPhotoButton = preferences.getBoolean("showCopyPhotoButton", true);
             showClearButton = preferences.getBoolean("showClearButton", true);
             showReportButton = preferences.getBoolean("showReportButton", true);
+            showHistoryButton = preferences.getBoolean("showHistoryButton", true);
 
             addCommaAfterMention = preferences.getBoolean("addCommaAfterMention", true);
 
