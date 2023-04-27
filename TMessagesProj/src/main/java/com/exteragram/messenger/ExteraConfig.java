@@ -93,6 +93,7 @@ public class ExteraConfig {
     public static int doubleTapAction;
     public static int doubleTapActionOutOwner;
 
+    public static int doubleTapSeekDuration;
     public static int bottomButton;
     public static boolean hideKeyboardOnScroll;
     public static boolean permissionsShortcut;
@@ -256,6 +257,7 @@ public class ExteraConfig {
             videoMessagesCamera = preferences.getInt("videoMessagesCamera", 0);
             rememberLastUsedCamera = preferences.getBoolean("rememberLastUsedCamera", false);
             pauseOnMinimize = preferences.getBoolean("pauseOnMinimize", true);
+            doubleTapSeekDuration = preferences.getInt("doubleTapSeekDuration", 1);
             disablePlayback = preferences.getBoolean("disablePlayback", true);
 
             // Updates
@@ -369,6 +371,16 @@ public class ExteraConfig {
                 return 2560;
             default:
                 return 1;
+        }
+    }
+
+    public static int getDoubleTapSeekDuration() {
+        switch(doubleTapSeekDuration) {
+            case 0: return 5000;
+            case 1: return 10000;
+            case 2: return 15000;
+            case 3: return 30000;
+            default: return 10000;
         }
     }
 

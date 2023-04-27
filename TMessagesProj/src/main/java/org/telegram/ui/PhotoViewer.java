@@ -17240,7 +17240,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         boolean forward = x >= width / 3 * 2;
         long current = getCurrentVideoPosition();
         long total = getVideoDuration();
-        return current != C.TIME_UNSET && total > 15 * 1000 && (!forward || total - current > 10000);
+        return current != C.TIME_UNSET && total > (ExteraConfig.doubleTapSeekDuration == 0 ? 10 : 15) && (!forward || total - current > ExteraConfig.getDoubleTapSeekDuration());
     }
 
     long totalRewinding;
@@ -17256,9 +17256,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (canDoubleTapSeekVideo(e)) {
                 long old = current;
                 if (x >= width / 3 * 2) {
-                    current += 10000;
+                    current += ExteraConfig.getDoubleTapSeekDuration();
                 } else if (x < width / 3) {
-                    current -= 10000;
+                    current -= ExteraConfig.getDoubleTapSeekDuration();
                 }
                 if (old != current) {
                     boolean apply = true;
@@ -17273,7 +17273,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     if (apply) {
                         videoForwardDrawable.setOneShootAnimation(true);
                         videoForwardDrawable.setLeftSide(x < width / 3);
-                        videoForwardDrawable.addTime(10000);
+                        videoForwardDrawable.addTime(ExteraConfig.getDoubleTapSeekDuration());
                         seekVideoOrWebTo(current);
                         containerView.invalidate();
                         videoPlayerSeekbar.setProgress(current / (float) total, true);

@@ -151,6 +151,9 @@
     <string name="VideoMessagesCameraAsk">Спрашивать</string>
     <string name="RearCamera">Основная</string>
     <string name="FrontCamera">Фронтальная</string>
+
+    <string name="DoubleTapSeekDuration">Перемотка по двойному нажатию</string>
+
     <string name="RememberLastUsedCamera">Запоминать выбранную камеру</string>
     <string name="RememberLastUsedCameraInfo">При записи видеосообщений будет использоваться последняя выбранная камера.</string>
     <string name="PauseOnMinimize">Авто-пауза</string>

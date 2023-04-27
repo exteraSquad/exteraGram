@@ -155,6 +155,7 @@
     <string name="VideoMessagesCameraAsk">Ask</string>
     <string name="RearCamera">Rear Camera</string>
     <string name="FrontCamera">Front Camera</string>
+    <string name="DoubleTapSeekDuration">Double Tap Seek Duration</string>
     <string name="RememberLastUsedCamera">Remember last used Camera</string>
     <string name="RememberLastUsedCameraInfo">When recording video messages, the last used camera will be selected.</string>
     <string name="PauseOnMinimize">Auto-Pause</string>

@@ -70,6 +70,12 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             LocaleController.getString("VideoMessagesCameraFront", R.string.VideoMessagesCameraFront),
             LocaleController.getString("VideoMessagesCameraRear", R.string.VideoMessagesCameraRear),
             LocaleController.getString("VideoMessagesCameraAsk", R.string.VideoMessagesCameraAsk)
+
+    }, doubleTapSeekDuration = new CharSequence[]{
+            LocaleController.formatPluralString("Seconds", 5),
+            LocaleController.formatPluralString("Seconds", 10),
+            LocaleController.formatPluralString("Seconds", 15),
+            LocaleController.formatPluralString("Seconds", 30)
     };
     private final int[] doubleTapIcons = new int[]{
             R.drawable.msg_block,
@@ -137,6 +143,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
     private int rememberLastUsedCameraRow;
     private int pauseOnMinimizeRow;
     private int disablePlaybackRow;
+    private int doubleTapSeekDurationRow;
     private int videosDividerRow;
 
     private boolean adminShortcutsExpanded;
@@ -303,6 +310,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         photosDividerRow = newRow();
 
         videosHeaderRow = newRow();
+        doubleTapSeekDurationRow = newRow();
         videoMessagesCameraRow = newRow();
         rememberLastUsedCameraRow = ExteraConfig.videoMessagesCamera != 2 ? newRow() : -1;
         staticZoomRow = newRow();
@@ -383,6 +391,20 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             ExteraConfig.editor.putBoolean("disablePlayback", ExteraConfig.disablePlayback ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.disablePlayback);
             showBulletin();
+        } else if (position == doubleTapSeekDurationRow) {
+            if (getParentActivity()==null) {
+                return;
+            }
+            ExteraUtils.showDialog(doubleTapSeekDuration, LocaleController.getString("DoubleTapSeekDuration", R.string.DoubleTapSeekDuration), ExteraConfig.doubleTapSeekDuration, getContext(), which -> {
+                int old = ExteraConfig.doubleTapSeekDuration;
+                ExteraConfig.editor.putInt("doubleTapSeekDuration", ExteraConfig.doubleTapSeekDuration = which).apply();
+                if (old == which) {
+                    return;
+                }
+                updateRowsId();
+                listAdapter.notifyItemChanged(doubleTapSeekDurationRow, payload);
+            });
+
         } else if (position == hideCounterRow) {
             ExteraConfig.editor.putBoolean("hidePhotoCounter", ExteraConfig.hidePhotoCounter ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hidePhotoCounter);
@@ -652,6 +674,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                         textSettingsCell.setTextAndValue(LocaleController.getString("BottomButton", R.string.BottomButton), ExteraUtils.capitalize((String) bottomButton[ExteraConfig.bottomButton]), payload, true);
                     } else if (position == videoMessagesCameraRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("VideoMessagesCamera", R.string.VideoMessagesCamera), videoMessagesCamera[ExteraConfig.videoMessagesCamera], payload, true);
+                    } else if (position == doubleTapSeekDurationRow) {
+                        textSettingsCell.setTextAndValue(LocaleController.getString("DoubleTapSeekDuration", R.string.DoubleTapSeekDuration), doubleTapSeekDuration[ExteraConfig.doubleTapSeekDuration], payload, true);
                     }
                     break;
                 case 8:
@@ -740,7 +764,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             } else if (position == stickersHeaderRow || position == chatsHeaderRow || position == videosHeaderRow || position == stickerShapeHeaderRow ||
                     position == doubleTapHeaderRow || position == photosHeaderRow || position == messagesHeaderRow) {
                 return 3;
-            } else if (position == doubleTapActionRow || position == doubleTapActionOutOwnerRow || position == bottomButtonRow || position == videoMessagesCameraRow) {
+            } else if (position == doubleTapActionRow || position == doubleTapActionOutOwnerRow || position == bottomButtonRow || position == videoMessagesCameraRow || position == doubleTapSeekDurationRow) {
                 return 7;
             } else if (position == doubleTapDividerRow || position == photosDividerRow || position == chatsDividerRow || position == stickersDividerRow || position == videosDividerRow || position == messagesDividerRow) {
                 return 8;
