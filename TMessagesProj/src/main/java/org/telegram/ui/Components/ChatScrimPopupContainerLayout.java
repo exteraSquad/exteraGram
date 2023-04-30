@@ -120,6 +120,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
 
     public void applyViewBottom(FrameLayout bottomView) {
         this.bottomView = bottomView;
+        updateBottomOffset();
     }
 
     public void setReactionsLayout(ReactionsContainerLayout reactionsLayout) {
@@ -129,12 +130,16 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
         }
     }
 
+    private void updateBottomOffset() {
+        bottomViewYOffset = popupWindowLayout.getVisibleHeight() - popupWindowLayout.getMeasuredHeight();
+        updateBottomViewPosition();
+    }
+
     public void setPopupWindowLayout(ActionBarPopupWindow.ActionBarPopupWindowLayout popupWindowLayout) {
         this.popupWindowLayout = popupWindowLayout;
         popupWindowLayout.setOnSizeChangedListener(() -> {
             if (bottomView != null) {
-                bottomViewYOffset = popupWindowLayout.getVisibleHeight() - popupWindowLayout.getMeasuredHeight();
-                updateBottomViewPosition();
+                updateBottomOffset();
             }
         });
         if (popupWindowLayout.getSwipeBack() != null) {

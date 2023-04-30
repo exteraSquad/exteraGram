@@ -361,7 +361,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 }
             }
 
-            if (!ChatObject.isChannel(currentChat) && currentChat.creator || currentChat.megagroup && !currentChat.gigagroup && ChatObject.canBlockUsers(currentChat)) {
+            if (!ChatObject.isChannel(currentChat) && currentChat.creator || currentChat.megagroup && !currentChat.gigagroup && ChatObject.canBlockUsers(currentChat) || !ChatObject.hasAdminRights(currentChat)) {
                 if (participantsDivider2Row == -1) {
                     participantsDivider2Row = rowCount++;
                 }
@@ -722,6 +722,9 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
             boolean listAdapter = listView.getAdapter() == listViewAdapter;
             if (listAdapter) {
                 if (isExpandableSendMediaRow(position)) {
+                    if (!ChatObject.canBlockUsers(currentChat)) {
+                        return;
+                    }
                     CheckBoxCell checkBoxCell = (CheckBoxCell) view;
                     if (position == sendMediaPhotosRow) {
                         defaultBannedRights.send_photos = !defaultBannedRights.send_photos;
@@ -1010,7 +1013,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                     return;
                 } else if (position > permissionsSectionRow && position <= Math.max(manageTopicsRow, changeInfoRow)) {
                     TextCheckCell2 checkCell = (TextCheckCell2) view;
-                    if (!checkCell.isEnabled()) {
+                    if (!checkCell.isEnabled() && position != sendMediaRow) {
                         return;
                     }
                     if (checkCell.hasIcon()) {
@@ -2933,7 +2936,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
             int viewType = holder.getItemViewType();
-            if (viewType == 7 || viewType == VIEW_TYPE_EXPANDABLE_SWITCH) {
+            if (viewType == 7 || viewType == VIEW_TYPE_EXPANDABLE_SWITCH || viewType == VIEW_TYPE_INNER_CHECK) {
                 return ChatObject.canBlockUsers(currentChat);
             } else if (viewType == 0) {
                 ManageChatUserCell cell = (ManageChatUserCell) holder.itemView;
@@ -3047,6 +3050,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                     SlideChooseView chooseView = new SlideChooseView(mContext);
                     view = chooseView;
                     chooseView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                    chooseView.setAllowSlide(ChatObject.hasAdminRights(currentChat));
                     chooseView.setOptions(
                             selectedSlowmode,
                             LocaleController.getString("SlowmodeOff", R.string.SlowmodeOff),
@@ -3303,6 +3307,9 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                         checkCell.setCollapseArrow(String.format(Locale.US, "%d/9", sentMediaCount), !sendMediaExpanded, new Runnable() {
                             @Override
                             public void run() {
+                                if (!ChatObject.canBlockUsers(currentChat)) {
+                                    return;
+                                }
                                 boolean checked = !checkCell.isChecked();
                                 checkCell.setChecked(checked);
                                 setSendMediaEnabled(checked);

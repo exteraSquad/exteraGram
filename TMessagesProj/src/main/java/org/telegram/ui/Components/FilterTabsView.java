@@ -1624,7 +1624,9 @@ public class FilterTabsView extends FrameLayout {
                 invalidated = true;
                 requestLayout();
                 allTabsWidth = 0;
-                if (!ExteraConfig.hideAllChats) findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+                if (!ExteraConfig.hideAllChats && findDefaultTab() != null) {
+                    findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+                }
                 for (int b = 0; b < N; b++) {
                     allTabsWidth += tabs.get(b).getWidth(true) + FolderIcons.getPaddingTab();
                 }

@@ -754,7 +754,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
         repeatButton.setShowSubmenuByMove(false);
         repeatButton.setAdditionalYOffset(-AndroidUtilities.dp(166));
         repeatButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, AndroidUtilities.dp(18)));
-        if (!messageObject.isVoice()) {
+        if (messageObject != null && !messageObject.isVoice()) {
             bottomView.addView(repeatButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP));
         }
         repeatButton.setOnClickListener(v -> {
@@ -940,7 +940,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
         prevButton.setLayerColor("Triangle 4.**", iconColor);
         prevButton.setLayerColor("Rectangle 4.**", iconColor);
         prevButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, AndroidUtilities.dp(22)));
-        if (!messageObject.isVoice()) {
+        if (messageObject != null && !messageObject.isVoice()) {
             bottomView.addView(prevButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP));
         }
         prevButton.setContentDescription(LocaleController.getString("AccDescrPrevious", R.string.AccDescrPrevious));
@@ -1062,7 +1062,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
         nextButton.setLayerColor("Rectangle 4.**", iconColor);
         nextButton.setRotation(180f);
         nextButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, AndroidUtilities.dp(22)));
-        if (!messageObject.isVoice()) {
+        if (messageObject != null && !messageObject.isVoice()) {
             bottomView.addView(nextButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP));
         }
         nextButton.setContentDescription(LocaleController.getString("Next", R.string.Next));
@@ -1073,7 +1073,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
         likeButton.setImageResource(R.drawable.msg_reactions);
         likeButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_player_button), PorterDuff.Mode.MULTIPLY));
         likeButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, AndroidUtilities.dp(24)));
-        if (!messageObject.isVoice()) {
+        if (messageObject != null && !messageObject.isVoice()) {
             bottomView.addView(likeButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP));
         }
 

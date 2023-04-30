@@ -386,6 +386,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
         } else if (position == hideCounterRow) {
             ExteraConfig.editor.putBoolean("hidePhotoCounter", ExteraConfig.hidePhotoCounter ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.hidePhotoCounter);
+            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == doubleTapActionRow || position == doubleTapActionOutOwnerRow) {
             if (getParentActivity() == null) {
                 return;

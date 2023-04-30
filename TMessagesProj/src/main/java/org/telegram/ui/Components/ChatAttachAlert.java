@@ -2026,7 +2026,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         floatingButton = new FrameLayout(context);
         Drawable drawable = ExteraUtils.drawFab();
         floatingButton.setBackground(drawable);
-        floatingButton.setVisibility(currentAttachLayout == photoLayout && ExteraConfig.hideCameraTile ? View.VISIBLE : View.GONE);
+        floatingButton.setVisibility(shouldShowFloatingCamera() ? View.VISIBLE : View.GONE);
         StateListAnimator stateListAnimator = new StateListAnimator();
         stateListAnimator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
         stateListAnimator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, "translationZ", AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
@@ -3169,7 +3169,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 shadow.setVisibility(View.VISIBLE);
             }
         } else if (typeButtonsAvailable) {
-            if (ExteraConfig.hideCameraTile) {
+            if (shouldShowFloatingCamera()) {
                 floatingButton.setVisibility(View.VISIBLE);
             }
             buttonsRecyclerView.setVisibility(View.VISIBLE);
@@ -3184,7 +3184,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             animators.add(ObjectAnimator.ofFloat(selectedCountView, View.SCALE_X, show ? 1.0f : 0.2f));
             animators.add(ObjectAnimator.ofFloat(selectedCountView, View.SCALE_Y, show ? 1.0f : 0.2f));
             animators.add(ObjectAnimator.ofFloat(selectedCountView, View.ALPHA, show ? 1.0f : 0.0f));
-            if (currentAttachLayout != null && currentAttachLayout == photoLayout) {
+            if (shouldShowFloatingCamera()) {
                 animators.add(ObjectAnimator.ofFloat(floatingButton, View.SCALE_X, show ? 0.2f : 1.0f));
                 animators.add(ObjectAnimator.ofFloat(floatingButton, View.SCALE_Y, show ? 0.2f : 1.0f));
                 animators.add(ObjectAnimator.ofFloat(floatingButton, View.ALPHA, show ? 0.0f : 1.0f));
@@ -3194,7 +3194,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 animators.add(ObjectAnimator.ofFloat(shadow, View.TRANSLATION_Y, show ? AndroidUtilities.dp(36) : AndroidUtilities.dp(48 + 36)));
                 animators.add(ObjectAnimator.ofFloat(shadow, View.ALPHA, show ? 1.0f : 0.0f));
             } else if (typeButtonsAvailable) {
-                if (currentAttachLayout != null && currentAttachLayout == photoLayout) {
+                if (shouldShowFloatingCamera()) {
                     animators.add(ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Y, show ? AndroidUtilities.dp(84) : 0));
                 }
                 animators.add(ObjectAnimator.ofFloat(buttonsRecyclerView, View.TRANSLATION_Y, show ? AndroidUtilities.dp(36) : 0));
@@ -3247,7 +3247,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             selectedCountView.setScaleX(show ? 1.0f : 0.2f);
             selectedCountView.setScaleY(show ? 1.0f : 0.2f);
             selectedCountView.setAlpha(show ? 1.0f : 0.0f);
-            if (currentAttachLayout != null && currentAttachLayout == photoLayout) {
+            if (shouldShowFloatingCamera()) {
                 floatingButton.setScaleX(show ? 0.2f : 1.0f);
                 floatingButton.setScaleY(show ? 0.2f : 1.0f);
                 floatingButton.setAlpha(show ? 0.0f : 1.0f);
@@ -3257,9 +3257,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 shadow.setTranslationY((show ? AndroidUtilities.dp(36) : AndroidUtilities.dp(48 + 36)) + botMainButtonOffsetY);
                 shadow.setAlpha(show ? 1.0f : 0.0f);
             } else if (typeButtonsAvailable) {
-                if (currentAttachLayout != null && currentAttachLayout == photoLayout) {
-                    floatingButton.setTranslationY(show ? AndroidUtilities.dp(84) : 0);
-                }
+                floatingButton.setTranslationY(show ? AndroidUtilities.dp(84) : 0);
                 if (currentAttachLayout == null || currentAttachLayout.shouldHideBottomButtons()) {
                     buttonsRecyclerView.setTranslationY(show ? AndroidUtilities.dp(36) : 0);
                 }
@@ -3271,8 +3269,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             if (!show) {
                 frameLayout2.setVisibility(View.INVISIBLE);
                 writeButtonContainer.setVisibility(View.INVISIBLE);
-                if (ExteraConfig.hideCameraTile)
+                if (shouldShowFloatingCamera()) {
                     floatingButton.setVisibility(View.VISIBLE);
+                }
                 if (!typeButtonsAvailable) {
                     shadow.setVisibility(View.INVISIBLE);
                 }
@@ -3458,6 +3457,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
     }
 
     private void setNavBarAlpha(float alpha) {
+        if (baseFragment == null) {
+            return;
+        }
         navBarColor = ColorUtils.blendARGB(baseFragment.getNavigationBarColor(), getThemedColor(Theme.key_dialogBackground), alpha);
         AndroidUtilities.setNavigationBarColor(getWindow(), navBarColor, false);
         AndroidUtilities.setLightNavigationBar(getWindow(), AndroidUtilities.computePerceivedBrightness(navBarColor) > 0.721);
@@ -3745,7 +3747,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 ArrayList<Animator> animators = new ArrayList<>();
                 animators.add(ObjectAnimator.ofFloat(actionBar, View.ALPHA, show ? 1.0f : 0.0f));
                 animators.add(ObjectAnimator.ofFloat(actionBarShadow, View.ALPHA, show ? 1.0f : 0.0f));
-                if (currentAttachLayout != null && currentAttachLayout == photoLayout && typeButtonsAvailable) {
+                if (shouldShowFloatingCamera() && typeButtonsAvailable) {
                     animators.add(ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Y, show ? AndroidUtilities.dp(84) : 0));
                 }
                 if (needsSearchItem) {
@@ -3786,7 +3788,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 }
                 actionBar.setAlpha(show ? 1.0f : 0.0f);
                 actionBarShadow.setAlpha(show ? 1.0f : 0.0f);
-                if (currentAttachLayout != null && currentAttachLayout == photoLayout && typeButtonsAvailable) {
+                if (shouldShowFloatingCamera() && typeButtonsAvailable) {
                     floatingButton.setTranslationY(show ? AndroidUtilities.dp(84) : 0);
                 }
                 if (needsSearchItem) {
@@ -4473,5 +4475,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
     public ChatAttachAlertDocumentLayout getDocumentLayout() {
         return documentLayout;
+    }
+
+    private boolean shouldShowFloatingCamera() {
+        return currentAttachLayout != null && currentAttachLayout == photoLayout && ExteraConfig.hideCameraTile && (photosEnabled || videosEnabled);
     }
 }

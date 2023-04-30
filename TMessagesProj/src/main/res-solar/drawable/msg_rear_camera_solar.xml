@@ -6,7 +6,12 @@
     <path
         android:strokeColor="#FFFFFFFF"
         android:strokeWidth="1.67"
-        android:pathData="M12 8A4 4 0 1 0 12 16 4 4 0 1 0 12 8z"/>
+        android:pathData="M15 7A2 2 0 1 0 15 11 2 2 0 1 0 15 7z"/>
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.67"
+        android:strokeLineCap="round"
+        android:pathData="M20 17.6l-2.22-2c-1.04-0.94-2.6-1.03-3.74-0.23l-0.3 0.21c-0.79 0.56-1.87 0.47-2.56-0.22L6.9 11.07c-0.85-0.85-2.23-0.9-3.14-0.1l-1.47 1.28"/>
     <path
         android:strokeColor="#FFFFFFFF"
         android:strokeWidth="1.67"

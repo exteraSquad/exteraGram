@@ -8929,28 +8929,32 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             getMessagesController().loadPinnedDialogs(folderId, 0, null);
         } else if (id == NotificationCenter.chatlistFolderUpdate) {
             int filterId = (int) args[0];
-            for (int i = 0; i < viewPages.length; ++i) {
-                ViewPage viewPage = viewPages[i];
-                if (viewPage != null && (viewPage.dialogsType == 7 || viewPage.dialogsType == 8)) {
-                    MessagesController.DialogFilter filter = getMessagesController().selectedDialogFilter[viewPage.dialogsType - 7];
-                    if (filter != null && filterId == filter.id) {
-                        viewPage.updateList(true);
-                        break;
+            if (viewPages != null) {
+                for (int i = 0; i < viewPages.length; ++i) {
+                    ViewPage viewPage = viewPages[i];
+                    if (viewPage != null && (viewPage.dialogsType == 7 || viewPage.dialogsType == 8)) {
+                        MessagesController.DialogFilter filter = getMessagesController().selectedDialogFilter[viewPage.dialogsType - 7];
+                        if (filter != null && filterId == filter.id) {
+                            viewPage.updateList(true);
+                            break;
+                        }
                     }
                 }
             }
         } else if (id == NotificationCenter.dialogTranslate) {
             long dialogId = (long) args[0];
-            for (int i = 0; i < viewPages.length; ++i) {
-                ViewPage viewPage = viewPages[i];
-                if (viewPage.listView != null) {
-                    for (int j = 0; j < viewPage.listView.getChildCount(); ++j) {
-                        View child = viewPage.listView.getChildAt(j);
-                        if (child instanceof DialogCell) {
-                            DialogCell dialogCell = (DialogCell) child;
-                            if (dialogId == dialogCell.getDialogId()) {
-                                dialogCell.buildLayout();
-                                break;
+            if (viewPages != null) {
+                for (int i = 0; i < viewPages.length; ++i) {
+                    ViewPage viewPage = viewPages[i];
+                    if (viewPage.listView != null) {
+                        for (int j = 0; j < viewPage.listView.getChildCount(); ++j) {
+                            View child = viewPage.listView.getChildAt(j);
+                            if (child instanceof DialogCell) {
+                                DialogCell dialogCell = (DialogCell) child;
+                                if (dialogId == dialogCell.getDialogId()) {
+                                    dialogCell.buildLayout();
+                                    break;
+                                }
                             }
                         }
                     }

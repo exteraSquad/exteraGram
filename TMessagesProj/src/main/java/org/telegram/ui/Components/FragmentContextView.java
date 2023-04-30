@@ -713,25 +713,27 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             if (currentStyle == STYLE_AUDIO_PLAYER) {
                 MessageObject messageObject = MediaController.getInstance().getPlayingMessageObject();
                 long dialogId = 0;
-                if (fragment instanceof ChatActivity) {
-                    dialogId = ((ChatActivity) fragment).getDialogId();
-                }
-                if (messageObject.getDialogId() == dialogId) {
-                    ((ChatActivity) fragment).scrollToMessageId(messageObject.getId(), 0, false, 0, true, 0);
-                } else {
-                    dialogId = messageObject.getDialogId();
-                    Bundle args = new Bundle();
-                    if (DialogObject.isEncryptedDialog(dialogId)) {
-                        args.putInt("enc_id", DialogObject.getEncryptedChatId(dialogId));
-                    } else if (DialogObject.isUserDialog(dialogId)) {
-                        args.putLong("user_id", dialogId);
-                    } else {
-                        args.putLong("chat_id", -dialogId);
+                if (fragment != null && messageObject != null) {
+                    if (fragment instanceof ChatActivity) {
+                        dialogId = ((ChatActivity) fragment).getDialogId();
                     }
-                    args.putInt("message_id", messageObject.getId());
-                    fragment.presentFragment(new ChatActivity(args), fragment instanceof ChatActivity);
+                    if (messageObject.getDialogId() == dialogId) {
+                        ((ChatActivity) fragment).scrollToMessageId(messageObject.getId(), 0, false, 0, true, 0);
+                    } else {
+                        dialogId = messageObject.getDialogId();
+                        Bundle args = new Bundle();
+                        if (DialogObject.isEncryptedDialog(dialogId)) {
+                            args.putInt("enc_id", DialogObject.getEncryptedChatId(dialogId));
+                        } else if (DialogObject.isUserDialog(dialogId)) {
+                            args.putLong("user_id", dialogId);
+                        } else {
+                            args.putLong("chat_id", -dialogId);
+                        }
+                        args.putInt("message_id", messageObject.getId());
+                        fragment.presentFragment(new ChatActivity(args), fragment instanceof ChatActivity);
+                    }
+                    return true;
                 }
-                return true;
             }
             return false;
         });

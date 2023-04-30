@@ -17,7 +17,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -1995,7 +1994,7 @@ public class ChatRightsEditActivity extends BaseFragment {
                 } else {
                     boolean childValue = false, childEnabled = false;
                     if (childPosition == manageRow) {
-                        childValue = asAdmin;
+                        childValue = true;
                         childEnabled = myAdminRights.add_admins || (currentChat != null && currentChat.creator);
                     } else if (childPosition == changeInfoRow) {
                         childValue = adminRights.change_info;

@@ -207,6 +207,9 @@ public class TextCheckCell2 extends FrameLayout {
                 collapseViewContainer.setAlpha(0.5f);
             }
         }
+        if (checkBoxClickArea != null) {
+            checkBoxClickArea.setEnabled(value);
+        }
     }
 
     public void setEnabled(boolean value, boolean animated) {
@@ -238,6 +241,9 @@ public class TextCheckCell2 extends FrameLayout {
                     collapseViewContainer.setAlpha(0.5f);
                 }
             }
+        }
+        if (checkBoxClickArea != null) {
+            checkBoxClickArea.setEnabled(value);
         }
     }
 

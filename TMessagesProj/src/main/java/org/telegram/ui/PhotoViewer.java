@@ -12046,7 +12046,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 MessagesController.getInstance(currentAccount).loadDialogPhotos(avatarsDialogId, 80, 0, true, classGuid);
             }
         }
-        if (currentMessageObject != null && (currentMessageObject.isGif() || currentMessageObject.isVideo()) || currentBotInlineResult != null && (currentBotInlineResult.type.equals("video") || MessageObject.isVideoDocument(currentBotInlineResult.document)) || (pageBlocksAdapter != null && pageBlocksAdapter.isVideo(index)) || (sendPhotoType == SELECT_TYPE_NO_SELECT && ((MediaController.PhotoEntry)imagesArrLocals.get(index)).isVideo)) {
+        if (currentMessageObject != null && currentMessageObject.isVideo() || currentBotInlineResult != null && (currentBotInlineResult.type.equals("video") || MessageObject.isVideoDocument(currentBotInlineResult.document)) || (pageBlocksAdapter != null && pageBlocksAdapter.isVideo(index)) || (sendPhotoType == SELECT_TYPE_NO_SELECT && ((MediaController.PhotoEntry)imagesArrLocals.get(index)).isVideo)) {
             playerAutoStarted = true;
             onActionClick(false);
         } else if (!imagesArrLocals.isEmpty()) {
@@ -17017,7 +17017,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public boolean onDown(MotionEvent e) {
         if (!doubleTap && checkImageView.getVisibility() != View.VISIBLE && !drawPressedDrawable[0] && !drawPressedDrawable[1]) {
             float x = e.getX();
-            int side = ExteraConfig.hidePhotoCounter ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
+            int side = Math.min(135, containerView.getMeasuredWidth() / 8);
             if (x < side) {
                 if (leftImage.hasImageSet()) {
                     drawPressedDrawable[0] = true;
@@ -17037,7 +17037,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public boolean canDoubleTap(MotionEvent e) {
         if (checkImageView.getVisibility() != View.VISIBLE && !drawPressedDrawable[0] && !drawPressedDrawable[1]) {
             float x = e.getX();
-            int side = ExteraConfig.hidePhotoCounter ? 0 : Math.min(135, containerView.getMeasuredWidth() / 8);
+            int side = Math.min(135, containerView.getMeasuredWidth() / 8);
             if (x < side || x > containerView.getMeasuredWidth() - side) {
                 return currentMessageObject == null || (currentMessageObject.isVideo() || photoViewerWebView != null && photoViewerWebView.isControllable()) && (SystemClock.elapsedRealtime() - lastPhotoSetTime) >= 500 && canDoubleTapSeekVideo(e);
             }

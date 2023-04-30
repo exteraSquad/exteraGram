@@ -23,6 +23,7 @@ import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
 import com.exteragram.messenger.ExteraConfig;
@@ -160,7 +161,7 @@ public class UpdaterUtils {
     }
 
     public static void downloadApk(Context context, String link, String title) {
-        if (!updateDownloaded) {
+        if (context != null && !updateDownloaded) {
             var request = new DownloadManager.Request(Uri.parse(link));
 
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
