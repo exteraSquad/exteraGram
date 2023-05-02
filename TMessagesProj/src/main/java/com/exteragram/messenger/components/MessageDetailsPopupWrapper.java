@@ -1,4 +1,4 @@
-package com.exteragram.messenger.extras;
+package com.exteragram.messenger.components;
 
 import android.content.Intent;
 import android.os.Bundle;

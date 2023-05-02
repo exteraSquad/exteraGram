@@ -110,7 +110,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.extras.MessageDetailsPopupWrapper;
+import com.exteragram.messenger.components.MessageDetailsPopupWrapper;
 import com.exteragram.messenger.extras.PermissionUtils;
 import com.exteragram.messenger.premium.BoostController;
 import com.exteragram.messenger.premium.encryption.EncryptionHelper;

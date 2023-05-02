@@ -116,6 +116,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.components.TranslateBeforeSendWrapper;
 
 public class ShareAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 
@@ -1886,25 +1887,17 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         sendPopupLayout2.setShownFromBottom(false);
 
         if (commentTextView.getText() != null && commentTextView.getText().toString().trim().length() != 0) {
-            ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, true, resourcesProvider);
-            translateButton.setTextAndIcon(LocaleController.getString("TranslateTo", R.string.TranslateTo), R.drawable.msg_translate);
-            translateButton.setSubtext(ExteraConfig.getCurrentLangName());
-            translateButton.setMinimumWidth(AndroidUtilities.dp(196));
-            translateButton.setItemHeight(56);
-            translateButton.setOnClickListener(v -> {
-                if (sendPopupWindow != null && sendPopupWindow.isShowing())
-                    sendPopupWindow.dismiss();
-                ExteraUtils.translate(commentTextView.getText(), ExteraConfig.getCurrentLangCode(), translated -> {
-                    commentTextView.setText(translated);
-                    commentTextView.setSelection(translated.length());
-                }, () -> {
-                });
-            });
-            translateButton.setRightIcon(R.drawable.msg_arrowright);
-            translateButton.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
-                ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
-                translateButton.setSubtext(ExteraConfig.getCurrentLangName());
-            }));
+            ActionBarMenuSubItem translateButton = new TranslateBeforeSendWrapper(getContext(), true, true, resourcesProvider) {
+                @Override
+                protected void onClick() {
+                    if (sendPopupWindow != null && sendPopupWindow.isShowing())
+                        sendPopupWindow.dismiss();
+                    ExteraUtils.translate(commentTextView.getText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                        commentTextView.setText(translated);
+                        commentTextView.setSelection(translated.length());
+                    }, null);
+                }
+            };
             sendPopupLayout2.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
         }
         ActionBarMenuSubItem sendWithoutSound = new ActionBarMenuSubItem(getContext(), true, true, resourcesProvider);

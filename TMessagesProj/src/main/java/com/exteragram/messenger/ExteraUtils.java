@@ -272,6 +272,9 @@ public final class ExteraUtils {
     }
 
     public static void translate(CharSequence text, String target, OnTranslationSuccess onSuccess, OnTranslationFail onFail) {
+        if (text == null || text.length() == 0) {
+            return;
+        }
         if (!translateQueue.isAlive()) {
             translateQueue.start();
         }

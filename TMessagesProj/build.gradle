@@ -21,7 +21,7 @@ dependencies {
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.sharetarget:sharetarget:1.2.0"
-    implementation 'com.google.android.gms:play-services-measurement:21.2.1'
+    implementation 'com.google.android.gms:play-services-measurement:21.2.2'
 
     compileOnly 'org.checkerframework:checker-qual:2.5.2'
     compileOnly 'org.checkerframework:checker-compat-qual:2.5.5'

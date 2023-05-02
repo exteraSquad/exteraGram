@@ -3501,7 +3501,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             if (mediaEnabled) {
                 progressView.setText(LocaleController.getString("NoPhotos", R.string.NoPhotos));
                 progressView.setLottie(0, 0, 0);
-                parentAlert.floatingButton.setVisibility(VISIBLE);
+                if (ExteraConfig.hideCameraTile) {
+                    parentAlert.floatingButton.setVisibility(VISIBLE);
+                }
             } else {
                 TLRPC.Chat chat = ((ChatActivity) parentAlert.baseFragment).getCurrentChat();
                 progressView.setLottie(R.raw.media_forbidden, 150, 150);
@@ -3512,7 +3514,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                 } else {
                     progressView.setText(LocaleController.formatString("AttachMediaRestricted", R.string.AttachMediaRestricted, LocaleController.formatDateForBan(chat.banned_rights.until_date)));
                 }
-                parentAlert.floatingButton.setVisibility(GONE);
+                if (ExteraConfig.hideCameraTile) {
+                    parentAlert.floatingButton.setVisibility(GONE);
+                }
             }
         } else {
             if (shouldLoadAllMedia()) {

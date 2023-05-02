@@ -1786,7 +1786,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private final static int gallery_menu_paint = 20;
     private final static int gallery_menu_pip2 = 21;
     private final static int gallery_menu_paint2 = 22;
-    private final static int gallery_menu_copy = 100;
+    private final static int gallery_menu_copy = 50;
 
     private static DecelerateInterpolator decelerateInterpolator;
     private static Paint progressPaint;
@@ -11720,6 +11720,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         menuItem.hideSubItem(gallery_menu_edit_avatar);
         menuItem.hideSubItem(gallery_menu_set_as_main);
         menuItem.hideSubItem(gallery_menu_delete);
+        menuItem.hideSubItem(gallery_menu_copy);
         speedItem.setVisibility(View.GONE);
         speedGap.setVisibility(View.GONE);
         actionBar.setTranslationY(0);
@@ -12696,6 +12697,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     } else {
                         title = LocaleController.getString("AttachPhoto", R.string.AttachPhoto);
                     }
+                }
+                if (isVideo) {
+                    menuItem.hideSubItem(gallery_menu_copy);
+                } else {
+                    menuItem.showSubItem(gallery_menu_copy);
                 }
                 menuItem.showSubItem(gallery_menu_save);
                 menuItem.hideSubItem(gallery_menu_savegif);

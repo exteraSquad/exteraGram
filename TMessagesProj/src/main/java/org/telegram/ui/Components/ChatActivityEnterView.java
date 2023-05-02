@@ -103,6 +103,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.components.ChatActivityEnterViewStaticIconView;
+import com.exteragram.messenger.components.TranslateBeforeSendWrapper;
 import com.exteragram.messenger.premium.BoostController;
 import com.exteragram.messenger.premium.encryption.EncryptionHelper;
 
@@ -165,7 +166,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -3490,51 +3490,41 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
             boolean scheduleButtonValue = parentFragment != null && parentFragment.canScheduleMessage();
             boolean sendWithoutSoundButtonValue = !(self || slowModeTimer > 0 && !isInScheduleMode());
-            boolean translate = messageEditText.getText() != null && messageEditText.getText().toString().trim().length() != 0;
-            if (translate) {
-                ActionBarMenuSubItem translateButton = new ActionBarMenuSubItem(getContext(), true, !scheduleButtonValue && !sendWithoutSoundButtonValue, resourcesProvider);
-                translateButton.setTextAndIcon(LocaleController.getString("TranslateTo", R.string.TranslateTo), R.drawable.msg_translate);
-                translateButton.setSubtext(ExteraConfig.getCurrentLangName());
-                translateButton.setMinimumWidth(AndroidUtilities.dp(196));
-                translateButton.setItemHeight(56);
-                translateButton.setOnClickListener(v -> {
+            ActionBarMenuSubItem translateButton = new TranslateBeforeSendWrapper(getContext(), true, !scheduleButtonValue && !sendWithoutSoundButtonValue, resourcesProvider) {
+                @Override
+                protected void onClick() {
                     if (sendPopupWindow != null && sendPopupWindow.isShowing())
                         sendPopupWindow.dismiss();
-                    ExteraUtils.translate(getEditField().getText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                    ExteraUtils.translate(getEditField() != null ? getEditField().getText() : null, ExteraConfig.getCurrentLangCode(), translated -> {
                         getEditField().setText(translated);
                         getEditField().setSelection(translated.length());
-                    }, () -> {});
-                });
-                translateButton.setRightIcon(R.drawable.msg_arrowright);
-                translateButton.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), getContext(), i -> {
-                    ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i]).apply();
-                    translateButton.setSubtext(ExteraConfig.getCurrentLangName());
-                }));
-                sendPopupLayout.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
-
-                if (BoostController.isUserBooster()) {
-                    ActionBarMenuSubItem encryptButton = new ActionBarMenuSubItem(getContext(), false, !scheduleButtonValue && !sendWithoutSoundButtonValue, resourcesProvider);
-                    encryptButton.setTextAndIcon(LocaleController.getString(R.string.Encrypt), R.drawable.msg_secret);
-                    encryptButton.setMinimumWidth(AndroidUtilities.dp(196));
-                    encryptButton.setItemHeight(56);
-                    encryptButton.setSubtext(EncryptionHelper.getEncryptorBy(dialog_id).getName());
-                    encryptButton.setRightIcon(R.drawable.msg_arrowright);
-                    encryptButton.getRightIcon().setVisibility(VISIBLE);
-                    encryptButton.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(EncryptionHelper.names, LocaleController.getString(R.string.Encryptors), EncryptionHelper.getEncryptorTypeFor(dialog_id), getContext(), i -> {
-                        EncryptionHelper.setEncryptorTypeFor(dialog_id, i);
-                        encryptButton.setSubtext(EncryptionHelper.getEncryptorBy(dialog_id).getName());
-                    }));
-                    encryptButton.setOnClickListener(v -> {
-                        if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
-                            sendPopupWindow.dismiss();
-                        }
-                        EncryptionHelper.encryptMessage(String.valueOf(getEditField().getText()), dialog_id, EncryptionHelper.getEncryptorTypeFor(dialog_id), message -> {
-                            getEditField().setText(message);
-                            sendMessage();
-                        });
-                    });
-                    sendPopupLayout.addView(encryptButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+                    }, null);
                 }
+            };
+            sendPopupLayout.addView(translateButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+
+            if (BoostController.isUserBooster()) {
+                ActionBarMenuSubItem encryptButton = new ActionBarMenuSubItem(getContext(), false, !scheduleButtonValue && !sendWithoutSoundButtonValue, resourcesProvider);
+                encryptButton.setTextAndIcon(LocaleController.getString(R.string.Encrypt), R.drawable.msg_secret);
+                encryptButton.setMinimumWidth(AndroidUtilities.dp(196));
+                encryptButton.setItemHeight(56);
+                encryptButton.setSubtext(EncryptionHelper.getEncryptorBy(dialog_id).getName());
+                encryptButton.setRightIcon(R.drawable.msg_arrowright);
+                encryptButton.getRightIcon().setVisibility(VISIBLE);
+                encryptButton.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(EncryptionHelper.names, LocaleController.getString(R.string.Encryptors), EncryptionHelper.getEncryptorTypeFor(dialog_id), getContext(), i -> {
+                    EncryptionHelper.setEncryptorTypeFor(dialog_id, i);
+                    encryptButton.setSubtext(EncryptionHelper.getEncryptorBy(dialog_id).getName());
+                }));
+                encryptButton.setOnClickListener(v -> {
+                    if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
+                        sendPopupWindow.dismiss();
+                    }
+                    EncryptionHelper.encryptMessage(String.valueOf(getEditField().getText()), dialog_id, EncryptionHelper.getEncryptorTypeFor(dialog_id), message -> {
+                        getEditField().setText(message);
+                        sendMessage();
+                    });
+                });
+                sendPopupLayout.addView(encryptButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
             }
             if (scheduleButtonValue) {
                 ActionBarMenuSubItem scheduleButton = new ActionBarMenuSubItem(getContext(), true, !sendWithoutSoundButtonValue, resourcesProvider);

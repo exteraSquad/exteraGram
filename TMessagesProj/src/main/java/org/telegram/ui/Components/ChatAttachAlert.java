@@ -68,6 +68,10 @@ import androidx.dynamicanimation.animation.SpringForce;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.extras.PermissionUtils;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
@@ -114,10 +118,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.extras.PermissionUtils;
 
 public class ChatAttachAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate, BottomSheet.BottomSheetDelegateInterface {
 
@@ -2961,7 +2961,11 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     ChatAttachAlertPhotoLayout photoLayout = (ChatAttachAlertPhotoLayout) currentAttachLayout;
                     if (photoLayout.cameraView != null) {
                         photoLayout.cameraView.setVisibility(View.INVISIBLE);
+                    }
+                    if (photoLayout.cameraIcon != null) {
                         photoLayout.cameraIcon.setVisibility(View.INVISIBLE);
+                    }
+                    if (photoLayout.cameraCell != null) {
                         photoLayout.cameraCell.setVisibility(View.VISIBLE);
                     }
                 }
@@ -2971,6 +2975,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     ChatAttachAlertPhotoLayout photoLayout = (ChatAttachAlertPhotoLayout) nextAttachLayout;
                     if (photoLayout.cameraView != null) {
                         photoLayout.cameraView.setVisibility(View.VISIBLE);
+                    }
+                    if (photoLayout.cameraIcon != null) {
                         photoLayout.cameraIcon.setVisibility(View.VISIBLE);
                     }
                 }
