@@ -424,8 +424,8 @@ public class IconSetsController {
         solar.put(R.drawable.profile_newmsg_filled, R.drawable.profile_newmsg_filled_solar);
         solar.put(R.drawable.profile_phone, R.drawable.profile_phone_solar);
         solar.put(R.drawable.profile_video, R.drawable.profile_video_solar);
-        solar.put(R.drawable.proxy_off, R.drawable.proxy_off_solar);
-        solar.put(R.drawable.proxy_on, R.drawable.proxy_on_solar);
+        solar.put(R.drawable.msg2_proxy_off, R.drawable.proxy_off_solar);
+        solar.put(R.drawable.msg2_proxy_on, R.drawable.proxy_on_solar);
         solar.put(R.drawable.qr_flashlight, R.drawable.qr_flashlight_solar);
         solar.put(R.drawable.qr_gallery, R.drawable.qr_gallery_solar);
         solar.put(R.drawable.reactionbutton, R.drawable.msg_reactions_solar);
