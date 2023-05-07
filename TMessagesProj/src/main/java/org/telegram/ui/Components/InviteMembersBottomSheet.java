@@ -15,7 +15,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -62,8 +61,8 @@ import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
 
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.utils.CanvasUtils;
 
 public class InviteMembersBottomSheet extends UsersAlertBase implements NotificationCenter.NotificationCenterDelegate {
 
@@ -257,7 +256,7 @@ public class InviteMembersBottomSheet extends UsersAlertBase implements Notifica
         floatingButton = new ImageView(context);
         floatingButton.setScaleType(ImageView.ScaleType.CENTER);
 
-        Drawable drawable = ExteraUtils.drawFab();
+        Drawable drawable = CanvasUtils.drawFab();
         floatingButton.setBackgroundDrawable(drawable);
         floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
         floatingButton.setImageResource(R.drawable.floating_check);

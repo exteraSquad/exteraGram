@@ -20,9 +20,10 @@ import android.widget.ScrollView;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.BaseFragment;
@@ -226,7 +227,7 @@ public class ItemOptions {
             @Override
             protected void onDraw(Canvas canvas) {
                 super.onDraw(canvas);
-                if (!SharedConfig.useLNavigation) {
+                if (!ExteraConfig.useLNavigation) {
                     canvas.drawColor(dim);
 
                     if (cachedBitmap != null && scrimView.getParent() instanceof View) {
@@ -325,10 +326,10 @@ public class ItemOptions {
             Y = (container.getHeight() - layout.getMeasuredHeight()) / 2; // in the center
         }
         actionBarPopupWindow.showAtLocation(
-            container,
-            0,
-            (int) (X + this.translateX),
-            (int) (Y + this.translateY)
+                container,
+                0,
+                (int) (X + this.translateX),
+                (int) (Y + this.translateY)
         );
         return this;
     }

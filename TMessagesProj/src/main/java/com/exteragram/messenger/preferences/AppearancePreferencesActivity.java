@@ -20,10 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.components.FabShapeCell;
-import com.exteragram.messenger.components.MainScreenSetupCell;
-import com.exteragram.messenger.components.SolarIconsPreview;
+import com.exteragram.messenger.preferences.components.FabShapeCell;
+import com.exteragram.messenger.preferences.components.MainScreenSetupCell;
+import com.exteragram.messenger.preferences.components.SolarIconsPreview;
+import com.exteragram.messenger.utils.AppUtils;
+import com.exteragram.messenger.utils.LocaleUtils;
+import com.exteragram.messenger.utils.SystemUtils;
+import com.exteragram.messenger.utils.PopupUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -45,8 +48,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private Parcelable recyclerViewState = null;
 
     SolarIconsPreview solarIconsPreview;
-
     MainScreenSetupCell mainScreenSetupCell;
+
     private final CharSequence[] styles = new CharSequence[]{
             LocaleController.getString("Default", R.string.Default),
             LocaleController.getString("TabStyleRounded", R.string.TabStyleRounded),
@@ -74,6 +77,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int hideActionBarStatusRow;
     private int centerTitleRow;
     private int hideAllChatsRow;
+    private int tabCounterRow;
     private int tabTitleRow;
     private int tabStyleRow;
     private int actionBarTitleRow;
@@ -122,6 +126,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         actionBarSetupRow = newRow();
         hideActionBarStatusRow = getUserConfig().isPremium() ? newRow() : -1;
         hideAllChatsRow = newRow();
+        tabCounterRow = newRow();
         centerTitleRow = newRow();
         tabStyleRow = newRow();
         tabTitleRow = newRow();
@@ -157,7 +162,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         newChannelRow = newRow();
         contactsRow = newRow();
         callsRow = newRow();
-        peopleNearbyRow = ExteraUtils.hasGps() ? newRow() : -1;
+        peopleNearbyRow = SystemUtils.hasGps() ? newRow() : -1;
         savedMessagesRow = newRow();
         scanQrRow = newRow();
         inviteFriendsRow = newRow();
@@ -189,13 +194,12 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ExteraConfig.editor.putBoolean("alternativeOpenAnimation", ExteraConfig.alternativeOpenAnimation ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.alternativeOpenAnimation);
         } else if (position == alternativeNavigationRow) {
-            SharedConfig.editor.putBoolean("useLNavigation", SharedConfig.useLNavigation ^= true).apply();
-            if (SharedConfig.useLNavigation) {
+            ExteraConfig.editor.putBoolean("useLNavigation", ExteraConfig.useLNavigation ^= true).apply();
+            if (ExteraConfig.useLNavigation) {
                 MessagesController.getGlobalMainSettings().edit().putBoolean("view_animations", true).apply();
                 SharedConfig.setAnimationsEnabled(true);
             }
-            SharedConfig.saveConfig();
-            ((TextCheckCell) view).setChecked(SharedConfig.useLNavigation);
+            ((TextCheckCell) view).setChecked(ExteraConfig.useLNavigation);
             parentLayout.rebuildAllFragmentViews(false, false);
             showBulletin();
         } else if (position == centerTitleRow) {
@@ -208,6 +212,10 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ((TextCheckCell) view).setChecked(ExteraConfig.hideAllChats);
             parentLayout.rebuildAllFragmentViews(false, false);
             mainScreenSetupCell.updateTabName(true);
+        } else if (position == tabCounterRow) {
+            ExteraConfig.editor.putBoolean("tabCounter", ExteraConfig.tabCounter ^= true).apply();
+            ((TextCheckCell) view).setChecked(ExteraConfig.tabCounter);
+            getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
         } else if (position == newSwitchStyleRow) {
             ExteraConfig.editor.putBoolean("newSwitchStyle", ExteraConfig.newSwitchStyle ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.newSwitchStyle);
@@ -278,7 +286,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(events, new int[]{
+            PopupUtils.showDialog(events, new int[]{
                     R.drawable.msg_calendar2, R.drawable.msg_block,
                     R.drawable.msg_settings_ny, R.drawable.msg_saved_14, R.drawable.msg_contacts_hw
             }, LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), ExteraConfig.eventType, getContext(), which -> {
@@ -296,7 +304,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(titles, LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), ExteraConfig.actionBarTitle, getContext(), i -> {
+            PopupUtils.showDialog(titles, LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), ExteraConfig.actionBarTitle, getContext(), i -> {
                 ExteraConfig.editor.putInt("actionBarTitle", ExteraConfig.actionBarTitle = i).apply();
                 mainScreenSetupCell.updateTitle(true);
                 parentLayout.rebuildAllFragmentViews(false, false);
@@ -306,7 +314,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(tabIcons, LocaleController.getString("TabTitleStyle", R.string.TabTitleStyle), ExteraConfig.tabIcons, getContext(), i -> {
+            PopupUtils.showDialog(tabIcons, LocaleController.getString("TabTitleStyle", R.string.TabTitleStyle), ExteraConfig.tabIcons, getContext(), i -> {
                 ExteraConfig.editor.putInt("tabIcons", ExteraConfig.tabIcons = i).apply();
                 listAdapter.notifyItemChanged(tabTitleRow, payload);
                 getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
@@ -315,7 +323,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(styles, LocaleController.getString("TabStyle", R.string.TabStyle), ExteraConfig.tabStyle, getContext(), i -> {
+            PopupUtils.showDialog(styles, LocaleController.getString("TabStyle", R.string.TabStyle), ExteraConfig.tabStyle, getContext(), i -> {
                 ExteraConfig.editor.putInt("tabStyle", ExteraConfig.tabStyle = i).apply();
                 mainScreenSetupCell.updateTabStyle(true);
                 listAdapter.notifyItemChanged(tabStyleRow, payload);
@@ -411,11 +419,13 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     } else if (position == forceSnowRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("ForceSnow", R.string.ForceSnow), LocaleController.getString("ForceSnowInfo", R.string.ForceSnowInfo), ExteraConfig.forceSnow, true, true);
                     } else if (position == alternativeNavigationRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("AlternativeNavigation", R.string.AlternativeNavigation), SharedConfig.useLNavigation, false);
+                        textCheckCell.setTextAndCheck(LocaleController.getString("AlternativeNavigation", R.string.AlternativeNavigation), ExteraConfig.useLNavigation, false);
                     } else if (position == centerTitleRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("CenterTitle", R.string.CenterTitle), ExteraConfig.centerTitle, true);
                     } else if (position == hideAllChatsRow) {
                         textCheckCell.setTextAndCheck(LocaleController.formatString("HideAllChats", R.string.HideAllChats, LocaleController.getString("AllChats", R.string.FilterAllChats)), ExteraConfig.hideAllChats, true);
+                    } else if (position == tabCounterRow) {
+                        textCheckCell.setTextAndCheck(LocaleController.getString("TabCounter", R.string.TabCounter), ExteraConfig.tabCounter, true);
                     } else if (position == newSwitchStyleRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("NewSwitchStyle", R.string.NewSwitchStyle), ExteraConfig.newSwitchStyle, true);
                     } else if (position == disableDividersRow) {
@@ -431,7 +441,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 case 2:
                     TextCell textCell = (TextCell) holder.itemView;
                     textCell.setEnabled(true);
-                    int[] icons = ExteraUtils.getDrawerIconPack();
+                    int[] icons = AppUtils.getDrawerIconPack();
                     if (position == statusRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), ExteraConfig.changeStatus, R.drawable.msg_smile_status, true);
                     } else if (position == newGroupRow) {
@@ -475,7 +485,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     if (position == appearanceDividerRow) {
                         cell.setText(LocaleController.getString("AlternativeNavigationInfo", R.string.AlternativeNavigationInfo));
                     } else if (position == solarIconsInfoRow) {
-                        cell.setText(ExteraUtils.formatWithUsernames(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), AppearancePreferencesActivity.this));
+                        cell.setText(LocaleUtils.formatWithUsernames(LocaleController.getString("SolarIconsInfo", R.string.SolarIconsInfo), AppearancePreferencesActivity.this));
                     } else if (position == mainScreenInfoRow) {
                         cell.setText(LocaleController.getString("MainScreenSetupInfo", R.string.MainScreenSetupInfo));
                     }

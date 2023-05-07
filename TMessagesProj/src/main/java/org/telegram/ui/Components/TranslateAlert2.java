@@ -38,7 +38,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.TranslatorUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
@@ -298,7 +298,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
         }
         req.to_lang = lang;
 
-        ExteraUtils.translate(reqText == null ? "" : reqText.toString(), lang, translated -> {
+        TranslatorUtils.translate(reqText == null ? "" : reqText.toString(), lang, translated -> {
             if (translated != null) {
                 firstTranslation = false;
                 textView.setText(translated);

@@ -43,7 +43,7 @@
     <string name="NewSwitchStyle">Estilo do interruptor MD3</string>
     <string name="DisableDividers">Desativar divisores</string>
     <string name="AlternativeNavigation">Navegação Alternativa</string>
-    <string name="AlternativeNavigationInfo">Uma opção experimental que inclui novas animações de transição mais suaves entre as telas.\n\n Com essa opção, a barra de navegação nas conversas será a mesma cor do painel de mensagens.</string>
+    <string name="AlternativeNavigationInfo">Uma opção experimental que inclui novas animações de transição mais suaves entre as telas.</string>
     <string name="DrawerOptions">Opções do menu</string>
     <string name="DrawerIconSet">Conjunto de Ícones</string>
     <string name="ForceSnow">Forçar Nevar</string>
@@ -78,11 +78,6 @@ CameraX só é suportada nos
     <string name="HidePhoneNumber">Ocultar número do telefone</string>
     <string name="ShowIdAndDc">Mostrar ID e DC</string>
     <string name="ShowIdAndDcInfo">O Telegram APl mostra os IDs como eles são, enquanto o Bot API adiciona um sinal de menos para grupos e -100 para supergrupos, grupos de transmissão e canais.</string>
-    <string name="DisableAnimatedAvatars">Desativar avatares animados</string>
-    <string name="PremiumAutoPlayback">Reprodução automática premium</string>
-    <string name="HidePremiumStickersTab">Ocultar aba de stickers premium</string>
-    <string name="HideFeaturedEmoji">Ocultar emojis premium destacados</string>
-    <string name="HideSendAsChannel">Ocultar \"Enviar como Canal\"</string>
     <string name="ArchiveOnPull">Abrir Conversas Arquivadas ao deslizar pra cima</string>
     <string name="DisableUnarchiveSwipe">Desativar \"Desarquivar\" ao deslizar</string>
     <string name="DisableUnarchiveSwipeInfo">Deslizar para a esquerda não removerá as conversas arquivadas.</string>
@@ -103,13 +98,10 @@ CameraX só é suportada nos
     <string name="DoubleTapIncoming">Mensagens recebidas</string>
     <string name="DoubleTapOutgoing">Mensagens enviadas</string>
     <string name="DoubleTapInfo">Algumas ações requerem direitos de administrador no grupo ou canal.</string>
-    <string name="HideMuteUnmuteButton">Ocultar botão \"%1$s\"</string>
-    <string name="HideMuteUnmuteButtonInfo">Da parte inferior dos canais.</string>
     <string name="HideKeyboardOnScroll">Ocultar teclado ao rolar no chat</string>
     <string name="DisableJumpToNextChannel">Desativar \"Ir para o próximo canal\"</string>
     <string name="ShowActionTimestamps">Mostrar data e hora de ações</string>
     <string name="HideShareButton">Ocultar botão \"%1$s\"</string>
-    <string name="ShowDetailsButton">Mostrar a data da mensagem encaminhada</string>
     <string name="AddCommaAfterMention">Adicionar vírgula após a menção</string>
     <string name="AddCommaAfterMentionInfo">Uma vírgula será colocada automaticamente após tocar no usuário que você deseja mencionar.</string>
     <string name="HideCameraTile">Ocultar Título de Câmera Instantânea</string>

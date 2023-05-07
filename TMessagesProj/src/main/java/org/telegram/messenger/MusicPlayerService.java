@@ -33,7 +33,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.AppUtils;
 import com.google.android.exoplayer2.C;
 
 import org.telegram.messenger.audioinfo.AudioInfo;
@@ -263,7 +263,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
                         .setMediaSession(mediaSession.getSessionToken())
                         .setShowActionsInCompactView(0, 1, 2));
         if (Build.VERSION.SDK_INT < 31)
-            bldr.setColor(ExteraUtils.getNotificationIconColor());
+            bldr.setColor(AppUtils.getNotificationIconColor());
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationsController.checkOtherNotificationsChannel();
             bldr.setChannelId(NotificationsController.OTHER_NOTIFICATIONS_CHANNEL);

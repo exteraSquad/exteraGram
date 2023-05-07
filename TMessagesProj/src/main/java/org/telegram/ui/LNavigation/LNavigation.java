@@ -894,11 +894,7 @@ public class LNavigation extends FrameLayout implements INavigationLayout, Float
 
         try {
             if (bgView != null && fgView != null) {
-                if (swipeProgress > 1f) {
-                    swipeProgress = 1f;
-                } else if (swipeProgress < 0f) {
-                    swipeProgress = 0f;
-                }
+                swipeProgress = MathUtils.clamp(swipeProgress, 0f, 1f);
                 int navColor = ColorUtils.blendARGB(fgView.fragment.getNavigationBarColor(), bgView.fragment.getNavigationBarColor(), swipeProgress);
                 getParentActivity().getWindow().setNavigationBarColor(navColor);
                 AndroidUtilities.setLightNavigationBar(getParentActivity().getWindow(), AndroidUtilities.computePerceivedBrightness(navColor) > 0.721f);

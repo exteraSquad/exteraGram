@@ -8,7 +8,7 @@ import android.widget.FrameLayout;
 
 import androidx.core.content.FileProvider;
 
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.ChatUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -133,7 +133,7 @@ public class MessageDetailsPopupWrapper {
             }
         }
         if (dc != 0) {
-            items.add(new Item(R.drawable.msg_satellite, LocaleController.getString(R.string.Datacenter), String.format(Locale.ROOT, "DC%d, %s", dc, ExteraUtils.getDCName(dc))));
+            items.add(new Item(R.drawable.msg_satellite, LocaleController.getString(R.string.Datacenter), String.format(Locale.ROOT, "DC%d, %s", dc, ChatUtils.getDCName(dc))));
         }
 
         if (items.get(items.size() - 1) == null) {
@@ -150,7 +150,7 @@ public class MessageDetailsPopupWrapper {
                 item.setItemHeight(56);
             }
             if (i.resId == R.drawable.msg_openprofile && stickerSetId != 0) {
-                ExteraUtils.getInfoAboutOwner(stickerSetId >> 32, (id, username) -> {
+                ChatUtils.getInfoAboutOwner(stickerSetId >> 32, (id, username) -> {
                     ownerId = id;
                     i.subtitle = "@" + username;
                     item.setSubtext(i.subtitle);
@@ -175,7 +175,7 @@ public class MessageDetailsPopupWrapper {
                         ProfileActivity profile = new ProfileActivity(args);
                         fragment.presentFragment(profile);
                     } else {
-                        copy(ExteraUtils.getOwnerIds(stickerSetId));
+                        copy(ChatUtils.getOwnerIds(stickerSetId));
                     }
                 } else {
                     copy(i.subtitle != null ? i.subtitle : i.title);
@@ -186,7 +186,7 @@ public class MessageDetailsPopupWrapper {
                 if (i.resId == R.drawable.msg_map && filePath != null) {
                     text = filePath;
                 } else if (i.resId == R.drawable.msg_openprofile) {
-                    text = ExteraUtils.getOwnerIds(stickerSetId);
+                    text = ChatUtils.getOwnerIds(stickerSetId);
                 } else if (i.subtitle != null) {
                     text = i.subtitle;
                 } else {

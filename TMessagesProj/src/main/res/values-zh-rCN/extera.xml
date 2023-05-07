@@ -43,7 +43,7 @@
     <string name="NewSwitchStyle">Material Design 3 开关样式</string>
     <string name="DisableDividers">禁用分隔线</string>
     <string name="AlternativeNavigation">备选导航动画</string>
-    <string name="AlternativeNavigationInfo">一个实验性选项，包括屏幕切换过程中新的、更加舒适的过渡动画。\n\n通过此选项，聊天中的导航栏颜色将与消息面板相同。</string>
+    <string name="AlternativeNavigationInfo">一个实验性选项，包括屏幕切换过程中新的、更加舒适的过渡动画。</string>
     <string name="DrawerOptions">侧栏选项</string>
     <string name="DrawerIconSet">图标集</string>
     <string name="ForceSnow">强制\"飘雪\"动画</string>
@@ -78,11 +78,6 @@ CameraX仅支持
     <string name="HidePhoneNumber">隐藏手机号码</string>
     <string name="ShowIdAndDc">显示用户ID和DC(数据中心)</string>
     <string name="ShowIdAndDcInfo">按照Telegram APl的返回表示ID，而Bot API为群组的ID之前添加负号，为超级群组、广播群组和频道的ID之前添加-100。</string>
-    <string name="DisableAnimatedAvatars">禁用动态头像</string>
-    <string name="PremiumAutoPlayback">Premium自动播放</string>
-    <string name="HidePremiumStickersTab">隐藏Premium贴纸选项卡</string>
-    <string name="HideFeaturedEmoji">隐藏Premium专属表情</string>
-    <string name="HideSendAsChannel">隐藏“以频道身份发言”</string>
     <string name="ArchiveOnPull">下拉打开已归档对话</string>
     <string name="DisableUnarchiveSwipe">禁用\"取消存档\"滑动动作</string>
     <string name="DisableUnarchiveSwipeInfo">向左滑动不会删除归档中的聊天。</string>
@@ -103,13 +98,10 @@ CameraX仅支持
     <string name="DoubleTapIncoming">收到的消息</string>
     <string name="DoubleTapOutgoing">发送的消息</string>
     <string name="DoubleTapInfo">某些操作需要在聊天或频道中拥有管理员权限。</string>
-    <string name="HideMuteUnmuteButton">隐藏“%1$s”按钮</string>
-    <string name="HideMuteUnmuteButtonInfo">从频道的底部</string>
     <string name="HideKeyboardOnScroll">在浏览对话时隐藏键盘</string>
     <string name="DisableJumpToNextChannel">禁用“跳转至下一个频道”</string>
     <string name="ShowActionTimestamps">显示操作的时间戳</string>
     <string name="HideShareButton">隐藏消息右侧的“%1$s”按钮</string>
-    <string name="ShowDetailsButton">显示被转发原消息时间</string>
     <string name="AddCommaAfterMention">选定@ 后自动添加逗号后缀</string>
     <string name="AddCommaAfterMentionInfo">点击您想要提及的用户后，将自动放置一个逗号。</string>
     <string name="HideCameraTile">隐藏即时相机</string>

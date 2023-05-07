@@ -28,8 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.premium.filter.ZalgoFilter;
+import com.exteragram.messenger.boost.filter.ZalgoFilter;
+import com.exteragram.messenger.utils.SystemUtils;
 
 import org.telegram.ui.Components.AnimatedEmojiSpan;
 
@@ -314,7 +314,7 @@ public class Emoji {
             if (SharedConfig.useSystemEmoji) {
                 String emoji = fixEmoji(EmojiData.data[info.page][info.emojiIndex]);
                 textPaint.setTextSize(b.height() * 0.8f);
-                textPaint.setTypeface(ExteraUtils.getSystemEmojiTypeface());
+                textPaint.setTypeface(SystemUtils.getSystemEmojiTypeface());
                 canvas.drawText(emoji,  0, emoji.length(), b.left, b.bottom - b.height() * 0.225f, textPaint);
                 return;
             }

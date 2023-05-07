@@ -43,7 +43,7 @@
     <string name="NewSwitchStyle">Перемикачі в стилі MD3</string>
     <string name="DisableDividers">Відключити розділювачі</string>
     <string name="AlternativeNavigation">Альтернативна навігація</string>
-    <string name="AlternativeNavigationInfo">Експериментальна опція, яка включає нові, більш плавні анімації переходу між екранами.\n\nУ цьому режимі навігаційна панель в чатах буде мати такий самий колір, як і панель повідомлення.</string>
+    <string name="AlternativeNavigationInfo">Експериментальна опція, яка включає нові, більш плавні анімації переходу між екранами.</string>
     <string name="DrawerOptions">Параметри меню</string>
     <string name="DrawerIconSet">Набір Іконок</string>
     <string name="ForceSnow">Включити Сніг</string>
@@ -78,11 +78,6 @@ CameraX підтримується тільки на
     <string name="HidePhoneNumber">Приховати номер телефону</string>
     <string name="ShowIdAndDc">Показати ID та DC</string>
     <string name="ShowIdAndDcInfo">API Telegram показує ID якими вони є, в той час, як API ботів додає знак мінуса для груп і -100 для супергруп, бродкаст груп і каналів.</string>
-    <string name="DisableAnimatedAvatars">Вимкнути анімовані аватарки</string>
-    <string name="PremiumAutoPlayback">Авто анімація преміум стікерів</string>
-    <string name="HidePremiumStickersTab">Приховати вкладку преміум наклейок</string>
-    <string name="HideFeaturedEmoji">Приховати рекомендовані преміум Emoji</string>
-    <string name="HideSendAsChannel">Сховати надсилання як канал</string>
     <string name="ArchiveOnPull">Відкрити архів при витягуванні</string>
     <string name="DisableUnarchiveSwipe">Вимкнути свайп «Розархівувати»</string>
     <string name="DisableUnarchiveSwipeInfo">Проведення вліво не призведе до видалення чатів з архіву.</string>
@@ -103,14 +98,10 @@ CameraX підтримується тільки на
     <string name="DoubleTapIncoming">Вхідні повідомлення</string>
     <string name="DoubleTapOutgoing">Вихідні повідомлення</string>
     <string name="DoubleTapInfo">Деякі дії потребують прав адміністратора в чаті або каналі.</string>
-    <string name="HideMuteUnmuteButton">Приховати кнопку %1$s</string>
-    <string name="HideMuteUnmuteButtonInfo">з нижньої частини каналів.</string>
     <string name="HideKeyboardOnScroll">Приховати клавіатуру на прокрутці чату</string>
     <string name="DisableJumpToNextChannel">Вимкнути \"Перейти до наступного каналу\"</string>
     <string name="ShowActionTimestamps">Показувати час для дій</string>
     <string name="HideShareButton">Приховати бокову кнопку %1$s</string>
-    <string name="ShowDetailsButton">Показувати дату пересланого повідомлення</string>
-    <string name="ShowMessageID">Показати ідентифікатор повідомлення</string>
     <string name="AddCommaAfterMention">Додати кому після згадування</string>
     <string name="AddCommaAfterMentionInfo">Кома буде розміщуватися автоматично після натискання на користувача, якого ви хочете згадати.</string>
     <string name="HideCameraTile">Приховати плитку миттєвої камери</string>

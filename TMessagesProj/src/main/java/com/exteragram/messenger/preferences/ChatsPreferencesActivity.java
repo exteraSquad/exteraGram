@@ -22,11 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.components.AltSeekbar;
-import com.exteragram.messenger.components.DoubleTapCell;
-import com.exteragram.messenger.components.StickerShapeCell;
-import com.exteragram.messenger.components.StickerSizePreviewCell;
+import com.exteragram.messenger.preferences.components.AltSeekbar;
+import com.exteragram.messenger.preferences.components.DoubleTapCell;
+import com.exteragram.messenger.preferences.components.StickerShapeCell;
+import com.exteragram.messenger.preferences.components.StickerSizePreviewCell;
+import com.exteragram.messenger.utils.LocaleUtils;
+import com.exteragram.messenger.utils.PopupUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -64,8 +65,8 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             LocaleController.getString("Delete", R.string.Delete)
     }, bottomButton = new CharSequence[]{
             LocaleController.getString("Hide", R.string.Hide),
-            ExteraUtils.capitalize(LocaleController.getString("ChannelMute", R.string.ChannelMute)),
-            ExteraUtils.capitalize(LocaleController.getString("ChannelDiscuss", R.string.ChannelDiscuss))
+            LocaleUtils.capitalize(LocaleController.getString("ChannelMute", R.string.ChannelMute)),
+            LocaleUtils.capitalize(LocaleController.getString("ChannelDiscuss", R.string.ChannelDiscuss))
     }, videoMessagesCamera = new CharSequence[]{
             LocaleController.getString("VideoMessagesCameraFront", R.string.VideoMessagesCameraFront),
             LocaleController.getString("VideoMessagesCameraRear", R.string.VideoMessagesCameraRear),
@@ -344,7 +345,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(bottomButton, LocaleController.getString("BottomButton", R.string.BottomButton), ExteraConfig.bottomButton, getContext(), which -> {
+            PopupUtils.showDialog(bottomButton, LocaleController.getString("BottomButton", R.string.BottomButton), ExteraConfig.bottomButton, getContext(), which -> {
                 ExteraConfig.editor.putInt("bottomButton", ExteraConfig.bottomButton = which).apply();
                 listAdapter.notifyItemChanged(bottomButtonRow, payload);
             });
@@ -364,7 +365,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(videoMessagesCamera, LocaleController.getString("VideoMessagesCamera", R.string.VideoMessagesCamera), ExteraConfig.videoMessagesCamera, getContext(), which -> {
+            PopupUtils.showDialog(videoMessagesCamera, LocaleController.getString("VideoMessagesCamera", R.string.VideoMessagesCamera), ExteraConfig.videoMessagesCamera, getContext(), which -> {
                 int old = ExteraConfig.videoMessagesCamera;
                 ExteraConfig.editor.putInt("videoMessagesCamera", ExteraConfig.videoMessagesCamera = which).apply();
                 if (old == which)
@@ -395,7 +396,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             if (getParentActivity()==null) {
                 return;
             }
-            ExteraUtils.showDialog(doubleTapSeekDuration, LocaleController.getString("DoubleTapSeekDuration", R.string.DoubleTapSeekDuration), ExteraConfig.doubleTapSeekDuration, getContext(), which -> {
+            PopupUtils.showDialog(doubleTapSeekDuration, LocaleController.getString("DoubleTapSeekDuration", R.string.DoubleTapSeekDuration), ExteraConfig.doubleTapSeekDuration, getContext(), which -> {
                 int old = ExteraConfig.doubleTapSeekDuration;
                 ExteraConfig.editor.putInt("doubleTapSeekDuration", ExteraConfig.doubleTapSeekDuration = which).apply();
                 if (old == which) {
@@ -413,7 +414,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(doubleTapActions, doubleTapIcons, LocaleController.getString("DoubleTap", R.string.DoubleTap), position == doubleTapActionRow ? ExteraConfig.doubleTapAction : ExteraConfig.doubleTapActionOutOwner, getContext(), i -> {
+            PopupUtils.showDialog(doubleTapActions, doubleTapIcons, LocaleController.getString("DoubleTap", R.string.DoubleTap), position == doubleTapActionRow ? ExteraConfig.doubleTapAction : ExteraConfig.doubleTapActionOutOwner, getContext(), i -> {
                 if (position == doubleTapActionOutOwnerRow) {
                     int old = ExteraConfig.doubleTapActionOutOwner;
                     if (old == i)
@@ -671,7 +672,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     } else if (position == doubleTapActionRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("DoubleTapIncoming", R.string.DoubleTapIncoming), doubleTapActions[ExteraConfig.doubleTapAction], payload, true);
                     } else if (position == bottomButtonRow) {
-                        textSettingsCell.setTextAndValue(LocaleController.getString("BottomButton", R.string.BottomButton), ExteraUtils.capitalize((String) bottomButton[ExteraConfig.bottomButton]), payload, true);
+                        textSettingsCell.setTextAndValue(LocaleController.getString("BottomButton", R.string.BottomButton), LocaleUtils.capitalize((String) bottomButton[ExteraConfig.bottomButton]), payload, true);
                     } else if (position == videoMessagesCameraRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("VideoMessagesCamera", R.string.VideoMessagesCamera), videoMessagesCamera[ExteraConfig.videoMessagesCamera], payload, true);
                     } else if (position == doubleTapSeekDurationRow) {
@@ -685,7 +686,7 @@ public class ChatsPreferencesActivity extends BasePreferencesActivity implements
                     } else if (position == photosDividerRow) {
                         cell.setText(LocaleController.getString("HideCameraTileInfo", R.string.HideCameraTileInfo));
                     } else if (position == chatsDividerRow) {
-                        cell.setText(ExteraUtils.formatWithUsernames(LocaleController.getString("AddCommaAfterMentionInfo", R.string.AddCommaAfterMentionInfo), ChatsPreferencesActivity.this));
+                        cell.setText(LocaleUtils.formatWithUsernames(LocaleController.getString("AddCommaAfterMentionInfo", R.string.AddCommaAfterMentionInfo), ChatsPreferencesActivity.this));
                     } else if (position == stickersDividerRow) {
                         cell.setText(LocaleController.getString("HideCategoriesInfo", R.string.HideCategoriesInfo));
                     } else if (position == videosDividerRow) {

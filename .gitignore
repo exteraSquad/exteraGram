@@ -1,4 +1,5 @@
 TMessagesProj/.externalNativeBuild/
+TMessagesProj/src/main/java/com/exteragram/messenger/boost/
 .gradle/
 .idea/
 build/
@@ -7,7 +8,6 @@ obj/
 
 output-metadata.json
 local.properties
-extera.jks
 API_KEYS
 
 *.hprof

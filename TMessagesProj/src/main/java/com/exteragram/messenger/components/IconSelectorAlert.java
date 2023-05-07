@@ -16,7 +16,7 @@ import android.widget.GridLayout;
 
 import androidx.core.content.ContextCompat;
 
-import com.exteragram.messenger.extras.FolderIcons;
+import com.exteragram.messenger.utils.FolderIcons;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;

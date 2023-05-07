@@ -88,8 +88,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.SystemUtils;
 
 public class PasscodeActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
     public final static int TYPE_MANAGE_CODE_SETTINGS = 0,
@@ -676,7 +677,7 @@ public class PasscodeActivity extends BaseFragment implements NotificationCenter
                 floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.Next));
                 floatingButtonContainer.addView(floatingButtonIcon, LayoutHelper.createFrame(56, 56));
 
-                Drawable drawable = ExteraUtils.drawFab();
+                Drawable drawable = CanvasUtils.drawFab();
                 floatingButtonContainer.setBackground(drawable);
 
                 updateFields();
@@ -869,7 +870,7 @@ public class PasscodeActivity extends BaseFragment implements NotificationCenter
         changePasscodeRow = rowCount++;
         try {
             if (Build.VERSION.SDK_INT >= 23) {
-                if (ExteraUtils.hasBiometrics()) {
+                if (SystemUtils.hasBiometrics()) {
                     fingerprintRow = rowCount++;
                 } else {
                     fingerprintRow = -1;

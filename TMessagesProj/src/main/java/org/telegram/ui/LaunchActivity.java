@@ -85,19 +85,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.extras.ExceptionHandler;
 import com.exteragram.messenger.ExteraResources;
-import com.exteragram.messenger.extras.MonetHelper;
+import com.exteragram.messenger.utils.ChatUtils;
+import com.exteragram.messenger.utils.MonetUtils;
 import com.exteragram.messenger.preferences.MainPreferencesActivity;
-import com.exteragram.messenger.updater.UpdaterUtils;
+import com.exteragram.messenger.utils.UpdaterUtils;
 import com.google.android.gms.common.api.Status;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.appindexing.Action;
 import com.google.firebase.appindexing.FirebaseUserActions;
 import com.google.firebase.appindexing.builders.AssistActionBuilder;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -943,7 +939,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            MonetHelper.registerReceiver(this);
+            MonetUtils.registerReceiver(this);
             LauncherIconController.updateMonetIcon();
             getWindow().getDecorView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
                 @Override
@@ -2857,7 +2853,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 Bundle args = new Bundle();
                 args.putLong("user_id", profile_user_id);
                 ProfileActivity fragment = new ProfileActivity(args);
-                ExteraUtils.openById(profile_user_id, this, (uid, un) -> {
+                ChatUtils.openById(profile_user_id, this, (uid, un) -> {
                     AndroidUtilities.runOnUIThread(() -> presentFragment(fragment, false, false));
                     if (AndroidUtilities.isTablet()) {
                         actionBarLayout.showLastFragment();
@@ -5644,7 +5640,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     @Override
     protected void onDestroy() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            MonetHelper.unregisterReceiver(this);
+            MonetUtils.unregisterReceiver(this);
         }
         if (PhotoViewer.getPipInstance() != null) {
             PhotoViewer.getPipInstance().destroyPhotoViewer();

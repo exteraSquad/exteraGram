@@ -14,7 +14,8 @@ import android.widget.FrameLayout;
 
 import androidx.core.util.Supplier;
 
-import org.telegram.messenger.SharedConfig;
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.ui.Components.BackButtonMenu;
 import org.telegram.ui.LNavigation.LNavigation;
 
@@ -81,7 +82,7 @@ public interface INavigationLayout {
     void setPulledDialogs(List<BackButtonMenu.PulledDialog> pulledDialogs);
 
     static INavigationLayout newLayout(Context context) {
-        return SharedConfig.useLNavigation ? new LNavigation(context) : new ActionBarLayout(context);
+        return ExteraConfig.useLNavigation ? new LNavigation(context) : new ActionBarLayout(context);
     }
 
     static INavigationLayout newLayout(Context context, Supplier<BottomSheet> supplier) {

@@ -69,8 +69,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.extras.PermissionUtils;
+import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.SystemUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -2024,7 +2024,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         containerView.addView(doneItem, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 48, Gravity.TOP | Gravity.RIGHT));
 
         floatingButton = new FrameLayout(context);
-        Drawable drawable = ExteraUtils.drawFab();
+        Drawable drawable = CanvasUtils.drawFab();
         floatingButton.setBackground(drawable);
         floatingButton.setVisibility(shouldShowFloatingCamera() ? View.VISIBLE : View.GONE);
         StateListAnimator stateListAnimator = new StateListAnimator();
@@ -2102,14 +2102,14 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                     }
                     showLayout(photoLayout);
                 } else if (num == 3) {
-                    if (Build.VERSION.SDK_INT >= 23 && !PermissionUtils.isAudioPermissionGranted()) {
-                        PermissionUtils.requestAudioPermission(baseFragment.getParentActivity());
+                    if (Build.VERSION.SDK_INT >= 23 && !SystemUtils.isAudioPermissionGranted()) {
+                        SystemUtils.requestAudioPermission(baseFragment.getParentActivity());
                         return;
                     }
                     openAudioLayout(true);
                 } else if (num == 4) {
-                    if (Build.VERSION.SDK_INT >= 23 && !PermissionUtils.isStoragePermissionGranted()) {
-                        PermissionUtils.requestStoragePermission(baseFragment.getParentActivity());
+                    if (Build.VERSION.SDK_INT >= 23 && !SystemUtils.isStoragePermissionGranted()) {
+                        SystemUtils.requestStoragePermission(baseFragment.getParentActivity());
                         return;
                     }
                     openDocumentsLayout(true);
@@ -2473,7 +2473,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         containerView.addView(writeButtonContainer, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 10));
 
         writeButton = new ImageView(context);
-        writeButtonDrawable = ExteraUtils.drawFab(true);
+        writeButtonDrawable = CanvasUtils.drawFab(true);
         writeButton.setBackgroundDrawable(writeButtonDrawable);
         writeButton.setImageResource(R.drawable.attach_send);
         writeButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));

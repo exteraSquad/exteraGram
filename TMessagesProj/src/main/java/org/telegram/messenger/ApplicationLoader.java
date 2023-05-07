@@ -27,15 +27,14 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDex;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.camera.CameraXUtils;
-import com.exteragram.messenger.extras.ExceptionHandler;
-import com.google.firebase.FirebaseApp;
+import com.exteragram.messenger.utils.CrashlyticsUtils;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
@@ -272,7 +271,20 @@ public class ApplicationLoader extends Application {
         }
 
         if (BuildVars.DEBUG_VERSION) {
-            Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+            var oldDefaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+            Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+                try {
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = android.content.ClipData.newPlainText("label", Log.getStackTraceString(e));
+                    clipboard.setPrimaryClip(clip);
+                } catch (Exception ex) {
+                    FileLog.e(ex);
+                }
+                FileLog.e(Log.getStackTraceString(e));
+                if (oldDefaultUncaughtExceptionHandler != null) {
+                    oldDefaultUncaughtExceptionHandler.uncaughtException(t, e);
+                }
+            });
         }
 
         applicationHandler = new Handler(applicationContext.getMainLooper());
@@ -327,7 +339,7 @@ public class ApplicationLoader extends Application {
             firebaseCrashlytics = FirebaseCrashlytics.getInstance();
             firebaseAnalytics.setAnalyticsCollectionEnabled(ExteraConfig.useGoogleAnalytics);
             firebaseCrashlytics.setCrashlyticsCollectionEnabled(ExteraConfig.useGoogleCrashlytics);
-            ExteraUtils.logEvents(applicationContext);
+            CrashlyticsUtils.logEvents(applicationContext);
         });
     }
 

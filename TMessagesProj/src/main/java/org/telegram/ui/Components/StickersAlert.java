@@ -23,7 +23,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -95,8 +94,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.ChatUtils;
 
 public class StickersAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 
@@ -1027,7 +1025,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
             }
         } else if (id == 3) {
             try {
-                ExteraUtils.openById(stickerSet.set.id >> 32, parentFragment.getParentActivity(), (uid, un) -> {
+                ChatUtils.openById(stickerSet.set.id >> 32, parentFragment.getParentActivity(), (uid, un) -> {
                     Bundle args = new Bundle();
                     args.putLong("user_id", uid);
                     ProfileActivity fragment = new ProfileActivity(args);
@@ -1036,7 +1034,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
                         dismiss();
                     });
                 }, uid -> {
-                    AndroidUtilities.addToClipboard(ExteraUtils.getOwnerIds(stickerSet.set.id));
+                    AndroidUtilities.addToClipboard(ChatUtils.getOwnerIds(stickerSet.set.id));
                     BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
                 });
             } catch (Exception e) {

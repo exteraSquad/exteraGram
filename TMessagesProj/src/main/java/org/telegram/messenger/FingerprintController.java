@@ -9,7 +9,7 @@ import android.security.keystore.KeyProperties;
 
 import androidx.annotation.RequiresApi;
 
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.SystemUtils;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPairGenerator;
@@ -102,7 +102,7 @@ public class FingerprintController {
     }
 
     public static void checkKeyReady(boolean notifyCheckFingerprint) {
-        if (!isKeyReady() && AndroidUtilities.isKeyguardSecure() && ExteraUtils.hasBiometrics()) {
+        if (!isKeyReady() && AndroidUtilities.isKeyguardSecure() && SystemUtils.hasBiometrics()) {
             Utilities.globalQueue.postRunnable(() -> generateNewKey(notifyCheckFingerprint));
         }
     }

@@ -109,11 +109,11 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.components.MessageDetailsPopupWrapper;
-import com.exteragram.messenger.extras.PermissionUtils;
-import com.exteragram.messenger.premium.BoostController;
-import com.exteragram.messenger.premium.encryption.EncryptionHelper;
+import com.exteragram.messenger.utils.ChatUtils;
+import com.exteragram.messenger.utils.SystemUtils;
+import com.exteragram.messenger.boost.BoostController;
+import com.exteragram.messenger.boost.encryption.EncryptionHelper;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.zxing.common.detector.MathUtils;
 
@@ -10553,9 +10553,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 FileLog.e(e);
             }
         } else if (which == attach_gallery) {
-            if (!PermissionUtils.isImagesAndVideoPermissionGranted()) {
+            if (!SystemUtils.isImagesAndVideoPermissionGranted()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    PermissionUtils.requestImagesAndVideoPermission(getParentActivity());
+                    SystemUtils.requestImagesAndVideoPermission(getParentActivity());
                 }
                 return;
             }
@@ -11905,7 +11905,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     updateReactionsMentionButton(true);
                 }
                 getDownloadController().checkUnviewedDownloads(messageCell.getId(), dialog_id);
-                boolean allowPlayEffect =  ExteraConfig.premiumAutoPlayback && ((messageObject.messageOwner.media != null && !messageObject.messageOwner.media.nopremium) || (messageObject.isAnimatedEmojiStickerSingle() && dialog_id > 0));
+                boolean allowPlayEffect = false; // ExteraConfig.premiumAutoPlayback && ((messageObject.messageOwner.media != null && !messageObject.messageOwner.media.nopremium) || (messageObject.isAnimatedEmojiStickerSingle() && dialog_id > 0));
                 if ((chatListItemAnimator == null || !chatListItemAnimator.isRunning()) && (!messageObject.isOutOwner() || messageObject.forcePlayEffect) && allowPlayEffect && !messageObject.messageOwner.premiumEffectWasPlayed && (messageObject.isPremiumSticker() || messageObject.isAnimatedEmojiStickerSingle()) && emojiAnimationsOverlay.isIdle() && emojiAnimationsOverlay.checkPosition(messageCell, chatListViewPaddingTop, chatListView.getMeasuredHeight() - blurredViewBottomOffset)) {
                     emojiAnimationsOverlay.onTapItem(messageCell, ChatActivity.this, false);
                 } else if (messageObject.isAnimatedAnimatedEmoji()) {
@@ -20521,6 +20521,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 pendingRequestsDelegate.onBackToScreen();
             }
             updateMessagesVisiblePart(false);
+            setNavigationBarColor(getNavigationBarColor());
         } else {
             getNotificationCenter().onAnimationFinish(transitionAnimationIndex);
             NotificationCenter.getGlobalInstance().onAnimationFinish(transitionAnimationGlobalIndex);
@@ -25697,7 +25698,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 break;
             }
             case OPTION_COPY_PHOTO: {
-                ExteraUtils.addMessageToClipboard(selectedObject, () -> {
+                ChatUtils.addMessageToClipboard(selectedObject, () -> {
                     if (BulletinFactory.canShowBulletin(ChatActivity.this)) {
                         BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied)).show();
                     }
@@ -25724,7 +25725,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         }
                     }
                 }
-                String path = ExteraUtils.getPathToMessage(selectedObject);
+                String path = ChatUtils.getPathToMessage(selectedObject);
                 File temp = new File(path);
                 try {
                     temp.delete();
@@ -30587,7 +30588,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (headerItem != null) {
                 headerItem.updateColor();
             }
-            setNavigationBarColor(getThemedColor(ExteraUtils.getNavigationBarColorKey()));
+            //setNavigationBarColor(getNavigationBarColor());
             if (fragmentContextView != null) {
                 fragmentContextView.updateColors();
             }
@@ -31418,12 +31419,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     @Override
     public int getNavigationBarColor() {
-        return getThemedColor(chatActivityEnterView != null && chatActivityEnterView.isPopupShowing() ? Theme.key_chat_emojiPanelBackground : SharedConfig.useLNavigation ? Theme.key_chat_messagePanelBackground : Theme.key_windowBackgroundGray);
+        return getThemedColor(chatActivityEnterView != null && chatActivityEnterView.isPopupShowing() ? Theme.key_chat_emojiPanelBackground : Theme.key_chat_messagePanelBackground);
     }
 
     @Override
     public void setNavigationBarColor(int color) {
-        color = getNavigationBarColor();
         super.setNavigationBarColor(color);
     }
 

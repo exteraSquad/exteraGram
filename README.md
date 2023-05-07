@@ -12,13 +12,16 @@ Experimental **third-party** Telegram client based on [official sources](https:/
 ## Importing API hash and keys
 - You should get **YOUR OWN API KEY AND HASH** here: https://core.telegram.org/api/obtaining_api_id and create a file called `API_KEYS` in the source root directory.
 - Also you should get **YOUR OWN MAPS API KEY** here: https://console.cloud.google.com/google/maps-apis/credentials and add it to this file.
-- And you need get **COMPUTE YOUR APP's HASH STRING** here: https://developers.google.com/identity/sms-retriever/verify#computing_your_apps_hash_string
+- And you need to generate **SIGNING KEY**: https://developer.android.com/studio/publish/app-signing#generate-key
 The contents should look like this:
 ```
 APP_ID = 123456
 APP_HASH = abcdef0123456789 (32 chars)
-SMS_HASH = FC+9qCX9VSu (11 chars)
 MAPS_V2_API = abcdef01234567-abcdef012345678910111213
+
+SIGNING_KEY_PASSWORD = A1BcDEFHJ2KLMn3oP
+SIGNING_KEY_ALIAS = abcdefghjklm
+SIGNING_KEY_STORE_PASSWORD = Z9yXDEFHJ6KRqn7oP
 ```
 
 ## Compilation Guide

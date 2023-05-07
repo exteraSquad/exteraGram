@@ -101,11 +101,12 @@ import androidx.recyclerview.widget.ChatListItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.components.ChatActivityEnterViewStaticIconView;
 import com.exteragram.messenger.components.TranslateBeforeSendWrapper;
-import com.exteragram.messenger.premium.BoostController;
-import com.exteragram.messenger.premium.encryption.EncryptionHelper;
+import com.exteragram.messenger.boost.BoostController;
+import com.exteragram.messenger.boost.encryption.EncryptionHelper;
+import com.exteragram.messenger.utils.PopupUtils;
+import com.exteragram.messenger.utils.TranslatorUtils;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -3495,7 +3496,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 protected void onClick() {
                     if (sendPopupWindow != null && sendPopupWindow.isShowing())
                         sendPopupWindow.dismiss();
-                    ExteraUtils.translate(getEditField() != null ? getEditField().getText() : null, ExteraConfig.getCurrentLangCode(), translated -> {
+                    TranslatorUtils.translate(getEditField() != null ? getEditField().getText() : null, ExteraConfig.getCurrentLangCode(), translated -> {
                         getEditField().setText(translated);
                         getEditField().setSelection(translated.length());
                     }, null);
@@ -3511,7 +3512,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 encryptButton.setSubtext(EncryptionHelper.getEncryptorBy(dialog_id).getName());
                 encryptButton.setRightIcon(R.drawable.msg_arrowright);
                 encryptButton.getRightIcon().setVisibility(VISIBLE);
-                encryptButton.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(EncryptionHelper.names, LocaleController.getString(R.string.Encryptors), EncryptionHelper.getEncryptorTypeFor(dialog_id), getContext(), i -> {
+                encryptButton.getRightIcon().setOnClickListener(v -> PopupUtils.showDialog(EncryptionHelper.names, LocaleController.getString(R.string.Encryptors), EncryptionHelper.getEncryptorTypeFor(dialog_id), getContext(), i -> {
                     EncryptionHelper.setEncryptorTypeFor(dialog_id, i);
                     encryptButton.setSubtext(EncryptionHelper.getEncryptorBy(dialog_id).getName());
                 }));
@@ -4471,7 +4472,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
             }
         }
-        allowAnimatedEmoji = needAnimatedEmoji && (UserConfig.getInstance(currentAccount).isPremium() || !ExteraConfig.hideFeaturedEmoji);
+        allowAnimatedEmoji = needAnimatedEmoji && UserConfig.getInstance(currentAccount).isPremium();
         allowStickers = needStickers;
         allowGifs = needGifs;
         if (emojiView != null) {
@@ -7811,7 +7812,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             defPeer = delegate.getSendAsPeers().peers.get(0).peer;
         }
         boolean isVisible = defPeer != null && (delegate.getSendAsPeers() == null || delegate.getSendAsPeers().peers.size() > 1) &&
-            !isEditingMessage() && !isRecordingAudioVideo() && !ExteraConfig.hideSendAsChannel && (recordedAudioPanel == null || recordedAudioPanel.getVisibility() != View.VISIBLE);
+            !isEditingMessage() && !isRecordingAudioVideo() && UserConfig.getInstance(currentAccount).isPremium() && (recordedAudioPanel == null || recordedAudioPanel.getVisibility() != View.VISIBLE);
         if (isVisible) {
             createSenderSelectView();
         }

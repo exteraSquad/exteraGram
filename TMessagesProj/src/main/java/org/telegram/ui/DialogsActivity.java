@@ -75,7 +75,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -84,8 +83,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.components.TranslateBeforeSendWrapper;
+import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.LocaleUtils;
+import com.exteragram.messenger.utils.TranslatorUtils;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -2750,10 +2751,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (UserConfig.getInstance(currentAccount).isPremium()) {
                     statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
                     statusDrawable.center = true;
-                    actionBar.setTitle(ExteraUtils.getActionBarTitle(), statusDrawable);
+                    actionBar.setTitle(LocaleUtils.getActionBarTitle(), statusDrawable);
                     updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
                 } else {
-                    actionBar.setTitle(ExteraUtils.getActionBarTitle());
+                    actionBar.setTitle(LocaleUtils.getActionBarTitle());
                 }
             }
             if (folderId == 0) {
@@ -2915,7 +2916,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                 @Override
                 public int getTabCounter(int tabId) {
-                    if (initialDialogsType == DIALOGS_TYPE_FORWARD) {
+                    if (initialDialogsType == DIALOGS_TYPE_FORWARD || !ExteraConfig.tabCounter) {
                         return 0;
                     }
                     if (tabId == filterTabsView.getDefaultTabId()) {
@@ -4154,7 +4155,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
 
             FrameLayout writeButtonBackground = new FrameLayout(context);
-            Drawable writeButtonDrawable = ExteraUtils.drawFab(true);
+            Drawable writeButtonDrawable = CanvasUtils.drawFab(true);
             writeButtonBackground.setBackgroundDrawable(writeButtonDrawable);
             writeButtonBackground.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             writeButtonBackground.setOutlineProvider(new ViewOutlineProvider() {
@@ -9869,7 +9870,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 protected void onClick() {
                     if (sendPopupWindow != null && sendPopupWindow.isShowing())
                         sendPopupWindow.dismiss();
-                    ExteraUtils.translate(commentView.getFieldText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                    TranslatorUtils.translate(commentView.getFieldText(), ExteraConfig.getCurrentLangCode(), translated -> {
                         commentView.setFieldText(translated);
                         commentView.setSelection(translated.length());
                     }, null);
@@ -10466,7 +10467,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (getParentActivity() == null || floatingButtonContainer == null) {
             return;
         }
-        Drawable drawable = ExteraUtils.drawFab();
+        Drawable drawable = CanvasUtils.drawFab();
         floatingButtonContainer.setBackground(drawable);
     }
 

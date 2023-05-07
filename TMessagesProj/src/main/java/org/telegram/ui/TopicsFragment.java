@@ -52,9 +52,7 @@ import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
-
-import com.google.android.exoplayer2.util.Log;
+import com.exteragram.messenger.utils.CanvasUtils;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -316,12 +314,11 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
 
     @Override
     public int getNavigationBarColor() {
-        return getThemedColor(/*ExteraUtils.getNavigationBarColorKey()*/ Theme.key_windowBackgroundWhite);
+        return getThemedColor(Theme.key_windowBackgroundWhite);
     }
 
     @Override
     public void setNavigationBarColor(int color) {
-        color = getNavigationBarColor();
         super.setNavigationBarColor(color);
     }
 
@@ -1106,7 +1103,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             presentFragment(TopicCreateFragment.create(chatId, 0));
         });
 
-        Drawable drawable = ExteraUtils.drawFab();
+        Drawable drawable = CanvasUtils.drawFab();
         StateListAnimator animator = new StateListAnimator();
         animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
         animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButtonContainer, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));
@@ -2092,7 +2089,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
                     ((View) fragmentView.getParent()).invalidate();
                 }
                 actionBar.showActionMode(true);
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
+                //NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
                 Iterator<Integer> iterator = selectedTopics.iterator();
                 int unreadCount = 0, readCount = 0;
                 int canPinCount = 0, canUnpinCount = 0;
@@ -3790,6 +3787,10 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
             if (dialogsActivity != null) {
                 dialogsActivity.removeSelfFromStack();
             }
+        }
+
+        if (isOpen && bottomPannelVisible) {
+            setNavigationBarColor(getNavigationBarColor());
         }
     }
 

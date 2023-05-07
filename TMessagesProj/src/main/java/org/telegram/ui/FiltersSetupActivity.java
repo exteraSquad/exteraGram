@@ -63,7 +63,7 @@ import org.telegram.ui.Components.UndoView;
 import java.util.ArrayList;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.extras.FolderIcons;
+import com.exteragram.messenger.utils.FolderIcons;
 
 public class FiltersSetupActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 

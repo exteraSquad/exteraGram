@@ -20,8 +20,6 @@ import org.telegram.ui.LauncherIconController;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.exteragram.messenger.ExteraUtils;
-
 public class PremiumAppIconsPreviewView extends FrameLayout implements PagerHeaderView {
     private List<LauncherIconController.LauncherIcon> icons = new ArrayList<>();
     private AdaptiveIconImageView topIcon, bottomLeftIcon, bottomRightIcon;

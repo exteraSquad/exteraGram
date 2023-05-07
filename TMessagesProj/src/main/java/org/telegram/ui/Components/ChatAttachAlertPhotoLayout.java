@@ -54,7 +54,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
@@ -68,7 +67,7 @@ import com.exteragram.messenger.camera.CameraXView;
 import com.exteragram.messenger.camera.EffectSelector;
 import com.exteragram.messenger.camera.LockAnimationView;
 import com.exteragram.messenger.camera.SlideControlView;
-import com.exteragram.messenger.extras.PermissionUtils;
+import com.exteragram.messenger.utils.SystemUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.AnimationNotificationsLocker;
@@ -743,8 +742,8 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                         parentAlert.baseFragment.getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, 18);
                     } catch (Exception ignore) {}
                     return;
-                } else if (!PermissionUtils.isImagesAndVideoPermissionGranted()) {
-                    PermissionUtils.requestImagesAndVideoPermission(parentAlert.baseFragment.getParentActivity());
+                } else if (!SystemUtils.isImagesAndVideoPermissionGranted()) {
+                    SystemUtils.requestImagesAndVideoPermission(parentAlert.baseFragment.getParentActivity());
                     return;
                 }
             }
@@ -2250,8 +2249,8 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                     parentAlert.baseFragment.getParentActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, 18);
                 } catch (Exception ignore) {}
                 return;
-            } else if (!PermissionUtils.isImagesAndVideoPermissionGranted()) {
-                PermissionUtils.requestImagesAndVideoPermission(parentAlert.baseFragment.getParentActivity());
+            } else if (!SystemUtils.isImagesAndVideoPermissionGranted()) {
+                SystemUtils.requestImagesAndVideoPermission(parentAlert.baseFragment.getParentActivity());
                 return;
             }
         }
@@ -3160,7 +3159,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
 
     public void checkStorage() {
         if (noGalleryPermissions && Build.VERSION.SDK_INT >= 23) {
-            noGalleryPermissions = !PermissionUtils.isImagesAndVideoPermissionGranted();
+            noGalleryPermissions = !SystemUtils.isImagesAndVideoPermissionGranted();
             if (!noGalleryPermissions) {
                 loadGalleryPhotos();
             }
@@ -3526,7 +3525,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
             }
         }
         if (Build.VERSION.SDK_INT >= 23) {
-            noGalleryPermissions = !PermissionUtils.isImagesAndVideoPermissionGranted();
+            noGalleryPermissions = !SystemUtils.isImagesAndVideoPermissionGranted();
         }
         if (galleryAlbumEntry != null) {
             for (int a = 0; a < Math.min(100, galleryAlbumEntry.photos.size()); a++) {

@@ -13,10 +13,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
-import com.exteragram.messenger.ExteraUtils;
 
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.LaunchActivity;

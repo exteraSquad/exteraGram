@@ -26,7 +26,6 @@ import android.util.Pair;
 import android.view.View;
 
 import androidx.core.content.FileProvider;
-import androidx.exifinterface.media.ExifInterface;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -64,7 +63,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.exteragram.messenger.extras.PermissionUtils;
+import com.exteragram.messenger.utils.SystemUtils;
 
 public class ImageUpdater implements NotificationCenter.NotificationCenterDelegate, PhotoCropActivity.PhotoEditActivityDelegate {
     private final static int ID_TAKE_PHOTO = 0,
@@ -691,11 +690,11 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
             return;
         }
         if (Build.VERSION.SDK_INT >= 23 && parentFragment.getParentActivity() != null) {
-            if (canSelectVideo ? !PermissionUtils.isImagesAndVideoPermissionGranted() : !PermissionUtils.isImagesPermissionGranted()) {
+            if (canSelectVideo ? !SystemUtils.isImagesAndVideoPermissionGranted() : !SystemUtils.isImagesPermissionGranted()) {
                 if (canSelectVideo) {
-                    PermissionUtils.requestImagesAndVideoPermission(parentFragment.getParentActivity(), BasePermissionsActivity.REQUEST_CODE_EXTERNAL_STORAGE_FOR_AVATAR);
+                    SystemUtils.requestImagesAndVideoPermission(parentFragment.getParentActivity(), BasePermissionsActivity.REQUEST_CODE_EXTERNAL_STORAGE_FOR_AVATAR);
                 } else {
-                    PermissionUtils.requestImagesPermission(parentFragment.getParentActivity(), BasePermissionsActivity.REQUEST_CODE_EXTERNAL_STORAGE_FOR_AVATAR);
+                    SystemUtils.requestImagesPermission(parentFragment.getParentActivity(), BasePermissionsActivity.REQUEST_CODE_EXTERNAL_STORAGE_FOR_AVATAR);
                 }
                 return;
             }

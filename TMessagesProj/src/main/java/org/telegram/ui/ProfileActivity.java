@@ -236,8 +236,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.preferences.MainPreferencesActivity;
+import com.exteragram.messenger.utils.AppUtils;
+import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.ChatUtils;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate {
     private final static int PHONE_OPTION_CALL = 0,
@@ -2287,13 +2289,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         final String ddc;
         if (dialogId != 0) {
             did = dialogId;
-            ddc = ExteraUtils.getDC(getMessagesController().getChat(dialogId));
+            ddc = ChatUtils.getDC(getMessagesController().getChat(dialogId));
         } else if (userId != 0) {
             did = userId;
-            ddc = ExteraUtils.getDC(getMessagesController().getUser(userId));
+            ddc = ChatUtils.getDC(getMessagesController().getUser(userId));
         } else {
             did = -chatId;
-            ddc = ExteraUtils.getDC(getMessagesController().getChat(chatId));
+            ddc = ChatUtils.getDC(getMessagesController().getChat(chatId));
         }
         fragmentView = new NestedFrameLayout(context) {
 
@@ -4151,7 +4153,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         updateProfileData(true);
 
         writeButton = new RLottieImageView(context);
-        Drawable drawable = ExteraUtils.drawFab();
+        Drawable drawable = CanvasUtils.drawFab();
         writeButton.setBackground(drawable);
         StateListAnimator animator = new StateListAnimator();
         animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(writeButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
@@ -8978,7 +8980,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     cell.getTextView().setMovementMethod(null);
                     try {
                         PackageInfo info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
-                        cell.setText(ExteraUtils.getAppName() + " | " + BuildVars.BUILD_VERSION_STRING + " (" + info.versionCode + ")");
+                        cell.setText(AppUtils.getAppName() + " | " + BuildVars.BUILD_VERSION_STRING + " (" + info.versionCode + ")");
                     } catch (PackageManager.NameNotFoundException e) {
                         FileLog.e(e);
                     }
@@ -9082,7 +9084,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         if (userId != 0) {
                             TLRPC.User user = getMessagesController().getUser(userId);
                             id = userId;
-                            dc = ExteraUtils.getDC(user);
+                            dc = ChatUtils.getDC(user);
                         } else if (chatId != 0) {
                             TLRPC.Chat chat = getMessagesController().getChat(chatId);
                             if (ExteraConfig.showIdAndDc == 2) {
@@ -9094,7 +9096,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             } else {
                                 id = chatId;
                             }
-                            dc = ExteraUtils.getDC(chat);
+                            dc = ChatUtils.getDC(chat);
                         }
                         detailCell.setTextAndValue(id + "", dc == null ? "ID" : dc, true);
                     } else if (position == usernameRow) {
@@ -10700,7 +10702,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             Drawable shadowDrawable = fragmentView.getContext().getResources().getDrawable(R.drawable.floating_shadow_profile).mutate();
             shadowDrawable.setColorFilter(new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY));
             CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable,
-                    ExteraUtils.drawFab(),
+                    CanvasUtils.drawFab(),
                     0, 0);
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             writeButton.setBackground(combinedDrawable);

@@ -29,6 +29,7 @@
     <string name="AvatarCornersRight">Circle</string>
     <string name="HideActionBarStatus">Hide Status</string>
     <string name="HideAllChats">Hide \"%1$s\" Tab</string>
+    <string name="TabCounter">Tab Counter</string>
     <string name="CenterTitle">Center Title in Action Bar</string>
     <string name="ActionBarTitle">Title Text</string>
     <string name="TabTitleStyle">Tab Title</string>
@@ -57,7 +58,7 @@
     <string name="NewSwitchStyle">MD3 Switch Style</string>
     <string name="DisableDividers">Disable Dividers</string>
     <string name="AlternativeNavigation">Alternative Navigation</string>
-    <string name="AlternativeNavigationInfo">An experimental option that includes new, smoother transition animations between screens.\n\nWith this option, the navigation bar in chats will be the same color as the message panel.</string>
+    <string name="AlternativeNavigationInfo">An experimental option that includes new, smoother transition animations between screens.</string>
 
     <string name="DrawerOptions">Drawer Options</string>
     <string name="DrawerIconSet">Icon Set</string>
@@ -95,12 +96,6 @@
     <string name="ShowIdAndDc">Show ID and DC</string>
     <string name="ShowIdAndDcInfo">Telegram APl shows IDs as they are, while the Bot API adds a minus sign for groups and -100 for supergroups, broadcast groups and channels.</string>
 
-    <string name="DisableAnimatedAvatars">Disable Animated Avatars</string>
-    <string name="PremiumAutoPlayback">Premium Auto-Playback</string>
-    <string name="HidePremiumStickersTab">Hide Premium Stickers Tab</string>
-    <string name="HideFeaturedEmoji">Hide Featured Premium Emoji</string>
-    <string name="HideSendAsChannel">Hide \"Send as Channel\"</string>
-
     <string name="ArchiveOnPull">Open Archive on Pulldown</string>
     <string name="DisableUnarchiveSwipe">Disable \"Unarchive\" swipe</string>
     <string name="DisableUnarchiveSwipeInfo">Swiping to the left will not remove chats from the archive.</string>
@@ -136,7 +131,6 @@
     <string name="HideKeyboardOnScroll">Hide Keyboard on Scroll</string>
     <string name="DisableJumpToNextChannel">Disable \"Jump to the Next Channel\"</string>
     <string name="ShowActionTimestamps">Show Timestamps for Actions</string>
-    <string name="ShowActionTimestampsInfo">Show Timestamps for Actions</string>
     <string name="HideShareButton">Hide Side \"%1$s\" Button</string>
     <string name="MessageMenu">Message Menu</string>
     <string name="AddCommaAfterMention">Add Comma after Mention</string>

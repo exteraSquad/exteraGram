@@ -74,8 +74,8 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
-import com.exteragram.messenger.extras.MonetHelper;
+import com.exteragram.messenger.utils.LocaleUtils;
+import com.exteragram.messenger.utils.MonetUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -4456,9 +4456,9 @@ public class Theme {
             themeInfo = new ThemeInfo();
             themeInfo.name = "Monet Light";
             themeInfo.assetName = "monet_light.attheme";
-            themeInfo.previewBackgroundColor = MonetHelper.getColor("n1_10");
-            themeInfo.previewInColor = MonetHelper.getColor("n1_50");
-            themeInfo.previewOutColor = MonetHelper.getColor("a1_600");
+            themeInfo.previewBackgroundColor = MonetUtils.getColor("n1_10");
+            themeInfo.previewInColor = MonetUtils.getColor("n1_50");
+            themeInfo.previewOutColor = MonetUtils.getColor("a1_600");
             themeInfo.sortIndex = 6;
             themes.add(themeInfo);
             themesDict.put("Monet Light", themeInfo);
@@ -4466,9 +4466,9 @@ public class Theme {
             themeInfo = new ThemeInfo();
             themeInfo.name = "Monet Dark";
             themeInfo.assetName = "monet_dark.attheme";
-            themeInfo.previewBackgroundColor = MonetHelper.getColor("n1_900");
-            themeInfo.previewInColor = MonetHelper.getColor("n1_800");
-            themeInfo.previewOutColor = MonetHelper.getColor("a1_200");
+            themeInfo.previewBackgroundColor = MonetUtils.getColor("n1_900");
+            themeInfo.previewInColor = MonetUtils.getColor("n1_800");
+            themeInfo.previewOutColor = MonetUtils.getColor("a1_200");
             themeInfo.sortIndex = 7;
             themes.add(themeInfo);
             themesDict.put("Monet Dark", themeInfo);
@@ -4959,7 +4959,7 @@ public class Theme {
                 if (canStartHolidayAnimation && (monthOfYear == 11 && dayOfMonth >= (BuildVars.DEBUG_PRIVATE_VERSION ? 29 : 31) && dayOfMonth <= 31 || monthOfYear == 0 && dayOfMonth == 1)) {
                     boolean isUpperCase;
                     try {
-                        isUpperCase = Character.isUpperCase(ExteraUtils.getActionBarTitle().charAt(0));
+                        isUpperCase = Character.isUpperCase(LocaleUtils.getActionBarTitle().charAt(0));
                     } catch (Exception e){
                         isUpperCase = false;
                     }
@@ -7745,7 +7745,7 @@ public class Theme {
                                         value = Utilities.parseInt(param);
                                     }
                                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && (param.startsWith("a") || param.startsWith("n") || param.startsWith("m"))) {
-                                    value = MonetHelper.getColor(param.trim());
+                                    value = MonetUtils.getColor(param.trim());
                                 } else {
                                     value = Utilities.parseInt(param);
                                 }

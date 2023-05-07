@@ -13,7 +13,6 @@ import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
@@ -59,7 +58,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.CanvasUtils;
 
 public class SharedDocumentCell extends FrameLayout implements DownloadController.FileDownloadProgressListener {
 
@@ -278,7 +277,7 @@ public class SharedDocumentCell extends FrameLayout implements DownloadControlle
                     thumbImageView.setImage(thumb, "42_42", null);
                 }
             } else {
-                Drawable drawable = ExteraUtils.createCircleDrawableWithIcon(getContext(), resId, AndroidUtilities.dp(42));
+                Drawable drawable = CanvasUtils.createCircleDrawableWithIcon(getContext(), resId, AndroidUtilities.dp(42));
                 int iconKey;
                 int backKey;
                 if (resId == R.drawable.files_storage) {

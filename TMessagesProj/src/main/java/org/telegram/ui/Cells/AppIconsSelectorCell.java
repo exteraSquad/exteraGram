@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.ChatUtils;
 
 public class AppIconsSelectorCell extends RecyclerListView implements NotificationCenter.NotificationCenterDelegate {
     public final static float ICONS_ROUND_RADIUS = 100;
@@ -83,7 +83,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
                 LauncherIconController.LauncherIcon icon = availableIcons.get(position);
                 if (icon == LauncherIconController.LauncherIcon.MONET && (Build.VERSION.SDK_INT < 31 || Build.VERSION.SDK_INT > 32)) {
                     return;
-                } else if (icon == LauncherIconController.LauncherIcon.RED && ExteraUtils.notSubbedTo(1178248235)) {
+                } else if (icon == LauncherIconController.LauncherIcon.RED && !ChatUtils.isSubscribedTo(1178248235)) {
                     return;
                 }
                 holderView.bind(icon);
@@ -163,7 +163,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
         if (Build.VERSION.SDK_INT < 31 || Build.VERSION.SDK_INT > 32) {
             availableIcons.removeIf(p -> p.equals(LauncherIconController.LauncherIcon.MONET));
         }
-        if (ExteraUtils.notSubbedTo(1178248235)) {
+        if (!ChatUtils.isSubscribedTo(1178248235)) {
             availableIcons.removeIf(p -> p.equals(LauncherIconController.LauncherIcon.RED));
         }
         if (MessagesController.getInstance(currentAccount).premiumLocked) {

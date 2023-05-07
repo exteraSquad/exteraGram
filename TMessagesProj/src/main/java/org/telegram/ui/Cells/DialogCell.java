@@ -114,7 +114,7 @@ import java.util.Objects;
 import java.util.Stack;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.premium.filter.ZalgoFilter;
+import com.exteragram.messenger.boost.filter.ZalgoFilter;
 
 public class DialogCell extends BaseCell {
 

@@ -46,7 +46,7 @@ import androidx.core.math.MathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.ChatUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
@@ -1420,7 +1420,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
             }
         } else if (id == 3) {
             try {
-                ExteraUtils.openById(stickerSet.set.id >> 32, fragment.getParentActivity(), (uid, un) -> {
+                ChatUtils.openById(stickerSet.set.id >> 32, fragment.getParentActivity(), (uid, un) -> {
                     Bundle args = new Bundle();
                     args.putLong("user_id", uid);
                     ProfileActivity newFragment = new ProfileActivity(args);
@@ -1429,7 +1429,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
                         dismiss();
                     });
                 }, uid -> {
-                    AndroidUtilities.addToClipboard(ExteraUtils.getOwnerIds(stickerSet.set.id));
+                    AndroidUtilities.addToClipboard(ChatUtils.getOwnerIds(stickerSet.set.id));
                     BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
                 });
             } catch (Exception e) {

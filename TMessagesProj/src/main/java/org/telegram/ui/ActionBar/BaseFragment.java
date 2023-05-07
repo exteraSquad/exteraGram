@@ -843,7 +843,7 @@ public abstract class BaseFragment {
     }
 
     public int getNavigationBarColor() {
-        return Theme.getColor(Theme.key_windowBackgroundGray, resourceProvider);
+        return getThemedColor(Theme.key_windowBackgroundGray);
     }
 
     public void setNavigationBarColor(int color) {

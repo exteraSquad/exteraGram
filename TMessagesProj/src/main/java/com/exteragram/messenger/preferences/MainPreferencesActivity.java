@@ -25,8 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exteragram.messenger.components.InfoSettingsCell;
-import com.exteragram.messenger.updater.UpdaterBottomSheet;
+import com.exteragram.messenger.preferences.components.InfoSettingsCell;
+import com.exteragram.messenger.preferences.updater.UpdaterBottomSheet;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;

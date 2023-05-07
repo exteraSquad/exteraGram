@@ -38,6 +38,7 @@ public class ExteraConfig {
     public static float avatarCorners;
     public static boolean hideActionBarStatus;
     public static boolean hideAllChats;
+    public static boolean tabCounter;
     public static boolean centerTitle;
     public static int tabIcons; // icons with titles - 0, titles - 1, icons - 2
     public static int tabStyle;
@@ -51,6 +52,7 @@ public class ExteraConfig {
     public static boolean useSystemFonts;
     public static boolean newSwitchStyle;
     public static boolean disableDividers;
+    public static boolean useLNavigation;
 
     public static int eventType;
     public static boolean alternativeOpenAnimation;
@@ -71,12 +73,6 @@ public class ExteraConfig {
 
     public static boolean hidePhoneNumber;
     public static int showIdAndDc;
-
-    public static boolean disableAnimatedAvatars;
-    public static boolean premiumAutoPlayback;
-    public static boolean hidePremiumStickersTab;
-    public static boolean hideFeaturedEmoji;
-    public static boolean hideSendAsChannel;
 
     public static boolean archiveOnPull;
     public static boolean disableUnarchiveSwipe;
@@ -177,12 +173,6 @@ public class ExteraConfig {
             hidePhoneNumber = preferences.getBoolean("hidePhoneNumber", false);
             showIdAndDc = preferences.getInt("showIdAndDc", 1);
 
-            disableAnimatedAvatars = preferences.getBoolean("disableAnimatedAvatars", false);
-            premiumAutoPlayback = preferences.getBoolean("premiumAutoPlayback", false);
-            hidePremiumStickersTab = preferences.getBoolean("hidePremiumStickersTab", true);
-            hideFeaturedEmoji = preferences.getBoolean("hideFeaturedEmoji", false);
-            hideSendAsChannel = preferences.getBoolean("hideSendAsChannel", false);
-
             archiveOnPull = preferences.getBoolean("archiveOnPull", false);
             disableUnarchiveSwipe = preferences.getBoolean("disableUnarchiveSwipe", true);
 
@@ -191,6 +181,7 @@ public class ExteraConfig {
             hideActionBarStatus = preferences.getBoolean("hideActionBarStatus", false);
             hideAllChats = preferences.getBoolean("hideAllChats", false);
             centerTitle = preferences.getBoolean("centerTitle", false);
+            tabCounter = preferences.getBoolean("tabCounter", true);
             tabIcons = preferences.getInt("tabIcons", 1);
             tabStyle = preferences.getInt("tabStyle", 1);
             actionBarTitle = preferences.getInt("actionBarTitle", 0);
@@ -203,6 +194,7 @@ public class ExteraConfig {
             useSystemFonts = preferences.getBoolean("useSystemFonts", true);
             newSwitchStyle = preferences.getBoolean("newSwitchStyle", true);
             disableDividers = preferences.getBoolean("disableDividers", false);
+            useLNavigation = preferences.getBoolean("useLNavigation", false);
 
             eventType = preferences.getInt("eventType", 0);
             alternativeOpenAnimation = preferences.getBoolean("alternativeOpenAnimation", true);
@@ -376,11 +368,12 @@ public class ExteraConfig {
 
     public static int getDoubleTapSeekDuration() {
         switch(doubleTapSeekDuration) {
-            case 0: return 5000;
-            case 1: return 10000;
-            case 2: return 15000;
-            case 3: return 30000;
-            default: return 10000;
+            case 0:
+            case 1:
+            case 2:
+                return (doubleTapSeekDuration + 1) * 5000;
+            default:
+                return 30000;
         }
     }
 

@@ -43,7 +43,7 @@
     <string name="NewSwitchStyle">MD3-Schalterdesign</string>
     <string name="DisableDividers">Trennlinien ausblenden</string>
     <string name="AlternativeNavigation">Alternative Navigation</string>
-    <string name="AlternativeNavigationInfo">Eine experimentelle Option, die neue, flüssigere Übergangsanimationen zwischen Bildschirmen beinhaltet.\n\nMit dieser Option wird die Navigationsleiste in Chats die gleiche Farbe wie das Eingabefeld haben.</string>
+    <string name="AlternativeNavigationInfo">Eine experimentelle Option, die neue, flüssigere Übergangsanimationen zwischen Bildschirmen beinhaltet.</string>
     <string name="DrawerOptions">Drawer-Optionen</string>
     <string name="DrawerIconSet">Symbolsatz</string>
     <string name="ForceSnow">Schnee erzwingen</string>
@@ -78,11 +78,6 @@ CameraX wird nur auf
     <string name="HidePhoneNumber">Meine Telefonnummer ausblenden</string>
     <string name="ShowIdAndDc">ID und DC anzeigen</string>
     <string name="ShowIdAndDcInfo">Die Telegram-API zeigt die IDs so an, wie sie sind, während die Bot-API ein Minuszeichen für Gruppen und -100 für Supergruppen, Broadcast-Gruppen und Kanäle hinzufügt.</string>
-    <string name="DisableAnimatedAvatars">Animierte Profilbilder deaktivieren</string>
-    <string name="PremiumAutoPlayback">Premium-Auto-Wiedergabe</string>
-    <string name="HidePremiumStickersTab">Premium-Stickerordner ausblenden</string>
-    <string name="HideFeaturedEmoji">Empfohlene Premium-Emoji ausblenden</string>
-    <string name="HideSendAsChannel">\"Als Kanal senden\" ausblenden</string>
     <string name="ArchiveOnPull">Archiv beim Herunterziehen öffnen</string>
     <string name="DisableUnarchiveSwipe">\"Einblenden\"-Geste deaktivieren</string>
     <string name="DisableUnarchiveSwipeInfo">Wischen nach links wird Chats nicht aus dem Archiv entfernen.</string>
@@ -103,13 +98,10 @@ CameraX wird nur auf
     <string name="DoubleTapIncoming">Eingehende Nachrichten</string>
     <string name="DoubleTapOutgoing">Ausgehende Nachrichten</string>
     <string name="DoubleTapInfo">Einige Aktionen erfordern Administratorrechte im Chat oder Kanal.</string>
-    <string name="HideMuteUnmuteButton">\"%1$s\"-Knopf ausblenden</string>
-    <string name="HideMuteUnmuteButtonInfo">Unten in Kanälen.</string>
     <string name="HideKeyboardOnScroll">Tastatur beim Scrollen ausblenden</string>
     <string name="DisableJumpToNextChannel">\"Zum nächsten Kanal springen\" deaktivieren</string>
     <string name="ShowActionTimestamps">Zeitstempel für Aktionen anzeigen</string>
     <string name="HideShareButton">\"%1$s\"-Knopf ausblenden</string>
-    <string name="ShowDetailsButton">Datum der weitergeleiteten Nachricht anzeigen</string>
     <string name="AddCommaAfterMention">Komma nach Erwähnung hinzufügen</string>
     <string name="AddCommaAfterMentionInfo">Ein Komma wird automatisch platziert, nachdem Sie auf den Benutzer getippt haben, den Sie erwähnen möchten.</string>
     <string name="HideCameraTile">Kamerakachel ausblenden</string>

@@ -43,7 +43,7 @@
     <string name="NewSwitchStyle">Styl przełączników MD3</string>
     <string name="DisableDividers">Wyłącz separatory</string>
     <string name="AlternativeNavigation">Alternatywna nawigacja</string>
-    <string name="AlternativeNavigationInfo">Eksperymentalna opcja, która obejmuje nowe, płynniejsze animacje przejścia między ekranami.\n\nZ tą opcją pasek nawigacyjny w czatach będzie miał taki sam kolor, jak panel wiadomości.</string>
+    <string name="AlternativeNavigationInfo">Eksperymentalna opcja, która obejmuje nowe, płynniejsze animacje przejścia między ekranami.</string>
     <string name="DrawerOptions">Opcje szuflady</string>
     <string name="DrawerIconSet">Zestaw ikon</string>
     <string name="ForceSnow">Wymuś śnieg</string>
@@ -78,11 +78,6 @@ CameraX wspierana jest tylko na
     <string name="HidePhoneNumber">Ukryj numer telefonu</string>
     <string name="ShowIdAndDc">Pokaż ID i DC</string>
     <string name="ShowIdAndDcInfo">Telegram APl pokazuje ID w oryginalnej postaci, a Bot API dodaje znak minus dla grup i -100 dla supergrup, grup rozgłoszeniowychi kanałów.</string>
-    <string name="DisableAnimatedAvatars">Wyłącz animowane awatary</string>
-    <string name="PremiumAutoPlayback">Automatyczne odtwarzanie Premium</string>
-    <string name="HidePremiumStickersTab">Ukryj zakładkę naklejek Premium</string>
-    <string name="HideFeaturedEmoji">Ukryj polecane emoji Premium</string>
-    <string name="HideSendAsChannel">Ukryj „Wyślij jako kanał”</string>
     <string name="ArchiveOnPull">Otwórz Archiwum przy pociągnięciu</string>
     <string name="DisableUnarchiveSwipe">Wyłącz przesunięcie „Przywróć”</string>
     <string name="DisableUnarchiveSwipeInfo">Przesunięcie w lewo nie usunie czatów z archiwum.</string>
@@ -103,13 +98,10 @@ CameraX wspierana jest tylko na
     <string name="DoubleTapIncoming">Wiadomości przychodzące</string>
     <string name="DoubleTapOutgoing">Wiadomości wychodzące</string>
     <string name="DoubleTapInfo">Niektóre działania wymagają uprawnień administratora w czacie lub kanale.</string>
-    <string name="HideMuteUnmuteButton">Ukryj przycisk „%1$s”</string>
-    <string name="HideMuteUnmuteButtonInfo">na dole kanałów.</string>
     <string name="HideKeyboardOnScroll">Ukryj klawiaturę podczas przewijania</string>
     <string name="DisableJumpToNextChannel">Wyłącz „Przejdź do następnego kanału”</string>
     <string name="ShowActionTimestamps">Pokaż czas na działaniach</string>
     <string name="HideShareButton">Ukryj boczny przycisk „%1$s”</string>
-    <string name="ShowDetailsButton">Pokaż datę przekazanych wiadomości</string>
     <string name="AddCommaAfterMention">Dodaj przecinek po wzmiance</string>
     <string name="AddCommaAfterMentionInfo">Przecinek zostanie dodany automatycznie po wybraniu użytkownika.</string>
     <string name="HideCameraTile">Ukryj kafelek błyskawicznego aparatu</string>

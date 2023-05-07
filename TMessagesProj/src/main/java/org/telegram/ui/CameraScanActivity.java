@@ -1,17 +1,14 @@
 package org.telegram.ui;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -93,7 +90,7 @@ import org.telegram.ui.Components.URLSpanNoUnderline;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import com.exteragram.messenger.extras.PermissionUtils;
+import com.exteragram.messenger.utils.SystemUtils;
 
 public class CameraScanActivity extends BaseFragment {
 
@@ -650,8 +647,8 @@ public class CameraScanActivity extends BaseFragment {
                         return;
                     }
                     if (Build.VERSION.SDK_INT >= 23) {
-                        if (!PermissionUtils.isImagesAndVideoPermissionGranted()) {
-                            PermissionUtils.requestImagesAndVideoPermission(getParentActivity());
+                        if (!SystemUtils.isImagesAndVideoPermissionGranted()) {
+                            SystemUtils.requestImagesAndVideoPermission(getParentActivity());
                             return;
                         }
                     }

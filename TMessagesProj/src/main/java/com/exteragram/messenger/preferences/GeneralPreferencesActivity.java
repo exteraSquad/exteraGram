@@ -25,9 +25,10 @@ import androidx.camera.video.Quality;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.camera.CameraXUtils;
-import com.exteragram.messenger.components.CameraTypeSelector;
+import com.exteragram.messenger.preferences.components.CameraTypeSelector;
+import com.exteragram.messenger.utils.LocaleUtils;
+import com.exteragram.messenger.utils.PopupUtils;
 
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
@@ -81,14 +82,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int hidePhoneNumberRow;
     private int profileDividerRow;
 
-    private int premiumHeaderRow;
-    private int disableAnimatedAvatarsRow;
-    private int premiumAutoPlaybackRow;
-    private int hidePremiumStickersTabRow;
-    private int hideFeaturedEmojiRow;
-    private int hideSendAsChannelRow;
-    private int premiumDividerRow;
-
     private int archiveHeaderRow;
     private int archiveOnPullRow;
     private int disableUnarchiveSwipeRow;
@@ -131,14 +124,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         showIdAndDcRow = newRow();
         profileDividerRow = newRow();
 
-        premiumHeaderRow = newRow();
-        disableAnimatedAvatarsRow = newRow();
-        premiumAutoPlaybackRow = newRow();
-        hidePremiumStickersTabRow = getUserConfig().isPremium() ? newRow() : -1;
-        hideFeaturedEmojiRow = newRow();
-        hideSendAsChannelRow = newRow();
-        premiumDividerRow = newRow();
-
         archiveHeaderRow = newRow();
         archiveOnPullRow = newRow();
         disableUnarchiveSwipeRow = newRow();
@@ -163,14 +148,11 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(tabletMode, LocaleController.getString("TabletMode", R.string.TabletMode), ExteraConfig.tabletMode, getContext(), i -> {
+            PopupUtils.showDialog(tabletMode, LocaleController.getString("TabletMode", R.string.TabletMode), ExteraConfig.tabletMode, getContext(), i -> {
                 ExteraConfig.editor.putInt("tabletMode", ExteraConfig.tabletMode = i).apply();
                 listAdapter.notifyItemChanged(tabletModeRow, payload);
                 showBulletin();
             });
-        } else if (position == disableAnimatedAvatarsRow) {
-            ExteraConfig.editor.putBoolean("disableAnimatedAvatars", ExteraConfig.disableAnimatedAvatars ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.disableAnimatedAvatars);
         } else if (position == archiveOnPullRow) {
             ExteraConfig.editor.putBoolean("archiveOnPull", ExteraConfig.archiveOnPull ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.archiveOnPull);
@@ -186,24 +168,12 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            ExteraUtils.showDialog(id, LocaleController.getString("ShowIdAndDc", R.string.ShowIdAndDc), ExteraConfig.showIdAndDc, getContext(), i -> {
+            PopupUtils.showDialog(id, LocaleController.getString("ShowIdAndDc", R.string.ShowIdAndDc), ExteraConfig.showIdAndDc, getContext(), i -> {
                 ExteraConfig.editor.putInt("showIdAndDc", ExteraConfig.showIdAndDc = i).apply();
                 parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(showIdAndDcRow, payload);
             });
             parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == premiumAutoPlaybackRow) {
-            ExteraConfig.editor.putBoolean("premiumAutoPlayback", ExteraConfig.premiumAutoPlayback ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.premiumAutoPlayback);
-        } else if (position == hidePremiumStickersTabRow) {
-            ExteraConfig.editor.putBoolean("hidePremiumStickersTab", ExteraConfig.hidePremiumStickersTab ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.hidePremiumStickersTab);
-        } else if (position == hideFeaturedEmojiRow) {
-            ExteraConfig.editor.putBoolean("hideFeaturedEmoji", ExteraConfig.hideFeaturedEmoji ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.hideFeaturedEmoji);
-        } else if (position == hideSendAsChannelRow) {
-            ExteraConfig.editor.putBoolean("hideSendAsChannel", ExteraConfig.hideSendAsChannel ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.hideSendAsChannel);
         } else if (position == uploadSpeedBoostRow) {
             ExteraConfig.editor.putBoolean("uploadSpeedBoost", ExteraConfig.uploadSpeedBoost ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.uploadSpeedBoost);
@@ -215,7 +185,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
             Stream<Integer> tmp = availableSizes.values().stream().sorted(Comparator.comparingInt(Size::getWidth).reversed()).map(Size::getHeight);
             ArrayList<Integer> types = tmp.collect(Collectors.toCollection(ArrayList::new));
             ArrayList<String> arrayList = types.stream().map(p -> p + "p").collect(Collectors.toCollection(ArrayList::new));
-            ExteraUtils.showDialog(arrayList, LocaleController.getString("CameraQuality", R.string.CameraQuality), types.indexOf(ExteraConfig.cameraResolution), getContext(), i -> {
+            PopupUtils.showDialog(arrayList, LocaleController.getString("CameraQuality", R.string.CameraQuality), types.indexOf(ExteraConfig.cameraResolution), getContext(), i -> {
                 ExteraConfig.editor.putInt("cameraResolution", ExteraConfig.cameraResolution = types.get(i)).apply();
                 listAdapter.notifyItemChanged(cameraXQualityRow, payload);
             });
@@ -286,8 +256,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         headerCell.setText(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
                     } else if (position == profileHeaderRow) {
                         headerCell.setText(LocaleController.getString("Profile", R.string.Profile));
-                    } else if (position == premiumHeaderRow) {
-                        headerCell.setText(LocaleController.getString("TelegramPremium", R.string.TelegramPremium));
                     } else if (position == speedBoostersHeaderRow) {
                         headerCell.setText(LocaleController.getString("DownloadSpeedBoost", R.string.DownloadSpeedBoost));
                     } else if (position == cameraTypeHeaderRow) {
@@ -303,22 +271,12 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("FormatTimeWithSeconds", R.string.FormatTimeWithSeconds), "12:34 -> 12:34:56", ExteraConfig.formatTimeWithSeconds, true, true);
                     } else if (position == disableProximitySensorRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableProximitySensor", R.string.DisableProximitySensor), ExteraConfig.disableProximitySensor, true);
-                    } else if (position == disableAnimatedAvatarsRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("DisableAnimatedAvatars", R.string.DisableAnimatedAvatars), ExteraConfig.disableAnimatedAvatars, true);
                     } else if (position == disableUnarchiveSwipeRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableUnarchiveSwipe", R.string.DisableUnarchiveSwipe), ExteraConfig.disableUnarchiveSwipe, false);
                     } else if (position == archiveOnPullRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("ArchiveOnPull", R.string.ArchiveOnPull), ExteraConfig.archiveOnPull, true);
                     } else if (position == hidePhoneNumberRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("HidePhoneNumber", R.string.HidePhoneNumber), ExteraConfig.hidePhoneNumber, true);
-                    } else if (position == premiumAutoPlaybackRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("PremiumAutoPlayback", R.string.PremiumAutoPlayback), ExteraConfig.premiumAutoPlayback, true);
-                    } else if (position == hidePremiumStickersTabRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("HidePremiumStickersTab", R.string.HidePremiumStickersTab), ExteraConfig.hidePremiumStickersTab, true);
-                    } else if (position == hideFeaturedEmojiRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("HideFeaturedEmoji", R.string.HideFeaturedEmoji), ExteraConfig.hideFeaturedEmoji, true);
-                    } else if (position == hideSendAsChannelRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("HideSendAsChannel", R.string.HideSendAsChannel), ExteraConfig.hideSendAsChannel, false);
                     } else if (position == uploadSpeedBoostRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("UploadSpeedBoost", R.string.UploadSpeedBoost), ExteraConfig.uploadSpeedBoost, false);
                     } else if (position == cameraXOptimizeRow) {
@@ -357,7 +315,7 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         } else {
                             htmlParsed = new SpannableString(Html.fromHtml(advise));
                         }
-                        textInfoPrivacyCell.setText(ExteraUtils.formatWithURLs(htmlParsed));
+                        textInfoPrivacyCell.setText(LocaleUtils.formatWithURLs(htmlParsed));
                     } else if (position == speedBoostersDividerRow) {
                         textInfoPrivacyCell.setText(LocaleController.getString("SpeedBoostInfo", R.string.SpeedBoostInfo));
                     } else if (position == profileDividerRow) {
@@ -379,10 +337,10 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
 
         @Override
         public int getItemViewType(int position) {
-            if (position == generalDividerRow || position == premiumDividerRow) {
+            if (position == generalDividerRow) {
                 return 1;
             } else if (position == generalHeaderRow || position == archiveHeaderRow || position == profileHeaderRow ||
-                    position == premiumHeaderRow || position == speedBoostersHeaderRow || position == cameraTypeHeaderRow) {
+                    position == speedBoostersHeaderRow || position == cameraTypeHeaderRow) {
                 return 3;
             } else if (position == cameraXQualityRow || position == tabletModeRow || position == showIdAndDcRow) {
                 return 7;

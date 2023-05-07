@@ -39,9 +39,4 @@ public class ExteraResources extends Resources {
         return mResources.getDrawableForDensity(current.getIcon(id), density, theme);
     }
 
-//    @NonNull
-//    @Override
-//    public InputStream openRawResource(int id) throws NotFoundException {
-//        return super.openRawResource(current.getIcon(id));
-//    }
 }

@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodSubtype;
 
 import androidx.annotation.Nullable;
 
-import com.exteragram.messenger.premium.encryption.EncryptionHelper;
+import com.exteragram.messenger.boost.encryption.EncryptionHelper;
 
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.Components.Bulletin;

@@ -106,7 +106,6 @@ import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.MessageStatisticActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -114,9 +113,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.exteragram.messenger.ExteraUtils;
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.components.TranslateBeforeSendWrapper;
+import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.TranslatorUtils;
 
 public class ShareAlert extends BottomSheet implements NotificationCenter.NotificationCenterDelegate {
 
@@ -1451,7 +1451,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         containerView.addView(writeButtonContainer, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 10));
 
         ImageView writeButton = new ImageView(context);
-        Drawable drawable = ExteraUtils.drawFab(true);
+        Drawable drawable = CanvasUtils.drawFab(true);
         writeButton.setBackgroundDrawable(drawable);
         writeButton.setImageResource(R.drawable.attach_send);
         writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -1892,7 +1892,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                 protected void onClick() {
                     if (sendPopupWindow != null && sendPopupWindow.isShowing())
                         sendPopupWindow.dismiss();
-                    ExteraUtils.translate(commentTextView.getText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                    TranslatorUtils.translate(commentTextView.getText(), ExteraConfig.getCurrentLangCode(), translated -> {
                         commentTextView.setText(translated);
                         commentTextView.setSelection(translated.length());
                     }, null);

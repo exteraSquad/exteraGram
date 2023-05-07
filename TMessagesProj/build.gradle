@@ -89,7 +89,6 @@ android {
         // Obtain your own keys at: https://core.telegram.org/api/obtaining_api_id
         buildConfigField 'int', 'APP_ID', localProperties.getProperty("APP_ID")
         buildConfigField 'String', 'APP_HASH', localProperties.getProperty("APP_HASH")
-        buildConfigField 'String', 'YANDEX_METRICA_KEY', localProperties.getProperty("YANDEX_METRICA_KEY")
 
         // Google Console: https://console.cloud.google.com/google/maps-apis/credentials
         resValue 'string', 'MAPS_V2_API', localProperties.getProperty("MAPS_V2_API")
@@ -126,9 +125,9 @@ android {
     signingConfigs {
         release {
             storeFile file("config/extera.jks")
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
+            storePassword localProperties.getProperty("SIGNING_KEY_STORE_PASSWORD")
+            keyAlias localProperties.getProperty("SIGNING_KEY_ALIAS")
+            keyPassword localProperties.getProperty("SIGNING_KEY_PASSWORD")
         }
     }
 

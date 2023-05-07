@@ -119,14 +119,16 @@ import androidx.dynamicanimation.animation.DynamicAnimation;
 import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
-import androidx.exifinterface.media.ExifInterface;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScrollerEnd;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.ExteraUtils;
+import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.PopupUtils;
+import com.exteragram.messenger.utils.SystemUtils;
+import com.exteragram.messenger.utils.TranslatorUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
@@ -5316,7 +5318,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     }
 
                     if (f != null && f.exists()) {
-                        ExteraUtils.addFileToClipboard(f, () -> BulletinFactory.of(containerView, null).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied), resourcesProvider).show());
+                        SystemUtils.addFileToClipboard(f, () -> BulletinFactory.of(containerView, null).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied), resourcesProvider).show());
                     } else {
                         showDownloadAlert();
                     }
@@ -6021,7 +6023,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
         };
         pickerViewSendButton.setScaleType(ImageView.ScaleType.CENTER);
-        pickerViewSendDrawable = ExteraUtils.drawFab(true);
+        pickerViewSendDrawable = CanvasUtils.drawFab(true);
         pickerViewSendButton.setBackgroundDrawable(pickerViewSendDrawable);
         pickerViewSendButton.setColorFilter(new PorterDuffColorFilter(0xffffffff, PorterDuff.Mode.MULTIPLY));
         pickerViewSendButton.setImageResource(R.drawable.attach_send);
@@ -6145,7 +6147,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     cell.setSubtext(ExteraConfig.getCurrentLangName());
                     cell.setItemHeight(56);
                     cell.setRightIcon(R.drawable.msg_arrowright);
-                    cell.getRightIcon().setOnClickListener(v -> ExteraUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), parentActivity, i2 -> {
+                    cell.getRightIcon().setOnClickListener(v -> PopupUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), parentActivity, i2 -> {
                         ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[i2]).apply();
                         cell.setSubtext(ExteraConfig.getCurrentLangName());
                     }));
@@ -6168,7 +6170,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     } else if (a == 4) {
                         sendPressed(true, 0, false, true, false);
                     } else if (a == 5) {
-                        ExteraUtils.translate(captionEditText.getMessageEditText().getText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                        TranslatorUtils.translate(captionEditText.getMessageEditText().getText(), ExteraConfig.getCurrentLangCode(), translated -> {
                             captionEditText.getMessageEditText().setText(translated);
                             setCurrentCaption(null, translated, false);
                         }, () -> {});
