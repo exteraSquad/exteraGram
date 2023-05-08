@@ -2853,16 +2853,20 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                 Bundle args = new Bundle();
                 args.putLong("user_id", profile_user_id);
                 ProfileActivity fragment = new ProfileActivity(args);
-                ChatUtils.openById(profile_user_id, this, (uid, un) -> {
-                    AndroidUtilities.runOnUIThread(() -> presentFragment(fragment, false, false));
-                    if (AndroidUtilities.isTablet()) {
-                        actionBarLayout.showLastFragment();
-                        rightActionBarLayout.showLastFragment();
-                        drawerLayoutContainer.setAllowOpenDrawer(false, false);
+                ChatUtils.searchById(profile_user_id, user -> {
+                    if (user != null) {
+                        AndroidUtilities.runOnUIThread(() -> presentFragment(fragment, false, false));
+                        if (AndroidUtilities.isTablet()) {
+                            actionBarLayout.showLastFragment();
+                            rightActionBarLayout.showLastFragment();
+                            drawerLayoutContainer.setAllowOpenDrawer(false, false);
+                        } else {
+                            drawerLayoutContainer.setAllowOpenDrawer(true, false);
+                        }
                     } else {
-                        drawerLayoutContainer.setAllowOpenDrawer(true, false);
+                        showBulletin(factory -> factory.createErrorBulletin(LocaleController.getString("UserNotFound", R.string.UserNotFound)));
                     }
-                }, uid -> showBulletin(factory -> factory.createErrorBulletin(LocaleController.getString("UserNotFound", R.string.UserNotFound))));
+                });
             } else if (showDialogsList) {
                 if (!AndroidUtilities.isTablet()) {
                     actionBarLayout.removeAllFragments();

@@ -1025,17 +1025,19 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
             }
         } else if (id == 3) {
             try {
-                ChatUtils.openById(stickerSet.set.id >> 32, parentFragment.getParentActivity(), (uid, un) -> {
-                    Bundle args = new Bundle();
-                    args.putLong("user_id", uid);
-                    ProfileActivity fragment = new ProfileActivity(args);
-                    AndroidUtilities.runOnUIThread(() -> {
-                        parentFragment.presentFragment(fragment, false, false);
-                        dismiss();
-                    });
-                }, uid -> {
-                    AndroidUtilities.addToClipboard(ChatUtils.getOwnerIds(stickerSet.set.id));
-                    BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+                ChatUtils.searchById(stickerSet.set.id >> 32, user -> {
+                    if (user != null) {
+                        Bundle args = new Bundle();
+                        args.putLong("user_id", user.id);
+                        ProfileActivity fragment = new ProfileActivity(args);
+                        AndroidUtilities.runOnUIThread(() -> {
+                            parentFragment.presentFragment(fragment, false, false);
+                            dismiss();
+                        });
+                    } else {
+                        AndroidUtilities.addToClipboard(ChatUtils.getOwnerIds(stickerSet.set.id));
+                        BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+                    }
                 });
             } catch (Exception e) {
                 FileLog.e(e);

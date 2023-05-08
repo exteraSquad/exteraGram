@@ -190,6 +190,8 @@
     <string name="FileSize">Размер файла</string>
     <string name="FileName">Название файла</string>
     <string name="FilePath">Путь к файлу</string>
+    <string name="Resolution">Разрешение</string>
+    <string name="Bitrate">Битрейт</string>
     <string name="MimeType">Тип медиа</string>
     <string name="Datacenter">Датацентр</string>
 

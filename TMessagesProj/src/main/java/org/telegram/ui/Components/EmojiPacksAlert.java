@@ -1420,17 +1420,19 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
             }
         } else if (id == 3) {
             try {
-                ChatUtils.openById(stickerSet.set.id >> 32, fragment.getParentActivity(), (uid, un) -> {
-                    Bundle args = new Bundle();
-                    args.putLong("user_id", uid);
-                    ProfileActivity newFragment = new ProfileActivity(args);
-                    AndroidUtilities.runOnUIThread(() -> {
-                        fragment.presentFragment(newFragment, false, false);
-                        dismiss();
-                    });
-                }, uid -> {
-                    AndroidUtilities.addToClipboard(ChatUtils.getOwnerIds(stickerSet.set.id));
-                    BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+                ChatUtils.searchById(stickerSet.set.id >> 32, user -> {
+                    if (user != null) {
+                        Bundle args = new Bundle();
+                        args.putLong("user_id", user.id);
+                        ProfileActivity newFragment = new ProfileActivity(args);
+                        AndroidUtilities.runOnUIThread(() -> {
+                            fragment.presentFragment(newFragment, false, false);
+                            dismiss();
+                        });
+                    } else {
+                        AndroidUtilities.addToClipboard(ChatUtils.getOwnerIds(stickerSet.set.id));
+                        BulletinFactory.of((FrameLayout) containerView, resourcesProvider).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+                    }
                 });
             } catch (Exception e) {
                 FileLog.e(e);

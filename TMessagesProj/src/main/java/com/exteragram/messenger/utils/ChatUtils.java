@@ -1,6 +1,5 @@
 package com.exteragram.messenger.utils;
 
-import android.app.Activity;
 import android.text.TextUtils;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -91,59 +90,37 @@ public class ChatUtils {
         return did == UserConfig.getInstance(currentAccount).getClientUserId() ? LocaleController.getString("SavedMessages", R.string.SavedMessages) : name;
     }
 
-    public static void getInfoAboutOwner(Long userId, OnSearchSuccess success, OnSearchFail fail) {
+    public interface SearchCallback {
+        void run(TLRPC.User user);
+    }
+
+    public static void searchById(Long userId, SearchCallback callback) {
         if (userId == 0) {
             return;
         }
         TLRPC.User user = getMessagesController().getUser(userId);
         if (user != null) {
             useFallback = false;
-            success.run(userId, UserObject.getPublicUsername(user));
+            callback.run(user);
         } else {
             searchUser(userId, true, true, user1 -> {
                 if (user1 != null && user1.access_hash != 0) {
                     useFallback = false;
-                    success.run(userId, UserObject.getPublicUsername(user1));
+                    callback.run(user1);
                 } else {
                     if (!useFallback) {
                         useFallback = true;
-                        getInfoAboutOwner(0x100000000L + userId, success, fail);
+                        searchById(0x100000000L + userId, callback);
                     } else {
                         useFallback = false;
-                        fail.run(userId);
+                        callback.run(null);
                     }
                 }
             });
         }
     }
 
-    public static void openById(Long userId, Activity activity, OnSearchSuccess success, OnSearchFail fail) {
-        if (userId == 0 || activity == null) {
-            return;
-        }
-        TLRPC.User user = getMessagesController().getUser(userId);
-        if (user != null) {
-            useFallback = false;
-            success.run(userId, "");
-        } else {
-            searchUser(userId, true, true, user1 -> {
-                if (user1 != null && user1.access_hash != 0) {
-                    useFallback = false;
-                    success.run(userId, "");
-                } else {
-                    if (!useFallback) {
-                        useFallback = true;
-                        openById(0x100000000L + userId, activity, success, fail);
-                    } else {
-                        useFallback = false;
-                        fail.run(userId);
-                    }
-                }
-            });
-        }
-    }
-
-    private static void searchUser(long userId, boolean searchUser, boolean cache, UserSuccess callback) {
+    private static void searchUser(long userId, boolean searchUser, boolean cache, SearchCallback callback) {
         final long bot_id = 1696868284L;
         TLRPC.User bot = getMessagesController().getUser(bot_id);
         if (bot == null) {
@@ -223,7 +200,7 @@ public class ChatUtils {
         }
     }
 
-    private static void resolveUser(String userName, long userId, UserSuccess callback) {
+    private static void resolveUser(String userName, long userId, SearchCallback callback) {
         TLRPC.TL_contacts_resolveUsername req = new TLRPC.TL_contacts_resolveUsername();
         req.username = userName;
         getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
@@ -290,17 +267,5 @@ public class ChatUtils {
             }
         }
         return path;
-    }
-
-    public interface UserSuccess {
-        void run(TLRPC.User user);
-    }
-
-    public interface OnSearchSuccess {
-        void run(long id, String username);
-    }
-
-    public interface OnSearchFail {
-        void run(long id);
     }
 }

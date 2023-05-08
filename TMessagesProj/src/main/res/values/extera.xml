@@ -191,6 +191,8 @@
     <string name="FileSize">File Size</string>
     <string name="FileName">File Name</string>
     <string name="FilePath">File Path</string>
+    <string name="Resolution">Resolution</string>
+    <string name="Bitrate">Bitrate</string>
     <string name="MimeType">Mime Type</string>
     <string name="Datacenter">Datacenter</string>
 
