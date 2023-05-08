@@ -3814,7 +3814,7 @@ public class NotificationsController extends BaseController {
                     .setWhen(((long) lastMessageObject.messageOwner.date) * 1000);
 
             if (Build.VERSION.SDK_INT < 31) {
-                mBuilder.setColor(setNotificationColor());
+                mBuilder.setColor(getNotificationColor());
             }
 
             long[] vibrationPattern = null;
@@ -3976,7 +3976,7 @@ public class NotificationsController extends BaseController {
         }
     }
 
-    private int setNotificationColor() {
+    private int getNotificationColor() {
         return AppUtils.getNotificationIconColor();
     }
 
@@ -4608,7 +4608,7 @@ public class NotificationsController extends BaseController {
                     .setCategory(NotificationCompat.CATEGORY_MESSAGE);
                     
             if (Build.VERSION.SDK_INT < 31)
-                builder.setColor(setNotificationColor());
+                builder.setColor(getNotificationColor());
 
             try {
                 Intent dismissIntent = new Intent(ApplicationLoader.applicationContext, NotificationDismissReceiver.class);

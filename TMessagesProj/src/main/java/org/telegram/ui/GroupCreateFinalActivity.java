@@ -609,7 +609,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
         });
 
         floatingButtonContainer = new FrameLayout(context);
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButtonContainer.setBackgroundDrawable(drawable);
         StateListAnimator animator = new StateListAnimator();
         animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButtonIcon, "translationZ", AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));

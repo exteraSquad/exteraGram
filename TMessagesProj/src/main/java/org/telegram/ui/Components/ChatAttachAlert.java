@@ -2024,7 +2024,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         containerView.addView(doneItem, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 48, Gravity.TOP | Gravity.RIGHT));
 
         floatingButton = new FrameLayout(context);
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButton.setBackground(drawable);
         floatingButton.setVisibility(shouldShowFloatingCamera() ? View.VISIBLE : View.GONE);
         StateListAnimator stateListAnimator = new StateListAnimator();
@@ -2473,7 +2473,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         containerView.addView(writeButtonContainer, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 10));
 
         writeButton = new ImageView(context);
-        writeButtonDrawable = CanvasUtils.drawFab(true);
+        writeButtonDrawable = CanvasUtils.createFabBackground(true);
         writeButton.setBackgroundDrawable(writeButtonDrawable);
         writeButton.setImageResource(R.drawable.attach_send);
         writeButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));

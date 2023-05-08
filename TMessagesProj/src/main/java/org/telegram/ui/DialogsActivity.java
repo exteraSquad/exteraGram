@@ -4155,7 +4155,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
 
             FrameLayout writeButtonBackground = new FrameLayout(context);
-            Drawable writeButtonDrawable = CanvasUtils.drawFab(true);
+            Drawable writeButtonDrawable = CanvasUtils.createFabBackground(true);
             writeButtonBackground.setBackgroundDrawable(writeButtonDrawable);
             writeButtonBackground.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             writeButtonBackground.setOutlineProvider(new ViewOutlineProvider() {
@@ -4325,11 +4325,20 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (inPreviewMode) {
             final TLRPC.User currentUser = getUserConfig().getCurrentUser();
             avatarContainer = new ChatAvatarContainer(actionBar.getContext(), null, false);
-            avatarContainer.setTitle(UserObject.getUserName(currentUser));
-            avatarContainer.setSubtitle(LocaleController.formatUserStatus(currentAccount, currentUser));
-            avatarContainer.setUserAvatar(currentUser, true);
+            if (folderId == 1) {
+                avatarContainer.getSubtitleTextView().setVisibility(View.GONE);
+                avatarContainer.setTitle(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
+                AvatarDrawable avatarDrawable = new AvatarDrawable();
+                avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_ARCHIVED);
+                avatarDrawable.setColor(getThemedColor(SharedConfig.archiveHidden ? Theme.key_avatar_backgroundArchivedHidden : Theme.key_avatar_backgroundArchived));
+                avatarContainer.getAvatarImageView().setImage(null, null, avatarDrawable, 42, 0);
+            } else {
+                avatarContainer.setTitle(UserObject.getUserName(currentUser));
+                avatarContainer.setSubtitle(LocaleController.formatUserStatus(currentAccount, currentUser));
+                avatarContainer.setUserAvatar(currentUser, true);
+            }
             avatarContainer.setOccupyStatusBar(false);
-            avatarContainer.setLeftPadding(AndroidUtilities.dp(10));
+            avatarContainer.setLeftPadding(AndroidUtilities.dp(12));
             actionBar.addView(avatarContainer, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 0, 0, 40, 0));
             floatingButton.setVisibility(View.INVISIBLE);
             actionBar.setOccupyStatusBar(false);
@@ -10467,7 +10476,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (getParentActivity() == null || floatingButtonContainer == null) {
             return;
         }
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButtonContainer.setBackground(drawable);
     }
 

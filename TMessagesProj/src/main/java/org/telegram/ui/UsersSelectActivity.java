@@ -760,7 +760,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
         floatingButton = new ImageView(context);
         floatingButton.setScaleType(ImageView.ScaleType.CENTER);
 
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButton.setBackgroundDrawable(drawable);
         floatingButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
         floatingButton.setImageResource(R.drawable.floating_check);

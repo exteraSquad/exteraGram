@@ -98,7 +98,6 @@ import com.google.android.gms.safetynet.SafetyNet;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.telegram.PhoneFormat.PhoneFormat;
-import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.AuthTokensHelper;
@@ -7926,7 +7925,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 
         Context context = getParentActivity();
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButtonContainer.setBackground(drawable);
 
         backButtonView.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
@@ -8125,7 +8124,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             numberView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
             editTextView.setTextColor(Theme.getColor(Theme.key_changephoneinfo_image2));
             confirmTextView.setTextColor(Theme.getColor(Theme.key_changephoneinfo_image2));
-            popupFabContainer.setBackground(CanvasUtils.drawFab());
+            popupFabContainer.setBackground(CanvasUtils.createFabBackground());
             floatingProgressView.setProgressColor(Theme.getColor(Theme.key_chats_actionIcon));
         }
 

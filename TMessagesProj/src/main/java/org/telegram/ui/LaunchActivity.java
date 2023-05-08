@@ -764,7 +764,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         actionBarLayout.getView().invalidate();
                     }
                 };
-                fragment.getActionBar();
                 actionBarLayout.presentFragmentAsPreview(fragment);
                 drawerLayoutContainer.setDrawCurrentPreviewFragmentAbove(true);
                 return true;

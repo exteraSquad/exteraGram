@@ -1451,7 +1451,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         containerView.addView(writeButtonContainer, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 6, 10));
 
         ImageView writeButton = new ImageView(context);
-        Drawable drawable = CanvasUtils.drawFab(true);
+        Drawable drawable = CanvasUtils.createFabBackground(true);
         writeButton.setBackgroundDrawable(drawable);
         writeButton.setImageResource(R.drawable.attach_send);
         writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);

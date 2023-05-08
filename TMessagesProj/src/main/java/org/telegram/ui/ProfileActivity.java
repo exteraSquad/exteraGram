@@ -4153,7 +4153,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         updateProfileData(true);
 
         writeButton = new RLottieImageView(context);
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         writeButton.setBackground(drawable);
         StateListAnimator animator = new StateListAnimator();
         animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(writeButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
@@ -10702,7 +10702,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             Drawable shadowDrawable = fragmentView.getContext().getResources().getDrawable(R.drawable.floating_shadow_profile).mutate();
             shadowDrawable.setColorFilter(new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY));
             CombinedDrawable combinedDrawable = new CombinedDrawable(shadowDrawable,
-                    CanvasUtils.drawFab(),
+                    CanvasUtils.createFabBackground(),
                     0, 0);
             combinedDrawable.setIconSize(AndroidUtilities.dp(56), AndroidUtilities.dp(56));
             writeButton.setBackground(combinedDrawable);

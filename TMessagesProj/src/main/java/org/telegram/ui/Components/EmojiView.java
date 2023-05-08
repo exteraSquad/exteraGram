@@ -2468,7 +2468,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         } else {
             addView(bottomTabContainer, LayoutHelper.createFrame(40 + 16, 40 + 8, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, 0, 0, 2, 0));
 
-            Drawable drawable = CanvasUtils.drawFab();
+            Drawable drawable = CanvasUtils.createFabBackground();
             StateListAnimator animator = new StateListAnimator();
             animator.addState(new int[]{android.R.attr.state_pressed}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(2), AndroidUtilities.dp(4)).setDuration(200));
             animator.addState(new int[]{}, ObjectAnimator.ofFloat(floatingButton, View.TRANSLATION_Z, AndroidUtilities.dp(4), AndroidUtilities.dp(2)).setDuration(200));

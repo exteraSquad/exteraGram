@@ -1040,7 +1040,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
             sizeNotifierFrameLayout.addView(writeButtonContainer, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 12, 10));
 
             writeButton = new ImageView(context);
-            writeButtonDrawable = CanvasUtils.drawFab(true);
+            writeButtonDrawable = CanvasUtils.createFabBackground(true);
             writeButton.setBackgroundDrawable(writeButtonDrawable);
             writeButton.setImageResource(R.drawable.attach_send);
             writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);

@@ -329,7 +329,7 @@ public class TwoStepVerificationSetupActivity extends BaseFragment {
         floatingProgressView.setScaleY(0.1f);
         floatingButtonContainer.addView(floatingProgressView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButtonContainer.setBackground(drawable);
 
         bottomSkipButton = new TextView(context);

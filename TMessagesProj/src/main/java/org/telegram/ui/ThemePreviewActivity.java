@@ -657,7 +657,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
         floatingButton = new ImageView(context);
         floatingButton.setScaleType(ImageView.ScaleType.CENTER);
 
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButton.setBackgroundDrawable(drawable);
         floatingButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
         floatingButton.setImageResource(R.drawable.floating_pencil);

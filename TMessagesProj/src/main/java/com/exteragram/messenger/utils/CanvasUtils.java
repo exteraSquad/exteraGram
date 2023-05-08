@@ -1,3 +1,14 @@
+/*
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @immat0x1, 2023
+
+*/
+
 package com.exteragram.messenger.utils;
 
 import android.content.Context;
@@ -18,11 +29,11 @@ import java.util.Objects;
 
 public class CanvasUtils {
 
-    public static Drawable drawFab() {
-        return drawFab(false);
+    public static Drawable createFabBackground() {
+        return createFabBackground(false);
     }
 
-    public static Drawable drawFab(boolean altColor) {
+    public static Drawable createFabBackground(boolean altColor) {
         int r = AndroidUtilities.dp(ExteraConfig.squareFab ? 16 : 100);
         int c = Theme.getColor(altColor ? Theme.key_dialogFloatingButton : Theme.key_chats_actionBackground);
         int pc = Theme.getColor(altColor ? Theme.key_dialogFloatingButtonPressed : Theme.key_chats_actionPressedBackground);

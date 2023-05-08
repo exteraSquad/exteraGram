@@ -6269,7 +6269,7 @@ public class Theme {
         applyProfileTheme();
         applyChatTheme(false, bg);
         boolean checkNavigationBarColor = !hasPreviousTheme;
-        AndroidUtilities.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, checkNavigationBarColor));
+        AndroidUtilities.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.didSetNewTheme, false, checkNavigationBarColor, true));
     }
 
     public static int changeColorAccent(ThemeInfo themeInfo, int accent, int color) {

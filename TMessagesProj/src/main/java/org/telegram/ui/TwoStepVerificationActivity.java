@@ -356,7 +356,7 @@ public class TwoStepVerificationActivity extends BaseFragment implements Notific
         floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.Next));
         floatingButtonContainer.addView(floatingButtonIcon, LayoutHelper.createFrame(56, 56));
 
-        Drawable drawable = CanvasUtils.drawFab();
+        Drawable drawable = CanvasUtils.createFabBackground();
         floatingButtonContainer.setBackground(drawable);
         frameLayout.addView(floatingButtonContainer, LayoutHelper.createFrame(56, 56, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 24, 16));
 

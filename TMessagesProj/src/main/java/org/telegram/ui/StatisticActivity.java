@@ -2699,7 +2699,7 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
 
     @Override
     public boolean isLightStatusBar() {
-        int color = Theme.getColor(Theme.key_windowBackgroundWhite);
+        int color = getThemedColor(Theme.key_windowBackgroundWhite);
         return ColorUtils.calculateLuminance(color) > 0.7f;
     }
 }

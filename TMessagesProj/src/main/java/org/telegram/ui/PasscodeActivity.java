@@ -677,7 +677,7 @@ public class PasscodeActivity extends BaseFragment implements NotificationCenter
                 floatingButtonContainer.setContentDescription(LocaleController.getString(R.string.Next));
                 floatingButtonContainer.addView(floatingButtonIcon, LayoutHelper.createFrame(56, 56));
 
-                Drawable drawable = CanvasUtils.drawFab();
+                Drawable drawable = CanvasUtils.createFabBackground();
                 floatingButtonContainer.setBackground(drawable);
 
                 updateFields();

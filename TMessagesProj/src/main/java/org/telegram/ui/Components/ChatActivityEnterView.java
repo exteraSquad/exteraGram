@@ -2000,6 +2000,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             notifyButton = new ImageView(context);
             notifySilentDrawable = new CrossOutDrawable(context, R.drawable.input_notify_on, Theme.key_chat_messagePanelIcons);
             notifyButton.setImageDrawable(notifySilentDrawable);
+            if (ExteraConfig.useSolarIcons) notifySilentDrawable.setPaddings(0, -AndroidUtilities.dp(0.5f), 0, -AndroidUtilities.dp(0.5f));
             notifySilentDrawable.setCrossOut(silent, false);
             notifyButton.setContentDescription(silent ? LocaleController.getString("AccDescrChanSilentOn", R.string.AccDescrChanSilentOn) : LocaleController.getString("AccDescrChanSilentOff", R.string.AccDescrChanSilentOff));
             notifyButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
@@ -2011,6 +2012,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 silent = !silent;
                 if (notifySilentDrawable == null) {
                     notifySilentDrawable = new CrossOutDrawable(context, R.drawable.input_notify_on, Theme.key_chat_messagePanelIcons);
+                    if (ExteraConfig.useSolarIcons) notifySilentDrawable.setPaddings(0, -AndroidUtilities.dp(0.5f), 0, -AndroidUtilities.dp(0.5f));
                 }
                 notifySilentDrawable.setCrossOut(silent, true);
                 notifyButton.setImageDrawable(notifySilentDrawable);
@@ -7728,6 +7730,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 notifyVisible = canWriteToChannel;
                 if (notifySilentDrawable == null) {
                     notifySilentDrawable = new CrossOutDrawable(getContext(), R.drawable.input_notify_on, Theme.key_chat_messagePanelIcons);
+                    if (ExteraConfig.useSolarIcons) notifySilentDrawable.setPaddings(0, -AndroidUtilities.dp(0.5f), 0, -AndroidUtilities.dp(0.5f));
                 }
                 notifySilentDrawable.setCrossOut(silent, false);
                 notifyButton.setImageDrawable(notifySilentDrawable);

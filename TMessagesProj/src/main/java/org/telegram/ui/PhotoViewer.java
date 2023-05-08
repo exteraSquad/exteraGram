@@ -6023,7 +6023,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
         };
         pickerViewSendButton.setScaleType(ImageView.ScaleType.CENTER);
-        pickerViewSendDrawable = CanvasUtils.drawFab(true);
+        pickerViewSendDrawable = CanvasUtils.createFabBackground(true);
         pickerViewSendButton.setBackgroundDrawable(pickerViewSendDrawable);
         pickerViewSendButton.setColorFilter(new PorterDuffColorFilter(0xffffffff, PorterDuff.Mode.MULTIPLY));
         pickerViewSendButton.setImageResource(R.drawable.attach_send);
