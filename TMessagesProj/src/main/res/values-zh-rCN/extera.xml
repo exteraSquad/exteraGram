@@ -143,9 +143,6 @@ CameraX仅支持
     <string name="ConfirmCall">呼叫前确认</string>
     <string name="CallTo">是否呼叫**%1$s**？</string>
     <string name="AppIconGradient">渐变</string>
-    <string name="AppIconGlow">荧光</string>
     <string name="AppIconSpace">太空</string>
     <string name="AppIconWinter">冬日</string>
-    <string name="AppIconVK">VК</string>
-    <string name="AppIconRed">红色</string>
 </resources>

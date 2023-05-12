@@ -142,10 +142,8 @@ CameraX підтримується тільки на
     <string name="TrackSaved">Пісню збережено</string>
     <string name="ConfirmCall">Підтвердити дзвінок</string>
     <string name="CallTo">Зателефонувати до **%1$s**?</string>
+
     <string name="AppIconGradient">Градієнт</string>
-    <string name="AppIconGlow">Сяйво</string>
     <string name="AppIconSpace">Космос</string>
     <string name="AppIconWinter">Зима</string>
-    <string name="AppIconVK">ВК</string>
-    <string name="AppIconRed">Червоне Єбало</string>
 </resources>

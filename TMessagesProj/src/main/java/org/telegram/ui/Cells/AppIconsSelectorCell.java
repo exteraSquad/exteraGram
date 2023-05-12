@@ -81,9 +81,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
                 IconHolderView holderView = (IconHolderView) holder.itemView;
                 LauncherIconController.LauncherIcon icon = availableIcons.get(position);
-                if (icon == LauncherIconController.LauncherIcon.MONET && (Build.VERSION.SDK_INT < 31 || Build.VERSION.SDK_INT > 32)) {
-                    return;
-                } else if (icon == LauncherIconController.LauncherIcon.RED && !ChatUtils.isSubscribedTo(1178248235)) {
+                if (icon.hidden) {
                     return;
                 }
                 holderView.bind(icon);
@@ -160,18 +158,10 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
     private void updateIconsVisibility() {
         availableIcons.clear();
         availableIcons.addAll(Arrays.asList(LauncherIconController.LauncherIcon.values()));
-        if (Build.VERSION.SDK_INT < 31 || Build.VERSION.SDK_INT > 32) {
-            availableIcons.removeIf(p -> p.equals(LauncherIconController.LauncherIcon.MONET));
-        }
-        if (!ChatUtils.isSubscribedTo(1178248235)) {
-            availableIcons.removeIf(p -> p.equals(LauncherIconController.LauncherIcon.RED));
-        }
-        if (MessagesController.getInstance(currentAccount).premiumLocked) {
-            for (int i = 0; i < availableIcons.size(); i++) {
-                if (availableIcons.get(i).premium) {
-                    availableIcons.remove(i);
-                    i--;
-                }
+        for (int i = 0; i < availableIcons.size(); i++) {
+            if (availableIcons.get(i).hidden || MessagesController.getInstance(currentAccount).premiumLocked && availableIcons.get(i).premium) {
+                availableIcons.remove(i);
+                i--;
             }
         }
         getAdapter().notifyDataSetChanged();
@@ -343,8 +333,8 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
 
         @Override
         public void draw(Canvas canvas) {
-            canvas.save();
             canvas.clipPath(path);
+            canvas.save();
             canvas.scale(1f + backgroundOuterPadding / (float) getWidth(), 1f + backgroundOuterPadding / (float) getHeight(), getWidth() / 2f, getHeight() / 2f);
             super.draw(canvas);
             canvas.restore();

@@ -204,25 +204,6 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.exteragram.messenger.VKIcon"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_vk"
-            android:roundIcon="@mipmap/ic_launcher_vk"
-            android:targetActivity="org.telegram.ui.LaunchActivity">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
-        </activity-alias>
-
-        <activity-alias
             android:name="com.exteragram.messenger.Dsgn480Icon"
             android:enabled="false"
             android:exported="true"
@@ -242,11 +223,11 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.exteragram.messenger.GlowIcon"
+            android:name="com.exteragram.messenger.AuroraIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_glow"
-            android:roundIcon="@mipmap/ic_launcher_glow"
+            android:icon="@mipmap/ic_launcher_aurora"
+            android:roundIcon="@mipmap/ic_launcher_aurora"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -290,11 +271,68 @@
         </activity-alias>
 
         <activity-alias
-            android:name="com.exteragram.messenger.RedIcon"
+            android:name="com.exteragram.messenger.NeoIcon"
             android:enabled="false"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher_red"
-            android:roundIcon="@mipmap/ic_launcher_red"
+            android:icon="@mipmap/ic_launcher_neo"
+            android:roundIcon="@mipmap/ic_launcher_neo"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.exteragram.messenger.OrbitIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_orbit"
+            android:roundIcon="@mipmap/ic_launcher_orbit"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.exteragram.messenger.AmethystIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_amethyst"
+            android:roundIcon="@mipmap/ic_launcher_amethyst"
+            android:targetActivity="org.telegram.ui.LaunchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.exteragram.messenger.SusIcon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_sus"
+            android:roundIcon="@mipmap/ic_launcher_sus"
             android:targetActivity="org.telegram.ui.LaunchActivity">
 
             <intent-filter>
@@ -439,7 +477,7 @@
             <intent-filter
                 android:icon="@mipmap/ic_launcher"
                 android:priority="1"
-                android:roundIcon="@mipmap/ic_launcher_round">
+                android:roundIcon="@mipmap/ic_launcher">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -456,7 +494,7 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter
                 android:icon="@mipmap/ic_launcher"
-                android:roundIcon="@mipmap/ic_launcher_round">
+                android:roundIcon="@mipmap/ic_launcher">
                 <action android:name="org.telegram.passport.AUTHORIZE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -469,7 +507,7 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter
                 android:icon="@mipmap/ic_launcher"
-                android:roundIcon="@mipmap/ic_launcher_round">
+                android:roundIcon="@mipmap/ic_launcher">
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
@@ -481,7 +519,7 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter
                 android:icon="@mipmap/ic_launcher"
-                android:roundIcon="@mipmap/ic_launcher_round">
+                android:roundIcon="@mipmap/ic_launcher">
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>

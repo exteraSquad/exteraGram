@@ -143,9 +143,6 @@ CameraX wird nur auf
     <string name="ConfirmCall">Anruf bestätigen</string>
     <string name="CallTo">Anruf an **%1$s**?</string>
     <string name="AppIconGradient">Farbverlauf</string>
-    <string name="AppIconGlow">Glow</string>
     <string name="AppIconSpace">Weltall</string>
     <string name="AppIconWinter">Winter</string>
-    <string name="AppIconVK">VK</string>
-    <string name="AppIconRed">RedEbalo</string>
 </resources>

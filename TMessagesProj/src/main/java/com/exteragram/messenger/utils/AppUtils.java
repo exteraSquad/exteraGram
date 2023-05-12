@@ -16,6 +16,8 @@ import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.R;
 
+import java.util.Calendar;
+
 public class AppUtils {
 
     public static int getNotificationIconColor() {
@@ -82,5 +84,11 @@ public class AppUtils {
                         R.drawable.msg_nearby
                 };
         }
+    }
+
+    public static boolean isWinter() {
+        Calendar calendar = Calendar.getInstance();
+        int currentMonth = calendar.get(Calendar.MONTH);
+        return currentMonth == Calendar.DECEMBER || currentMonth == Calendar.JANUARY || currentMonth == Calendar.FEBRUARY;
     }
 }

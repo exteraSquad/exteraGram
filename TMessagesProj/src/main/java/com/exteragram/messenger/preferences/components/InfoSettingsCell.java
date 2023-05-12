@@ -43,7 +43,7 @@ public class InfoSettingsCell extends FrameLayout {
 
         Drawable arrow = ContextCompat.getDrawable(context, R.drawable.ic_logo_foreground).mutate();
         Theme.ThemeInfo theme = Theme.getActiveTheme();
-        int color = BuildVars.isBetaApp() ? 0xff747F9F : 0xffF54142;
+        int color = 0xffF54142;
 
         if (theme.isMonet() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             color = MonetUtils.getColor(theme.isDark() ? "n1_800" : "a1_100");

@@ -143,9 +143,6 @@ CameraX wspierana jest tylko na
     <string name="ConfirmCall">Potwierdź połączenie</string>
     <string name="CallTo">Zadzwonić do **%1$s**?</string>
     <string name="AppIconGradient">Gradient</string>
-    <string name="AppIconGlow">Poświata</string>
     <string name="AppIconSpace">Kosmos</string>
     <string name="AppIconWinter">Zima</string>
-    <string name="AppIconVK">VK</string>
-    <string name="AppIconRed">RedEbalo</string>
 </resources>

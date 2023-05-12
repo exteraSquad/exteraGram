@@ -96,7 +96,7 @@ public class IconSetsController {
         solar.put(R.drawable.list_secret, R.drawable.list_secret_solar);
         solar.put(R.drawable.menu_devices, R.drawable.msg_devices_solar);
         solar.put(R.drawable.msg2_animations, R.drawable.msg_played_solar);
-        solar.put(R.drawable.msg2_archived_stickers, R.drawable.msg_archived_stickers_solar);
+        solar.put(R.drawable.msg2_archived_stickers, R.drawable.msg_archive);
         solar.put(R.drawable.msg2_ask_question, R.drawable.msg_ask_question_solar);
         solar.put(R.drawable.msg2_ask_question, R.drawable.msg_ask_question_solar);
         solar.put(R.drawable.msg2_autodelete, R.drawable.msg_autodelete_solar);
@@ -130,7 +130,7 @@ public class IconSetsController {
         solar.put(R.drawable.msg_admins, R.drawable.msg_admins_solar);
         solar.put(R.drawable.msg_allowspeak, R.drawable.msg_allowspeak_solar);
         solar.put(R.drawable.msg_archive, R.drawable.msg_archive_solar);
-        solar.put(R.drawable.msg_archived_stickers, R.drawable.msg_archived_stickers_solar);
+        solar.put(R.drawable.msg_archived_stickers, R.drawable.msg_archive_solar);
         solar.put(R.drawable.msg_autodelete, R.drawable.msg_autodelete_solar);
         solar.put(R.drawable.msg_autodelete_1d, R.drawable.msg_autodelete_1d_solar);
         solar.put(R.drawable.msg_autodelete_1m, R.drawable.msg_autodelete_1m_solar);

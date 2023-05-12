@@ -220,13 +220,15 @@
     <string name="formatterDay24HSec" translatable="false">HH:mm:ss</string>
     <string name="formatterDay12HSec" translatable="false">h:mm:ss a</string>
 
-    <string name="AppIconGoogle" translatable="false">Google</string>
-    <string name="AppIcon480DSGN" translatable="false">480 DSGN</string>
     <string name="AppIconMonet" translatable="false">Monet</string>
     <string name="AppIconGradient">Gradient</string>
-    <string name="AppIconGlow">Glow</string>
+    <string name="AppIconAurora">Aurora</string>
+    <string name="AppIconNeo">Neo</string>
+    <string name="AppIconGoogle" translatable="false">Google</string>
+    <string name="AppIconAmethyst">Amethyst</string>
+    <string name="AppIcon480DSGN" translatable="false">480 DSGN</string>
     <string name="AppIconSpace">Space</string>
+    <string name="AppIconOrbit">Orbit</string>
+    <string name="AppIconSus">Impostor</string>
     <string name="AppIconWinter">Winter</string>
-    <string name="AppIconVK">VK</string>
-    <string name="AppIconRed">RedEbalo</string>
 </resources>

@@ -217,9 +217,11 @@
     <string name="CallTo">Позвонить **%1$s**?</string>
 
     <string name="AppIconGradient">Градиент</string>
-    <string name="AppIconGlow">Свечение</string>
+    <string name="AppIconAurora">Аврора</string>
+    <string name="AppIconNeo">Нео</string>
+    <string name="AppIconAmethyst">Аметист</string>
     <string name="AppIconSpace">Космос</string>
+    <string name="AppIconOrbit">Орбита</string>
+    <string name="AppIconSus">Самозванец</string>
     <string name="AppIconWinter">Зима</string>
-    <string name="AppIconVK">ВК</string>
-    <string name="AppIconRed">Красный бля</string>
 </resources>

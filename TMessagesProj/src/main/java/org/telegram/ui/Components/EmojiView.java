@@ -2315,11 +2315,8 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
         backspaceButton.setScaleType(ImageView.ScaleType.CENTER);
         backspaceButton.setContentDescription(LocaleController.getString("AccDescrBackspace", R.string.AccDescrBackspace));
         backspaceButton.setFocusable(true);
-        backspaceButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        backspaceButton.setOnClickListener(v -> {
 
-            }
         });
 
         bulletinContainer = new FrameLayout(context);
@@ -2486,6 +2483,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
             });
             backspaceButton.setPadding(0, 0, AndroidUtilities.dp(2), 0);
             backspaceButton.setBackground(drawable);
+            backspaceButton.setImageResource(R.drawable.smiles_tab_clear);
             backspaceButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY));
             backspaceButton.setContentDescription(LocaleController.getString("AccDescrBackspace", R.string.AccDescrBackspace));
             backspaceButton.setFocusable(true);
