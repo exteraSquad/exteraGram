@@ -65,7 +65,6 @@ public class ExteraConfig {
 
     public static boolean disableNumberRounding;
     public static boolean formatTimeWithSeconds;
-    public static boolean disableProximitySensor;
     public static int tabletMode;
 
     public static int downloadSpeedBoost;
@@ -164,7 +163,6 @@ public class ExteraConfig {
 
             disableNumberRounding = preferences.getBoolean("disableNumberRounding", false);
             formatTimeWithSeconds = preferences.getBoolean("formatTimeWithSeconds", false);
-            disableProximitySensor = preferences.getBoolean("disableProximitySensor", false);
             tabletMode = preferences.getInt("tabletMode", 0);
 
             downloadSpeedBoost = preferences.getInt("downloadSpeedBoost", 0);

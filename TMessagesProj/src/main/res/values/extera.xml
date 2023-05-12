@@ -83,7 +83,6 @@
 
     <string name="DisableNumberRounding">Disable Number Rounding</string>
     <string name="FormatTimeWithSeconds">Format Time with Seconds</string>
-    <string name="DisableProximitySensor">Disable Proximity Sensor</string>
     <string name="TabletMode">Tablet Mode</string>
 
     <string name="DownloadSpeedBoost">Download Speed Boost</string>

@@ -85,7 +85,6 @@
 
     <string name="DisableNumberRounding">Отключить округление чисел</string>
     <string name="FormatTimeWithSeconds">Показывать время с секундами</string>
-    <string name="DisableProximitySensor">Отключить датчик приближения</string>
     <string name="TabletMode">Планшетный режим</string>
 
     <string name="Profile">Профиль</string>

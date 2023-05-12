@@ -68,7 +68,6 @@ CameraX仅支持
     <string name="CameraQuality">相机清晰度</string>
     <string name="DisableNumberRounding">禁用数字舍入</string>
     <string name="FormatTimeWithSeconds">时间精确到秒</string>
-    <string name="DisableProximitySensor">禁用距离传感器</string>
     <string name="TabletMode">平板模式</string>
     <string name="DownloadSpeedBoost">下载加速</string>
     <string name="UploadSpeedBoost">上传加速</string>

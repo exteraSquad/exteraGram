@@ -68,7 +68,6 @@ CameraX підтримується тільки на
     <string name="CameraQuality">Якість камери</string>
     <string name="DisableNumberRounding">Вимкнути округлення чисел</string>
     <string name="FormatTimeWithSeconds">Форматувати час з секундами</string>
-    <string name="DisableProximitySensor">Вимкнути датчик наближення</string>
     <string name="TabletMode">Режим планшета</string>
     <string name="DownloadSpeedBoost">Прискорення швидкості завантаження</string>
     <string name="UploadSpeedBoost">Збільшення швидкості завантаження</string>

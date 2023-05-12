@@ -73,7 +73,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
     private int generalHeaderRow;
     private int formatTimeWithSecondsRow;
     private int disableNumberRoundingRow;
-    private int disableProximitySensorRow;
     private int tabletModeRow;
     private int generalDividerRow;
 
@@ -110,7 +109,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
         generalHeaderRow = newRow();
         disableNumberRoundingRow = newRow();
         formatTimeWithSecondsRow = newRow();
-        disableProximitySensorRow = newRow();
         tabletModeRow = newRow();
         generalDividerRow = newRow();
 
@@ -141,9 +139,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
             ((TextCheckCell) view).setChecked(ExteraConfig.formatTimeWithSeconds);
             LocaleController.getInstance().recreateFormatters();
             parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == disableProximitySensorRow) {
-            ExteraConfig.editor.putBoolean("disableProximitySensor", ExteraConfig.disableProximitySensor ^= true).apply();
-            ((TextCheckCell) view).setChecked(ExteraConfig.disableProximitySensor);
         } else if (position == tabletModeRow) {
             if (getParentActivity() == null) {
                 return;
@@ -269,8 +264,6 @@ public class GeneralPreferencesActivity extends BasePreferencesActivity {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("DisableNumberRounding", R.string.DisableNumberRounding), "1.23K -> 1,234", ExteraConfig.disableNumberRounding, true, true);
                     } else if (position == formatTimeWithSecondsRow) {
                         textCheckCell.setTextAndValueAndCheck(LocaleController.getString("FormatTimeWithSeconds", R.string.FormatTimeWithSeconds), "12:34 -> 12:34:56", ExteraConfig.formatTimeWithSeconds, true, true);
-                    } else if (position == disableProximitySensorRow) {
-                        textCheckCell.setTextAndCheck(LocaleController.getString("DisableProximitySensor", R.string.DisableProximitySensor), ExteraConfig.disableProximitySensor, true);
                     } else if (position == disableUnarchiveSwipeRow) {
                         textCheckCell.setTextAndCheck(LocaleController.getString("DisableUnarchiveSwipe", R.string.DisableUnarchiveSwipe), ExteraConfig.disableUnarchiveSwipe, false);
                     } else if (position == archiveOnPullRow) {

@@ -68,7 +68,6 @@ CameraX wird nur auf
     <string name="CameraQuality">Kameraqualität</string>
     <string name="DisableNumberRounding">Zahlen nicht runden</string>
     <string name="FormatTimeWithSeconds">Zeit mit Sekunden formatieren</string>
-    <string name="DisableProximitySensor">Näherungssensor deaktivieren</string>
     <string name="TabletMode">Tablet-Modus</string>
     <string name="DownloadSpeedBoost">Beschleunigtes Herunterladen</string>
     <string name="UploadSpeedBoost">Beschleunigtes Hochladen</string>

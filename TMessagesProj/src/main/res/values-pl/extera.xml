@@ -68,7 +68,6 @@ CameraX wspierana jest tylko na
     <string name="CameraQuality">Jakość aparatu</string>
     <string name="DisableNumberRounding">Wyłącz zaokrąglanie liczb</string>
     <string name="FormatTimeWithSeconds">Formatuj czas z sekundami</string>
-    <string name="DisableProximitySensor">Wyłącz czujnik zbliżeniowy</string>
     <string name="TabletMode">Tryb tabletu</string>
     <string name="DownloadSpeedBoost">Zwiększ szybkość pobierania</string>
     <string name="UploadSpeedBoost">Zwiększ szybkość wysyłania</string>
