@@ -33,6 +33,7 @@ import android.content.res.Configuration;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -41,7 +42,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.Outline;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -95,6 +95,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.preferences.MainPreferencesActivity;
+import com.exteragram.messenger.utils.AppUtils;
+import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.ChatUtils;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -234,12 +240,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.preferences.MainPreferencesActivity;
-import com.exteragram.messenger.utils.AppUtils;
-import com.exteragram.messenger.utils.CanvasUtils;
-import com.exteragram.messenger.utils.ChatUtils;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate {
     private final static int PHONE_OPTION_CALL = 0,
@@ -2286,16 +2286,14 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             sharedMediaLayout.onDestroy();
         }
         final long did;
-        final String ddc;
         if (dialogId != 0) {
             did = dialogId;
-            ddc = ChatUtils.getDC(getMessagesController().getChat(dialogId));
         } else if (userId != 0) {
             did = userId;
-            ddc = ChatUtils.getDC(getMessagesController().getUser(userId));
-        } else {
+        } else if (chatId != 0) {
             did = -chatId;
-            ddc = ChatUtils.getDC(getMessagesController().getChat(chatId));
+        } else {
+            did = 0;
         }
         fragmentView = new NestedFrameLayout(context) {
 
@@ -3040,13 +3038,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 return;
             }
             listView.stopScroll();
-            if (position == idDcRow && did != 0) {
-                try {
-                    BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied), resourcesProvider).show();
-                    AndroidUtilities.addToClipboard(((TextDetailCell) view).getTextView().getText());
-                } catch (Exception ignore) {}
-                return;
-            } else if (position == notificationsSimpleRow) {
+            if (position == notificationsSimpleRow) {
                 boolean muted = getMessagesController().isDialogMuted(did, topicId);
                 getNotificationsController().muteDialog(did, topicId, !muted);
                 BulletinFactory.createMuteBulletin(ProfileActivity.this, !muted, null).show();
@@ -3636,7 +3628,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     return onMemberClick(participant, true, view);
                 } else {
-                    return processOnClickOrPress(position, view, view.getWidth() / 2f, (int) (view.getHeight() * .75f));
+                    return processOnClickOrPress(position, view, view.getWidth() / 2f, (int) (view.getHeight() * .75f), position == idDcRow && did != 0);
                 }
             }
         });
@@ -4920,6 +4912,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private boolean processOnClickOrPress(final int position, final View view, final float x, final float y) {
+        return processOnClickOrPress(position, view, x, y, false);
+    }
+
+    private boolean processOnClickOrPress(final int position, final View view, final float x, final float y, boolean longPress) {
         if (position == usernameRow || position == setUsernameRow) {
             final String username;
             if (userId != 0) {
@@ -4963,6 +4959,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     FileLog.e(e);
                 }
             }
+            return true;
+        } else if (position == idDcRow && ((TextDetailCell) view).getText() != null) {
+            String id = ((TextDetailCell) view).getText();
+            try {
+                BulletinFactory.of(ProfileActivity.this).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied), resourcesProvider).show();
+                AndroidUtilities.addToClipboard((longPress && userId != 0 ? "tg://user?id=" : "") + id);
+            } catch (Exception ignore) {}
             return true;
         } else if (position == phoneRow || position == numberRow) {
             final TLRPC.User user = getMessagesController().getUser(userId);

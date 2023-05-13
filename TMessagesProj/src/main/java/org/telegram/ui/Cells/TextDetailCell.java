@@ -168,6 +168,10 @@ public class TextDetailCell extends FrameLayout {
         return textView;
     }
 
+    public String getText() {
+        return (String) textView.getText();
+    }
+
     @Override
     public void invalidate() {
         super.invalidate();
