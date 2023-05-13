@@ -3923,6 +3923,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             dialogsHintCell = new DialogsHintCell(context);
             dialogsHintCell.setBackground(Theme.AdaptiveRipple.filledRect());
+            dialogsHintCell.setVisibility(View.GONE);
             updateDialogsHint();
             CacheControlActivity.calculateTotalSize(size -> {
                 cacheSize = size;
@@ -4671,7 +4672,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void updateDialogsHint() {
-        if (dialogsHintCell == null) {
+        if (dialogsHintCell == null || true) {
             return;
         }
         if (isPremiumRestoreHintVisible()) {
