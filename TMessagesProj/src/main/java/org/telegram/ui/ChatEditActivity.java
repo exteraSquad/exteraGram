@@ -589,7 +589,11 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
 
         linearLayout1.setOrientation(LinearLayout.VERTICAL);
 
-        actionBar.setTitle(LocaleController.getString("ChannelEdit", R.string.ChannelEdit));
+        if (ChatObject.hasAdminRights(currentChat)) {
+            actionBar.setTitle(LocaleController.getString("ChannelEdit", R.string.ChannelEdit));
+        } else {
+            actionBar.setTitle(LocaleController.getString("Info", R.string.Info));
+        }
 
         avatarContainer = new LinearLayout(context);
         avatarContainer.setOrientation(LinearLayout.VERTICAL);
