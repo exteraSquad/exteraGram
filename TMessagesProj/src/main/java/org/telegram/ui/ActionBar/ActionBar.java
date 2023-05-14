@@ -1687,6 +1687,71 @@ public class ActionBar extends FrameLayout {
         requestLayout();
     }
 
+    private AnimatorSet titleAnimator;
+
+    // TODO: rework with gesture progress
+    public void setTitleAnimatedX(CharSequence title, Drawable rightDrawable, boolean forward, int duration) {
+        if (titleTextView[0] == null || title == null) {
+            setTitle(title, rightDrawable);
+            return;
+        }
+
+        if (titleTextView[1] != null) {
+            if (titleTextView[1].getParent() != null) {
+                ViewGroup viewGroup = (ViewGroup) titleTextView[1].getParent();
+                viewGroup.removeView(titleTextView[1]);
+            }
+            titleTextView[1] = null;
+        }
+
+        if (titleAnimator != null) {
+            titleAnimator.cancel();
+            titleAnimator = null;
+        }
+
+        titleTextView[1] = titleTextView[0];
+        titleTextView[0] = null;
+        setTitle(title, rightDrawable);
+        titleAnimationRunning = true;
+
+        float amplitude = AndroidUtilities.dp(10) * (forward ? -1 : 1);
+
+        titleTextView[1].setTranslationX(0);
+        titleTextView[1].setTranslationY(0);
+        titleTextView[0].setTranslationX(-amplitude);
+        titleTextView[0].setTranslationY(0);
+
+        titleTextView[0].setAlpha(0);
+        titleTextView[1].setAlpha(1);
+        titleTextView[0].setVisibility(View.VISIBLE);
+        titleTextView[1].setVisibility(View.VISIBLE);
+
+        ArrayList<Animator> arrayList = new ArrayList<>();
+        arrayList.add(ObjectAnimator.ofFloat(titleTextView[1], View.ALPHA, 0));
+        arrayList.add(ObjectAnimator.ofFloat(titleTextView[0], View.ALPHA, 1));
+        arrayList.add(ObjectAnimator.ofFloat(titleTextView[1], View.TRANSLATION_X, amplitude));
+        arrayList.add(ObjectAnimator.ofFloat(titleTextView[0], View.TRANSLATION_X, 0));
+        titleAnimator = new AnimatorSet();
+        titleAnimator.playTogether(arrayList);
+        titleAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (titleTextView[1] != null && titleTextView[1].getParent() != null) {
+                    ViewGroup viewGroup = (ViewGroup) titleTextView[1].getParent();
+                    viewGroup.removeView(titleTextView[1]);
+                }
+                titleTextView[1] = null;
+                titleAnimationRunning = false;
+
+                requestLayout();
+            }
+        });
+        titleAnimator.setDuration(duration);
+        titleAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
+        titleAnimator.start();
+        requestLayout();
+    }
+
     @Override
     public boolean hasOverlappingRendering() {
         return false;

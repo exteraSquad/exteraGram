@@ -2538,6 +2538,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         return actionBar;
     }
 
+    private String actionBarDefaultTitle;
+
     @Override
     public View createView(final Context context) {
         searching = false;
@@ -2737,6 +2739,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else {
                 actionBar.setTitle(LocaleController.getString("SelectChat", R.string.SelectChat));
             }
+            actionBarDefaultTitle = actionBar.getTitle();
             actionBar.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefault));
         } else {
             if (searchString != null || folderId != 0) {
@@ -2758,6 +2761,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     actionBar.setTitle(LocaleUtils.getActionBarTitle());
                 }
             }
+            actionBarDefaultTitle = actionBar.getTitle();
             if (folderId == 0) {
                 actionBar.setSupportsHolidayImage(true);
             }
@@ -3053,26 +3057,26 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     showDeleteAlert(getMessagesController().getDialogFilters().get(id));
                 }
 
-//                private int lastTitleType = ExteraConfig.tabIcons;
-//
-//                @Override
-//                public void onTabSelected(FilterTabsView.Tab tab, boolean forward, boolean animated) {
-//                    if (ExteraConfig.tabIcons != 2) {
-//                        if (lastTitleType == 2) {
-//                            actionBar.setTitle(actionBarDefaultTitle);
-//                            lastTitleType = ExteraConfig.tabIcons;
-//                        }
-//                        return;
-//                    }
-//                    if (!selectedDialogs.isEmpty()) {
-//                        return;
-//                    }
-//                    if (animated) {
-//                        actionBar.setTitleAnimatedX(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null, forward, 200);
-//                    } else {
-//                        actionBar.setTitle(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null);
-//                    }
-//                }
+                private int lastTitleType = ExteraConfig.titleText;
+
+                @Override
+                public void onTabSelected(FilterTabsView.Tab tab, boolean forward, boolean animated) {
+                    if (ExteraConfig.tabIcons != 2 || lastTitleType != ExteraConfig.titleText) {
+                        actionBar.setTitle(actionBarDefaultTitle = LocaleUtils.getActionBarTitle(), statusDrawable);
+                        lastTitleType = ExteraConfig.titleText;
+                        if (ExteraConfig.tabIcons != 2) {
+                            return;
+                        }
+                    }
+                    if (!selectedDialogs.isEmpty()) {
+                        return;
+                    }
+                    if (animated) {
+                        actionBar.setTitleAnimatedX(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null, forward, 350);
+                    } else {
+                        actionBar.setTitle(tab.isDefault ? actionBarDefaultTitle : tab.realTitle, tab.isDefault ? statusDrawable : null);
+                    }
+                }
             });
         }
 
@@ -5502,7 +5506,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     viewPages[a].listView.requestLayout();
                     viewPages[a].requestLayout();
                 }
-
+                if (!actionBarDefaultTitle.equals(actionBar.getTitle())) {
+                    if (animated) {
+                        actionBar.setTitleAnimatedX(actionBarDefaultTitle, statusDrawable, false, 350);
+                    } else {
+                        actionBar.setTitle(actionBarDefaultTitle, statusDrawable);
+                    }
+                }
                 filterTabsView.resetTabId();
             }
             updateDrawerSwipeEnabled();

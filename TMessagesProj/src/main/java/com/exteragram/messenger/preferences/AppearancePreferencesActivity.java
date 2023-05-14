@@ -58,7 +58,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             LocaleController.getString("TabStylePills", R.string.TabStylePills),
     }, titles = new CharSequence[]{
             LocaleController.getString("exteraAppName", R.string.exteraAppName),
-            LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort),
             LocaleController.getString("ActionBarTitleUsername", R.string.ActionBarTitleUsername),
             LocaleController.getString("ActionBarTitleName", R.string.ActionBarTitleName)
     }, tabIcons = new CharSequence[]{
@@ -126,8 +125,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         actionBarSetupRow = newRow();
         hideActionBarStatusRow = getUserConfig().isPremium() ? newRow() : -1;
         hideAllChatsRow = newRow();
-        tabCounterRow = newRow();
         centerTitleRow = newRow();
+        tabCounterRow = newRow();
         tabStyleRow = newRow();
         tabTitleRow = newRow();
         actionBarTitleRow = newRow();
@@ -304,8 +303,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             if (getParentActivity() == null) {
                 return;
             }
-            PopupUtils.showDialog(titles, LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), ExteraConfig.actionBarTitle, getContext(), i -> {
-                ExteraConfig.editor.putInt("actionBarTitle", ExteraConfig.actionBarTitle = i).apply();
+            PopupUtils.showDialog(titles, LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), ExteraConfig.titleText, getContext(), i -> {
+                ExteraConfig.editor.putInt("titleText", ExteraConfig.titleText = i).apply();
                 mainScreenSetupCell.updateTitle(true);
                 parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(actionBarTitleRow, payload);
@@ -473,7 +472,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     if (position == eventChooserRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), events[ExteraConfig.eventType], payload, true);
                     } else if (position == actionBarTitleRow) {
-                        textSettingsCell.setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[ExteraConfig.actionBarTitle], payload, false);
+                        textSettingsCell.setTextAndValue(LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), titles[ExteraConfig.titleText], payload, false);
                     } else if (position == tabTitleRow) {
                         textSettingsCell.setTextAndValue(LocaleController.getString("TabTitleStyle", R.string.TabTitleStyle), tabIcons[ExteraConfig.tabIcons], payload, true);
                     } else if (position == tabStyleRow) {

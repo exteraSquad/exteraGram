@@ -31,24 +31,17 @@ import org.telegram.ui.Components.URLSpanNoUnderline;
 
 public class LocaleUtils {
     public static String getActionBarTitle() {
-        return getActionBarTitle(ExteraConfig.actionBarTitle);
-    }
-
-    public static String getActionBarTitle(int num) {
-        TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
         String title;
-        if (num == 0) {
+        int actionBarTitle = ExteraConfig.titleText;
+        if (actionBarTitle == 0) {
             title = LocaleController.getString("exteraAppName", R.string.exteraAppName);
-        } else if (num == 1) {
-            title = LocaleController.getString("SearchAllChatsShort", R.string.SearchAllChatsShort);
-        } else if (num == 2) {
-            if (!TextUtils.isEmpty(UserObject.getPublicUsername(user))) {
+        } else {
+            TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
+            if (actionBarTitle == 1 && !TextUtils.isEmpty(UserObject.getPublicUsername(user))) {
                 title = UserObject.getPublicUsername(user);
             } else {
                 title = UserObject.getFirstName(user);
             }
-        } else {
-            title = UserObject.getFirstName(user);
         }
         return title;
     }

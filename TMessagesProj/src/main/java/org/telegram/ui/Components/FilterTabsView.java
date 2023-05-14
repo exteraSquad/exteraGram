@@ -1191,6 +1191,7 @@ public class FilterTabsView extends FrameLayout {
         if (delegate != null) {
             delegate.onPageSelected(tab, scrollingForward);
             delegate.onTabSelected(tab, scrollingForward, true);
+            oldAnimatedTab = currentPosition;
         }
         scrollToChild(position);
     }
@@ -1285,6 +1286,7 @@ public class FilterTabsView extends FrameLayout {
         listView.setItemAnimator(animated ? itemAnimator : null);
         adapter.notifyDataSetChanged();
         delegate.onTabSelected(tabs.get(currentPosition), false, false);
+        oldAnimatedTab = currentPosition;
     }
 
     public void animateColorsTo(int line, int active, int unactive, int selector, int background) {
@@ -1521,6 +1523,8 @@ public class FilterTabsView extends FrameLayout {
         }
     }
 
+    private int oldAnimatedTab = -1;
+
     public void selectTabWithId(int id, float progress) {
         int position = idToPosition.get(id, -1);
         if (position < 0) {
@@ -1544,8 +1548,13 @@ public class FilterTabsView extends FrameLayout {
         invalidate();
         scrollToChild(position);
 
+        if ((((progress >= 0.5f && oldAnimatedTab != position) || (progress <= 0.5f && oldAnimatedTab != currentPosition)) && manualScrollingToPosition != currentPosition)) {
+            position = progress >= 0.5f ? position : currentPosition;
+            delegate.onTabSelected(tabs.get(position), currentPosition < position, true);
+            oldAnimatedTab = position;
+        }
+
         if (progress >= 1.0f) {
-            if (manualScrollingToPosition != currentPosition) delegate.onTabSelected(tabs.get(position), currentPosition < position, true);
             manualScrollingToPosition = -1;
             manualScrollingToId = -1;
             currentPosition = position;

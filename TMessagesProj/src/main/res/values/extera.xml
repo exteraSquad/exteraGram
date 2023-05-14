@@ -30,7 +30,7 @@
     <string name="HideActionBarStatus">Hide Status</string>
     <string name="HideAllChats">Hide \"%1$s\" Tab</string>
     <string name="TabCounter">Tab Counter</string>
-    <string name="CenterTitle">Center Title in Action Bar</string>
+    <string name="CenterTitle">Center Title</string>
     <string name="ActionBarTitle">Title Text</string>
     <string name="TabTitleStyle">Tab Title</string>
     <string name="TabTitleStyleTextWithIcons">Names with Icons</string>

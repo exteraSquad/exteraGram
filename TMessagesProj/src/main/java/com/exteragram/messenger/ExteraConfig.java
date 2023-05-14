@@ -42,7 +42,7 @@ public class ExteraConfig {
     public static boolean centerTitle;
     public static int tabIcons; // icons with titles - 0, titles - 1, icons - 2
     public static int tabStyle;
-    public static int actionBarTitle;
+    public static int titleText;
 
     public static boolean useSolarIcons;
 
@@ -182,7 +182,7 @@ public class ExteraConfig {
             tabCounter = preferences.getBoolean("tabCounter", true);
             tabIcons = preferences.getInt("tabIcons", 1);
             tabStyle = preferences.getInt("tabStyle", 1);
-            actionBarTitle = preferences.getInt("actionBarTitle", 0);
+            titleText = preferences.getInt("titleText", 0);
 
             useSolarIcons = preferences.getBoolean("useSolarIcons", true);
 
