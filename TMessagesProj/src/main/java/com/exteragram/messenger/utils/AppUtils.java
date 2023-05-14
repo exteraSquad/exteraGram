@@ -13,7 +13,6 @@ package com.exteragram.messenger.utils;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.FileLog;
 import org.telegram.messenger.R;
 
 import java.util.Calendar;
@@ -43,8 +42,6 @@ public class AppUtils {
                         R.drawable.msg_contacts_ny,
                         R.drawable.msg_calls_ny,
                         R.drawable.msg_saved_ny,
-                        R.drawable.msg_invite_ny,
-                        R.drawable.msg_help_ny,
                         R.drawable.msg_nearby_ny
                 };
             case 1:
@@ -55,8 +52,6 @@ public class AppUtils {
                         R.drawable.msg_contacts_14,
                         R.drawable.msg_calls_14,
                         R.drawable.msg_saved_14,
-                        R.drawable.msg_invite_14,
-                        R.drawable.msg_help_14,
                         R.drawable.msg_nearby_14
                 };
             case 2:
@@ -67,8 +62,6 @@ public class AppUtils {
                         R.drawable.msg_contacts_hw,
                         R.drawable.msg_calls_hw,
                         R.drawable.msg_saved_hw,
-                        R.drawable.msg_invite_hw,
-                        R.drawable.msg_help_hw,
                         R.drawable.msg_nearby_hw
                 };
             default:
@@ -79,8 +72,6 @@ public class AppUtils {
                         R.drawable.msg_contacts,
                         R.drawable.msg_calls,
                         R.drawable.msg_saved,
-                        R.drawable.msg_invite,
-                        R.drawable.msg_help,
                         R.drawable.msg_nearby
                 };
         }

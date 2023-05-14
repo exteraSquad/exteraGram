@@ -25,7 +25,9 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 
 import java.util.Arrays;
@@ -56,7 +58,7 @@ public class ExteraConfig {
 
     public static int eventType;
     public static boolean alternativeOpenAnimation;
-    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr, inviteFriends, telegramFeatures;
+    public static boolean changeStatus, newGroup, newSecretChat, newChannel, contacts, calls, peopleNearby, archivedChats, savedMessages, scanQr;
 
     // General
     public static int cameraType;
@@ -202,13 +204,11 @@ public class ExteraConfig {
             newSecretChat = preferences.getBoolean("newSecretChat", false);
             newChannel = preferences.getBoolean("newChannel", false);
             contacts = preferences.getBoolean("contacts", true);
-            calls = preferences.getBoolean("calls", false);
+            calls = preferences.getBoolean("calls", true);
             peopleNearby = preferences.getBoolean("peopleNearby", false);
             archivedChats = preferences.getBoolean("archivedChats", true);
             savedMessages = preferences.getBoolean("savedMessages", true);
             scanQr = preferences.getBoolean("scanQr", true);
-            inviteFriends = preferences.getBoolean("inviteFriends", false);
-            telegramFeatures = preferences.getBoolean("telegramFeatures", true);
 
             // Chats
             stickerSize = preferences.getFloat("stickerSize", 14.0f);
@@ -315,15 +315,10 @@ public class ExteraConfig {
                 editor.putBoolean("scanQr", scanQr ^= true).apply();
                 break;
             case 10:
-                editor.putBoolean("inviteFriends", inviteFriends ^= true).apply();
-                break;
-            case 11:
-                editor.putBoolean("telegramFeatures", telegramFeatures ^= true).apply();
-                break;
-            case 12:
                 editor.putBoolean("changeStatus", changeStatus ^= true).apply();
                 break;
         }
+        NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.mainUserInfoChanged);
     }
 
     public static void setChannelToSave(long id) {

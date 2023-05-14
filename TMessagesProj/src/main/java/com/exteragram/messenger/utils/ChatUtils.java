@@ -279,4 +279,8 @@ public class ChatUtils {
         }
         return path;
     }
+
+    public static boolean hasArchivedChats() {
+        return getMessagesController().dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null;
+    }
 }

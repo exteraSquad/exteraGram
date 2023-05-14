@@ -24,6 +24,7 @@ import com.exteragram.messenger.preferences.components.FabShapeCell;
 import com.exteragram.messenger.preferences.components.MainScreenSetupCell;
 import com.exteragram.messenger.preferences.components.SolarIconsPreview;
 import com.exteragram.messenger.utils.AppUtils;
+import com.exteragram.messenger.utils.ChatUtils;
 import com.exteragram.messenger.utils.LocaleUtils;
 import com.exteragram.messenger.utils.SystemUtils;
 import com.exteragram.messenger.utils.PopupUtils;
@@ -114,8 +115,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     private int archivedChatsRow;
     private int savedMessagesRow;
     private int scanQrRow;
-    private int inviteFriendsRow;
-    private int telegramFeaturesRow;
     private int drawerDividerRow;
 
     @Override
@@ -155,7 +154,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
 
         drawerHeaderRow = newRow();
         statusRow = getUserConfig().isPremium() ? newRow() : -1;
-        archivedChatsRow = newRow();
+        archivedChatsRow = ChatUtils.hasArchivedChats() ? newRow() : -1;
         newGroupRow = newRow();
         newSecretChatRow = newRow();
         newChannelRow = newRow();
@@ -164,8 +163,6 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
         peopleNearbyRow = SystemUtils.hasGps() ? newRow() : -1;
         savedMessagesRow = newRow();
         scanQrRow = newRow();
-        inviteFriendsRow = newRow();
-        telegramFeaturesRow = newRow();
         drawerDividerRow = newRow();
     }
 
@@ -230,53 +227,35 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             parentLayout.rebuildAllFragmentViews(true, true);
             getListView().getLayoutManager().onRestoreInstanceState(recyclerViewState);
         } else if (position == statusRow) {
-            ExteraConfig.toggleDrawerElements(12);
+            ExteraConfig.toggleDrawerElements(10);
             ((TextCell) view).setChecked(ExteraConfig.changeStatus);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == newGroupRow) {
             ExteraConfig.toggleDrawerElements(1);
             ((TextCell) view).setChecked(ExteraConfig.newGroup);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == newSecretChatRow) {
             ExteraConfig.toggleDrawerElements(2);
             ((TextCell) view).setChecked(ExteraConfig.newSecretChat);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == newChannelRow) {
             ExteraConfig.toggleDrawerElements(3);
             ((TextCell) view).setChecked(ExteraConfig.newChannel);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == contactsRow) {
             ExteraConfig.toggleDrawerElements(4);
             ((TextCell) view).setChecked(ExteraConfig.contacts);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == callsRow) {
             ExteraConfig.toggleDrawerElements(5);
             ((TextCell) view).setChecked(ExteraConfig.calls);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == peopleNearbyRow) {
             ExteraConfig.toggleDrawerElements(6);
             ((TextCell) view).setChecked(ExteraConfig.peopleNearby);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == archivedChatsRow) {
             ExteraConfig.toggleDrawerElements(7);
             ((TextCell) view).setChecked(ExteraConfig.archivedChats);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == savedMessagesRow) {
             ExteraConfig.toggleDrawerElements(8);
             ((TextCell) view).setChecked(ExteraConfig.savedMessages);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == scanQrRow) {
             ExteraConfig.toggleDrawerElements(9);
             ((TextCell) view).setChecked(ExteraConfig.scanQr);
-            parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == inviteFriendsRow) {
-            ExteraConfig.toggleDrawerElements(10);
-            ((TextCell) view).setChecked(ExteraConfig.inviteFriends);
-            parentLayout.rebuildAllFragmentViews(false, false);
-        } else if (position == telegramFeaturesRow) {
-            ExteraConfig.toggleDrawerElements(11);
-            ((TextCell) view).setChecked(ExteraConfig.telegramFeatures);
-            parentLayout.rebuildAllFragmentViews(false, false);
         } else if (position == forceSnowRow) {
             ExteraConfig.editor.putBoolean("forceSnow", ExteraConfig.forceSnow ^= true).apply();
             ((TextCheckCell) view).setChecked(ExteraConfig.forceSnow);
@@ -291,7 +270,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             }, LocaleController.getString("DrawerIconSet", R.string.DrawerIconSet), ExteraConfig.eventType, getContext(), which -> {
                 ExteraConfig.editor.putInt("eventType", ExteraConfig.eventType = which).apply();
                 listAdapter.notifyItemChanged(eventChooserRow, payload);
-                listAdapter.notifyItemRangeChanged(statusRow, 12);
+                listAdapter.notifyItemRangeChanged(statusRow, 10);
                 getNotificationCenter().postNotificationName(NotificationCenter.mainUserInfoChanged);
             });
         } else if (position == hideActionBarStatusRow) {
@@ -454,17 +433,13 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     } else if (position == callsRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("Calls", R.string.Calls), ExteraConfig.calls, icons[4], true);
                     } else if (position == peopleNearbyRow) {
-                        textCell.setTextAndCheckAndIcon(LocaleController.getString("PeopleNearby", R.string.PeopleNearby), ExteraConfig.peopleNearby, icons[8], true);
+                        textCell.setTextAndCheckAndIcon(LocaleController.getString("PeopleNearby", R.string.PeopleNearby), ExteraConfig.peopleNearby, icons[6], true);
                     } else if (position == archivedChatsRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("ArchivedChats", R.string.ArchivedChats), ExteraConfig.archivedChats, R.drawable.msg_archive, true);
                     } else if (position == savedMessagesRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("SavedMessages", R.string.SavedMessages), ExteraConfig.savedMessages, icons[5], true);
                     } else if (position == scanQrRow) {
-                        textCell.setTextAndCheckAndIcon(LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), ExteraConfig.scanQr, R.drawable.msg_qrcode, true);
-                    } else if (position == inviteFriendsRow) {
-                        textCell.setTextAndCheckAndIcon(LocaleController.getString("InviteFriends", R.string.InviteFriends), ExteraConfig.inviteFriends, icons[6], true);
-                    } else if (position == telegramFeaturesRow) {
-                        textCell.setTextAndCheckAndIcon(LocaleController.getString("TelegramFeatures", R.string.TelegramFeatures), ExteraConfig.telegramFeatures, icons[7], false);
+                        textCell.setTextAndCheckAndIcon(LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), ExteraConfig.scanQr, R.drawable.msg_qrcode, false);
                     }
                     break;
                 case 7:
@@ -498,7 +473,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                 return 1;
             } else if (position == statusRow || position == newGroupRow || position == newSecretChatRow || position == newChannelRow ||
                     position == contactsRow || position == callsRow || position == peopleNearbyRow || position == archivedChatsRow ||
-                    position == savedMessagesRow || position == scanQrRow || position == inviteFriendsRow || position == telegramFeaturesRow) {
+                    position == savedMessagesRow || position == scanQrRow) {
                 return 2;
             } else if (position == appearanceHeaderRow || position == drawerHeaderRow || position == drawerOptionsHeaderRow || position == solarIconsHeaderRow) {
                 return 3;
