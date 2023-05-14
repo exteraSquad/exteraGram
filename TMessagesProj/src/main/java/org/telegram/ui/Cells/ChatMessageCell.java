@@ -15254,7 +15254,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         endX = x + backgroundWidth - AndroidUtilities.dp(12);
                     }
                     Theme.chat_replyLinePaint.setAlpha((int) (Theme.chat_replyLinePaint.getAlpha() * ChatMessageCell.this.getAlpha()));
-                    if (!ExteraConfig.disableDividers) canvas.drawLine(x, ly, endX - AndroidUtilities.dp(14), ly, Theme.chat_replyLinePaint);
+                    canvas.drawLine(x, ly, endX - AndroidUtilities.dp(14), ly, Theme.chat_replyLinePaint);
                 }
                 if (commentLayout != null && drawSideButton != 3) {
                     Theme.chat_commentTextPaint.setColor(getThemedColor(currentMessageObject.isOutOwner() ? Theme.key_chat_outPreviewInstantText : Theme.key_chat_inPreviewInstantText));

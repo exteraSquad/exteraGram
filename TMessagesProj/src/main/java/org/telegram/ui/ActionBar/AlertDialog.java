@@ -701,12 +701,14 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
                 protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
                     boolean result = super.drawChild(canvas, child, drawingTime);
                     if (shadow[0].getPaint().getAlpha() != 0) {
-                        shadow[0].setBounds(0, getScrollY(), getMeasuredWidth(), getScrollY() + AndroidUtilities.dp(3));
-                        shadow[0].draw(canvas);
+//                        shadow[0].setBounds(0, getScrollY(), getMeasuredWidth(), getScrollY() + AndroidUtilities.dp(3));
+//                        shadow[0].draw(canvas);
+                        canvas.drawLine(0, getScrollY(), getMeasuredWidth(), getScrollY(), Theme.dividerPaint);
                     }
                     if (shadow[1].getPaint().getAlpha() != 0) {
-                        shadow[1].setBounds(0, getScrollY() + getMeasuredHeight() - AndroidUtilities.dp(3), getMeasuredWidth(), getScrollY() + getMeasuredHeight());
-                        shadow[1].draw(canvas);
+//                        shadow[1].setBounds(0, getScrollY() + getMeasuredHeight() - AndroidUtilities.dp(3), getMeasuredWidth(), getScrollY() + getMeasuredHeight());
+//                        shadow[1].draw(canvas);
+                        canvas.drawLine(0, getScrollY() + getMeasuredHeight(), getMeasuredWidth(), getScrollY() + getMeasuredHeight(), Theme.dividerPaint);
                     }
                     return result;
                 }
