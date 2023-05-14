@@ -16,12 +16,14 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.graphics.drawable.shapes.RoundRectShape;
 
 import androidx.core.content.ContextCompat;
 
 import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.CombinedDrawable;
 
@@ -47,6 +49,15 @@ public class CanvasUtils {
         ShapeDrawable defaultDrawable = new ShapeDrawable(ovalShape);
         Paint paint = defaultDrawable.getPaint();
         paint.setColor(0xffffffff);
+        CombinedDrawable combinedDrawable = new CombinedDrawable(defaultDrawable, drawable);
+        combinedDrawable.setCustomSize(size, size);
+        return combinedDrawable;
+    }
+
+    public static CombinedDrawable createRoundRectDrawableWithIcon(int size, int rad, int iconRes) {
+        ShapeDrawable defaultDrawable = new ShapeDrawable(new RoundRectShape(new float[]{rad, rad, rad, rad, rad, rad, rad, rad}, null, null));
+        defaultDrawable.getPaint().setColor(0xffffffff);
+        Drawable drawable = ApplicationLoader.applicationContext.getResources().getDrawable(iconRes).mutate();
         CombinedDrawable combinedDrawable = new CombinedDrawable(defaultDrawable, drawable);
         combinedDrawable.setCustomSize(size, size);
         return combinedDrawable;

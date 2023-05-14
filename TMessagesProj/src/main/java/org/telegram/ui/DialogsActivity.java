@@ -168,6 +168,7 @@ import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ChatActivityEnterView;
 import org.telegram.ui.Components.ChatAvatarContainer;
+import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.DialogsItemAnimator;
 import org.telegram.ui.Components.EditTextBoldCursor;
@@ -4329,10 +4330,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (folderId == 1) {
                 avatarContainer.getSubtitleTextView().setVisibility(View.GONE);
                 avatarContainer.setTitle(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
-                AvatarDrawable avatarDrawable = new AvatarDrawable();
-                avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_ARCHIVED);
-                avatarDrawable.setColor(getThemedColor(SharedConfig.archiveHidden ? Theme.key_avatar_backgroundArchivedHidden : Theme.key_avatar_backgroundArchived));
-                avatarContainer.getAvatarImageView().setImage(null, null, avatarDrawable, 42, 0);
+                CombinedDrawable thumbDrawable = CanvasUtils.createRoundRectDrawableWithIcon(AndroidUtilities.dp(42), ExteraConfig.getAvatarCorners(42), R.drawable.chats_archive);
+                thumbDrawable.setIconSize(AndroidUtilities.dp(22), AndroidUtilities.dp(22));
+                Theme.setCombinedDrawableColor(thumbDrawable, getThemedColor(Theme.key_avatar_backgroundArchivedHidden), false);
+                Theme.setCombinedDrawableColor(thumbDrawable, getThemedColor(Theme.key_avatar_text), true);
+                avatarContainer.getAvatarImageView().setImageDrawable(thumbDrawable);
             } else {
                 avatarContainer.setTitle(UserObject.getUserName(currentUser));
                 avatarContainer.setSubtitle(LocaleController.formatUserStatus(currentAccount, currentUser));
