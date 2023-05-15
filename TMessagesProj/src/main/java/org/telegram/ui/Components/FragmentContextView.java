@@ -12,6 +12,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,7 +35,6 @@ import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
@@ -144,7 +144,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
     private CoverContainer coverContainer;
     private View divider;
 
-    private float currentX, secondX, currentY, secondY, dx, dy;
+    private float firstX, secondX, firstY, secondY, dx, dy;
     private String currentFile;
     private boolean isMuted;
 
@@ -284,6 +284,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
         delegate = fragmentContextViewDelegate;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void checkCreateView() {
         if (frameLayout != null) {
             return;
@@ -742,15 +743,15 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
             if (currentStyle == STYLE_AUDIO_PLAYER) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        currentX = event.getRawX();
-                        currentY = event.getRawY();
+                        firstX = event.getRawX();
+                        firstY = event.getRawY();
                         break;
                     case MotionEvent.ACTION_UP:
                         secondX = event.getRawX();
                         secondY = event.getRawY();
-                        dx = Math.abs(currentX - secondX);
-                        dy = Math.abs(currentY - secondY);
-                        if (currentY > secondY && dx < dy) {
+                        dx = Math.abs(firstX - secondX);
+                        dy = Math.abs(firstY - secondY);
+                        if (firstY > secondY && dy > AndroidUtilities.dp(getStyleHeight()) && dx < dy) {
                             MediaController.getInstance().cleanupPlayer(true, true);
                         }
                         break;
