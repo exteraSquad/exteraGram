@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-import com.exteragram.messenger.utils.AppUtils;
 import com.exteragram.messenger.utils.MonetUtils;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -34,16 +33,16 @@ import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
 
-public class InfoSettingsCell extends FrameLayout {
+public class HeaderSettingsCell extends FrameLayout {
 
-    public final TextView textView;
+    public final TextView titleTextView;
 
-    public InfoSettingsCell(Context context) {
+    public HeaderSettingsCell(Context context) {
         super(context);
 
         Drawable arrow = ContextCompat.getDrawable(context, R.drawable.ic_logo_foreground).mutate();
         Theme.ThemeInfo theme = Theme.getActiveTheme();
-        int color = 0xffF54142;
+        int color = ContextCompat.getColor(context, R.color.ic_background);
 
         if (theme.isMonet() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             color = MonetUtils.getColor(theme.isDark() ? "n1_800" : "a1_100");
@@ -59,29 +58,30 @@ public class InfoSettingsCell extends FrameLayout {
         logo.setImageDrawable(arrow);
         addView(logo, LayoutHelper.createFrame(108, 108, Gravity.CENTER | Gravity.TOP, 0, 20, 0, 0));
 
-        textView = new TextView(context);
-        textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        textView.setText(String.format("%s | %s", AppUtils.getAppName(), BuildVars.BUILD_VERSION_STRING));
-        textView.setLines(1);
-        textView.setMaxLines(1);
-        textView.setSingleLine(true);
-        textView.setPadding(0, 0, 0, 0);
-        textView.setGravity(Gravity.CENTER);
-        addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 50, 145, 50, 0));
+        titleTextView = new TextView(context);
+        titleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        titleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22);
+        titleTextView.setText(String.format("%s %s", LocaleController.getString(R.string.exteraAppName), BuildVars.BUILD_VERSION_STRING));
+        titleTextView.setLines(1);
+        titleTextView.setMaxLines(1);
+        titleTextView.setSingleLine(true);
+        titleTextView.setPadding(0, 0, 0, 0);
+        titleTextView.setGravity(Gravity.CENTER);
+        addView(titleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 50, 145, 50, 0));
 
-        TextView valueTextView = new TextView(context);
-        valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        valueTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
-        valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        valueTextView.setText(LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription));
-        valueTextView.setGravity(Gravity.CENTER);
-        valueTextView.setLines(0);
-        valueTextView.setMaxLines(0);
-        valueTextView.setSingleLine(false);
-        valueTextView.setPadding(0, 0, 0, 0);
-        addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 60, 180, 60, 27));
+        TextView subtitleTextView = new TextView(context);
+        subtitleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        subtitleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
+        subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        subtitleTextView.setLineSpacing(AndroidUtilities.dp(2), 1f);
+        subtitleTextView.setText(LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription));
+        subtitleTextView.setGravity(Gravity.CENTER);
+        subtitleTextView.setLines(0);
+        subtitleTextView.setMaxLines(0);
+        subtitleTextView.setSingleLine(false);
+        subtitleTextView.setPadding(0, 0, 0, 0);
+        addView(subtitleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 60, 180, 60, 27));
 
     }
 

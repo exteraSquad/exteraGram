@@ -25,7 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exteragram.messenger.preferences.components.InfoSettingsCell;
+import com.exteragram.messenger.preferences.components.HeaderSettingsCell;
 import com.exteragram.messenger.preferences.updater.UpdaterBottomSheet;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -46,7 +46,7 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
     private View actionBarBackground;
     private AnimatorSet actionBarAnimator;
 
-    private InfoSettingsCell infoSettingsCell;
+    private HeaderSettingsCell headerSettingsCell;
 
     private int categoryHeaderRow;
     private int generalRow;
@@ -151,9 +151,9 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
             if (holder == null) {
                 show = true;
             } else {
-                infoSettingsCell = (InfoSettingsCell) holder.itemView;
-                infoSettingsCell.textView.getLocationOnScreen(location);
-                show = location[1] + infoSettingsCell.textView.getMeasuredHeight() < actionBar.getBottom();
+                headerSettingsCell = (HeaderSettingsCell) holder.itemView;
+                headerSettingsCell.titleTextView.getLocationOnScreen(location);
+                show = location[1] + headerSettingsCell.titleTextView.getMeasuredHeight() < actionBar.getBottom();
             }
         }
         boolean visible = actionBarBackground.getTag() == null;
@@ -293,8 +293,8 @@ public class MainPreferencesActivity extends BasePreferencesActivity {
                     }
                     break;
                 case 4:
-                    infoSettingsCell = (InfoSettingsCell) holder.itemView;
-                    infoSettingsCell.setPadding(0, ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.dp(40), 0, 0);
+                    headerSettingsCell = (HeaderSettingsCell) holder.itemView;
+                    headerSettingsCell.setPadding(0, ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.dp(40), 0, 0);
                     break;
             }
         }
