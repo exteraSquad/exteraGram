@@ -105,6 +105,7 @@ import com.exteragram.messenger.components.ChatActivityEnterViewStaticIconView;
 import com.exteragram.messenger.components.TranslateBeforeSendWrapper;
 import com.exteragram.messenger.boost.BoostController;
 import com.exteragram.messenger.boost.encryption.EncryptionHelper;
+import com.exteragram.messenger.utils.ChatUtils;
 import com.exteragram.messenger.utils.PopupUtils;
 import com.exteragram.messenger.utils.TranslatorUtils;
 
@@ -7250,8 +7251,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 currentLimit = accountInstance.getMessagesController().maxMessageLength;
                 editingText = editingMessageObject.messageText;
             }
-            if (EncryptionHelper.isEncrypted(editingMessageObject.messageText)) {
-                editingText = EncryptionHelper.decryptMessage(editingMessageObject).messageOwner.message;
+            if (EncryptionHelper.isEncrypted(editingMessageObject, null)) {
+                editingText = ChatUtils.getMessageText(EncryptionHelper.decryptMessage(editingMessageObject), null);
             }
             if (editingText != null) {
                 final Paint.FontMetricsInt fontMetricsInt;

@@ -12,11 +12,16 @@
 package com.exteragram.messenger.utils;
 
 import android.net.Uri;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONTokener;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.DispatchQueue;
+import org.telegram.messenger.FileLog;
+import org.telegram.messenger.LanguageDetector;
+import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.Utilities;
 
 import java.io.BufferedReader;
@@ -54,8 +59,32 @@ public class TranslatorUtils {
         void run();
     }
 
-    public static void translate(CharSequence text, String target, OnTranslationSuccess onSuccess, OnTranslationFail onFail) {
-        if (text == null || text.length() == 0) {
+    // todo
+    public static void translate(MessageObject messageObject) {
+    }
+
+    public static void translate(CharSequence text, String toLang, OnTranslationSuccess onSuccess, OnTranslationFail onFail) {
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
+        if (LanguageDetector.hasSupport()) {
+            LanguageDetector.detectLanguage(text.toString(), lng -> {
+                String fromLang = "auto";
+                if (lng != null && !lng.equals("und")) {
+                    fromLang = lng;
+                }
+                translate(text, fromLang, toLang, onSuccess, onFail);
+            }, e -> {
+                FileLog.e(e);
+                translate(text, "auto", toLang, onSuccess, onFail);
+            });
+        } else {
+            translate(text, "auto", toLang, onSuccess, onFail);
+        }
+    }
+
+    public static void translate(CharSequence text, String fromLang, String toLang, OnTranslationSuccess onSuccess, OnTranslationFail onFail) {
+        if (TextUtils.isEmpty(text)) {
             return;
         }
         if (!translateQueue.isAlive()) {
@@ -65,8 +94,9 @@ public class TranslatorUtils {
             String uri;
             HttpURLConnection connection;
             try {
-                uri = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=";
-                uri += Uri.encode(target);
+                uri = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=";
+                uri += fromLang + "&tl=";
+                uri += Uri.encode(toLang);
                 uri += "&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&q=";
                 uri += Uri.encode(text.toString());
                 connection = (HttpURLConnection) new URI(uri).toURL().openConnection();
