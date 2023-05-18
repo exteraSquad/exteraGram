@@ -16,18 +16,14 @@ public class LauncherIconController {
     public static void tryFixLauncherIconIfNeeded() {
         for (LauncherIcon icon : LauncherIcon.values()) {
             if (isEnabled(icon)) {
+                if (icon == LauncherIcon.MONET && !icon.hidden) {
+                    setIcon(LauncherIcon.DEFAULT);
+                    setIcon(LauncherIcon.MONET);
+                }
                 return;
             }
         }
-
         setIcon(LauncherIcon.DEFAULT);
-    }
-
-    public static void updateMonetIcon() {
-        if (isEnabled(LauncherIcon.MONET)) {
-            setIcon(LauncherIcon.DEFAULT);
-            setIcon(LauncherIcon.MONET);
-        }
     }
 
     public static boolean isEnabled(LauncherIcon icon) {

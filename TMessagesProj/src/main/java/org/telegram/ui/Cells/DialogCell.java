@@ -1101,7 +1101,7 @@ public class DialogCell extends BaseCell {
                             drawScam = 2;
                             Theme.dialogs_fakeDrawable.checkText();
                         }
-                        drawArrow = ExteraConfig.isExtera(chat);
+                        drawArrow = ExteraConfig.isExtera(chat) && !isTopic;
                         drawVerified = !forbidVerified && chat.verified;
                     } else if (user != null) {
                         if (user.scam) {

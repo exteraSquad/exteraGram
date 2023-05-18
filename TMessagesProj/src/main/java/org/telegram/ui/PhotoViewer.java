@@ -6170,9 +6170,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     } else if (a == 4) {
                         sendPressed(true, 0, false, true, false);
                     } else if (a == 5) {
-                        TranslatorUtils.translate(captionEditText.getMessageEditText().getText(), ExteraConfig.getCurrentLangCode(), translated -> {
-                            captionEditText.getMessageEditText().setText(translated);
-                            setCurrentCaption(null, translated, false);
+                        TranslatorUtils.translate(captionEditText.getFieldCharSequence(), ExteraConfig.getCurrentLangCode(), translated -> {
+                            captionEditText.setFieldText(translated);
+                            setCaption(translated);
                         }, () -> {});
                     }
                 });

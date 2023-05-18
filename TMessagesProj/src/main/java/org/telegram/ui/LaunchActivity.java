@@ -939,7 +939,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MonetUtils.registerReceiver(this);
-            LauncherIconController.updateMonetIcon();
             getWindow().getDecorView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
                 @Override
                 public void onViewAttachedToWindow(View v) {
@@ -5865,9 +5864,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         if (Theme.selectedAutoNightType == Theme.AUTO_NIGHT_TYPE_SYSTEM) {
             Theme.checkAutoNightThemeConditions();
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            LauncherIconController.updateMonetIcon();
         }
     }
 

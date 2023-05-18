@@ -134,18 +134,14 @@ public class MonetUtils {
         public void onReceive(Context context, Intent intent) {
             if (ACTION_OVERLAY_CHANGED.equals(intent.getAction())) {
                 if (Theme.getActiveTheme().isMonet()) {
-                    File darkTheme = new File(ApplicationLoader.getFilesDirFixed(), "monet_dark.attheme");
-                    File lightTheme = new File(ApplicationLoader.getFilesDirFixed(), "monet_light.attheme");
-                    if (darkTheme.exists()) {
-                        darkTheme.delete();
-                    }
-                    if (lightTheme.exists()) {
-                        lightTheme.delete();
+                    String themeToReset = "monet_" + (Theme.getActiveTheme().isDark() ? "dark" : "light") + ".attheme";
+                    File theme = new File(ApplicationLoader.getFilesDirFixed(), themeToReset);
+                    if (theme.exists()) {
+                        theme.delete();
                     }
                     Theme.applyTheme(Theme.getActiveTheme());
                 }
             }
-            LauncherIconController.updateMonetIcon();
         }
     }
 

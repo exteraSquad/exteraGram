@@ -66,7 +66,7 @@ public class TranslateController extends BaseController {
     }
 
     public boolean isFeatureAvailable() {
-        return isChatTranslateEnabled();
+        return  UserConfig.getInstance(currentAccount).isPremium() && isChatTranslateEnabled();
     }
 
     private Boolean chatTranslateEnabled;

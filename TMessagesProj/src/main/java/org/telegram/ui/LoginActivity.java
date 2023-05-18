@@ -87,16 +87,14 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 
+import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.utils.CanvasUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.safetynet.SafetyNet;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -177,8 +175,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.exteragram.messenger.ExteraConfig;
 
 @SuppressLint("HardwareIds")
 public class LoginActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
@@ -1697,69 +1693,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
     private boolean isRequestingFirebaseSms;
     private void fillNextCodeParams(Bundle params, TLRPC.auth_SentCode res, boolean animate) {
-        if (res.type instanceof TLRPC.TL_auth_sentCodeTypeFirebaseSms && !res.type.verifiedFirebase && !isRequestingFirebaseSms) {
-            if (PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()) {
-                needShowProgress(0);
-                isRequestingFirebaseSms = true;
-                SafetyNet.getClient(ApplicationLoader.applicationContext).attest(res.type.nonce, BuildVars.SAFETYNET_KEY)
-                        .addOnSuccessListener(attestationResponse -> {
-                            String jws = attestationResponse.getJwsResult();
 
-                            if (jws != null) {
-                                TLRPC.TL_auth_requestFirebaseSms req = new TLRPC.TL_auth_requestFirebaseSms();
-                                req.phone_number = params.getString("phoneFormated");
-                                req.phone_code_hash = res.phone_code_hash;
-                                req.safety_net_token = jws;
-                                req.flags |= 1;
-
-                                String[] spl = jws.split("\\.");
-                                if (spl.length > 0) {
-                                    try {
-                                        JSONObject obj = new JSONObject(new String(Base64.decode(spl[1].getBytes(StandardCharsets.UTF_8), 0)));
-
-                                        if (obj.optBoolean("basicIntegrity") && obj.optBoolean("ctsProfileMatch")) {
-                                            ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
-                                                if (response instanceof TLRPC.TL_boolTrue) {
-                                                    needHideProgress(false);
-                                                    isRequestingFirebaseSms = false;
-                                                    res.type.verifiedFirebase = true;
-                                                    AndroidUtilities.runOnUIThread(() -> fillNextCodeParams(params, res, animate));
-                                                } else {
-                                                    FileLog.d("Resend firebase sms because auth.requestFirebaseSms = false");
-                                                    resendCodeFromSafetyNet(params, res);
-                                                }
-                                            }, ConnectionsManager.RequestFlagFailOnServerErrors | ConnectionsManager.RequestFlagWithoutLogin);
-                                        } else {
-                                            FileLog.d("Resend firebase sms because ctsProfileMatch or basicIntegrity = false");
-                                            resendCodeFromSafetyNet(params, res);
-                                        }
-                                    } catch (JSONException e) {
-                                        FileLog.e(e);
-
-                                        FileLog.d("Resend firebase sms because of exception");
-                                        resendCodeFromSafetyNet(params, res);
-                                    }
-                                } else {
-                                    FileLog.d("Resend firebase sms because can't split JWS token");
-                                    resendCodeFromSafetyNet(params, res);
-                                }
-                            } else {
-                                FileLog.d("Resend firebase sms because JWS = null");
-                                resendCodeFromSafetyNet(params, res);
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            FileLog.e(e);
-
-                            FileLog.d("Resend firebase sms because of safetynet exception");
-                            resendCodeFromSafetyNet(params, res);
-                        });
-            } else {
-                FileLog.d("Resend firebase sms because firebase is not available");
-                resendCodeFromSafetyNet(params, res);
-            }
-            return;
-        }
 
         params.putString("phoneHash", res.phone_code_hash);
         if (res.next_type instanceof TLRPC.TL_auth_codeTypeCall) {
@@ -2751,19 +2685,27 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
                                 if (!allowReadCallLog) {
                                     permissionsItems.add(Manifest.permission.READ_CALL_LOG);
                                 }
-                                if (!allowReadPhoneNumbers && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                if (!allowReadPhoneNumbers) {
                                     permissionsItems.add(Manifest.permission.READ_PHONE_NUMBERS);
                                 }
                                 if (!permissionsItems.isEmpty()) {
                                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                                    if (getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
+                                    if (preferences.getBoolean("firstlogin", true) || getParentActivity().shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)) {
                                         preferences.edit().putBoolean("firstlogin", false).apply();
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
 
                                         builder.setPositiveButton(LocaleController.getString("Continue", R.string.Continue), null);
                                         int resId;
-                                        builder.setMessage(LocaleController.getString("AllowReadCall", R.string.AllowReadCall));
-                                        resId = R.raw.incoming_calls;
+                                        if (!allowCall && (!allowCancelCall || !allowReadCallLog)) {
+                                            builder.setMessage(LocaleController.getString("AllowReadCallAndLog", R.string.AllowReadCallAndLog));
+                                            resId = R.raw.calls_log;
+                                        } else if (!allowCancelCall || !allowReadCallLog) {
+                                            builder.setMessage(LocaleController.getString("AllowReadCallLog", R.string.AllowReadCallLog));
+                                            resId = R.raw.calls_log;
+                                        } else {
+                                            builder.setMessage(LocaleController.getString("AllowReadCall", R.string.AllowReadCall));
+                                            resId = R.raw.incoming_calls;
+                                        }
                                         builder.setTopAnimation(resId, 46, false, Theme.getColor(Theme.key_dialogTopBackground));
                                         permissionsDialog = showDialog(builder.create());
                                         confirmedNumber = true;
@@ -8289,7 +8231,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             proxyDrawable.setConnected(true, connected, animated);
         }
     }
-    
+
     private boolean proxyButtonVisible;
     private Runnable showProxyButtonDelayed;
     private void showProxyButtonDelayed() {

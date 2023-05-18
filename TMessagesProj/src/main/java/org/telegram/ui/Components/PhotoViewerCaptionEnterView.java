@@ -604,9 +604,7 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
                 return -9539985;
             } else if (key == Theme.key_chat_emojiBottomPanelIcon) {
                 return -9539985;
-            } else if (key == Theme.key_chat_emojiPanelIconSelected) {
-                return -10177041;
-            } else if (key == Theme.key_chat_emojiPanelStickerPackSelectorLine) {
+            } else if (key == Theme.key_chat_emojiPanelIconSelected || key == Theme.key_chat_emojiPanelStickerPackSelectorLine) {
                 return -10177041;
             } else if (key == Theme.key_chat_emojiPanelBackground) {
                 return -14803425;
@@ -618,7 +616,7 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
                 return 771751936;
             } else if (key == Theme.key_divider) {
                 return -16777216;
-            } else if (key == Theme.key_dialogFloatingButton) {
+            } else if (key == Theme.key_dialogFloatingButton || key == Theme.key_chats_actionBackground) {
                 return -10177041;
             } else if (key == Theme.key_dialogFloatingIcon) {
                 return 0xffffffff;
@@ -640,7 +638,7 @@ public class PhotoViewerCaptionEnterView extends FrameLayout implements Notifica
         if (emojiView != null) {
             return;
         }
-        emojiView = new EmojiView(null, true, false, false, getContext(), false, null, null, resourcesProvider);
+        emojiView = new EmojiView(null, UserConfig.getInstance(currentAccount).isPremium(), false, false, getContext(), false, null, null, resourcesProvider);
         emojiView.setDelegate(new EmojiView.EmojiViewDelegate() {
             @Override
             public boolean onBackspace() {

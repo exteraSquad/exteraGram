@@ -220,7 +220,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                     return;
                 }
             }
-            pager.setCurrentItem(position, false);
+            pager.setCurrentItem(position, true);
         });
         tab.setPadding(AndroidUtilities.dp(18), 0, AndroidUtilities.dp(18), 0);
         tabsContainer.addView(tab, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 10, 0, 10, 0));

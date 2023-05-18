@@ -421,7 +421,7 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
                     textCell.setEnabled(true);
                     int[] icons = AppUtils.getDrawerIconPack();
                     if (position == statusRow) {
-                        textCell.setTextAndCheckAndIcon(LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), ExteraConfig.changeStatus, R.drawable.msg_smile_status, true);
+                        textCell.setTextAndCheckAndIcon(LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), ExteraConfig.changeStatus, R.drawable.msg_status_set, true);
                     } else if (position == newGroupRow) {
                         textCell.setTextAndCheckAndIcon(LocaleController.getString("NewGroup", R.string.NewGroup), ExteraConfig.newGroup, icons[0], true);
                     } else if (position == newSecretChatRow) {

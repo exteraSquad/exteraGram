@@ -125,7 +125,7 @@ public class ExteraConfig {
 
     // Other
     private static final long[] OFFICIAL_CHANNELS = {1233768168, 1524581881, 1571726392, 1632728092, 1638754701, 1779596027, 1172503281, 1877362358};
-    private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381, 1773117711, 5330087923L};
+    private static final long[] DEVS = {963080346, 1282540315, 1374434073, 388099852, 1972014627, 168769611, 480000401, 5307590670L, 639891381, 1773117711, 5330087923L, 666154369};
     public static long channelToSave;
     public static String targetLanguage;
     public static final CharSequence[] supportedLanguages = new CharSequence[]{
@@ -259,8 +259,8 @@ public class ExteraConfig {
             channelToSave = preferences.getLong("channelToSave", 0);
             targetLanguage = preferences.getString("targetLanguage", (String) supportedLanguages[8]);
             voiceHintShowcases = preferences.getInt("voiceHintShowcases", 0);
-            useGoogleCrashlytics = preferences.getBoolean("useGoogleCrashlytics", true);
-            useGoogleAnalytics = preferences.getBoolean("useGoogleAnalytics", true);
+            useGoogleCrashlytics = preferences.getBoolean("useGoogleCrashlytics", BuildVars.isBetaApp());
+            useGoogleAnalytics = preferences.getBoolean("useGoogleAnalytics", BuildVars.isBetaApp());
 
             configLoaded = true;
         }
@@ -350,12 +350,11 @@ public class ExteraConfig {
         switch (sendPhotosQuality) {
             case 0:
                 return 800;
-            case 1:
-                return 1280;
             case 2:
                 return 2560;
+            case 1:
             default:
-                return 1;
+                return 1280;
         }
     }
 

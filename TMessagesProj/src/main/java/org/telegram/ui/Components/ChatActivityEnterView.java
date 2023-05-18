@@ -3499,7 +3499,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 protected void onClick() {
                     if (sendPopupWindow != null && sendPopupWindow.isShowing())
                         sendPopupWindow.dismiss();
-                    TranslatorUtils.translate(getEditField() != null ? getEditField().getText() : null, ExteraConfig.getCurrentLangCode(), translated -> {
+                    TranslatorUtils.translate(getEditField().getText(), ExteraConfig.getCurrentLangCode(), translated -> {
                         getEditField().setText(translated);
                         getEditField().setSelection(translated.length());
                     }, null);

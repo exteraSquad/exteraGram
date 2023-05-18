@@ -1352,10 +1352,10 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                         ItemOptions options = ItemOptions.makeOptions(StickersActivity.this, cell);
                         options.add(R.drawable.msg_archive, LocaleController.getString("StickersHide", R.string.StickersHide), () -> processSelectionOption(MENU_ARCHIVE, stickerSet));
                         if (stickerSet.set.official) {
-                            options.add(R.drawable.msg_reorder, LocaleController.getString("StickersReorder", R.string.StickersReorder), () -> processSelectionOption(4, stickerSet));
+                            options.add(R.drawable.msg_forward_replace, LocaleController.getString("StickersReorder", R.string.StickersReorder), () -> processSelectionOption(4, stickerSet));
                         } else {
                             options.add(R.drawable.msg_link, LocaleController.getString("StickersCopy", R.string.StickersCopy), () -> processSelectionOption(3, stickerSet));
-                            options.add(R.drawable.msg_reorder, LocaleController.getString("StickersReorder", R.string.StickersReorder), () -> processSelectionOption(4, stickerSet));
+                            options.add(R.drawable.msg_forward_replace, LocaleController.getString("StickersReorder", R.string.StickersReorder), () -> processSelectionOption(4, stickerSet));
                             options.add(R.drawable.msg_share, LocaleController.getString("StickersShare", R.string.StickersShare), () -> processSelectionOption(2, stickerSet));
                             options.add(R.drawable.msg_delete, LocaleController.getString("StickersRemove", R.string.StickersRemove), true, () -> processSelectionOption(MENU_DELETE, stickerSet));
                         }

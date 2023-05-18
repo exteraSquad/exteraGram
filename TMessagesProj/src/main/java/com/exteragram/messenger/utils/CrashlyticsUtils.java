@@ -18,8 +18,10 @@ import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildConfig;
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.SharedConfig;
 
@@ -53,9 +55,13 @@ public class CrashlyticsUtils {
         params.putString("version", BuildConfig.VERSION_NAME);
         params.putInt("version_code", BuildConfig.VERSION_CODE);
         params.putBoolean("has_play_services", isGooglePlayServicesAvailable(context));
-        params.putString("device", Build.MANUFACTURER + " " + Build.MODEL);
+        params.putString("device", LocaleUtils.capitalize(Build.MANUFACTURER) + " " + Build.MODEL);
         params.putString("performance_class", getPerformanceClassString());
         params.putString("locale", LocaleController.getSystemLocaleStringIso639());
+        params.putString("cache_path", AndroidUtilities.getCacheDir().getAbsolutePath());
+        params.putInt("refresh_rate", (int) AndroidUtilities.screenRefreshRate);
+        params.putString("display", AndroidUtilities.displaySize.x + "x" + AndroidUtilities.displaySize.y);
+        params.putBoolean("debug_build", BuildVars.isBetaApp());
         ApplicationLoader.getFirebaseAnalytics().logEvent("stats", params);
     }
 }

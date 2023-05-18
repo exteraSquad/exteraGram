@@ -70,7 +70,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.PopupUtils;
 import com.exteragram.messenger.utils.SystemUtils;
+import com.exteragram.messenger.utils.TranslatorUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -114,6 +116,7 @@ import org.telegram.ui.PhotoPickerSearchActivity;
 import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -2560,25 +2563,39 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             });
             sendPopupLayout.setShownFromBottom(false);
 
-            itemCells = new ActionBarMenuSubItem[2];
+            itemCells = new ActionBarMenuSubItem[3];
             int i = 0;
-            for (int a = 0; a < 2; a++) {
+            for (int a = 0; a < 3; a++) {
                 if (a == 0) {
+                    if (TextUtils.isEmpty(getCommentTextView().getText())) {
+                        continue;
+                    }
+                } else if (a == 1) {
                     if (!chatActivity.canScheduleMessage() || !currentAttachLayout.canScheduleMessages()) {
                         continue;
                     }
-                } else if (a == 1 && UserObject.isUserSelf(user)) {
+                } else if (UserObject.isUserSelf(user)) {
                     continue;
                 }
                 int num = a;
-                itemCells[a] = new ActionBarMenuSubItem(getContext(), a == 0, a == 1, resourcesProvider);
+                itemCells[a] = new ActionBarMenuSubItem(getContext(), a == 0, a == 2, resourcesProvider);
                 if (num == 0) {
+                    itemCells[a].setTextAndIcon(LocaleController.getString("TranslateTo", R.string.TranslateTo), R.drawable.msg_translate);
+                    itemCells[a].setSubtext(ExteraConfig.getCurrentLangName());
+                    itemCells[a].setMinimumWidth(AndroidUtilities.dp(196));
+                    itemCells[a].setItemHeight(56);
+                    itemCells[a].setRightIcon(R.drawable.msg_arrowright);
+                    itemCells[a].getRightIcon().setOnClickListener(v -> PopupUtils.showDialog(ExteraConfig.supportedLanguages, LocaleController.getString("Language", R.string.Language), Arrays.asList(ExteraConfig.supportedLanguages).indexOf(ExteraConfig.targetLanguage), context, j -> {
+                        ExteraConfig.editor.putString("targetLanguage", ExteraConfig.targetLanguage = (String) ExteraConfig.supportedLanguages[j]).apply();
+                        itemCells[num].setSubtext(ExteraConfig.getCurrentLangName());
+                    }));
+                } else if (num == 1) {
                     if (UserObject.isUserSelf(user)) {
                         itemCells[a].setTextAndIcon(LocaleController.getString("SetReminder", R.string.SetReminder), R.drawable.msg_calendar2);
                     } else {
                         itemCells[a].setTextAndIcon(LocaleController.getString("ScheduleMessage", R.string.ScheduleMessage), R.drawable.msg_calendar2);
                     }
-                } else if (num == 1) {
+                } else {
                     itemCells[a].setTextAndIcon(LocaleController.getString("SendWithoutSound", R.string.SendWithoutSound), R.drawable.input_notify_off);
                 }
                 itemCells[a].setMinimumWidth(AndroidUtilities.dp(196));
@@ -2589,6 +2606,13 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                         sendPopupWindow.dismiss();
                     }
                     if (num == 0) {
+                        TranslatorUtils.translate(getCommentTextView().getText(), ExteraConfig.getCurrentLangCode(), translated -> {
+                            getCommentTextView().setText(translated);
+                            applyCaption();
+                            getCommentTextView().setSelection(translated.length());
+                        }, () -> {
+                        });
+                    } else if (num == 1) {
                         AlertsCreator.createScheduleDatePickerDialog(getContext(), chatActivity.getDialogId(), (notify, scheduleDate) -> {
                             if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
                                 sendPressed(notify, scheduleDate);
@@ -2597,7 +2621,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                                 dismiss();
                             }
                         }, resourcesProvider);
-                    } else if (num == 1) {
+                    } else {
                         if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
                             sendPressed(false, 0);
                         } else {
