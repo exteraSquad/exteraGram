@@ -117,6 +117,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.android.internal.telephony.ITelephony;
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.utils.FontUtils;
 import com.google.android.exoplayer2.util.Consumer;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
@@ -1743,10 +1744,18 @@ public class AndroidUtilities {
                                 t = Typeface.create("sans-serif-condensed", Typeface.BOLD);
                                 break;
                             case TYPEFACE_ROBOTO_MEDIUM_ITALIC:
-                                t = Build.VERSION.SDK_INT >= 28 ? Typeface.create(Typeface.SANS_SERIF, 500, true) : Typeface.create("sans-serif-medium", Typeface.ITALIC);
+                                if (FontUtils.isMediumWeightSupported()) {
+                                    t = Typeface.create("sans-serif-medium", Typeface.ITALIC);
+                                } else {
+                                    t = Typeface.create("sans-serif", Typeface.BOLD_ITALIC);
+                                }
                                 break;
                             case TYPEFACE_ROBOTO_MEDIUM:
-                                t = Build.VERSION.SDK_INT >= 28 ? Typeface.create(Typeface.SANS_SERIF, 500, false) : Typeface.create("sans-serif-medium", Typeface.NORMAL);
+                                if (FontUtils.isMediumWeightSupported()) {
+                                    t = Typeface.create("sans-serif-medium", Typeface.NORMAL);
+                                } else {
+                                    t = Typeface.create("sans-serif", Typeface.BOLD);
+                                }
                                 break;
                             case TYPEFACE_ROBOTO_ITALIC:
                                 t = Build.VERSION.SDK_INT >= 28 ? Typeface.create(Typeface.SANS_SERIF, 400, true) : Typeface.create("sans-serif", Typeface.ITALIC);
