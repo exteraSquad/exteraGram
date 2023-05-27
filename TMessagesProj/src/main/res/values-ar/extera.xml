@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @immat0x1, 2023
+
+-->
+<resources>
+    <string name="Preferences">تفضيلات exteraGram</string>
+    <!-- Main Menu -->
+    <string name="Links">الروابط</string>
+    <string name="AboutExteraDescription">بديل تليجرام تجريبي، مبني على مصادر تليجرام الرسمية!</string>
+    <string name="Channel">قناة</string>
+    <string name="Crowdin">ترجمة</string>
+    <string name="SourceCode">الكود المصدري</string>
+    <string name="Categories">الفئات</string>
+    <!-- Appearance -->
+    <string name="AvatarCorners">زوايا الصورة الرمزية</string>
+    <string name="AvatarCornersLeft">مربع</string>
+    <string name="AvatarCornersRight">دائري</string>
+    <string name="ListOfChats">قائمة الدردشة</string>
+    <string name="ActionBarTitle">نص العنوان</string>
+    <string name="ActionBarTitleUsername">اسم المستخدم</string>
+    <string name="ActionBarTitleName">الاسم الأول</string>
+    <string name="HideActionBarStatus">إخفاء الحالة</string>
+    <string name="CenterTitle">عنوان متوسط</string>
+    <string name="ListOfChatsInfo">سيتم استبدال نص العنوان باسم المجلد عند تمكين الرموز.</string>
+    <string name="TabTitleStyle">عنوان علامة التبويب</string>
+    <string name="TabTitleStyleTextWithIcons">أسماء مع أيقونات</string>
+    <string name="TabTitleStyleIconsOnly">أيقونات فقط</string>
+    <string name="TabTitleStyleTextOnly">أسماء فقط</string>
+    <string name="TabStyle">نمط المجلد</string>
+    <string name="TabStyleTextOnly">نص</string>
+    <string name="TabStyleRounded">مدوّر</string>
+    <string name="TabStyleChips">رقائق</string>
+    <string name="TabStylePills">حبوب</string>
+    <string name="TabCounter">عداد علامات التبويب</string>
+    <string name="HideAllChats">إخفاء تبويب \"%1$s\"</string>
+    <string name="FoldersInfo">يتم مزامنة الأيقونات مع تليجرام.</string>
+    <string name="IconPack">أيقونات</string>
+    <string name="SolarIcons">استخدام الأيقونات \"الشمسية\"</string>
+    <string name="ForceBlur">ضبابية إجبارية</string>
+    <string name="ForceBlurInfo">سيتم تطبيق الضبابية على جميع المواضيع بشكل مطلق.</string>
+    <string name="ForceSnow">فرض الثلج</string>
+    <string name="ForceSnowInfo">سيظهر الثلج في شريط الحركة، والدرج وخلفية المحادثات.</string>
+    <string name="UseSystemFonts">استخدام خطوط النظام</string>
+    <string name="UseSystemEmoji">استخدام رموز النظام التعبيرية</string>
+    <string name="NewSwitchStyle">نمط تبديل MD3</string>
+    <string name="DisableDividers">تعطيل المقسمات</string>
+    <string name="AlternativeNavigation">التنقل البديل</string>
+    <string name="AlternativeNavigationInfo">خيار تجريبي يحتوي على رسوم متحركة جديدة وسلسة للتنقل بين الشاشات.</string>
+    <string name="DrawerOptions">خيارات القائمة</string>
+    <string name="DrawerIconSet">تعيين الأيقونة</string>
+    <string name="DrawerAlternativeOpeningAnimation">حركة فتح بديلة</string>
+    <string name="DependsOnTheDate">يعتمد على التاريخ</string>
+    <string name="NewYear">السنة الجديدة</string>
+    <string name="ValentinesDay">عيد الحب</string>
+    <string name="Halloween">عيد الهالوين</string>
+    <string name="DrawerElements">عناصر القائمة</string>
+    <!-- General -->
+    <string name="CameraType">نوع الكاميرا</string>
+    <string name="CameraTypeSystem">النظام</string>
+    <string name="DefaultCameraInfo">استخدم كاميرا تيليجرام المدمجة.</string>
+    <string name="CameraXInfo">CameraX مدعوم فقط على <![CDATA[<a href="https://developer.android.com/training/camerax/devices">الأجهزة المحددة</a>]]>، يعتمد دعم المؤثرات والعدسات على الشركة المصنعة الخاصة بك.</string>
+    <string name="SystemCameraInfo">الوصول مباشرة إلى كاميرا النظام (لا تنطبق على رسائل الفيديو).</string>
+    <string name="PerformanceMode">وضع الأداء</string>
+    <string name="PerformanceModeInfo">سيتم خفض جودة CameraX لصالح الأداء.</string>
+    <string name="CameraQuality">جودة الكاميرا</string>
+    <string name="DisableNumberRounding">تعطيل تقريب الأرقام</string>
+    <string name="FormatTimeWithSeconds">تنسيق الوقت بالثواني</string>
+    <string name="TabletMode">وضع الجهاز اللوحي</string>
+    <string name="DownloadSpeedBoost">زيادة سرعة التحميل</string>
+    <string name="UploadSpeedBoost">زيادة سرعة الرفع</string>
+    <string name="Ultra">الفائق</string>
+    <string name="SpeedBoostInfo">يمكن أن يسبب Ultra Boost مشاكل في تنزيل الملفات وبث مقاطع الفيديو على اتصال إنترنت بطيء.</string>
+    <string name="Profile">الملف الشخصي</string>
+    <string name="HidePhoneNumber">إخفاء رقم الهاتف</string>
+    <string name="ShowIdAndDc">إظهار المعرف وDC</string>
+    <string name="ShowIdAndDcInfo">يُظهِر Telegram API المعرفات كما هي، في حين ان Bot API يضيف علامة \'-\" للمجموعات و-100 للمجموعات الخارقة والقنوات.</string>
+    <string name="ArchiveOnPull">فتح الأرشيف عند السحب للأسفل</string>
+    <string name="DisableUnarchiveSwipe">تعطيل \"إلغاء الأرشيف\" بالسحب</string>
+    <string name="DisableUnarchiveSwipeInfo">السحب إلى اليسار لن يزيل المحادثات من الأرشيف.</string>
+    <!-- Other -->
+    <string name="AnalyticsInfo">عند تمكين هذه الخيارات، يتم جمع البيانات حول الجهاز وإرسالها إلى Google Analytics و Crashlytics، السماح لنا بحفظ إحصائيات الاستخدام وتتبع الأخطاء في التطبيق. \n\nومع ذلك، إذا تم إيقاف تشغيل الخيارات، تتوقف عملية جمع البيانات ويتم حذف البيانات المرسلة على الفور.</string>
+    <string name="DeleteAccount">حذف الحساب</string>
+    <string name="ResetSettings">إعادة تعيين الإعدادات</string>
+    <!-- Chats -->
+    <string name="StickerSize">حجم الملصقات</string>
+    <string name="StickerSizeLeft">صغير</string>
+    <string name="StickerSizeRight">كبيرة</string>
+    <string name="StickerSizeDialogMessageReplyTo">رائع</string>
+    <string name="StickerSizeDialogMessage">واو! إنه لطيف جداً!</string>
+    <string name="StickerShape">شكل الملصقات</string>
+    <string name="StickerShapeRounded">مدوّر</string>
+    <string name="StickerShapeRoundedMsg">رسالة</string>
+    <string name="StickerTime">إخفاء الوقت على الملصقات</string>
+    <string name="UnlimitedRecentStickers">الملصقات الأخيرة غير المحدودة</string>
+    <string name="HideCategories">إخفاء الفئات</string>
+    <string name="HideCategoriesInfo">ستختفي الفئات من شريط البحث في مربع حوار اختيار التفاعلات ولوحة الرموز التعبيرية.</string>
+    <string name="DoubleTap">نقر مزدوج</string>
+    <string name="DoubleTapIncoming">الرسائل الواردة</string>
+    <string name="DoubleTapOutgoing">الرسائل المرسلة</string>
+    <string name="DoubleTapInfo">تتطلب بعض الإجراءات حقوق المسؤول في المحادثة أو القناة.</string>
+    <string name="BottomButton">الزر السفلي</string>
+    <string name="AdminShortcuts">اختصارات المشرف السريعة</string>
+    <string name="HideKeyboardOnScroll">إخفاء لوحة المفاتيح عند التمرير</string>
+    <string name="DisableJumpToNextChannel">تعطيل \"الانتقال إلى القناة التالية\"</string>
+    <string name="ShowActionTimestamps">عرض الطوابع الزمنية للإجراءات</string>
+    <string name="HideShareButton">إخفاء الزر%1$s\" الجانبي</string>
+    <string name="MessageMenu">قائمة الرسائل</string>
+    <string name="AddCommaAfterMention">إضافة فاصلة بعد الإشارة</string>
+    <string name="AddCommaAfterMentionInfo">سيتم وضع فاصلة تلقائيًا بعد النقر على المستخدم الذي تريد ذكره.</string>
+    <string name="HidePhotoCounter">إخفاء عدد الصور</string>
+    <string name="HidePhotoCounterInfo">سوف يختفي عداد الصور المزعج في الجزء العلوي من الشاشة من منظورك.</string>
+    <string name="HideCameraTile">إخفاء شريط الكاميرا الفوري</string>
+    <string name="HideCameraTileInfo">سيتم استبدال مربع الكاميرا بزر عائم. الضغط على الزر سيفتح كاميرا تيليجرام، استمرار الضغط عليها سيفتح كاميرا النظام.</string>
+    <string name="StaticZoom">التكبير الثابت</string>
+    <string name="StaticZoomInfo">عند تسجيل رسائل الفيديو، لن يعاد ضبط التكبير إذا قمت بتحرير أصابعك.</string>
+    <string name="VideoMessagesCamera">الكاميرا في رسائل الفيديو</string>
+    <string name="VideoMessagesCameraRear">الخلفية</string>
+    <string name="VideoMessagesCameraFront">الأمامية</string>
+    <string name="VideoMessagesCameraAsk">اطلب</string>
+    <string name="RearCamera">الكاميرا الخلفية</string>
+    <string name="FrontCamera">الكاميرا الأمامية</string>
+    <string name="DoubleTapSeekDuration">مدة البحث بالضغط المزدوج</string>
+    <string name="RememberLastUsedCamera">تذكّر آخر كاميرا مستخدمة</string>
+    <string name="RememberLastUsedCameraInfo">عند تسجيل رسائل الفيديو، سيتم تحديد آخر كاميرا مستخدمة.</string>
+    <string name="PauseOnMinimize">إيقاف مؤقت تلقائي</string>
+    <string name="PauseOnMinimizeInfo">إيقاف تشغيل الفيديو عندما يكون الجهاز مقفلاً، أو يتم تصغير ExteraGram.</string>
+    <string name="DisablePlayback">تعطيل التشغيل في الخلفية</string>
+    <string name="DisablePlaybackInfo">تعطيل التشغيل عند الضغط على زر الصوت.</string>
+    <!-- Boost -->
+    <string name="Encryptors">المشفرات</string>
+    <string name="Encrypt">تشفير</string>
+    <string name="Decrypt">فك التشفير</string>
+    <string name="EncryptionKeyInfo">سيتم استخدام هذا المفتاح لتشفير وفك تشفير الرسائل في غرفة المحادثة هذه.</string>
+    <!-- Updates -->
+    <string name="LastCheck">آخر تحقق</string>
+    <string name="CurrentVersion">الإصدار الحالي</string>
+    <string name="BuildType">نوع النسخة</string>
+    <string name="BTRelease">إصدار</string>
+    <string name="BTBeta">نسخة تجريبية</string>
+    <string name="CheckOnLaunch">التحقق عند التشغيل</string>
+    <string name="ClearUpdatesCache">مسح ذاكرة التخزين المؤقت للتحديثات</string>
+    <string name="ClearedUpdatesCache">تم مسح %1$s من ذاكرة التخزين المؤقت.</string>
+    <string name="NothingToClear">لا شيء لمسحه.</string>
+    <string name="CheckForUpdates">التحقق من وجود تحديثات</string>
+    <string name="CheckingForUpdates">التحقق من وجود تحديثات…</string>
+    <string name="NoUpdates">لم يتم العثور على تحديثات.</string>
+    <string name="UpdateAvailable">يتوفر تحديث!</string>
+    <string name="Version">إصدار</string>
+    <string name="UpdateSize">حجم التحديث</string>
+    <string name="Changelog">سجل التغييرات:</string>
+    <!-- Message Details -->
+    <string name="Details">التفاصيل</string>
+    <string name="Date">التاريخ</string>
+    <string name="EditedDate">تعديل التاريخ</string>
+    <string name="ForwardedDate">تاريخ إعادة التوجيه</string>
+    <string name="FileSize">حجم الملف</string>
+    <string name="FileName">اسم الملف</string>
+    <string name="FilePath">مسار الملف</string>
+    <string name="Resolution">الدقة</string>
+    <string name="Bitrate">معدل البت</string>
+    <string name="MimeType">نوع الـMime</string>
+    <string name="Datacenter">قاعدة البيانات</string>
+    <!-- Other -->
+    <string name="RestartRequired">إعادة تشغيل التطبيق، لتطبيق الميزات.</string>
+    <string name="ResetSettingsBulletin">تمت إعادة تعيين تفضيلات **exteraGram**.</string>
+    <string name="UserNotFound">لم يتم العثور على مستخدم مع هذا **المعرف**.</string>
+    <string name="PhotoCopied">تم نسخ الصورة إلى الحافظة.</string>
+    <string name="MutualContact">جهة اتصال مشتركة</string>
+    <string name="ToBeginning">إلى البداية</string>
+    <string name="MessageHistory">السجل</string>
+    <string name="BoldItalic">عريض مائل</string>
+    <string name="OpenPremiumBot">فتح البوت الرسمي</string>
+    <string name="CopyPhoto">نسخ الصورة</string>
+    <string name="CopySticker">نسخ الملصق</string>
+    <string name="SaveMessage">حفظ الرسالة</string>
+    <string name="TrackSaved">تم حفظ الموسيقى في **%1$s**.</string>
+    <string name="ChannelToSaveChanged">سيتم حفظ الأصوات في **%1$s**.</string>
+    <string name="ConfirmCall">قبول المكالمة</string>
+    <string name="CallTo">الاتصال ب **%1$s**؟</string>
+    <string name="AppIconGradient">متدرج</string>
+    <string name="AppIconAurora">أضواء قطبية</string>
+    <string name="AppIconNeo">Neo</string>
+    <string name="AppIconAmethyst">يَاقُوتٌ بَنَفْسَجِىّ‎</string>
+    <string name="AppIconSpace">فضاء</string>
+    <string name="AppIconOrbit">مدار</string>
+    <string name="AppIconSus">مستورد</string>
+    <string name="AppIconWinter">شتاء</string>
+</resources>

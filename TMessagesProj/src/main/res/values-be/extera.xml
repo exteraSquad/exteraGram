@@ -1,0 +1,198 @@
+    <!--
+
+     This is the source code of exteraGram for Android.
+
+     We do not and cannot prevent the use of our code,
+     but be respectful and credit the original author.
+
+     Copyright @immat0x1, 2023
+
+     -->
+<resources>
+    <string name="Preferences">Налады exteraGram</string>
+    <!--  Main Menu  -->
+    <string name="Links">Спасылкі</string>
+    <string name="AboutExteraDescription">Эксперыментальны кліент Telegram, заснаваны на афіцыйным зыходным кодзе!</string>
+    <string name="Channel">Канал</string>
+    <string name="Crowdin">Пераклад</string>
+    <string name="SourceCode">Зыходны код</string>
+    <string name="Categories">Катэгорыі</string>
+    <!--  Appearance  -->
+    <string name="AvatarCorners">Куткі аватара</string>
+    <string name="AvatarCornersLeft">Квадратны</string>
+    <string name="AvatarCornersRight">Круг</string>
+    <string name="ListOfChats">Спіс чатаў</string>
+    <string name="ActionBarTitle">Галаўны тэкст</string>
+    <string name="ActionBarTitleUsername">Імя карыстальніка</string>
+    <string name="ActionBarTitleName">Імя</string>
+    <string name="HideActionBarStatus">Схаваць статус</string>
+    <string name="CenterTitle">Загаловак па цэнтру</string>
+    <string name="ListOfChatsInfo">Пры ўключэнні значкоў тэкст загалоўка будзе заменены назвай папкі.</string>
+    <string name="TabTitleStyle">Загаловак Укладкі</string>
+    <string name="TabTitleStyleTextWithIcons">Імёны са значкамі</string>
+    <string name="TabTitleStyleIconsOnly">Толькі значкі</string>
+    <string name="TabTitleStyleTextOnly">Толькі імёны</string>
+    <string name="TabStyle">Стыль укладкі</string>
+    <string name="TabStyleTextOnly">Тэкст</string>
+    <string name="TabStyleRounded">Скруглены</string>
+    <string name="TabStyleChips">Чыпсы</string>
+    <string name="TabStylePills">Таблеткі</string>
+    <string name="TabCounter">Лічыльнік апавяшчэнняў</string>
+    <string name="HideAllChats">Схаваць укладку \"%1$s\"</string>
+    <string name="FoldersInfo">Значкі сінхранізаваны з Telegram.</string>
+    <string name="IconPack">Значкі</string>
+    <string name="SolarIcons">Выкарыстоўваць значкі \"Solar\"</string>
+    <string name="ForceBlur">Прымусовае фокуснае размыццё</string>
+    <string name="ForceBlurInfo">Размыццё будзе ўжыта абсалютна да ўсіх тэмах.</string>
+    <string name="ForceSnow">Прымусовы снег</string>
+    <string name="ForceSnowInfo">Снег таксама з\'явіцца на панэлі дзеянняў і на фоне чатаў.</string>
+    <string name="UseSystemFonts">Выкарыстоўваць сістэмныя шрыфты</string>
+    <string name="UseSystemEmoji">Выкарыстоўваць сістэмныя эмодзі</string>
+    <string name="NewSwitchStyle">Пераключальнікі ў стылле MD3</string>
+    <string name="DisableDividers">Адключыць падзельнікі</string>
+    <string name="AlternativeNavigation">Альтэрнатыўная навігацыя</string>
+    <string name="AlternativeNavigationInfo">Эксперыментальная опцыя, якая ўключае ў сябе новую, больш плыўную анімацыю пераходу паміж экранамі.\ n \ n пры выкарыстанні гэтай опцыі панэль навігацыі ў чатах будзе таго ж колеру, што і панэль паведамленняў.</string>
+    <string name="DrawerOptions">Налады скрыні</string>
+    <string name="DrawerIconSet">Набор абразкоў</string>
+    <string name="DrawerAlternativeOpeningAnimation">Альтэрнатыўная анімацыя адкрыцця</string>
+    <string name="DependsOnTheDate">Залежыць ад даты</string>
+    <string name="NewYear">Новы год</string>
+    <string name="ValentinesDay">Дзень Святога Валянціна</string>
+    <string name="Halloween">Хэлоўін</string>
+    <string name="DrawerElements">Элементы скрыні</string>
+    <!--  General  -->
+    <string name="CameraType">Тып камеры</string>
+    <string name="CameraTypeSystem">Сістэмная</string>
+    <string name="DefaultCameraInfo">Выкарыстоўваць убудаваную камеру Telegram.</string>
+    <string name="CameraXInfo">
+CameraX падтрымліваецца толькі на
+<![CDATA[ <a href="https://developer.android.com/training/camerax/devices"> выбраныя прылады</a> ]]>
+, падтрымка эфектаў і аб\'ектываў залежыць ад вашага вытворцы.
+</string>
+    <string name="SystemCameraInfo">Атрымаць прамы доступ да сістэмнай камеры (не дастасавальна для відэапаведамленняў).</string>
+    <string name="PerformanceMode">Рэжым прадукцыйнасці</string>
+    <string name="PerformanceModeInfo">Якасць CameraX будзе зніжана на карысць прадукцыйнасці.</string>
+    <string name="CameraQuality">Якасць камеры</string>
+    <string name="DisableNumberRounding">Адключыць акругленне чысел</string>
+    <string name="FormatTimeWithSeconds">Паказваць час с секундамі</string>
+    <string name="TabletMode">Рэжым планшэту</string>
+    <string name="DownloadSpeedBoost">Павелічэнне хуткасці спампоўкі</string>
+    <string name="UploadSpeedBoost">Павелічэнне хуткасці адпраўкі</string>
+    <string name="Ultra">Ультра</string>
+    <string name="SpeedBoostInfo">Ultra Boost можа выклікаць праблемы з загрузкай файлаў і струменевым відэа пры павольным інтэрнэт-злучэнні.</string>
+    <string name="Profile">Профіль</string>
+    <string name="HidePhoneNumber">Схаваць нумар тэлефона</string>
+    <string name="ShowIdAndDc">Паказаць ID ды DC</string>
+    <string name="ShowIdAndDcInfo">Telegram APl паказвае ідэнтыфікатары такімі, якія яны ёсць, у той час як Bot API дадае знак мінус для груп і -100 для супергруп, шырокавяшчальных груп і каналаў.</string>
+    <string name="ArchiveOnPull">Адчыняць архіў пры выцягванні</string>
+    <string name="DisableUnarchiveSwipe">Адключыць жэст \"вернуць\"</string>
+    <string name="DisableUnarchiveSwipeInfo">Пракрутка налева не прывядзе да выдалення чатаў з архіва.</string>
+    <!--  Other  -->
+    <string name="AnalyticsInfo">Калі гэтыя опцыі ўключаны, дадзеныя пра прыладу збіраюцца і адпраўляюцца ў Google Analytics і Crashlytics, што дазваляе нам весці статыстыку выкарыстання і адсочваць памылкі ў дадатку. \n\n аднак, калі опцыі адключаныя, збор дадзеных спыняецца, а адпраўленыя дадзеныя імгненна выдаляюцца.</string>
+    <string name="DeleteAccount">Выдаліць уліковы запіс</string>
+    <string name="ResetSettings">Скінуць налады</string>
+    <!--  Chats  -->
+    <string name="StickerSize">Памер стыкераў</string>
+    <string name="StickerSizeLeft">Маленькі</string>
+    <string name="StickerSizeRight">Вялікі</string>
+    <string name="StickerSizeDialogMessageReplyTo">вау</string>
+    <string name="StickerSizeDialogMessage">вау, ён такі мілы!</string>
+    <string name="StickerShape">Форма стыкераў</string>
+    <string name="StickerShapeRounded">Скругленая</string>
+    <string name="StickerShapeRoundedMsg">Паведамленне</string>
+    <string name="StickerTime">Схаваць час на стыкерах</string>
+    <string name="UnlimitedRecentStickers">Безлімітныя нядаўнія стыкеры</string>
+    <string name="HideCategories">Схаваць катэгорыі</string>
+    <string name="HideCategoriesInfo">Катэгорыі знікнуць з радка пошуку ў дыялогавым акне выбару рэакцый і панэлі эмодзи.</string>
+    <string name="DoubleTap">Двайны дотык</string>
+    <string name="DoubleTapIncoming">Уваходныя паведамленні</string>
+    <string name="DoubleTapOutgoing">Выходныя паведамленні</string>
+    <string name="DoubleTapInfo">Для некаторых дзеянняў патрабуюцца правы адміністратара ў чаце або канале.</string>
+    <string name="BottomButton">Кнопкі ўнізе</string>
+    <string name="AdminShortcuts">Хуткія ярлыкі адміністратара</string>
+    <string name="HideKeyboardOnScroll">Схаваць клавіятуру падчас пракруткі</string>
+    <string name="DisableJumpToNextChannel">Адключыць \"Перайсці да наступнага каналу\"</string>
+    <string name="ShowActionTimestamps">Паказваць таймштампы для дзеянняў</string>
+    <string name="HideShareButton">Схаваць \"%1$s\" кнопку</string>
+    <string name="MessageMenu">Меню паведамленняў</string>
+    <string name="AddCommaAfterMention">Дадаць коску пасля згадкі</string>
+    <string name="AddCommaAfterMentionInfo">Коска будзе пастаўлена аўтаматычна пасля націску на карыстальніка, якога вы хочаце згадаць.</string>
+    <string name="HidePhotoCounter">Схаваць лічыльнік фатаграфій</string>
+    <string name="HidePhotoCounterInfo">Раздражняльны лічыльнік фатаграфій у верхняй частцы экрана знікне з вашага поля зроку.</string>
+    <string name="HideCameraTile">Схаваць плітку імгненнай камеры</string>
+    <string name="HideCameraTileInfo">Вы зможаце адкрыць сістэмную камеру, доўга націскаючы на кнопку прымацаваць на панэлі паведамленняў.</string>
+    <string name="StaticZoom">Статычны зум</string>
+    <string name="StaticZoomInfo">Пры запісе відэапаведамленняў маштабаванне не будзе скінута, калі вы адпусціце пальцы.</string>
+    <string name="VideoMessagesCamera">Камера ў відэапаведамленнях</string>
+    <string name="VideoMessagesCameraRear">Задняя</string>
+    <string name="VideoMessagesCameraFront">Пярэдняя</string>
+    <string name="VideoMessagesCameraAsk">Спытаць</string>
+    <string name="RearCamera">Задняя камера</string>
+    <string name="FrontCamera">Пярэдняя камера</string>
+    <string name="DoubleTapSeekDuration">Падвойны націск для пошуку</string>
+    <string name="RememberLastUsedCamera">Памятаць апошнюю выкарыстаную камеру</string>
+    <string name="RememberLastUsedCameraInfo">Пры запісе відэапаведамленняў будзе выбрана камера, якая выкарыстоўвалася апошняй.</string>
+    <string name="PauseOnMinimize">Аўта-паўза</string>
+    <string name="PauseOnMinimizeInfo">Прыпыняе прайграванне відэа, калі прылада заблакавана або exteraGram згорнуты.</string>
+    <string name="DisablePlayback">Адключыць прайграванне</string>
+    <string name="DisablePlaybackInfo">Адключае прайграванне пры націску кнопкі гучнасці.</string>
+    <!--  Boost  -->
+    <string name="Encryptors">Шыфравальшчык</string>
+    <string name="Encrypt">Шыфраваць</string>
+    <string name="Decrypt">Расшыфроўваць</string>
+    <string name="EncryptionKeyInfo">Гэты ключ будзе выкарыстоўвацца для шыфравання і дэшыфраванні паведамленняў у гэтым чаце.</string>
+    <!--  Updates  -->
+    <string name="LastCheck">Апошняя праверка</string>
+    <string name="CurrentVersion">Бягучая версія</string>
+    <string name="BuildType">Тып зборкі</string>
+    <string name="BTRelease">Выпуск</string>
+    <string name="BTBeta">Бэта</string>
+    <string name="CheckOnLaunch">Правяраць пры запуску</string>
+    <string name="ClearUpdatesCache">Адчысціць кэш абнаўленняў</string>
+    <string name="ClearedUpdatesCache">Адчышчана **%1$s** кэшу.</string>
+    <string name="NothingToClear">Нічога няма для адчысткі.</string>
+    <string name="CheckForUpdates">Праверыць наяўнасць абнаўленняў</string>
+    <string name="CheckingForUpdates">Праверка абнаўленняў…</string>
+    <string name="NoUpdates">Абнаўленняў не знойдзена.</string>
+    <string name="UpdateAvailable">Абнаўленне даступна!</string>
+    <string name="Version">Версія</string>
+    <string name="UpdateSize">Памер абнаўлення</string>
+    <string name="Changelog">Спіс зменаў:</string>
+    <!--  Message Details  -->
+    <string name="Details">Дэталі</string>
+    <string name="Date">Дата</string>
+    <string name="EditedDate">Рэдагаваць дату</string>
+    <string name="ForwardedDate">Дата перасылкі</string>
+    <string name="FileSize">Памер файла</string>
+    <string name="FileName">Назва файла</string>
+    <string name="FilePath">Шлях да файла</string>
+    <string name="Resolution">Памер</string>
+    <string name="Bitrate">Бітрэйт</string>
+    <string name="MimeType">Тып Mime</string>
+    <string name="Datacenter">Дата-цэнтр</string>
+    <!--  Other  -->
+    <string name="RestartRequired">Перапусціце прыкладанне каб захаваць змены.</string>
+    <string name="ResetSettingsBulletin">**exteraGram** Налады былі скінуты.</string>
+    <string name="UserNotFound">Карыстальнік з гэтым **ID** не знойдзены.</string>
+    <string name="PhotoCopied">Фота скапіравана ў буфер абмену.</string>
+    <string name="MutualContact">узаемны кантакт</string>
+    <string name="ToBeginning">У пачатак</string>
+    <string name="MessageHistory">Гісторыя паведамленняў</string>
+    <string name="BoldItalic">Тлусты курсіў</string>
+    <string name="OpenPremiumBot">Адкрыць афіцыйнага бота</string>
+    <string name="CopyPhoto">Капіраваць фота</string>
+    <string name="CopySticker">Капіраваць стыкер</string>
+    <string name="SaveMessage">Захаваць паведамленне</string>
+    <string name="TrackSaved">Трэк захаваны ў **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Трэк захаваны ў **%1$s**.</string>
+    <string name="ConfirmCall">Пацвердзіць выклік</string>
+    <string name="CallTo">Тэлефанаваць **%1$s**?</string>
+    <string name="AppIconGradient">Градыент</string>
+    <string name="AppIconAurora">Аўрора</string>
+    <string name="AppIconNeo">Неа</string>
+    <string name="AppIconAmethyst">Аметыст</string>
+    <string name="AppIconSpace">Космас</string>
+    <string name="AppIconOrbit">Арбіта</string>
+    <string name="AppIconSus">Самазванец</string>
+    <string name="AppIconWinter">Зіма</string>
+</resources>
