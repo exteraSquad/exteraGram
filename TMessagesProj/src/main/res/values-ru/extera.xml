@@ -29,8 +29,8 @@
 
     <string name="ListOfChats">Список чатов</string>
     <string name="ActionBarTitle">Текст заголовка</string>
-    <string name="ActionBarTitleUsername">Имя</string>
-    <string name="ActionBarTitleName">Короткая ссылка</string>
+    <string name="ActionBarTitleUsername">Короткая ссылка</string>
+    <string name="ActionBarTitleName">Имя</string>
     <string name="HideActionBarStatus">Скрыть статус</string>
     <string name="CenterTitle">Заголовок по центру</string>
     <string name="ListOfChatsInfo">Текст заголовка будет заменен именем папки при включенных иконках.</string>

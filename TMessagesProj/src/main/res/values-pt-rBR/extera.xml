@@ -1,45 +1,46 @@
-    <!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 
-     This is the source code of exteraGram for Android.
+ This is the source code of exteraGram for Android.
 
-     We do not and cannot prevent the use of our code,
-     but be respectful and credit the original author.
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
 
-     Copyright @immat0x1, 2023
+ Copyright @immat0x1, 2023
 
-     -->
+-->
 <resources>
     <string name="Preferences">Preferências exteraGram</string>
-    <!--  Main Menu  -->
+    <!-- Main Menu -->
     <string name="Links">Links</string>
     <string name="AboutExteraDescription">Cliente Experimental do Telegram baseado em fontes oficiais do Telegram!</string>
     <string name="Channel">Canal</string>
     <string name="Crowdin">Traduza</string>
     <string name="SourceCode">Código-fonte</string>
     <string name="Categories">Categorias</string>
-    <!--  Appearance  -->
+    <!-- Appearance -->
     <string name="AvatarCorners">Cantos dos avatares</string>
     <string name="AvatarCornersLeft">Quadrado</string>
     <string name="AvatarCornersRight">Círculo</string>
-    <string name="ListOfChats">Chat List</string>
+    <string name="ListOfChats">Lista de conversas</string>
     <string name="ActionBarTitle">Texto do título</string>
     <string name="ActionBarTitleUsername">Nome de usuário</string>
     <string name="ActionBarTitleName">Primeiro Nome</string>
     <string name="HideActionBarStatus">Ocultar \'status\'</string>
     <string name="CenterTitle">Centralizar título na barra de ação</string>
-    <string name="ListOfChatsInfo">The title text will be replaced by the folder name when icons are enabled.</string>
-    <string name="TabTitleStyle">Tab Title</string>
-    <string name="TabTitleStyleTextWithIcons">Names with Icons</string>
-    <string name="TabTitleStyleIconsOnly">Icons only</string>
-    <string name="TabTitleStyleTextOnly">Names only</string>
+    <string name="ListOfChatsInfo">O texto do título será substituído pelo nome da pasta quando os ícones estiverem habilitados.</string>
+    <string name="TabTitleStyle">Título da Aba</string>
+    <string name="TabTitleStyleTextWithIcons">Nomes com ícones</string>
+    <string name="TabTitleStyleIconsOnly">Apenas Ícones</string>
+    <string name="TabTitleStyleTextOnly">Apenas nomes</string>
     <string name="TabStyle">Estilo da tab</string>
     <string name="TabStyleTextOnly">Texto</string>
     <string name="TabStyleRounded">Arredondado</string>
     <string name="TabStyleChips">Circuitos integrados</string>
     <string name="TabStylePills">Pills</string>
-    <string name="TabCounter">Tab Counter</string>
+    <string name="TabCounter">Contador de Abas</string>
     <string name="HideAllChats">Ocultar a tab \"%1$s\"</string>
-    <string name="FoldersInfo">Icons are synchronized with Telegram.</string>
+    <string name="FoldersInfo">Ícones são sincronizados com Telegram.</string>
     <string name="IconPack">Ícones</string>
     <string name="SolarIcons">Usar Ícones \"Solar\"</string>
     <string name="ForceBlur">Forçar Desfoque</string>
@@ -54,21 +55,17 @@
     <string name="AlternativeNavigationInfo">Uma opção experimental que inclui novas animações de transição mais suaves entre as telas.\n\n Com essa opção, a barra de navegação nas conversas será a mesma cor do painel de mensagens.</string>
     <string name="DrawerOptions">Opções do menu</string>
     <string name="DrawerIconSet">Conjunto de Ícones</string>
-    <string name="DrawerAlternativeOpeningAnimation">Alternative Opening Animation</string>
+    <string name="DrawerAlternativeOpeningAnimation">Animação de abertura alternativa</string>
     <string name="DependsOnTheDate">Depende da data</string>
     <string name="NewYear">Ano Novo</string>
     <string name="ValentinesDay">Dia dos Namorados</string>
     <string name="Halloween">Dia das Bruxas</string>
     <string name="DrawerElements">Elementos do menu</string>
-    <!--  General  -->
+    <!-- General -->
     <string name="CameraType">Categoria de Câmera</string>
     <string name="CameraTypeSystem">Sistema</string>
     <string name="DefaultCameraInfo">Use a câmera interna do Telegram.</string>
-    <string name="CameraXInfo">
-CameraX só é suportada nos
-<![CDATA[ <a href="https://developer.android.com/training/camerax/devices">dispositivos selecionados</a> ]]>
-, o suporte a efeitos e lentes depende do fabricante.
-</string>
+    <string name="CameraXInfo">CameraX só é suportada nos <![CDATA[<a href="https://developer.android.com/training/camerax/devices">dispositivos selecionados</a>]]>, o suporte a efeitos e lentes depende do fabricante.</string>
     <string name="SystemCameraInfo">Acesse diretamente a câmera do sistema (não aplicável para mensagens de vídeo).</string>
     <string name="PerformanceMode">Modo de Desempenho</string>
     <string name="PerformanceModeInfo">A qualidade da CameraX será reduzida em favor do desempenho.</string>
@@ -87,11 +84,11 @@ CameraX só é suportada nos
     <string name="ArchiveOnPull">Abrir Conversas Arquivadas ao deslizar pra cima</string>
     <string name="DisableUnarchiveSwipe">Desativar \"Desarquivar\" ao deslizar</string>
     <string name="DisableUnarchiveSwipeInfo">Deslizar para a esquerda não removerá as conversas arquivadas.</string>
-    <!--  Other  -->
-    <string name="AnalyticsInfo">When these options are enabled, data about the device is collected and sent to Google Analytics and Crashlytics, allowing us to keep usage statistics and track errors in the app. \n\nHowever, if the options are switched off, the data collection stops and the sent data is instantly deleted.</string>
-    <string name="DeleteAccount">Delete Account</string>
-    <string name="ResetSettings">Reset Settings</string>
-    <!--  Chats  -->
+    <!-- Other -->
+    <string name="AnalyticsInfo">Quando essas opções estão ativadas, dados sobre o dispositivo são coletados e enviados para o Google Analytics e Crashlytics, nos permite manter estatísticas de uso e acompanhar erros no app. \n\nEntretanto, se as opções forem desligadas, a coleção de dados interrompe e os dados enviados serão excluídos instantaneamente.</string>
+    <string name="DeleteAccount">Excluir conta</string>
+    <string name="ResetSettings">Redefinir configurações</string>
+    <!-- Chats -->
     <string name="StickerSize">Tamanho das figurinhas</string>
     <string name="StickerSizeLeft">Pequeno</string>
     <string name="StickerSizeRight">Grande</string>
@@ -108,40 +105,40 @@ CameraX só é suportada nos
     <string name="DoubleTapIncoming">Mensagens recebidas</string>
     <string name="DoubleTapOutgoing">Mensagens enviadas</string>
     <string name="DoubleTapInfo">Algumas ações requerem direitos de administrador no grupo ou canal.</string>
-    <string name="BottomButton">Bottom Button</string>
-    <string name="AdminShortcuts">Quick Admin Shortcuts</string>
+    <string name="BottomButton">Botão inferior</string>
+    <string name="AdminShortcuts">Atalhos rápidos do Admin</string>
     <string name="HideKeyboardOnScroll">Ocultar teclado ao rolar no chat</string>
     <string name="DisableJumpToNextChannel">Desativar \"Ir para o próximo canal\"</string>
     <string name="ShowActionTimestamps">Mostrar data e hora de ações</string>
     <string name="HideShareButton">Ocultar botão \"%1$s\"</string>
-    <string name="MessageMenu">Message Menu</string>
+    <string name="MessageMenu">Menu de mensagem</string>
     <string name="AddCommaAfterMention">Adicionar vírgula após a menção</string>
     <string name="AddCommaAfterMentionInfo">Uma vírgula será colocada automaticamente após tocar no usuário que você deseja mencionar.</string>
-    <string name="HidePhotoCounter">Hide Photo Counter</string>
-    <string name="HidePhotoCounterInfo">The annoying photo counter at the top of the screen will disappear from your view.</string>
+    <string name="HidePhotoCounter">Ocultar Contador de Fotos</string>
+    <string name="HidePhotoCounterInfo">O irritante contador de fotos na parte superior da tela desaparecerá da sua vista.</string>
     <string name="HideCameraTile">Ocultar Título de Câmera Instantânea</string>
     <string name="HideCameraTileInfo">Você ainda conseguirá abrir a câmera do sistema com um toque longo no botão de anexação no painel de mensagens.</string>
     <string name="StaticZoom">Zoom estático</string>
     <string name="StaticZoomInfo">Ao gravar mensagens de vídeo, o zoom não será redefinido se você soltar os dedos.</string>
-    <string name="VideoMessagesCamera">Camera in Video Messages</string>
-    <string name="VideoMessagesCameraRear">Rear</string>
-    <string name="VideoMessagesCameraFront">Front</string>
-    <string name="VideoMessagesCameraAsk">Ask</string>
-    <string name="RearCamera">Rear Camera</string>
-    <string name="FrontCamera">Front Camera</string>
-    <string name="DoubleTapSeekDuration">Double Tap Seek Duration</string>
+    <string name="VideoMessagesCamera">Câmera em Mensagens de Vídeo</string>
+    <string name="VideoMessagesCameraRear">Traseira</string>
+    <string name="VideoMessagesCameraFront">Frontal</string>
+    <string name="VideoMessagesCameraAsk">Perguntar</string>
+    <string name="RearCamera">Câmera traseira</string>
+    <string name="FrontCamera">Câmera frontal</string>
+    <string name="DoubleTapSeekDuration">Duração da Busca por Toque Duplo</string>
     <string name="RememberLastUsedCamera">Lembrar última câmera usada</string>
     <string name="RememberLastUsedCameraInfo">Ao capturar mensagens de vídeo, a última câmera usada será selecionada.</string>
     <string name="PauseOnMinimize">Pausa automática</string>
     <string name="PauseOnMinimizeInfo">Pausa uma reprodução de vídeo quando o dispositivo está bloqueado ou o exteraGram é minimizado.</string>
     <string name="DisablePlayback">Desativar a reprodução</string>
     <string name="DisablePlaybackInfo">Desativa a reprodução quando o botão de volume é pressionado.</string>
-    <!--  Boost  -->
-    <string name="Encryptors">Encryptors</string>
-    <string name="Encrypt">Encrypt</string>
-    <string name="Decrypt">Decrypt</string>
-    <string name="EncryptionKeyInfo">This key will be used to encrypt and decrypt messages in this chat room.</string>
-    <!--  Updates  -->
+    <!-- Boost -->
+    <string name="Encryptors">Encriptadores</string>
+    <string name="Encrypt">Criptografar</string>
+    <string name="Decrypt">Descriptografar</string>
+    <string name="EncryptionKeyInfo">Esta chave será usada para criptografar e descriptografar mensagens nesta sala de bate-papo.</string>
+    <!-- Updates -->
     <string name="LastCheck">Última verificação</string>
     <string name="CurrentVersion">Versão atual</string>
     <string name="BuildType">Tipo da versão</string>
@@ -158,41 +155,41 @@ CameraX só é suportada nos
     <string name="Version">Versão</string>
     <string name="UpdateSize">Tamanho da atualização</string>
     <string name="Changelog">Alterações:</string>
-    <!--  Message Details  -->
-    <string name="Details">Details</string>
-    <string name="Date">Date</string>
-    <string name="EditedDate">Edit Date</string>
-    <string name="ForwardedDate">Forwarding Date</string>
-    <string name="FileSize">File Size</string>
-    <string name="FileName">File Name</string>
-    <string name="FilePath">File Path</string>
-    <string name="Resolution">Resolution</string>
-    <string name="Bitrate">Bitrate</string>
-    <string name="MimeType">Mime Type</string>
+    <!-- Message Details -->
+    <string name="Details">Detalhes</string>
+    <string name="Date">Data</string>
+    <string name="EditedDate">Editar data</string>
+    <string name="ForwardedDate">Data de encaminhamento</string>
+    <string name="FileSize">Tamanho do arquivo</string>
+    <string name="FileName">Nome do arquivo</string>
+    <string name="FilePath">Caminho do arquivo</string>
+    <string name="Resolution">Resolução</string>
+    <string name="Bitrate">Taxa de Bits</string>
+    <string name="MimeType">Tipo de Mime</string>
     <string name="Datacenter">Datacenter</string>
-    <!--  Other  -->
+    <!-- Other -->
     <string name="RestartRequired">Reinicie a app para fazer efeito.</string>
-    <string name="ResetSettingsBulletin">**exteraGram** Preferences have been reset.</string>
-    <string name="UserNotFound">User with this **ID** not found.</string>
-    <string name="PhotoCopied">Photo copied to clipboard.</string>
+    <string name="ResetSettingsBulletin">As preferências **exteraGram** foram redefinidas.</string>
+    <string name="UserNotFound">Usuário com esse **ID** não encontrado.</string>
+    <string name="PhotoCopied">Foto copiada para área de transferência.</string>
     <string name="MutualContact">contato mútuo</string>
     <string name="ToBeginning">Para o início</string>
     <string name="MessageHistory">Histórico de mensagens</string>
     <string name="BoldItalic">Negrito Itálico</string>
     <string name="OpenPremiumBot">Abrir bot oficial</string>
-    <string name="CopyPhoto">Copy Photo</string>
-    <string name="CopySticker">Copy Sticker</string>
+    <string name="CopyPhoto">Copiar foto</string>
+    <string name="CopySticker">Copiar Sticker</string>
     <string name="SaveMessage">Salvar Mensagem</string>
     <string name="TrackSaved">Faixa salva em **%1$s**.</string>
-    <string name="ChannelToSaveChanged">Tracks will be saved to **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Faixas serão salvas em **%1$s**.</string>
     <string name="ConfirmCall">Confirmar ligação</string>
     <string name="CallTo">Ligar para **%1$s**?</string>
     <string name="AppIconGradient">Gradiente</string>
     <string name="AppIconAurora">Aurora</string>
     <string name="AppIconNeo">Neo</string>
-    <string name="AppIconAmethyst">Amethyst</string>
+    <string name="AppIconAmethyst">Ametista</string>
     <string name="AppIconSpace">Space</string>
-    <string name="AppIconOrbit">Orbit</string>
+    <string name="AppIconOrbit">Órbita</string>
     <string name="AppIconSus">Impostor</string>
     <string name="AppIconWinter">Winter</string>
 </resources>

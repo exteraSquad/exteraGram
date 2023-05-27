@@ -1,45 +1,46 @@
-    <!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
 
-     This is the source code of exteraGram for Android.
+ This is the source code of exteraGram for Android.
 
-     We do not and cannot prevent the use of our code,
-     but be respectful and credit the original author.
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
 
-     Copyright @immat0x1, 2023
+ Copyright @immat0x1, 2023
 
-     -->
+-->
 <resources>
     <string name="Preferences">exteraGram 设置</string>
-    <!--  Main Menu  -->
+    <!-- Main Menu -->
     <string name="Links">链接</string>
     <string name="AboutExteraDescription">基于官方Telegram源码制作的第三方客户端</string>
     <string name="Channel">通知频道</string>
     <string name="Crowdin">翻译</string>
     <string name="SourceCode">exteraGram 源码</string>
     <string name="Categories">设置分类</string>
-    <!--  Appearance  -->
+    <!-- Appearance -->
     <string name="AvatarCorners">头像圆角</string>
     <string name="AvatarCornersLeft">方正</string>
     <string name="AvatarCornersRight">圆角</string>
-    <string name="ListOfChats">Chat List</string>
+    <string name="ListOfChats">聊天列表</string>
     <string name="ActionBarTitle">标题文本</string>
     <string name="ActionBarTitleUsername">用户名</string>
     <string name="ActionBarTitleName">姓名</string>
     <string name="HideActionBarStatus">隐藏状态</string>
     <string name="CenterTitle">标题居中</string>
-    <string name="ListOfChatsInfo">The title text will be replaced by the folder name when icons are enabled.</string>
-    <string name="TabTitleStyle">Tab Title</string>
-    <string name="TabTitleStyleTextWithIcons">Names with Icons</string>
-    <string name="TabTitleStyleIconsOnly">Icons only</string>
-    <string name="TabTitleStyleTextOnly">Names only</string>
+    <string name="ListOfChatsInfo">当图标启用时，标题文本将被文件夹名称替代。</string>
+    <string name="TabTitleStyle">标题文本</string>
+    <string name="TabTitleStyleTextWithIcons">图标和标题</string>
+    <string name="TabTitleStyleIconsOnly">仅图标</string>
+    <string name="TabTitleStyleTextOnly">仅标题</string>
     <string name="TabStyle">Tab风格</string>
     <string name="TabStyleTextOnly">仅文本</string>
     <string name="TabStyleRounded">圆角</string>
     <string name="TabStyleChips">椭圆</string>
     <string name="TabStylePills">药丸</string>
-    <string name="TabCounter">Tab Counter</string>
+    <string name="TabCounter">选项卡计数</string>
     <string name="HideAllChats">隐藏 %1$s 选项卡</string>
-    <string name="FoldersInfo">Icons are synchronized with Telegram.</string>
+    <string name="FoldersInfo">图标与 Telegram 官方同步。</string>
     <string name="IconPack">图标</string>
     <string name="SolarIcons">使用“Solar”风格图标</string>
     <string name="ForceBlur">强制模糊</string>
@@ -54,21 +55,17 @@
     <string name="AlternativeNavigationInfo">一个实验性选项，包括屏幕切换过程中新的、更加舒适的过渡动画。\n\n通过此选项，聊天中的导航栏颜色将与消息面板相同。</string>
     <string name="DrawerOptions">侧栏选项</string>
     <string name="DrawerIconSet">图标集</string>
-    <string name="DrawerAlternativeOpeningAnimation">Alternative Opening Animation</string>
+    <string name="DrawerAlternativeOpeningAnimation">备选打开动画</string>
     <string name="DependsOnTheDate">根据日期</string>
     <string name="NewYear">新年</string>
     <string name="ValentinesDay">情人节</string>
     <string name="Halloween">万圣节</string>
     <string name="DrawerElements">侧栏元素</string>
-    <!--  General  -->
+    <!-- General -->
     <string name="CameraType">相机类型</string>
     <string name="CameraTypeSystem">系统</string>
     <string name="DefaultCameraInfo">使用Telegram的官方内置相机</string>
-    <string name="CameraXInfo">
-CameraX仅支持
-<![CDATA[ <a href="https://developer.android.com/training/camerax/devices">该列表</a> ]]>
-中的设备，拍摄质量与兼容性取决于硬件性能。
-</string>
+    <string name="CameraXInfo">CameraX仅支持<![CDATA[<a href="https://developer.android.com/training/camerax/devices">该列表</a>]]>中的设备，拍摄质量与兼容性取决于硬件性能。</string>
     <string name="SystemCameraInfo">直接使用系统相机(不适用于视频消息)</string>
     <string name="PerformanceMode">性能模式</string>
     <string name="PerformanceModeInfo">CameraX的拍摄质量会有所降低，以提高性能</string>
@@ -87,19 +84,19 @@ CameraX仅支持
     <string name="ArchiveOnPull">下拉打开已归档对话</string>
     <string name="DisableUnarchiveSwipe">禁用\"取消存档\"滑动动作</string>
     <string name="DisableUnarchiveSwipeInfo">向左滑动不会删除归档中的聊天。</string>
-    <!--  Other  -->
-    <string name="AnalyticsInfo">When these options are enabled, data about the device is collected and sent to Google Analytics and Crashlytics, allowing us to keep usage statistics and track errors in the app. \n\nHowever, if the options are switched off, the data collection stops and the sent data is instantly deleted.</string>
-    <string name="DeleteAccount">Delete Account</string>
-    <string name="ResetSettings">Reset Settings</string>
-    <!--  Chats  -->
+    <!-- Other -->
+    <string name="AnalyticsInfo">启用这些选项后，将收集设备的数据并发送到Google Analytics 以及 Crashlytics。 允许我们保留使用统计并跟踪应用中的错误。 \n\n然而，如果该选项被关闭，数据收集将会中止，发送的数据被立即删除。</string>
+    <string name="DeleteAccount">删除账户</string>
+    <string name="ResetSettings">重置设置</string>
+    <!-- Chats -->
     <string name="StickerSize">贴纸大小</string>
     <string name="StickerSizeLeft">更小</string>
     <string name="StickerSizeRight">更大</string>
     <string name="StickerSizeDialogMessageReplyTo">喵喵喵~</string>
     <string name="StickerSizeDialogMessage">哇，好可爱的猫猫!</string>
-    <string name="StickerShape">贴纸形状</string>
+    <string name="StickerShape">消息样式</string>
     <string name="StickerShapeRounded">圆角</string>
-    <string name="StickerShapeRoundedMsg">留言</string>
+    <string name="StickerShapeRoundedMsg">椭圆形</string>
     <string name="StickerTime">隐藏贴纸发送时间</string>
     <string name="UnlimitedRecentStickers">无限的最近贴纸</string>
     <string name="HideCategories">隐藏类别</string>
@@ -108,44 +105,44 @@ CameraX仅支持
     <string name="DoubleTapIncoming">收到的消息</string>
     <string name="DoubleTapOutgoing">发送的消息</string>
     <string name="DoubleTapInfo">某些操作需要在聊天或频道中拥有管理员权限。</string>
-    <string name="BottomButton">Bottom Button</string>
-    <string name="AdminShortcuts">Quick Admin Shortcuts</string>
+    <string name="BottomButton">底部按钮</string>
+    <string name="AdminShortcuts">快捷管理方式</string>
     <string name="HideKeyboardOnScroll">在浏览对话时隐藏键盘</string>
     <string name="DisableJumpToNextChannel">禁用“跳转至下一个频道”</string>
     <string name="ShowActionTimestamps">显示操作的时间戳</string>
     <string name="HideShareButton">隐藏消息右侧的“%1$s”按钮</string>
-    <string name="MessageMenu">Message Menu</string>
+    <string name="MessageMenu">消息菜单</string>
     <string name="AddCommaAfterMention">选定@ 后自动添加逗号后缀</string>
     <string name="AddCommaAfterMentionInfo">点击您想要提及的用户后，将自动放置一个逗号。</string>
-    <string name="HidePhotoCounter">Hide Photo Counter</string>
-    <string name="HidePhotoCounterInfo">The annoying photo counter at the top of the screen will disappear from your view.</string>
+    <string name="HidePhotoCounter">隐藏图片计数器</string>
+    <string name="HidePhotoCounterInfo">屏幕上方烦人的照片计数器将从你的视野中消失。</string>
     <string name="HideCameraTile">隐藏即时相机</string>
     <string name="HideCameraTileInfo">您仍然可以通过长按消息面板中的相机按钮来打开系统相机。</string>
     <string name="StaticZoom">静态缩放</string>
     <string name="StaticZoomInfo">当录制视频消息时，如果您放开手指，缩放将不会重置。</string>
-    <string name="VideoMessagesCamera">Camera in Video Messages</string>
-    <string name="VideoMessagesCameraRear">Rear</string>
-    <string name="VideoMessagesCameraFront">Front</string>
-    <string name="VideoMessagesCameraAsk">Ask</string>
-    <string name="RearCamera">Rear Camera</string>
-    <string name="FrontCamera">Front Camera</string>
-    <string name="DoubleTapSeekDuration">Double Tap Seek Duration</string>
+    <string name="VideoMessagesCamera">视频消息中的相机方向</string>
+    <string name="VideoMessagesCameraRear">后置</string>
+    <string name="VideoMessagesCameraFront">前置</string>
+    <string name="VideoMessagesCameraAsk">询问</string>
+    <string name="RearCamera">后置摄像头</string>
+    <string name="FrontCamera">前置摄像头</string>
+    <string name="DoubleTapSeekDuration">双击快进时间长度</string>
     <string name="RememberLastUsedCamera">保留上次相机状态</string>
     <string name="RememberLastUsedCameraInfo">录制视频留言时，使用上次的摄像头设置</string>
     <string name="PauseOnMinimize">自动暂停视频播放</string>
     <string name="PauseOnMinimizeInfo">当锁屏/切换到后台时暂停视频播放</string>
     <string name="DisablePlayback">禁用快捷播放</string>
     <string name="DisablePlaybackInfo">按动音量键时，禁止音频外放</string>
-    <!--  Boost  -->
-    <string name="Encryptors">Encryptors</string>
-    <string name="Encrypt">Encrypt</string>
-    <string name="Decrypt">Decrypt</string>
-    <string name="EncryptionKeyInfo">This key will be used to encrypt and decrypt messages in this chat room.</string>
-    <!--  Updates  -->
+    <!-- Boost -->
+    <string name="Encryptors">加密器</string>
+    <string name="Encrypt">加密</string>
+    <string name="Decrypt">解密</string>
+    <string name="EncryptionKeyInfo">该密钥将用于在此聊天室中加密和解密消息。</string>
+    <!-- Updates -->
     <string name="LastCheck">最后检查</string>
     <string name="CurrentVersion">当前版本</string>
     <string name="BuildType">构建类型</string>
-    <string name="BTRelease">发布</string>
+    <string name="BTRelease">正式版</string>
     <string name="BTBeta">β</string>
     <string name="CheckOnLaunch">启动时检测</string>
     <string name="ClearUpdatesCache">清除更新缓存</string>
@@ -158,41 +155,41 @@ CameraX仅支持
     <string name="Version">版本</string>
     <string name="UpdateSize">更新大小</string>
     <string name="Changelog">更新日志</string>
-    <!--  Message Details  -->
-    <string name="Details">Details</string>
-    <string name="Date">Date</string>
-    <string name="EditedDate">Edit Date</string>
-    <string name="ForwardedDate">Forwarding Date</string>
-    <string name="FileSize">File Size</string>
-    <string name="FileName">File Name</string>
-    <string name="FilePath">File Path</string>
-    <string name="Resolution">Resolution</string>
-    <string name="Bitrate">Bitrate</string>
-    <string name="MimeType">Mime Type</string>
-    <string name="Datacenter">Datacenter</string>
-    <!--  Other  -->
+    <!-- Message Details -->
+    <string name="Details">详情</string>
+    <string name="Date">日期</string>
+    <string name="EditedDate">编辑日期</string>
+    <string name="ForwardedDate">转发日期</string>
+    <string name="FileSize">文件体积</string>
+    <string name="FileName">文件名</string>
+    <string name="FilePath">文件路径</string>
+    <string name="Resolution">清晰度</string>
+    <string name="Bitrate">码率</string>
+    <string name="MimeType">文件类型</string>
+    <string name="Datacenter">数据中心</string>
+    <!-- Other -->
     <string name="RestartRequired">重启应用以保证设置生效.</string>
-    <string name="ResetSettingsBulletin">**exteraGram** Preferences have been reset.</string>
-    <string name="UserNotFound">User with this **ID** not found.</string>
-    <string name="PhotoCopied">Photo copied to clipboard.</string>
+    <string name="ResetSettingsBulletin">**exteraGram** 设置已被重置。</string>
+    <string name="UserNotFound">未找到 **ID** 的用户。</string>
+    <string name="PhotoCopied">图片已复制到剪贴板</string>
     <string name="MutualContact">双向联系人</string>
     <string name="ToBeginning">首条消息</string>
     <string name="MessageHistory">消息历史</string>
     <string name="BoldItalic">粗体斜体</string>
     <string name="OpenPremiumBot">打开官方Premium Bot</string>
-    <string name="CopyPhoto">Copy Photo</string>
-    <string name="CopySticker">Copy Sticker</string>
+    <string name="CopyPhoto">复制图片</string>
+    <string name="CopySticker">复制贴纸</string>
     <string name="SaveMessage">我的收藏</string>
     <string name="TrackSaved">ID超链接已保存</string>
-    <string name="ChannelToSaveChanged">Tracks will be saved to **%1$s**.</string>
+    <string name="ChannelToSaveChanged">曲目将被保存到 **%1$s**。</string>
     <string name="ConfirmCall">呼叫前确认</string>
     <string name="CallTo">是否呼叫**%1$s**？</string>
     <string name="AppIconGradient">渐变</string>
-    <string name="AppIconAurora">Aurora</string>
-    <string name="AppIconNeo">Neo</string>
-    <string name="AppIconAmethyst">Amethyst</string>
+    <string name="AppIconAurora">极光</string>
+    <string name="AppIconNeo">新式</string>
+    <string name="AppIconAmethyst">紫水晶</string>
     <string name="AppIconSpace">太空</string>
-    <string name="AppIconOrbit">Orbit</string>
-    <string name="AppIconSus">Impostor</string>
+    <string name="AppIconOrbit">星轨</string>
+    <string name="AppIconSus">内鬼</string>
     <string name="AppIconWinter">冬日</string>
 </resources>
