@@ -33,7 +33,6 @@
     <string name="TabStylePills">Pigułki</string>
     <string name="ActionBarTitleUsername">Nazwa użytkownika</string>
     <string name="ActionBarTitleName">Imię</string>
-    <string name="MainScreenSetupInfo">Większość funkcji wymaga ponownego uruchomienia klienta w celu poprawnego działania.</string>
     <string name="IconPack">Ikony</string>
     <string name="SolarIcons">Używaj ikon „Solar”</string>
     <string name="ForceBlur">Wymuś rozmycie</string>

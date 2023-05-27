@@ -33,7 +33,6 @@
     <string name="TabStylePills">Pillenförmig</string>
     <string name="ActionBarTitleUsername">Nutzername</string>
     <string name="ActionBarTitleName">Vorname</string>
-    <string name="MainScreenSetupInfo">Die meisten Funktionen erfordern einen Neustart der Anwendung, um korrekt zu funktionieren.</string>
     <string name="IconPack">Symbole</string>
     <string name="SolarIcons">\"Solar\"-Symbole verwenden</string>
     <string name="ForceBlur">Unschärfe erzwingen</string>

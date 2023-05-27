@@ -81,7 +81,9 @@ public class SolarIconsPreview extends FrameLayout {
 
                 for (int i = 0; i < iconsRes.length; i++) {
                     icons[i] = ContextCompat.getDrawable(context, iconsRes[i]);
-                    icons[i].setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(0x00, Theme.getColor(Theme.key_chats_menuItemIcon), iconChangingProgress[i]), PorterDuff.Mode.MULTIPLY));
+                    if (icons[i] != null) {
+                        icons[i].setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(0x00, Theme.getColor(Theme.key_chats_menuItemIcon), iconChangingProgress[i]), PorterDuff.Mode.MULTIPLY));
+                    }
                 }
 
                 outlinePaint.setStyle(Paint.Style.STROKE);

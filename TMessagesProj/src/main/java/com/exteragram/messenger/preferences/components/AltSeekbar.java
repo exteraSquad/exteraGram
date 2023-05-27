@@ -44,19 +44,18 @@ public class AltSeekbar extends FrameLayout {
 
     private final int min, max;
     private float currentValue;
+    private int roundedValue;
     private int vibro = -1;
-    private final boolean round;
 
     public interface OnDrag {
         void run(float progress);
     }
 
-    public AltSeekbar(Context context, OnDrag onDrag, boolean round, int min, int max, String title, String left, String right) {
+    public AltSeekbar(Context context, OnDrag onDrag, int min, int max, String title, String left, String right) {
         super(context);
 
         this.max = max;
         this.min = min;
-        this.round = round;
 
         LinearLayout headerLayout = new LinearLayout(context);
         headerLayout.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
@@ -80,7 +79,7 @@ public class AltSeekbar extends FrameLayout {
                 super.onDraw(canvas);
             }
         };
-        headerValue.setAnimationProperties(1f, 0, 75, CubicBezierInterpolator.EASE_OUT_QUINT);
+        headerValue.setAnimationProperties(.45f, 0, 240, CubicBezierInterpolator.EASE_OUT_QUINT);
         headerValue.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         headerValue.setPadding(AndroidUtilities.dp(5.33f), AndroidUtilities.dp(2), AndroidUtilities.dp(5.33f), AndroidUtilities.dp(2));
         headerValue.setTextSize(AndroidUtilities.dp(12));
@@ -94,9 +93,11 @@ public class AltSeekbar extends FrameLayout {
         seekBarView.setDelegate(new SeekBarView.SeekBarViewDelegate() {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
-                currentValue = round ? Math.round((min + (max - min) * progress)) : (min + (max - min) * progress);
-                onDrag.run(currentValue);
-                setProgress(progress);
+                float newValue = (min + (max - min) * progress);
+                onDrag.run(newValue);
+                if (Math.round(newValue) != roundedValue) {
+                    setProgress(progress);
+                }
             }
 
             @Override
@@ -148,16 +149,30 @@ public class AltSeekbar extends FrameLayout {
     }
 
     public void setProgress(float progress) {
-        currentValue = round ? Math.round(min + (max - min) * progress) : (min + (max - min) * progress);
+        currentValue = (min + (max - min) * progress);
+        roundedValue = Math.round(currentValue);
         seekBarView.setProgress(progress);
-        headerValue.setText(String.valueOf((int) currentValue), true);
-        if ((currentValue == min || currentValue == max) && currentValue != vibro) {
+        headerValue.cancelAnimation();
+        headerValue.setText(getTextForHeader(), true);
+        if ((roundedValue == min || roundedValue == max) && roundedValue != vibro) {
             vibro = (int) currentValue;
             performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-        } else if (currentValue > min && currentValue < max) {
+        } else if (roundedValue > min && roundedValue < max) {
             vibro = -1;
         }
         updateValues();
+    }
+
+    public CharSequence getTextForHeader() {
+        CharSequence text;
+        if (roundedValue == min) {
+            text = leftTextView.getText();
+        } else if (roundedValue == max) {
+            text = rightTextView.getText();
+        } else {
+            text = String.valueOf(roundedValue);
+        }
+        return text.toString().toUpperCase();
     }
 
     @Override

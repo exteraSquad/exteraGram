@@ -26,23 +26,27 @@
     <string name="AvatarCorners">Закругление аватарок</string>
     <string name="AvatarCornersLeft">Квадрат</string>
     <string name="AvatarCornersRight">Круг</string>
-    <string name="HideActionBarStatus">Скрыть статус</string>
-    <string name="HideAllChats">Скрыть папку \"%1$s\"</string>
-    <string name="TabCounter">Счётчик уведомлений</string>
-    <string name="CenterTitle">Заголовок по центру</string>
+
+    <string name="ListOfChats">Список чатов</string>
     <string name="ActionBarTitle">Текст заголовка</string>
+    <string name="ActionBarTitleUsername">Имя</string>
+    <string name="ActionBarTitleName">Короткая ссылка</string>
+    <string name="HideActionBarStatus">Скрыть статус</string>
+    <string name="CenterTitle">Заголовок по центру</string>
+    <string name="ListOfChatsInfo">Текст заголовка будет заменен именем папки при включенных иконках.</string>
+
     <string name="TabTitleStyle">Заголовки папок</string>
-    <string name="TabTitleStyleTextWithIcons">Название и иконки</string>
+    <string name="TabTitleStyleTextWithIcons">Названия и иконки</string>
     <string name="TabTitleStyleIconsOnly">Только иконки</string>
-    <string name="TabTitleStyleTextOnly">Только название</string>
+    <string name="TabTitleStyleTextOnly">Только названия</string>
     <string name="TabStyle">Стиль папок</string>
     <string name="TabStyleTextOnly">Текст</string>
     <string name="TabStyleRounded">Закруглённый</string>
     <string name="TabStyleChips">Чипсы</string>
     <string name="TabStylePills">Таблетки</string>
-    <string name="ActionBarTitleUsername">Короткая ссылка</string>
-    <string name="ActionBarTitleName">Имя</string>
-    <string name="MainScreenSetupInfo">Большинству функций требуется перезапуск клиента для корректной работы.</string>
+    <string name="TabCounter">Счётчик уведомлений</string>
+    <string name="HideAllChats">Скрыть папку \"%1$s\"</string>
+    <string name="FoldersInfo">Иконки синхронизируются с Telegram.</string>
 
     <string name="IconPack">Иконки</string>
     <string name="SolarIcons">Использовать набор \"Solar\"</string>

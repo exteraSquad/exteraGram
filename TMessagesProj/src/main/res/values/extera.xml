@@ -27,23 +27,27 @@
     <string name="AvatarCorners">Avatar Corners</string>
     <string name="AvatarCornersLeft">Square</string>
     <string name="AvatarCornersRight">Circle</string>
-    <string name="HideActionBarStatus">Hide Status</string>
-    <string name="HideAllChats">Hide \"%1$s\" Tab</string>
-    <string name="TabCounter">Tab Counter</string>
-    <string name="CenterTitle">Center Title</string>
+
+    <string name="ListOfChats">Chat List</string>
     <string name="ActionBarTitle">Title Text</string>
-    <string name="TabTitleStyle">Tab Title</string>
+    <string name="ActionBarTitleUsername">Username</string>
+    <string name="ActionBarTitleName">First Name</string>
+    <string name="HideActionBarStatus">Hide Status</string>
+    <string name="CenterTitle">Center Title</string>
+    <string name="ListOfChatsInfo">The title text will be replaced by the folder name when icons are enabled.</string>
+
+    <string name="TabTitleStyle">Folder Title</string>
     <string name="TabTitleStyleTextWithIcons">Names with Icons</string>
     <string name="TabTitleStyleIconsOnly">Icons only</string>
     <string name="TabTitleStyleTextOnly">Names only</string>
-    <string name="TabStyle">Tab Style</string>
+    <string name="TabStyle">Folder Style</string>
     <string name="TabStyleTextOnly">Text</string>
     <string name="TabStyleRounded">Rounded</string>
     <string name="TabStyleChips">Chips</string>
     <string name="TabStylePills">Pills</string>
-    <string name="ActionBarTitleUsername">Username</string>
-    <string name="ActionBarTitleName">First Name</string>
-    <string name="MainScreenSetupInfo">Most features require a client restart to work correctly.</string>
+    <string name="TabCounter">Notification Counter</string>
+    <string name="HideAllChats">Hide \"%1$s\" Tab</string>
+    <string name="FoldersInfo">Icons are synchronized with Telegram.</string>
 
     <string name="IconPack">Icons</string>
     <string name="SolarIcons">Use \"Solar\" Icons</string>
@@ -95,7 +99,7 @@
     <string name="ShowIdAndDc">Show ID and DC</string>
     <string name="ShowIdAndDcInfo">Telegram APl shows IDs as they are, while the Bot API adds a minus sign for groups and -100 for supergroups, broadcast groups and channels.</string>
 
-    <string name="ArchiveOnPull">Open Archive on Pulldown</string>
+    <string name="ArchiveOnPull">Open Archive on Pull-down</string>
     <string name="DisableUnarchiveSwipe">Disable \"Unarchive\" swipe</string>
     <string name="DisableUnarchiveSwipeInfo">Swiping to the left will not remove chats from the archive.</string>
 
@@ -148,7 +152,7 @@
     <string name="VideoMessagesCameraAsk">Ask</string>
     <string name="RearCamera">Rear Camera</string>
     <string name="FrontCamera">Front Camera</string>
-    <string name="DoubleTapSeekDuration">Double Tap Seek Duration</string>
+    <string name="DoubleTapSeekDuration">Double Tap Skip Time</string>
     <string name="RememberLastUsedCamera">Remember last used Camera</string>
     <string name="RememberLastUsedCameraInfo">When recording video messages, the last used camera will be selected.</string>
     <string name="PauseOnMinimize">Auto-Pause</string>
@@ -186,7 +190,7 @@
     <string name="Details">Details</string>
     <string name="Date">Date</string>
     <string name="EditedDate">Edit Date</string>
-    <string name="ForwardedDate">Forwarding Date</string>
+    <string name="ForwardedDate">Forward Date</string>
     <string name="FileSize">File Size</string>
     <string name="FileName">File Name</string>
     <string name="FilePath">File Path</string>

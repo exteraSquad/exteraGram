@@ -33,7 +33,6 @@
     <string name="TabStylePills">药丸</string>
     <string name="ActionBarTitleUsername">用户名</string>
     <string name="ActionBarTitleName">姓名</string>
-    <string name="MainScreenSetupInfo">大多数特性需要客户端重新启动才能正常生效。</string>
     <string name="IconPack">图标</string>
     <string name="SolarIcons">使用“Solar”风格图标</string>
     <string name="ForceBlur">强制模糊</string>
