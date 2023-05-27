@@ -400,6 +400,23 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
     private int lastQueryId;
     private String[] lastLang;
     private Runnable searchRunnable;
+    private long lastLangChangedTime = 0;
+
+    /**
+     * The user needs time to change the locale. We estimate this time to be at least 360 ms.
+     */
+    private String[] detectKeyboardLangThrottleFirstWithDelay() {
+        long currentTime = System.currentTimeMillis();
+        int delay = 360;
+        if (lastLang == null || Math.abs(currentTime - lastLangChangedTime) > delay) {
+            lastLangChangedTime = currentTime;
+            return AndroidUtilities.getCurrentKeyboardLanguage();
+        } else {
+            lastLangChangedTime = currentTime;
+        }
+        return lastLang;
+    }
+
     private void searchKeywords(String query) {
         if (query == null) {
             return;
@@ -414,7 +431,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         }
         final int id = ++lastQueryId;
 
-        String[] lang = AndroidUtilities.getCurrentKeyboardLanguage();
+        String[] lang = detectKeyboardLangThrottleFirstWithDelay();
         if (lastLang == null || !Arrays.equals(lang, lastLang)) {
             MediaDataController.getInstance(currentAccount).fetchNewEmojiKeywords(lang);
         }
@@ -447,6 +464,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                             adapter.notifyDataSetChanged();
                         }
                     } else {
+                        keywordResults = null;
                         clear = true;
                         forceClose();
                     }

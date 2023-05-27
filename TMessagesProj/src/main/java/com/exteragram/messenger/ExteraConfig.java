@@ -350,11 +350,11 @@ public class ExteraConfig {
         switch (sendPhotosQuality) {
             case 0:
                 return 800;
-            case 2:
-                return 2560;
             case 1:
             default:
                 return 1280;
+            case 2:
+                return 2560;
         }
     }
 
