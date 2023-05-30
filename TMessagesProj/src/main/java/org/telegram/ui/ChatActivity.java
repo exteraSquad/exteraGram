@@ -1318,6 +1318,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int members = 102;
     private final static int recent_actions = 103;
     private final static int encryption_key = 104;
+    private final static int show_pinned = 105;
 
     private final static int id_chat_compose_panel = 1000;
 
@@ -3052,6 +3053,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                 } else if (id == to_beginning) {
                     scrollToMessageId(1, 0, false, 0, true, 0);
+                } else if (id == show_pinned) {
+                    setPinVisibility(true);
                 } else if (id == recent_actions) {
                     presentFragment(new ChannelAdminLogActivity(currentChat));
                 } else if (id == permissions) {
@@ -3472,6 +3475,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 headerItem.lazilyAddSubItem(report, R.drawable.msg_report, LocaleController.getString("ReportChat", R.string.ReportChat));
             }
             headerItem.lazilyAddSubItem(to_beginning, R.drawable.msg_to_beginning, LocaleController.getString("ToBeginning", R.string.ToBeginning));
+            if (currentChat != null && (ChatObject.canUserDoAction(currentChat, ChatObject.ACTION_PIN) || ChatObject.isChannel(currentChat)) || currentEncryptedChat == null && currentUser != null) {
+                headerItem.lazilyAddSubItem(show_pinned, R.drawable.msg_pin, LocaleController.getString("PinnedMessage", R.string.PinnedMessage));
+            }
             if (currentUser != null) {
                 addContactItem = headerItem.lazilyAddSubItem(share_contact, R.drawable.msg_addcontact, "");
             }
@@ -8568,9 +8574,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         pinnedListButton.setAlpha(0.0f);
         pinnedListButton.setScaleX(0.4f);
         pinnedListButton.setScaleY(0.4f);
-        if (Build.VERSION.SDK_INT >= 21) {
-            pinnedListButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_inappPlayerClose) & 0x19ffffff));
-        }
+        pinnedListButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_inappPlayerClose) & 0x19ffffff));
+        pinnedListButton.setOnLongClickListener(v -> {
+            setPinVisibility(false);
+            return true;
+        });
         pinnedMessageView.addView(pinnedListButton, LayoutHelper.createFrame(36, 48, Gravity.RIGHT | Gravity.TOP, 0, 0, 7, 0));
         pinnedListButton.setOnClickListener(v -> openPinnedMessagesList(false));
 
@@ -8588,26 +8596,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         pinnedProgress.setProgressColor(getThemedColor(Theme.key_chat_topPanelLine));
         pinnedMessageView.addView(pinnedProgress, LayoutHelper.createFrame(36, 48, Gravity.RIGHT | Gravity.TOP, 0, 0, 2, 0));
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            closePinned.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_inappPlayerClose) & 0x19ffffff, 1, AndroidUtilities.dp(14)));
-        }
+        closePinned.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_inappPlayerClose) & 0x19ffffff, 1, AndroidUtilities.dp(14)));
         pinnedMessageView.addView(closePinned, LayoutHelper.createFrame(36, 48, Gravity.RIGHT | Gravity.TOP, 0, 0, 2, 0));
         closePinned.setOnClickListener(v -> {
             if (getParentActivity() == null) {
                 return;
             }
-            boolean allowPin;
-            if (currentChat != null) {
-                allowPin = ChatObject.canPinMessages(currentChat);
-            } else if (currentEncryptedChat == null) {
-                if (userInfo != null) {
-                    allowPin = userInfo.can_pin_message;
-                } else {
-                    allowPin = false;
-                }
-            } else {
-                allowPin = false;
-            }
+            boolean allowPin = currentChat != null ? ChatObject.canPinMessages(currentChat) : currentEncryptedChat == null && userInfo != null && userInfo.can_pin_message;
             if (allowPin) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), themeDelegate);
                 builder.setTitle(LocaleController.getString("UnpinMessageAlertTitle", R.string.UnpinMessageAlertTitle));
@@ -8623,11 +8618,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 showDialog(builder.create());
             } else if (!pinnedMessageIds.isEmpty()) {
                 SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
-                preferences.edit().putInt("pin_" + dialog_id, pinnedMessageIds.get(0)).commit();
+                preferences.edit().putInt("pin_" + dialog_id, pinnedMessageIds.get(0)).apply();
                 updatePinnedMessageView(true);
             }
         });
-
+        closePinned.setOnLongClickListener(v -> {
+            setPinVisibility(false);
+            return true;
+        });
         updatePinnedListButton(false);
     }
 
@@ -21375,10 +21373,20 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
         TLRPC.KeyboardButton botButton = pinnedButton(pinnedMessageObject);
         pinnedMessageButtonShown = botButton != null;
-        SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
-        if (threadMessageObject == null && (chatInfo == null && userInfo == null || pinned_msg_id == 0 || !pinnedMessageIds.isEmpty() && pinnedMessageIds.get(0) == preferences.getInt("pin_" + dialog_id, 0)) || reportType >= 0 || actionBar != null && (actionBar.isActionModeShowed() || actionBar.isSearchFieldVisible())) {
+        if (threadMessageObject == null && (chatInfo == null && userInfo == null || pinned_msg_id == 0) || reportType >= 0 || actionBar != null && (actionBar.isActionModeShowed() || actionBar.isSearchFieldVisible())) {
             changed = hidePinnedMessageView(animated);
+            if (headerItem != null) {
+                headerItem.hideSubItem(show_pinned);
+            }
+        } else if (isPinHidden()) {
+            changed = hidePinnedMessageView(animated);
+            if (headerItem != null) {
+                headerItem.showSubItem(show_pinned);
+            }
         } else {
+            if (headerItem != null) {
+                headerItem.hideSubItem(show_pinned);
+            }
             if (pinnedMessageView == null) {
                 createPinnedMessageView();
             } else {
@@ -21466,21 +21474,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         chatActivityEnterView.didPressedBotButton(botButton, buttonMessage, buttonMessage);
                     });
                     buttonTextView.setOnLongClickListener(e -> {
-                        if (getParentActivity() == null || bottomOverlayChat.getVisibility() == View.VISIBLE &&
-                                !(botButton instanceof TLRPC.TL_keyboardButtonSwitchInline) && !(botButton instanceof TLRPC.TL_keyboardButtonCallback) &&
-                                !(botButton instanceof TLRPC.TL_keyboardButtonGame) && !(botButton instanceof TLRPC.TL_keyboardButtonUrl) &&
-                                !(botButton instanceof TLRPC.TL_keyboardButtonBuy) && !(botButton instanceof TLRPC.TL_keyboardButtonUrlAuth) &&
-                                !(botButton instanceof TLRPC.TL_keyboardButtonUserProfile)) {
-                            return false;
-                        }
-                        if (botButton instanceof TLRPC.TL_keyboardButtonUrl) {
-                            openClickableLink(null, botButton.url, true, null, buttonMessage);
-                            try {
-                                buttonTextView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-                            } catch (Exception ignore) {}
-                            return true;
-                        }
-                        return false;
+                        //chatMessageCellDelegate.didLongPressBotButton(null, botButton);
+                        setPinVisibility(false);
+                        return true;
                     });
                 }
                 buttonTextView.measure(View.MeasureSpec.makeMeasureSpec(999999, View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(28), View.MeasureSpec.EXACTLY));
@@ -32242,7 +32238,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         int lastBottom;
     }
 
-    // bottom button utils
     private boolean isBottomOverlaysInvisible() {
         if (bottomMessagesActionContainer == null)
             createBottomMessagesActionButtons();
@@ -32287,5 +32282,20 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
         presentFragment(new ChatActivity(args));
     }
-    //
+
+    public boolean isPinHidden() {
+        return !pinnedMessageIds.isEmpty() && pinnedMessageIds.get(0) == MessagesController.getNotificationsSettings(currentAccount).getInt("pin_" + dialog_id, 0);
+    }
+
+    public void setPinVisibility(boolean visible) {
+        if (!pinnedMessageIds.isEmpty()) {
+            SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
+            if (!visible) {
+                preferences.edit().putInt("pin_" + dialog_id, pinnedMessageIds.get(0)).apply();
+            } else {
+                preferences.edit().remove("pin_" + dialog_id).apply();
+            }
+            updatePinnedMessageView(true);
+        }
+    }
 }
