@@ -108,7 +108,9 @@ public class MessageDetailsPopupWrapper {
                 }
                 if (attribute instanceof TLRPC.TL_documentAttributeSticker) {
                     stickerSetId = attribute.stickerset.id;
-                    items.add(new Item(SET_OWNER, R.drawable.msg_sticker, LocaleController.getString(R.string.ChannelCreator), LocaleController.getString("Loading", R.string.Loading)));
+                    if (stickerSetId > 0) {
+                        items.add(new Item(SET_OWNER, R.drawable.msg_sticker, LocaleController.getString(R.string.ChannelCreator), LocaleController.getString("Loading", R.string.Loading)));
+                    }
                 }
             }
         }

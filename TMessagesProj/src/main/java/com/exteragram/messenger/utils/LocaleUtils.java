@@ -20,6 +20,7 @@ import android.view.View;
 
 import com.exteragram.messenger.ExteraConfig;
 
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -33,15 +34,17 @@ public class LocaleUtils {
     public static String getActionBarTitle() {
         String title;
         int actionBarTitle = ExteraConfig.titleText;
-        if (actionBarTitle == 0) {
-            title = LocaleController.getString("exteraAppName", R.string.exteraAppName);
-        } else {
-            TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
-            if (actionBarTitle == 1 && !TextUtils.isEmpty(UserObject.getPublicUsername(user))) {
-                title = UserObject.getPublicUsername(user);
-            } else {
-                title = UserObject.getFirstName(user);
-            }
+        switch (actionBarTitle) {
+            case 0:
+                title = LocaleController.getString("exteraAppName", R.string.exteraAppName);
+                break;
+            case 3:
+                title = LocaleController.getString(R.string.FilterChats);
+                break;
+            default:
+                TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
+                title = actionBarTitle == 1 && !TextUtils.isEmpty(UserObject.getPublicUsername(user)) ? UserObject.getPublicUsername(user) : UserObject.getFirstName(user);
+                break;
         }
         return title;
     }
@@ -109,5 +112,13 @@ public class LocaleUtils {
             }
         }
         return new String(chars);
+    }
+
+    public static String getAppName() {
+        try {
+            return ApplicationLoader.applicationContext.getString(R.string.exteraAppName);
+        } catch (Exception e) {
+            return "exteraGram";
+        }
     }
 }

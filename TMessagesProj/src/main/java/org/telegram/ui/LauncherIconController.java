@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 
 import com.exteragram.messenger.utils.AppUtils;
-import com.exteragram.messenger.utils.ChatUtils;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
@@ -16,7 +15,7 @@ public class LauncherIconController {
     public static void tryFixLauncherIconIfNeeded() {
         for (LauncherIcon icon : LauncherIcon.values()) {
             if (isEnabled(icon)) {
-                if (icon == LauncherIcon.MONET && !icon.hidden) {
+                if (icon == LauncherIcon.MONET) {
                     setIcon(LauncherIcon.DEFAULT);
                     setIcon(LauncherIcon.MONET);
                 }

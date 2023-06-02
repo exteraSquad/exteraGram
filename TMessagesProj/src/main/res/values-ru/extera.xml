@@ -33,7 +33,7 @@
     <string name="ActionBarTitleName">Имя</string>
     <string name="HideActionBarStatus">Скрыть статус</string>
     <string name="CenterTitle">Заголовок по центру</string>
-    <string name="ListOfChatsInfo">Текст заголовка будет заменен именем папки при включенных иконках.</string>
+    <string name="ListOfChatsInfo">Текст заголовка будет меняться в зависимости от имени папки, когда включены только иконки.</string>
 
     <string name="TabTitleStyle">Заголовки папок</string>
     <string name="TabTitleStyleTextWithIcons">Названия и иконки</string>

@@ -34,7 +34,7 @@
     <string name="ActionBarTitleName">First Name</string>
     <string name="HideActionBarStatus">Hide Status</string>
     <string name="CenterTitle">Center Title</string>
-    <string name="ListOfChatsInfo">The title text will be replaced by the folder name when icons are enabled.</string>
+    <string name="ListOfChatsInfo">The title text will change depending on the folder name when only icons are enabled.</string>
 
     <string name="TabTitleStyle">Folder Title</string>
     <string name="TabTitleStyleTextWithIcons">Names with Icons</string>

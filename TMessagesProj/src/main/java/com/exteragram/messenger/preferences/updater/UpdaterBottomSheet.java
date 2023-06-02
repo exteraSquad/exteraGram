@@ -24,7 +24,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.utils.AppUtils;
+import com.exteragram.messenger.utils.LocaleUtils;
 import com.exteragram.messenger.utils.UpdaterUtils;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -47,8 +47,7 @@ public class UpdaterBottomSheet extends BottomSheet {
 
     private RLottieImageView imageView;
 
-    public UpdaterBottomSheet(Context context, BaseFragment fragment, boolean available, String... args) {
-        // args = {version, changelog, size, downloadUrl, uploadDate}
+    public UpdaterBottomSheet(Context context, BaseFragment fragment, boolean available, UpdaterUtils.Update update) {
         super(context, false);
         setOpenNoDelay(true);
         fixNavigationBar();
@@ -77,7 +76,7 @@ public class UpdaterBottomSheet extends BottomSheet {
         nameView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
         nameView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         nameView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        nameView.setText(available ? LocaleController.getString("UpdateAvailable", R.string.UpdateAvailable) : AppUtils.getAppName());
+        nameView.setText(available ? LocaleController.getString("UpdateAvailable", R.string.UpdateAvailable) : LocaleUtils.getAppName());
         header.addView(nameView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 30, Gravity.LEFT, available ? 75 : 0, 5, 0, 0));
 
         AnimatedTextView timeView = new AnimatedTextView(context, true, true, false);
@@ -88,13 +87,13 @@ public class UpdaterBottomSheet extends BottomSheet {
         timeView.setTextSize(AndroidUtilities.dp(13));
         timeView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
         timeView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        timeView.setText(available ? args[4] : LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
+        timeView.setText(available ? update.uploadDate : LocaleController.getString("LastCheck", R.string.LastCheck) + ": " + LocaleController.formatDateTime(ExteraConfig.lastUpdateCheckTime / 1000));
         header.addView(timeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, Gravity.LEFT, available ? 75 : 0, 35, 0, 0));
 
         TextCell version = new TextCell(context);
         version.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
         if (available) {
-            version.setTextAndValueAndIcon(LocaleController.getString("Version", R.string.Version), args[0].replaceAll("v|-beta", ""), R.drawable.msg_info, true);
+            version.setTextAndValueAndIcon(LocaleController.getString("Version", R.string.Version), update.version.replaceAll("v|-beta|-force", ""), R.drawable.msg_info, true);
         } else {
             version.setTextAndValueAndIcon(LocaleController.getString("CurrentVersion", R.string.CurrentVersion), BuildVars.BUILD_VERSION_STRING, R.drawable.msg_info, true);
         }
@@ -113,7 +112,7 @@ public class UpdaterBottomSheet extends BottomSheet {
         if (available) {
             TextCell size = new TextCell(context);
             size.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 100, 0));
-            size.setTextAndValueAndIcon(LocaleController.getString("UpdateSize", R.string.UpdateSize), args[2], R.drawable.msg_sendfile, true);
+            size.setTextAndValueAndIcon(LocaleController.getString("UpdateSize", R.string.UpdateSize), update.size, R.drawable.msg_sendfile, true);
             size.setOnClickListener(v -> copyText(size.getTextView().getText() + ": " + size.getValueTextView().getText()));
             linearLayout.addView(size);
 
@@ -125,7 +124,7 @@ public class UpdaterBottomSheet extends BottomSheet {
 
             TextInfoPrivacyCell changelogTextView = new TextInfoPrivacyCell(context);
             changelogTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-            changelogTextView.setText(UpdaterUtils.replaceTags(args[1]));
+            changelogTextView.setText(UpdaterUtils.replaceTags(update.changelog));
             linearLayout.addView(changelogTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             linearLayout.addView(divider, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(1)));
@@ -141,7 +140,7 @@ public class UpdaterBottomSheet extends BottomSheet {
             doneButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             doneButton.setText(LocaleController.getString("AppUpdateDownloadNow", R.string.AppUpdateDownloadNow));
             doneButton.setOnClickListener(v -> {
-                UpdaterUtils.downloadApk(fragment.getContext(), args[3], "exteraGram " + args[0]);
+                UpdaterUtils.downloadApk(fragment.getContext(), update.downloadURL, "exteraGram " + update.version);
                 dismiss();
             });
             linearLayout.addView(doneButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 5));

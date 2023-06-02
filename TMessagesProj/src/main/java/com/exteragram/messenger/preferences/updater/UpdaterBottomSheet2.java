@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.utils.AppUtils;
+import com.exteragram.messenger.utils.LocaleUtils;
 import com.exteragram.messenger.utils.TranslatorUtils;
 import com.exteragram.messenger.utils.UpdaterUtils;
 
@@ -411,7 +411,7 @@ public class UpdaterBottomSheet2 extends BottomSheet {
             nameView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
             nameView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             nameView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            nameView.setText(available ? LocaleController.getString("UpdateAvailable", R.string.UpdateAvailable) : AppUtils.getAppName());
+            nameView.setText(available ? LocaleController.getString("UpdateAvailable", R.string.UpdateAvailable) : LocaleUtils.getAppName());
             frame.addView(nameView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 30, Gravity.LEFT, available ? 75 : 0, 5, 0, 0));
 
             timeView = new AnimatedTextView(context, true, true, false);

@@ -33,23 +33,23 @@
     <string name="TabTitleStyleTextWithIcons">Nomes com ícones</string>
     <string name="TabTitleStyleIconsOnly">Apenas Ícones</string>
     <string name="TabTitleStyleTextOnly">Apenas nomes</string>
-    <string name="TabStyle">Estilo da tab</string>
+    <string name="TabStyle">Estilo da aba</string>
     <string name="TabStyleTextOnly">Texto</string>
     <string name="TabStyleRounded">Arredondado</string>
-    <string name="TabStyleChips">Circuitos integrados</string>
+    <string name="TabStyleChips">Chips</string>
     <string name="TabStylePills">Pills</string>
     <string name="TabCounter">Contador de Abas</string>
-    <string name="HideAllChats">Ocultar a tab \"%1$s\"</string>
+    <string name="HideAllChats">Ocultar a aba \"%1$s\"</string>
     <string name="FoldersInfo">Ícones são sincronizados com Telegram.</string>
     <string name="IconPack">Ícones</string>
     <string name="SolarIcons">Usar Ícones \"Solar\"</string>
     <string name="ForceBlur">Forçar Desfoque</string>
     <string name="ForceBlurInfo">O desfoque será aplicado a absolutamente todos os temas.</string>
-    <string name="ForceSnow">Forçar Nevar</string>
-    <string name="ForceSnowInfo">A neve também aparecerá na barra de ação e, no fundo das conversas.</string>
+    <string name="ForceSnow">Forçar efeitos de neve</string>
+    <string name="ForceSnowInfo">A neve também aparecerá na barra de ação e no fundo das conversas.</string>
     <string name="UseSystemFonts">Usar fontes do sistema</string>
     <string name="UseSystemEmoji">Usar emojis do sistema</string>
-    <string name="NewSwitchStyle">Estilo do interruptor MD3</string>
+    <string name="NewSwitchStyle">Estilo do switch MD3</string>
     <string name="DisableDividers">Desativar divisores</string>
     <string name="AlternativeNavigation">Navegação Alternativa</string>
     <string name="AlternativeNavigationInfo">Uma opção experimental que inclui novas animações de transição mais suaves entre as telas.\n\n Com essa opção, a barra de navegação nas conversas será a mesma cor do painel de mensagens.</string>
@@ -74,7 +74,7 @@
     <string name="FormatTimeWithSeconds">Formatar a hora com segundos</string>
     <string name="TabletMode">Modo Tablet</string>
     <string name="DownloadSpeedBoost">Otimizar velocidade de download</string>
-    <string name="UploadSpeedBoost">Aumentar velocidade de upload</string>
+    <string name="UploadSpeedBoost">Otimizar velocidade de upload</string>
     <string name="Ultra">Ultra</string>
     <string name="SpeedBoostInfo">Ultra Boost pode causar problemas com o download de arquivos e streaming de vídeos em uma conexão de internet lenta.</string>
     <string name="Profile">Perfil</string>
@@ -89,12 +89,12 @@
     <string name="DeleteAccount">Excluir conta</string>
     <string name="ResetSettings">Redefinir configurações</string>
     <!-- Chats -->
-    <string name="StickerSize">Tamanho das figurinhas</string>
+    <string name="StickerSize">Tamanho dos Stickers</string>
     <string name="StickerSizeLeft">Pequeno</string>
     <string name="StickerSizeRight">Grande</string>
     <string name="StickerSizeDialogMessageReplyTo">uau</string>
     <string name="StickerSizeDialogMessage">uau, ele é tão fofo!</string>
-    <string name="StickerShape">Formato das figurinhas</string>
+    <string name="StickerShape">Formato dos Stickers</string>
     <string name="StickerShapeRounded">Arredondado</string>
     <string name="StickerShapeRoundedMsg">Mensagem</string>
     <string name="StickerTime">Ocultar Horário nos Stickers</string>
@@ -111,7 +111,7 @@
     <string name="DisableJumpToNextChannel">Desativar \"Ir para o próximo canal\"</string>
     <string name="ShowActionTimestamps">Mostrar data e hora de ações</string>
     <string name="HideShareButton">Ocultar botão \"%1$s\"</string>
-    <string name="MessageMenu">Menu de mensagem</string>
+    <string name="MessageMenu">Menu da mensagem</string>
     <string name="AddCommaAfterMention">Adicionar vírgula após a menção</string>
     <string name="AddCommaAfterMentionInfo">Uma vírgula será colocada automaticamente após tocar no usuário que você deseja mencionar.</string>
     <string name="HidePhotoCounter">Ocultar Contador de Fotos</string>
@@ -126,7 +126,7 @@
     <string name="VideoMessagesCameraAsk">Perguntar</string>
     <string name="RearCamera">Câmera traseira</string>
     <string name="FrontCamera">Câmera frontal</string>
-    <string name="DoubleTapSeekDuration">Duração da Busca por Toque Duplo</string>
+    <string name="DoubleTapSeekDuration">Duração do intervalo por toque duplo</string>
     <string name="RememberLastUsedCamera">Lembrar última câmera usada</string>
     <string name="RememberLastUsedCameraInfo">Ao capturar mensagens de vídeo, a última câmera usada será selecionada.</string>
     <string name="PauseOnMinimize">Pausa automática</string>
@@ -168,13 +168,13 @@
     <string name="MimeType">Tipo de Mime</string>
     <string name="Datacenter">Datacenter</string>
     <!-- Other -->
-    <string name="RestartRequired">Reinicie a app para fazer efeito.</string>
+    <string name="RestartRequired">Reinicie o app para fazer efeito.</string>
     <string name="ResetSettingsBulletin">As preferências **exteraGram** foram redefinidas.</string>
     <string name="UserNotFound">Usuário com esse **ID** não encontrado.</string>
     <string name="PhotoCopied">Foto copiada para área de transferência.</string>
     <string name="MutualContact">contato mútuo</string>
     <string name="ToBeginning">Para o início</string>
-    <string name="MessageHistory">Histórico de mensagens</string>
+    <string name="MessageHistory">Histórico</string>
     <string name="BoldItalic">Negrito Itálico</string>
     <string name="OpenPremiumBot">Abrir bot oficial</string>
     <string name="CopyPhoto">Copiar foto</string>

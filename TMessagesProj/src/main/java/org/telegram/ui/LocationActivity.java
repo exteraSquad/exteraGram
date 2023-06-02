@@ -2835,4 +2835,9 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
 
         return themeDescriptions;
     }
+
+    @Override
+    public int getNavigationBarColor() {
+        return getThemedColor(Theme.key_dialogBackground);
+    }
 }

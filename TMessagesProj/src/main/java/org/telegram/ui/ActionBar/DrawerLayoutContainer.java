@@ -40,6 +40,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.exteragram.messenger.ExteraConfig;
 import com.google.android.gms.vision.Frame;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -704,7 +705,7 @@ public class DrawerLayoutContainer extends FrameLayout {
 
         if (scrimOpacity > 0 && drawingContent) {
             if (indexOfChild(child) == lastVisibleChild) {
-                scrimPaint.setColor((int) (((0x99000000 & 0xff000000) >>> 24) * scrimOpacity) << 24);
+                scrimPaint.setColor((int) ((((ExteraConfig.alternativeOpenAnimation ? 0x66000000 : 0x99000000) & 0xff000000) >>> 24) * scrimOpacity) << 24);
                 canvas.drawRect(clipLeft, 0, clipRight, getHeight(), scrimPaint);
             }
         }

@@ -2584,7 +2584,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public void onPreToggleSearch() {
-                if (!isSpeedItemCreated) {
+                if (!isSpeedItemCreated && false) {
                     isSpeedItemCreated = true;
                     FrameLayout searchContainer = (FrameLayout) searchItem.getSearchClearButton().getParent();
                     speedItem = new ActionBarMenuItem(context, menu, Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), Theme.getColor(Theme.key_actionBarActionModeDefaultIcon));
@@ -2752,16 +2752,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (folderId != 0) {
                 actionBar.setTitle(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
             } else {
-                if (UserConfig.getInstance(currentAccount).isPremium()) {
-                    statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
-                    statusDrawable.center = true;
-                    actionBar.setTitle(LocaleUtils.getActionBarTitle(), statusDrawable);
-                    updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
-                } else {
-                    actionBar.setTitle(LocaleUtils.getActionBarTitle());
-                }
+                statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, AndroidUtilities.dp(26));
+                statusDrawable.center = true;
+                actionBar.setTitle(actionBarDefaultTitle = LocaleUtils.getActionBarTitle(), statusDrawable);
+                updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
-            actionBarDefaultTitle = actionBar.getTitle();
             if (folderId == 0) {
                 actionBar.setSupportsHolidayImage(true);
             }
@@ -3057,16 +3052,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     showDeleteAlert(getMessagesController().getDialogFilters().get(id));
                 }
 
-                private int lastTitleType = ExteraConfig.titleText;
+                private int lastTitleType = ExteraConfig.tabIcons;
 
                 @Override
                 public void onTabSelected(FilterTabsView.Tab tab, boolean forward, boolean animated) {
-                    if (ExteraConfig.tabIcons != 2 || lastTitleType != ExteraConfig.titleText) {
-                        actionBar.setTitle(actionBarDefaultTitle = LocaleUtils.getActionBarTitle(), statusDrawable);
-                        lastTitleType = ExteraConfig.titleText;
-                        if (ExteraConfig.tabIcons != 2) {
-                            return;
+                    if (ExteraConfig.tabIcons != 2) {
+                        if (lastTitleType == 2) {
+                            actionBar.setTitle(LocaleUtils.getActionBarTitle(), statusDrawable);
+                            lastTitleType = ExteraConfig.tabIcons;
                         }
+                        return;
                     }
                     if (!selectedDialogs.isEmpty()) {
                         return;
@@ -8953,6 +8948,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         } else if (id == NotificationCenter.userEmojiStatusUpdated) {
             updateStatus((TLRPC.User) args[0], true);
         } else if (id == NotificationCenter.currentUserPremiumStatusChanged) {
+            actionBar.setTitle(actionBarDefaultTitle = LocaleUtils.getActionBarTitle(), statusDrawable);
             updateStatus(UserConfig.getInstance(account).getCurrentUser(), true);
         } else if (id == NotificationCenter.onDatabaseReset) {
             dialogsLoaded[currentAccount] = false;

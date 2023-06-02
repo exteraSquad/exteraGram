@@ -17,7 +17,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.hardware.biometrics.BiometricManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
@@ -30,14 +29,9 @@ import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.ui.BasePermissionsActivity;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 
 public class SystemUtils {
-
-    public static boolean loadSystemEmojiFailed = false;
-    private static Typeface systemEmojiTypeface;
 
     @RequiresApi(api = 23)
     public static boolean isPermissionGranted(String perm) {
@@ -152,56 +146,6 @@ public class SystemUtils {
             hasGps = false;
         }
         return hasGps;
-    }
-
-    public static File getSystemEmojiFontPath() {
-        try (var br = new BufferedReader(new FileReader("/system/etc/fonts.xml"))) {
-            String line;
-            var ignored = false;
-            while ((line = br.readLine()) != null) {
-                var trimmed = line.trim();
-                if (trimmed.startsWith("<family") && trimmed.contains("ignore=\"true\"")) {
-                    ignored = true;
-                } else if (trimmed.startsWith("</family>")) {
-                    ignored = false;
-                } else if (trimmed.startsWith("<font") && !ignored) {
-                    var start = trimmed.indexOf(">");
-                    var end = trimmed.indexOf("<", 1);
-                    if (start > 0 && end > 0) {
-                        var font = trimmed.substring(start + 1, end);
-                        if (font.toLowerCase().contains("emoji")) {
-                            File file = new File("/system/fonts/" + font);
-                            if (file.exists()) {
-                                FileLog.d("emoji font file fonts.xml = " + font);
-                                return file;
-                            }
-                        }
-                    }
-                }
-            }
-            br.close();
-
-            var fileAOSP = new File("/system/fonts/NotoColorEmoji.ttf");
-            if (fileAOSP.exists()) {
-                return fileAOSP;
-            }
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-        return null;
-    }
-
-    public static Typeface getSystemEmojiTypeface() {
-        if (!loadSystemEmojiFailed && systemEmojiTypeface == null) {
-            var font = getSystemEmojiFontPath();
-            if (font != null) {
-                systemEmojiTypeface = Typeface.createFromFile(font);
-            }
-            if (systemEmojiTypeface == null) {
-                loadSystemEmojiFailed = true;
-            }
-        }
-        return systemEmojiTypeface;
     }
 
     public static void addFileToClipboard(File file, Runnable callback) {

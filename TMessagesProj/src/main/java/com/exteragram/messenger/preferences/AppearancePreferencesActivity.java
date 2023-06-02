@@ -64,7 +64,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
     }, titles = new CharSequence[]{
             LocaleController.getString("exteraAppName", R.string.exteraAppName),
             LocaleController.getString("ActionBarTitleUsername", R.string.ActionBarTitleUsername),
-            LocaleController.getString("ActionBarTitleName", R.string.ActionBarTitleName)
+            LocaleController.getString("ActionBarTitleName", R.string.ActionBarTitleName),
+            LocaleController.getString("FilterChats", R.string.FilterChats)
     }, tabIcons = new CharSequence[]{
             LocaleController.getString("TabTitleStyleTextWithIcons", R.string.TabTitleStyleTextWithIcons),
             LocaleController.getString("TabTitleStyleTextOnly", R.string.TabTitleStyleTextOnly),
@@ -222,12 +223,13 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             ExteraConfig.editor.putBoolean("centerTitle", ExteraConfig.centerTitle ^= true).apply();
             chatListPreviewCell.updateCenteredTitle(true);
             ((TextCheckCell) view).setChecked(ExteraConfig.centerTitle);
-            parentLayout.rebuildAllFragmentViews(false, false);
+            showBulletin();
         } else if (position == hideAllChatsRow) {
             ExteraConfig.editor.putBoolean("hideAllChats", ExteraConfig.hideAllChats ^= true).apply();
             foldersPreviewCell.updateAllChatsTabName(true);
             ((TextCheckCell) view).setChecked(ExteraConfig.hideAllChats);
-            parentLayout.rebuildAllFragmentViews(false, false);
+            getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
+            getNotificationCenter().postNotificationName(NotificationCenter.mainUserInfoChanged);
         } else if (position == tabCounterRow) {
             ExteraConfig.editor.putBoolean("tabCounter", ExteraConfig.tabCounter ^= true).apply();
             foldersPreviewCell.updateTabCounter(true);
@@ -306,8 +308,8 @@ public class AppearancePreferencesActivity extends BasePreferencesActivity {
             PopupUtils.showDialog(titles, LocaleController.getString("ActionBarTitle", R.string.ActionBarTitle), ExteraConfig.titleText, getContext(), i -> {
                 ExteraConfig.editor.putInt("titleText", ExteraConfig.titleText = i).apply();
                 chatListPreviewCell.updateTitle(true);
-                parentLayout.rebuildAllFragmentViews(false, false);
                 listAdapter.notifyItemChanged(actionBarTitleRow, payload);
+                getNotificationCenter().postNotificationName(NotificationCenter.currentUserPremiumStatusChanged);
             });
         } else if (position == tabTitleRow) {
             if (getParentActivity() == null) {
