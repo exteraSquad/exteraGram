@@ -3872,6 +3872,160 @@ public class AlertsCreator {
         return builder;
     }
 
+    public static BottomSheet.Builder createInactivityPeriodPickerDialog(Context context, Theme.ResourcesProvider resourcesProvider, final ScheduleDatePickerDelegate datePickerDelegate) {
+        if (context == null) {
+            return null;
+        }
+
+        ScheduleDatePickerColors datePickerColors = new ScheduleDatePickerColors(resourcesProvider);
+        BottomSheet.Builder builder = new BottomSheet.Builder(context, false, resourcesProvider);
+        builder.setApplyBottomPadding(false);
+
+        int[] values = new int[]{
+            60 * 24,
+            2 * 60 * 24,
+            3 * 60 * 24,
+            4 * 60 * 24,
+            5 * 60 * 24,
+            6 * 60 * 24,
+            7 * 60 * 24,
+            2 * 7 * 60 * 24,
+            3 * 7 * 60 * 24,
+            31 * 60 * 24,
+            2 * 31 * 60 * 24,
+            3 * 31 * 60 * 24,
+            4 * 31 * 60 * 24,
+            5 * 31 * 60 * 24,
+            6 * 31 * 60 * 24,
+            365 * 60 * 24
+        };
+
+        final NumberPicker numberPicker = new NumberPicker(context, resourcesProvider) {
+            @Override
+            protected CharSequence getContentDescription(int index) {
+                if (values[index] == 0) {
+                    return LocaleController.getString("MuteNever", R.string.MuteNever);
+                } else if (values[index] < 60) {
+                    return LocaleController.formatPluralString("Minutes", values[index]);
+                } else if (values[index] < 60 * 24) {
+                    return LocaleController.formatPluralString("Hours", values[index] / 60);
+                } else if (values[index] < 7 * 60 * 24) {
+                    return LocaleController.formatPluralString("Days", values[index] / (60 * 24));
+                } else if (values[index] < 31 * 60 * 24) {
+                    return LocaleController.formatPluralString("Weeks", values[index] / (7 * 60 * 24));
+                } else if (values[index] < 365 * 60 * 24) {
+                    return LocaleController.formatPluralString("Months", values[index] / (31 * 60 * 24));
+                } else {
+                    return LocaleController.formatPluralString("Years", values[index] / (365 * 60 * 24));
+                }
+            }
+        };
+        numberPicker.setMinValue(0);
+        numberPicker.setMaxValue(values.length - 1);
+        numberPicker.setTextColor(datePickerColors.textColor);
+        numberPicker.setValue(0);
+        numberPicker.setFormatter(index -> {
+            if (values[index] == 0) {
+                return LocaleController.getString("MuteNever", R.string.MuteNever);
+            } else if (values[index] < 60) {
+                return LocaleController.formatPluralString("Minutes", values[index]);
+            } else if (values[index] < 60 * 24) {
+                return LocaleController.formatPluralString("Hours", values[index] / 60);
+            } else if (values[index] < 7 * 60 * 24) {
+                return LocaleController.formatPluralString("Days", values[index] / (60 * 24));
+            } else if (values[index] < 31 * 60 * 24) {
+                return LocaleController.formatPluralString("Weeks", values[index] / (7 * 60 * 24));
+            } else if (values[index] < 365 * 60 * 24) {
+                return LocaleController.formatPluralString("Months", values[index] / (31 * 60 * 24));
+            } else {
+                return LocaleController.formatPluralString("Years", values[index] / (365 * 60 * 24));
+            }
+        });
+
+        LinearLayout container = new LinearLayout(context) {
+
+            boolean ignoreLayout = false;
+
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                ignoreLayout = true;
+                int count;
+                if (AndroidUtilities.displaySize.x > AndroidUtilities.displaySize.y) {
+                    count = 3;
+                } else {
+                    count = 5;
+                }
+                numberPicker.setItemCount(count);
+                numberPicker.getLayoutParams().height = AndroidUtilities.dp(NumberPicker.DEFAULT_SIZE_PER_COUNT) * count;
+                ignoreLayout = false;
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
+
+            @Override
+            public void requestLayout() {
+                if (ignoreLayout) {
+                    return;
+                }
+                super.requestLayout();
+            }
+        };
+        container.setOrientation(LinearLayout.VERTICAL);
+
+        FrameLayout titleLayout = new FrameLayout(context);
+        container.addView(titleLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 22, 0, 0, 4));
+
+        TextView titleView = new TextView(context);
+        titleView.setText("Select inactivity period");
+        titleView.setTextColor(datePickerColors.textColor);
+        titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
+        titleView.setOnTouchListener((v, event) -> true);
+
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.setWeightSum(1.0f);
+        container.addView(linearLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 1f, 0, 0, 12, 0, 12));
+
+        TextView buttonTextView = new TextView(context) {
+            @Override
+            public CharSequence getAccessibilityClassName() {
+                return Button.class.getName();
+            }
+        };
+
+        linearLayout.addView(numberPicker, LayoutHelper.createLinear(0, 54 * 5, 1f));
+        final NumberPicker.OnValueChangeListener onValueChangeListener = (picker, oldVal, newVal) -> {
+            try {
+                container.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            } catch (Exception ignore) {
+
+            }
+        };
+        numberPicker.setOnValueChangedListener(onValueChangeListener);
+
+        buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
+        buttonTextView.setGravity(Gravity.CENTER);
+        buttonTextView.setTextColor(datePickerColors.buttonTextColor);
+        buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), datePickerColors.buttonBackgroundColor, datePickerColors.buttonBackgroundPressedColor));
+        buttonTextView.setText(LocaleController.getString("AutoDeleteConfirm", R.string.AutoDeleteConfirm));
+        container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
+        buttonTextView.setOnClickListener(v -> {
+            int time = values[numberPicker.getValue()] * 60;
+            datePickerDelegate.didSelectDate(true, time);
+            builder.getDismissRunnable().run();
+        });
+
+        builder.setCustomView(container);
+        BottomSheet bottomSheet = builder.show();
+        bottomSheet.setBackgroundColor(datePickerColors.backgroundColor);
+        bottomSheet.fixNavigationBar(datePickerColors.backgroundColor);
+
+        return builder;
+    }
+
     private static void checkMuteForButton(NumberPicker dayPicker, NumberPicker hourPicker, TextView buttonTextView, boolean animated) {
         StringBuilder stringBuilder = new StringBuilder();
         if (dayPicker.getValue() != 0) {

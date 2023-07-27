@@ -69,6 +69,7 @@ import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextCheckCell2;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
+import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.FlickerLoadingView;
@@ -153,6 +154,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
     private int addNew2Row;
     private int removedUsersRow;
     private int addNewSectionRow;
+    private int chatCleanupSectionRow;
     private int restricted1SectionRow;
     private int participantsStartRow;
     private int participantsEndRow;
@@ -284,6 +286,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
         addNew2Row = -1;
         hideMembersRow = -1;
         hideMembersInfoRow = -1;
+        chatCleanupSectionRow = -1;
         addNewSectionRow = -1;
         restricted1SectionRow = -1;
         participantsStartRow = -1;
@@ -449,6 +452,9 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                 loadingUserCellRow = rowCount++;
             }
         } else if (type == TYPE_USERS) {
+            if (!isChannel && ChatObject.canBlockUsers(currentChat)) {
+                chatCleanupSectionRow = rowCount++;
+            }
             if (ChatObject.isChannel(currentChat) && ChatObject.hasAdminRights(currentChat)) {
                 if (!ChatObject.isChannelAndNotMegaGroup(currentChat) && !needOpenSearch) {
                     hideMembersRow = rowCount++;
@@ -936,6 +942,94 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                             antiSpamToggleLoading = false;
                         });
                     }
+                    return;
+                } else if (position == chatCleanupSectionRow) {
+                    AlertsCreator.createInactivityPeriodPickerDialog(context, getResourceProvider(), (notify, seconds) -> {
+                        AlertDialog alertDialog = new AlertDialog(context, AlertDialog.ALERT_TYPE_SPINNER);
+                        alertDialog.setCanCancel(false);
+                        alertDialog.show();
+
+                        TLRPC.TL_channels_getParticipants req = new TLRPC.TL_channels_getParticipants();
+                        req.channel = getMessagesController().getInputChannel(chatId);
+                        req.limit = 250000; // даже не спрашивай
+                        req.filter = new TLRPC.TL_channelParticipantsRecent();
+
+                        getConnectionsManager().sendRequest(req, ((res, err) -> {
+                            if (res != null) {
+                                final ArrayList<TLRPC.User> usersToDie = new ArrayList<>();
+                                // знакомая ситуация?
+                                AtomicInteger totalUsers = new AtomicInteger(0);
+                                AtomicInteger processedUsers = new AtomicInteger(0);
+
+                                final TLRPC.TL_channels_channelParticipants response = (TLRPC.TL_channels_channelParticipants) res;
+                                for (TLRPC.User user : response.users) {
+                                    if (!user.bot) {
+                                        totalUsers.getAndIncrement();
+
+                                        TLRPC.TL_messages_search searchReq = new TLRPC.TL_messages_search();
+                                        searchReq.peer = getMessagesController().getInputPeer(-chatId);
+                                        searchReq.from_id = MessagesController.getInputPeer(user);
+                                        searchReq.flags |= 1;
+                                        searchReq.limit = 1;
+                                        searchReq.filter = new TLRPC.TL_inputMessagesFilterEmpty();
+
+                                        getConnectionsManager().sendRequestSync(searchReq, (searchRes, searchErr) -> {
+                                            processedUsers.getAndIncrement();
+
+                                            if (searchRes != null) {
+                                                TLRPC.TL_messages_channelMessages searchResponse = (TLRPC.TL_messages_channelMessages) searchRes;
+                                                TLRPC.Message msg = searchResponse.messages.get(0);
+                                                if (msg != null) {
+                                                    if (getConnectionsManager().getCurrentTime() - msg.date > seconds) {
+                                                        usersToDie.add(user);
+                                                    }
+                                                }
+                                            }
+
+                                            if (totalUsers.get() == processedUsers.get()) {
+                                                for (TLRPC.User userToDie : usersToDie) {
+                                                    TLRPC.TL_channels_editBanned kickReq = new TLRPC.TL_channels_editBanned();
+                                                    kickReq.channel = MessagesController.getInputChannel(currentChat);
+                                                    kickReq.participant = MessagesController.getInputPeer(userToDie);
+                                                    kickReq.banned_rights = new TLRPC.TL_chatBannedRights();
+                                                    kickReq.banned_rights.view_messages = true;
+                                                    kickReq.banned_rights.send_media = true;
+                                                    kickReq.banned_rights.send_messages = true;
+                                                    kickReq.banned_rights.send_stickers = true;
+                                                    kickReq.banned_rights.send_gifs = true;
+                                                    kickReq.banned_rights.send_games = true;
+                                                    kickReq.banned_rights.send_inline = true;
+                                                    kickReq.banned_rights.embed_links = true;
+                                                    kickReq.banned_rights.pin_messages = true;
+                                                    kickReq.banned_rights.send_polls = true;
+                                                    kickReq.banned_rights.invite_users = true;
+                                                    kickReq.banned_rights.change_info = true;
+
+                                                    getConnectionsManager().sendRequest(kickReq, (r, e) -> {
+                                                        kickReq.banned_rights = new TLRPC.TL_chatBannedRights();
+                                                        getConnectionsManager().sendRequest(kickReq, (rr ,ee) -> {});
+                                                    });
+                                                }
+                                                AndroidUtilities.runOnUIThread(() -> {
+                                                    alertDialog.dismiss();
+                                                    BulletinFactory.of(ChatUsersActivity.this)
+                                                        .createSimpleBulletin(R.raw.swipe_delete, "Inactive users removed")
+                                                        .show();
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+                            } else {
+                                AndroidUtilities.runOnUIThread(() -> {
+                                    alertDialog.dismiss();
+                                    BulletinFactory.of(ChatUsersActivity.this)
+                                        .createSimpleBulletin(R.raw.error, LocaleController.getString("UnknownError", R.string.UnknownError))
+                                        .show();
+                                });
+                            }
+                        }));
+                    });
                     return;
                 } else if (position == hideMembersRow) {
                     final TextCell textCell = (TextCell) view;
@@ -3245,6 +3339,9 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
                                 actionCell.setText(LocaleController.getString("AddMember", R.string.AddMember), null, R.drawable.msg_contact_add, showDivider);
                             }
                         }
+                    } else if (position == chatCleanupSectionRow) {
+                        actionCell.setColors(Theme.key_color_red, Theme.key_color_red);
+                        actionCell.setText("Remove inactive users", null, R.drawable.msg_user_remove, true);
                     } else if (position == recentActionsRow) {
                         actionCell.setText(LocaleController.getString("EventLog", R.string.EventLog), null, R.drawable.msg_log, antiSpamRow > recentActionsRow);
                     } else if (position == addNew2Row) {
@@ -3415,7 +3512,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
 
         @Override
         public int getItemViewType(int position) {
-            if (position == addNewRow || position == addNew2Row || position == recentActionsRow || position == gigaConvertRow) {
+            if (position == addNewRow || position == addNew2Row || position == recentActionsRow || position == gigaConvertRow || position == chatCleanupSectionRow) {
                 return 2;
             } else if (position >= participantsStartRow && position < participantsEndRow ||
                     position >= botStartRow && position < botEndRow ||
@@ -3585,6 +3682,7 @@ public class ChatUsersActivity extends BaseFragment implements NotificationCente
             sparseIntArray.clear();
             int pointer = 0;
             put(++pointer, recentActionsRow, sparseIntArray);
+            put(++pointer, chatCleanupSectionRow, sparseIntArray);
             put(++pointer, addNewRow, sparseIntArray);
             put(++pointer, addNew2Row, sparseIntArray);
             put(++pointer, addNewSectionRow, sparseIntArray);
