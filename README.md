@@ -77,7 +77,13 @@ Here are a few things you can do:
 - [Test and report issues](https://github.com/exteraSquad/exteraGram/issues/new/choose)
 - [Translate the extera strings app into your language](https://crowdin.com/project/exteralocales) -
 **exteraGram** is a fork of **Telegram for Android** and most of the localizations follow the translations of **Telegram for Android**, check it out [here](https://translations.telegram.org/en/android/). As for specialized strings for **exteraGram**, we use **Crowdin** to translate **exteraGram**.
-    
+
+
+ ## Thanks to:
+- [Catogram](https://github.com/Catogram/Catogram)
+- [Nekogram](https://gitlab.com/Nekogram/Nekogram)
+- [OwlGram](https://github.com/OwlGramDev/OwlGram)
+
 License
 ---
 Licensed under the GNU General Public License v2.0
