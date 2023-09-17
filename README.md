@@ -26,7 +26,9 @@
 - Large interface customization
 - Integrated ChatGPT (key required)
 - Custom app icons
+- Solar Icon set in the UI (Powered by @Design480)
 - Zalgo Filters
+- and much more...
 
 
 ## Installation
