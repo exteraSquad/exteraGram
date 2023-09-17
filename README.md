@@ -18,12 +18,15 @@
 
 ## Features
 
-- Reworked Player
+- Reworked Music Player
 - Dynamic theme (Android 12+)
 - Modern Interface using Telegram design system, Google material 3 and custom icons.
 - Download/Upload speed boost
 - CameraX
 - Large interface customization
+- Integrated ChatGPT (key required)
+- Custom app icons
+- Zalgo Filters
 
 
 ## Installation
