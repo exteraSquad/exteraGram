@@ -6672,13 +6672,21 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
     private void fileDetach(MessageObject messageObject) {
         if (photoImage != null) {
-            photoImage.setFileLoadingPriority(FileLoader.PRIORITY_LOW);
+            boolean keepPriority = ExteraConfig.getKeepChatDownloadsAlive() && messageObject != null &&
+                    (messageObject.putInDownloadsStore || DownloadController.getInstance(currentAccount).isDownloading(messageObject.messageOwner.id) || (messageObject.getFileName() != null && FileLoader.getInstance(currentAccount).isLoadingFile(messageObject.getFileName())));
+            if (!keepPriority) {
+                photoImage.setFileLoadingPriority(FileLoader.PRIORITY_LOW);
+            }
+            photoImage.onDetachedFromWindow();
         }
         cancelLoading(messageObject);
     }
 
     private void cancelLoading(MessageObject messageObject) {
         if (messageObject != null && !messageObject.mediaExists && !messageObject.putInDownloadsStore && !DownloadController.getInstance(currentAccount).isDownloading(messageObject.messageOwner.id) && !PhotoViewer.getInstance().isVisible()) {
+            if (ExteraConfig.getKeepChatDownloadsAlive() && messageObject.getFileName() != null && FileLoader.getInstance(currentAccount).isLoadingFile(messageObject.getFileName())) {
+                return;
+            }
             TLRPC.Document document = messageObject.getDocument();
             boolean loadDocumentFromImageReceiver = MessageObject.isStickerDocument(document) || MessageObject.isAnimatedStickerDocument(document, true) || MessageObject.isGifDocument(document) || MessageObject.isRoundVideoDocument(document);
             if (!loadDocumentFromImageReceiver) {
@@ -15984,6 +15992,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             radialProgress.setProgress(0, false);
             if (currentMessageObject != null && !currentMessageObject.isAnyKindOfSticker()) {
                 currentMessageObject.putInDownloadsStore = true;
+                if (ExteraConfig.getKeepChatDownloadsAlive()) {
+                    DownloadController.getInstance(currentAccount).startDownloadFile(currentMessageObject);
+                }
             }
             if (documentAttachType == DOCUMENT_ATTACH_TYPE_AUDIO || documentAttachType == DOCUMENT_ATTACH_TYPE_MUSIC) {
                 FileLoader.getInstance(currentAccount).loadFile(documentAttach, currentMessageObject, FileLoader.PRIORITY_NORMAL_UP, currentMessageObject.shouldEncryptPhotoOrVideo() ? 2 : 0);
@@ -16003,6 +16014,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             }
             miniButtonState = 0;
             currentMessageObject.loadingCancelled = true;
+            if (currentMessageObject != null) {
+                currentMessageObject.putInDownloadsStore = false;
+                DownloadController.getInstance(currentAccount).cancelDownloadFile(currentMessageObject.messageOwner.id);
+            }
             FileLoader.getInstance(currentAccount).cancelLoadFile(documentAttach);
             radialProgress.setMiniIcon(getMiniIconForCurrentState(), false, true);
             invalidate();
@@ -16016,6 +16031,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
         if (currentMessageObject != null && !currentMessageObject.isAnyKindOfSticker()) {
             currentMessageObject.putInDownloadsStore = true;
+            if (ExteraConfig.getKeepChatDownloadsAlive()) {
+                DownloadController.getInstance(currentAccount).startDownloadFile(currentMessageObject);
+            }
         }
         if (buttonState == 0 && (!drawVideoImageButton || video)) {
             if (documentAttachType == DOCUMENT_ATTACH_TYPE_AUDIO || documentAttachType == DOCUMENT_ATTACH_TYPE_MUSIC || documentAttachType == DOCUMENT_ATTACH_TYPE_ROUND && currentMessageObject != null && currentMessageObject.isVoiceTranscriptionOpen() && currentMessageObject.mediaExists) {
@@ -16121,6 +16139,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     }
                 } else {
                     currentMessageObject.loadingCancelled = true;
+                    if (currentMessageObject != null) {
+                        currentMessageObject.putInDownloadsStore = false;
+                        DownloadController.getInstance(currentAccount).cancelDownloadFile(currentMessageObject.messageOwner.id);
+                    }
                     if (
                         documentAttachType == DOCUMENT_ATTACH_TYPE_GIF ||
                         documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO ||
@@ -16211,6 +16233,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     }
                 } else {
                     currentMessageObject.loadingCancelled = true;
+                    if (currentMessageObject != null) {
+                        currentMessageObject.putInDownloadsStore = false;
+                        DownloadController.getInstance(currentAccount).cancelDownloadFile(currentMessageObject.messageOwner.id);
+                    }
                     FileLoader.getInstance(currentAccount).cancelLoadFile(documentAttach);
                     buttonState = 2;
                     radialProgress.setIcon(getIconForCurrentState(), false, animated);

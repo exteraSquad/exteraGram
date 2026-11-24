@@ -265,6 +265,7 @@
     <!-- Speed -->
     <string name="DownloadSpeedBoost">Download Speed Boost</string>
     <string name="UploadSpeedBoost">Upload Speed Boost</string>
+    <string name="KeepChatDownloadsAlive">Keep downloads alive on chat exit</string>
     <string name="Ultra">Ultra</string>
     <string name="SpeedBoostInfo">Ultra Boost can cause problems with downloading files and streaming videos on slow Internet connections.</string>
 
