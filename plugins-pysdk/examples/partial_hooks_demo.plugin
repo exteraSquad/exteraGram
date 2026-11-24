@@ -1,0 +1,56 @@
+from base_plugin import BasePlugin
+from hook_utils import get_field, get_method
+
+__id__ = "partial_hooks_demo"
+__name__ = "Partial Hooks Demo"
+__description__ = (
+    "Shows every partial hook kind: names in the chat list get a star, "
+    "view counters in message bubbles are multiplied by 10, short numbers use a cyrillic \"к\" "
+    "and user statuses get a clock prefix"
+)
+__author__ = "exteraGram"
+__version__ = "1.0.0"
+__icon__ = "exteraPlugins/1"
+__app_version__ = ">=13.2.1"
+__sdk_version__ = ">=1.4.6.4"
+
+
+class PartialHooksDemo(BasePlugin):
+    def on_plugin_load(self):
+        user = "org.telegram.tgnet.TLRPC$User"
+        locale_controller = "org.telegram.messenger.LocaleController"
+
+        handles = {
+            "call site": self.hook_call_site(
+                get_method("org.telegram.ui.Cells.DialogCell", "buildLayout"),
+                get_method("org.telegram.messenger.UserObject", "getUserName", user),
+                self.star_name,
+            ),
+            "field read": self.hook_field_read(
+                get_method("org.telegram.ui.Cells.ChatMessageCell", "measureTime", "org.telegram.messenger.MessageObject"),
+                get_field("org.telegram.tgnet.TLRPC$Message", "views"),
+                self.more_views,
+            ),
+            "string constant": self.hook_string_constant(
+                get_method(locale_controller, "formatShortNumber", "int", "int[]"),
+                "K",
+                lambda chain: "к",
+            ),
+            "return value": self.hook_return_value(
+                get_method(locale_controller, "formatUserStatus", "int", user, "boolean[]", "boolean[]", "boolean[]"),
+                self.clock_status,
+            ),
+        }
+        for kind, handle in handles.items():
+            self.log(f"{kind}: {'installed' if handle is not None else 'FAILED, see the log above'}")
+
+    def star_name(self, chain):
+        name = chain.proceed()
+        return name if name is None else "✦ " + name
+
+    def more_views(self, chain):
+        return min(chain.proceed() * 10, 2_000_000_000)
+
+    def clock_status(self, chain):
+        status = chain.proceed()
+        return status if status is None else "◷ " + status

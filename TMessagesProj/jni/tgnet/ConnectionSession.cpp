@@ -91,13 +91,13 @@ NetworkMessage *ConnectionSession::generateConfirmationRequest() {
     if (!messagesIdsForConfirmation.empty()) {
         TL_msgs_ack *msgAck = new TL_msgs_ack();
         msgAck->msg_ids.insert(msgAck->msg_ids.begin(), messagesIdsForConfirmation.begin(), messagesIdsForConfirmation.end());
-        NativeByteBuffer *os = new NativeByteBuffer(true);
-        msgAck->serializeToStream(os);
+        NativeByteBuffer os(true);
+        msgAck->serializeToStream(&os);
         networkMessage = new NetworkMessage();
         networkMessage->message = std::unique_ptr<TL_message>(new TL_message);
         networkMessage->message->msg_id = ConnectionsManager::getInstance(instanceNum).generateMessageId();
         networkMessage->message->seqno = generateMessageSeqNo(false);
-        networkMessage->message->bytes = os->capacity();
+        networkMessage->message->bytes = os.capacity();
         networkMessage->message->body = std::unique_ptr<TLObject>(msgAck);
         messagesIdsForConfirmation.clear();
     }

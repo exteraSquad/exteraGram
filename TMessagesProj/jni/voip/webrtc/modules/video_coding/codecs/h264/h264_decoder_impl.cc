@@ -21,9 +21,9 @@
 #include <memory>
 
 extern "C" {
-#include "ffmpeg/include/libavcodec/avcodec.h"
-#include "ffmpeg/include/libavformat/avformat.h"
-#include "ffmpeg/include/libavutil/imgutils.h"
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/imgutils.h"
 }  // extern "C"
 
 #include "api/video/color_space.h"
@@ -39,10 +39,10 @@ namespace webrtc {
 
 namespace {
 
-constexpr std::array<AVPixelFormat, 8> kPixelFormatsSupported = {
-    AV_PIX_FMT_YUV420P,     AV_PIX_FMT_YUV422P,    AV_PIX_FMT_YUV444P,
-    AV_PIX_FMT_YUVJ420P,    AV_PIX_FMT_YUVJ422P,   AV_PIX_FMT_YUVJ444P,
-    AV_PIX_FMT_YUV420P10LE, AV_PIX_FMT_YUV422P10LE};
+constexpr std::array<AVPixelFormat, 9> kPixelFormatsSupported = {
+    AV_PIX_FMT_YUV420P,     AV_PIX_FMT_YUV422P,     AV_PIX_FMT_YUV444P,
+    AV_PIX_FMT_YUVJ420P,    AV_PIX_FMT_YUVJ422P,    AV_PIX_FMT_YUVJ444P,
+    AV_PIX_FMT_YUV420P10LE, AV_PIX_FMT_YUV422P10LE, AV_PIX_FMT_YUV444P10LE};
 const size_t kYPlaneIndex = 0;
 const size_t kUPlaneIndex = 1;
 const size_t kVPlaneIndex = 2;
@@ -80,7 +80,11 @@ int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
       kPixelFormatsSupported.begin(), kPixelFormatsSupported.end(),
       [context](AVPixelFormat format) { return context->pix_fmt == format; });
 
-  RTC_CHECK(pixelFormatSupported != kPixelFormatsSupported.end());
+  if (pixelFormatSupported == kPixelFormatsSupported.end()) {
+    RTC_LOG(LS_ERROR) << "Unsupported pixel format: " << context->pix_fmt;
+    decoder->ReportError();
+    return -1;
+  }
 
   // `av_frame->width` and `av_frame->height` are set by FFmpeg. These are the
   // actual image's dimensions and may be different from `context->width` and
@@ -120,6 +124,7 @@ int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
   rtc::scoped_refptr<I422Buffer> i422_buffer;
   rtc::scoped_refptr<I010Buffer> i010_buffer;
   rtc::scoped_refptr<I210Buffer> i210_buffer;
+  rtc::scoped_refptr<I410Buffer> i410_buffer;
   int bytes_per_pixel = 1;
   switch (context->pix_fmt) {
     case AV_PIX_FMT_YUV420P:
@@ -194,6 +199,22 @@ int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
       frame_buffer = i210_buffer;
       bytes_per_pixel = 2;
       break;
+    case AV_PIX_FMT_YUV444P10LE:
+      i410_buffer =
+          decoder->ffmpeg_buffer_pool_.CreateI410Buffer(width, height);
+      // Set `av_frame` members as required by FFmpeg.
+      av_frame->data[kYPlaneIndex] =
+          reinterpret_cast<uint8_t*>(i410_buffer->MutableDataY());
+      av_frame->linesize[kYPlaneIndex] = i410_buffer->StrideY() * 2;
+      av_frame->data[kUPlaneIndex] =
+          reinterpret_cast<uint8_t*>(i410_buffer->MutableDataU());
+      av_frame->linesize[kUPlaneIndex] = i410_buffer->StrideU() * 2;
+      av_frame->data[kVPlaneIndex] =
+          reinterpret_cast<uint8_t*>(i410_buffer->MutableDataV());
+      av_frame->linesize[kVPlaneIndex] = i410_buffer->StrideV() * 2;
+      frame_buffer = i410_buffer;
+      bytes_per_pixel = 2;
+      break;
     default:
       RTC_LOG(LS_ERROR) << "Unsupported buffer type " << context->pix_fmt
                         << ". Check supported supported pixel formats!";
@@ -211,8 +232,7 @@ int H264DecoderImpl::AVGetBuffer2(AVCodecContext* context,
                 av_frame->data[kUPlaneIndex] + uv_size);
   int total_size = y_size + 2 * uv_size;
 
-  av_frame->format = context->pix_fmt;
-  av_frame->reordered_opaque = context->reordered_opaque;
+        av_frame->format = context->pix_fmt;
 
   // Create a VideoFrame object, to keep a reference to the buffer.
   // TODO(nisse): The VideoFrame's timestamp and rotation info is not used.
@@ -361,7 +381,8 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
   }
   packet->size = static_cast<int>(input_image.size());
   int64_t frame_timestamp_us = input_image.ntp_time_ms_ * 1000;  // ms -> μs
-  av_context_->reordered_opaque = frame_timestamp_us;
+  packet->pts = frame_timestamp_us;
+  packet->dts = frame_timestamp_us;
 
   int result = avcodec_send_packet(av_context_.get(), packet.get());
 
@@ -380,7 +401,8 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
 
   // We don't expect reordering. Decoded frame timestamp should match
   // the input one.
-  RTC_DCHECK_EQ(av_frame_->reordered_opaque, frame_timestamp_us);
+  RTC_DCHECK_NE(av_frame_->pts, AV_NOPTS_VALUE);
+  RTC_DCHECK_EQ(av_frame_->pts, frame_timestamp_us);
 
   // TODO(sakal): Maybe it is possible to get QP directly from FFmpeg.
   h264_bitstream_parser_.ParseBitstream(input_image);
@@ -421,6 +443,11 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
       break;
     case VideoFrameBuffer::Type::kI210:
       planar_yuv_buffer = frame_buffer->GetI210();
+      planar_yuv16_buffer = reinterpret_cast<const webrtc::PlanarYuv16BBuffer*>(
+          planar_yuv_buffer);
+      break;
+    case VideoFrameBuffer::Type::kI410:
+      planar_yuv_buffer = frame_buffer->GetI410();
       planar_yuv16_buffer = reinterpret_cast<const webrtc::PlanarYuv16BBuffer*>(
           planar_yuv_buffer);
       break;
@@ -469,7 +496,8 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
       break;
     }
     case VideoFrameBuffer::Type::kI010:
-    case VideoFrameBuffer::Type::kI210: {
+    case VideoFrameBuffer::Type::kI210:
+    case VideoFrameBuffer::Type::kI410: {
       RTC_DCHECK_GE(
           av_frame_->data[kYPlaneIndex],
           reinterpret_cast<const uint8_t*>(planar_yuv16_buffer->DataY()));
@@ -562,6 +590,18 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
           // To keep reference alive.
           [frame_buffer] {});
       break;
+    case VideoFrameBuffer::Type::kI410:
+      cropped_buffer = WrapI410Buffer(
+          av_frame_->width, av_frame_->height,
+          reinterpret_cast<const uint16_t*>(av_frame_->data[kYPlaneIndex]),
+          av_frame_->linesize[kYPlaneIndex] / 2,
+          reinterpret_cast<const uint16_t*>(av_frame_->data[kUPlaneIndex]),
+          av_frame_->linesize[kUPlaneIndex] / 2,
+          reinterpret_cast<const uint16_t*>(av_frame_->data[kVPlaneIndex]),
+          av_frame_->linesize[kVPlaneIndex] / 2,
+          // To keep reference alive.
+          [frame_buffer] {});
+      break;
     default:
       RTC_LOG(LS_ERROR) << "frame_buffer type: "
                         << static_cast<int32_t>(video_frame_buffer_type)
@@ -577,7 +617,7 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
 
   VideoFrame decoded_frame = VideoFrame::Builder()
                                  .set_video_frame_buffer(cropped_buffer)
-                                 .set_timestamp_rtp(input_image.Timestamp())
+                                 .set_timestamp_rtp(input_image.RtpTimestamp())
                                  .set_color_space(color_space)
                                  .build();
 

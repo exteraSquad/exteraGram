@@ -1,5 +1,7 @@
 package org.telegram.ui.Components.Premium;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -8,37 +10,44 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
+import org.telegram.messenger.utils.ViewOutlineProviderImpl;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
+import org.telegram.ui.BadWayToMakeButtonRound;
 import org.telegram.ui.Components.AnimatedFloat;
 import org.telegram.ui.Components.AnimatedTextView;
+import org.telegram.ui.Components.CircularProgressDrawable;
 import org.telegram.ui.Components.CounterView;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.Loadable;
 import org.telegram.ui.Components.RLottieImageView;
+import org.telegram.ui.Components.ScaleStateListAnimator;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
 
-public class PremiumButtonView extends FrameLayout {
+public class PremiumButtonView extends FrameLayout implements Loadable {
 
     private Paint paintOverlayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    // paintOverlayPaint is featuredStickers_addButton (read on every draw) once the overlay is created
+    private boolean themedOverlayPaint;
+    private Theme.ResourcesProvider overlayResourcesProvider;
 
     private float progress;
     private boolean inc;
     public AnimatedTextView buttonTextView;
     public AnimatedTextView overlayTextView;
     private int radius;
-
     private boolean showOverlay;
     private float overlayProgress;
     public FrameLayout buttonLayout;
@@ -54,12 +63,13 @@ public class PremiumButtonView extends FrameLayout {
 
     private boolean isFlickerDisabled;
     CounterView counterView;
+    public boolean drawGradient = true;
 
-    public PremiumButtonView(@NonNull Context context, boolean createOverlayTextView) {
-        this(context, AndroidUtilities.dp(8), createOverlayTextView);
+    public PremiumButtonView(@NonNull Context context, boolean createOverlayTextView, Theme.ResourcesProvider resourcesProvider) {
+        this(context, AndroidUtilities.dp(8), createOverlayTextView, resourcesProvider);
     }
 
-    public PremiumButtonView(@NonNull Context context, int radius, boolean createOverlayTextView) {
+    public PremiumButtonView(@NonNull Context context, int radius, boolean createOverlayTextView, Theme.ResourcesProvider resourcesProvider) {
         super(context);
         this.radius = radius;
 
@@ -69,43 +79,134 @@ public class PremiumButtonView extends FrameLayout {
         flickerDrawable.repeatProgress = 4f;
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        buttonTextView = new AnimatedTextView(context);
+        buttonTextView = new AnimatedTextView(context, true, true, true) {
+            @Override
+            protected void onDraw(Canvas canvas) {
+                if (loadingT > 0) {
+                    if (loadingDrawable == null) {
+                        loadingDrawable = new CircularProgressDrawable(buttonTextView.getTextColor());
+                    }
+                    int y = (int) ((1f - loadingT) * dp(24));
+                    loadingDrawable.setBounds(0, y, getWidth(), y + getHeight());
+                    loadingDrawable.setAlpha((int) (0xFF * loadingT));
+                    loadingDrawable.draw(canvas);
+                    invalidate();
+                }
+
+                if (loadingT < 1) {
+                    if (loadingT != 0) {
+                        canvas.save();
+                        canvas.translate(0, (int) (loadingT * dp(-24)));
+                        canvas.scale(1, 1f - .4f * loadingT);
+                        super.onDraw(canvas);
+                        canvas.restore();
+                        return;
+                    }
+                    super.onDraw(canvas);
+                }
+            }
+        };
+        buttonTextView.setAnimationProperties(.35f, 0, 350, CubicBezierInterpolator.EASE_OUT_QUINT);
         buttonTextView.setGravity(Gravity.CENTER);
-        buttonTextView.setTextColor(Color.WHITE);
+        buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
         buttonTextView.setTextSize(AndroidUtilities.dp(14));
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
 
         iconView = new RLottieImageView(context);
-        iconView.setColorFilter(Color.WHITE);
+        iconView.setColorFilter(Theme.getColor(Theme.key_featuredStickers_buttonText));
         iconView.setVisibility(View.GONE);
 
-        buttonLayout = new FrameLayout(context);
+        buttonLayout = new FrameLayout(context) {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull AccessibilityNodeInfo info) {
+                super.onInitializeAccessibilityNodeInfo(info);
+                info.setClassName("android.widget.Button");
+                CharSequence label = null;
+                if (showOverlay && overlayTextView != null) {
+                    label = overlayTextView.getText();
+                }
+                if (label == null && buttonTextView != null) {
+                    label = buttonTextView.getText();
+                }
+                if (label != null) {
+                    info.setText(label);
+                    if (getContentDescription() == null) {
+                        info.setContentDescription(label);
+                    }
+                }
+            }
+        };
         buttonLayout.addView(linearLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
-        buttonLayout.setBackground(Theme.createSimpleSelectorRoundRectDrawable(radius, Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, 120)));
+        buttonLayout.setBackground(Theme.createSimpleSelectorRoundRectDrawable(radius, Color.TRANSPARENT, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_featuredStickers_buttonText), 120)));
 
         linearLayout.addView(buttonTextView, LayoutHelper.createLinear(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER_VERTICAL));
         linearLayout.addView(iconView, LayoutHelper.createLinear(24, 24, 0, Gravity.CENTER_VERTICAL, 4, 0, 0, 0));
         addView(buttonLayout);
+        BadWayToMakeButtonRound.round(this);
+        ScaleStateListAnimator.apply(this, 0.02f, 1.2f);
 
         if (createOverlayTextView) {
-            overlayTextView = new AnimatedTextView(context, true, true, true);
+            overlayTextView = new AnimatedTextView(context, true, true, true) {
+                @Override
+                protected void onDraw(Canvas canvas) {
+                    if (loadingT > 0) {
+                        if (loadingDrawable == null) {
+                            loadingDrawable = new CircularProgressDrawable(buttonTextView.getTextColor());
+                        }
+                        int y = (int) ((1f - loadingT) * dp(24));
+                        loadingDrawable.setBounds(0, y, getWidth(), y + getHeight());
+                        loadingDrawable.setAlpha((int) (0xFF * loadingT));
+                        loadingDrawable.draw(canvas);
+                        invalidate();
+                    }
+
+                    if (loadingT < 1) {
+                        if (loadingT != 0) {
+                            canvas.save();
+                            canvas.translate(0, (int) (loadingT * dp(-24)));
+                            canvas.scale(1, 1f - .4f * loadingT);
+                            super.onDraw(canvas);
+                            canvas.restore();
+                            return;
+                        }
+                        super.onDraw(canvas);
+                    }
+                }
+            };
             overlayTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
             overlayTextView.setGravity(Gravity.CENTER);
-            overlayTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+            ThemeBind.textColor(overlayTextView, Theme.key_featuredStickers_buttonText, resourcesProvider);
             overlayTextView.setTextSize(AndroidUtilities.dp(14));
-            overlayTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            overlayTextView.setTypeface(AndroidUtilities.bold());
             overlayTextView.getDrawable().setAllowCancel(true);
-            overlayTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(8), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, 120)));
+            overlayTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(8), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_featuredStickers_buttonText), 120)));
             addView(overlayTextView);
 
-            paintOverlayPaint.setColor(Theme.getColor(Theme.key_featuredStickers_addButton));
+            paintOverlayPaint.setColor(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider));
+            themedOverlayPaint = true;
+            overlayResourcesProvider = resourcesProvider;
             updateOverlayProgress();
         }
+    }
+
+    private boolean nonClickable;
+
+    public void setNonClickable() {
+        this.nonClickable = true;
+        setClickable(false);
+        buttonLayout.setClickable(false);
+        setStateListAnimator(null);
+
+    }
+
+    public boolean isShowOverlay() {
+        return showOverlay;
     }
 
     public RLottieImageView getIconView() {
         return iconView;
     }
+
     public AnimatedTextView getTextView() {
         return buttonTextView;
     }
@@ -116,6 +217,45 @@ public class PremiumButtonView extends FrameLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    private CircularProgressDrawable loadingDrawable;
+    private float loadingT = 0;
+    private boolean loading;
+    private ValueAnimator loadingAnimator;
+
+    public void setLoading(boolean loading) {
+        if (this.loading != loading) {
+            if (loadingAnimator != null) {
+                loadingAnimator.cancel();
+                loadingAnimator = null;
+            }
+            loadingAnimator = ValueAnimator.ofFloat(loadingT, (this.loading = loading) ? 1 : 0);
+            loadingAnimator.addUpdateListener(anm -> {
+                loadingT = (float) anm.getAnimatedValue();
+                buttonTextView.invalidate();
+                if (overlayTextView != null) {
+                    overlayTextView.invalidate();
+                }
+            });
+            loadingAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    loadingT = loading ? 1 : 0;
+                    buttonTextView.invalidate();
+                    if (overlayTextView != null) {
+                        overlayTextView.invalidate();
+                    }
+                }
+            });
+            loadingAnimator.setDuration(320);
+            loadingAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
+            loadingAnimator.start();
+        }
+    }
+
+    public boolean isLoading() {
+        return loading;
     }
 
     @Override
@@ -143,8 +283,16 @@ public class PremiumButtonView extends FrameLayout {
                     inc = true;
                 }
             }
-            PremiumGradient.getInstance().updateMainGradientMatrix(0, 0, getMeasuredWidth(), getMeasuredHeight(), -getMeasuredWidth() * 0.1f * progress, 0);
-            canvas.drawRoundRect(AndroidUtilities.rectTmp, radius, radius, PremiumGradient.getInstance().getMainGradientPaint());
+            if (drawGradient) {
+                PremiumGradient.getInstance().updateMainGradientMatrix(0, 0, getMeasuredWidth(), getMeasuredHeight(), -getMeasuredWidth() * 0.1f * progress, 0);
+                canvas.drawRoundRect(AndroidUtilities.rectTmp, radius, radius, PremiumGradient.getInstance().getMainGradientPaint());
+            } else {
+                if (themedOverlayPaint) {
+                    paintOverlayPaint.setColor(Theme.getColor(Theme.key_featuredStickers_addButton, overlayResourcesProvider));
+                }
+                paintOverlayPaint.setAlpha(255);
+                canvas.drawRoundRect(AndroidUtilities.rectTmp, radius, radius, paintOverlayPaint);
+            }
             invalidate();
         }
 
@@ -154,6 +302,9 @@ public class PremiumButtonView extends FrameLayout {
         }
 
         if (overlayProgress != 0 && drawOverlayColor) {
+            if (themedOverlayPaint) {
+                paintOverlayPaint.setColor(Theme.getColor(Theme.key_featuredStickers_addButton, overlayResourcesProvider));
+            }
             paintOverlayPaint.setAlpha((int) (255 * overlayProgress));
             if (overlayProgress != 1f) {
                 path.rewind();
@@ -171,13 +322,13 @@ public class PremiumButtonView extends FrameLayout {
         super.dispatchDraw(canvas);
     }
 
-    public void setOverlayText(String text, boolean drawOverlayColor, boolean animated) {
+    public void setOverlayText(CharSequence text, boolean drawOverlayColor, boolean animated) {
         showOverlay = true;
         this.drawOverlayColor = drawOverlayColor;
         overlayTextView.setText(text, animated);
+        overlayTextView.setContentDescription(text);
         updateOverlay(animated);
     }
-
 
     private void updateOverlay(boolean animated) {
         if (overlayAnimator != null) {
@@ -269,7 +420,11 @@ public class PremiumButtonView extends FrameLayout {
             buttonTextView.cancelAnimation();
         }
         buttonTextView.setText(text, animated);
-        buttonLayout.setOnClickListener(clickListener);
+        buttonLayout.setContentDescription(text);
+
+        if (!nonClickable) {
+            buttonLayout.setOnClickListener(clickListener);
+        }
     }
 
     public void checkCounterView() {

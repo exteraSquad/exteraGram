@@ -1,5 +1,7 @@
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -25,11 +27,11 @@ public class ProgressButton extends Button {
         super(context);
         setAllCaps(false);
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        setTypeface(AndroidUtilities.bold());
         setOutlineProvider(null);
 
         ViewHelper.setPadding(this, 8, 0, 8, 0);
-        final int minWidth = AndroidUtilities.dp(60);
+        final int minWidth = dp(60);
         setMinWidth(minWidth);
         setMinimumWidth(minWidth);
 
@@ -37,15 +39,15 @@ public class ProgressButton extends Button {
         progressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         progressPaint.setStrokeCap(Paint.Cap.ROUND);
         progressPaint.setStyle(Paint.Style.STROKE);
-        progressPaint.setStrokeWidth(AndroidUtilities.dp(2));
+        progressPaint.setStrokeWidth(dp(2));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (drawProgress || progressAlpha != 0) {
-            int x = getMeasuredWidth() - AndroidUtilities.dp(11);
-            progressRect.set(x, AndroidUtilities.dp(3), x + AndroidUtilities.dp(8), AndroidUtilities.dp(8 + 3));
+            int x = getMeasuredWidth() - dp(11);
+            progressRect.set(x, dp(3), x + dp(8), dp(8 + 3));
             progressPaint.setAlpha(Math.min(255, (int) (progressAlpha * 255)));
             canvas.drawArc(progressRect, angle, 220, false, progressPaint);
             long newTime = System.currentTimeMillis();
@@ -76,7 +78,7 @@ public class ProgressButton extends Button {
     }
 
     public void setBackgroundRoundRect(int backgroundColor, int pressedBackgroundColor) {
-        setBackgroundRoundRect(backgroundColor, pressedBackgroundColor, 4);
+        setBackgroundRoundRect(backgroundColor, pressedBackgroundColor, 14);
     }
 
     public void setBackgroundRoundRect(int backgroundColor, int pressedBackgroundColor, float radius) {

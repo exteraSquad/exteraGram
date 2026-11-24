@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.Bitmaps;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
@@ -303,17 +302,11 @@ public class PhotoCropActivity extends BaseFragment {
                 sizeY = imageToCrop.getHeight() - y;
             }
             try {
-                return Bitmaps.createBitmap(imageToCrop, x, y, sizeX, sizeY);
+                return Bitmap.createBitmap(imageToCrop, x, y, sizeX, sizeY, null, false);
             } catch (Throwable e) {
                 FileLog.e(e);
-                System.gc();
-                try {
-                    return Bitmaps.createBitmap(imageToCrop, x, y, sizeX, sizeY);
-                } catch (Throwable e2) {
-                    FileLog.e(e2);
-                }
+                return null;
             }
-            return null;
         }
 
         @Override
@@ -420,7 +413,7 @@ public class PhotoCropActivity extends BaseFragment {
         actionBar.setItemsColor(0xffffffff, false);
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setAllowOverlayTitle(true);
-        actionBar.setTitle(LocaleController.getString("CropImage", R.string.CropImage));
+        actionBar.setTitle(LocaleController.getString(R.string.CropImage));
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
@@ -441,7 +434,7 @@ public class PhotoCropActivity extends BaseFragment {
         });
 
         ActionBarMenu menu = actionBar.createMenu();
-        menu.addItemWithWidth(done_button, R.drawable.ic_ab_done, AndroidUtilities.dp(56), LocaleController.getString("Done", R.string.Done));
+        menu.addItemWithWidth(done_button, R.drawable.ic_ab_done, AndroidUtilities.dp(56), LocaleController.getString(R.string.Done));
 
         fragmentView = view = new PhotoCropView(context);
         ((PhotoCropView) fragmentView).freeform = getArguments().getBoolean("freeform", false);

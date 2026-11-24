@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class HelloParticles {
 
-    private static String[] hellos = new String[] {
+    private static final String[] hellos = new String[] {
         "Hello", "Привіт", "Привет", "Bonjour", "Hola", "Ciao", "Olá", "여보세요", "你好", "Salve",
         "Sveiki", "Halo", "გამარჯობა", "Hallå", "Salam", "Tere", "Dia dhuit", "こんにちは", "Сайн уу",
         "Bongu", "Ahoj", "γεια", "Zdravo", "नमस्ते", "Habari", "Hallo", "ជំរាបសួរ", "مرحبًا", "ನಮಸ್ಕಾರ",
@@ -50,7 +50,7 @@ public class HelloParticles {
 
         public Drawable(int count) {
             this.count = count;
-            textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textPaint.setTypeface(AndroidUtilities.bold());
             textPaint.setColor(Color.WHITE);
             switch (SharedConfig.getDevicePerformanceClass()) {
                 case SharedConfig.PERFORMANCE_CLASS_LOW:
@@ -120,12 +120,7 @@ public class HelloParticles {
             float inProgress;
 
             public void draw(Canvas canvas, int index,  long time) {
-
                 if (!paused) {
-                    float speed = AndroidUtilities.dp(4) * (dt / 660f) * speedScale;
-//                    x += vecX * speed;
-//                    y += vecY * speed;
-
                     if (inProgress != 1f) {
                         inProgress += dt / duration;
                         if (inProgress > 1f) {

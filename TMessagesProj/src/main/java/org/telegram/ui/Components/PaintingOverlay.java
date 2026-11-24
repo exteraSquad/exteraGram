@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -19,6 +18,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
 
+import com.exteragram.messenger.utils.ui.PaintTextUiHelper;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
@@ -27,13 +28,12 @@ import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.VideoEditedInfo;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.Paint.Views.EditTextOutline;
 import org.telegram.ui.Components.Paint.Views.PaintTextOptionsView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class PaintingOverlay extends FrameLayout {
 
@@ -46,8 +46,8 @@ public class PaintingOverlay extends FrameLayout {
         super(context);
     }
 
-    public void setData(String paintPath, ArrayList<VideoEditedInfo.MediaEntity> entities, boolean isVideo, boolean startAfterSet) {
-        setEntities(entities, isVideo, startAfterSet);
+    public void setData(String paintPath, ArrayList<VideoEditedInfo.MediaEntity> entities, boolean isVideo, boolean startAfterSet, boolean clip) {
+        setEntities(entities, isVideo, startAfterSet, clip);
         if (paintPath != null) {
             paintBitmap = BitmapFactory.decodeFile(paintPath);
             setBackground(backgroundDrawable = new BitmapDrawable(paintBitmap));
@@ -55,6 +55,14 @@ public class PaintingOverlay extends FrameLayout {
             paintBitmap = null;
             setBackground(backgroundDrawable = null);
         }
+    }
+
+    public boolean drawChildren = true;
+
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        if (!drawChildren) return false;
+        return super.drawChild(canvas, child, drawingTime);
     }
 
     @Override
@@ -72,9 +80,14 @@ public class PaintingOverlay extends FrameLayout {
                 }
                 if (child instanceof EditTextOutline) {
                     child.measure(MeasureSpec.makeMeasureSpec(entity.viewWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-                    float sc = entity.textViewWidth * width / entity.viewWidth;
-                    child.setScaleX(entity.scale * sc);
-                    child.setScaleY(entity.scale * sc);
+                    float scale;
+                    if (entity.customTextView) {
+                        scale = entity.width * getMeasuredWidth() / entity.viewWidth;
+                    } else {
+                        scale = entity.scale * (entity.textViewWidth * width / entity.viewWidth);
+                    }
+                    child.setScaleX(scale);
+                    child.setScaleY(scale);
                 } else {
                     child.measure(MeasureSpec.makeMeasureSpec((int) (width * entity.width), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec((int) (height * entity.height), MeasureSpec.EXACTLY));
                 }
@@ -117,15 +130,20 @@ public class PaintingOverlay extends FrameLayout {
                 if (entity == null) {
                     continue;
                 }
-                int x, y;
+                int x, y, w = child.getMeasuredWidth(), h = child.getMeasuredHeight();
                 if (child instanceof EditTextOutline) {
-                    x = (int) (width * entity.textViewX) - child.getMeasuredWidth() / 2;
-                    y = (int) (height * entity.textViewY) - child.getMeasuredHeight() / 2;
+                    if (entity.customTextView) {
+                        x = (int) (width * (entity.x + entity.width / 2f)) - child.getMeasuredWidth() / 2;
+                        y = (int) (height * (entity.y + entity.height / 2f)) - child.getMeasuredHeight() / 2;
+                    } else {
+                        x = (int) (width * entity.textViewX) - child.getMeasuredWidth() / 2;
+                        y = (int) (height * entity.textViewY) - child.getMeasuredHeight() / 2;
+                    }
                 } else {
                     x = (int) (width * entity.x);
                     y = (int) (height * entity.y);
                 }
-                child.layout(x, y, x + child.getMeasuredWidth(), y + child.getMeasuredHeight());
+                child.layout(x, y, x + w, y + h);
             }
         }
     }
@@ -158,7 +176,8 @@ public class PaintingOverlay extends FrameLayout {
         setBackground(null);
     }
 
-    public void setEntities(ArrayList<VideoEditedInfo.MediaEntity> entities, boolean isVideo, boolean startAfterSet) {
+    public void setEntities(ArrayList<VideoEditedInfo.MediaEntity> entities, boolean isVideo, boolean startAfterSet, boolean clip) {
+        setClipChildren(clip);
         reset();
         mediaEntityViews = new HashMap<>();
         if (entities != null && !entities.isEmpty()) {
@@ -167,7 +186,7 @@ public class PaintingOverlay extends FrameLayout {
                 View child = null;
                 if (entity.type == 0) {
                     BackupImageView imageView = new BackupImageView(getContext());
-                    imageView.setLayerNum(8);
+                    imageView.setLayerNum(4 | 8);
                     imageView.setAspectFit(true);
                     ImageReceiver imageReceiver = imageView.getImageReceiver();
                     if (isVideo) {
@@ -185,15 +204,13 @@ public class PaintingOverlay extends FrameLayout {
                         }
                     }
                     TLRPC.PhotoSize thumb = FileLoader.getClosestPhotoSizeWithSize(entity.document.thumbs, 90);
-                    imageReceiver.setImage(ImageLocation.getForDocument(entity.document), null, ImageLocation.getForDocument(thumb, entity.document), null, "webp", entity.parentObject, 1);
+                    imageReceiver.setImage(ImageLocation.getForDocument(entity.document), null, null, null, ImageLocation.getForDocument(thumb, entity.document), null, null, 0, "webp", entity.parentObject, 1);
                     if ((entity.subType & 2) != 0) {
                         imageView.setScaleX(-1);
                     }
                     entity.view = child = imageView;
                 } else if (entity.type == 1) {
                     EditTextOutline editText = new EditTextOutline(getContext()) {
-                        { animatedEmojiOffsetX = AndroidUtilities.dp(8); }
-
                         @Override
                         public boolean dispatchTouchEvent(MotionEvent event) {
                             return false;
@@ -208,9 +225,17 @@ public class PaintingOverlay extends FrameLayout {
                     editText.setPadding(AndroidUtilities.dp(7), AndroidUtilities.dp(7), AndroidUtilities.dp(7), AndroidUtilities.dp(7));
                     editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, entity.fontSize);
                     editText.setTypeface(entity.textTypeface.getTypeface());
-                    SpannableString text = new SpannableString(Emoji.replaceEmoji(entity.text, editText.getPaint().getFontMetricsInt(), (int) (editText.getTextSize() * .8f), false));
+                    SpannableString text = new SpannableString(Emoji.replaceEmoji(entity.text, editText.getPaint().getFontMetricsInt(), false));
                     for (VideoEditedInfo.EmojiEntity e : entity.entities) {
                         text.setSpan(new AnimatedEmojiSpan(e.document_id, editText.getPaint().getFontMetricsInt()), e.offset, e.offset + e.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                    if (text instanceof Spanned) {
+                        Emoji.EmojiSpan[] spans = ((Spanned) text).getSpans(0, text.length(), Emoji.EmojiSpan.class);
+                        if (spans != null) {
+                            for (int i = 0; i < spans.length; ++i) {
+                                spans[i].scale = .85f;
+                            }
+                        }
                     }
                     editText.setText(text);
                     editText.setGravity(Gravity.CENTER);
@@ -254,22 +279,24 @@ public class PaintingOverlay extends FrameLayout {
                     if (Build.VERSION.SDK_INT >= 23) {
                         editText.setBreakStrategy(Layout.BREAK_STRATEGY_SIMPLE);
                     }
-                    if ((entity.subType & 1) != 0) {
-                        editText.setTextColor(0xffffffff);
-                        editText.setStrokeColor(entity.color);
-                        editText.setFrameColor(0);
-                        editText.setShadowLayer(0, 0, 0, 0);
-                    } else if ((entity.subType & 4) != 0) {
-                        editText.setTextColor(0xff000000);
-                        editText.setStrokeColor(0);
+                    editText.setShadowLayer(0, 0, 0, 0);
+                    int textColor = entity.color;
+                    if (entity.subType == 0) {
                         editText.setFrameColor(entity.color);
-                        editText.setShadowLayer(0, 0, 0, 0);
+                        textColor = AndroidUtilities.computePerceivedBrightness(entity.color) >= .721f ? Color.BLACK : Color.WHITE;
+                    } else if (entity.subType == 1) {
+                        editText.setFrameColor(AndroidUtilities.computePerceivedBrightness(entity.color) >= .25f ? 0x99000000 : 0x99ffffff);
+                    } else if (entity.subType == 2) {
+                        editText.setFrameColor(AndroidUtilities.computePerceivedBrightness(entity.color) >= .25f ? Color.BLACK : Color.WHITE);
+                    } else if (entity.subType == PaintTextUiHelper.TYPE_OUTLINED) {
+                        textColor = PaintTextUiHelper.applyOutlined(editText, entity.color);
                     } else {
-                        editText.setTextColor(entity.color);
-                        editText.setStrokeColor(0);
                         editText.setFrameColor(0);
-                        editText.setShadowLayer(5, 0, 1, 0x66000000);
                     }
+                    editText.setTextColor(textColor);
+                    editText.setCursorColor(textColor);
+                    editText.setHandlesColor(textColor);
+                    editText.setHighlightColor(Theme.multAlpha(textColor, .4f));
                     entity.view = child = editText;
                 }
                 if (child != null) {

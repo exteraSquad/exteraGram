@@ -20,6 +20,7 @@ import android.view.animation.DecelerateInterpolator;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Stories.StoriesUtilities;
 
 public class RadialProgress {
 
@@ -65,6 +66,27 @@ public class RadialProgress {
     private Canvas miniDrawCanvas;
 
     private float overrideAlpha = 1.0f;
+    private Paint overridePaint = null;
+    private boolean disableUpdate;
+    private float roundRectRadius = -1;
+
+    public float getAnimatedProgress() {
+        return animatedProgressValue;
+    }
+
+    public void copyParams(RadialProgress radialProgressUpload) {
+        currentProgress = radialProgressUpload.currentProgress;
+        animatedProgressValue = radialProgressUpload.animatedProgressValue;
+        radOffset = radialProgressUpload.radOffset;
+        lastUpdateTime = System.currentTimeMillis();
+//        currentProgressTime = radialProgressUpload.currentProgressTime;
+//        animationProgressStart = radialProgressUpload.animationProgressStart;
+        invalidateParent();
+    }
+
+    public void disableUpdate(boolean disableUpdate) {
+        this.disableUpdate = disableUpdate;
+    }
 
     private class CheckDrawable extends Drawable {
 
@@ -172,7 +194,16 @@ public class RadialProgress {
         alphaForMiniPrevious = value;
     }
 
+    private float rotationSpeed = 3000;
+
+    public void setRotationTime(float rotationSpeed) {
+        this.rotationSpeed = rotationSpeed;
+    }
+
     private void updateAnimation(boolean progress) {
+        if (disableUpdate) {
+            return;
+        }
         long newTime = System.currentTimeMillis();
         long dt = newTime - lastUpdateTime;
         lastUpdateTime = newTime;
@@ -184,7 +215,7 @@ public class RadialProgress {
 
         if (progress) {
             if (animatedProgressValue != 1) {
-                radOffset += 360 * dt / 3000.0f;
+                radOffset += 360 * dt / rotationSpeed;
                 float progressDiff = currentProgress - animationProgressStart;
                 if (progressDiff > 0) {
                     currentProgressTime += dt;
@@ -490,18 +521,41 @@ public class RadialProgress {
             }
 
             if (currentWithRound || previousWithRound) {
-                progressPaint.setColor(progressColor);
-                if (previousWithRound) {
-                    progressPaint.setAlpha((int) (255 * animatedAlphaValue * overrideAlpha));
+                Paint finalPaint;
+                if (overridePaint != null) {
+                    finalPaint = overridePaint;
                 } else {
-                    progressPaint.setAlpha((int) (255 * overrideAlpha));
+                    progressPaint.setColor(progressColor);
+                    if (previousWithRound) {
+                        progressPaint.setAlpha((int) (255 * animatedAlphaValue * overrideAlpha));
+                    } else {
+                        progressPaint.setAlpha((int) (255 * overrideAlpha));
+                    }
+                    finalPaint = progressPaint;
                 }
                 cicleRect.set(progressRect.left + diff, progressRect.top + diff, progressRect.right - diff, progressRect.bottom - diff);
-                canvas.drawArc(cicleRect, -90 + radOffset, Math.max(4, 360 * animatedProgressValue), false, progressPaint);
+                drawArc(canvas, cicleRect, -90 + radOffset, Math.max(4, 360 * animatedProgressValue), false, finalPaint);
                 updateAnimation(true);
             } else {
                 updateAnimation(false);
             }
         }
+    }
+
+    private void drawArc(Canvas canvas, RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint) {
+        if (roundRectRadius >= 0) {
+            StoriesUtilities.drawRoundRectSegment(canvas, oval, roundRectRadius,
+                    Math.min(startAngle, startAngle + sweepAngle), Math.max(startAngle, startAngle + sweepAngle), paint);
+        } else {
+            canvas.drawArc(oval, startAngle, sweepAngle, useCenter, paint);
+        }
+    }
+
+    public void setPaint(Paint paint) {
+        overridePaint = paint;
+    }
+
+    public void setRoundRectRadius(float roundRectRadius) {
+        this.roundRectRadius = roundRectRadius;
     }
 }

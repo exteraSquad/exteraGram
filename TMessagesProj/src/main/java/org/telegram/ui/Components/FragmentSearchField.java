@@ -1,0 +1,726 @@
+package org.telegram.ui.Components;
+
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.RectF;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
+import android.transition.TransitionManager;
+import android.transition.TransitionSet;
+import android.transition.TransitionValues;
+import android.transition.Visibility;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.AnimationNotificationsLocker;
+import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.NotificationCenter;
+import org.telegram.messenger.R;
+import org.telegram.ui.ActionBar.ActionBarMenuItem;
+import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Adapters.FiltersView;
+import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
+
+import com.exteragram.messenger.pillstack.core.PillRegistry;
+import com.exteragram.messenger.pillstack.ui.PillStackView;
+import com.exteragram.messenger.pillstack.ui.pills.BasePill;
+import com.exteragram.messenger.pillstack.core.PillStackConfig;
+
+import java.util.ArrayList;
+
+import me.vkryl.android.AnimatorUtils;
+import me.vkryl.android.animator.BoolAnimator;
+import me.vkryl.android.animator.FactorAnimator;
+import java.util.HashSet;
+
+@SuppressLint("ViewConstructor")
+public class FragmentSearchField extends FrameLayout implements FactorAnimator.Target, Theme.Colorable, NotificationCenter.NotificationCenterDelegate {
+    private static final int ANIMATOR_ID_CLOSE_BUTTON_VISIBLE = 0;
+    private static final int ANIMATOR_ID_SEARCH_ICON_VISIBLE = 1;
+    private static final int ANIMATOR_ID_SEARCH_FILTERS_WIDTH = 2;
+
+    private final BoolAnimator animatorCloseIconVisible = new BoolAnimator(ANIMATOR_ID_CLOSE_BUTTON_VISIBLE, this, CubicBezierInterpolator.EASE_OUT_QUINT, 380, false);
+    private final BoolAnimator animatorSearchIconVisible = new BoolAnimator(ANIMATOR_ID_SEARCH_ICON_VISIBLE, this, CubicBezierInterpolator.EASE_OUT_QUINT, 380, true);
+    private final FactorAnimator animatorSearchFiltersWidth = new FactorAnimator(ANIMATOR_ID_SEARCH_FILTERS_WIDTH, this, AnimatorUtils.DECELERATE_INTERPOLATOR, 280);
+
+    private final Theme.ResourcesProvider resourcesProvider;
+
+    private final ImageView searchIcon;
+    private final ImageView closeIcon;
+    private final LinearLayout additionalIconsLayout;
+    private PillStackView pillStackView;
+    @Nullable
+    private View pillHost;
+    @Nullable
+    private CharSequence pillMeasuredHint;
+    private boolean closeButtonForcedVisible;
+    private boolean showPillStack;
+    public final EditTextBoldCursor editText;
+    private BlurredBackgroundDrawable blurredBackgroundDrawable;
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.pillStackLayoutChanged);
+        updatePillStack(false);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.pillStackLayoutChanged);
+    }
+
+    @Override
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.pillStackLayoutChanged) {
+            updatePillStack(true);
+        }
+    }
+
+    public FragmentSearchField(Context context, Theme.ResourcesProvider resourcesProvider) {
+        super(context);
+        this.resourcesProvider = resourcesProvider;
+
+        editText = new EditTextBoldCursor(context) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                setPivotX(getPaddingLeft());
+                setPivotY(getMeasuredHeight() / 2.0f);
+            }
+
+            @Override
+            protected void onDraw(Canvas canvas) {
+                super.onDraw(canvas);
+                checkPillHint();
+            }
+
+            @Override
+            public boolean onKeyDown(int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_DEL && editText.length() == 0 && hasRemovableFilters()) {
+                    if (hasRemovableFilters()) {
+                        FiltersView.MediaFilterData filterToRemove = currentSearchFilters.get(currentSearchFilters.size() - 1);
+                        if (searchFiltersListener != null) {
+                            searchFiltersListener.onSearchFilterCleared(filterToRemove);
+                        }
+                        removeSearchFilter(filterToRemove);
+                    }
+                    return true;
+                }
+                return super.onKeyDown(keyCode, event);
+            }
+        };
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        editText.setTypeface(AndroidUtilities.regular());
+        editText.setCursorWidth(1.5f);
+        editText.setInputType(editText.getInputType() | InputType.TYPE_TEXT_VARIATION_FILTER);
+        editText.setSingleLine(true);
+        editText.setBackground(null);
+        editText.setVerticalScrollBarEnabled(false);
+        editText.setHorizontalScrollBarEnabled(false);
+        editText.setPadding(dp(48), 0, dp(48), 0);
+        editText.setClipToPadding(true);
+        editText.setImeOptions(EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        editText.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!currentSearchFilters.isEmpty()) {
+                    if (s.length() > 0 && selectedFilterIndex >= 0) {
+                        selectedFilterIndex = -1;
+                        onFiltersChanged();
+                    }
+                }
+                checkCloseButtonVisible();
+            }
+        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            editText.setLocalePreferredLineHeightForMinimumUsed(false);
+        }
+        addView(editText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL, 0, 0, 0, 0));
+
+        searchIcon = new ImageView(context);
+        searchIcon.setScaleType(ImageView.ScaleType.CENTER);
+        searchIcon.setImageResource(R.drawable.outline_search_1_24);
+        addView(searchIcon, LayoutHelper.createFrame(24, 24, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), 12, 0, 12, 0));
+
+        additionalIconsLayout = new LinearLayout(context);
+        additionalIconsLayout.setOrientation(LinearLayout.HORIZONTAL);
+        addView(additionalIconsLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT), 32, 0, 32, 0));
+
+        closeIcon = new ImageView(context);
+        closeIcon.setScaleType(ImageView.ScaleType.CENTER);
+        closeIcon.setImageResource(R.drawable.miniplayer_close);
+        closeIcon.setVisibility(GONE);
+        closeIcon.setOnClickListener(v -> {
+            if (hasRemovableFilters()) {
+                if (searchFiltersListener != null) {
+                    searchFiltersListener.hideActionMode();
+                }
+                for (int i = 0; i < currentSearchFilters.size(); i++) {
+                    if (searchFiltersListener != null && currentSearchFilters.get(i).removable) {
+                        searchFiltersListener.onSearchFilterCleared(currentSearchFilters.get(i));
+                    }
+                }
+                clearSearchFilters();
+            } else if (onCloseSearch != null) {
+                onCloseSearch.run();
+            } else {
+                editText.getText().clear();
+            }
+        });
+        addView(closeIcon, LayoutHelper.createFrame(24, 24, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT), 12, 0, 12, 0));
+
+        searchFilterLayout = new LinearLayout(getContext()) {
+            @Override
+            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+                animatorSearchFiltersWidth.animateTo(getMeasuredWidth());
+                super.onLayout(changed, l, t, r, b);
+            }
+        };
+        searchFilterLayout.setOrientation(LinearLayout.HORIZONTAL);
+        searchFilterLayout.setVisibility(View.VISIBLE);
+        addView(searchFilterLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 32, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, 4, 0, 4, 0));
+
+        setWillNotDraw(false);
+        checkUi_editTextPaddings();
+        updateColors();
+    }
+
+    public void setHintText(CharSequence text, boolean animated) {
+        editText.setHintText(text, animated);
+    }
+
+    public void addAdditionalIcon(View icon) {
+        additionalIconsLayout.addView(icon);
+    }
+
+    private Drawable bg;
+    private final Path contentClipPath = new Path();
+    private final RectF contentClipRect = new RectF();
+    private final float contentClipRadius = dp(20);
+
+    @Override
+    protected void dispatchDraw(@NonNull Canvas canvas) {
+        canvas.save();
+        if (bg != null) {
+            bg.setBounds(
+                getPaddingLeft(),
+                getPaddingTop(),
+                getWidth() - getPaddingRight(),
+                getHeight() - getPaddingBottom()
+            );
+            bg.draw(canvas);
+        }
+        if (blurredBackgroundDrawable != null) {
+            blurredBackgroundDrawable.setBounds(
+                    getPaddingLeft() - dp(4),
+                    getPaddingTop() - dp(4),
+                    getWidth() - getPaddingRight() + dp(4),
+                    (getHeight() - getPaddingBottom()) + dp(4));
+            blurredBackgroundDrawable.draw(canvas);
+        } else {
+            contentClipRect.set(
+                    getPaddingLeft(),
+                    getPaddingTop(),
+                    getWidth() - getPaddingRight(),
+                    getHeight() - getPaddingBottom()
+            );
+            contentClipPath.reset();
+            contentClipPath.addRoundRect(contentClipRect, contentClipRadius, contentClipRadius, Path.Direction.CW);
+            canvas.clipPath(contentClipPath);
+        }
+        super.dispatchDraw(canvas);
+        canvas.restore();
+    }
+
+    public void setupBlurredBackground(BlurredBackgroundDrawable drawable) {
+        drawable.setRadius(dp(20));
+        drawable.setPadding(dp(4));
+        blurredBackgroundDrawable = drawable;
+    }
+
+    public void setBlurredBackgroundVisibility(float visibility) {
+        final int alpha = (int) (255 * visibility);
+        boolean changed = false;
+        if (blurredBackgroundDrawable != null) {
+            if (blurredBackgroundDrawable.getAlpha() != alpha) {
+                blurredBackgroundDrawable.setAlpha(alpha);
+                changed = true;
+            }
+        }
+        if (bg != null) {
+            if (bg.getAlpha() != (255 - alpha)) {
+                bg.setAlpha(255 - alpha);
+                changed = true;
+            }
+        }
+        if (changed) {
+            invalidate();
+        }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        CharSequence hint = editText.getHint();
+        pillMeasuredHint = hint;
+        int hintWidth = TextUtils.isEmpty(hint) ? 0 : (int) Math.ceil(editText.getPaint().measureText(hint.toString()));
+        int reserved = Math.max((int) animatorSearchFiltersWidth.getFactor() + dp(6), dp(48)) + hintWidth + dp(8);
+        measurePillChild(pillStackView, reserved);
+        measurePillChild(pillHost, reserved);
+        checkUi_editTextPaddings();
+    }
+
+    private void measurePillChild(@Nullable View child, int reserved) {
+        if (child == null || child.getVisibility() == GONE || child.getParent() != this) {
+            return;
+        }
+        MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+        int available = Math.max(0, getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - lp.leftMargin - lp.rightMargin - reserved);
+        child.measure(MeasureSpec.makeMeasureSpec(available, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(child.getMeasuredHeight(), MeasureSpec.EXACTLY));
+    }
+
+    private void checkPillHint() {
+        if ((pillStackView != null && pillStackView.getVisibility() != GONE || pillHost != null && pillHost.getVisibility() != GONE) && !TextUtils.equals(pillMeasuredHint, editText.getHint())) {
+            requestLayout();
+        }
+    }
+
+    public void setPillHost(@Nullable View pillHost) {
+        this.pillHost = pillHost;
+        requestLayout();
+    }
+
+    private void checkUi_editTextPaddings() {
+        final int filtersWidth = (int) animatorSearchFiltersWidth.getFactor() + dp(6); //searchFilterLayout.getWidth();
+        final int pStart = Math.max(filtersWidth, dp(48));
+        final int pEnd = dp(48) + additionalIconsLayout.getMeasuredWidth();
+
+        final int pLeft = LocaleController.isRTL ? pEnd : pStart;
+        final int pRight = LocaleController.isRTL ? pStart : pEnd;
+
+        AndroidUtilities.rectTmp2.set(
+            pLeft, 0,
+            editText.getMeasuredWidth() - pRight,
+            editText.getMeasuredHeight()
+        );
+        editText.setClipBounds(AndroidUtilities.rectTmp2);
+        editText.setPadding(pLeft, 0, pRight, 0);
+    }
+
+    public boolean isSectionBackground;
+    public void setSectionBackground() {
+        isSectionBackground = true;
+        setPadding(dp(3), dp(3), dp(3), dp(3));
+        updateColors();
+    }
+
+    private boolean isWhiteBackground;
+
+    public void setWhiteBackground() {
+        isWhiteBackground = true;
+        updateColors();
+    }
+
+    @Override
+    public void updateColors() {
+        final boolean isDark = resourcesProvider != null ? resourcesProvider.isDark() : Theme.isCurrentThemeDark();
+        bg = isSectionBackground ?
+            Theme.createRoundRectDrawableShadowed(dp(20), getThemedColor(Theme.key_windowBackgroundWhite)) :
+            Theme.createRoundRectDrawable(dp(20), isWhiteBackground ? getThemedColor(Theme.key_windowBackgroundWhite) : getThemedColor(Theme.key_windowBackgroundWhiteBlackText, isDark ? 0.07f : 0.05f));
+        searchIcon.setColorFilter(getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.6f), PorterDuff.Mode.MULTIPLY);
+        closeIcon.setColorFilter(getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.6f), PorterDuff.Mode.MULTIPLY);
+        closeIcon.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, dp(17)));
+        editText.setHintTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.5f));
+        editText.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
+        editText.setCursorColor(getThemedColor(Theme.key_groupcreate_cursor));
+        if (blurredBackgroundDrawable != null) {
+            blurredBackgroundDrawable.updateColors();
+        }
+
+        for (int i = 0, N = additionalIconsLayout.getChildCount(); i < N; i++) {
+            final View view = additionalIconsLayout.getChildAt(i);
+            if (view instanceof ActionBarMenuItem) {
+                final ActionBarMenuItem item = (ActionBarMenuItem) view;
+                if (item.getIconView() != null) {
+                    item.getIconView().setColorFilter(getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.6f), PorterDuff.Mode.MULTIPLY);
+                }
+                view.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), 1, dp(17)));
+            }
+        }
+
+        for (int i = 0, N = searchFilterLayout.getChildCount(); i < N; i++) {
+            if (searchFilterLayout.getChildAt(i) instanceof ActionBarMenuItem.SearchFilterView) {
+                ((ActionBarMenuItem.SearchFilterView) searchFilterLayout.getChildAt(i)).updateColors();
+            }
+        }
+
+        if (pillStackView != null) {
+            pillStackView.updateColors();
+        }
+
+        invalidate();
+    }
+    @Override
+    public void addColorKeys(HashSet<Integer> colors) {
+        colors.add(Theme.key_windowBackgroundWhite);
+        colors.add(Theme.key_windowBackgroundWhiteBlackText);
+        colors.add(Theme.key_listSelector);
+        colors.add(Theme.key_groupcreate_cursor);
+    }
+
+    private int getThemedColor(int key) {
+        return Theme.getColor(key, resourcesProvider);
+    }
+
+    private int getThemedColor(int key, float alpha) {
+        return Theme.multAlpha(getThemedColor(key), alpha);
+    }
+
+    private Runnable onCloseSearch;
+
+    public void setCloseButtonOnClickListener(Runnable onCloseSearch) {
+        this.onCloseSearch = onCloseSearch;
+    }
+
+    public void setCloseButtonVisible(boolean visible) {
+        closeButtonForcedVisible = visible;
+        checkCloseButtonVisible();
+    }
+
+    public void showPillStack() {
+        this.showPillStack = true;
+        updatePillStack(true);
+    }
+
+    private void updatePillStack(boolean animate) {
+        if (showPillStack && !PillStackConfig.getActivePills().isEmpty()) {
+            boolean justCreated = false;
+            if (pillStackView == null) {
+                pillStackView = new PillStackView(getContext());
+                justCreated = true;
+                addView(pillStackView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT), 6, 0, 6, 0));
+            }
+
+            final PillStackView view = pillStackView;
+
+            if (justCreated) {
+                if (animate) {
+                    view.setAlpha(0f);
+                    view.setScaleX(0.6f);
+                    view.setScaleY(0.6f);
+                    view.animate().alpha(1f).scaleX(1f).scaleY(1f)
+                            .setDuration(250)
+                            .setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT)
+                            .withEndAction(() -> {
+                                if (pillStackView == view) {
+                                    view.setVisibilityFactor(1.0f - animatorCloseIconVisible.getFloatValue());
+                                }
+                            })
+                            .start();
+                } else {
+                    view.setVisibilityFactor(1.0f - animatorCloseIconVisible.getFloatValue());
+                }
+            }
+
+            view.clearPills();
+            int indexToSelect = 0;
+            for (int i = 0; i < PillStackConfig.getActivePills().size(); i++) {
+                Integer pillId = PillStackConfig.getActivePills().get(i);
+                BasePill pill = getPill(pillId);
+                if (pill != null) {
+                    view.addPill(pill);
+                    if (pillId == PillStackConfig.getLastActivePillId()) {
+                        indexToSelect = view.getPillsCount() - 1;
+                    }
+                }
+            }
+
+            if (view.getPillsCount() == 0) {
+                if (pillStackView == view) {
+                    pillStackView = null;
+                }
+                if (animate && view.getVisibility() == VISIBLE && view.getAlpha() > 0) {
+                    view.animate().alpha(0f).scaleX(0.6f).scaleY(0.6f)
+                            .setDuration(250)
+                            .setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT)
+                            .withEndAction(() -> removeView(view))
+                            .start();
+                } else {
+                    removeView(view);
+                }
+            } else {
+                view.setCurrentIndex(indexToSelect);
+            }
+        } else if (pillStackView != null) {
+            final PillStackView view = pillStackView;
+            pillStackView = null;
+            if (animate && view.getVisibility() == VISIBLE && view.getAlpha() > 0) {
+                view.animate().alpha(0f).scaleX(0.6f).scaleY(0.6f)
+                        .setDuration(250)
+                        .setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT)
+                        .withEndAction(() -> removeView(view))
+                        .start();
+            } else {
+                removeView(view);
+            }
+        }
+    }
+
+    @Nullable
+    private BasePill getPill(Integer pillId) {
+        PillRegistry.PillInfo info = PillRegistry.getPillInfo(pillId);
+        if (info != null && info.creator() != null) {
+            return info.creator().create(getContext(), resourcesProvider);
+        }
+        return null;
+    }
+
+    private void checkCloseButtonVisible() {
+        animatorCloseIconVisible.setValue(closeButtonForcedVisible || editText.length() > 0, true);
+    }
+
+    @Override
+    public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {
+        if (id == ANIMATOR_ID_CLOSE_BUTTON_VISIBLE) {
+            FragmentFloatingButton.setAnimatedVisibility(closeIcon, factor);
+            closeIcon.setRotation((1 - factor) * 90);
+            if (pillStackView != null) {
+                pillStackView.setVisibilityFactor(1.0f - factor);
+            }
+        } else if (id == ANIMATOR_ID_SEARCH_ICON_VISIBLE) {
+            FragmentFloatingButton.setAnimatedVisibility(searchIcon, factor);
+        } else if (id == ANIMATOR_ID_SEARCH_FILTERS_WIDTH) {
+            checkUi_editTextPaddings();
+        }
+    }
+
+
+    public interface SearchFiltersListener {
+        void onSearchFilterCleared(FiltersView.MediaFilterData filterData);
+        void hideActionMode();
+    }
+
+    private final AnimationNotificationsLocker notificationsLocker = new AnimationNotificationsLocker();
+    private final ArrayList<FiltersView.MediaFilterData> currentSearchFilters = new ArrayList<>();
+    private final LinearLayout searchFilterLayout;
+    private SearchFiltersListener searchFiltersListener;
+    private int selectedFilterIndex;
+
+    private boolean hasRemovableFilters() {
+        if (currentSearchFilters.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < currentSearchFilters.size(); i++) {
+            if (currentSearchFilters.get(i).removable) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setSearchFiltersListener(SearchFiltersListener searchFiltersListener) {
+        this.searchFiltersListener = searchFiltersListener;
+    }
+
+    public void addSearchFilter(FiltersView.MediaFilterData filter) {
+        currentSearchFilters.add(filter);
+        if (true /*searchContainer.getTag() != null*/) {
+            selectedFilterIndex = currentSearchFilters.size() - 1;
+        }
+        onFiltersChanged();
+    }
+
+    public void removeSearchFilter(FiltersView.MediaFilterData filter) {
+        if (!filter.removable) {
+            return;
+        }
+        currentSearchFilters.remove(filter);
+        if (selectedFilterIndex < 0 || selectedFilterIndex > currentSearchFilters.size() - 1) {
+            selectedFilterIndex = currentSearchFilters.size() - 1;
+        }
+        onFiltersChanged();
+        if (searchFiltersListener != null) {
+            searchFiltersListener.hideActionMode();
+        }
+    }
+
+    public void clearSearchFiltersWithCallback() {
+        if (!currentSearchFilters.isEmpty()) {
+            if (searchFiltersListener != null) {
+                for (int i = 0; i < currentSearchFilters.size(); i++) {
+                    if ( currentSearchFilters.get(i).removable) {
+                        searchFiltersListener.onSearchFilterCleared(currentSearchFilters.get(i));
+                    }
+                }
+            }
+//                clearSearchFilters();
+        }
+    }
+
+    public void clearSearchFilters() {
+        for (int i = 0; i < currentSearchFilters.size(); i++) {
+            if (currentSearchFilters.get(i).removable) {
+                currentSearchFilters.remove(i);
+                i--;
+            }
+        }
+        onFiltersChanged();
+    }
+
+    private void onFiltersChanged() {
+        final boolean visible = !currentSearchFilters.isEmpty();
+
+        animatorSearchIconVisible.setValue(!visible, true);
+
+
+        ArrayList<FiltersView.MediaFilterData> localFilters = new ArrayList<>(currentSearchFilters);
+
+        if (true /*searchContainer != null && searchContainer.getTag() != null*/) {
+            TransitionSet transition = new TransitionSet();
+            ChangeBounds changeBounds = new ChangeBounds();
+            changeBounds.setDuration(150);
+            transition.addTransition(new Visibility() {
+                @Override
+                public Animator onAppear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) {
+                    if (view instanceof ActionBarMenuItem.SearchFilterView) {
+                        AnimatorSet set = new AnimatorSet();
+                        set.playTogether(
+                                ObjectAnimator.ofFloat(view, View.ALPHA, 0, 1f),
+                                ObjectAnimator.ofFloat(view, View.SCALE_X, 0.5f, 1f),
+                                ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.5f, 1f)
+                        );
+                        set.setInterpolator(CubicBezierInterpolator.DEFAULT);
+                        return set;
+                    }
+                    return ObjectAnimator.ofFloat(view, View.ALPHA, 0, 1f);
+                }
+                @Override
+                public Animator onDisappear(ViewGroup sceneRoot, View view, TransitionValues startValues, TransitionValues endValues) {
+                    if (view instanceof ActionBarMenuItem.SearchFilterView) {
+                        AnimatorSet set = new AnimatorSet();
+                        set.playTogether(
+                                ObjectAnimator.ofFloat(view, View.ALPHA, view.getAlpha(), 0f),
+                                ObjectAnimator.ofFloat(view, View.SCALE_X,  view.getScaleX(), 0.5f),
+                                ObjectAnimator.ofFloat(view, View.SCALE_Y,  view.getScaleX(), 0.5f)
+                        );
+                        set.setInterpolator(CubicBezierInterpolator.DEFAULT);
+                        return set;
+                    }
+                    return ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0);
+                }
+            }.setDuration(150)).addTransition(changeBounds);
+            transition.setOrdering(TransitionSet.ORDERING_TOGETHER);
+            transition.setInterpolator(CubicBezierInterpolator.EASE_OUT);
+            transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+                    notificationsLocker.lock();
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+                    notificationsLocker.unlock();
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+                    notificationsLocker.unlock();
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+
+                }
+            });
+            TransitionManager.beginDelayedTransition(searchFilterLayout, transition);
+        }
+
+
+        for (int i = 0; i < searchFilterLayout.getChildCount(); i++) {
+            boolean removed = localFilters.remove(((ActionBarMenuItem.SearchFilterView) searchFilterLayout.getChildAt(i)).getFilter());
+            if (!removed) {
+                searchFilterLayout.removeViewAt(i);
+                i--;
+            }
+        }
+
+        for (int i = 0; i < localFilters.size(); i++) {
+            FiltersView.MediaFilterData filter = localFilters.get(i);
+            ActionBarMenuItem.SearchFilterView searchFilterView;
+            if (filter.reaction != null) {
+                searchFilterView = new ActionBarMenuItem.ReactionFilterView(getContext(), resourcesProvider, false);
+            } else {
+                searchFilterView = new ActionBarMenuItem.SearchFilterView(getContext(), resourcesProvider, false);
+            }
+
+            searchFilterView.setGlass();
+            searchFilterView.setData(filter);
+            searchFilterView.setOnClickListener(view -> {
+                int index = currentSearchFilters.indexOf(searchFilterView.getFilter());
+                if (selectedFilterIndex != index) {
+                    selectedFilterIndex = index;
+                    onFiltersChanged();
+                    return;
+                }
+                if (searchFilterView.getFilter().removable) {
+                    if (!searchFilterView.isSelectedForDelete()) {
+                        searchFilterView.setSelectedForDelete(true);
+                    } else {
+                        FiltersView.MediaFilterData filterToRemove = searchFilterView.getFilter();
+                        removeSearchFilter(filterToRemove);
+
+
+                        if (searchFiltersListener != null) {
+                            searchFiltersListener.onSearchFilterCleared(filterToRemove);
+                        }
+                    }
+                }
+            });
+            searchFilterLayout.addView(searchFilterView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, 0, LocaleController.isRTL ? 6 : 0, 0, LocaleController.isRTL ? 0 : 6, 0));
+        }
+
+
+        for (int i = 0; i < searchFilterLayout.getChildCount(); i++) {
+            ((ActionBarMenuItem.SearchFilterView) searchFilterLayout.getChildAt(i)).setExpanded(i == selectedFilterIndex);
+        }
+        searchFilterLayout.setTag(visible ? 1 : null);
+    }
+}

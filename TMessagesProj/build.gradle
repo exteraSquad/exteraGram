@@ -1,76 +1,94 @@
-apply plugin: 'com.android.application'
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-repositories {
-    mavenCentral()
-    google()
+plugins {
+    id 'com.android.application'
+    id 'com.chaquo.python'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.google.devtools.ksp'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'androidx.baselineprofile'
+    id 'idea'
+    id 'org.telegram.build-plugin'
+    id 'org.telegram.build-app-plugin'
+}
+
+idea {
+    module {
+        excludeDirs += [
+            file('jni/td'),
+            file('jni/third_party/absl'),
+            file('jni/third_party/boringssl'),
+            file('jni/third_party/dav1d'),
+            file('jni/third_party/ffmpeg'),
+            file('jni/third_party/libvpx'),
+            file('jni/third_party/libyuv'),
+            file('jni/third_party/openh264'),
+            file('jni/third_party/xiph'),
+            file('jni/third_party/wamr'),
+            file('jni/third_party/libprisma'),
+            file('jni/third_party/boost-regex'),
+            file('jni/tgcalls'),
+            file('jni/tlottie'),
+            file('jni/voip/webrtc'),
+            file('jni/sqlite')
+        ]
+    }
 }
 
 configurations {
     compile.exclude module: 'support-v4'
+    configureEach {
+        exclude group: 'com.google.firebase', module: 'firebase-core'
+        exclude group: 'androidx.recyclerview', module: 'recyclerview'
+    }
 }
 
-configurations.all {
-    exclude group: 'com.google.firebase', module: 'firebase-core'
-    exclude group: 'androidx.recyclerview', module: 'recyclerview'
+configurations.implementation {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
 }
 
-dependencies {
-    implementation 'androidx.core:core:1.10.0'
-    implementation 'androidx.palette:palette:1.0.0'
-    implementation 'androidx.exifinterface:exifinterface:1.3.6'
-    implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation "androidx.sharetarget:sharetarget:1.2.0"
-    implementation 'com.google.android.gms:play-services-measurement:21.3.0'
-
-    compileOnly 'org.checkerframework:checker-qual:2.5.2'
-    compileOnly 'org.checkerframework:checker-compat-qual:2.5.5'
-
-    implementation platform('com.google.firebase:firebase-bom:32.1.0')
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-messaging:23.1.2'
-    implementation 'com.google.firebase:firebase-config:21.4.0'
-    implementation 'com.google.firebase:firebase-datatransport:18.1.8'
-    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation 'com.google.android.gms:play-services-auth:20.5.0'
-    implementation 'com.google.android.gms:play-services-vision:20.1.3'
-    implementation 'com.google.android.gms:play-services-wearable:18.0.0'
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation 'com.google.android.gms:play-services-wallet:19.1.0'
-    implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
-    implementation 'com.stripe:stripe-android:2.0.2'
-    implementation 'com.google.mlkit:language-id:16.1.1'
-    implementation 'com.android.billingclient:billing:5.2.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.google.guava:guava:32.0.0-jre'
-
-    def camerax_version = '1.3.0-alpha07'
-    implementation "androidx.camera:camera-camera2:${camerax_version}"
-    implementation "androidx.camera:camera-core:${camerax_version}"
-    implementation "androidx.camera:camera-extensions:${camerax_version}"
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
-    implementation "androidx.camera:camera-view:${camerax_version}"
-    implementation "androidx.camera:camera-video:${camerax_version}"
-    implementation 'androidx.interpolator:interpolator:1.0.0'
-
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
-
-    implementation files('libs/libgsaverification-client.aar')
-}
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'androidx.baselineprofile'
 
 def isPmBuild = "false"
-def abis = [9: 'universal', 1: 'armeabi-v7a', 5: 'arm64-v8a', 2: 'x86', 6: 'x86_64']
+def abiConfig = [
+        armv7: ['armeabi-v7a', 1, 'armeabi-v7a'],
+        x86  : ['x86', 2, 'x86'],
+        arm64: ['arm64-v8a', 5, 'arm64-v8a'],
+        x64  : ['x86_64', 6, 'x86_64']
+]
+def requestedTasks = gradle.startParameter.taskNames.collect { it.toLowerCase() }
+def requestedMinApiFlavors = abiConfig.keySet().findAll { flavorName ->
+    requestedTasks.any { it.contains(flavorName.toLowerCase()) }
+} as Set
+def defaultAbiFlavors = ['arm64', 'x64'] as Set
+def enabledAbiConfig = requestedMinApiFlavors ?
+        abiConfig.findAll { name, _ -> requestedMinApiFlavors.contains(name) } :
+        abiConfig.findAll { name, _ -> defaultAbiFlavors.contains(name) }
+def flavorAbiSets = enabledAbiConfig.collectEntries { name, config ->
+    [(name): [config[2]] as Set]
+} + [
+        afat: ['armeabi-v7a', 'arm64-v8a'] as Set,
+        beta: ['armeabi-v7a', 'arm64-v8a'] as Set
+]
+
+apply from: "$projectDir/gradle/extera-locales.gradle"
+apply from: "$projectDir/gradle/extera-appicons.gradle"
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion '33.0.1'
-    ndkVersion "21.4.7075529"
-    namespace 'org.telegram.messenger'
+    compileSdkVersion 37
+    buildToolsVersion "36.0.0"
+    ndkVersion = "29.0.14206865"
+    namespace = 'org.telegram.messenger'
 
-    defaultConfig.applicationId = APP_PACKAGE
-    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
+    baselineProfile {
+        dexLayoutOptimization = true
+        warnings {
+            disabledVariants = false
+        }
+    }
 
     Properties localProperties = new Properties()
     if (project.rootProject.file('API_KEYS').exists()) {
@@ -78,32 +96,47 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionName APP_VERSION_NAME
+        applicationId = APP_PACKAGE
+        versionCode = Integer.parseInt(APP_VERSION_CODE)
+        minSdkVersion 24
+        targetSdkVersion 36
+        versionName = APP_VERSION_NAME
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
 
         // Obtain your own keys at: https://core.telegram.org/api/obtaining_api_id
         buildConfigField 'int', 'APP_ID', localProperties.getProperty("APP_ID")
         buildConfigField 'String', 'APP_HASH', localProperties.getProperty("APP_HASH")
+        buildConfigField 'boolean', 'DEBUG_PRIVATE_VERSION', 'false'
 
         // Google Console: https://console.cloud.google.com/google/maps-apis/credentials
         resValue 'string', 'MAPS_V2_API', localProperties.getProperty("MAPS_V2_API")
 
+        vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
+        multiDexEnabled = true
+
         externalNativeBuild {
             cmake {
-                version '3.10.2'
-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21'
+                version = '4.0.0+'
+                arguments '-DANDROID_PLATFORM=android-23' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
             }
         }
     }
 
+    androidResources {
+        noCompress += "pack"
+        localeFilters += ["zz"]
+    }
+
     externalNativeBuild.cmake.path 'jni/CMakeLists.txt'
 
-    sourceSets.main {
-        jniLibs.srcDirs = ['jni']
-        //jniLibs.srcDir 'libs'
-        //jni.srcDirs = []
-        res.srcDirs = ['src/main/res', 'src/main/res-solar', 'src/main/res-tabs']
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['jni', 'jniLibs']
+            res.srcDirs = ['src/main/res', 'src/main/res-appicons', 'src/main/res-solar', 'src/main/res-remix', 'src/main/res-tabs']
+        }
     }
 
     lint {
@@ -112,104 +145,298 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
     }
 
     signingConfigs {
         release {
-            storeFile file("config/extera.jks")
+            storeFile file("config/exteraGram.jks")
             storePassword localProperties.getProperty("SIGNING_KEY_STORE_PASSWORD")
             keyAlias localProperties.getProperty("SIGNING_KEY_ALIAS")
             keyPassword localProperties.getProperty("SIGNING_KEY_PASSWORD")
         }
     }
 
-    packagingOptions.exclude 'META-INF/DEPENDENCIES'
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
+        jniLibs {
+            useLegacyPackaging true
+            pickFirsts += ['**/libc++_shared.so', '**/libshadowhook.so']
+        }
+    }
 
     buildTypes {
         debug {
             debuggable false
             jniDebuggable false
             signingConfig signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             multiDexEnabled true
-            zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            ndk.debugSymbolLevel = 'FULL'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BUILD_VERSION_STRING", "\"$APP_VERSION_NAME\""
             buildConfigField "boolean", "DEBUG_VERSION", "true"
             buildConfigField "boolean", "IS_PM_BUILD", isPmBuild
+            matchingFallbacks = ['release']
         }
 
         release {
-            debuggable false
             jniDebuggable false
             signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
-            zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk.debugSymbolLevel = 'FULL'
+            buildConfigField "String", "BUILD_VERSION_STRING", "\"$APP_VERSION_NAME\""
             buildConfigField "boolean", "DEBUG_VERSION", "false"
             buildConfigField "boolean", "IS_PM_BUILD", isPmBuild
         }
     }
 
-    flavorDimensions "minApi"
+    flavorDimensions "appType", "minApi"
 
     productFlavors {
-        armv7 {
-            ndk.abiFilters "armeabi-v7a"
-            ext.abiVersionCode = 1
+        lite {
+            dimension "appType"
+            proguardFiles 'proguard-rules-lite.pro'
+            buildConfigField "boolean", "EXTERA_HOOK_EMBEDDED", "false"
+            externalNativeBuild {
+                cmake {
+                    arguments "-DANDROID_STL=c++_static", "-DEXTERA_HOOK_EMBEDDED=OFF"
+                }
+            }
         }
-        x86 {
-            ndk.abiFilters "x86"
-            ext.abiVersionCode = 2
+
+        full {
+            dimension "appType"
+            proguardFiles 'proguard-rules-full.pro'
+            buildConfigField "boolean", "EXTERA_HOOK_EMBEDDED", "true"
+            buildConfigField "int", "EXTERA_ANALYZER_APP_VERSION_CODE", APP_VERSION_CODE
+            externalNativeBuild {
+                cmake {
+                    arguments "-DANDROID_STL=c++_shared", "-DEXTERA_HOOK_EMBEDDED=ON"
+                }
+            }
         }
-        arm64 {
-            ndk.abiFilters "arm64-v8a"
-            ext.abiVersionCode = 5
+
+        enabledAbiConfig.each { name, config ->
+            register(name) {
+                dimension "minApi"
+                //noinspection ChromeOsAbiSupport
+                ndk.abiFilters config[0]
+                ext.abiVersionCode = config[1]
+                ext.abiName = config[2]
+            }
         }
-        x64 {
-            ndk.abiFilters "x86_64"
-            ext.abiVersionCode = 6
-        }
+
         afat {
-            ndk.abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            dimension "minApi"
+            ndk.abiFilters "armeabi-v7a", "arm64-v8a"
             sourceSets.release.manifest.srcFile 'config/release/AndroidManifest.xml'
             ext.abiVersionCode = 9
+            ext.abiName = 'universal'
         }
+
         beta {
+            dimension "minApi"
+            //noinspection ChromeOsAbiSupport
             ndk.abiFilters "armeabi-v7a", "arm64-v8a"
             sourceSets.debug.manifest.srcFile 'config/debug/AndroidManifest.xml'
             ext.abiVersionCode = 9
+            ext.abiName = 'universal'
         }
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            def buildType = variant.productFlavors[0].name == "beta" ? "beta-" : ""
-            def date = new Date()
-            def formattedDate = date.format('ddMMyyyy')
-            def abi = abis.get(variant.productFlavors.get(0).abiVersionCode)
-
-            outputFileName = "exteraGram-${buildType}${abi}-${formattedDate}.apk"
-            output.versionCodeOverride = defaultConfig.versionCode * (isPmBuild == "true" ? 100 : 10) + variant.productFlavors.get(0).abiVersionCode
-        }
+    buildFeatures {
+        buildConfig true
+        resValues true
+        prefab true
+        aidl true
     }
-
-    variantFilter { variant ->
-        def names = variant.flavors*.name
-        setIgnore(variant.buildType.name != "debug" && names.contains("beta") || variant.buildType.name != "release" && !names.contains("beta"))
-    }
-
     bundle.language.enableSplit false
     dependenciesInfo.includeInApk false
 }
 
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+androidComponents {
+    beforeVariants(selector().all()) { variant ->
+        def names = variant.productFlavors.collect { it.second }
+        if (names.contains("full") && (names.contains("x86") || names.contains("x64"))) {
+            variant.enable = false
+            return
+        }
+
+        def isBeta = names.contains("beta")
+        def buildTypeName = variant.buildType
+        def shouldEnable = (isBeta && (buildTypeName == "debug" || buildTypeName == "benchmarkDebug" || buildTypeName == "nonMinifiedRelease")) ||
+                (!isBeta && (buildTypeName == "debug" || buildTypeName == "release" || buildTypeName == "benchmarkRelease" || buildTypeName == "nonMinifiedRelease"))
+        variant.enable = shouldEnable
+    }
+
+    onVariants(selector().all()) { variant ->
+        def appTypeFlavorName = variant.productFlavors.find { it.first == "appType" }?.second
+        def apiFlavorName = variant.productFlavors.find { it.first == "minApi" }?.second
+        if (appTypeFlavorName == null || apiFlavorName == null) {
+            return
+        }
+
+        def buildTypePrefix = apiFlavorName == "beta" ? "beta-" : ""
+        def formattedDate = new Date().format('yyyyMMdd')
+        def abi = abiConfig.containsKey(apiFlavorName) ? abiConfig[apiFlavorName][2] : 'universal'
+        def abiVersionCode = abiConfig.containsKey(apiFlavorName) ? abiConfig[apiFlavorName][1] : 9
+        def baseVersionCode = android.defaultConfig.versionCode
+
+        variant.outputs.each { output ->
+            output.outputFileName.set("exteraGram-${appTypeFlavorName}-${buildTypePrefix}${abi}-${formattedDate}.apk")
+            output.versionCode.set(baseVersionCode * (isPmBuild == "true" ? 100 : 10) + abiVersionCode)
+        }
+    }
+}
+
+apply from: "$projectDir/gradle/extera-python.gradle"
+
+repositories {
+    maven {
+        url = uri("$rootDir/Tools/maven")
+    }
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.3.20"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0"
+    implementation 'androidx.core:core-ktx:1.19.1'
+    implementation 'androidx.annotation:annotation-jvm:1.11.0'
+
+    implementation 'com.google.android.material:material:1.14.0'
+    implementation 'androidx.palette:palette-ktx:1.1.0'
+    implementation 'androidx.dynamicanimation:dynamicanimation-ktx:1.1.0'
+    implementation 'androidx.interpolator:interpolator:1.0.0'
+    implementation 'androidx.webkit:webkit:1.18.0'
+    implementation "androidx.sharetarget:sharetarget:1.2.0"
+    implementation 'com.caverock:androidsvg-aar:1.4'
+
+    def camerax_version = "1.7.0"
+    implementation "androidx.camera:camera-core:${camerax_version}"
+    implementation "androidx.camera:camera-camera2:${camerax_version}"
+    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+    implementation "androidx.mediarouter:mediarouter:1.9.0"
+    implementation 'androidx.exifinterface:exifinterface:1.4.2'
+    implementation 'androidx.biometric:biometric:1.1.0'
+    implementation 'androidx.car.app:app:1.4.0'
+    implementation 'androidx.car.app:app-projected:1.4.0'
+    implementation 'com.google.android.gms:play-services-wearable:18.0.0'
+    implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
+
+    implementation platform('com.google.firebase:firebase-bom:34.19.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-pnv'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging:25.1.2'
+    implementation 'com.google.firebase:firebase-config:23.1.0'
+    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
+
+    implementation 'com.google.android.gms:play-services-maps:20.1.0'
+    implementation 'com.google.android.gms:play-services-auth:21.5.1'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+    implementation 'com.google.android.gms:play-services-location:21.4.0'
+    implementation 'com.google.android.gms:play-services-wallet:19.2.1'
+    implementation 'com.google.android.gms:play-services-cast-framework:22.3.1'
+    implementation 'com.google.zxing:core:3.5.4'
+    implementation 'com.neovisionaries:nv-websocket-client:2.14'
+    implementation 'com.google.android.recaptcha:recaptcha:18.9.2'
+
+    implementation 'com.google.mlkit:genai-prompt:1.0.0-beta4'
+    implementation 'com.google.mlkit:language-id:17.0.6'
+    implementation 'com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1'
+    implementation 'com.google.android.gms:play-services-mlkit-image-labeling:16.0.8'
+
+    implementation "com.squareup.okhttp3:okhttp:5.5.1"
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0'
+    implementation 'com.google.code.gson:gson:2.15.0'
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+
+    implementation 'androidx.room:room-runtime:2.8.5'
+    implementation "androidx.room:room-ktx:2.8.5"
+    ksp 'androidx.room:room-compiler:2.8.5'
+
+    implementation 'com.stripe:stripe-android:2.0.2'
+    implementation 'com.android.billingclient:billing:8.0.0'
+    implementation 'com.alphacephei:vosk-android:0.3.75'
+    fullImplementation("com.exteragram.hook:hook-core:1.0.0")
+    fullImplementation("com.exteragram.hook.thirdparty:lsplant:6.4-extera.8")
+    fullImplementation("com.bytedance.android:shadowhook:2.0.1")
+    fullImplementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
+
+    implementation ('com.google.guava:guava:33.8.0-android') {
+        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        exclude group: 'org.checkerframework', module: 'checker-compat-qual'
+        exclude group: 'org.checkerframework', module: 'checker-qual'
+        exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+        exclude group: 'com.google.j2objc', module: 'j2objc-annotations'
+        exclude group: 'org.codehaus.mojo', module: 'animal-sniffer-annotations'
+    }
+
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.11.1'
+    implementation "androidx.work:work-runtime-ktx:2.12.0"
+    implementation "androidx.credentials:credentials:1.6.0"
+    implementation "androidx.credentials:credentials-play-services-auth:1.6.0"
+
+    implementation "io.noties.markwon:core:4.6.2"
+    implementation "io.noties.markwon:ext-strikethrough:4.6.2"
+    implementation "io.noties.markwon:ext-tables:4.6.2"
+    implementation "io.noties.markwon:html:4.6.2"
+    implementation "io.noties.markwon:inline-parser:4.6.2"
+    implementation("io.noties.markwon:ext-latex:4.6.2") {
+        exclude group: 'ru.noties', module: 'jlatexmath-android'
+    }
+
+    api project(":TMessagesProj_Modules:media3:media-lib-exoplayer")
+    api project(":TMessagesProj_Modules:media3:media-lib-exoplayer-dash")
+    api project(":TMessagesProj_Modules:media3:media-lib-exoplayer-hls")
+    api project(":TMessagesProj_Modules:media3:media-lib-decoder-ffmpeg")
+    api project(":TMessagesProj_Modules:media3:media-lib-session")
+    api project(':jlatexmath')
+
+    fullImplementation 'com.linkedin.dexmaker:dexmaker:2.28.6'
+    fullImplementation 'org.mvel:mvel2:2.5.4.Final'
+
+    implementation "io.github.immat0x1:simplifiles:0.1.6"
+
+    compileOnly 'org.checkerframework:checker-qual:4.4.0'
+
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.20") { because("part of kotlin-stdlib") }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.20") { because("part of kotlin-stdlib") }
+    }
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.1.5'
+    baselineProfile(project(":baselineprofile"))
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        def minApiFlavor = variant.productFlavors.find { it.first == "minApi" }?.second
+        def allowedAbis = flavorAbiSets[minApiFlavor]
+
+        if (allowedAbis != null) {
+            ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'].findAll { !allowedAbis.contains(it) }.each { abi ->
+                variant.packaging.jniLibs.excludes.add("**/${abi}/**")
+            }
+        }
+    }
+}

@@ -8,6 +8,8 @@
 
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -24,9 +26,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.ImageLocation;
@@ -37,15 +41,19 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Cells.GroupCreateUserCell;
 
-import androidx.core.graphics.ColorUtils;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.utils.folders.FolderRoles;
+import com.exteragram.messenger.utils.folders.FolderUiHelper;
 
-public class GroupCreateSpan extends View {
+public class GroupCreateSpan extends View implements Theme.Colorable {
 
+    private String countryIso2;
     private long uid;
     private String key;
+    public boolean isFlag;
     private static TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private static Paint backPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Drawable deleteDrawable;
@@ -60,6 +68,9 @@ public class GroupCreateSpan extends View {
     private boolean deleting;
     private long lastUpdateTime;
     private int[] colors = new int[8];
+    private Theme.ResourcesProvider resourcesProvider;
+    private boolean small;
+    private boolean drawAvatarBackground = true;
 
     public GroupCreateSpan(Context context, Object object) {
         this(context, object, null);
@@ -70,11 +81,22 @@ public class GroupCreateSpan extends View {
     }
 
     public GroupCreateSpan(Context context, Object object, ContactsController.Contact contact) {
+        this(context, object, contact, null);
+    }
+
+    public GroupCreateSpan(Context context, Object object, ContactsController.Contact contact, Theme.ResourcesProvider resourcesProvider) {
+        this(context, object, contact, false, resourcesProvider);
+    }
+
+    public GroupCreateSpan(Context context, Object object, ContactsController.Contact contact, boolean small, Theme.ResourcesProvider resourcesProvider) {
         super(context);
+        this.resourcesProvider = resourcesProvider;
+        this.small = small;
+        isFlag = false;
 
         currentContact = contact;
         deleteDrawable = getResources().getDrawable(R.drawable.delete);
-        textPaint.setTextSize(AndroidUtilities.dp(14));
+        textPaint.setTextSize(dp(small ? 13 : 14));
 
         String firstName;
 
@@ -82,7 +104,7 @@ public class GroupCreateSpan extends View {
         Object imageParent;
 
         avatarDrawable = new AvatarDrawable();
-        avatarDrawable.setTextSize(AndroidUtilities.dp(20));
+        avatarDrawable.setTextSize(dp(20));
         if (object instanceof String) {
             imageLocation = null;
             imageParent = null;
@@ -92,56 +114,84 @@ public class GroupCreateSpan extends View {
                 case "contacts":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_CONTACTS);
                     uid = Long.MIN_VALUE;
-                    firstName = LocaleController.getString("FilterContacts", R.string.FilterContacts);
+                    firstName = LocaleController.getString(R.string.FilterContacts);
                     break;
                 case "non_contacts":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_NON_CONTACTS);
                     uid = Long.MIN_VALUE + 1;
-                    firstName = LocaleController.getString("FilterNonContacts", R.string.FilterNonContacts);
+                    firstName = LocaleController.getString(R.string.FilterNonContacts);
                     break;
                 case "groups":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_GROUPS);
                     uid = Long.MIN_VALUE + 2;
-                    firstName = LocaleController.getString("FilterGroups", R.string.FilterGroups);
+                    firstName = LocaleController.getString(R.string.FilterGroups);
                     break;
                 case "channels":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_CHANNELS);
                     uid = Long.MIN_VALUE + 3;
-                    firstName = LocaleController.getString("FilterChannels", R.string.FilterChannels);
+                    firstName = LocaleController.getString(R.string.FilterChannels);
                     break;
                 case "bots":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_BOTS);
                     uid = Long.MIN_VALUE + 4;
-                    firstName = LocaleController.getString("FilterBots", R.string.FilterBots);
+                    firstName = LocaleController.getString(R.string.FilterBots);
                     break;
                 case "muted":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_MUTED);
                     uid = Long.MIN_VALUE + 5;
-                    firstName = LocaleController.getString("FilterMuted", R.string.FilterMuted);
+                    firstName = LocaleController.getString(R.string.FilterMuted);
                     break;
                 case "read":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_READ);
                     uid = Long.MIN_VALUE + 6;
-                    firstName = LocaleController.getString("FilterRead", R.string.FilterRead);
+                    firstName = LocaleController.getString(R.string.FilterRead);
+                    break;
+                case "existing_chats":
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_EXISTING_CHATS);
+                    uid = Long.MIN_VALUE + 8;
+                    firstName = LocaleController.getString(R.string.FilterExistingChats);
+                    break;
+                case "new_chats":
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_NEW_CHATS);
+                    uid = Long.MIN_VALUE + 9;
+                    firstName = LocaleController.getString(R.string.FilterNewChats);
+                    break;
+                case FolderRoles.TYPE_OWNER:
+                case FolderRoles.TYPE_ADMIN:
+                    avatarDrawable.setAvatarType(FolderRoles.TYPE_OWNER.equals(str) ? AvatarDrawable.AVATAR_TYPE_FILTER_OWNER : AvatarDrawable.AVATAR_TYPE_FILTER_ADMIN);
+                    uid = FolderRoles.spanUidOf(FolderRoles.modeOf(str));
+                    firstName = FolderUiHelper.getRoleName(str);
+                    break;
+                case "premium":
+                    isFlag = true;
+                    avatarDrawable.setColor(Theme.getColor(Theme.key_premiumGradientBackground2, resourcesProvider));
+                    avatarThemeColorType = 1;
+                    firstName = LocaleController.getString(R.string.PrivacyPremium);
+                    break;
+                case "miniapps":
+                    isFlag = true;
+                    avatarDrawable.setColor(Theme.getColor(Theme.key_avatar_backgroundBlue, resourcesProvider), Theme.getColor(Theme.key_avatar_background2Blue, resourcesProvider));
+                    avatarThemeColorType = 2;
+                    firstName = LocaleController.getString(R.string.PrivacyMiniapps);
                     break;
                 case "archived":
                 default:
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_ARCHIVED);
                     uid = Long.MIN_VALUE + 7;
-                    firstName = LocaleController.getString("FilterArchived", R.string.FilterArchived);
+                    firstName = LocaleController.getString(R.string.FilterArchived);
                     break;
             }
         } else if (object instanceof TLRPC.User) {
             TLRPC.User user = (TLRPC.User) object;
             uid = user.id;
             if (UserObject.isReplyUser(user)) {
-                firstName = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
+                firstName = LocaleController.getString(R.string.RepliesTitle);
                 avatarDrawable.setScaleSize(.8f);
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
                 imageLocation = null;
                 imageParent = null;
             } else if (UserObject.isUserSelf(user)) {
-                firstName = LocaleController.getString("SavedMessages", R.string.SavedMessages);
+                firstName = LocaleController.getString(R.string.SavedMessages);
                 avatarDrawable.setScaleSize(.8f);
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                 imageLocation = null;
@@ -149,6 +199,10 @@ public class GroupCreateSpan extends View {
             } else {
                 avatarDrawable.setInfo(user);
                 firstName = UserObject.getFirstName(user);
+                int index;
+                if ((index = firstName.indexOf(' ')) >= 0) {
+                    firstName = firstName.substring(0, index);
+                }
                 imageLocation = ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_SMALL);
                 imageParent = user;
             }
@@ -159,8 +213,22 @@ public class GroupCreateSpan extends View {
             firstName = chat.title;
             imageLocation = ImageLocation.getForUserOrChat(chat, ImageLocation.TYPE_SMALL);
             imageParent = chat;
+        } else if (object instanceof TLRPC.TL_help_country) {
+            TLRPC.TL_help_country country = (TLRPC.TL_help_country) object;
+            String flag = LocaleController.getLanguageFlag(country.iso2);
+            firstName = country.default_name;
+            avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_COUNTRY);
+            avatarDrawable.setTextSize(dp(24));
+            avatarDrawable.setInfo(0, flag, null, null);
+            avatarDrawable.setColor(Theme.multAlpha(Theme.getColor(Theme.key_text_RedRegular, resourcesProvider), 0.7f));
+            avatarThemeColorType = 3;
+            avatarDrawable.setDrawAvatarBackground(drawAvatarBackground = false);
+            uid = country.default_name.hashCode();
+            countryIso2 = country.iso2;
+            imageLocation = null;
+            imageParent = null;
         } else {
-            avatarDrawable.setInfo(0, contact.first_name, contact.last_name);
+            avatarDrawable.setInfo(contact.contact_id, contact.first_name, contact.last_name);
             uid = contact.contact_id;
             key = contact.key;
             if (!TextUtils.isEmpty(contact.first_name)) {
@@ -173,36 +241,62 @@ public class GroupCreateSpan extends View {
         }
 
         imageReceiver = new ImageReceiver();
-        imageReceiver.setRoundRadius(ExteraConfig.getAvatarCorners(32));
+        imageReceiver.setRoundRadius(ExteraConfig.getAvatarCorners(small ? 28 : 32));
         imageReceiver.setParentView(this);
-        imageReceiver.setImageCoords(0, 0, AndroidUtilities.dp(32), AndroidUtilities.dp(32));
+        imageReceiver.setImageCoords(drawAvatarBackground ? 0 : dp(4), 0, dp(small ? 28 : 32), dp(small ? 28 : 32));
 
         int maxNameWidth;
         if (AndroidUtilities.isTablet()) {
-            maxNameWidth = AndroidUtilities.dp(530 - 32 - 18 - 57 * 2) / 2;
+            maxNameWidth = dp(530 - (small ? 28 : 32) - 18 - 57 * 2) / 2;
         } else {
-            maxNameWidth = (Math.min(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y) - AndroidUtilities.dp(32 + 18 + 57 * 2)) / 2;
+            maxNameWidth = (Math.min(AndroidUtilities.displaySize.x, AndroidUtilities.displaySize.y) - dp((small ? 28 : 32) + 18 + 57 * 2)) / 2;
         }
 
         firstName = firstName.replace('\n', ' ');
         CharSequence name = firstName;
-        name = Emoji.replaceEmoji(name, textPaint.getFontMetricsInt(), AndroidUtilities.dp(12), false);
+        name = Emoji.replaceEmoji(name, textPaint.getFontMetricsInt(), false);
         name = TextUtils.ellipsize(name, textPaint, maxNameWidth, TextUtils.TruncateAt.END);
         nameLayout = new StaticLayout(name, textPaint, 1000, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
         if (nameLayout.getLineCount() > 0) {
             textWidth = (int) Math.ceil(nameLayout.getLineWidth(0));
             textX = -nameLayout.getLineLeft(0);
         }
-        imageReceiver.setImage(imageLocation, "50_50", avatarDrawable, 0, null, imageParent, 1);
-        updateColors();
+        if (object instanceof String && "premium".equals((String) object)) {
+            imageReceiver.setImageBitmap(GroupCreateUserCell.makePremiumUsersDrawable(getContext(), true));
+        } else if (object instanceof String && "miniapps".equals((String) object)) {
+            imageReceiver.setImageBitmap(GroupCreateUserCell.makeMiniAppsDrawable(getContext(), true));
+        } else {
+            imageReceiver.setImage(imageLocation, "50_50", avatarDrawable, 0, null, imageParent, 1);
+        }
+        updateColorsInternal();
 
         NotificationCenter.listenEmojiLoading(this);
     }
 
+    private int avatarThemeColorType;
+
     public void updateColors() {
+        try {
+            if (avatarDrawable != null) {
+                if (avatarThemeColorType == 1) {
+                    avatarDrawable.setColor(Theme.getColor(Theme.key_premiumGradientBackground2, resourcesProvider));
+                } else if (avatarThemeColorType == 2) {
+                    avatarDrawable.setColor(Theme.getColor(Theme.key_avatar_backgroundBlue, resourcesProvider), Theme.getColor(Theme.key_avatar_background2Blue, resourcesProvider));
+                } else if (avatarThemeColorType == 3) {
+                    avatarDrawable.setColor(Theme.multAlpha(Theme.getColor(Theme.key_text_RedRegular, resourcesProvider), 0.7f));
+                }
+            }
+            updateColorsInternal();
+            invalidate();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    private void updateColorsInternal() {
         int color = avatarDrawable.getColor();
-        int back = Theme.getColor(Theme.key_groupcreate_spanBackground);
-        int delete = Theme.getColor(Theme.key_groupcreate_spanDelete);
+        int back = Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider), 0.05f);
+        int delete = Theme.getColor(Theme.key_groupcreate_spanDelete, resourcesProvider);
         colors[0] = Color.red(back);
         colors[1] = Color.red(color);
         colors[2] = Color.green(back);
@@ -211,8 +305,19 @@ public class GroupCreateSpan extends View {
         colors[5] = Color.blue(color);
         colors[6] = Color.alpha(back);
         colors[7] = Color.alpha(color);
-        deleteDrawable.setColorFilter(new PorterDuffColorFilter(delete, PorterDuff.Mode.MULTIPLY));
+        if (!deleteColorApplied || delete != appliedDeleteColor) {
+            deleteColorApplied = true;
+            appliedDeleteColor = delete;
+            deleteDrawable.setColorFilter(new PorterDuffColorFilter(delete, PorterDuff.Mode.MULTIPLY));
+        }
         backPaint.setColor(back);
+    }
+
+    private boolean deleteColorApplied;
+    private int appliedDeleteColor;
+
+    public String getCountryIso2() {
+        return countryIso2;
     }
 
     public boolean isDeleting() {
@@ -251,11 +356,14 @@ public class GroupCreateSpan extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(AndroidUtilities.dp(32 + 25) + textWidth, AndroidUtilities.dp(32));
+        setMeasuredDimension(
+            dp((small ? 28 - 8 : 32) + 25) + textWidth,
+            dp(small ? 28 : 32)
+        );
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         if (deleting && progress != 1.0f || !deleting && progress != 0.0f) {
             long newTime = System.currentTimeMillis();
             long dt = newTime - lastUpdateTime;
@@ -276,9 +384,9 @@ public class GroupCreateSpan extends View {
             invalidate();
         }
         canvas.save();
-        rect.set(0, 0, getMeasuredWidth(), AndroidUtilities.dp(32));
+        rect.set(0, 0, getMeasuredWidth(), dp(small ? 28 : 32));
         backPaint.setColor(Color.argb(colors[6] + (int) ((colors[7] - colors[6]) * progress), colors[0] + (int) ((colors[1] - colors[0]) * progress), colors[2] + (int) ((colors[3] - colors[2]) * progress), colors[4] + (int) ((colors[5] - colors[4]) * progress)));
-        canvas.drawRoundRect(rect, AndroidUtilities.dp(16), AndroidUtilities.dp(16), backPaint);
+        canvas.drawRoundRect(rect, ExteraConfig.getAvatarCorners(small ? 28 : 32), ExteraConfig.getAvatarCorners(small ? 28 : 32), backPaint);
         if (progress != 1f) {
             imageReceiver.draw(canvas);
         }
@@ -287,17 +395,18 @@ public class GroupCreateSpan extends View {
             float alpha = Color.alpha(color) / 255.0f;
             backPaint.setColor(color);
             backPaint.setAlpha((int) (255 * progress * alpha));
-            canvas.drawCircle(AndroidUtilities.dp(16), AndroidUtilities.dp(16), AndroidUtilities.dp(16), backPaint);
+            canvas.drawRoundRect(0, 0, AndroidUtilities.dp(small ? 28 : 32), AndroidUtilities.dp(small ? 28 : 32), ExteraConfig.getAvatarCorners(small ? 28 : 32), ExteraConfig.getAvatarCorners(small ? 28 : 32), backPaint);
+            //canvas.drawCircle(dp(small ? 14 : 16), dp(small ? 14 : 16), dp(small ? 14 : 16), backPaint);
             canvas.save();
-            canvas.rotate(45 * (1.0f - progress), AndroidUtilities.dp(16), AndroidUtilities.dp(16));
-            deleteDrawable.setBounds(AndroidUtilities.dp(11), AndroidUtilities.dp(11), AndroidUtilities.dp(21), AndroidUtilities.dp(21));
+            canvas.rotate(45 * (1.0f - progress), dp(16), dp(16));
+            deleteDrawable.setBounds(dp(small ? 9 : 11), dp(small ? 9 : 11), dp(small ? 19 : 21), dp(small ? 19 : 21));
             deleteDrawable.setAlpha((int) (255 * progress));
             deleteDrawable.draw(canvas);
             canvas.restore();
         }
-        canvas.translate(textX + AndroidUtilities.dp(32 + 9), AndroidUtilities.dp(8));
-        int text = Theme.getColor(Theme.key_groupcreate_spanText);
-        int textSelected = Theme.getColor(Theme.key_avatar_text);
+        canvas.translate(textX + dp((small ? 26 : 32) + 9), dp(small ? 6 : 8));
+        int text = Theme.getColor(Theme.key_groupcreate_spanText, resourcesProvider);
+        int textSelected = Theme.getColor(Theme.key_avatar_text, resourcesProvider);
         textPaint.setColor(ColorUtils.blendARGB(text, textSelected, progress));
 
         nameLayout.draw(canvas);
@@ -309,6 +418,6 @@ public class GroupCreateSpan extends View {
         super.onInitializeAccessibilityNodeInfo(info);
         info.setText(nameLayout.getText());
         if (isDeleting())
-            info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK.getId(), LocaleController.getString("Delete", R.string.Delete)));
+            info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK.getId(), LocaleController.getString(R.string.Delete)));
     }
 }

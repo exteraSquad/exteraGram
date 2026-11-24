@@ -9,13 +9,19 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Keep;
 import android.text.TextPaint;
+import android.util.SparseArray;
 import android.view.animation.DecelerateInterpolator;
 
+import com.exteragram.messenger.plugins.PluginsController;
+
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.ui.ActionBar.MessageDrawable;
 import org.telegram.ui.ActionBar.Theme;
 
 public class MediaActionDrawable extends Drawable {
@@ -36,14 +42,25 @@ public class MediaActionDrawable extends Drawable {
     public static final int ICON_CANCEL_PERCENT = 13;
     public static final int ICON_CANCEL_FILL = 14;
     public static final int ICON_UPDATE = 15;
+    public static final int ICON_PLUGIN = 16;
+    public static final int ICON_SETTINGS = 17;
+    public static final int ICON_STICKERS = 18;
+    public static final int ICON_PILL = 19;
+
+    public static boolean isCustomFileIcon(int icon) {
+        return icon == ICON_PLUGIN || icon == ICON_SETTINGS || icon == ICON_STICKERS || icon == ICON_PILL || PluginsController.isPluginFileIcon(icon);
+    }
 
     private TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint backPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint paint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public Paint paint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint paint3 = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint drawablePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF rect = new RectF();
     private ColorFilter colorFilter;
+    private final ColorFilter whiteColorFilter = new PorterDuffColorFilter(0xffffffff, PorterDuff.Mode.SRC_IN);
+    private final SparseArray<Drawable[]> customIconDrawables = new SparseArray<>();
     private float scale = 1.0f;
     private DecelerateInterpolator interpolator = new DecelerateInterpolator();
 
@@ -81,10 +98,23 @@ public class MediaActionDrawable extends Drawable {
 
     private MediaActionDrawableDelegate delegate;
 
-    private Theme.MessageDrawable messageDrawable;
+    private MessageDrawable messageDrawable;
     private LinearGradient gradientDrawable;
     private Matrix gradientMatrix;
     private boolean hasOverlayImage;
+
+    public boolean drawProgressCircle = true;
+    private float downloadIconScale = 1f;
+
+    public void setDownloadIconScale(float scale) {
+        downloadIconScale = scale;
+    }
+
+    @Keep
+    public float getDownloadIconScale() {
+        return downloadIconScale;
+    }
+
 
     public interface MediaActionDrawableDelegate {
         void invalidate();
@@ -98,7 +128,7 @@ public class MediaActionDrawable extends Drawable {
 
         paint3.setColor(0xffffffff);
 
-        textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        textPaint.setTypeface(AndroidUtilities.bold());
         textPaint.setTextSize(AndroidUtilities.dp(13));
         textPaint.setColor(0xffffffff);
 
@@ -116,6 +146,7 @@ public class MediaActionDrawable extends Drawable {
 
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
+        this.colorFilter = colorFilter;
         paint.setColorFilter(colorFilter);
         paint2.setColorFilter(colorFilter);
         paint3.setColorFilter(colorFilter);
@@ -148,6 +179,30 @@ public class MediaActionDrawable extends Drawable {
         return PixelFormat.TRANSPARENT;
     }
 
+    private void drawTintedDrawable(Canvas canvas, Drawable drawable, int cx, int cy, float scale, int alpha) {
+        int w = (int) (drawable.getIntrinsicWidth() * scale);
+        int h = (int) (drawable.getIntrinsicHeight() * scale);
+        int left = cx - w / 2;
+        int top = cy - h / 2;
+        int right = cx + w / 2;
+        int bottom = cy + h / 2;
+
+        applyShaderMatrix(true);
+
+        int saveCount = canvas.saveLayer(left, top, right, bottom, null);
+        drawable.setColorFilter(whiteColorFilter);
+        drawable.setAlpha(255);
+        drawable.setBounds(left, top, right, bottom);
+        drawable.draw(canvas);
+
+        drawablePaint.set(paint2);
+        drawablePaint.setAlpha(alpha);
+        drawablePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawRect(left, top, right, bottom, drawablePaint);
+        drawablePaint.setXfermode(null);
+        canvas.restoreToCount(saveCount);
+    }
+
     public void setDelegate(MediaActionDrawableDelegate mediaActionDrawableDelegate) {
         delegate = mediaActionDrawableDelegate;
     }
@@ -164,7 +219,7 @@ public class MediaActionDrawable extends Drawable {
             if (currentIcon == ICON_PLAY && icon == ICON_PAUSE || currentIcon == ICON_PAUSE && icon == ICON_PLAY) {
                 transitionAnimationTime = 300.0f;
             } else if (currentIcon == ICON_DOWNLOAD && (icon == ICON_CANCEL || icon == ICON_CANCEL_FILL)) {
-                transitionAnimationTime = 400.0f;
+                transitionAnimationTime = drawProgressCircle ? 400.0f : 250.0f;
             } else if (currentIcon != ICON_NONE && icon == ICON_CHECK) {
                 transitionAnimationTime = 360.0f;
             } else if (currentIcon == ICON_NONE && icon == ICON_CANCEL_FILL || currentIcon == ICON_CANCEL_FILL && icon == ICON_NONE) {
@@ -243,7 +298,7 @@ public class MediaActionDrawable extends Drawable {
         return animatingTransition ? transitionProgress : 1.0f;
     }
 
-    public void setBackgroundDrawable(Theme.MessageDrawable drawable) {
+    public void setBackgroundDrawable(MessageDrawable drawable) {
         messageDrawable = drawable;
     }
 
@@ -273,7 +328,7 @@ public class MediaActionDrawable extends Drawable {
         }
     }
 
-    private void applyShaderMatrix(boolean path) {
+    public void applyShaderMatrix(boolean path) {
         if (messageDrawable != null && messageDrawable.hasGradient() && !hasOverlayImage) {
             android.graphics.Rect bounds = getBounds();
             Shader shader = messageDrawable.getGradientShader();
@@ -330,123 +385,203 @@ public class MediaActionDrawable extends Drawable {
         int width = AndroidUtilities.dp(3);
         if (currentIcon == ICON_DOWNLOAD || nextIcon == ICON_DOWNLOAD) {
             applyShaderMatrix(false);
-            float yStart = cy - AndroidUtilities.dp(9) * scale;
-            float yEnd = cy + AndroidUtilities.dp(9) * scale;
-            float yStart2;
-            float yEnd2 = cy + AndroidUtilities.dp(12) * scale;
 
-            float transition;
-            if ((currentIcon == ICON_CANCEL || currentIcon == ICON_CANCEL_FILL) && nextIcon == ICON_DOWNLOAD) {
-                paint.setAlpha((int) (255 * Math.min(1.0f, transitionProgress / 0.5f)));
-                transition = transitionProgress;
-                yStart2 = cy + AndroidUtilities.dp(12) * scale;
-            } else {
-                if (nextIcon != ICON_CANCEL && nextIcon != ICON_CANCEL_FILL && nextIcon != ICON_DOWNLOAD) {
-                    paint.setAlpha((int) (255 * Math.min(1.0f, savedTransitionProgress / 0.5f) * (1.0f - transitionProgress)));
-                    transition = savedTransitionProgress;
-                } else {
-                    paint.setAlpha(255);
+            if (drawProgressCircle) {
+                float yStart = cy - AndroidUtilities.dp(9) * scale;
+                float yEnd = cy + AndroidUtilities.dp(9) * scale;
+                float yStart2;
+                float yEnd2 = cy + AndroidUtilities.dp(12) * scale;
+
+                float transition;
+                if ((currentIcon == ICON_CANCEL || currentIcon == ICON_CANCEL_FILL) && nextIcon == ICON_DOWNLOAD) {
+                    paint.setAlpha((int) (255 * Math.min(1.0f, transitionProgress / 0.5f)));
                     transition = transitionProgress;
-                }
-                yStart2 = cy + AndroidUtilities.dp(1) * scale;
-            }
-
-            float y1, y2, x1, x2, y3;
-            if (animatingTransition) {
-                float progress = transition;
-                if (nextIcon == ICON_DOWNLOAD || progress <= DOWNLOAD_TO_CANCEL_STAGE1) {
-                    float currentProgress;
-                    float currentBackProgress;
-                    if (nextIcon == ICON_DOWNLOAD) {
-                        currentBackProgress = transition;
-                        currentProgress = 1.0f - currentBackProgress;
-                    } else {
-                        currentProgress = transition / DOWNLOAD_TO_CANCEL_STAGE1;
-                        currentBackProgress = 1.0f - currentProgress;
-                    }
-                    y1 = yStart + (yStart2 - yStart) * currentProgress;
-                    y2 = yEnd + (yEnd2 - yEnd) * currentProgress;
-                    x1 = cx - AndroidUtilities.dp(8) * currentBackProgress * scale;
-                    x2 = cx + AndroidUtilities.dp(8) * currentBackProgress * scale;
-                    y3 = y2 - AndroidUtilities.dp(8) * currentBackProgress * scale;
+                    yStart2 = cy + AndroidUtilities.dp(12) * scale;
                 } else {
-                    float currentProgress;
-                    float currentProgress2;
-                    float currentProgress3;
-                    float d = AndroidUtilities.dp(13) * scale * scale + (isMini ? AndroidUtilities.dp(2) : 0);
-
-                    progress -= DOWNLOAD_TO_CANCEL_STAGE1;
-                    currentProgress3 = progress / (DOWNLOAD_TO_CANCEL_STAGE2 + DOWNLOAD_TO_CANCEL_STAGE3);
-                    if (progress > DOWNLOAD_TO_CANCEL_STAGE2) {
-                        progress -= DOWNLOAD_TO_CANCEL_STAGE2;
-                        currentProgress = 1.0f;
-                        currentProgress2 = progress / DOWNLOAD_TO_CANCEL_STAGE3;
+                    if (nextIcon != ICON_CANCEL && nextIcon != ICON_CANCEL_FILL && nextIcon != ICON_DOWNLOAD) {
+                        paint.setAlpha((int) (255 * Math.min(1.0f, savedTransitionProgress / 0.5f) * (1.0f - transitionProgress)));
+                        transition = savedTransitionProgress;
                     } else {
-                        currentProgress = progress / DOWNLOAD_TO_CANCEL_STAGE2;
-                        currentProgress2 = 0.0f;
+                        paint.setAlpha(255);
+                        transition = transitionProgress;
                     }
-                    rect.set(cx - d, yEnd2 - d / 2, cx, yEnd2 + d / 2);
-                    float start = 100 * currentProgress2;
-                    canvas.drawArc(rect, start, 104 * currentProgress3 - start, false, paint);
+                    yStart2 = cy + AndroidUtilities.dp(1) * scale;
+                }
 
-                    y1 = yStart2 + (yEnd2 - yStart2) * currentProgress;
-                    y2 = y3 = yEnd2;
-                    x1 = x2 = cx;
-
-                    if (currentProgress2 > 0) {
-                        float rotation;
-                        if (nextIcon == ICON_CANCEL_FILL) {
-                            rotation = 0;
+                float y1, y2, x1, x2, y3;
+                if (animatingTransition) {
+                    float progress = transition;
+                    if (nextIcon == ICON_DOWNLOAD || progress <= DOWNLOAD_TO_CANCEL_STAGE1) {
+                        float currentProgress;
+                        float currentBackProgress;
+                        if (nextIcon == ICON_DOWNLOAD) {
+                            currentBackProgress = transition;
+                            currentProgress = 1.0f - currentBackProgress;
                         } else {
-                            rotation = -45 * (1.0f - currentProgress2);
+                            currentProgress = transition / DOWNLOAD_TO_CANCEL_STAGE1;
+                            currentBackProgress = 1.0f - currentProgress;
                         }
-                        d = AndroidUtilities.dp(7) * currentProgress2 * scale;
-                        int alpha = (int) (255 * currentProgress2);
-                        if (nextIcon != ICON_CANCEL && nextIcon != ICON_CANCEL_FILL && nextIcon != ICON_DOWNLOAD) {
-                            float backProgress = (1.0f - Math.min(1.0f, transitionProgress / 0.5f));
-                            //d *= backProgress;
-                            alpha *= backProgress;
-                        }
+                        y1 = yStart + (yStart2 - yStart) * currentProgress;
+                        y2 = yEnd + (yEnd2 - yEnd) * currentProgress;
+                        x1 = cx - AndroidUtilities.dp(8) * currentBackProgress * scale;
+                        x2 = cx + AndroidUtilities.dp(8) * currentBackProgress * scale;
+                        y3 = y2 - AndroidUtilities.dp(8) * currentBackProgress * scale;
+                    } else {
+                        float currentProgress;
+                        float currentProgress2;
+                        float currentProgress3;
+                        float d = AndroidUtilities.dp(13) * scale * scale + (isMini ? AndroidUtilities.dp(2) : 0);
 
-                        if (rotation != 0) {
-                            canvas.save();
-                            canvas.rotate(rotation, cx, cy);
+                        progress -= DOWNLOAD_TO_CANCEL_STAGE1;
+                        currentProgress3 = progress / (DOWNLOAD_TO_CANCEL_STAGE2 + DOWNLOAD_TO_CANCEL_STAGE3);
+                        if (progress > DOWNLOAD_TO_CANCEL_STAGE2) {
+                            progress -= DOWNLOAD_TO_CANCEL_STAGE2;
+                            currentProgress = 1.0f;
+                            currentProgress2 = progress / DOWNLOAD_TO_CANCEL_STAGE3;
+                        } else {
+                            currentProgress = progress / DOWNLOAD_TO_CANCEL_STAGE2;
+                            currentProgress2 = 0.0f;
                         }
-                        if (alpha != 0) {
-                            paint.setAlpha(alpha);
+                        rect.set(cx - d, yEnd2 - d / 2, cx, yEnd2 + d / 2);
+                        float start = 100 * currentProgress2;
+                        canvas.drawArc(rect, start, 104 * currentProgress3 - start, false, paint);
+
+                        y1 = yStart2 + (yEnd2 - yStart2) * currentProgress;
+                        y2 = y3 = yEnd2;
+                        x1 = x2 = cx;
+
+                        if (currentProgress2 > 0) {
+                            float rotation;
                             if (nextIcon == ICON_CANCEL_FILL) {
-                                paint3.setAlpha(alpha);
-                                rect.set(cx - AndroidUtilities.dp(3.5f), cy - AndroidUtilities.dp(3.5f), cx + AndroidUtilities.dp(3.5f), cy + AndroidUtilities.dp(3.5f));
-                                canvas.drawRoundRect(rect, AndroidUtilities.dp(2), AndroidUtilities.dp(2), paint3);
-
-                                paint.setAlpha((int) (alpha * 0.15f));
-                                int diff = AndroidUtilities.dp(isMini ? 2 : 4);
-                                rect.set(bounds.left + diff, bounds.top + diff, bounds.right - diff, bounds.bottom - diff);
-                                canvas.drawArc(rect, 0, 360, false, paint);
-                                paint.setAlpha(alpha);
+                                rotation = 0;
                             } else {
-                                canvas.drawLine(cx - d, cy - d, cx + d, cy + d, paint);
-                                canvas.drawLine(cx + d, cy - d, cx - d, cy + d, paint);
+                                rotation = -45 * (1.0f - currentProgress2);
+                            }
+                            d = AndroidUtilities.dp(7) * currentProgress2 * scale;
+                            int alpha = (int) (255 * currentProgress2);
+                            if (nextIcon != ICON_CANCEL && nextIcon != ICON_CANCEL_FILL && nextIcon != ICON_DOWNLOAD) {
+                                float backProgress = (1.0f - Math.min(1.0f, transitionProgress / 0.5f));
+                                //d *= backProgress;
+                                alpha *= backProgress;
+                            }
+
+                            if (rotation != 0) {
+                                canvas.save();
+                                canvas.rotate(rotation, cx, cy);
+                            }
+                            if (alpha != 0) {
+                                paint.setAlpha(alpha);
+                                if (nextIcon == ICON_CANCEL_FILL) {
+                                    paint3.setAlpha(alpha);
+                                    rect.set(cx - AndroidUtilities.dp(3.5f), cy - AndroidUtilities.dp(3.5f), cx + AndroidUtilities.dp(3.5f), cy + AndroidUtilities.dp(3.5f));
+                                    canvas.drawRoundRect(rect, AndroidUtilities.dp(2), AndroidUtilities.dp(2), paint3);
+
+                                    paint.setAlpha((int) (alpha * 0.15f));
+                                    int diff = AndroidUtilities.dp(isMini ? 2 : 4);
+                                    rect.set(bounds.left + diff, bounds.top + diff, bounds.right - diff, bounds.bottom - diff);
+                                    canvas.drawArc(rect, 0, 360, false, paint);
+                                    paint.setAlpha(alpha);
+                                } else {
+                                    canvas.drawLine(cx - d, cy - d, cx + d, cy + d, paint);
+                                    canvas.drawLine(cx + d, cy - d, cx - d, cy + d, paint);
+                                }
+                            }
+                            if (rotation != 0) {
+                                canvas.restore();
                             }
                         }
-                        if (rotation != 0) {
+                    }
+                } else {
+                    y1 = yStart;
+                    y2 = yEnd;
+                    x1 = cx - AndroidUtilities.dp(8) * scale;
+                    x2 = cx + AndroidUtilities.dp(8) * scale;
+                    y3 = y2 - AndroidUtilities.dp(8) * scale;
+                }
+                if (y1 != y2) {
+                    canvas.drawLine(cx, y1, cx, y2, paint);
+                }
+                if (x1 != cx) {
+                    canvas.drawLine(x1, y3, cx, y2, paint);
+                    canvas.drawLine(x2, y3, cx, y2, paint);
+                }
+            } else {
+                boolean isFillTransition = (currentIcon == ICON_CANCEL_FILL || nextIcon == ICON_CANCEL_FILL);
+                float p = nextIcon == ICON_DOWNLOAD ? (1.0f - transitionProgress) : transitionProgress;
+                float customScale = scale * downloadIconScale;
+
+                float t1 = AndroidUtilities.dp(8) * customScale, t2 = AndroidUtilities.dp(1) * customScale;
+                float t3 = AndroidUtilities.dp(7) * customScale, t4 = AndroidUtilities.dp(9) * customScale;
+                float t5 = AndroidUtilities.dp(2) * customScale, t6 = AndroidUtilities.dp(3.5f);
+
+                if (!isFillTransition) {
+                    boolean isCancelTransition = currentIcon == ICON_CANCEL || nextIcon == ICON_CANCEL;
+
+                    if (isCancelTransition && animatingTransition) {
+                        canvas.save();
+                        canvas.rotate(90 * p, cx, cy);
+
+                        float stemAlpha = 1.0f - p;
+                        if (stemAlpha > 0) {
+                            paint.setAlpha((int) (255 * stemAlpha));
+                            float stemY1 = cy - t4 * stemAlpha;
+                            float stemY2 = cy + t4 * stemAlpha;
+                            canvas.drawLine(cx, stemY1, cx, stemY2, paint);
+                        }
+
+                        paint.setAlpha(255);
+
+                        float y1_l = cy + t2 - t1 * p, y2_l = cy + t4 - t5 * p;
+                        canvas.drawLine(cx - t1 + t2 * p, y1_l, cx + t3 * p, y2_l, paint);
+                        canvas.drawLine(cx + t1 - t2 * p, y1_l, cx - t3 * p, y2_l, paint);
+
+                        canvas.restore();
+                    } else {
+                        float fadeProgress = animatingTransition ? p : (currentIcon == ICON_DOWNLOAD ? 0f : 1f);
+                        float scaleIcon = 1.0f - fadeProgress;
+                        int alpha = (int) (255 * scaleIcon);
+
+                        if (alpha > 0) {
+                            canvas.save();
+                            canvas.scale(scaleIcon, scaleIcon, cx, cy);
+                            paint.setAlpha(alpha);
+
+                            float yEnd = cy + t4;
+                            float y3 = yEnd - t1;
+
+                            canvas.drawLine(cx, cy - t4, cx, yEnd, paint);
+                            canvas.drawLine(cx - t1, y3, cx, yEnd, paint);
+                            canvas.drawLine(cx + t1, y3, cx, yEnd, paint);
+
                             canvas.restore();
                         }
                     }
+                } else {
+                    float arrowScale = 1.0f - p;
+                    if (arrowScale > 0) {
+                        canvas.save();
+                        canvas.scale(arrowScale, arrowScale, cx, cy);
+                        paint.setAlpha((int) (255 * arrowScale * overrideAlpha));
+
+                        float yEnd = cy + t4;
+                        float y3 = yEnd - t1;
+
+                        canvas.drawLine(cx, cy - t4, cx, yEnd, paint);
+                        canvas.drawLine(cx - t1, y3, cx, yEnd, paint);
+                        canvas.drawLine(cx + t1, y3, cx, yEnd, paint);
+                        canvas.restore();
+                    }
+
+                    if (p > 0) {
+                        canvas.save();
+                        canvas.scale(p, p, cx, cy);
+                        paint3.setAlpha((int) (255 * p * overrideAlpha));
+                        rect.set(cx - t6, cy - t6, cx + t6, cy + t6);
+                        canvas.drawRoundRect(rect, AndroidUtilities.dp(2), AndroidUtilities.dp(2), paint3);
+
+                        canvas.restore();
+                    }
                 }
-            } else {
-                y1 = yStart;
-                y2 = yEnd;
-                x1 = cx - AndroidUtilities.dp(8) * scale;
-                x2 = cx + AndroidUtilities.dp(8) * scale;
-                y3 = y2 - AndroidUtilities.dp(8) * scale;
-            }
-            if (y1 != y2) {
-                canvas.drawLine(cx, y1, cx, y2, paint);
-            }
-            if (x1 != cx) {
-                canvas.drawLine(x1, y3, cx, y2, paint);
-                canvas.drawLine(x2, y3, cx, y2, paint);
             }
         }
 
@@ -459,17 +594,22 @@ public class MediaActionDrawable extends Drawable {
             float iconScaleY = 0, progressScaleY = 0;
             int alpha;
             if (nextIcon == ICON_DOWNLOAD) {
-                if (transitionProgress <= DOWNLOAD_TO_CANCEL_STAGE3 + DOWNLOAD_TO_CANCEL_STAGE2) {
-                    float progress = transitionProgress / (DOWNLOAD_TO_CANCEL_STAGE3 + DOWNLOAD_TO_CANCEL_STAGE2);
-                    float backProgress = 1.0f - progress;
-                    d = AndroidUtilities.dp(7) * backProgress * scale;
-                    alpha = (int) (255 * backProgress);
+                if (drawProgressCircle) {
+                    if (transitionProgress <= DOWNLOAD_TO_CANCEL_STAGE3 + DOWNLOAD_TO_CANCEL_STAGE2) {
+                        float progress = transitionProgress / (DOWNLOAD_TO_CANCEL_STAGE3 + DOWNLOAD_TO_CANCEL_STAGE2);
+                        float backProgress = 1.0f - progress;
+                        d = AndroidUtilities.dp(7) * backProgress * scale;
+                        alpha = (int) (255 * backProgress);
+                    } else {
+                        d = 0;
+                        alpha = 0;
+                    }
                 } else {
                     d = 0;
                     alpha = 0;
                 }
                 rotation = 0;
-            } else if (nextIcon == ICON_UPDATE || nextIcon == ICON_PLAY || nextIcon == ICON_PAUSE || nextIcon == ICON_FILE || nextIcon == ICON_GIF || nextIcon == ICON_SECRETCHECK || nextIcon == ICON_FIRE || nextIcon == ICON_CHECK) {
+            } else if (nextIcon == ICON_UPDATE || nextIcon == ICON_PLAY || nextIcon == ICON_PAUSE || nextIcon == ICON_FILE || isCustomFileIcon(nextIcon) || nextIcon == ICON_GIF || nextIcon == ICON_SECRETCHECK || nextIcon == ICON_FIRE || nextIcon == ICON_CHECK) {
                 float progress;
                 float backProgress;
                 if (nextIcon == ICON_CHECK) {
@@ -555,16 +695,18 @@ public class MediaActionDrawable extends Drawable {
                 canvas.scale(progressScale, progressScale, progressScaleX, progressScaleY);
             }
             if ((currentIcon == ICON_CANCEL || currentIcon == ICON_CANCEL_FILL || currentIcon == ICON_NONE && (nextIcon == ICON_CANCEL_FILL || nextIcon == ICON_CANCEL)) && alpha != 0) {
-                float rad = Math.max(4, 360 * animatedDownloadProgress);
-                int diff = AndroidUtilities.dp(isMini ? 2 : 4);
-                rect.set(bounds.left + diff, bounds.top + diff, bounds.right - diff, bounds.bottom - diff);
+                if (drawProgressCircle) {
+                    float rad = Math.max(4, 360 * animatedDownloadProgress);
+                    int diff = AndroidUtilities.dp(isMini ? 2 : 4);
+                    rect.set(bounds.left + diff, bounds.top + diff, bounds.right - diff, bounds.bottom - diff);
 
-                if (currentIcon == ICON_CANCEL_FILL || currentIcon == ICON_NONE && nextIcon == ICON_CANCEL_FILL) {
-                    paint.setAlpha((int) (alpha * 0.15f * overrideAlpha));
-                    canvas.drawArc(rect, 0, 360, false, paint);
-                    paint.setAlpha(alpha);
+                    if (currentIcon == ICON_CANCEL_FILL || currentIcon == ICON_NONE && nextIcon == ICON_CANCEL_FILL) {
+                        paint.setAlpha((int) (alpha * 0.15f * overrideAlpha));
+                        canvas.drawArc(rect, 0, 360, false, paint);
+                        paint.setAlpha(alpha);
+                    }
+                    canvas.drawArc(rect, downloadRadOffset, rad, false, paint);
                 }
-                canvas.drawArc(rect, downloadRadOffset, rad, false, paint);
             }
             if (progressScale != 1.0f) {
                 canvas.restore();
@@ -582,10 +724,13 @@ public class MediaActionDrawable extends Drawable {
             if (alpha != 0) {
                 applyShaderMatrix(false);
                 paint.setAlpha((int) (alpha * overrideAlpha));
-                float rad = Math.max(4, 360 * animatedDownloadProgress);
-                int diff = AndroidUtilities.dp(isMini ? 2 : 4);
-                rect.set(bounds.left + diff, bounds.top + diff, bounds.right - diff, bounds.bottom - diff);
-                canvas.drawArc(rect, downloadRadOffset, rad, false, paint);
+
+                if (drawProgressCircle) {
+                    float rad = Math.max(4, 360 * animatedDownloadProgress);
+                    int diff = AndroidUtilities.dp(isMini ? 2 : 4);
+                    rect.set(bounds.left + diff, bounds.top + diff, bounds.right - diff, bounds.bottom - diff);
+                    canvas.drawArc(rect, downloadRadOffset, rad, false, paint);
+                }
             }
         }
 
@@ -616,6 +761,10 @@ public class MediaActionDrawable extends Drawable {
         } else if (currentIcon == ICON_FILE) {
             previousPath = Theme.chat_filePath;
         }
+        if (isCustomFileIcon(nextIcon))
+            nextDrawable = getCustomIconDrawable(nextIcon);
+        if (isCustomFileIcon(currentIcon))
+            previousDrawable = getCustomIconDrawable(currentIcon);
         if (nextIcon == ICON_FIRE) {
             nextDrawable = Theme.chat_flameIcon;
         } else if (currentIcon == ICON_FIRE) {
@@ -793,20 +942,30 @@ public class MediaActionDrawable extends Drawable {
         }
 
         if (previousDrawable != null && previousDrawable != nextDrawable) {
-            int w = (int) (previousDrawable.getIntrinsicWidth() * previowsDrawableScale);
-            int h = (int) (previousDrawable.getIntrinsicHeight() * previowsDrawableScale);
-            previousDrawable.setColorFilter(colorFilter);
-            previousDrawable.setAlpha(currentIcon == nextIcon ? 255 : (int) ((1.0f - transitionProgress) * 255));
-            previousDrawable.setBounds(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
-            previousDrawable.draw(canvas);
+            int alpha = currentIcon == nextIcon ? 255 : (int) ((1.0f - transitionProgress) * 255);
+            if (isCustomFileIcon(currentIcon)) {
+                drawTintedDrawable(canvas, previousDrawable, cx, cy, previowsDrawableScale, alpha);
+            } else {
+                int w = (int) (previousDrawable.getIntrinsicWidth() * previowsDrawableScale);
+                int h = (int) (previousDrawable.getIntrinsicHeight() * previowsDrawableScale);
+                previousDrawable.setColorFilter(colorFilter);
+                previousDrawable.setAlpha(alpha);
+                previousDrawable.setBounds(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
+                previousDrawable.draw(canvas);
+            }
         }
         if (nextDrawable != null) {
-            int w = (int) (nextDrawable.getIntrinsicWidth() * drawableScale);
-            int h = (int) (nextDrawable.getIntrinsicHeight() * drawableScale);
-            nextDrawable.setColorFilter(colorFilter);
-            nextDrawable.setAlpha(currentIcon == nextIcon ? 255 : (int) (transitionProgress * 255));
-            nextDrawable.setBounds(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
-            nextDrawable.draw(canvas);
+            int alpha = currentIcon == nextIcon ? 255 : (int) (transitionProgress * 255);
+            if (isCustomFileIcon(nextIcon)) {
+                drawTintedDrawable(canvas, nextDrawable, cx, cy, drawableScale, alpha);
+            } else {
+                int w = (int) (nextDrawable.getIntrinsicWidth() * drawableScale);
+                int h = (int) (nextDrawable.getIntrinsicHeight() * drawableScale);
+                nextDrawable.setColorFilter(colorFilter);
+                nextDrawable.setAlpha(alpha);
+                nextDrawable.setBounds(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
+                nextDrawable.draw(canvas);
+            }
         }
 
         if (previousPath != null && previousPath != nextPath) {
@@ -896,6 +1055,26 @@ public class MediaActionDrawable extends Drawable {
         if (saveCount >= 1) {
             canvas.restoreToCount(saveCount);
         }
+    }
+
+    private Drawable getCustomIconDrawable(int icon) {
+        Drawable source;
+        if (icon == ICON_PLUGIN) source = Theme.chat_pluginIcon;
+        else if (icon == ICON_SETTINGS) source = Theme.chat_settingsIcon;
+        else if (icon == ICON_STICKERS) source = Theme.chat_stickersIcon;
+        else if (icon == ICON_PILL) source = Theme.chat_pillIcon;
+        else source = PluginsController.getPluginFileIconDrawable(icon);
+        if (source == null) {
+            return null;
+        }
+
+        Drawable[] cached = customIconDrawables.get(icon);
+        if (cached == null || cached[0] != source) {
+            Drawable.ConstantState state = source.getConstantState();
+            cached = new Drawable[]{source, state != null ? state.newDrawable().mutate() : source};
+            customIconDrawables.put(icon, cached);
+        }
+        return cached[1];
     }
 
     @Override

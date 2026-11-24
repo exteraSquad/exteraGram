@@ -20,6 +20,7 @@ import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.NotificationCenter;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
@@ -55,7 +56,7 @@ public class StickersAdapter extends RecyclerListView.SelectionAdapter implement
         this.resourcesProvider = resourcesProvider;
         MediaDataController.getInstance(currentAccount).checkStickers(MediaDataController.TYPE_IMAGE);
         MediaDataController.getInstance(currentAccount).checkStickers(MediaDataController.TYPE_MASK);
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.newEmojiSuggestionsAvailable);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.newEmojiSuggestionsAvailable);
     }
 
     public void onDestroy() {
@@ -101,7 +102,7 @@ public class StickersAdapter extends RecyclerListView.SelectionAdapter implement
                 notifyDataSetChanged();
                 delegate.needChangePanelVisibility(visible = !param.isEmpty());
             }
-        }, true);
+        }, SharedConfig.suggestAnimatedEmoji && UserConfig.getInstance(currentAccount).isPremium());
         if (keywordResults == null || keywordResults.isEmpty()) {
             AndroidUtilities.runOnUIThread(searchRunnable, 1000);
         } else {

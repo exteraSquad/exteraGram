@@ -8,6 +8,8 @@
 
 package org.telegram.ui.Cells;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -18,9 +20,11 @@ import android.widget.TextView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.WebFile;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.LayoutHelper;
 
@@ -28,23 +32,23 @@ import java.util.Locale;
 
 public class PaymentInfoCell extends FrameLayout {
 
-    private TextView nameTextView;
-    private TextView detailTextView;
-    private TextView detailExTextView;
-    private BackupImageView imageView;
+    private final TextView nameTextView;
+    private final TextView detailTextView;
+    private final TextView detailExTextView;
+    private final BackupImageView imageView;
 
-    public PaymentInfoCell(Context context, Theme.ResourcesProvider resourcesProvider) {
+    public PaymentInfoCell(Context context) {
         super(context);
 
         imageView = new BackupImageView(context);
-        imageView.getImageReceiver().setRoundRadius(AndroidUtilities.dp(8));
+        imageView.getImageReceiver().setRoundRadius(dp(8));
         addView(imageView, LayoutHelper.createFrame(100, 100, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), 10, 10, 10, 0));
 
         nameTextView = new TextView(context);
-        nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
+        ThemeBind.textColor(nameTextView, Theme.key_windowBackgroundWhiteBlackText);
         nameTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         nameTextView.setLines(1);
-        nameTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        nameTextView.setTypeface(AndroidUtilities.bold());
         nameTextView.setMaxLines(1);
         nameTextView.setSingleLine(true);
         nameTextView.setEllipsize(TextUtils.TruncateAt.END);
@@ -52,7 +56,7 @@ public class PaymentInfoCell extends FrameLayout {
         addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 10 : 123, 9, LocaleController.isRTL ? 123 : 10, 0));
 
         detailTextView = new TextView(context);
-        detailTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
+        ThemeBind.textColor(detailTextView, Theme.key_windowBackgroundWhiteBlackText);
         detailTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         detailTextView.setMaxLines(3);
         detailTextView.setEllipsize(TextUtils.TruncateAt.END);
@@ -60,7 +64,7 @@ public class PaymentInfoCell extends FrameLayout {
         addView(detailTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 10 : 123, 33, LocaleController.isRTL ? 123 : 10, 0));
 
         detailExTextView = new TextView(context);
-        detailExTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
+        ThemeBind.textColor(detailExTextView, Theme.key_windowBackgroundWhiteGrayText2);
         detailExTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         detailExTextView.setLines(1);
         detailExTextView.setMaxLines(1);
@@ -74,12 +78,12 @@ public class PaymentInfoCell extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int h;
         if (imageView.getVisibility() != GONE) {
-            h = MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(120), MeasureSpec.EXACTLY);
+            h = MeasureSpec.makeMeasureSpec(dp(120), MeasureSpec.EXACTLY);
         } else {
             h = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
             measureChildWithMargins(detailTextView, widthMeasureSpec, 0, heightMeasureSpec, 0);
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) detailExTextView.getLayoutParams();
-            layoutParams.topMargin = AndroidUtilities.dp(33) + detailTextView.getMeasuredHeight() + AndroidUtilities.dp(3);
+            layoutParams.topMargin = dp(33) + detailTextView.getMeasuredHeight() + dp(3);
         }
         super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), h);
     }
@@ -97,7 +101,7 @@ public class PaymentInfoCell extends FrameLayout {
         }
         int width = 640;
         int height = 360;
-        float scale = width / (float) (maxPhotoWidth - AndroidUtilities.dp(2));
+        float scale = width / (float) (maxPhotoWidth - dp(2));
         width /= scale;
         height /= scale;
         if (photo != null && photo.mime_type.startsWith("image/")) {
@@ -119,7 +123,7 @@ public class PaymentInfoCell extends FrameLayout {
         setInfo(invoice.title, invoice.description, invoice.webPhoto, botname, invoice);
     }
 
-    public void setReceipt(TLRPC.TL_payments_paymentReceipt receipt, String botname) {
+    public void setReceipt(TLRPC.PaymentReceipt receipt, String botname) {
         setInfo(receipt.title, receipt.description, receipt.photo, botname, receipt);
     }
 }

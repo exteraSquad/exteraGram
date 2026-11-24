@@ -19,6 +19,7 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.LayoutHelper;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class RequestPeerRequirementsCell extends LinearLayout {
         super(context);
 
         setOrientation(VERTICAL);
-        setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+        ThemeBind.backgroundColor(this, Theme.key_windowBackgroundGray);
     }
 
     private TLRPC.RequestPeerType requestPeerType;
@@ -79,19 +80,25 @@ public class RequestPeerRequirementsCell extends LinearLayout {
 
             if (!requirements.isEmpty()) {
                 HeaderCell headerCell = new HeaderCell(getContext(), 20);
-                headerCell.setText(LocaleController.getString("PeerRequirements", R.string.PeerRequirements));
-                headerCell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                headerCell.setText(LocaleController.getString(R.string.PeerRequirements));
+                ThemeBind.backgroundColor(headerCell, Theme.key_windowBackgroundWhite);
                 addView(headerCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
-                addView(emptyView(9, Theme.getColor(Theme.key_windowBackgroundWhite)), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+                addView(emptyViewThemed(9, Theme.key_windowBackgroundWhite), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
                 for (Requirement requirement : requirements) {
                     addView(new RequirementCell(getContext(), requirement), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
                 }
-                addView(emptyView(12, Theme.getColor(Theme.key_windowBackgroundWhite)), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+                addView(emptyViewThemed(12, Theme.key_windowBackgroundWhite), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
                 addView(emptyView(12, Theme.getThemedDrawableByKey(getContext(), R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow)), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             }
         }
+    }
+
+    private View emptyViewThemed(int heightDp, int colorKey) {
+        final View view = emptyView(heightDp, (Drawable) null);
+        ThemeBind.backgroundColor(view, colorKey);
+        return view;
     }
 
     private View emptyView(int heightDp, int color) {
@@ -135,39 +142,39 @@ public class RequestPeerRequirementsCell extends LinearLayout {
             array.add(Requirement.make(
                     1,
                     isChannel ?
-                            LocaleController.getString("EditAdminChangeChannelInfo", R.string.EditAdminChangeChannelInfo) :
-                            LocaleController.getString("EditAdminChangeGroupInfo", R.string.EditAdminChangeGroupInfo)
+                            LocaleController.getString(R.string.EditAdminChangeChannelInfo) :
+                            LocaleController.getString(R.string.EditAdminChangeGroupInfo)
             ));
         }
         if (rights.post_messages && isChannel) {
-            array.add(Requirement.make(1, LocaleController.getString("EditAdminPostMessages", R.string.EditAdminPostMessages)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminPostMessages)));
         }
         if (rights.edit_messages && isChannel) {
-            array.add(Requirement.make(1, LocaleController.getString("EditAdminEditMessages", R.string.EditAdminEditMessages)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminEditMessages)));
         }
         if (rights.delete_messages) {
-            array.add(Requirement.make(1, isChannel ? LocaleController.getString("EditAdminDeleteMessages", R.string.EditAdminDeleteMessages) : LocaleController.getString("EditAdminGroupDeleteMessages", R.string.EditAdminGroupDeleteMessages)));
+            array.add(Requirement.make(1, isChannel ? LocaleController.getString(R.string.EditAdminDeleteMessages) : LocaleController.getString(R.string.EditAdminGroupDeleteMessages)));
         }
         if (rights.ban_users && !isChannel) {
-            array.add(Requirement.make(1, LocaleController.getString("EditAdminBanUsers", R.string.EditAdminBanUsers)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminBanUsers)));
         }
         if (rights.invite_users) {
-            array.add(Requirement.make(1, LocaleController.getString("EditAdminAddUsers", R.string.EditAdminAddUsers)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminAddUsers)));
         }
         if (rights.pin_messages && !isChannel) {
-            array.add(Requirement.make(1, LocaleController.getString("EditAdminPinMessages", R.string.EditAdminPinMessages)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminPinMessages)));
         }
         if (rights.add_admins) {
-            array.add(Requirement.make(1, LocaleController.getString("EditAdminAddAdmins", R.string.EditAdminAddAdmins)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminAddAdmins)));
         }
         if (rights.anonymous && !isChannel) {
-            array.add(Requirement.make(1, LocaleController.getString("EditAdminSendAnonymously", R.string.EditAdminSendAnonymously)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminSendAnonymously)));
         }
         if (rights.manage_call) {
-            array.add(Requirement.make(1, LocaleController.getString("StartVoipChatPermission", R.string.StartVoipChatPermission)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.StartVoipChatPermission)));
         }
         if (rights.manage_topics && !isChannel) {
-            array.add(Requirement.make(1, LocaleController.getString("ManageTopicsPermission", R.string.ManageTopicsPermission)));
+            array.add(Requirement.make(1, LocaleController.getString(R.string.ManageTopicsPermission)));
         }
 
         if (array.size() == 1) {
@@ -195,39 +202,39 @@ public class RequestPeerRequirementsCell extends LinearLayout {
             rights.add(Requirement.make(
                 1,
                 isChannel ?
-                    LocaleController.getString("EditAdminChangeChannelInfo", R.string.EditAdminChangeChannelInfo) :
-                    LocaleController.getString("EditAdminChangeGroupInfo", R.string.EditAdminChangeGroupInfo)
+                    LocaleController.getString(R.string.EditAdminChangeChannelInfo) :
+                    LocaleController.getString(R.string.EditAdminChangeGroupInfo)
             ));
         }
         if (value.post_messages && isChannel) {
-            rights.add(Requirement.make(1, LocaleController.getString("EditAdminPostMessages", R.string.EditAdminPostMessages)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminPostMessages)));
         }
         if (value.edit_messages && isChannel) {
-            rights.add(Requirement.make(1, LocaleController.getString("EditAdminEditMessages", R.string.EditAdminEditMessages)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminEditMessages)));
         }
         if (value.delete_messages) {
-            rights.add(Requirement.make(1, isChannel ? LocaleController.getString("EditAdminDeleteMessages", R.string.EditAdminDeleteMessages) : LocaleController.getString("EditAdminGroupDeleteMessages", R.string.EditAdminGroupDeleteMessages)));
+            rights.add(Requirement.make(1, isChannel ? LocaleController.getString(R.string.EditAdminDeleteMessages) : LocaleController.getString(R.string.EditAdminGroupDeleteMessages)));
         }
         if (value.ban_users && !isChannel) {
-            rights.add(Requirement.make(1, LocaleController.getString("EditAdminBanUsers", R.string.EditAdminBanUsers)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminBanUsers)));
         }
         if (value.invite_users) {
-            rights.add(Requirement.make(1, LocaleController.getString("EditAdminAddUsers", R.string.EditAdminAddUsers)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminAddUsers)));
         }
         if (value.pin_messages && !isChannel) {
-            rights.add(Requirement.make(1, LocaleController.getString("EditAdminPinMessages", R.string.EditAdminPinMessages)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminPinMessages)));
         }
         if (value.add_admins) {
-            rights.add(Requirement.make(1, LocaleController.getString("EditAdminAddAdmins", R.string.EditAdminAddAdmins)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminAddAdmins)));
         }
         if (value.anonymous && !isChannel) {
-            rights.add(Requirement.make(1, LocaleController.getString("EditAdminSendAnonymously", R.string.EditAdminSendAnonymously)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.EditAdminSendAnonymously)));
         }
         if (value.manage_call) {
-            rights.add(Requirement.make(1, LocaleController.getString("StartVoipChatPermission", R.string.StartVoipChatPermission)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.StartVoipChatPermission)));
         }
         if (value.manage_topics && !isChannel) {
-            rights.add(Requirement.make(1, LocaleController.getString("ManageTopicsPermission", R.string.ManageTopicsPermission)));
+            rights.add(Requirement.make(1, LocaleController.getString(R.string.ManageTopicsPermission)));
         }
 
         if (rights.size() == 1) {
@@ -258,19 +265,19 @@ public class RequestPeerRequirementsCell extends LinearLayout {
         public RequirementCell(Context context, Requirement requirement) {
             super(context);
 
-            setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            ThemeBind.backgroundColor(this, Theme.key_windowBackgroundWhite);
 
             setOrientation(HORIZONTAL);
 
             imageView = new ImageView(context);
             imageView.setScaleType(ImageView.ScaleType.CENTER);
             imageView.setImageResource(requirement.padding <= 0 ? R.drawable.list_check : R.drawable.list_circle);
-            imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader), PorterDuff.Mode.MULTIPLY));
+            ThemeBind.colorFilter(imageView, Theme.key_windowBackgroundWhiteBlueHeader, PorterDuff.Mode.MULTIPLY);
             addView(imageView, LayoutHelper.createLinear(20, 20, 0, Gravity.TOP | Gravity.LEFT, 17 + requirement.padding * 16, -1, 0, 0));
 
             textView = new TextView(context);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2));
+            ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteGrayText2);
             textView.setSingleLine(false);
             textView.setText(requirement.text);
             addView(textView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 1, 6, 4, 24, 4));

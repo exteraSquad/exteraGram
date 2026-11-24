@@ -100,7 +100,7 @@ public class ShapeInput {
         }
 
         if (shape.getType() == Brush.Shape.SHAPE_TYPE_CIRCLE || shape.getType() == Brush.Shape.SHAPE_TYPE_STAR) {
-            return Math.sqrt(Math.pow(x - shape.centerX, 2) + Math.pow(y - shape.centerY, 2)) - Math.min(shape.radiusX, shape.radiusY) - shape.thickness / 2 < AndroidUtilities.dp(30);
+            return Math.sqrt(Math.pow(x - shape.centerX, 2) + Math.pow(y - shape.centerY, 2)) - Math.min(shape.radiusX, shape.radiusY) - shape.thickness / 2 < AndroidUtilities.dp(30) * touchScale;
         } else if (shape.getType() == Brush.Shape.SHAPE_TYPE_RECTANGLE || shape.getType() == Brush.Shape.SHAPE_TYPE_BUBBLE) {
             float left = (shape.centerX - shape.radiusX - shape.thickness / 2),
                   top = (shape.centerY - shape.radiusY - shape.thickness / 2),
@@ -115,7 +115,7 @@ public class ShapeInput {
                 } else {
                     dist = 0;
                 }
-            } else if (x < left && x > right) {
+            } else if (x > left && x < right) {
                 if (y < top) {
                     dist = top - y;
                 } else if (y > bottom) {
@@ -138,7 +138,7 @@ public class ShapeInput {
             if (shape.getType() == Brush.Shape.SHAPE_TYPE_BUBBLE) {
                 dist = Math.min(dist, distToLine(x, y, shape.centerX, shape.centerY, shape.middleX, shape.middleY));
             }
-            return dist < AndroidUtilities.dp(30);
+            return dist < AndroidUtilities.dp(30) * touchScale;
         } else if (shape.getType() == Brush.Shape.SHAPE_TYPE_ARROW) {
             Size size = renderView.getPainting().getSize();
             return Math.min(
@@ -151,9 +151,13 @@ public class ShapeInput {
     }
 
     private float[] tempPoint = new float[2];
+    private float touchScale = 1f;
     public void process(MotionEvent event, float scale) {
         if (renderView == null || renderView.getPainting() == null || shape == null) {
             return;
+        }
+        if (renderView.getWidth() > 0 && scale > 0) {
+            touchScale = renderView.getPainting().getSize().width / (renderView.getWidth() * scale);
         }
 
         int action = event.getActionMasked();
@@ -181,7 +185,7 @@ public class ShapeInput {
                     rotate(dx, dy, false);
                 }
                 double dist = MathUtils.distance(p.x, p.y, tempPoint[0], tempPoint[1]);
-                if (dist < AndroidUtilities.dp(40) && (hitPoint == null || dist < hitPointDist)) {
+                if (dist < AndroidUtilities.dp(40) * touchScale && (hitPoint == null || dist < hitPointDist)) {
                     hitPoint = p;
                     hitPointDist = dist;
                 }
@@ -189,7 +193,7 @@ public class ShapeInput {
             tempPoint[0] = dx;
             tempPoint[1] = dy;
             rotate(dx, dy, false);
-            boolean inside = hitPoint != null || isInsideShape(dx, dy);
+            boolean inside = hitPoint != null || isInsideShape(tempPoint[0], tempPoint[1]);
             if (!inside) {
                 stop();
                 return;
@@ -385,7 +389,7 @@ public class ShapeInput {
                     if (y > shape.centerY - shape.radiusY && y < shape.centerY + shape.radiusY) {
                         if (x <= shape.centerX && x > shape.centerX - shape.radiusX) {
                             x = shape.centerX - shape.radiusX;
-                        } else if (x > shape.centerY && x < shape.centerX + shape.radiusX) {
+                        } else if (x > shape.centerX && x < shape.centerX + shape.radiusX) {
                             x = shape.centerX + shape.radiusX;
                         }
                     }

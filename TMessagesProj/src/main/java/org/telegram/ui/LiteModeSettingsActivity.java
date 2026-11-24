@@ -12,6 +12,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -21,6 +23,7 @@ import android.text.style.ImageSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
@@ -37,18 +40,21 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exteragram.messenger.ExteraConfig;
-
+import com.exteragram.messenger.utils.system.VibratorUtils;
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.Utilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.ui.ActionBar.ActionBar;
+import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
@@ -66,6 +72,9 @@ import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SeekBarAccessibilityDelegate;
 import org.telegram.ui.Components.SeekBarView;
 import org.telegram.ui.Components.Switch;
+import org.telegram.ui.Components.ThanosEffect;
+import org.telegram.utils.glass.BaseFragmentSimpleGlass;
+import org.telegram.utils.glass.GlassEngine;
 
 import java.util.ArrayList;
 
@@ -82,11 +91,16 @@ public class LiteModeSettingsActivity extends BaseFragment {
     private int FLAGS_CHAT;
 
     @Override
+    protected boolean useSimpleActionBar() {
+        return true;
+    }
+
+    @Override
     public View createView(Context context) {
-        actionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        actionBar.setAllowOverlayTitle(true);
-        actionBar.setTitle(LocaleController.getString("PowerUsage", R.string.PowerUsage));
-        actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+        setHasOwnBackground(true);
+        simpleActionBar.setBackButtonImage(R.drawable.ic_ab_back);
+        simpleActionBar.setTitle(LocaleController.getString(R.string.PowerUsage));
+        simpleActionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
                 if (id == -1) {
@@ -94,13 +108,17 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 }
             }
         });
+        if (parentLayout != null && parentLayout.isRightLayout()) {
+            simpleActionBar.setBackButtonImage(R.drawable.ic_ab_close);
+        }
 
         contentView = new FrameLayout(context);
-        contentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
 
         listView = new RecyclerListView(context);
+        listView.setSections();
         listView.setLayoutManager(layoutManager = new LinearLayoutManager(context));
         listView.setAdapter(adapter = new Adapter());
+        listView.setSectionsDrawBackground(true);
         DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
         itemAnimator.setDurations(350);
         itemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
@@ -116,7 +134,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
 
             if (item.viewType == VIEW_TYPE_SWITCH || item.viewType == VIEW_TYPE_CHECKBOX) {
                 if (LiteMode.isPowerSaverApplied()) {
-                    restrictBulletin = BulletinFactory.of(this).createSimpleBulletin(new BatteryDrawable(.1f, Color.WHITE, Theme.getColor(Theme.key_dialogSwipeRemove), 1.3f), LocaleController.getString("LiteBatteryRestricted", R.string.LiteBatteryRestricted)).show();
+                    restrictBulletin = BulletinFactory.of(this).createSimpleBulletin(new BatteryDrawable(.1f, Color.WHITE, Theme.getColor(Theme.key_dialogSwipeRemove), 1.3f), LocaleController.getString(R.string.LiteBatteryRestricted)).show();
                     return;
                 }
                 if (item.viewType == VIEW_TYPE_SWITCH && item.getFlagsCount() > 1 && (LocaleController.isRTL ? x > dp(19 + 37 + 19) : x < view.getMeasuredWidth() - dp(19 + 37 + 19))) {
@@ -140,8 +158,14 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     SharedConfig.setAnimationsEnabled(!animations);
                     editor.apply();
                     ((TextCell) view).setChecked(!animations);
+                } else if (item.type == SWITCH_TYPE_FOLLOW_SYSTEM) {
+                    LiteMode.setPowerSaverFollowSystem(!LiteMode.isPowerSaverFollowSystem());
+                    updateValues();
+                    updateInfo();
+                    ((TextCell) view).setChecked(LiteMode.isPowerSaverFollowSystem());
                 }
             }
+            GlassEngine.getCurrentGlassSettings();
         });
 
         fragmentView = contentView;
@@ -150,6 +174,11 @@ public class LiteModeSettingsActivity extends BaseFragment {
         updateItems();
 
         return fragmentView;
+    }
+
+    @Override
+    protected RecyclerListView getListViewForSimpleGlass() {
+        return listView;
     }
 
     @Override
@@ -219,50 +248,65 @@ public class LiteModeSettingsActivity extends BaseFragment {
     private ArrayList<Item> oldItems = new ArrayList<>();
     private ArrayList<Item> items = new ArrayList<>();
 
+    private CharSequence getPowerSaverInfoText() {
+        if (LiteMode.isPowerSaverFollowSystem()) {
+            return LocaleController.getString(R.string.LiteBatteryFollowSystemInfo);
+        }
+        if (LiteMode.getPowerSaverLevel() <= 0) {
+            return LocaleController.getString(R.string.LiteBatteryInfoDisabled);
+        }
+        if (LiteMode.getPowerSaverLevel() >= 100) {
+            return LocaleController.getString(R.string.LiteBatteryInfoEnabled);
+        }
+        return LocaleController.formatString(R.string.LiteBatteryInfoBelow, String.format("%d%%", LiteMode.getPowerSaverLevel()));
+    }
+
     private void updateItems() {
         oldItems.clear();
         oldItems.addAll(items);
 
         items.clear();
         items.add(Item.asSlider());
-        items.add(Item.asInfo(
-            LiteMode.getPowerSaverLevel() <= 0 ?
-                LocaleController.getString(R.string.LiteBatteryInfoDisabled) :
-            LiteMode.getPowerSaverLevel() >= 100 ?
-                LocaleController.getString(R.string.LiteBatteryInfoEnabled) :
-                LocaleController.formatString(R.string.LiteBatteryInfoBelow, String.format("%d%%", LiteMode.getPowerSaverLevel()))
-        ));
+        items.add(Item.asSwitch(LocaleController.getString(R.string.LiteBatteryFollowSystem), SWITCH_TYPE_FOLLOW_SYSTEM));
+        items.add(Item.asInfo(getPowerSaverInfoText()));
 
-        items.add(Item.asHeader(LocaleController.getString("LiteOptionsTitle")));
-        items.add(Item.asSwitch(R.drawable.msg2_sticker, LocaleController.getString("LiteOptionsStickers", R.string.LiteOptionsStickers), LiteMode.FLAGS_ANIMATED_STICKERS));
+        items.add(Item.asHeader(LocaleController.getString(R.string.LiteOptionsTitle)));
+        items.add(Item.asSwitch(R.drawable.msg2_sticker, LocaleController.getString(R.string.LiteOptionsStickers), LiteMode.FLAGS_ANIMATED_STICKERS));
         if (expanded[0]) {
-            items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsAutoplayKeyboard"), LiteMode.FLAG_ANIMATED_STICKERS_KEYBOARD));
-            items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsAutoplayChat"), LiteMode.FLAG_ANIMATED_STICKERS_CHAT));
+            items.add(Item.asCheckbox(LocaleController.getString(R.string.LiteOptionsAutoplayKeyboard), LiteMode.FLAG_ANIMATED_STICKERS_KEYBOARD));
+            items.add(Item.asCheckbox(LocaleController.getString(R.string.LiteOptionsAutoplayChat), LiteMode.FLAG_ANIMATED_STICKERS_CHAT));
         }
-        items.add(Item.asSwitch(R.drawable.msg2_smile_status, LocaleController.getString("LiteOptionsEmoji", R.string.LiteOptionsEmoji), LiteMode.FLAGS_ANIMATED_EMOJI));
+        items.add(Item.asSwitch(R.drawable.msg2_smile_status, LocaleController.getString(R.string.LiteOptionsEmoji), LiteMode.FLAGS_ANIMATED_EMOJI));
         if (expanded[1]) {
-            items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsAutoplayKeyboard"), LiteMode.FLAG_ANIMATED_EMOJI_KEYBOARD));
-            items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsAutoplayReactions"), LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS));
-            items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsAutoplayChat"), LiteMode.FLAG_ANIMATED_EMOJI_CHAT));
+            items.add(Item.asCheckbox(LocaleController.getString(R.string.LiteOptionsAutoplayKeyboard), LiteMode.FLAG_ANIMATED_EMOJI_KEYBOARD));
+            items.add(Item.asCheckbox(LocaleController.getString(R.string.LiteOptionsAutoplayReactions), LiteMode.FLAG_ANIMATED_EMOJI_REACTIONS));
+            items.add(Item.asCheckbox(LocaleController.getString(R.string.LiteOptionsAutoplayChat), LiteMode.FLAG_ANIMATED_EMOJI_CHAT));
         }
-        items.add(Item.asSwitch(R.drawable.msg2_ask_question, LocaleController.getString("LiteOptionsChat"), FLAGS_CHAT));
+        items.add(Item.asSwitch(R.drawable.msg2_ask_question, LocaleController.getString(R.string.LiteOptionsChat), FLAGS_CHAT));
         if (expanded[2]) {
             items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsBackground"), LiteMode.FLAG_CHAT_BACKGROUND));
             if (!AndroidUtilities.isTablet()) {
                 items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsTopics"), LiteMode.FLAG_CHAT_FORUM_TWOCOLUMN));
             }
             items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsSpoiler"), LiteMode.FLAG_CHAT_SPOILER));
-            if (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE) {
-                items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsBlur"), LiteMode.FLAG_CHAT_BLUR));
+            if (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE || BuildVars.DEBUG_PRIVATE_VERSION) {
+                items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsBlur2"), LiteMode.FLAG_CHAT_BLUR));
+            }
+            if (Build.VERSION.SDK_INT >= 33 && (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE || BuildVars.DEBUG_PRIVATE_VERSION)) {
+                items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsLiquidGlass"), LiteMode.FLAG_LIQUID_GLASS));
             }
             items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsScale"), LiteMode.FLAG_CHAT_SCALE));
+            if (ThanosEffect.supports()) {
+                items.add(Item.asCheckbox(LocaleController.getString("LiteOptionsThanos"), LiteMode.FLAG_CHAT_THANOS));
+            }
         }
-        items.add(Item.asSwitch(R.drawable.msg2_call_earpiece, LocaleController.getString("LiteOptionsCalls"), LiteMode.FLAG_CALLS_ANIMATIONS));
-        items.add(Item.asSwitch(R.drawable.msg2_videocall, LocaleController.getString("LiteOptionsAutoplayVideo"), LiteMode.FLAG_AUTOPLAY_VIDEOS));
-        items.add(Item.asSwitch(R.drawable.msg2_gif, LocaleController.getString("LiteOptionsAutoplayGifs"), LiteMode.FLAG_AUTOPLAY_GIFS));
+        items.add(Item.asSwitch(R.drawable.msg2_call_earpiece, LocaleController.getString(R.string.LiteOptionsCalls), LiteMode.FLAG_CALLS_ANIMATIONS));
+        items.add(Item.asSwitch(R.drawable.msg2_videocall, LocaleController.getString(R.string.LiteOptionsAutoplayVideo), LiteMode.FLAG_AUTOPLAY_VIDEOS));
+        items.add(Item.asSwitch(R.drawable.msg2_gif, LocaleController.getString(R.string.LiteOptionsAutoplayGifs), LiteMode.FLAG_AUTOPLAY_GIFS));
+        items.add(Item.asSwitch(R.drawable.photo_star, LocaleController.getString(R.string.LiteOptionsParticles), LiteMode.FLAG_PARTICLES));
         items.add(Item.asInfo(""));
 
-        items.add(Item.asSwitch(LocaleController.getString("LiteSmoothTransitions"), SWITCH_TYPE_SMOOTH_TRANSITIONS));
+        items.add(Item.asSwitch(LocaleController.getString(R.string.LiteSmoothTransitions), SWITCH_TYPE_SMOOTH_TRANSITIONS));
         items.add(Item.asInfo(LocaleController.getString("LiteSmoothTransitionsInfo")));
 
         adapter.setItems(oldItems, items);
@@ -272,15 +316,9 @@ public class LiteModeSettingsActivity extends BaseFragment {
 
         if (items.isEmpty()) {
             updateItems();
-        } else if (items.size() >= 2) {
-            items.set(1, Item.asInfo(
-                LiteMode.getPowerSaverLevel() <= 0 ?
-                    LocaleController.getString(R.string.LiteBatteryInfoDisabled) :
-                LiteMode.getPowerSaverLevel() >= 100 ?
-                    LocaleController.getString(R.string.LiteBatteryInfoEnabled) :
-                    LocaleController.formatString(R.string.LiteBatteryInfoBelow, String.format("%d%%", LiteMode.getPowerSaverLevel()))
-            ));
-            adapter.notifyItemChanged(1);
+        } else if (items.size() >= 3) {
+            items.set(2, Item.asInfo(getPowerSaverInfoText()));
+            adapter.notifyItemChanged(2);
         }
     }
 
@@ -302,6 +340,12 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 ((SwitchCell) child).update(item);
             } else if (item.viewType == VIEW_TYPE_SLIDER) {
                 ((PowerSaverSlider) child).update();
+            } else if (item.viewType == VIEW_TYPE_SWITCH2) {
+                if (item.type == SWITCH_TYPE_SMOOTH_TRANSITIONS) {
+                    ((TextCell) child).setChecked(MessagesController.getGlobalMainSettings().getBoolean("view_animations", true));
+                } else if (item.type == SWITCH_TYPE_FOLLOW_SYSTEM) {
+                    ((TextCell) child).setChecked(LiteMode.isPowerSaverFollowSystem());
+                }
             }
         }
 
@@ -319,6 +363,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
     private static final int VIEW_TYPE_SWITCH2 = 5;
 
     public static final int SWITCH_TYPE_SMOOTH_TRANSITIONS = 1;
+    public static final int SWITCH_TYPE_FOLLOW_SYSTEM = 2;
 
     private class Adapter extends AdapterWithDiffUtils {
 
@@ -329,11 +374,9 @@ public class LiteModeSettingsActivity extends BaseFragment {
             View view = null;
             if (viewType == VIEW_TYPE_HEADER) {
                 view = new HeaderCell(context);
-                view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             } else if (viewType == VIEW_TYPE_SLIDER) {
                 PowerSaverSlider powerSaverSlider = new PowerSaverSlider(context);
                 view = powerSaverSlider;
-                view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             } else if (viewType == VIEW_TYPE_INFO) {
                 view = new TextInfoPrivacyCell(context) {
                     @Override
@@ -355,7 +398,6 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 view = new SwitchCell(context);
             } else if (viewType == VIEW_TYPE_SWITCH2) {
                 view = new TextCell(context, 23, false, true, null);
-                view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
             }
             return new RecyclerListView.Holder(view);
         }
@@ -384,17 +426,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 }
                 textInfoPrivacyCell.setText(item.text);
                 textInfoPrivacyCell.setContentDescription(item.text);
-                boolean top = position > 0 && items.get(position - 1).viewType != VIEW_TYPE_INFO;
-                boolean bottom = position + 1 < items.size() && items.get(position + 1).viewType != VIEW_TYPE_INFO;
-                if (top && bottom) {
-                    textInfoPrivacyCell.setBackground(Theme.getThemedDrawableByKey(getContext(), R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow));
-                } else if (top) {
-                    textInfoPrivacyCell.setBackground(Theme.getThemedDrawableByKey(getContext(), R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
-                } else if (bottom) {
-                    textInfoPrivacyCell.setBackground(Theme.getThemedDrawableByKey(getContext(), R.drawable.greydivider_top, Theme.key_windowBackgroundGrayShadow));
-                } else {
-                    textInfoPrivacyCell.setBackground(null);
-                }
+                textInfoPrivacyCell.setBackground(null);
             } else if (viewType == VIEW_TYPE_SWITCH || viewType == VIEW_TYPE_CHECKBOX) {
                 final boolean divider = position + 1 < items.size() && items.get(position + 1).viewType != VIEW_TYPE_INFO;
                 SwitchCell switchCell = (SwitchCell) holder.itemView;
@@ -405,6 +437,8 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                     boolean animations = preferences.getBoolean("view_animations", true);
                     textCell.setTextAndCheck(item.text, animations, false);
+                } else if (item.type == SWITCH_TYPE_FOLLOW_SYSTEM) {
+                    textCell.setTextAndCheck(item.text, LiteMode.isPowerSaverFollowSystem(), false);
                 }
             }
         }
@@ -437,6 +471,8 @@ public class LiteModeSettingsActivity extends BaseFragment {
         private ImageView arrowView;
         private Switch switchView;
         private CheckBox2 checkBoxView;
+        private ValueAnimator switchAlphaAnimator;
+        private float switchAlpha = 1f;
 
         private boolean needDivider, needLine;
 
@@ -444,10 +480,9 @@ public class LiteModeSettingsActivity extends BaseFragment {
             super(context);
 
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
-            setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
 
             imageView = new ImageView(context);
-            imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
+            ThemeBind.colorFilter(imageView, Theme.key_windowBackgroundWhiteGrayIcon, PorterDuff.Mode.MULTIPLY);
             imageView.setVisibility(View.GONE);
             addView(imageView, LayoutHelper.createFrame(24, 24, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), 20, 0, 20, 0));
 
@@ -464,20 +499,20 @@ public class LiteModeSettingsActivity extends BaseFragment {
             textView.setSingleLine(true);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-            textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+            ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteBlackText);
             textView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
             textView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
 
             countTextView = new AnimatedTextView(context, false, true, true);
             countTextView.setAnimationProperties(.35f, 0, 200, CubicBezierInterpolator.EASE_OUT_QUINT);
-            countTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+            countTextView.setTypeface(AndroidUtilities.bold());
             countTextView.setTextSize(dp(14));
-            countTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+            ThemeBind.textColor(countTextView, Theme.key_windowBackgroundWhiteBlackText);
             countTextView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
 
             arrowView = new ImageView(context);
             arrowView.setVisibility(GONE);
-            arrowView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.MULTIPLY));
+            ThemeBind.colorFilter(arrowView, Theme.key_windowBackgroundWhiteBlackText, PorterDuff.Mode.MULTIPLY);
             arrowView.setImageResource(R.drawable.arrow_more);
 
             textViewLayout = new LinearLayout(context);
@@ -486,9 +521,9 @@ public class LiteModeSettingsActivity extends BaseFragment {
             if (LocaleController.isRTL) {
                 textViewLayout.addView(arrowView, LayoutHelper.createLinear(16, 16, 0, Gravity.CENTER_VERTICAL, 0, 0, 6, 0));
                 textViewLayout.addView(countTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, Gravity.CENTER_VERTICAL, 0, 0, 6, 0));
-                textViewLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL));
+                textViewLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 1f, Gravity.CENTER_VERTICAL));
             } else {
-                textViewLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL));
+                textViewLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 1f, Gravity.CENTER_VERTICAL));
                 textViewLayout.addView(countTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, Gravity.CENTER_VERTICAL, 6, 0, 0, 0));
                 textViewLayout.addView(arrowView, LayoutHelper.createLinear(16, 16, 0, Gravity.CENTER_VERTICAL, 2, 0, 0, 0));
             }
@@ -510,24 +545,54 @@ public class LiteModeSettingsActivity extends BaseFragment {
             addView(checkBoxView, LayoutHelper.createFrame(21, 21, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT), LocaleController.isRTL ? 0 : 64, 0, LocaleController.isRTL ? 64 : 0, 0));
 
             setFocusable(true);
+            setClipChildren(false);
         }
 
         private boolean disabled;
         public void setDisabled(boolean disabled, boolean animated) {
             if (this.disabled != disabled) {
                 this.disabled = disabled;
+                float targetAlpha = disabled ? .5f : 1f;
                 if (animated) {
-                    imageView.animate().alpha(disabled ? .5f : 1f).setDuration(220).start();
-                    textViewLayout.animate().alpha(disabled ? .5f : 1f).setDuration(220).start();
-                    switchView.animate().alpha(disabled ? .5f : 1f).setDuration(220).start();
-                    checkBoxView.animate().alpha(disabled ? .5f : 1f).setDuration(220).start();
+                    imageView.animate().alpha(targetAlpha).setDuration(220).start();
+                    textViewLayout.animate().alpha(targetAlpha).setDuration(220).start();
+                    setSwitchAlpha(targetAlpha, true);
+                    checkBoxView.animate().alpha(targetAlpha).setDuration(220).start();
                 } else {
-                    imageView.setAlpha(disabled ? .5f : 1f);
-                    textViewLayout.setAlpha(disabled ? .5f : 1f);
-                    switchView.setAlpha(disabled ? .5f : 1f);
-                    checkBoxView.setAlpha(disabled ? .5f : 1f);
+                    imageView.setAlpha(targetAlpha);
+                    textViewLayout.setAlpha(targetAlpha);
+                    setSwitchAlpha(targetAlpha, false);
+                    checkBoxView.setAlpha(targetAlpha);
                 }
                 setEnabled(!disabled);
+            }
+        }
+
+        private void setSwitchAlpha(float alpha, boolean animated) {
+            if (switchAlphaAnimator != null) {
+                switchAlphaAnimator.cancel();
+                switchAlphaAnimator = null;
+            }
+            switchView.clearAnimation();
+            if (animated) {
+                switchAlphaAnimator = ValueAnimator.ofFloat(switchAlpha, alpha);
+                switchAlphaAnimator.addUpdateListener(animation -> {
+                    switchAlpha = (float) animation.getAnimatedValue();
+                    switchView.setAlpha(switchAlpha);
+                });
+                switchAlphaAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        switchAlpha = alpha;
+                        switchView.setAlpha(alpha);
+                        switchAlphaAnimator = null;
+                    }
+                });
+                switchAlphaAnimator.setDuration(220);
+                switchAlphaAnimator.start();
+            } else {
+                switchAlpha = alpha;
+                switchView.setAlpha(alpha);
             }
         }
 
@@ -622,6 +687,12 @@ public class LiteModeSettingsActivity extends BaseFragment {
             if (SharedConfig.getDevicePerformanceClass() < SharedConfig.PERFORMANCE_CLASS_AVERAGE && (flags & LiteMode.FLAG_CHAT_BLUR) > 0) {
                 count--;
             }
+            if (!(Build.VERSION.SDK_INT >= 33 && (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_AVERAGE || BuildVars.DEBUG_PRIVATE_VERSION)) && (flags & LiteMode.FLAG_LIQUID_GLASS) > 0) {
+                count--;
+            }
+            if (!ThanosEffect.supports() && (flags & LiteMode.FLAG_CHAT_THANOS) > 0) {
+                count--;
+            }
             return count;
         }
 
@@ -633,7 +704,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     float x = dp(19 + 37 + 19);
                     canvas.drawRect(x - dp(0.66f), (getMeasuredHeight() - dp(20)) / 2f, x, (getMeasuredHeight() + dp(20)) / 2f, Theme.dividerPaint);
                 }
-                if (needDivider && !ExteraConfig.disableDividers) {
+                if (needDivider) {
                     canvas.drawLine(getMeasuredWidth() - dp(64) + (textView.getTranslationX() < 0 ? dp(-32) : 0), getMeasuredHeight() - 1, 0, getMeasuredHeight() - 1, Theme.dividerPaint);
                 }
             } else {
@@ -641,7 +712,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     float x = getMeasuredWidth() - dp(19 + 37 + 19);
                     canvas.drawRect(x - dp(0.66f), (getMeasuredHeight() - dp(20)) / 2f, x, (getMeasuredHeight() + dp(20)) / 2f, Theme.dividerPaint);
                 }
-                if (needDivider && !ExteraConfig.disableDividers) {
+                if (needDivider) {
                     canvas.drawLine(dp(64) + textView.getTranslationX(), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
                 }
             }
@@ -668,7 +739,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
         }
     }
 
-    private class PowerSaverSlider extends FrameLayout {
+    private class PowerSaverSlider extends FrameLayout implements Theme.Colorable {
 
         BatteryDrawable batteryIcon;
         SpannableStringBuilder batteryText;
@@ -686,6 +757,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
 
         public PowerSaverSlider(Context context) {
             super(context);
+            setWillNotDraw(false);
 
             headerLayout = new LinearLayout(context);
             headerLayout.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
@@ -693,8 +765,8 @@ public class LiteModeSettingsActivity extends BaseFragment {
 
             headerTextView = new TextView(context);
             headerTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-            headerTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
-            headerTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
+            headerTextView.setTypeface(AndroidUtilities.bold());
+            ThemeBind.textColor(headerTextView, Theme.key_windowBackgroundWhiteBlueHeader);
             headerTextView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
             headerTextView.setText(LocaleController.getString("LiteBatteryTitle"));
             headerLayout.addView(headerTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL));
@@ -704,16 +776,22 @@ public class LiteModeSettingsActivity extends BaseFragment {
 
                 @Override
                 protected void onDraw(Canvas canvas) {
+                    if (backgroundDrawable instanceof ShapeDrawable) {
+                        final int color = Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader), 0.15f);
+                        if (((ShapeDrawable) backgroundDrawable).getPaint().getColor() != color) {
+                            ((ShapeDrawable) backgroundDrawable).getPaint().setColor(color);
+                        }
+                    }
                     backgroundDrawable.setBounds(0, 0, (int) (getPaddingLeft() + getDrawable().getCurrentWidth() + getPaddingRight()), getMeasuredHeight());
                     backgroundDrawable.draw(canvas);
 
                     super.onDraw(canvas);
                 }
             };
-            headerOnView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+            headerOnView.setTypeface(AndroidUtilities.bold());
             headerOnView.setPadding(AndroidUtilities.dp(5.33f), AndroidUtilities.dp(2), AndroidUtilities.dp(5.33f), AndroidUtilities.dp(2));
             headerOnView.setTextSize(AndroidUtilities.dp(12));
-            headerOnView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
+            ThemeBind.textColor(headerOnView, Theme.key_windowBackgroundWhiteBlueHeader);
             headerLayout.addView(headerOnView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 17, Gravity.CENTER_VERTICAL, 6, 1, 0, 0));
 
             addView(headerLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.FILL_HORIZONTAL, 21, 17, 21, 0));
@@ -731,7 +809,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
 
                         if (newValue <= 0 || newValue >= 100) {
                             try {
-                                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
+                                performHapticFeedback(VibratorUtils.getType(HapticFeedbackConstants.KEYBOARD_TAP), HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
                             } catch (Exception e) {}
                         }
                     }
@@ -754,7 +832,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
             leftTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
             leftTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
             leftTextView.setGravity(Gravity.LEFT);
-            leftTextView.setText(LocaleController.getString("LiteBatteryDisabled", R.string.LiteBatteryDisabled));
+            leftTextView.setText(LocaleController.getString(R.string.LiteBatteryDisabled));
             valuesView.addView(leftTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL));
 
             middleTextView = new AnimatedTextView(context, false, true, true) {
@@ -772,7 +850,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
             middleTextView.setAnimationProperties(.45f, 0, 240, CubicBezierInterpolator.EASE_OUT_QUINT);
             middleTextView.setGravity(Gravity.CENTER_HORIZONTAL);
             middleTextView.setTextSize(dp(13));
-            middleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText));
+            ThemeBind.textColor(middleTextView, Theme.key_windowBackgroundWhiteBlueText);
             valuesView.addView(middleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
 
             batteryText = new SpannableStringBuilder("b");
@@ -786,7 +864,7 @@ public class LiteModeSettingsActivity extends BaseFragment {
             rightTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
             rightTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
             rightTextView.setGravity(Gravity.RIGHT);
-            rightTextView.setText(LocaleController.getString("LiteBatteryEnabled", R.string.LiteBatteryEnabled));
+            rightTextView.setText(LocaleController.getString(R.string.LiteBatteryEnabled));
             valuesView.addView(rightTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.RIGHT | Gravity.CENTER_VERTICAL));
 
             addView(valuesView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.FILL_HORIZONTAL, 21, 52, 21, 0));
@@ -825,13 +903,17 @@ public class LiteModeSettingsActivity extends BaseFragment {
                     super.onPopulateAccessibilityEvent(host, event);
 
                     StringBuilder sb = new StringBuilder(LocaleController.getString(R.string.LiteBatteryTitle)).append(", ");
-                    int percent = LiteMode.getPowerSaverLevel();
-                    if (percent <= 0) {
-                        sb.append(LocaleController.getString(R.string.LiteBatteryAlwaysDisabled));
-                    } else if (percent >= 100) {
-                        sb.append(LocaleController.getString(R.string.LiteBatteryAlwaysEnabled));
+                    if (LiteMode.isPowerSaverFollowSystem()) {
+                        sb.append(LocaleController.getString(R.string.LiteBatteryFollowSystemInfo));
                     } else {
-                        sb.append(LocaleController.formatString(R.string.AccDescrLiteBatteryWhenBelow, Math.round(percent)));
+                        int percent = LiteMode.getPowerSaverLevel();
+                        if (percent <= 0) {
+                            sb.append(LocaleController.getString(R.string.LiteBatteryAlwaysDisabled));
+                        } else if (percent >= 100) {
+                            sb.append(LocaleController.getString(R.string.LiteBatteryAlwaysEnabled));
+                        } else {
+                            sb.append(LocaleController.formatString(R.string.AccDescrLiteBatteryWhenBelow, Math.round(percent)));
+                        }
                     }
 
                     event.setContentDescription(sb);
@@ -863,22 +945,32 @@ public class LiteModeSettingsActivity extends BaseFragment {
 
         public void update() {
             final int percent = LiteMode.getPowerSaverLevel();
+            final boolean followSystem = LiteMode.isPowerSaverFollowSystem();
 
-            middleTextView.cancelAnimation();
-            if (percent <= 0) {
-                middleTextView.setText(LocaleController.getString("LiteBatteryAlwaysDisabled", R.string.LiteBatteryAlwaysDisabled), !LocaleController.isRTL);
+            if (followSystem) {
+                middleTextView.setText(LocaleController.getString(R.string.LiteBatteryFollowSystemState), !LocaleController.isRTL);
+            } else if (percent <= 0) {
+                middleTextView.setText(LocaleController.getString(R.string.LiteBatteryAlwaysDisabled), !LocaleController.isRTL);
             } else if (percent >= 100) {
-                middleTextView.setText(LocaleController.getString("LiteBatteryAlwaysEnabled", R.string.LiteBatteryAlwaysEnabled), !LocaleController.isRTL);
+                middleTextView.setText(LocaleController.getString(R.string.LiteBatteryAlwaysEnabled), !LocaleController.isRTL);
             } else {
                 batteryIcon.setFillValue(percent / 100F, true);
-                middleTextView.setText(AndroidUtilities.replaceCharSequence("%s", LocaleController.getString("LiteBatteryWhenBelow", R.string.LiteBatteryWhenBelow), TextUtils.concat(String.format("%d%% ", Math.round(percent)), batteryText)), !LocaleController.isRTL);
+                middleTextView.setText(AndroidUtilities.replaceCharSequence("%s", LocaleController.getString(R.string.LiteBatteryWhenBelow), TextUtils.concat(String.format("%d%% ", Math.round(percent)), batteryText)), !LocaleController.isRTL);
             }
 
-            headerOnView.setText((LiteMode.isPowerSaverApplied() ? LocaleController.getString("LiteBatteryEnabled", R.string.LiteBatteryEnabled) : LocaleController.getString("LiteBatteryDisabled", R.string.LiteBatteryDisabled)).toUpperCase());
-            updateHeaderOnVisibility(percent > 0 && percent < 100);
+            headerOnView.setText((LiteMode.isPowerSaverApplied() ? LocaleController.getString(R.string.LiteBatteryEnabled) : LocaleController.getString(R.string.LiteBatteryDisabled)).toUpperCase());
+            updateHeaderOnVisibility(followSystem || (percent > 0 && percent < 100));
 
-            updateOnActive(percent >= 100);
-            updateOffActive(percent <= 0);
+            updateOnActive(!followSystem && percent >= 100);
+            updateOffActive(!followSystem && percent <= 0);
+            seekBarView.setEnabled(!followSystem);
+            seekBarView.setAlpha(followSystem ? .5f : 1f);
+        }
+
+        @Override
+        protected void onDraw(@NonNull Canvas canvas) {
+            super.onDraw(canvas);
+            canvas.drawLine(0, getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
         }
 
         private boolean headerOnVisible;
@@ -922,6 +1014,36 @@ public class LiteModeSettingsActivity extends BaseFragment {
                 onActiveAnimator.setDuration(320);
                 onActiveAnimator.start();
             }
+        }
+
+        @Override
+        public void updateColors() {
+            try {
+                if (rightTextView != null && (onActiveAnimator == null || !onActiveAnimator.isRunning())) {
+                    rightTextView.setTextColor(ColorUtils.blendARGB(
+                        Theme.getColor(Theme.key_windowBackgroundWhiteGrayText),
+                        Theme.getColor(Theme.key_windowBackgroundWhiteBlueText),
+                        onActiveT
+                    ));
+                }
+                if (leftTextView != null && (offActiveAnimator == null || !offActiveAnimator.isRunning())) {
+                    leftTextView.setTextColor(ColorUtils.blendARGB(
+                        Theme.getColor(Theme.key_windowBackgroundWhiteGrayText),
+                        Theme.getColor(Theme.key_windowBackgroundWhiteBlueText),
+                        offActiveT
+                    ));
+                }
+                if (headerOnView != null) {
+                    headerOnView.invalidate();
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        }
+
+        @Override
+        public void addColorKeys(java.util.HashSet<Integer> colors) {
+            colors.add(Theme.key_windowBackgroundWhiteGrayText);
         }
 
         private float offActiveT;
@@ -1044,5 +1166,14 @@ public class LiteModeSettingsActivity extends BaseFragment {
         LiteMode.savePreference();
         AnimatedEmojiDrawable.updateAll();
         Theme.reloadWallpaper(true);
+        // fix official memory leak
+        // onBecomeFullyHidden isn't called in this fragment
+        // too lazy to figure out why, other fragments work correctly
+        LiteMode.removeOnPowerSaverAppliedListener(onPowerAppliedChange);
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
     }
 }

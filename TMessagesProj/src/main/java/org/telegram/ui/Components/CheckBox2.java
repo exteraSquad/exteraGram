@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.GenericProvider;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 public class CheckBox2 extends View {
 
@@ -72,6 +73,10 @@ public class CheckBox2 extends View {
         checkBoxBase.setDrawUnchecked(value);
     }
 
+    public boolean getDrawUnchecked() {
+        return checkBoxBase.getDrawUnchecked();
+    }
+
     public void setDrawBackgroundAsArc(int type) {
         checkBoxBase.setBackgroundType(type);
     }
@@ -101,6 +106,7 @@ public class CheckBox2 extends View {
         super.onLayout(changed, left, top, right, bottom);
         checkBoxBase.setBounds(0, 0, right - left, bottom - top);
     }
+    private final Paint paint = new Paint();
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -109,7 +115,6 @@ public class CheckBox2 extends View {
             int cy = getMeasuredHeight() >> 1;
             iconDrawable.setBounds(cx - iconDrawable.getIntrinsicWidth() / 2, cy - iconDrawable.getIntrinsicHeight() / 2, cx + iconDrawable.getIntrinsicWidth() / 2, cy + iconDrawable.getIntrinsicHeight() / 2);
             iconDrawable.draw(canvas);
-            Paint paint = new Paint();
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(AndroidUtilities.dp(1.2f));
             paint.setColor(Theme.getColor(Theme.key_switch2Track));
@@ -138,7 +143,7 @@ public class CheckBox2 extends View {
                 iconDrawable = null;
             } else {
                 iconDrawable = ContextCompat.getDrawable(getContext(), icon).mutate();
-                iconDrawable.setColorFilter(Theme.getColor(Theme.key_switch2Track), PorterDuff.Mode.MULTIPLY);
+                ThemeBind.drawableColorFilter(this, iconDrawable, Theme.key_switch2Track, PorterDuff.Mode.MULTIPLY);
             }
         }
     }

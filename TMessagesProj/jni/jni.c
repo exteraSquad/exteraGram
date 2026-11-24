@@ -5,15 +5,22 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <openssl/aes.h>
+#include <openssl/aes_ige.h>
 #include <openssl/evp.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <stdbool.h>
+#include <time.h>
+
+#ifdef EXTERA_HOOK_EMBEDDED
+#include "exterahook.h"
+#endif
 
 int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env);
 int videoOnJNILoad(JavaVM *vm, JNIEnv *env);
-int imageOnJNILoad(JavaVM *vm, JNIEnv *env);
 int tgvoipOnJNILoad(JavaVM *vm, JNIEnv *env);
+int ffmpegOnJNILoad(JavaVM *vm, JNIEnv *env);
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 	JNIEnv *env = 0;
@@ -23,9 +30,11 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 		return -1;
 	}
 
-    if (imageOnJNILoad(vm, env) != JNI_TRUE) {
+#ifdef EXTERA_HOOK_EMBEDDED
+    if (ExteraHookJniOnLoad(vm) != JNI_VERSION_1_6) {
         return -1;
     }
+#endif
 
     if (videoOnJNILoad(vm, env) != JNI_TRUE) {
         return -1;
@@ -35,13 +44,19 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
         return -1;
     }
 
+    if (ffmpegOnJNILoad(vm, env) != JNI_TRUE) {
+        return -1;
+    }
+
     tgvoipOnJNILoad(vm, env);
 
 	return JNI_VERSION_1_6;
 }
 
 void JNI_OnUnload(JavaVM *vm, void *reserved) {
-
+#ifdef EXTERA_HOOK_EMBEDDED
+    ExteraHookJniOnUnload(vm);
+#endif
 }
 
 JNIEXPORT void Java_org_telegram_messenger_Utilities_aesIgeEncryption(JNIEnv *env, jclass class, jobject buffer, jbyteArray key, jbyteArray iv, jboolean encrypt, jint offset, jint length) {

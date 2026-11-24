@@ -2,6 +2,7 @@ package org.telegram.ui.Components.Paint.Views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -12,10 +13,11 @@ import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.Components.AnimatedFileDrawable;
+import org.telegram.ui.Components.AnimatedFloat;
+import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.Point;
 import org.telegram.ui.Components.RLottieDrawable;
-import org.telegram.ui.Components.Rect;
+import org.telegram.ui.Components.RectOld;
 import org.telegram.ui.Components.Size;
 
 public class StickerView extends EntityView {
@@ -36,16 +38,17 @@ public class StickerView extends EntityView {
     private Object parentObject;
     private int anchor = -1;
     private boolean mirrored = false;
+    private final AnimatedFloat mirrorT;
     private Size baseSize;
 
     private FrameLayoutDrawer containerView;
     public final ImageReceiver centerImage = new ImageReceiver();
 
-    public StickerView(Context context, Point position, Size baseSize, TLRPC.Document sticker, Object parentObject) {
+    public StickerView(Context context, PointF position, Size baseSize, TLRPC.Document sticker, Object parentObject) {
         this(context, position, 0.0f, 1.0f, baseSize, sticker, parentObject);
     }
 
-    public StickerView(Context context, Point position, float angle, float scale, Size baseSize, TLRPC.Document sticker, Object parentObject) {
+    public StickerView(Context context, PointF position, float angle, float scale, Size baseSize, TLRPC.Document sticker, Object parentObject) {
         super(context, position);
         setRotation(angle);
         setScale(scale);
@@ -67,6 +70,8 @@ public class StickerView extends EntityView {
         containerView = new FrameLayoutDrawer(context);
         addView(containerView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
+        mirrorT = new AnimatedFloat(containerView, 0, 500, CubicBezierInterpolator.EASE_OUT_QUINT);
+
         centerImage.setAspectFit(true);
         centerImage.setInvalidateAll(true);
         centerImage.setParentView(containerView);
@@ -84,7 +89,7 @@ public class StickerView extends EntityView {
         updatePosition();
     }
 
-    public StickerView(Context context, StickerView stickerView, Point position) {
+    public StickerView(Context context, StickerView stickerView, PointF position) {
         this(context, position, stickerView.getRotation(), stickerView.getScale(), stickerView.baseSize, stickerView.sticker, stickerView.parentObject);
         if (stickerView.mirrored) {
             mirror();
@@ -108,7 +113,14 @@ public class StickerView extends EntityView {
     }
 
     public void mirror() {
+        mirror(false);
+    }
+
+    public void mirror(boolean animated) {
         mirrored = !mirrored;
+        if (!animated) {
+            mirrorT.set(mirrored, true);
+        }
         containerView.invalidate();
     }
 
@@ -134,10 +146,9 @@ public class StickerView extends EntityView {
         }
 
         canvas.save();
-        if (mirrored) {
-            canvas.scale(-1.0f, 1.0f);
-            canvas.translate(-baseSize.width, 0);
-        }
+        float mirrorT = this.mirrorT.set(mirrored);
+        canvas.scale(1 - mirrorT * 2, 1f, baseSize.width / 2f, 0);
+        canvas.skew(0, 4 * mirrorT * (1f - mirrorT) * .25f);
         centerImage.setImageCoords(0, 0, (int) baseSize.width, (int) baseSize.height);
         centerImage.draw(canvas);
         canvas.restore();
@@ -162,15 +173,15 @@ public class StickerView extends EntityView {
     }
 
     @Override
-    protected Rect getSelectionBounds() {
+    public RectOld getSelectionBounds() {
         ViewGroup parentView = (ViewGroup) getParent();
         if (parentView == null) {
-            return new Rect();
+            return new RectOld();
         }
         float scale = parentView.getScaleX();
 
         float side = getMeasuredWidth() * (getScale() + 0.5f);
-        return new Rect((getPositionX() - side / 2.0f) * scale, (getPositionY() - side / 2.0f) * scale, side * scale, side * scale);
+        return new RectOld((getPositionX() - side / 2.0f) * scale, (getPositionY() - side / 2.0f) * scale, side * scale, side * scale);
     }
 
     @Override
@@ -225,8 +236,17 @@ public class StickerView extends EntityView {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
+            int count = canvas.getSaveCount();
+
+            float alpha = getShowAlpha();
+            if (alpha <= 0) {
+                return;
+            } else if (alpha < 1) {
+                canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), (int) (0xFF * alpha), Canvas.ALL_SAVE_FLAG);
+            }
+
             float thickness = AndroidUtilities.dp(1.0f);
-            float radius = AndroidUtilities.dp(4.5f);
+            float radius = AndroidUtilities.dpf2(5.66f);
 
             float inset = radius + thickness + AndroidUtilities.dp(15);
             float mainRadius = getMeasuredWidth() / 2 - inset;
@@ -235,11 +255,13 @@ public class StickerView extends EntityView {
             canvas.drawArc(arcRect, 0, 180, false, paint);
             canvas.drawArc(arcRect, 180, 180, false, paint);
 
-            canvas.drawCircle(inset, inset + mainRadius, radius, dotPaint);
             canvas.drawCircle(inset, inset + mainRadius, radius, dotStrokePaint);
+            canvas.drawCircle(inset, inset + mainRadius, radius - AndroidUtilities.dp(1), dotPaint);
 
-            canvas.drawCircle(inset + mainRadius * 2, inset + mainRadius, radius, dotPaint);
             canvas.drawCircle(inset + mainRadius * 2, inset + mainRadius, radius, dotStrokePaint);
+            canvas.drawCircle(inset + mainRadius * 2, inset + mainRadius, radius - AndroidUtilities.dp(1), dotPaint);
+
+            canvas.restoreToCount(count);
         }
     }
 }

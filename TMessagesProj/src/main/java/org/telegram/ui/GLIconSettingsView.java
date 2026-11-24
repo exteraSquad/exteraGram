@@ -11,6 +11,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.ColorPicker;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Premium.GLIcon.GLIconRenderer;
@@ -26,7 +27,7 @@ public class GLIconSettingsView extends LinearLayout {
 
         TextView saturationTextView = new TextView(context);
         saturationTextView.setText("Spectral top ");
-        saturationTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(saturationTextView, Theme.key_dialogTextBlue2);
         saturationTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         saturationTextView.setLines(1);
         saturationTextView.setMaxLines(1);
@@ -38,7 +39,9 @@ public class GLIconSettingsView extends LinearLayout {
         seekBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
-                mRenderer.star.spec1 = 2 * progress;
+                if (mRenderer.model != null) {
+                    mRenderer.model.spec1 = 2 * progress;
+                }
             }
 
             @Override
@@ -46,14 +49,14 @@ public class GLIconSettingsView extends LinearLayout {
 
             }
         });
-        seekBar.setProgress(mRenderer.star.spec1 / 2);
+        seekBar.setProgress(mRenderer.model == null ? 0 : mRenderer.model.spec1 / 2);
         seekBar.setReportChanges(true);
         addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, 0, 5, 4, 5, 0));
 
 
         saturationTextView = new TextView(context);
         saturationTextView.setText("Spectral bottom ");
-        saturationTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(saturationTextView, Theme.key_dialogTextBlue2);
         saturationTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         saturationTextView.setLines(1);
         saturationTextView.setMaxLines(1);
@@ -65,7 +68,9 @@ public class GLIconSettingsView extends LinearLayout {
         seekBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
-                mRenderer.star.spec2 = 2 * progress;
+                if (mRenderer.model != null) {
+                    mRenderer.model.spec2 = 2 * progress;
+                }
             }
 
             @Override
@@ -73,7 +78,7 @@ public class GLIconSettingsView extends LinearLayout {
 
             }
         });
-        seekBar.setProgress(mRenderer.star.spec2 / 2);
+        seekBar.setProgress(mRenderer.model == null ? 0 : mRenderer.model.spec2 / 2);
         seekBar.setReportChanges(true);
         addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, 0, 5, 4, 5, 0));
 
@@ -85,8 +90,8 @@ public class GLIconSettingsView extends LinearLayout {
         saturationTextView.setGravity(Gravity.CENTER);
         saturationTextView.setMaxLines(1);
         saturationTextView.setSingleLine(true);
-        saturationTextView.setTextColor(Theme.getColor((Theme.key_featuredStickers_buttonText)));
-        saturationTextView.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 4));
+        ThemeBind.textColor(saturationTextView, (Theme.key_featuredStickers_buttonText));
+        ThemeBind.selectorBackground(saturationTextView, Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 4), ThemeBind.of(Theme.key_featuredStickers_addButton), ThemeBind.adaptiveRipple(Theme.key_featuredStickers_addButton));
         saturationTextView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +99,9 @@ public class GLIconSettingsView extends LinearLayout {
 
                     @Override
                     public void setColor(int color, int num, boolean applyNow) {
-                        mRenderer.star.specColor = color;
+                        if (mRenderer.model != null) {
+                            mRenderer.model.specColor = color;
+                        }
                     }
                 }) {
                     @Override
@@ -102,7 +109,7 @@ public class GLIconSettingsView extends LinearLayout {
                         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(300), MeasureSpec.EXACTLY));
                     }
                 };
-                colorPicker.setColor(mRenderer.star.specColor, 0);
+                colorPicker.setColor(mRenderer.model != null ? mRenderer.model.specColor : 0, 0);
                 colorPicker.setType(-1, true, 1, 1, false, 0, false);
                 BottomSheet bottomSheet = new BottomSheet(context, false);
                 bottomSheet.setCustomView(colorPicker);
@@ -115,7 +122,7 @@ public class GLIconSettingsView extends LinearLayout {
 
         saturationTextView = new TextView(context);
         saturationTextView.setText("Diffuse ");
-        saturationTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(saturationTextView, Theme.key_dialogTextBlue2);
         saturationTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         saturationTextView.setLines(1);
         saturationTextView.setMaxLines(1);
@@ -127,7 +134,9 @@ public class GLIconSettingsView extends LinearLayout {
         seekBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
-                mRenderer.star.diffuse = progress;
+                if (mRenderer.model != null) {
+                    mRenderer.model.diffuse = progress;
+                }
             }
 
             @Override
@@ -135,13 +144,13 @@ public class GLIconSettingsView extends LinearLayout {
 
             }
         });
-        seekBar.setProgress(mRenderer.star.diffuse);
+        seekBar.setProgress(mRenderer.model == null ? 0 : mRenderer.model.diffuse);
         seekBar.setReportChanges(true);
         addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, 0, 5, 4, 5, 0));
 
         saturationTextView = new TextView(context);
         saturationTextView.setText("Normal map spectral");
-        saturationTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(saturationTextView, Theme.key_dialogTextBlue2);
         saturationTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         saturationTextView.setLines(1);
         saturationTextView.setMaxLines(1);
@@ -153,7 +162,9 @@ public class GLIconSettingsView extends LinearLayout {
         seekBar.setDelegate(new SeekBarView.SeekBarViewDelegate() {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
-                mRenderer.star.normalSpec = 2 * progress;
+                if (mRenderer.model != null) {
+                    mRenderer.model.normalSpec = 2 * progress;
+                }
             }
 
             @Override
@@ -161,7 +172,7 @@ public class GLIconSettingsView extends LinearLayout {
 
             }
         });
-        seekBar.setProgress(mRenderer.star.normalSpec / 2);
+        seekBar.setProgress(mRenderer.model == null ? 0 : mRenderer.model.normalSpec / 2);
         seekBar.setReportChanges(true);
         addView(seekBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, 0, 5, 4, 5, 0));
 
@@ -173,8 +184,8 @@ public class GLIconSettingsView extends LinearLayout {
         saturationTextView.setGravity(Gravity.CENTER);
         saturationTextView.setMaxLines(1);
         saturationTextView.setSingleLine(true);
-        saturationTextView.setTextColor(Theme.getColor((Theme.key_featuredStickers_buttonText)));
-        saturationTextView.setBackground(Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 4));
+        ThemeBind.textColor(saturationTextView, (Theme.key_featuredStickers_buttonText));
+        ThemeBind.selectorBackground(saturationTextView, Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_featuredStickers_addButton), 4), ThemeBind.of(Theme.key_featuredStickers_addButton), ThemeBind.adaptiveRipple(Theme.key_featuredStickers_addButton));
         // addView(saturationTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, 21, 13, 21, 0));
         saturationTextView.setOnClickListener(new OnClickListener() {
             @Override
@@ -184,7 +195,9 @@ public class GLIconSettingsView extends LinearLayout {
                     @Override
                     public void setColor(int color, int num, boolean applyNow) {
                         if (num == 0) {
-                            mRenderer.star.normalSpecColor = color;
+                            if (mRenderer.model != null) {
+                                mRenderer.model.normalSpecColor = color;
+                            }
                         }
                     }
                 }) {
@@ -193,7 +206,7 @@ public class GLIconSettingsView extends LinearLayout {
                         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(300), MeasureSpec.EXACTLY));
                     }
                 };
-                colorPicker.setColor(mRenderer.star.normalSpecColor, 0);
+                colorPicker.setColor(mRenderer.model == null ? 0 : mRenderer.model.normalSpecColor, 0);
                 colorPicker.setType(-1, true, 1, 1, false, 0, false);
                 BottomSheet bottomSheet = new BottomSheet(context, false);
                 bottomSheet.setCustomView(colorPicker);
@@ -207,7 +220,7 @@ public class GLIconSettingsView extends LinearLayout {
 
         saturationTextView = new TextView(context);
         saturationTextView.setText("Small starts size");
-        saturationTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(saturationTextView, Theme.key_dialogTextBlue2);
         saturationTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         saturationTextView.setLines(1);
         saturationTextView.setMaxLines(1);

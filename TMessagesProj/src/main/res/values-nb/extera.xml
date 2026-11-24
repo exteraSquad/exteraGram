@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram Innstillinger</string>
+    <!-- Main Menu -->
+    <string name="Links">Lenker</string>
+    <string name="Crowdin">Oversett</string>
+    <string name="Website">Nettside</string>
+    <string name="Developer">**%1$s** er medlem av utviklingsteamet **exteraGram**.</string>
+    <string name="DeveloperCompact">Medlem av utviklingsteamet til **exteraGram**.</string>
+    <string name="Supporter">**%1$s** støttet utviklingen av **exteraGram** og mottok et unikt merke.</string>
+    <string name="OfficialChannel">**%1$s** er den offisielle ressursen til **exteraGram**.</string>
+    <string name="NoSuchSetting">Det ser ut til at en slik innstilling ikke finnes.</string>
+    <string name="SettingLinkToSavedMessages">Innstillingslenke sendt til **Lagrede meldinger**.</string>
+    <string name="SettingLinkToUser">Innstillingslenke sendt til **%1$s**.</string>
+    <string name="SettingLinkToChats">Innstillingslenke sendt til **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Bruk systembatterisparing</string>
+    <string name="LiteBatteryFollowSystemInfo">Styres av systemets batterisparer.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Pillestabel</string>
+    <string name="PillStackPillsInfo">Vis interaktive piller i søkefeltet</string>
+    <string name="PillStackActivePills">Aktive piller</string>
+    <string name="PillStackHiddenPills">Skjulte piller</string>
+    <string name="CurrentLocation">Nåværende plassering</string>
+    <string name="SelectLocation">Velg på kartet</string>
+    <string name="WeatherPill">Vær</string>
+    <string name="WeatherSettingsInfo">Velg hvordan du vil bestemme plasseringen for værmeldingen i søket.</string>
+    <string name="WeatherLocation">Posisjonsdeteksjon</string>
+    <string name="WeatherLocationPermissionNo">exteraGram trenger tilgang til posisjonen din for å vise gjeldende vær.</string>
+    <string name="WeatherLocationPermissionGrant">Gi tillatelse</string>
+    <string name="WeatherLocationServicesEnable">Aktiver plassering</string>
+    <string name="WeatherPillTopInfo">Innstillinger for vær-widget for Pill Stack.</string>
+    <string name="PillStackInfiniteScrolling">Uendelig rulling</string>
+    <string name="CryptoPillTargetCurrency">Målvaluta</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Deaktiver proxy</string>
+    <string name="ProxyDisableNever">Aldri</string>
+    <string name="ProxyDisableAlways">Alltid</string>
+    <string name="ProxyDisableOnMobileData">Mobildata</string>
+    <string name="Unknown">Ukjent</string>
+    <string name="ProxyRename">Proxynavn (valgfritt)</string>
+    <string name="ProxyPinLimitReached">Du kan feste opptil %1$d proxyer.</string>
+    <string name="CopyIpAddress">Kopier IP-adressen</string>
+    <string name="IpInfoUnavailable">Kunne ikke laste IP-adresseinformasjon.</string>
+    <string name="IpInfoIsp">Internett-leverandør</string>
+    <string name="IpInfoOrganization">Organisasjon</string>
+    <string name="IpInfoDomain">Domene</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Oversettelsesleverandør</string>
+    <string name="TranslationTarget">Målspråk</string>
+    <string name="TranslationTargetApp">Følg appen</string>
+    <string name="ShowTranslateChatButtonLocked">Velg en annen oversettelsesleverandør eller abonnér på **Telegram Premium**.</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Deaktiver tallavrunding</string>
+    <string name="FormatTimeWithSeconds">Formater tid med sekunder</string>
+    <string name="RelativeLastSeen">Slektning sist sett</string>
+    <string name="InAppVibration">Vibrasjon i appen</string>
+    <string name="FilterZalgo">Filter «Zalgo»</string>
+    <string name="FilterZalgoInfo">Fjerner symbolene «%1$s» i navn og meldinger.</string>
+    <string name="RestartRequired">Start appen på nytt for at endringene skal tre i kraft.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Kode</string>
+    <string name="CreateCode">Lag kodeblokk</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Nedlastingshastighetsøkning</string>
+    <string name="UploadSpeedBoost">Økning av opplastingshastighet</string>
+    <string name="SpeedBoostInfo">Ultra Boost kan forårsake problemer med nedlasting av filer og strømming av videoer på trege internettforbindelser.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Lagring</string>
+    <string name="CustomSavePath">Egendefinert lagringsmappe</string>
+    <string name="CustomSavePathHint">La stå tomt for å lagre direkte til root</string>
+    <string name="CustomSavePathDefault">Lagre til root</string>
+    <string name="CustomSavePathInfo">Lagrede filer vil bli lagret direkte i Bilder, Nedlastinger osv.</string>
+    <string name="CustomSavePathInfoFolder">Lagrede filer vil bli lagret i Bilder/%1$s, Nedlastinger/%1$s osv.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Skjul telefonnummer</string>
+    <string name="ShowIdAndDc">Vis ID og DC</string>
+    <string name="ShowIdAndDcInfo">Telegram API viser ID-er som de er, mens Bot API legger til et minustegn for grupper og -100 for supergrupper og kanaler.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Skjul arkivmappen</string>
+    <string name="ArchiveOnPull">Åpne arkivet på rullegardinmenyen</string>
+    <string name="DisableUnarchiveSwipe">Deaktiver sveiping ved å fjerne arkivet</string>
+    <string name="DisableUnarchiveSwipeInfo">Å sveipe til venstre vil ikke fjerne chatter fra arkivet.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Utseende</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Avatarhjørner</string>
+    <string name="SingleCornerRadius">Enkelt hjørneradius</string>
+    <string name="SingleCornerRadiusInfo">Forumene vil ha samme avatarform som chatter.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Chatliste</string>
+    <string name="ActionBarTitle">Titteltekst</string>
+    <string name="ActionBarTitleName">Fornavn</string>
+    <string name="HideStories">Skjul historier</string>
+    <string name="HideActionBarStatus">Skjul status</string>
+    <string name="CenterTitle">Sentertittel</string>
+    <string name="ChatHeader">Chattoppskrift</string>
+    <string name="HideFloatingButton">Skjul flytende knapp</string>
+    <string name="HideDialogsSearchBar">Skjul søkefeltet</string>
+    <string name="BottomNavigationBarMode">Nederste navigasjonsfelt</string>
+    <string name="BottomNavigationModeShow">Vise</string>
+    <string name="BottomNavigationModeHide">Gjemme</string>
+    <string name="BottomNavigationModeFloating">Flytende</string>
+    <string name="SenderMiniAvatars">Mini-avatarer for avsendere</string>
+    <string name="ListOfChatsInfo">Når \"Kun ikoner\" er aktivert for mapper, vil hovedtittelen vise mappenavnet.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Mappetittel</string>
+    <string name="TabTitleStyleTextWithIcons">Navn med ikoner</string>
+    <string name="TabTitleStyleIconsOnly">Kun ikoner</string>
+    <string name="TabTitleStyleTextOnly">Kun navn</string>
+    <string name="TabCounter">Varslingsteller</string>
+    <string name="HideAllChats">Skjul fanen \"%1$s\"</string>
+    <string name="FoldersInfo">Ikonene er synkronisert med kontoen din.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Appnavigasjon</string>
+    <string name="AppNavigationInfo">Meny øverst til høyre og skuffinnstillinger</string>
+    <string name="NavigationDrawer">Navigasjonsskuff</string>
+    <string name="NavigationDrawerInfo">Erstatter menyen øverst til høyre med en klassisk sveip-for-åpne-skuff og en hamburgerknapp.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Immersiv animasjon</string>
+    <string name="MainMenuItems">Menyelementer</string>
+    <string name="MainMenuItemsInfo">Trykk for å vise eller skjule elementer, hold inne for å endre rekkefølgen. Oppsettet deles mellom menyen og skuffen.</string>
+    <string name="MainMenuHiddenItems">Skjulte menyelementer</string>
+    <string name="MainMenuAddDivider">Legg til skillelinje</string>
+    <string name="MainMenuRemoveSettingsInfo">Innstillinger kan ikke skjules mens den nederste navigasjonslinjen er deaktivert.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Ikonpakker</string>
+    <string name="IconPacksInfo">Tilpass ikoner på tvers av appen</string>
+    <string name="IconPickerAllIcons">Alle ikoner</string>
+    <string name="IconPickerReplacedIcons">Byttet ut ikoner</string>
+    <string name="IconPickerNotReplacedIcons">Byttet ut ikoner</string>
+    <string name="IconPickerSaveAndExit">Lagre &amp; Avslutt</string>
+    <string name="BasePacks">Basispakker</string>
+    <string name="BaseIconPackInfo">Basisikonpakken brukes som reserve for ikoner som ikke erstattes av andre pakker.</string>
+    <string name="IconPacksHint">Trykk for å aktivere eller deaktivere en pakke. Hold inne for å redigere eller slette.</string>
+    <string name="NewIconPack">Opprett en ny ikonpakke</string>
+    <string name="EnabledPacks">Aktiverte pakker</string>
+    <string name="AllPacks">Alle pakker</string>
+    <string name="PackName">Pakkenavn</string>
+    <string name="AuthorNameOptional">Forfatternavn (valgfritt)</string>
+    <string name="NameCannotBeEmpty">Navnet kan ikke være tomt.</string>
+    <string name="Version">Versjon</string>
+    <string name="InstallPack">Installer pakke</string>
+    <string name="IconCount_one">%1$d ikon</string>
+    <string name="IconCount_two">%1$d ikoner</string>
+    <string name="IconCount_few">%1$d ikoner</string>
+    <string name="IconCount_many">%1$d ikoner</string>
+    <string name="IconCount_other">%1$d ikoner</string>
+    <string name="UpdatePack">Oppdateringspakke</string>
+    <string name="DeletePack">Slett pakke</string>
+    <string name="DeletePackInfo">Er du sikker på at du vil slette **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Ikonpakkens arkiv er ugyldig.</string>
+    <string name="IconPackErrorMissingMetadata">Ikonpakkearkiv mangler metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Ikonpakkens metadata er for store.</string>
+    <string name="IconPackErrorInvalidMetadata">Metadata for ikonpakken er ugyldig.</string>
+    <string name="IconPackErrorTooManyFiles">Ikonpakken inneholder for mange filer.</string>
+    <string name="IconPackErrorArchiveTooLarge">Ikonpakken er for stor.</string>
+    <string name="IconPackErrorFileTooLarge">En av ikonfilene er for stor.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Ikonpakkearkiv er komprimert for aggressivt.</string>
+    <string name="IconPackErrorStorage">Kunne ikke lagre ikonpakken.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Ikonpakk</string>
+    <string name="AppIconSunset">Solnedgang</string>
+    <string name="AppIconAmethyst">Ametyst</string>
+    <string name="AppIconInvincible">Uovervinnelig</string>
+    <string name="AppIconSpace">Rom</string>
+    <string name="AppIconIceAge">Istid</string>
+    <string name="AppIconEditor">Redaktør</string>
+    <string name="AppIconOrbit">Bane</string>
+    <string name="AppIconSus">Bedrager</string>
+    <string name="AppIconWinter">Vinter</string>
+    <!-- General Appearance -->
+    <string name="Sections">Seksjoner</string>
+    <string name="SeparateHeaders">Separate overskrifter</string>
+    <string name="DividerStyle">Divider stil</string>
+    <string name="DividerStyleHidden">Skjult</string>
+    <string name="DividerStyleLine">Linje</string>
+    <string name="DividerStyleSegments">Segmenter</string>
+    <string name="UseSystemFonts">Bruk systemfonter</string>
+    <string name="UseSystemEmoji">Bruk system-emoji</string>
+    <string name="NewLoadingStyle">Lastestil</string>
+    <string name="NewSliderStyle">Glidebryterstil</string>
+    <string name="NewSwitchStyle">Bytt stil</string>
+    <string name="TabletMode">Nettbrettmodus</string>
+    <string name="RemoveMessageTail">Fjern meldingshale</string>
+    <string name="GooeyAvatarAnimation">\"Gooey\" avataranimasjon</string>
+    <string name="CustomChatThemes">Tilpassede temaer i chatter</string>
+    <string name="CustomChatThemesInfo">Hver chat vil vise temaet som ble spesifikt valgt for den.</string>
+    <string name="PredictiveBackIntensity">Prediktiv ryggintensitet</string>
+    <string name="PredictiveBackMax">Maks</string>
+    <string name="PredictiveBackInfo">Justerer hvor langt skjermen beveger seg når du sveiper tilbake.</string>
+    <string name="TransitionAnimation">Overgangsanimasjon</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Uskarphetsalternativer</string>
+    <string name="GlassOutlineStyle">Omriss av glass</string>
+    <string name="GlassOutlineGlare">Blending</string>
+    <string name="GlassOutlineSolid">Fast</string>
+    <string name="GlassOutlineHidden">Skjul feed-fanen</string>
+    <string name="ForceSnow">Tving snøflak</string>
+    <string name="ForceSnowInfo">Fallende snøflak vil vises i handlingslinjen, sidemenyen og chatbakgrunnene.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Klistremerkestørrelse</string>
+    <string name="StickerSizeLeft">Liten</string>
+    <string name="StickerSizeRight">Stor</string>
+    <string name="StickerSizeDialogMessage">wow, så søtt!</string>
+    <string name="StickerShape">Klistremerkeform</string>
+    <string name="StickerShapeRounded">Avrundet</string>
+    <string name="StickerShapeRoundedMsg">Beskjed</string>
+    <string name="ViewEmojiSet">Se Emoji-sett</string>
+    <string name="UnlimitedRecentStickers">Ubegrenset med nylige klistremerker</string>
+    <string name="HideReactions">Skjul reaksjoner</string>
+    <string name="HideReactionsInfo">Reaksjoner vil være fullstendig skjult fra grensesnittet.</string>
+    <string name="ReplyBackground">Bakgrunn</string>
+    <string name="ChatSettingsInfo">Medieinnstillinger, appikon og annet</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Konfigurer tjenester, roller og historikk</string>
+    <string name="AIChatInfo2">Generer tekst fra meldinger eller før sending.</string>
+    <!-- AI Services -->
+    <string name="Services">Tjenester</string>
+    <string name="ServicesInfo">Velg riktig tjeneste for samhandling med språkmodeller.</string>
+    <string name="NewService">Ny tjeneste</string>
+    <string name="EditService">Rediger tjeneste</string>
+    <string name="ServiceModel">Modell</string>
+    <string name="ServiceKey">API-nøkkel</string>
+    <string name="ServiceInfo">Serviceinformasjon</string>
+    <string name="ServiceProvider">Leverandør</string>
+    <string name="ServiceProviderCustom">Skikk</string>
+    <string name="ServiceTestAndSave">Test og lagre</string>
+    <string name="ServicePasteService">Lim inn tjeneste</string>
+    <string name="ServicePasteKey">Lim inn API-nøkkel</string>
+    <string name="DeleteServiceInfo">Er du sikker på at du vil slette **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Roller</string>
+    <string name="RolesInfo">Lag roller for dine spesifikke behov!</string>
+    <string name="Suggestions">Forslag</string>
+    <string name="RoleName">Navn</string>
+    <string name="RolePrompt">Spørsmål</string>
+    <string name="PromptInfo">En prompt er den første teksten som gis til modellen for å starte generering av et svar eller fortsette en dialog.</string>
+    <string name="NewRole">Ny rolle</string>
+    <string name="EditRole">Rediger rolle</string>
+    <string name="DeleteRoleInfo">Er du sikker på at du vil slette **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Samtalehistorikk lar AI-en forstå tidligere forespørsler og vurdere dem når den genererer nye svar.</string>
+    <string name="AIGeneration">Generasjon</string>
+    <string name="AIReasoning">Argumentasjon</string>
+    <string name="AIReasoningInfo">Lar støttede modeller på denne tjenesten bruke ekstra tokens på å tenke før de svarer.</string>
+    <string name="AITemperature">Temperatur</string>
+    <string name="AITemperatureInfo">Temperatur kontrollerer responstilfeldighet: høyere verdier er mer kreative, lavere verdier er mer fokusert.</string>
+    <string name="ResponseStreaming">Responsstrømming</string>
+    <string name="ResponseStreamingInfo">Sikrer jevnere og raskere visning av svar.</string>
+    <string name="ShowResponseOnly">Vis kun svar</string>
+    <string name="InsertResponseAsQuote">Sett inn svar som sitat</string>
+    <string name="TapToAddApiKey">Trykk for å legge til en API-nøkkel for å komme i gang med AI-funksjoner.</string>
+    <string name="Generate">Generere</string>
+    <string name="ClearConversationHistoryInfo">Er du sikker på at du vil slette **all** AI-samtalehistorikk?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Ugyldig forespørsel</string>
+    <string name="AIError400Info">Sjekk forespørselsparametrene.</string>
+    <string name="AIError401">Ugyldig legitimasjon</string>
+    <string name="AIError401Info">API-nøkkelen er ugyldig eller deaktivert. Sjekk legitimasjonen din.</string>
+    <string name="AIError402">Utilstrekkelige kreditter</string>
+    <string name="AIError402Info">Kontoen eller API-nøkkelen din har ikke nok kreditter. Legg til flere kreditter og prøv forespørselen på nytt.</string>
+    <string name="AIError403">Tilgang nektet</string>
+    <string name="AIError403Info">Du har ikke tillatelse til å få tilgang til denne modellen eller ressursen. Sjekk API-nøkkelen og kontotillatelsene.</string>
+    <string name="AIError408">Forespørselstidsavbrudd</string>
+    <string name="AIError408Info">Forespørselen din ble ikke behandlet i tide. Prøv igjen senere.</string>
+    <string name="AIError429">Hastighetsgrense overskredet</string>
+    <string name="AIError429Info">Du sender forespørsler for ofte. Vent litt og prøv på nytt.</string>
+    <string name="AIError502">Modellfeil</string>
+    <string name="AIError502Info">Den valgte modellen er ikke tilgjengelig, eller vi mottok et ugyldig svar fra den.</string>
+    <string name="AIError503">Tilgang nektet</string>
+    <string name="AIError503Info">Tjenesten er midlertidig utilgjengelig eller overbelastet. Vennligst prøv igjen senere.</string>
+    <string name="AIError">Serverfeil</string>
+    <string name="AIErrorInfo">Vennligst prøv forespørselen på nytt etter en kort ventetid.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Innkommende meldinger</string>
+    <string name="DoubleTapOutgoing">Utgående meldinger</string>
+    <string name="DoubleTapInfo">Noen handlinger krever administratorrettigheter i chatten eller kanalen.</string>
+    <string name="BottomButton">Nederste knapp</string>
+    <string name="ChannelDiscussNoCaps">Diskutere</string>
+    <string name="QuickTransitions">Rask sveipeovergang</string>
+    <string name="DisableGreetingSticker">Deaktiver hilsenklistremerke</string>
+    <string name="AdminShortcuts">Hurtigsnarveier for administratorer</string>
+    <string name="HideKeyboardOnScroll">Skjul tastaturet ved rulling</string>
+    <string name="HideShareButton">Skjul sideknappen \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">Erstatt \"%1$s\" med et ikon</string>
+    <string name="MessageMenu">Meldingsmeny</string>
+    <string name="GroupMessageMenu">Gruppemeldingsmeny</string>
+    <string name="GroupMessageMenuInfo">Gruppering flytter hovedhandlingene til bunnen av meldingsmenyen.</string>
+    <string name="GlassMessageMenu">Glass meldingsmeny</string>
+    <string name="GlassMessageMenuBlurOff">Glassmenyer trenger uskarphet, som for øyeblikket er av.</string>
+    <string name="AddCommaAfterMention">Legg til komma etter omtale</string>
+    <string name="HideSendAsPeer">Skjul \"Send som…\" knappen</string>
+    <string name="HideSendAsPeerInfo">Du kan fortsatt få tilgang til \"Send som…\" menyen ved å trykke lenge på Emojier/Klistremerker/GIF knappen.</string>
+    <string name="ShowPollResultsBeforeVotingHint">Se resultatene for hvert alternativ før du sender inn stemmen din.</string>
+    <string name="ShowOnlineStatus">Vis online-indikator</string>
+    <string name="MessagePreviewDialogMessage">Jeg kan spise glass, og det skader meg ikke.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Gjenkjenningsspråk</string>
+    <string name="RecognitionInfo">Bruker Vosk API. Fungerer offline. Kvaliteten på den transkriberte teksten kan være lav.</string>
+    <string name="MissingLanguageModel">Manglende språkmodell</string>
+    <string name="DownloadingModel">Laster ned modellen…</string>
+    <string name="DownloadingModelInfo">Vennligst hold dette vinduet åpent mens språkmodellen lastes ned.</string>
+    <string name="ModelDownload">Last ned (%1$s)</string>
+    <string name="ModelDownloadInfo">For å fortsette må du laste ned språkmodellen \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Modellen er lastet ned.</string>
+    <string name="ModelError">Feil under nedlasting av modellen.</string>
+    <string name="ModelUnzipping">Utpakking…</string>
+    <string name="DeleteRecognitionModel">Slett modell</string>
+    <string name="DeleteRecognitionModelInfo">Er du sikker på at du vil slette språkmodellen \"**%1$s**\"?</string>
+    <string name="RecognitionModelDeleted">Modellen ble slettet.</string>
+    <string name="RecognitionModelDeleteError">Feil under sletting av modellen.</string>
+    <string name="PostProcessingWithAi">Bruk AI til etterbehandling</string>
+    <string name="PostProcessingWithAiInfo">AI vil forbedre lesbarheten ved å korrigere feil, legge til tegnsetting og tydeliggjøre uklare deler.</string>
+    <!-- Camera -->
+    <string name="CameraType">Kameratype</string>
+    <string name="ExtendedSettings">Utvidede innstillinger</string>
+    <string name="SeamlessSwitching">Sømløs bytte</string>
+    <string name="ExtendedFramesPerSecond">Utvidet FPS-område</string>
+    <string name="CameraStabilization">Stabilisering</string>
+    <string name="CameraMirrorMode">Speilmodus</string>
+    <string name="StartWithWideAngleCamera">Start med vidvinkel</string>
+    <string name="ZoomSlider">Zoom-glidebryter</string>
+    <string name="ZoomSliderInfo">Vis zoomkontrollen under videomeldingskameraet.</string>
+    <string name="StaticZoom">Statisk zoom</string>
+    <string name="StaticZoomInfo">Når du spiller inn videomeldinger, vil ikke zoomnivået tilbakestilles hvis du slipper fingrene.</string>
+    <string name="VideoMessagesCamera">Kamera i videomeldinger</string>
+    <string name="VideoMessagesCameraRear">Bak</string>
+    <string name="VideoMessagesCameraAsk">Spørre</string>
+    <string name="RearCamera">Ryggekamera</string>
+    <string name="FrontCamera">Frontkamera</string>
+    <string name="RememberLastUsedCamera">Husk sist brukte kamera</string>
+    <string name="RememberLastUsedCameraInfo">Når du spiller inn videomeldinger, vil det sist brukte kameraet bli valgt automatisk.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Send alltid i HD</string>
+    <string name="HideCameraTile">Skjul flis for øyeblikkelig kamera</string>
+    <string name="HideCameraTileInfo">Kameraflisen vil bli erstattet av en flytende knapp. Hvis du trykker på den, starter Telegram-kameraet; hvis du holder den inne, starter systemkameraet.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Dobbelttrykk Hopp over tid</string>
+    <string name="PreferOriginalQuality">Foretrekker original kvalitet</string>
+    <string name="PauseOnMinimize">Automatisk pause</string>
+    <string name="PauseOnMinimizeVoice">Stemme</string>
+    <string name="PauseOnMinimizeRound">Rund</string>
+    <string name="PauseOnMinimizeInfo">Setter avspillingen av media på pause når enheten er låst eller exteraGram er minimert.</string>
+    <string name="SwipeToPip">Sveip til PiP</string>
+    <string name="UnmuteWithVolumeButtons">Slå av lyden for videoer med volumknappene</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Hvis du trykker på en volumknapp, slås videoen av i stedet for å endre systemvolumet.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Når disse alternativene er aktivert, samles data om enheten inn og sendes til Google Analytics og Crashlytics, slik at vi kan føre bruksstatistikk og spore feil i appen. \n\n Hvis alternativene imidlertid er slått av, stopper datainnsamlingen, og alle sendte data slettes umiddelbart.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Skriv inn filnavnet…</string>
+    <string name="ExportSettings">Eksportinnstillinger</string>
+    <string name="ApplySettings">Bruk innstillinger</string>
+    <string name="ImportTitle">Er du sikker på at du vil bruke disse innstillingene?</string>
+    <string name="ImportConfirm">Ja, søk</string>
+    <string name="CancelConfirm">Nei, la det være som det er</string>
+    <string name="SettingsSaved">Innstillingsfilen er lagret.</string>
+    <string name="SettingsImported">Innstillingene er implementert.</string>
+    <string name="ImportChanges_one">**1** endring vil bli brukt på de gjeldende innstillingene.</string>
+    <string name="ImportChanges_two">**%1$d** endringer vil bli brukt på de gjeldende innstillingene.</string>
+    <string name="ImportChanges_few">**%1$d** endringer vil bli brukt på de gjeldende innstillingene.</string>
+    <string name="ImportChanges_many">**%1$d** endringer vil bli brukt på de gjeldende innstillingene.</string>
+    <string name="ImportChanges_other">**%1$d** endringer vil bli brukt på de gjeldende innstillingene.</string>
+    <string name="SameSettings">Det ser ut som innstillingene er de samme som de nåværende.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Av sikkerhetsgrunner kan du begynne å laste ned dataene dine om %1$s. Vi har varslet alle enhetene dine om eksportforespørselen for å sikre at den er autorisert, og for å gi deg tid til å reagere hvis den ikke er det.\n\nVennligst kom tilbake %2$s og gjenta forespørselen fra samme enhet.</string>
+    <string name="ExportInvalid">Beklager, du har startet en ny dataeksport, så denne dataeksporten er blitt kansellert.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Slett konto</string>
+    <string name="ResetSettings">Tilbakestill innstillinger</string>
+    <string name="ResetPreferences">**exteraGram**-innstillingene er tilbakestilt.</string>
+    <string name="ResetPreferencesInfo">Er du sikker på at du vil tilbakestille **alle** exteraGram-innstillingene til standardinnstillingene?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Støtteutvikling</string>
+    <string name="SupportDevelopmentInfo">Ved å støtte prosjektet bidrar du ikke bare til utviklingen, men får også et unikt merke.</string>
+    <string name="MakeDonation">Gi en donasjon</string>
+    <string name="ReceiveBadge">Motta merket ditt</string>
+    <string name="NowPlaying">Spilles nå</string>
+    <string name="ScrobblingService">Scrobbling-tjeneste</string>
+    <string name="SelectService">Velg tjeneste</string>
+    <string name="SelectServiceInfo">Viser gjeldende spor i profilen som et kort hentet fra scrobbling-tjenesten.</string>
+    <string name="EnterUsername">Skriv inn brukernavn</string>
+    <string name="EnterUsernameInfo">Du kan få brukernavnet ditt på den **offisielle nettsiden**.</string>
+    <string name="BoostyPeopleCount_two">%1$d personer</string>
+    <string name="BoostyPeopleCount_few">%1$d personer</string>
+    <string name="BoostyPeopleCount_many">%1$d personer</string>
+    <string name="BoostyPeopleCount_other">%1$d personer</string>
+    <string name="BoostyInfo">Støtt aktivt **exteraGram** på **Boosty**.</string>
+    <string name="BoostyInfo2">Takk for støtten!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Installasjon av plugin er bare tilgjengelig i **fullversjonen** av **exteraGram**.</string>
+    <string name="Plugins">Programtillegg</string>
+    <string name="PluginsEngine">Plugin-motor</string>
+    <string name="EnablePluginsEngine">Aktiver plugin-motor</string>
+    <string name="PluginsInfo">Du finner programtillegg i @exteraPlugins.</string>
+    <string name="PluginsNotFound">Ingen programtillegg funnet.</string>
+    <string name="InstallPlugin">Installer</string>
+    <string name="UpdatePlugin">Oppdater</string>
+    <string name="PluginNotEnabled">Aktiver **Plugin Engine** for å installere **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** installert.</string>
+    <string name="PluginUpdated">**%1$s** oppdatert.</string>
+    <string name="PluginEnableError">Kunne ikke aktivere **%1$s**.</string>
+    <string name="PluginDisableError">Kunne ikke deaktivere **%1$s**.</string>
+    <string name="PluginInstallError">Kunne ikke installere **%1$s**.</string>
+    <string name="PluginSourceTrusted">Pålitelig kilde</string>
+    <string name="PluginSourceTrustedInfo">Programtillegg fra denne kilden er **verifisert** og trygge å bruke.</string>
+    <string name="PluginSourceUnknown">Ukjent kilde</string>
+    <string name="PluginSourceUnknownInfo">Programtillegg fra denne kilden er **ubekreftet** og kan utgjøre en sikkerhetsrisiko.</string>
+    <string name="PluginVersion">Versjon</string>
+    <string name="PluginNoDescription">Ingen beskrivelse gitt.</string>
+    <string name="PluginIsNotResponding">Plugin-modulen svarer ikke.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s svarer ikke</string>
+    <string name="PluginNoAuthor">Ukjent forfatter</string>
+    <string name="EnableAfterInstallation">Aktiver etter installasjon</string>
+    <string name="EnterValue">Skriv inn en verdi</string>
+    <string name="PluginDelete">Slett plugin</string>
+    <string name="PluginDeleteInfo">Er du sikker på at du vil slette **%1$s**?</string>
+    <string name="ResetPluginSettings">Innstillingene for **%1$s** er tilbakestilt.</string>
+    <string name="ResetPluginSettingsInfo">Er du sikker på at du vil tilbakestille innstillingene **%1$s** til standard?</string>
+    <string name="PluginsSafeMode">Sikkermodus</string>
+    <string name="PluginsSafeModeShortcut">Start med sikkermodus</string>
+    <string name="PluginsSafeModeInfo">Plugin-motoren er deaktivert på grunn av et krasj. Deaktivering av sikkermodus kan føre til uforutsigbare konsekvenser.</string>
+    <string name="PluginsSafeModeInfo2">I sikkermodus er alle programtillegg inaktive. Dette lar deg trygt finne og deaktivere en problematisk programtillegg.</string>
+    <string name="PluginsDevMode">Utviklermodus</string>
+    <string name="PluginsCompactView">Kompakt visning av plugin-moduler</string>
+    <string name="PluginsDocumentation">Dokumentasjon</string>
+    <string name="PluginsTrusted">Pålitelige programtillegg</string>
+    <string name="PluginsDevServerLaunched">Utviklerserveren er startet.</string>
+    <string name="PluginsDevServerStopped">Utviklerserveren er stoppet.</string>
+    <string name="PluginEngineNotEnabled">Aktiver **Plugin motoren** for å åpne innstillingene til **%1$s**.</string>
+    <string name="PluginNotFound">**%1$s** ikke funnet.</string>
+    <string name="PluginHasNoSettings">**%1$s** har ingen innstillinger.</string>
+    <string name="PluginsPySdkAutoUpdate">Oppdater automatisk</string>
+    <string name="PluginsPySdkEnableBetaVersion">Installer betaversjoner</string>
+    <string name="PluginsPySdkCheckUpdates">Se etter oppdateringer</string>
+    <string name="CheckingForUpdates">Søker etter oppdateringer…</string>
+    <string name="LatestVersionInstalled">Nyeste versjon er installert</string>
+    <string name="RestartPluginSystemToApplyUpdate">Oppdatering lastet inn, start Plugin Engine på nytt for å bruke</string>
+    <string name="LoadingUpdate">Laster inn oppdatering…</string>
+    <string name="RestoreSdkFromApk">Gjenopprett SDK fra APK</string>
+    <string name="EnableAutoUpdate">Aktiver automatisk oppdatering</string>
+    <string name="PluginsDisableArt">Kompatibilitetsmodus</string>
+    <string name="PluginsDisableArtInfo">Forhindrer feil med plugin-hook ved å deaktivere ART Profile Saver.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Oppdatering pågår…</string>
+    <string name="UpdateInstallingRelaunch">Appen starter på nytt når oppdateringen er fullført.</string>
+    <string name="UpdateInstallingNotification">Du vil bli varslet når oppdateringen er fullført.</string>
+    <string name="UpdateInstalledNotification">Oppdatering fullført. Trykk for å åpne appen.</string>
+    <string name="UpdateFailedToInstall">Installasjon av oppdatering mislyktes med feilkode: %d</string>
+    <string name="UpdateAvailable">Oppdatering tilgjengelig!</string>
+    <!-- Message Details -->
+    <string name="Details">Detaljer</string>
+    <string name="Date">Dato</string>
+    <string name="EditedDate">Rediger dato</string>
+    <string name="ForwardedDate">Fremtidig dato</string>
+    <string name="FileSize">Filstørrelse</string>
+    <string name="FileName">Filnavn</string>
+    <string name="FilePath">Filsti</string>
+    <string name="Platform">Plattform</string>
+    <string name="Resolution">Oppløsning</string>
+    <string name="Duration">Varighet</string>
+    <string name="MimeType">Mime-type</string>
+    <string name="Datacenter">Datasenter</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOptionNone">Ingen</string>
+    <string name="DateFormatOptionRelative">Slektning</string>
+    <string name="DateFormatOptionShortTime">Kort tid</string>
+    <string name="DateFormatOptionLongTime">Lang tid</string>
+    <string name="DateFormatOptionShortDate">Kort dato</string>
+    <string name="DateFormatOptionLongDate">Lang dato</string>
+    <string name="DateFormatOptionDayOfWeek">Ukedag</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">QR-kodepålogging</string>
+    <string name="LoginQrSubtitle">Bruk en annen enhet til å skanne denne QR-koden.</string>
+    <string name="WifiConnect">Koble til</string>
+    <string name="WifiDisabled">Wi-Fi er deaktivert.</string>
+    <string name="WifiFailed">Kunne ikke koble til Wi-Fi.</string>
+    <string name="WifiSuccess">Koblet til Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Er du sikker på at du vil logge på denne kontoen på en annen enhet?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Side blokkert</string>
+    <string name="PageBlockedDescription">exteraGram har forhindret at følgende side lastes inn:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Gå tilbake</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Angi som merke</string>
+    <string name="AutoLockInstant">Øyeblikkelig</string>
+    <string name="TestBackend">Test-backend</string>
+    <string name="SearchPhotoInfo">Tjenester kan bruke bilder i henhold til sine retningslinjer for personvern og bruksvilkår.</string>
+    <string name="PhotoUploadFailed">Kunne ikke laste opp bildet.</string>
+    <string name="TrackSaved">Spor lagret til **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Sporene vil bli lagret i **%1$s**.</string>
+    <string name="DeletedMessage">Slettet melding</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Kopier tittel</string>
+    <string name="CopyCallback">Kopier tilbakeringingsdata</string>
+    <string name="CopyInlineQuery">Kopier innebygd spørring</string>
+    <string name="CopyID">Kopier bruker-ID</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Merkestatus angitt.</string>
+    <string name="UserNotFound">Bruker med denne **ID** ble ikke funnet.</string>
+    <string name="ChatNotFound">Chat med denne **ID** ble ikke funnet.</string>
+    <string name="PhotoCopied">Bildet er kopiert til utklippstavlen.</string>
+    <string name="FrameCopied">Ramme kopiert til utklippstavlen.</string>
+    <string name="TapToCopy">Trykk for å kopiere</string>
+    <string name="ProfileUsesEmojiPack">Denne profilen bruker emoji fra %s-pakken som bakgrunn.</string>
+    <string name="ProfileUsesEmojiPacks">Denne profilen bruker emoji fra **%d-pakkene** som bakgrunn.</string>
+    <string name="ReplyUsesEmojiPacks">Dette svaret bruker emoji fra %s-pakken som bakgrunn.</string>
+    <string name="StickerSavedHint">Klistremerket er lagret i galleriet.</string>
+    <string name="EmojiSavedHint">Emojien er lagret i galleriet.</string>
+    <string name="GifGallerySavedHint">GIF lagret i galleriet.</string>
+    <string name="MutualContactInfo">Denne kontakten er gjensidig.</string>
+    <string name="LocalPremiumEmojiHint">Du har ikke et **Telegram Premium**-abonnement, så bare **exteraGram**-brukere vil kunne se denne emojien.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Skjul Kontakter-fanen</string>
+    <string name="ShowContactsTab">Vis Kontakter-fanen</string>
+    <string name="ContactsTabWasShownTitle">**Kontakter**-fanen er nå synlig.</string>
+    <string name="ContactsTabWasHiddenTitle">**Kontakter**-fanen er nå skjult.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Denne funksjonen fungerer bare med passordbehandlere som lar brukeren administrere tillitsinnstillinger for privilegerte apper, for eksempel **Bitwarden** eller **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Ustøttet passordbehandler</string>
+    <string name="PasskeyUnsupportedMessage">Prøv andre passordbehandlere som **Bitwarden** eller **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** opprettet kontoen sin omtrent den **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** opprettet kontoen sin tidligere enn **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** opprettet kontoen sin senere enn **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** ble opprettet på **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Du opprettet kontoen din omtrent den **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">Du opprettet kontoen din tidligere enn **%1$s**.</string>
+    <string name="CreationDateSelfLater">Du opprettet kontoen din senere enn **%1$s**.</string>
+    <string name="JoinDateChat">Du ble med i **%1$s** den **%2$s**.</string>
+    <string name="GroupMemberJoined">ble med i %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Til begynnelsen</string>
+    <string name="MessageHistory">Historie</string>
+    <string name="BoldItalic">Fet kursiv</string>
+    <string name="CopyPhoto">Kopier bilde</string>
+    <string name="CopyFrame">Kopier ramme</string>
+    <string name="Repeat">Gjenta</string>
+    <string name="Subtitles">Undertekster</string>
+    <string name="ChooseSubtitles">Velg Undertekster</string>
+    <string name="DisableSubtitles">Deaktiver undertekster</string>
+    <string name="SubtitlesAdded">Undertekster aktivert.</string>
+    <string name="SubtitlesRemoved">Undertekster deaktivert.</string>
+    <string name="SubtitlesLoadError">Kunne ikke laste undertekster.</string>
+    <string name="SubtitlesUnsupportedFormat">Ustøttet undertekstformat.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Klistremerke hjørner</string>
+    <string name="StickerCornerRadiusInfo">Velg hvor avrundede klistremerkehjørnene skal se ut.</string>
+    <string name="StickerCornerRadiusLarge">Stor</string>
+    <string name="StickerCornerRadiusSmall">Liten</string>
+    <string name="StickerCornerRadiusNone">Ingen</string>
+    <!-- Feed -->
+    <string name="Feed">Mate</string>
+    <string name="FeedShownChannels">Vist i feed</string>
+    <string name="FeedHiddenChannels">Skjult</string>
+    <string name="FeedChannels">Kanaler</string>
+    <string name="FeedSettings">Feedinnstillinger</string>
+    <string name="FeedNoPosts">Ingen kanalinnlegg ennå.</string>
+    <string name="FeedAllChannelsExcluded">Alle kanaler er ekskludert fra feeden.</string>
+    <string name="FeedMarkAllReadConfirm">Vil du merke alle innlegg i feedkanalene dine som lest? Dette vil også merke dem som lest i de originale kanalene.</string>
+    <string name="FeedMarkAllReadDone">Alle innlegg merket som lest</string>
+    <string name="FeedIncludeArchived">Vis chatter fra arkiv</string>
+    <string name="FeedIncludeArchivedInfo">Inkluder også kanaler fra de arkiverte chattene dine i feeden.</string>
+    <string name="FeedHideChannel">Skjul fra feed</string>
+    <string name="FeedChannelHidden">**%1$s** skjult fra feed</string>
+    <string name="FeedBottomTab">Vis i Nedre faner</string>
+    <string name="FeedBottomTabInfo">Vis feeden som en nederste navigasjonsfane i stedet for Kontakter-fanen.</string>
+    <string name="FeedUnreadCounter">Teller for uleste innlegg</string>
+    <string name="HideFeedTab">Skjul feed-fanen</string>
+    <string name="DisableMarkdown">Deaktiver Markdown</string>
+    <string name="EnableMarkdown">Aktiver Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

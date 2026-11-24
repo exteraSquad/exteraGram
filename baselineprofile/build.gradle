@@ -1,0 +1,98 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'com.android.test'
+    id 'androidx.baselineprofile'
+}
+
+repositories {
+    mavenCentral()
+    google()
+    maven {
+        url = uri("$rootDir/Tools/maven")
+    }
+}
+
+def singleAbiFlavors = ['armv7', 'x86', 'arm64', 'x64'] as Set
+def minApiFlavors = singleAbiFlavors + ['afat', 'beta'] as Set
+def requestedTasks = gradle.startParameter.taskNames.collect { it.toLowerCase() }
+def requestedSingleAbiFlavors = singleAbiFlavors.findAll { flavorName ->
+    requestedTasks.any { it.contains(flavorName) }
+} as Set
+def defaultAbiFlavors = ['arm64', 'x64'] as Set
+def enabledSingleAbiFlavors = requestedSingleAbiFlavors ?: defaultAbiFlavors
+
+android {
+    namespace = 'com.exteragram.messenger.baselineprofile'
+    compileSdkVersion 37
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
+
+    defaultConfig {
+        minSdk 28
+        targetSdk 36
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    targetProjectPath = ":TMessagesProj"
+
+    flavorDimensions += ["appType", "minApi"]
+    productFlavors {
+        lite { dimension = "appType" }
+        full { dimension = "appType" }
+        enabledSingleAbiFlavors.each { flavorName ->
+            register(flavorName) { dimension = "minApi" }
+        }
+        afat { dimension = "minApi" }
+        beta { dimension = "minApi" }
+    }
+
+}
+
+// This is the configuration block for the Baseline Profile plugin.
+// You can specify to run the generators on a managed devices or connected devices.
+baselineProfile {
+    useConnectedDevices = true
+}
+
+dependencies {
+    implementation 'androidx.test.ext:junit:1.3.0'
+    implementation 'androidx.test.espresso:espresso-core:3.7.0'
+    implementation 'androidx.test.uiautomator:uiautomator:2.4.1'
+    implementation 'androidx.benchmark:benchmark-macro-junit4:1.5.0'
+}
+
+androidComponents {
+    beforeVariants(selector().all()) { variant ->
+        def names = variant.productFlavors.collect { it.second }
+        def buildTypeName = variant.buildType
+        def isBeta = names.contains("beta")
+        def minApiFlavor = names.find { it in minApiFlavors }
+
+        def unsupportedBuildType =
+                (isBeta && buildTypeName != "debug" && buildTypeName != "benchmarkDebug" && buildTypeName != "nonMinifiedRelease") ||
+                (!isBeta && buildTypeName != "release" && buildTypeName != "benchmarkRelease" && buildTypeName != "nonMinifiedRelease")
+
+        def unsupportedRequestedAbi = requestedSingleAbiFlavors && minApiFlavor in singleAbiFlavors && !requestedSingleAbiFlavors.contains(minApiFlavor)
+
+        variant.enable = !(unsupportedBuildType || unsupportedRequestedAbi)
+    }
+
+    onVariants(selector().all()) { v ->
+        def artifactsLoader = v.artifacts.getBuiltArtifactsLoader()
+        v.instrumentationRunnerArguments.put(
+                "targetAppId",
+                v.testedApks.map { artifactsLoader.load(it)?.applicationId }
+        )
+    }
+}

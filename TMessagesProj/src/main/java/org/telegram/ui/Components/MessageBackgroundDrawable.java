@@ -100,6 +100,10 @@ public class MessageBackgroundDrawable extends Drawable {
         return animationInProgress;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
     @Override
     public void setBounds(int left, int top, int right, int bottom) {
         super.setBounds(left, top, right, bottom);

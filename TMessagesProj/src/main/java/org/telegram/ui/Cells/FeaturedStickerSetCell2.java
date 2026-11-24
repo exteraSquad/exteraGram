@@ -27,6 +27,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.ImageLocation;
@@ -40,19 +41,24 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Premium.PremiumButtonView;
 import org.telegram.ui.Components.ProgressButton;
 import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.UItem;
+import org.telegram.ui.Components.UniversalAdapter;
+import org.telegram.ui.Components.UniversalRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
-import com.exteragram.messenger.ExteraConfig;
+public class FeaturedStickerSetCell2 extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, Theme.Colorable {
 
-public class FeaturedStickerSetCell2 extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
+    private boolean rippleDark = Theme.isCurrentThemeDark();
 
     private final int currentAccount = UserConfig.selectedAccount;
 
@@ -80,7 +86,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         this.resourcesProvider = resourcesProvider;
 
         textView = new TextView(context);
-        textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteBlackText);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         textView.setLines(1);
         textView.setMaxLines(1);
@@ -90,7 +96,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, LocaleController.isRTL ? 22 : 71, 10, LocaleController.isRTL ? 71 : 22, 0));
 
         valueTextView = new TextView(context);
-        valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2));
+        ThemeBind.textColor(valueTextView, Theme.key_windowBackgroundWhiteGrayText2);
         valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
         valueTextView.setLines(1);
         valueTextView.setMaxLines(1);
@@ -105,21 +111,21 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         addView(imageView, LayoutHelper.createFrame(48, 48, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 12, 8, LocaleController.isRTL ? 12 : 0, 0));
 
         addButton = new ProgressButton(context);
-        addButton.setText(LocaleController.getString("Add", R.string.Add));
-        addButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+        addButton.setText(LocaleController.getString(R.string.Add));
+        ThemeBind.textColor(addButton, Theme.key_featuredStickers_buttonText);
         addView(addButton, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 18, 14, 0));
 
         delButton = new TextView(context);
         delButton.setGravity(Gravity.CENTER);
-        delButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_removeButtonText));
+        ThemeBind.textColor(delButton, Theme.key_featuredStickers_removeButtonText);
         delButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        delButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        delButton.setText(LocaleController.getString("StickersRemove", R.string.StickersRemove));
+        delButton.setTypeface(AndroidUtilities.bold());
+        delButton.setText(LocaleController.getString(R.string.StickersRemove));
         addView(delButton, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 16, 14, 0));
 
-        unlockButton = new PremiumButtonView(context, AndroidUtilities.dp(4), false);
+        unlockButton = new PremiumButtonView(context, AndroidUtilities.dp(4), false, resourcesProvider);
         unlockButton.setIcon(R.raw.unlock_icon);
-        unlockButton.setButton(LocaleController.getString("Unlock", R.string.Unlock), e -> onPremiumButtonClick());
+        unlockButton.setButton(LocaleController.getString(R.string.Unlock), e -> onPremiumButtonClick());
         unlockButton.setVisibility(View.GONE);
         try {
             MarginLayoutParams iconLayout = (MarginLayoutParams) unlockButton.getIconView().getLayoutParams();
@@ -218,7 +224,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
             sticker = null;
             waitingForStickerSetId = set.set.id;
             if (!bindedObserver) {
-                NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.groupStickersDidLoad);
+                NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.groupStickersDidLoad);
                 bindedObserver = true;
             }
             TLRPC.TL_messages_stickerSet fullSet = MediaDataController.getInstance(currentAccount).getStickerSet(MediaDataController.getInputStickerSet(set.set), set.set.hash, false);
@@ -272,7 +278,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
                     imageLocation = ImageLocation.getForSticker(thumb, sticker, set.set.thumb_version);
                 }
 
-                if (object instanceof TLRPC.Document && MessageObject.isAnimatedStickerDocument(sticker, true)) {
+                if (object instanceof TLRPC.Document && (MessageObject.isAnimatedStickerDocument(sticker, true) || MessageObject.isVideoSticker(sticker))) {
                     if (svgThumb != null) {
                         imageView.setImage(ImageLocation.getForDocument(sticker), "50_50", svgThumb, 0, set);
                     } else {
@@ -403,7 +409,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (needDivider && !ExteraConfig.disableDividers) {
+        if (needDivider) {
             canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(71), getHeight() - 1, getWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(71) : 0), getHeight() - 1, Theme.dividerPaint);
         }
     }
@@ -412,17 +418,55 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         return imageView;
     }
 
+    @Override
     public void updateColors() {
+        if (addButton == null) {
+            return;
+        }
         addButton.setProgressColor(Theme.getColor(Theme.key_featuredStickers_buttonProgress));
-        addButton.setBackgroundRoundRect(Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed));
+        if (!recolorAddButtonBackground()) {
+            addButton.setBackgroundRoundRect(Theme.getColor(Theme.key_featuredStickers_addButton), Theme.getColor(Theme.key_featuredStickers_addButtonPressed));
+            addButtonBackground = addButton.getBackground();
+        }
+    }
+
+    private Drawable addButtonBackground;
+
+    // recolors the existing AdaptiveRipple background in place (same result as recreating it, without allocating a new one)
+    private boolean recolorAddButtonBackground() {
+        try {
+            final Drawable background = addButton.getBackground();
+            if (background == null || background != addButtonBackground || !(background instanceof android.graphics.drawable.RippleDrawable)) {
+                return false;
+            }
+            final android.graphics.drawable.RippleDrawable ripple = (android.graphics.drawable.RippleDrawable) background;
+            if (ripple.getNumberOfLayers() <= 0 || ripple.getId(0) == android.R.id.mask || !(ripple.getDrawable(0) instanceof android.graphics.drawable.ShapeDrawable)) {
+                return false;
+            }
+            final int color = Theme.getColor(Theme.key_featuredStickers_addButton);
+            final android.graphics.drawable.ShapeDrawable content = (android.graphics.drawable.ShapeDrawable) ripple.getDrawable(0);
+            if (content.getPaint().getColor() != color || rippleDark != Theme.isCurrentThemeDark()) {
+                rippleDark = Theme.isCurrentThemeDark(); // the ripple shade depends on dark / light
+                content.getPaint().setColor(color);
+                ripple.setColor(android.content.res.ColorStateList.valueOf(Theme.AdaptiveRipple.calcRippleColor(color)));
+                ripple.invalidateSelf();
+            }
+            return true;
+        } catch (Exception e) {
+            FileLog.e(e);
+            return false;
+        }
+    }
+
+    @Override
+    public void addColorKeys(java.util.HashSet<Integer> colors) {
+        colors.add(Theme.key_featuredStickers_buttonProgress);
+        colors.add(Theme.key_featuredStickers_addButton);
+        colors.add(Theme.key_divider);
     }
 
     public static void createThemeDescriptions(List<ThemeDescription> descriptions, RecyclerListView listView, ThemeDescription.ThemeDescriptionDelegate delegate) {
-        descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
-        descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText2));
-        descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetCell.class}, new String[]{"addButton"}, null, null, null, Theme.key_featuredStickers_buttonText));
         descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetCell.class}, new String[]{"delButton"}, null, null, null, Theme.key_featuredStickers_removeButtonText));
-        descriptions.add(new ThemeDescription(listView, 0, new Class[]{FeaturedStickerSetCell.class}, Theme.dividerPaint, null, null, Theme.key_divider));
         descriptions.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_featuredStickers_buttonProgress));
         descriptions.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_featuredStickers_addButtonPressed));
     }
@@ -450,6 +494,30 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
                 setNoCovered.set = ((TLRPC.TL_messages_stickerSet) args[1]).set;
                 setStickersSet(setNoCovered, needDivider, unread, forceInstalled, true);
             }
+        }
+    }
+
+    public static final class Factory extends UItem.UItemFactory<FeaturedStickerSetCell2> {
+        static { setup(new Factory()); }
+
+        @Override
+        public FeaturedStickerSetCell2 createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
+            return new FeaturedStickerSetCell2(context, resourcesProvider);
+        }
+
+        @Override
+        public void bindView(View view, UItem item, boolean divider, UniversalAdapter adapter, UniversalRecyclerView listView) {
+            final FeaturedStickerSetCell2 cell = (FeaturedStickerSetCell2) view;
+            final TLRPC.StickerSetCovered set = (TLRPC.StickerSetCovered) item.object;
+            cell.setStickersSet(set, divider, false, item.locked, false);
+            cell.setDrawProgress(item.locked, false);
+            cell.setAddOnClickListener(item.clickCallback);
+        }
+
+        public static UItem of(TLRPC.StickerSetCovered set) {
+            final UItem item = UItem.ofFactory(Factory.class);
+            item.object = set;
+            return item;
         }
     }
 }

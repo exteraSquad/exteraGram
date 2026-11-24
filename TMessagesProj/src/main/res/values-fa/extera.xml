@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">تنظیمات exteraGram</string>
+    <!-- Main Menu -->
+    <string name="Links">لینک‌ ها</string>
+    <string name="Crowdin">ترجمه</string>
+    <string name="Website">وبسایت</string>
+    <string name="Categories">دسته‌ها</string>
+    <string name="Developer">**%1$s** یکی از اعضای تیم توسعه‌ی **اکستراگرام** است.</string>
+    <string name="DeveloperCompact">عضوی از تیم توسعه‌ی **اکستراگرام**.</string>
+    <string name="Supporter">**%1$s** از توسعه‌ی **اکستراگرام** حمایت کرد و یک نشان ویژه دریافت کرد.</string>
+    <string name="OfficialChannel">**%1$s** منبع رسمی **اکستراگرام** است.</string>
+    <string name="NoSuchSetting">به نظر می‌رسد چنین تنظبماتی وجود ندارد.</string>
+    <string name="SettingLinkToSavedMessages">تنظیم ارسال لینک به **پیام‌های ذخیره شده**.</string>
+    <string name="SettingLinkToUser">لینک تنظیمات به **%1$s** ارسال شد.</string>
+    <string name="SettingLinkToChats">لینک تنظیمات به **%1$s** ارسال شد.</string>
+    <string name="LiteBatteryFollowSystem">استفاده از ذخیره‌ساز باتری دستگاه</string>
+    <string name="LiteBatteryFollowSystemState">سیستم</string>
+    <string name="LiteBatteryFollowSystemInfo">کنترل توسط ذخیره‌ساز باتری دستگاه.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">ابزارک‌های تعاملی</string>
+    <string name="PillStackPillsInfo">نمایش ابزارک‌های تعاملی در فیلد جستجو</string>
+    <string name="PillStackActivePills">ابزارک‌های فعال</string>
+    <string name="PillStackHiddenPills">ابزارک‌های پنهان</string>
+    <string name="PillStackFromPlugin">از افزونه</string>
+    <string name="CurrentLocation">مکان فعلی</string>
+    <string name="SelectLocation">انتخاب از روی نقشه</string>
+    <string name="WeatherPill">آب و هوا</string>
+    <string name="WeatherSettingsInfo">نحوه تعیین مکان برای نمایش آب و هوا در جستجو را انتخاب کنید.</string>
+    <string name="WeatherLocation">تشخیص مکان</string>
+    <string name="WeatherLocationPermissionNo">اکستراگرام برای نمایش آب و هوای فعلی به دسترسی به موقعیت مکانی شما نیاز دارد.</string>
+    <string name="WeatherLocationPermissionGrant">اعطای مجوز</string>
+    <string name="WeatherLocationServicesEnable">فعال‌سازی موقعیت مکانی</string>
+    <string name="WeatherPillTopInfo">تنظیمات ویجت آب و هوا برای ابزارک‌های تعاملی.</string>
+    <string name="PillStackInfiniteScrolling">اسکرول بی‌نهایت</string>
+    <string name="CryptoPillTargetCurrency">ارز مقصد</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">غیرفعال کردن پروکسی</string>
+    <string name="ProxyDisableNever">هرگز</string>
+    <string name="ProxyDisableAlways">همیشه</string>
+    <string name="ProxyDisableOnMobileData">اینترنت همراه</string>
+    <string name="ProxyType">نوع</string>
+    <string name="Unknown">ناشناخته</string>
+    <string name="ProxyRename">نام پروکسی (اختیاری)</string>
+    <string name="ProxyPinLimitReached">شما می‌توانید تا %1$d پروکسی را پین کنید.</string>
+    <string name="CopyIpAddress">کپی آدرس IP</string>
+    <string name="IpInfoUnavailable">اطلاعات آدرس IP دریافت نشد.</string>
+    <string name="IpInfoIsp">ارائه‌دهنده اینترنت</string>
+    <string name="IpInfoOrganization">شرکت</string>
+    <string name="IpInfoDomain">دامنه</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">ارائه‌دهنده ترجمه</string>
+    <string name="TranslationTarget">زبان مقصد</string>
+    <string name="TranslationTargetApp">پیروی از برنامه</string>
+    <string name="ShowTranslateChatButtonLocked">یک ارائه‌دهندهٔ ترجمهٔ دیگر انتخاب کنید یا مشترک **Telegram Premium** شوید.</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">غیرفعال کردن گرد کردن اعداد</string>
+    <string name="FormatTimeWithSeconds">فرمت زمان با ثانیه</string>
+    <string name="RelativeLastSeen">نمایش نسبی آخرین بازدید</string>
+    <string name="InAppVibration">لرزش داخل برنامه</string>
+    <string name="DisableNotificationDelay">خاموش کردن تاخیر اعلان ها</string>
+    <string name="AccountNotificationsInfo">اکانت‌های انتخاب‌نشده هنگام استفاده از اکانت دیگر، اعلانی نشان نمی‌دهند.</string>
+    <string name="AccountNotificationsCurrent">اعلان هایی که از اکانت فعلی میاد همیشه نشان داده میشود.</string>
+    <string name="FilterZalgo">فیلتر «زالگو»</string>
+    <string name="FilterZalgoInfo">حذف کردن نمادهای \"%1$s\" در نام‌ها و پیام‌ها.</string>
+    <string name="RestartRequired">برای اعمال تغییرات برنامه را بسته و مجدداً اجرا کنید.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">کد</string>
+    <string name="CreateCode">ساخت بلوک کد جدید</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">افزایش سرعت دانلود</string>
+    <string name="UploadSpeedBoost">افزایش سرعت آپلود</string>
+    <string name="Ultra">فوق‌العاده</string>
+    <string name="SpeedBoostInfo">افزایش فوق‌العاده ممکن است اختلالاتی در بارگیری و پخش ویدیو‌ها در اینترنت‌های کند ایجاد کند.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">حافظه</string>
+    <string name="CustomSavePath">پوشه ذخیره‌سازی دلخواه</string>
+    <string name="CustomSavePathHint">برای ذخیره‌سازی در پوشه اصلی خالی بگذارید</string>
+    <string name="CustomSavePathDefault">ذخیره در پوشه اصلی</string>
+    <string name="CustomSavePathInfo">قایل‌های ذخیره شده به صورت مستقیم در پوشه‌های Pictures،‏ Downloads و غیره ذخیره خواهند شد.</string>
+    <string name="CustomSavePathInfoFolder">قایل‌های ذخیره شده به صورت مستقیم در پوشه‌های Pictures/%1$s‏، Downloads/%1$s و غیره ذخیره خواهند شد.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">مخفی کردن شماره تلفن</string>
+    <string name="ShowIdAndDc">نشان دادن ID و DC</string>
+    <string name="ShowIdAndDcInfo">API تلگرام شناسه‌ها را همانطور که هستند نشان می‌دهد، درحالی‌که API ربات علامت منفی را برای گروه‌ها و ‎-100 را برای سوپرگروه‌ها و کانال‌ها اضافه می‌کند.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">مخفی کردن پوشه بایگانی</string>
+    <string name="ArchiveOnPull">باز کردن بایگانی با کشیدن به پایین</string>
+    <string name="DisableUnarchiveSwipe">غیرفعال کردن «خروج از بایگانی» با کشیدن انگشت</string>
+    <string name="DisableUnarchiveSwipeInfo">کشیدن انگشت به سمت چپ، چت‌ها را از بایگانی خارج نمی‌کند.</string>
+    <!-- Appearance -->
+    <string name="Appearance">ظاهر</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">گوشه های آواتار</string>
+    <string name="SingleCornerRadius">شعاع گوشه تکی</string>
+    <string name="SingleCornerRadiusInfo">انجمن‌ها همان شکل آواتار چت را خواهند داشت.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">فهرست گفتگو‌ها</string>
+    <string name="ActionBarTitle">متن عنوان</string>
+    <string name="ActionBarTitleName">نام کوچک</string>
+    <string name="HideStories">مخفی کردن استوری</string>
+    <string name="HideActionBarStatus">مخفی کردن وضعیت</string>
+    <string name="CenterTitle">عنوان مرکزی</string>
+    <string name="ChatHeader">سرتیتر چت</string>
+    <string name="HideFloatingButton">مخفی کردن دکمه شناور</string>
+    <string name="HideDialogsSearchBar">مخفی کردن نوار جست و جو</string>
+    <string name="BottomNavigationBarMode">نوار پیمایش پایین</string>
+    <string name="BottomNavigationModeShow">نمایش</string>
+    <string name="BottomNavigationModeHide">مخفی کردن</string>
+    <string name="BottomNavigationModeFloating">شناور</string>
+    <string name="SenderMiniAvatars">نمایه‌های کوچک ارسال کننده</string>
+    <string name="ListOfChatsInfo">وقتی حالت «فقط آیکون ها» برای پوشه‌ها فعال باشد، عنوان اصلی اسم کامل پوشه را نشان می‌دهد.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">عنوان پوشه</string>
+    <string name="TabTitleStyleTextWithIcons">نام همراه با آیکون‌ها</string>
+    <string name="TabTitleStyleIconsOnly">فقط آیکون‌ها</string>
+    <string name="TabTitleStyleTextOnly">فقط نام‌ها</string>
+    <string name="TabCounter">شمارشگر اعلان</string>
+    <string name="TabCounterUnmuted">بی‌صدا نشده</string>
+    <string name="HideAllChats">پنهان کردن برگه \"%1$s\"</string>
+    <string name="FoldersInfo">آیکون‌ها با حساب کاربری شما همگام‌سازی شده‌اند.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">پیمایش برنامه</string>
+    <string name="AppNavigationInfo">منوی بالا سمت راست و تنظیمات کشو</string>
+    <string name="NavigationDrawer">کشوی پیمایش</string>
+    <string name="NavigationDrawerInfo">منوی بالا سمت راست را با یک کشوی کلاسیک با قابلیت کشیدن انگشت برای باز کردن و یک دکمه همبرگری جایگزین می‌کند.</string>
+    <string name="NavigationDrawerImmersiveAnimation">انیمیشن‌های فراگیر</string>
+    <string name="NavigationDrawerProxyPingShort">%1$d میلی‌ثانیه</string>
+    <string name="MainMenuItems">آیتم‌های منو</string>
+    <string name="MainMenuItemsInfo">برای نمایش یا مخفی کردن آیتم‌ها کلیک کنید، برای مرتب‌سازی نگه‌دارید. طرح‌بندی بین منو و کشو مشترک است.</string>
+    <string name="MainMenuHiddenItems">آیتم‌های پنهان‌شده</string>
+    <string name="MainMenuAddDivider">افزودن تقسیم‌کننده</string>
+    <string name="MainMenuRemoveSettingsInfo">امکان مخفی کردن تنظیمات در صورتی که نوار پیمایش پایین غیرفعال باشد وجود ندارد.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">بسته‌های آیکن</string>
+    <string name="IconPacksInfo">آیکون‌های درون برنامه را سفارشی کنید</string>
+    <string name="IconPickerFilter">فیلتر</string>
+    <string name="IconPickerAllIcons">همه آیکون‌ها</string>
+    <string name="IconPickerReplacedIcons">آیکن‌های جایگزین‌شده</string>
+    <string name="IconPickerNotReplacedIcons">آیکن‌های جایگزین‌نشده</string>
+    <string name="IconPickerSaveAndExit">ذخیره &amp; خروج</string>
+    <string name="BasePacks">بسته‌های پایه</string>
+    <string name="BaseIconPackInfo">بسته آیکون پایه به عنوان جایگزین برای آیکون‌هایی که با بسته‌های دیگر جایگزین نشده‌اند، استفاده می‌شود.</string>
+    <string name="IconPacksHint">برای فعال یا غیرفعال کردن بسته ضربه بزنید. برای ویرایش یا حذف نگه دارید.</string>
+    <string name="NewIconPack">ایجاد یک بسته آیکون جدید</string>
+    <string name="EnabledPacks">بسته‌های فعال</string>
+    <string name="AllPacks">همه‌ی بسته‌ها</string>
+    <string name="PackName">نام بسته</string>
+    <string name="AuthorNameOptional">نام نویسنده (اختیاری)</string>
+    <string name="NameCannotBeEmpty">نام نمی‌تواند خالی باشد.</string>
+    <string name="Version">نسخه</string>
+    <string name="InstallPack">نصب بسته</string>
+    <string name="IconCount_one">%1$d آیکون</string>
+    <string name="IconCount_two">%1$d آیکون</string>
+    <string name="IconCount_few">%1$d آیکون</string>
+    <string name="IconCount_many">%1$d آيکون</string>
+    <string name="IconCount_other">%1$d آیکون</string>
+    <string name="UpdatePack">به‌روزرسانی بسته</string>
+    <string name="DeletePack">حذف بسته</string>
+    <string name="DeletePackInfo">آیا مطمئن هستید که می‌خواهید **%1$s** را حذف کنید؟</string>
+    <string name="IconPackErrorInvalidArchive">آرشیو بسته آیکون نامعتبر است.</string>
+    <string name="IconPackErrorMissingMetadata">آرشیو بسته آیکون فاقد metadata.json است.</string>
+    <string name="IconPackErrorMetadataTooLarge">متادیتای بسته آیکون خیلی بزرگ است.</string>
+    <string name="IconPackErrorInvalidMetadata">متادیتای بسته آیکون نامعتبر است.</string>
+    <string name="IconPackErrorTooManyFiles">بسته آیکون شامل فایل‌های بسیار زیادی است.</string>
+    <string name="IconPackErrorArchiveTooLarge">بسته آیکون خیلی بزرگ است.</string>
+    <string name="IconPackErrorFileTooLarge">یکی از فایل‌های آیکون خیلی بزرگ است.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">آرشیو بسته‌های آیکون بیش از حد فشرده شده است.</string>
+    <string name="IconPackErrorStorage">بسته آیکون ذخیره نشد.</string>
+    <!-- App Icons -->
+    <string name="IconPack">پک آیکون</string>
+    <string name="AppIconSunset">غروب</string>
+    <string name="AppIconAurora">شفق قطبی</string>
+    <string name="AppIconAmethyst">آمتیست</string>
+    <string name="AppIconInvincible">شکست‌ناپذیر</string>
+    <string name="AppIconCyberpunk">سایبرپانک</string>
+    <string name="AppIconSpace">فضا</string>
+    <string name="AppIconIceAge">عصر یخبندان</string>
+    <string name="AppIconEditor">ویراستار</string>
+    <string name="AppIconOrbit">مدار</string>
+    <string name="AppIconSus">آمانگ‌ آس</string>
+    <string name="AppIconWinter">زمستان</string>
+    <string name="AppIconsKeep">این را نگه دار</string>
+    <!-- General Appearance -->
+    <string name="Sections">بخش‌ها</string>
+    <string name="SeparateHeaders">سرتیترهای جداگانه</string>
+    <string name="DividerStyle">سبک جداکننده</string>
+    <string name="DividerStyleHidden">پنهان</string>
+    <string name="DividerStyleLine">خط</string>
+    <string name="DividerStyleSegments">چندبخشی</string>
+    <string name="UseSystemFonts">استفاده از فونت سیستم</string>
+    <string name="UseSystemEmoji">استفاده از ایموجی سیستم</string>
+    <string name="NewLoadingStyle">سبک لود شدن</string>
+    <string name="NewSliderStyle">سبک لغزنده</string>
+    <string name="NewSwitchStyle">سبک سوئیچ</string>
+    <string name="NewFabStyle">دکمه معلق</string>
+    <string name="TabletMode">حالت تبلت</string>
+    <string name="RemoveMessageTail">حذف گوشه پیام</string>
+    <string name="GooeyAvatarAnimation">انیمیشن «چسبناک» نمایه</string>
+    <string name="CustomChatThemes">پوسته‌های سفارشی در چت‌ها</string>
+    <string name="CustomChatThemesInfo">هر چت، پوسته‌ای را که به‌طور خاص برای آن انتخاب شده است، نمایش می‌دهد.</string>
+    <string name="PredictiveBackIntensity">شدت بازگشت پیش‌بینی‌کننده</string>
+    <string name="PredictiveBackMax">حداکثر</string>
+    <string name="PredictiveBackInfo">میزان جابجایی صفحه هنگام کشیدن به عقب را تنظیم می‌کند.</string>
+    <string name="TransitionAnimation">انیمیشن انتقال</string>
+    <string name="TransitionAnimationSpring">فنری</string>
+    <string name="TransitionAnimationInfo">AOSP از انیمیشن پیش‌فرض اندروید برای انتقال پنجره‌ها استفاده می‌کند و «فنری» از انیمیشنی نرم‌تر.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">گزینه‌های تار شدگی</string>
+    <string name="GlassOutlineStyle">حاشیه شیشه‌ای</string>
+    <string name="GlassOutlineGlare">درخشش</string>
+    <string name="GlassOutlineSolid">یکدست</string>
+    <string name="GlassOutlineHidden">مخفی</string>
+    <string name="ForceSnow">نمایش دانه‌های برف</string>
+    <string name="ForceSnowInfo">دانه‌های برف در حال ریزش، در نوار اکشن، منوی کناری و پس‌زمینه‌های چت ظاهر می‌شوند.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">اندازه استیکر</string>
+    <string name="StickerSizeLeft">کوچک</string>
+    <string name="StickerSizeRight">بزرگ</string>
+    <string name="StickerSizeDialogMessageReplyTo">واو</string>
+    <string name="StickerSizeDialogMessage">وای، خیلی بامزه!</string>
+    <string name="StickerShape">حالت استیکر</string>
+    <string name="StickerShapeRounded">گردشده</string>
+    <string name="StickerShapeRoundedMsg">پیام</string>
+    <string name="StickerTimeHidden">پنهان</string>
+    <string name="ViewEmojiSet">مشاهده مجموعه ایموجی</string>
+    <string name="UnlimitedRecentStickers">استیکرهای اخیر نامحدود</string>
+    <string name="HideReactions">مخفی کردن واکنش‌ها</string>
+    <string name="HideReactionsInfo">واکنش‌ها به طور کامل از رابط کاربری پنهان می‌شوند.</string>
+    <string name="ReplyBackground">پس‌زمینه</string>
+    <string name="ChatSettingsInfo">تنظیمات رسانه، آیکون برنامه و موارد دیگر</string>
+    <!-- AI -->
+    <string name="AIChatInfo">راه‌اندازی خدمات، نقش‌ها و تاریخچه</string>
+    <string name="AIChatInfo2">تولید متن از پیام‌ها یا قبل از ارسال.</string>
+    <!-- AI Services -->
+    <string name="Services">خدمات</string>
+    <string name="ServicesInfo">سرویس مناسب برای تعامل با مدل‌های زبانی را انتخاب کنید.</string>
+    <string name="NewService">سرویس جدید</string>
+    <string name="EditService">ویرایش سرویس</string>
+    <string name="ServiceModel">مدل</string>
+    <string name="ServiceKey">کلید API</string>
+    <string name="ServiceInfo">اطلاعات سرویس</string>
+    <string name="ServiceProvider">ارائه‌دهنده</string>
+    <string name="ServiceProviderCustom">سفارشی</string>
+    <string name="ServiceTestAndSave">آزمایش و ذخیره</string>
+    <string name="ServicePasteService">چسباندن سرویس</string>
+    <string name="ServicePasteKey">چسباندن کلید API</string>
+    <string name="DeleteServiceInfo">آیا مطمئن هستید که می‌خواهید **%1$s** را حذف کنید؟</string>
+    <!-- AI Roles -->
+    <string name="Roles">نقش‌‌ها</string>
+    <string name="RolesInfo">برای نیازهای خاص خود نقش ایجاد کنید!</string>
+    <string name="Suggestions">پیشنهادها</string>
+    <string name="RoleName">نام</string>
+    <string name="RolePrompt">پرامپت</string>
+    <string name="PromptInfo">پرامپت متنی اولیه است که به مدل داده می‌شود تا پاسخ تولید کند یا گفتگو را ادامه دهد.</string>
+    <string name="NewRole">نقش جدید</string>
+    <string name="EditRole">ویرایش نقش</string>
+    <string name="DeleteRoleInfo">آیا مطمئن هستید که می‌خواهید **%1$s** را حذف کنید؟</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">تاریخچه مکالمه به هوش مصنوعی اجازه می دهد تا درخواست ها و پاسخ های قبلی را درک کند و آنها را هنگام ایجاد پاسخ های بعدی در نظر بگیرد.</string>
+    <string name="AIGeneration">تولید</string>
+    <string name="AIReasoning">استدلال</string>
+    <string name="AIReasoningInfo">به مدل‌های پشتیبانی‌شده در این سرویس اجازه می‌دهد توکن‌های اضافی را قبل از پاسخ دادن صرف تفکر کنند.</string>
+    <string name="AITemperature">دما</string>
+    <string name="AITemperatureInfo">دما تصادفی بودن پاسخ را کنترل می‌کند: مقادیر بالاتر خلاق‌تر، مقادیر پایین‌تر متمرکزتر هستند.</string>
+    <string name="ResponseStreaming">ارسال پاسخ‌ ها به شکل پیوسته</string>
+    <string name="ResponseStreamingInfo">نمایش نرم‌تر و سریع‌تر پاسخ‌ ها را تضمین می‌کند.</string>
+    <string name="ShowResponseOnly">فقط نمایش پاسخ</string>
+    <string name="InsertResponseAsQuote">درج پاسخ به عنوان نقل‌قول</string>
+    <string name="TapToAddApiKey">برای شروع کار با قابلیت‌های هوش مصنوعی، روی افزودن کلید API ضربه بزنید.</string>
+    <string name="Generate">تولید</string>
+    <string name="GenerateWithHistory">با تاریخچه</string>
+    <string name="GenerateWithPhoto">با عکس</string>
+    <string name="ClearConversationHistoryInfo">آیا مطمئنید که می‌خواهید **همه** سابقه مکالمه هوش مصنوعی را پاک کنید؟</string>
+    <!-- AI Errors -->
+    <string name="AIError400">درخواست اشتباه</string>
+    <string name="AIError400Info">پارامترهای درخواست را بررسی کنید.</string>
+    <string name="AIError401">احراز هویت نامعتبر می‌باشد</string>
+    <string name="AIError401Info">کلید API نامعتبر یا غیرفعال است. اعتبارنامه‌های خود را بررسی کنید.</string>
+    <string name="AIError402">اعتبار ناکافی</string>
+    <string name="AIError402Info">حساب کاربری یا کلید API شما اعتبار کافی ندارد. اعتبار بیشتری اضافه کنید و درخواست را دوباره امتحان کنید.</string>
+    <string name="AIError403">دسترسی رد شد</string>
+    <string name="AIError403Info">شما مجوز دسترسی به این مدل یا منبع را ندارید. کلید API و مجوزهای حساب خود را بررسی کنید.</string>
+    <string name="AIError408">اتمام مهلت درخواست</string>
+    <string name="AIError408Info">درخواست شما به موقع پردازش نشد. لطفاً بعداً دوباره امتحان کنید.</string>
+    <string name="AIError429">از حد مجاز نرخ تجاوز شد</string>
+    <string name="AIError429Info">شما درخواست‌ها را بیش از حد ارسال می‌کنید. لطفاً لحظه‌ای صبر کنید و دوباره امتحان کنید.</string>
+    <string name="AIError502">عدم موفقیت مدل</string>
+    <string name="AIError502Info">مدل انتخاب شده در دسترس نیست یا پاسخ نامعتبری از آن دریافت کرده‌ایم.</string>
+    <string name="AIError503">سرویس در دسترس نیست</string>
+    <string name="AIError503Info">سرویس به طور موقت در دسترس نیست یا بیش از حد بارگذاری شده است. لطفاً بعداً دوباره امتحان کنید.</string>
+    <string name="AIError">خطای سرور</string>
+    <string name="AIErrorInfo">لطفاً پس از انتظار کوتاه درخواست خود را دوباره امتحان کنید.</string>
+    <string name="AIErrorOnDeviceStopped">مدل متوقف شد</string>
+    <string name="AIOnDeviceDownloadButton">بارگیری</string>
+    <string name="AIOnDeviceBadgeReady">حاضر</string>
+    <string name="AIOnDeviceBadgeUnavailable">غیر قابل دسترس</string>
+    <string name="AIOnDeviceNotificationReady">مدل حاضر</string>
+    <string name="AIOnDeviceBadgeDownload">بارگیری</string>
+    <string name="AIOnDeviceBadgeDownloading">درحال دریافت</string>
+    <string name="AIOnDeviceFastModel">مدل سریع</string>
+    <string name="AIReplaceTelegram">هوش مصنوعی تلگرام</string>
+    <string name="AIReplaceTelegramSummariesInfo">خلاصه کردن متن های طولانی پیام ها و پست ها</string>
+    <string name="AIReplaceTelegramInfo">ویژگی های انتخاب شده از سرویس هوش مصنوعی به جای سرور های تلگرام استفاده میکنه تا محدودیت تلگرام پرمیوم را دور بزنه.</string>
+    <string name="AIOnDeviceManage">تنظیمات هسته ی هوش مصنوعی</string>
+    <string name="AIOnDeviceManageUnavailable">تنظیمات سیستم واسه ی هسته‌ی هوش مصنوعی در این دستگاه در دسترس نیست.</string>
+    <string name="AIChangeModel">تغییر مدل هوش مصنوعی</string>
+    <string name="AIAskMore">پرسیدن بیشتر</string>
+    <string name="AIAssistant">دستیار هوش مصنوعی</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">پیام‌‌های دریافتی</string>
+    <string name="DoubleTapOutgoing">پیام‌های خروجی</string>
+    <string name="DoubleTapInfo">برخی از عملکردها به حقوق مدیران در چت یا کانال نیاز دارند.</string>
+    <string name="Gestures">اشاره ها</string>
+    <string name="SwipeActions">کنش‌های کشیدن انگشت</string>
+    <string name="SwipeActionsInfo">پیام را به چپ بکشید و بدون برداشتن انگشت، آن را بالا یا پایین ببرید تا یک کنش را انتخاب کنید.</string>
+    <string name="BottomButton">دکمه‌های پایین</string>
+    <string name="ChannelDiscussNoCaps">بحث</string>
+    <string name="QuickTransitions">ترجمه سریع با کشیدن</string>
+    <string name="DisableGreetingSticker">غیرفعال کردن استیکر خوش‌آمدگویی</string>
+    <string name="AdminShortcuts">میانبرهای مدیریت سریع</string>
+    <string name="HideKeyboardOnScroll">مخفی کردن کیبورد هنگام پیمایش چت</string>
+    <string name="HideShareButton">مخفی کردن دکمه سمت \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">\"%1$s\" را با یک آیکون جایگزین کنید</string>
+    <string name="MessageMenu">لیست پیام‌ها</string>
+    <string name="GroupMessageMenu">منوی پیام گروهی</string>
+    <string name="GroupMessageMenuInfo">گروه‌بندی، اقدامات اصلی را به پایین منوی پیام منتقل می‌کند.</string>
+    <string name="GlassMessageMenu">منوی پیام شیشه‌ای</string>
+    <string name="GlassMessageMenuBlurOff">منوهای شیشه‌ای نیاز به تاری دارند که در حال حاضر غیرفعال است.</string>
+    <string name="AddCommaAfterMention">اضافه کردن کاما بعد از منشن</string>
+    <string name="HideSendAsPeer">مخفی کردن دکمه \"ارسال به عنوان…\"</string>
+    <string name="HideSendAsPeerInfo">همچنان می‌توانید با فشار طولانی روی دکمه ایموجی/استیکر/گیف به منوی \"ارسال به‌ عنوان…\" دسترسی پیدا کنید.</string>
+    <string name="ShowPollResultsBeforeVoting">نمایش نتایج قبل از رأی‌گیری</string>
+    <string name="ShowPollResultsBeforeVotingHint">نتایج هر گزینه را قبل از ارسال رأی خود مشاهده کنید.</string>
+    <string name="ShowOnlineStatus">نمایش نشانگر آنلاین</string>
+    <string name="MessagePreviewDialogMessage">من می‌توانم شیشه بخورم و به من آسیبی نمی‌رساند.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">زبان تشخیص</string>
+    <string name="RecognitionInfo">از Vosk API استفاده می‌کند. به صورت آفلاین کار می‌کند. کیفیت متن رونویسی‌شده ممکن است پایین باشد.</string>
+    <string name="MissingLanguageModel">مدل زبانی موجود نیست</string>
+    <string name="DownloadingModel">درحال دانلود مدل…</string>
+    <string name="DownloadingModelInfo">لطفا تا زمانی که مدل زبانی درحال دانلود است این صفحه را باز نگه دارید.</string>
+    <string name="ModelDownload">دانلود (%1$s)</string>
+    <string name="ModelDownloadInfo">برای ادامه دادن، باید مدل زبانی \"**%1$s**\" را دانلود کنید.</string>
+    <string name="ModelDownloaded">مدل با موفقیت دانلود شد.</string>
+    <string name="ModelError">خطا هنگام دانلود مدل.</string>
+    <string name="ModelUnzipping">درحال استخراج…</string>
+    <string name="DeleteRecognitionModel">حذف مدل</string>
+    <string name="DeleteRecognitionModelInfo">آیا مطمئن هستید که می‌خواهید مدل زبانی «**%1$s**» را حذف کنید؟</string>
+    <string name="RecognitionModelDeleted">مدل با موفقیت حذف شد.</string>
+    <string name="RecognitionModelDeleteError">خطا در هنگام حذف مدل.</string>
+    <string name="PostProcessingWithAi">استفاده از هوش مصنوعی برای پس‌پردازش</string>
+    <string name="PostProcessingWithAiInfo">هوش مصنوعی با تصحیح خطاها، افزودن علائم نگارشی و روشن‌سازی قسمت‌های مبهم، خوانایی را بهبود می‌بخشد.</string>
+    <!-- Camera -->
+    <string name="CameraType">نوع دوربین</string>
+    <string name="ExtendedSettings">تنظیمات پیشرفته</string>
+    <string name="SeamlessSwitching">تغییر یکپارچه</string>
+    <string name="ExtendedFramesPerSecond">دامنه FPS گسترده</string>
+    <string name="CameraStabilization">پایدارسازی</string>
+    <string name="CameraMirrorMode">حالت آینه‌ای</string>
+    <string name="StartWithWideAngleCamera">شروع با دوربین زاویه‌باز</string>
+    <string name="ZoomSlider">لغزنده زوم</string>
+    <string name="ZoomSliderInfo">نمایش کنترل زوم در زیر دوربین پیام ویدیویی.</string>
+    <string name="StaticZoom">زوم ثابت</string>
+    <string name="StaticZoomInfo">هنگام ضبط پیام ویدیویی. سطح بزرگنمایی با رها کردن انگشت بازنشانی نمی‌شود.</string>
+    <string name="VideoMessagesCamera">دوربین در پیام های ویدیویی</string>
+    <string name="VideoMessagesCameraRear">دوربین پشت</string>
+    <string name="VideoMessagesCameraFront">دوربین جلو</string>
+    <string name="VideoMessagesCameraAsk">پرسیدن</string>
+    <string name="RearCamera">دوربین عقب</string>
+    <string name="FrontCamera">دوربین جلو</string>
+    <string name="RememberLastUsedCamera">به خاطر سپردن آخرین دوربین استفاده‌شده</string>
+    <string name="RememberLastUsedCameraInfo">هنگام ضبط پیام‌های ویدیویی، آخرین دوربین استفاده‌شده به طور خودکار انتخاب می‌شود.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">همیشه با کیفیت HD ارسال شود</string>
+    <string name="HideCameraTile">حذف کاشی دوربین</string>
+    <string name="HideCameraTileInfo">کاشی دوربین با یک دکمه شناور جایگزین می‌شود. با فشار دادن آن، دوربین تلگرام راه‌اندازی می‌شود؛ با نگه داشتن آن، دوربین سیستم راه‌اندازی می‌شود.</string>
+    <string name="ShortStandardQuality">استاندارد</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">مدت زمان پرش با دوبار ضربه</string>
+    <string name="PreferOriginalQuality">ترجیح دادن کیفیت اصلی</string>
+    <string name="PauseOnMinimize">مکث خودکار</string>
+    <string name="PauseOnMinimizeVideo">ویدیو</string>
+    <string name="PauseOnMinimizeVoice">صدا</string>
+    <string name="PauseOnMinimizeRound">گرد</string>
+    <string name="PauseOnMinimizeInfo">پخش رسانه را هنگام قفل شدن دستگاه یا کوچک‌سازی exteraGram متوقف می‌کند.</string>
+    <string name="SwipeToPip">کشیدن به حالت تصویر در تصویر</string>
+    <string name="UnmuteWithVolumeButtons">فعال کردن صدای ویدیوها با دکمه‌های صدا</string>
+    <string name="UnmuteWithVolumeButtonsInfo">فشار دادن دکمه صدا به جای تغییر صدای سیستم، صدای ویدیو را فعال می‌کند.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">زمانی که این گزینه فعال باشد اطلاعات فنی مربوط به دستگاه شما جمع‌آوری می‌شود و برای Google Analytics و Crashlytics ارسال خواهد شد و به ما در امر رفع باگ کمک خواهد کرد. \n\nهرچند، اگر تصمیم بگیرید که این گزینه را خاموش کنید ارسال اطلاعات متوقف و اطلاعات ذخیره‌شده حذف خواهد شد.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">نام پرونده واردكنيد…</string>
+    <string name="ExportSettings">وارد کردن تنظیمات</string>
+    <string name="ApplySettings">اعمال تنظیمات</string>
+    <string name="ImportTitle">آیا مطمئن هستید که می‌خواهید این تنظیمات را اعمال کنید؟</string>
+    <string name="ImportConfirm">بله، اعمال کن</string>
+    <string name="CancelConfirm">نه، به همان شکل رها کنید</string>
+    <string name="SettingsSaved">فایل تنظیمات با موفقیت ذخیره شد.</string>
+    <string name="SettingsImported">فایل تنظیمات با موفقیت ذخیره شد.</string>
+    <string name="ImportChanges_one">**1** تغییر روی تنظیمات فعلی اعمال خواهد شد.</string>
+    <string name="ImportChanges_two">**%1$d** تغییرات در تنظیمات فعلی اعمال خواهد شد.</string>
+    <string name="ImportChanges_few">**%1$d** تغییرات در تنظیمات فعلی اعمال خواهد شد.</string>
+    <string name="ImportChanges_many">**%1$d** تغییرات در تنظیمات فعلی اعمال خواهد شد.</string>
+    <string name="ImportChanges_other">**%1$d** تغییرات در تنظیمات فعلی اعمال خواهد شد.</string>
+    <string name="SameSettings">به نظر می‌رسد تنظیمات مشابه تنظیمات فعلی است.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">به دلایل امنیتی، شما قادر به شروع دانلود داده‌های خود در %1$s خواهید بود. ما همه دستگاه‌های شما را در مورد درخواست صادرات مطلع کرده‌ایم تا مطمئن شویم که مجاز است و به شما زمان دهید تا در صورت عدم مجوز واکنش نشان دهید.\n\nلطفاً در %2$s بازگردید و درخواست را با همان دستگاه تکرار کنید.</string>
+    <string name="ExportInvalid">متأسفیم، شما یک صادرات داده جدید شروع کرده‌اید، بنابراین این صادرات داده لغو شده است.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">حذف حساب کاربری</string>
+    <string name="ResetSettings">بازنشانی تنظیمات</string>
+    <string name="ResetPreferences">تنظیمات **exteraGram** بازنشانی شد.</string>
+    <string name="ResetPreferencesInfo">آیا مطمئنید که می‌خواهید **همه** تنظیمات exteraGram را به پیش‌فرض بازنشانی کنید؟</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">حمایت از توسعه</string>
+    <string name="SupportDevelopmentInfo">با حمایت از پروژه، نه تنها به توسعه آن کمک می‌کنید، بلکه نشان منحصر به فردی نیز دریافت می‌کنید.</string>
+    <string name="MakeDonation">کمک مالی کنید</string>
+    <string name="ReceiveBadge">نشان خود را دریافت کنید</string>
+    <string name="NowPlaying">در حال پخش</string>
+    <string name="ScrobblingService">سرویس اسکرابلینگ</string>
+    <string name="SelectService">انتخاب سرویس</string>
+    <string name="SelectServiceInfo">آهنگ فعلی را در پروفایل به صورت کارت‌هایی که از سرویس اسکرابلینگ دریافت می‌شود، نمایش می‌دهد.</string>
+    <string name="EnterUsername">نام کاربری را وارد کنید</string>
+    <string name="EnterUsernameInfo">می‌توانید نام کاربری خود را در **وب‌سایت رسمی** دریافت کنید.</string>
+    <string name="BoostyPeopleCount_one">%1$d نفر</string>
+    <string name="BoostyPeopleCount_two">%1$d نفر</string>
+    <string name="BoostyPeopleCount_few">%1$d نفر</string>
+    <string name="BoostyPeopleCount_many">%1$d نفر</string>
+    <string name="BoostyPeopleCount_other">%1$d نفر</string>
+    <string name="BoostyInfo">به طور فعال از **exteraGram** در **Boosty** حمایت کنید.</string>
+    <string name="BoostyInfo2">از حمایت شما متشکریم!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">نصب افزونه فقط در نسخه **کامل** **exteraGram** در دسترس است.</string>
+    <string name="Plugins">افزونه‌ها</string>
+    <string name="PluginsEngine">موتور افزونه‌ها</string>
+    <string name="EnablePluginsEngine">فعال‌سازی موتور افزونه‌ها</string>
+    <string name="PluginsInfo">می‌توانید افزونه‌ها را در @exteraPlugins پیدا کنید.</string>
+    <string name="PluginsNotFound">هیچ افزونه‌ای یافت نشد.</string>
+    <string name="InstallPlugin">نصب</string>
+    <string name="UpdatePlugin">به‌روزرسانی</string>
+    <string name="PluginNotEnabled">برای نصب **%1$s**، **موتور افزونه** را فعال کنید.</string>
+    <string name="PluginInstalled">**%1$s** با موفقیت نصب شد.</string>
+    <string name="PluginUpdated">**%1$s** با موفقیت آپدیت شد.</string>
+    <string name="PluginEnableError">خطا در فعال‌سازی **%1$s**.</string>
+    <string name="PluginDisableError">خطا در غیر فعال‌سازی **%1$s**.</string>
+    <string name="PluginInstallError">خطا در نصب **%1$s**.</string>
+    <string name="PluginSourceTrusted">منبع معتبر</string>
+    <string name="PluginSourceTrustedInfo">افزونه‌های این منبع **تأیید شده** و استفاده از آنها ایمن است.</string>
+    <string name="PluginSourceUnknown">منبع ناشناخته</string>
+    <string name="PluginSourceUnknownInfo">افزونه‌های این منبع **تأیید نشده** هستند و ممکن است خطر امنیتی داشته باشند.</string>
+    <string name="PluginVersion">نسخه</string>
+    <string name="PluginNoDescription">توضیحی ارائه نشده است.</string>
+    <string name="PluginIsNotResponding">افزونه پاسخ نمی‌دهد.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s پاسخ نمی‌دهد</string>
+    <string name="PluginNoAuthor">نویسنده ناشناخته</string>
+    <string name="EnableAfterInstallation">فعال‌سازی پس از نصب</string>
+    <string name="EnterValue">مقدار را وارد نمایید</string>
+    <string name="PluginDelete">حذف افزونه</string>
+    <string name="PluginDeleteInfo">مطمئنی می خوای \"%1$s\" رو حذف کنی؟</string>
+    <string name="ResetPluginSettings">تنظیمات **%1$s** بازنشانی شد.</string>
+    <string name="ResetPluginSettingsInfo">آیا مطمئن هستید که می‌خواهید تنظیمات **%1$s** را به حالت پیش‌فرض بازنشانی کنید؟</string>
+    <string name="PluginsSafeMode">حالت ایمن</string>
+    <string name="PluginsSafeModeShortcut">شروع با حالت ایمن</string>
+    <string name="PluginsSafeModeInfo">موتور افزونه به دلیل خرابی غیرفعال شده است. غیرفعال کردن حالت ایمن ممکن است عواقب پیش‌بینی‌نشده داشته باشد.</string>
+    <string name="PluginsSafeModeInfo2">در حالت ایمن، همه افزونه‌ها غیرفعال هستند. این به شما امکان می‌دهد تا با خیال راحت افزونه مشکل‌دار را پیدا و غیرفعال کنید.</string>
+    <string name="PluginsDevMode">حالت توسعه‌دهنده</string>
+    <string name="PluginsCompactView">نمای فشرده افزونه‌ها</string>
+    <string name="PluginsDocumentation">مستندات</string>
+    <string name="PluginsTrusted">افزونه‌های مطمئن</string>
+    <string name="PluginsDevServerLaunched">سرور توسعه‌دهنده راه‌اندازی شد.</string>
+    <string name="PluginsDevServerStopped">سرور توسعه‌دهنده متوقف شد.</string>
+    <string name="PluginEngineNotEnabled">برای باز کردن تنظیمات **%1$s**، **موتور افزونه** را فعال کنید.</string>
+    <string name="PluginNotFound">**%1$s** پیدا نشد.</string>
+    <string name="PluginHasNoSettings">**%1$s** تنظیماتی ندارد.</string>
+    <string name="PluginsPySdkAutoUpdate">به‌روزرسانی خودکار</string>
+    <string name="PluginsPySdkEnableBetaVersion">نصب نسخه‌های بتا</string>
+    <string name="PluginsPySdkCheckUpdates">بررسی به‌روزرسانی‌ها</string>
+    <string name="CheckingForUpdates">در حال بررسی به‌روزرسانی‌ها…</string>
+    <string name="LatestVersionInstalled">آخرین نسخه نصب شده است.</string>
+    <string name="RestartPluginSystemToApplyUpdate">به‌روزرسانی بارگیری شد، برای اعمال، موتور افزونه را مجدداً راه‌اندازی کنید.</string>
+    <string name="LoadingUpdate">در حال بارگیری به‌روزرسانی…</string>
+    <string name="RestoreSdkFromApk">بازیابی SDK از APK</string>
+    <string name="EnableAutoUpdate">فعال‌سازی به‌روزرسانی خودکار</string>
+    <string name="PluginsDisableArt">حالت سازگاری</string>
+    <string name="PluginsDisableArtInfo">با غیرفعال‌سازی ART Profile Saver از خرابی هوک‌های افزونه جلوگیری می‌کند.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">درحال بروزرسانی…</string>
+    <string name="UpdateInstallingRelaunch">پس از اتمام به‌روزرسانی برنامه مجددا راه‌اندازی خواهد شد.</string>
+    <string name="UpdateInstallingNotification">هنگام تکمیل به‌روزرسانی به شما اطلاع داده می‌شود.</string>
+    <string name="UpdateInstalledNotification">به‌روزرسانی کامل شد. برای باز کردن برنامه ضربه بزنید.</string>
+    <string name="UpdateFailedToInstall">نصب به‌روزرسانی با کد خطای %d ناموفق بود.</string>
+    <string name="UpdateAvailable">به‌روزرسانی در دسترس است!</string>
+    <!-- Message Details -->
+    <string name="Details">جزئیات</string>
+    <string name="Date">تاریخ</string>
+    <string name="EditedDate">ویرایش تاریخ</string>
+    <string name="ForwardedDate">تاریخ پیش رو</string>
+    <string name="FileSize">اندازه فایل</string>
+    <string name="FileName">نام فایل</string>
+    <string name="FilePath">مسیر فایل</string>
+    <string name="Platform">پلتفرم</string>
+    <string name="Resolution">وضوح</string>
+    <string name="Bitrate">میزان بیت</string>
+    <string name="Duration">مدت زمان</string>
+    <string name="MimeType">نوع mime</string>
+    <string name="Datacenter">دیتاسنتر</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">قالب:</string>
+    <string name="DateFormatOptionNone">هیچ‌کدام</string>
+    <string name="DateFormatOptionRelative">نسبی</string>
+    <string name="DateFormatOptionShortTime">زمان کوتاه</string>
+    <string name="DateFormatOptionLongTime">زمان کامل</string>
+    <string name="DateFormatOptionShortDate">تاریخ کوتاه</string>
+    <string name="DateFormatOptionLongDate">تاریخ کامل</string>
+    <string name="DateFormatOptionDayOfWeek">روز هفته</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">ورود با کد QR</string>
+    <string name="LoginQrSubtitle">برای اسکن این کد QR از دستگاه دیگری استفاده کنید.</string>
+    <string name="WifiConnect">اتصال</string>
+    <string name="WifiDisabled">وای‌فای غیرفعال است.</string>
+    <string name="WifiFailed">اتصال به وای‌فای ناموفق بود.</string>
+    <string name="WifiSuccess">اتصال به وای‌فای با موفقیت انجام شد.</string>
+    <string name="AreYouSureToLogin">آیا مطمئن هستید که می‌خواهید در دستگاه دیگری وارد این حساب شوید؟</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">صفحه مسدود شده است</string>
+    <string name="PageBlockedDescription">exteraGram از بارگذاری صفحه زیر جلوگیری کرد:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">بازگشت</string>
+    <string name="BlockAds">مسدود کردن تبلیغات</string>
+    <!-- Other -->
+    <string name="SetAsBadge">تنظیم به عنوان نشان</string>
+    <string name="AutoLockInstant">فوری</string>
+    <string name="TestBackend">آزمایش سمت سرور</string>
+    <string name="SearchPhotoInfo">سرویس‌ها می‌توانند از تصاویر مطابق با سیاست‌های حریم خصوصی و شرایط استفاده خود استفاده کنند.</string>
+    <string name="PhotoUploadFailed">بارگذاری عکس ناموفق بود.</string>
+    <string name="TrackSaved">آهنگ در **%1$s** ذخیره شد.</string>
+    <string name="ChannelToSaveChanged">آهنگ‌ها در **%1$s** ذخیره خواهند شد.</string>
+    <string name="DeletedMessage">پیام حذف‌شده</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">کپی عنوان</string>
+    <string name="CopyCallback">کپی کردن داده‌های برگشت به تماس</string>
+    <string name="CopyInlineQuery">پرس و جو درون خطی را کپی کنید</string>
+    <string name="CopyID">کپی کردن شناسه کاربری</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">وضعیت نشان تنظیم شد.</string>
+    <string name="UserNotFound">کاربری با این **شناسه** یافت نشد.</string>
+    <string name="ChatNotFound">گفت‌وگو با این **شناسه** پیدا نشد.</string>
+    <string name="PhotoCopied">عکس در کلیپ بورد کپی شد.</string>
+    <string name="FrameCopied">فریم در کلیپ‌بورد کپی شد.</string>
+    <string name="TapToCopy">برای کپی ضربه بزنید</string>
+    <string name="ProfileUsesEmojiPack">این پروفایل از ایموجی‌های مجموعه %s برای پس‌زمینه خود استفاده می‌کند.</string>
+    <string name="ProfileUsesEmojiPacks">این پروفایل از ایموجی‌های **%d مجموعه** برای پس‌زمینه خود استفاده می‌کند.</string>
+    <string name="ReplyUsesEmojiPacks">این پاسخ از ایموجی‌های مجموعه %s برای پس‌زمینه خود استفاده می‌کند.</string>
+    <string name="StickerSavedHint">استیکر در گالری ذخیره شد.</string>
+    <string name="EmojiSavedHint">ایموجی در گالری ذخیره شد.</string>
+    <string name="GifGallerySavedHint">GIF در گالری ذخیره شد.</string>
+    <string name="MutualContactInfo">این تماس متقابل است.</string>
+    <string name="LocalPremiumEmojiHint">شما اشتراک **Telegram Premium** ندارید، بنابراین فقط کاربران **exteraGram** قادر به دیدن این ایموجی خواهند بود.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">پنهان‌سازی برگه مخاطبین</string>
+    <string name="ShowContactsTab">نمایش برگه مخاطبین</string>
+    <string name="ContactsTabWasShownTitle">برگه **مخاطبین** اکنون قابل مشاهده است.</string>
+    <string name="ContactsTabWasHiddenTitle">برگه **مخاطبین** اکنون پنهان است.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">این ویژگی فقط با مدیریت‌کننده‌های رمز عبور کار می‌کند که به کاربر امکان مدیریت تنظیمات اعتماد برای برنامه‌های ممتاز را می‌دهند، مانند **Bitwarden** یا **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">مدیریت‌کننده رمز عبور پشتیبانی نمی‌شود</string>
+    <string name="PasskeyUnsupportedMessage">مدیریت‌کننده‌های رمز عبور دیگر مانند **Bitwarden** یا **KeePassDX** را امتحان کنید.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** حساب خود را تقریباً در **%2$s** ایجاد کرده است.</string>
+    <string name="CreationDateUserEarlier">**%1$s** حساب خود را زودتر از **%2$s** ایجاد کرده است.</string>
+    <string name="CreationDateUserLater">**%1$s** حساب خود را دیرتر از **%2$s** ایجاد کرده است.</string>
+    <string name="CreationDateChat">**%1$s** در **%2$s** ایجاد شده است.</string>
+    <string name="CreationDateSelfApproximately">شما حساب خود را تقریباً در **%1$s** ایجاد کرده‌اید.</string>
+    <string name="CreationDateSelfEarlier">شما حساب خود را زودتر از **%1$s** ایجاد کرده‌اید.</string>
+    <string name="CreationDateSelfLater">شما حساب خود را دیرتر از **%1$s** ایجاد کرده‌اید.</string>
+    <string name="JoinDateChat">شما در **%2$s** به **%1$s** پیوستید.</string>
+    <string name="GroupMemberJoined">به %1$s پیوست</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">شروع کردن</string>
+    <string name="MessageHistory">تاریخچه</string>
+    <string name="BoldItalic">کج با حروف ضخیم</string>
+    <string name="CopyPhoto">کپی‌ کردن عکس</string>
+    <string name="CopyFrame">کپی فریم</string>
+    <string name="Repeat">تکرار</string>
+    <string name="Subtitles">زیرنویس‌ها</string>
+    <string name="ChooseSubtitles">انتخاب زیرنویس</string>
+    <string name="DisableSubtitles">غیرفعال‌سازی زیرنویس‌ها</string>
+    <string name="SubtitlesAdded">زیرنویس‌ها فعال شدند.</string>
+    <string name="SubtitlesRemoved">زیرنویس‌ها غیرفعال شدند.</string>
+    <string name="SubtitlesLoadError">بارگیری زیرنویس‌ها امکان‌پذیر نبود.</string>
+    <string name="SubtitlesUnsupportedFormat">فرمت زیرنویس پشتیبانی نمی‌شود.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">گوشه‌های استیکر</string>
+    <string name="StickerCornerRadiusInfo">انتخاب کنید که گوشه‌های استیکر چقدر گرد باشند.</string>
+    <string name="StickerCornerRadiusLarge">بزرگ</string>
+    <string name="StickerCornerRadiusMedium">متوسط</string>
+    <string name="StickerCornerRadiusSmall">کوچک</string>
+    <string name="StickerCornerRadiusNone">هیچ‌کدام</string>
+    <!-- Feed -->
+    <string name="Feed">خوراک</string>
+    <string name="FeedShownChannels">نمایش داده شده در خوراک</string>
+    <string name="FeedHiddenChannels">پنهان</string>
+    <string name="FeedChannels">کانال‌ها</string>
+    <string name="FeedSettings">تنظیمات خوراک</string>
+    <string name="FeedNoPosts">هنوز پستی در کانال‌ها وجود ندارد.</string>
+    <string name="FeedAllChannelsExcluded">همه کانال‌ها از خوراک حذف شده‌اند.</string>
+    <string name="FeedMarkAllReadConfirm">همه پست‌های موجود در کانال‌های خوراک را به عنوان خوانده‌شده علامت‌گذاری کنیم؟ این کار آنها را در کانال‌های اصلی نیز به عنوان خوانده‌شده علامت‌گذاری می‌کند.</string>
+    <string name="FeedMarkAllReadDone">همه پست‌ها به عنوان خوانده‌شده علامت‌گذاری شدند.</string>
+    <string name="FeedIncludeArchived">نمایش گفتگوهای بایگانی‌شده</string>
+    <string name="FeedIncludeArchivedInfo">همچنین کانال‌های موجود در گفتگوهای بایگانی‌شده خود را در خوراک قرار دهید.</string>
+    <string name="FeedHideChannel">پنهان کردن از خوراک</string>
+    <string name="FeedChannelHidden">**%1$s** از خوراک پنهان شد.</string>
+    <string name="FeedBottomTab">نمایش در برگه‌های پایین</string>
+    <string name="FeedBottomTabInfo">خوراک را به عنوان یک برگه ناوبری پایین به جای برگه مخاطبین نمایش دهید.</string>
+    <string name="FeedUnreadCounter">شمارنده پست‌های خوانده‌نشده</string>
+    <string name="HideFeedTab">پنهان‌سازی برگه خوراک</string>
+    <string name="DisableMarkdown">غیرفعال‌سازی مارک‌داون</string>
+    <string name="EnableMarkdown">فعال‌سازی مارک‌داون</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

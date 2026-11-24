@@ -1,5 +1,7 @@
 package org.telegram.ui;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -8,7 +10,6 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,11 +19,12 @@ import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
+import android.hardware.Camera;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
@@ -42,6 +44,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
 import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.dynamicanimation.animation.SpringAnimation;
@@ -64,13 +67,13 @@ import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MediaController;
 import org.telegram.messenger.MrzRecognizer;
 import org.telegram.messenger.R;
-import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.camera.CameraController;
-import org.telegram.messenger.camera.CameraSession;
+import org.telegram.messenger.camera.CameraSessionWrapper;
 import org.telegram.messenger.camera.CameraView;
 import org.telegram.messenger.camera.Size;
 import org.telegram.ui.ActionBar.ActionBar;
@@ -78,8 +81,10 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Components.AnimationProperties;
+import org.telegram.ui.Components.ChatAttachAlert;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LinkPath;
@@ -89,11 +94,12 @@ import org.telegram.ui.Components.URLSpanNoUnderline;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-
-import com.exteragram.messenger.utils.SystemUtils;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class CameraScanActivity extends BaseFragment {
 
+    private @Nullable OrientationController.Request portraitRequest;
     private TextView titleTextView;
     private TextView descriptionText;
     private CameraView cameraView;
@@ -112,8 +118,21 @@ public class CameraScanActivity extends BaseFragment {
     private SpringAnimation qrAppearing = null;
     private float qrAppearingValue = 0;
 
-    private RectF fromBounds = new RectF();
-    private RectF bounds = new RectF();
+    private final PointF[] fromPoints = new PointF[4];
+    private final PointF[] points = new PointF[4];
+    private final PointF[] tmpPoints = new PointF[4];
+    private final PointF[] tmp2Points = new PointF[4];
+    {
+        for (int i = 0; i < 4; ++i) {
+            fromPoints[i] = new PointF(-1, -1);
+            points[i] = new PointF(-1, -1);
+            tmpPoints[i] = new PointF(-1, -1);
+            tmp2Points[i] = new PointF(-1, -1);
+        }
+    }
+
+    private final RectF fromBounds = new RectF();
+    private final RectF bounds = new RectF();
     private long lastBoundsUpdate = 0;
     private final long boundsUpdateDuration = 75;
 
@@ -133,6 +152,7 @@ public class CameraScanActivity extends BaseFragment {
     private BarcodeDetector visionQrReader = null;
 
     private boolean needGalleryButton;
+    private ChatAttachAlert galleryPickerAlert;
 
     private int currentType;
 
@@ -169,7 +189,7 @@ public class CameraScanActivity extends BaseFragment {
         if (parentActivity == null) {
             return null;
         }
-        INavigationLayout[] actionBarLayout = new INavigationLayout[]{INavigationLayout.newLayout(parentActivity)};
+        INavigationLayout[] actionBarLayout = new INavigationLayout[]{INavigationLayout.newLayout(parentActivity, false)};
         BottomSheet bottomSheet = new BottomSheet(parentActivity, false) {
             CameraScanActivity fragment;
             {
@@ -223,8 +243,8 @@ public class CameraScanActivity extends BaseFragment {
             }
         };
         bottomSheet.setUseLightStatusBar(false);
-        AndroidUtilities.setLightNavigationBar(bottomSheet.getWindow(), false);
-        AndroidUtilities.setNavigationBarColor(bottomSheet.getWindow(), 0xff000000, false);
+        AndroidUtilities.setLightNavigationBar(bottomSheet, false);
+        AndroidUtilities.setNavigationBarColor(bottomSheet, 0xff000000, false);
         bottomSheet.setUseLightStatusBar(false);
         bottomSheet.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         bottomSheet.show();
@@ -258,11 +278,17 @@ public class CameraScanActivity extends BaseFragment {
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
         destroy(false, null);
-        if (getParentActivity() != null) {
-            getParentActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        if (portraitRequest != null) {
+            portraitRequest.release();
+            portraitRequest = null;
         }
         if (visionQrReader != null) {
             visionQrReader.release();
+        }
+        if (galleryPickerAlert != null) {
+            galleryPickerAlert.dismissInternal();
+            galleryPickerAlert.onDestroy();
+            galleryPickerAlert = null;
         }
     }
 
@@ -273,7 +299,12 @@ public class CameraScanActivity extends BaseFragment {
             actionBar.setItemsColor(0xffffffff, false);
             actionBar.setItemsBackgroundColor(0xffffffff, false);
             actionBar.setTitleColor(0xffffffff);
+        } else if (currentType == TYPE_MRZ) {
+            ThemeBind.actionBarItemsColor(actionBar, Theme.key_windowBackgroundWhiteGrayText2, false);
+            ThemeBind.actionBarItemsBackgroundColor(actionBar, Theme.key_actionBarWhiteSelector, false);
+            ThemeBind.actionBarTitleColor(actionBar, Theme.key_actionBarDefaultTitle);
         } else {
+            // overwritten with fixed white below (camera backdrop): no theme binding
             actionBar.setItemsColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2), false);
             actionBar.setItemsBackgroundColor(Theme.getColor(Theme.key_actionBarWhiteSelector), false);
             actionBar.setTitleColor(Theme.getColor(Theme.key_actionBarDefaultTitle));
@@ -312,13 +343,13 @@ public class CameraScanActivity extends BaseFragment {
                     }
                     recognizedMrzView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED));
                     if (galleryButton != null) {
-                        galleryButton.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(60), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(60), MeasureSpec.EXACTLY));
+                        galleryButton.measure(MeasureSpec.makeMeasureSpec(dp(60), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(60), MeasureSpec.EXACTLY));
                     }
-                    flashButton.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(60), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(60), MeasureSpec.EXACTLY));
+                    flashButton.measure(MeasureSpec.makeMeasureSpec(dp(60), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(60), MeasureSpec.EXACTLY));
                 }
-                titleTextView.measure(MeasureSpec.makeMeasureSpec(width - AndroidUtilities.dp(72), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED));
+                titleTextView.measure(MeasureSpec.makeMeasureSpec(width - dp(72), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED));
                 if (currentType == TYPE_QR_WEB_BOT) {
-                    descriptionText.measure(MeasureSpec.makeMeasureSpec(width - AndroidUtilities.dp(72), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED));
+                    descriptionText.measure(MeasureSpec.makeMeasureSpec(width - dp(72), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED));
                 } else {
                     descriptionText.measure(MeasureSpec.makeMeasureSpec((int) (width * 0.9f), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.UNSPECIFIED));
                 }
@@ -339,7 +370,7 @@ public class CameraScanActivity extends BaseFragment {
                     recognizedMrzView.setTextSize(TypedValue.COMPLEX_UNIT_PX, height / 22);
                     recognizedMrzView.setPadding(0, 0, 0, height / 15);
                     y = (int) (height * 0.65f);
-                    titleTextView.layout(AndroidUtilities.dp(36), y, AndroidUtilities.dp(36) + titleTextView.getMeasuredWidth(), y + titleTextView.getMeasuredHeight());
+                    titleTextView.layout(dp(36), y, dp(36) + titleTextView.getMeasuredWidth(), y + titleTextView.getMeasuredHeight());
                 } else {
                     actionBar.layout(0, 0, actionBar.getMeasuredWidth(), actionBar.getMeasuredHeight());
                     if (cameraView != null) {
@@ -347,28 +378,28 @@ public class CameraScanActivity extends BaseFragment {
                     }
                     int size = (int) (Math.min(width, height) / 1.5f);
                     if (currentType == TYPE_QR) {
-                        y = (height - size) / 2 - titleTextView.getMeasuredHeight() - AndroidUtilities.dp(30);
+                        y = (height - size) / 2 - titleTextView.getMeasuredHeight() - dp(30);
                     } else {
-                        y = (height - size) / 2 - titleTextView.getMeasuredHeight() - AndroidUtilities.dp(64);
+                        y = (height - size) / 2 - titleTextView.getMeasuredHeight() - dp(64);
                     }
-                    titleTextView.layout(AndroidUtilities.dp(36), y, AndroidUtilities.dp(36) + titleTextView.getMeasuredWidth(), y + titleTextView.getMeasuredHeight());
+                    titleTextView.layout(dp(36), y, dp(36) + titleTextView.getMeasuredWidth(), y + titleTextView.getMeasuredHeight());
                     if (currentType == TYPE_QR_WEB_BOT) {
-                        y += titleTextView.getMeasuredHeight() + AndroidUtilities.dp(8);
-                        descriptionText.layout(AndroidUtilities.dp(36), y, AndroidUtilities.dp(36) + descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
+                        y += titleTextView.getMeasuredHeight() + dp(8);
+                        descriptionText.layout(dp(36), y, dp(36) + descriptionText.getMeasuredWidth(), y + descriptionText.getMeasuredHeight());
                     }
                     recognizedMrzView.layout(0, getMeasuredHeight() - recognizedMrzView.getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight());
 
                     int x;
                     if (needGalleryButton) {
-                        x = width / 2 + AndroidUtilities.dp(35);
+                        x = width / 2 + dp(35);
                     } else {
                         x = width / 2 - flashButton.getMeasuredWidth() / 2;
                     }
-                    y = (height - size) / 2 + size + AndroidUtilities.dp(80);
+                    y = (height - size) / 2 + size + dp(80);
                     flashButton.layout(x, y, x + flashButton.getMeasuredWidth(), y + flashButton.getMeasuredHeight());
 
                     if (galleryButton != null) {
-                        x = width / 2 - AndroidUtilities.dp(35) - galleryButton.getMeasuredWidth();
+                        x = width / 2 - dp(35) - galleryButton.getMeasuredWidth();
                         galleryButton.layout(x, y, x + galleryButton.getMeasuredWidth(), y + galleryButton.getMeasuredHeight());
                     }
                 }
@@ -382,6 +413,8 @@ public class CameraScanActivity extends BaseFragment {
                 updateNormalBounds();
             }
 
+            Path path = new Path();
+
             @Override
             protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
                 boolean result = super.drawChild(canvas, child, drawingTime);
@@ -391,6 +424,17 @@ public class CameraScanActivity extends BaseFragment {
                         sizey = (int) (child.getHeight() * bounds.height()),
                         cx = (int) (child.getWidth() * bounds.centerX()),
                         cy = (int) (child.getHeight() * bounds.centerY());
+
+//                    PointF[] points = getPoints();
+//                    path.rewind();
+//                    for (int i = 0; i < points.length; ++i) {
+//                        float x = child.getWidth() * points[i].x;
+//                        float y = child.getHeight() * points[i].y;
+//                        if (i == 0) path.moveTo(x, y);
+//                        else path.lineTo(x, y);
+//                    }
+//                    Theme.DEBUG_RED.setAlpha(40);
+//                    canvas.drawPath(path, Theme.DEBUG_RED);
 
                     sizex *= (.5f + qrAppearingValue * .5f);
                     sizey *= (.5f + qrAppearingValue * .5f);
@@ -405,9 +449,9 @@ public class CameraScanActivity extends BaseFragment {
                     paint.setAlpha((int) (255 * Math.max(0, 1f - qrAppearingValue)));
                     canvas.drawRect(x, y, x + sizex, y + sizey, paint);
 
-                    final int lineWidth = AndroidUtilities.lerp(0, AndroidUtilities.dp(4), Math.min(1, qrAppearingValue * 20f)),
+                    final int lineWidth = AndroidUtilities.lerp(0, dp(4), Math.min(1, qrAppearingValue * 20f)),
                               halfLineWidth = lineWidth / 2;
-                    final int lineLength = AndroidUtilities.lerp(Math.min(sizex, sizey), AndroidUtilities.dp(20), Math.min(1.2f, (float) Math.pow(qrAppearingValue, 1.8f)));
+                    final int lineLength = AndroidUtilities.lerp(Math.min(sizex, sizey), dp(20), Math.min(1.2f, (float) Math.pow(qrAppearingValue, 1.8f)));
 
                     cornerPaint.setAlpha((int) (255 * Math.min(1, qrAppearingValue)));
 
@@ -463,8 +507,8 @@ public class CameraScanActivity extends BaseFragment {
         }
 
         if (currentType == TYPE_MRZ) {
-            actionBar.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-            fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            ThemeBind.backgroundColor(actionBar, Theme.key_windowBackgroundWhite);
+            ThemeBind.backgroundColor(fragmentView, Theme.key_windowBackgroundWhite);
         } else {
             actionBar.setBackgroundDrawable(null);
             actionBar.setAddToContainer(false);
@@ -476,7 +520,7 @@ public class CameraScanActivity extends BaseFragment {
         }
 
         if (currentType == TYPE_QR_LOGIN || currentType == TYPE_QR_WEB_BOT) {
-            actionBar.setTitle(LocaleController.getString("AuthAnotherClientScan", R.string.AuthAnotherClientScan));
+            actionBar.setTitle(LocaleController.getString(R.string.AuthAnotherClientScan));
         }
 
         Paint selectionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -501,7 +545,7 @@ public class CameraScanActivity extends BaseFragment {
                             int end = spanned.getSpanEnd(innerSpans[a]);
                             textPath.setCurrentLayout(getLayout(), start, 0);
                             int shift = getText() != null ? getPaint().baselineShift : 0;
-                            textPath.setBaselineShift(shift != 0 ? shift + AndroidUtilities.dp(shift > 0 ? 5 : -2) : 0);
+                            textPath.setBaselineShift(shift != 0 ? shift + dp(shift > 0 ? 5 : -2) : 0);
                             getLayout().getSelectionPath(start, end, textPath);
                         }
                         textPath.setAllowReset(true);
@@ -568,7 +612,11 @@ public class CameraScanActivity extends BaseFragment {
         viewGroup.addView(titleTextView);
 
         descriptionText = new TextView(context);
-        descriptionText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText6));
+        if (currentType == TYPE_QR_WEB_BOT) {
+            descriptionText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText6)); // overwritten with fixed white below
+        } else {
+            ThemeBind.textColor(descriptionText, Theme.key_windowBackgroundWhiteGrayText6);
+        }
         descriptionText.setGravity(Gravity.CENTER_HORIZONTAL);
         descriptionText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         viewGroup.addView(descriptionText);
@@ -579,23 +627,23 @@ public class CameraScanActivity extends BaseFragment {
         recognizedMrzView.setAlpha(0);
 
         if (currentType == TYPE_MRZ) {
-            titleTextView.setText(LocaleController.getString("PassportScanPassport", R.string.PassportScanPassport));
-            descriptionText.setText(LocaleController.getString("PassportScanPassportInfo", R.string.PassportScanPassportInfo));
-            titleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+            titleTextView.setText(LocaleController.getString(R.string.PassportScanPassport));
+            descriptionText.setText(LocaleController.getString(R.string.PassportScanPassportInfo));
+            ThemeBind.textColor(titleTextView, Theme.key_windowBackgroundWhiteBlackText);
             recognizedMrzView.setTypeface(Typeface.MONOSPACE);
         } else {
             if (needGalleryButton) {
-                //titleTextView.setText(LocaleController.getString("WalletScanCode", R.string.WalletScanCode));
+                //titleTextView.setText(LocaleController.getString(R.string.WalletScanCode));
             } else {
                 if (currentType == TYPE_QR || currentType == TYPE_QR_WEB_BOT) {
-                    titleTextView.setText(LocaleController.getString("AuthAnotherClientScan", R.string.AuthAnotherClientScan));
+                    titleTextView.setText(LocaleController.getString(R.string.AuthAnotherClientScan));
                 } else {
-                    String text = LocaleController.getString("AuthAnotherClientInfo5", R.string.AuthAnotherClientInfo5);
+                    String text = LocaleController.getString(R.string.AuthAnotherClientInfo5);
                     SpannableStringBuilder spanned = new SpannableStringBuilder(text);
 
                     String[] links = new String[] {
-                        LocaleController.getString("AuthAnotherClientDownloadClientUrl", R.string.AuthAnotherClientDownloadClientUrl),
-                        LocaleController.getString("AuthAnotherWebClientUrl", R.string.AuthAnotherWebClientUrl)
+                        LocaleController.getString(R.string.AuthAnotherClientDownloadClientUrl),
+                        LocaleController.getString(R.string.AuthAnotherWebClientUrl)
                     };
                     for (int i = 0; i < links.length; ++i) {
                         text = spanned.toString();
@@ -609,7 +657,7 @@ public class CameraScanActivity extends BaseFragment {
                             index1 += 1;
                             index2 += 1;
                             spanned.setSpan(new URLSpanNoUnderline(links[i], true), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            spanned.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM)), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            spanned.setSpan(new TypefaceSpan(AndroidUtilities.bold()), index1, index2 - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         } else {
                             break;
                         }
@@ -618,7 +666,7 @@ public class CameraScanActivity extends BaseFragment {
                     titleTextView.setLinkTextColor(0xffffffff);
 
                     titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-                    titleTextView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
+                    titleTextView.setLineSpacing(dp(2), 1.0f);
                     titleTextView.setPadding(0, 0, 0, 0);
                     titleTextView.setText(spanned);
                 }
@@ -628,11 +676,11 @@ public class CameraScanActivity extends BaseFragment {
                 descriptionText.setTextColor(0x99ffffff);
             }
             recognizedMrzView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-            recognizedMrzView.setPadding(AndroidUtilities.dp(10), 0, AndroidUtilities.dp(10), AndroidUtilities.dp(10));
+            recognizedMrzView.setPadding(dp(10), 0, dp(10), dp(10));
             if (needGalleryButton) {
-                //recognizedMrzView.setText(LocaleController.getString("WalletScanCodeNotFound", R.string.WalletScanCodeNotFound));
+                //recognizedMrzView.setText(LocaleController.getString(R.string.WalletScanCodeNotFound));
             } else {
-                recognizedMrzView.setText(LocaleController.getString("AuthAnotherClientNotFound", R.string.AuthAnotherClientNotFound));
+                recognizedMrzView.setText(LocaleController.getString(R.string.AuthAnotherClientNotFound));
             }
             viewGroup.addView(recognizedMrzView);
 
@@ -640,69 +688,23 @@ public class CameraScanActivity extends BaseFragment {
                 galleryButton = new ImageView(context);
                 galleryButton.setScaleType(ImageView.ScaleType.CENTER);
                 galleryButton.setImageResource(R.drawable.qr_gallery);
-                galleryButton.setBackgroundDrawable(Theme.createSelectorDrawableFromDrawables(Theme.createCircleDrawable(AndroidUtilities.dp(60), 0x22ffffff), Theme.createCircleDrawable(AndroidUtilities.dp(60), 0x44ffffff)));
+                galleryButton.setBackgroundDrawable(Theme.createSelectorDrawableFromDrawables(Theme.createCircleDrawable(dp(60), 0x22ffffff), Theme.createCircleDrawable(dp(60), 0x44ffffff)));
                 viewGroup.addView(galleryButton);
                 galleryButton.setOnClickListener(currentImage -> {
-                    if (getParentActivity() == null) {
-                        return;
-                    }
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        if (!SystemUtils.isImagesAndVideoPermissionGranted()) {
-                            SystemUtils.requestImagesAndVideoPermission(getParentActivity());
-                            return;
-                        }
-                    }
-                    PhotoAlbumPickerActivity fragment = new PhotoAlbumPickerActivity(PhotoAlbumPickerActivity.SELECT_TYPE_QR, false, false, null);
-                    fragment.setMaxSelectedPhotos(1, false);
-                    fragment.setAllowSearchImages(false);
-                    fragment.setDelegate(new PhotoAlbumPickerActivity.PhotoAlbumPickerActivityDelegate() {
-                        @Override
-                        public void didSelectPhotos(ArrayList<SendMessagesHelper.SendingMediaInfo> photos, boolean notify, int scheduleDate) {
-                            try {
-                                if (!photos.isEmpty()) {
-                                    SendMessagesHelper.SendingMediaInfo info = photos.get(0);
-                                    if (info.path != null) {
-                                        Point screenSize = AndroidUtilities.getRealScreenSize();
-                                        Bitmap bitmap = ImageLoader.loadBitmap(info.path, null, screenSize.x, screenSize.y, true);
-                                        QrResult res = tryReadQr(null, null, 0, 0, 0, bitmap);
-                                        if (res != null) {
-                                            if (delegate != null) {
-                                                delegate.didFindQr(res.text);
-                                            }
-                                            removeSelfFromStack();
-                                        }
-                                    }
-                                }
-                            } catch (Throwable e) {
-                                FileLog.e(e);
-                            }
-                        }
-
-                        @Override
-                        public void startPhotoSelectActivity() {
-                            try {
-                                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                                photoPickerIntent.setType("image/*");
-                                getParentActivity().startActivityForResult(photoPickerIntent, 11);
-                            } catch (Exception e) {
-                                FileLog.e(e);
-                            }
-                        }
-                    });
-                    presentFragment(fragment);
+                    openGalleryPicker();
                 });
             }
 
             flashButton = new ImageView(context);
             flashButton.setScaleType(ImageView.ScaleType.CENTER);
             flashButton.setImageResource(R.drawable.qr_flashlight);
-            flashButton.setBackgroundDrawable(Theme.createCircleDrawable(AndroidUtilities.dp(60), 0x22ffffff));
+            flashButton.setBackgroundDrawable(Theme.createCircleDrawable(dp(60), 0x22ffffff));
             viewGroup.addView(flashButton);
             flashButton.setOnClickListener(currentImage -> {
                 if (cameraView == null) {
                     return;
                 }
-                CameraSession session = cameraView.getCameraSession();
+                CameraSessionWrapper session = cameraView.getCameraSession();
                 if (session != null) {
                     ShapeDrawable shapeDrawable = (ShapeDrawable) flashButton.getBackground();
                     if (flashAnimator != null) {
@@ -724,17 +726,18 @@ public class CameraScanActivity extends BaseFragment {
                     flashAnimator.start();
                     if (flashButton.getTag() == null) {
                         flashButton.setTag(1);
-                        session.setTorchEnabled(true);
+                        session.setCurrentFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     } else {
                         flashButton.setTag(null);
-                        session.setTorchEnabled(false);
+                        session.setCurrentFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                     }
                 }
             });
         }
 
-        if (getParentActivity() != null) {
-            getParentActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        final OrientationController orientation = OrientationController.of(getParentActivity());
+        if (orientation != null && portraitRequest == null) {
+            portraitRequest = orientation.requestPortrait();
         }
         fragmentView.setKeepScreenOn(true);
 
@@ -788,7 +791,7 @@ public class CameraScanActivity extends BaseFragment {
     }
 
     private void initCameraView() {
-        if (fragmentView == null) {
+        if (fragmentView == null || !CameraView.isCameraAllowed()) {
             return;
         }
         CameraController.getInstance().initCamera(null);
@@ -826,43 +829,84 @@ public class CameraScanActivity extends BaseFragment {
         }
     }
 
-    private void updateRecognizedBounds(RectF newBounds) {
+    private void setPointsFromBounds(RectF bounds, PointF[] points) {
+        points[0].set(bounds.left, bounds.top);
+        points[1].set(bounds.right, bounds.top);
+        points[2].set(bounds.right, bounds.bottom);
+        points[3].set(bounds.left, bounds.bottom);
+    }
+
+    private void updateRecognizedBounds(RectF newBounds, PointF[] newPoints) {
         final long now = SystemClock.elapsedRealtime();
         if (lastBoundsUpdate == 0) {
             // first update = set
             lastBoundsUpdate = now - boundsUpdateDuration;
             bounds.set(newBounds);
             fromBounds.set(newBounds);
+            if (newPoints == null) {
+                setPointsFromBounds(newBounds, fromPoints);
+                setPointsFromBounds(newBounds, points);
+            } else {
+                for (int i = 0; i < 4; i++) {
+                    fromPoints[i].set(newPoints[i].x, newPoints[i].y);
+                    points[i].set(newPoints[i].x, newPoints[i].y);
+                }
+            }
         } else {
             // next updates = interpolate
             if (fromBounds != null && now - lastBoundsUpdate < boundsUpdateDuration) {
                 float t = (now - lastBoundsUpdate) / (float) boundsUpdateDuration;
                 t = Math.min(1, Math.max(0, t));
                 AndroidUtilities.lerp(fromBounds, bounds, t, fromBounds);
-            } else {
-                if (fromBounds == null) {
-                    fromBounds = new RectF();
+
+                for (int i = 0; i < 4; ++i) {
+                    fromPoints[i].set(
+                        AndroidUtilities.lerp(fromPoints[i].x, points[i].x, t),
+                        AndroidUtilities.lerp(fromPoints[i].y, points[i].y, t)
+                    );
                 }
+            } else {
                 fromBounds.set(bounds);
+                for (int i = 0; i < 4; ++i) {
+                    fromPoints[i].set(points[i].x, points[i].y);
+                }
             }
             bounds.set(newBounds);
+            if (newPoints == null) {
+                setPointsFromBounds(bounds, points);
+            } else {
+                for (int i = 0; i < 4; ++i) {
+                    points[i].set(newPoints[i].x, newPoints[i].y);
+                }
+            }
             lastBoundsUpdate = now;
         }
         fragmentView.invalidate();
     }
 
     private RectF getRecognizedBounds() {
-        if (fromBounds == null) {
-            return bounds;
-        } else {
-            float t = (SystemClock.elapsedRealtime() - lastBoundsUpdate) / (float) boundsUpdateDuration;
-            t = Math.min(1, Math.max(0, t));
-            if (t < 1f) {
-                fragmentView.invalidate();
-            }
-            AndroidUtilities.lerp(fromBounds, bounds, t, AndroidUtilities.rectTmp);
-            return AndroidUtilities.rectTmp;
+        float t = (SystemClock.elapsedRealtime() - lastBoundsUpdate) / (float) boundsUpdateDuration;
+        t = Math.min(1, Math.max(0, t));
+        if (t < 1f) {
+            fragmentView.invalidate();
         }
+        AndroidUtilities.lerp(fromBounds, bounds, t, AndroidUtilities.rectTmp);
+        return AndroidUtilities.rectTmp;
+    }
+
+    private PointF[] getRecognizedPoints() {
+        float t = (SystemClock.elapsedRealtime() - lastBoundsUpdate) / (float) boundsUpdateDuration;
+        t = Math.min(1, Math.max(0, t));
+        if (t < 1f) {
+            fragmentView.invalidate();
+        }
+        for (int i = 0; i < 4; ++i) {
+            tmpPoints[i].set(
+                AndroidUtilities.lerp(fromPoints[i].x, points[i].x, t),
+                AndroidUtilities.lerp(fromPoints[i].y, points[i].y, t)
+            );
+        }
+        return tmpPoints;
     }
 
     private RectF normalBounds;
@@ -870,8 +914,8 @@ public class CameraScanActivity extends BaseFragment {
         if (normalBounds == null) {
             normalBounds = new RectF();
         }
-        int width = Math.max(AndroidUtilities.displaySize.x, fragmentView.getWidth()),
-            height = Math.max(AndroidUtilities.displaySize.y, fragmentView.getHeight()),
+        int width = fragmentView.getWidth(),
+            height = fragmentView.getHeight(),
             side = (int) (Math.min(width, height) / 1.5f);
         normalBounds.set(
             (width - side) / 2f / (float) width,
@@ -880,6 +924,7 @@ public class CameraScanActivity extends BaseFragment {
             (height + side) / 2f / (float) height
         );
     }
+
     private RectF getBounds() {
         RectF recognizedBounds = getRecognizedBounds();
         if (useRecognizedBounds < 1f) {
@@ -891,22 +936,114 @@ public class CameraScanActivity extends BaseFragment {
         return recognizedBounds;
     }
 
+    private PointF[] getPoints() {
+        PointF[] recognizedPoints = getRecognizedPoints();
+        if (useRecognizedBounds < 1f) {
+            if (normalBounds == null) {
+                updateNormalBounds();
+            }
+            setPointsFromBounds(normalBounds, tmp2Points);
+            for (int i = 0; i < recognizedPoints.length; ++i) {
+                recognizedPoints[i].set(
+                    AndroidUtilities.lerp(tmp2Points[i].x, recognizedPoints[i].x, useRecognizedBounds),
+                    AndroidUtilities.lerp(tmp2Points[i].y, recognizedPoints[i].y, useRecognizedBounds)
+                );
+            }
+        }
+        return recognizedPoints;
+    }
+
+    private void openGalleryPicker() {
+        if (getParentActivity() == null) {
+            return;
+        }
+        if (galleryPickerAlert != null) {
+            galleryPickerAlert.dismissInternal();
+            galleryPickerAlert.onDestroy();
+        }
+        final var chatAttachAlert = galleryPickerAlert = new ChatAttachAlert(getParentActivity(), this, false, false, false, resourceProvider);
+        chatAttachAlert.drawNavigationBar = true;
+        chatAttachAlert.setupPhotoPicker(LocaleController.getString(R.string.ChoosePhoto));
+        chatAttachAlert.setMaxSelectedPhotos(1, false);
+        chatAttachAlert.setDelegate(new ChatAttachAlert.ChatAttachViewDelegate() {
+            @Override
+            public boolean selectItemOnClicking() {
+                return true;
+            }
+
+            @Override
+            public void didPressedButton(int button, boolean arg, boolean notify, int scheduleDate, int scheduleRepeatPeriod, long effectId, boolean invertMedia, boolean forceDocument, long payStars) {
+                if (button != 7 && button != 8) {
+                    return;
+                }
+                var selectedPhotos = chatAttachAlert.getPhotoLayout().getSelectedPhotos();
+                var selectedPhotosOrder = chatAttachAlert.getPhotoLayout().getSelectedPhotosOrder();
+                Object object = null;
+                if (!selectedPhotosOrder.isEmpty()) {
+                    object = selectedPhotos.get(selectedPhotosOrder.get(0));
+                } else if (!selectedPhotos.isEmpty()) {
+                    object = selectedPhotos.values().iterator().next();
+                }
+                if (!(object instanceof MediaController.PhotoEntry photoEntry)) {
+                    return;
+                }
+                processGalleryQr(photoEntry.imagePath != null ? photoEntry.imagePath : photoEntry.path, null, chatAttachAlert::dismiss);
+            }
+        });
+        chatAttachAlert.init();
+        chatAttachAlert.getPhotoLayout().loadGalleryPhotos();
+        chatAttachAlert.show();
+    }
+
+    private void processGalleryQr(String path, Uri uri, Runnable onResult) {
+        if (path == null && uri == null) {
+            return;
+        }
+        try {
+            Point screenSize = AndroidUtilities.getRealScreenSize();
+            Bitmap bitmap = ImageLoader.loadBitmap(path, uri, screenSize.x, screenSize.y, true);
+            if (bitmap == null) {
+                return;
+            }
+            QrResult res = tryReadQr(null, null, 0, 0, 0, bitmap);
+            if (res != null) {
+                processGalleryQrResult(res.text, onResult);
+            }
+        } catch (Throwable e) {
+            FileLog.e(e);
+        }
+    }
+
+    private void processGalleryQrResult(String text, Runnable onResult) {
+        if (delegate == null) {
+            return;
+        }
+        boolean loading = delegate.processQr(text, () -> AndroidUtilities.runOnUIThread(() -> {
+            if (delegate != null) {
+                delegate.didFindQr(text);
+            }
+            if (onResult != null) {
+                onResult.run();
+            }
+            if (currentType != TYPE_QR_WEB_BOT) {
+                finishFragment();
+            }
+        }));
+        if (!loading) {
+            delegate.didFindQr(text);
+            if (onResult != null) {
+                onResult.run();
+            }
+            if (currentType != TYPE_QR_WEB_BOT) {
+                finishFragment();
+            }
+        }
+    }
+
     @Override
     public void onActivityResultFragment(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && requestCode == 11 && data != null && data.getData() != null) {
-            try {
-                Point screenSize = AndroidUtilities.getRealScreenSize();
-                Bitmap bitmap = ImageLoader.loadBitmap(null, data.getData(), screenSize.x, screenSize.y, true);
-                QrResult res = tryReadQr(null, null, 0, 0, 0, bitmap);
-                if (res != null) {
-                    if (delegate != null) {
-                        delegate.didFindQr(res.text);
-                    }
-                    finishFragment();
-                }
-            } catch (Throwable e) {
-                FileLog.e(e);
-            }
+            processGalleryQr(null, data.getData(), null);
         }
     }
 
@@ -923,7 +1060,7 @@ public class CameraScanActivity extends BaseFragment {
         backgroundHandlerThread.quitSafely();
     }
 
-    private Runnable requestShot = new Runnable() {
+    private final Runnable requestShot = new Runnable() {
         @Override
         public void run() {
             if (cameraView != null && !recognized && cameraView.getCameraSession() != null) {
@@ -1008,7 +1145,7 @@ public class CameraScanActivity extends BaseFragment {
                         recognizedStart = SystemClock.elapsedRealtime();
                         AndroidUtilities.runOnUIThread(this::updateRecognized);
                     }
-                    AndroidUtilities.runOnUIThread(() -> updateRecognizedBounds(res.bounds));
+                    AndroidUtilities.runOnUIThread(() -> updateRecognizedBounds(res.bounds, res.cornerPoints));
                 } else if (recognized) {
                     recognizeFailed++;
                     if (recognizeFailed > 4 && !qrLoading) {
@@ -1122,12 +1259,25 @@ public class CameraScanActivity extends BaseFragment {
     private class QrResult {
         String text;
         RectF bounds;
+        PointF[] cornerPoints;
+    }
+
+    private static PointF[] toPointF(Point[] points, int w, int h) {
+        PointF[] out = new PointF[points.length];
+        for (int i = 0; i < points.length; ++i) {
+            out[i] = new PointF(
+                points[i].x / (float) w,
+                points[i].y / (float) h
+            );
+        }
+        return out;
     }
 
     private QrResult tryReadQr(byte[] data, Size size, int x, int y, int side, Bitmap bitmap) {
         try {
             String text;
             RectF bounds = new RectF();
+            PointF[] cornerPoints = null;
             int width = 1, height = 1;
             if (visionQrReader != null && visionQrReader.isOperational()) {
                 Frame frame;
@@ -1144,10 +1294,10 @@ public class CameraScanActivity extends BaseFragment {
                 if (codes != null && codes.size() > 0) {
                     Barcode code = codes.valueAt(0);
                     text = code.rawValue;
+                    cornerPoints = toPointF(code.cornerPoints, width, height);
                     if (code.cornerPoints == null || code.cornerPoints.length == 0) {
                         bounds = null;
                     } else {
-//                        bounds.set(code.getBoundingBox());
                         float minX = Float.MAX_VALUE,
                               maxX = Float.MIN_VALUE,
                               minY = Float.MAX_VALUE,
@@ -1170,6 +1320,7 @@ public class CameraScanActivity extends BaseFragment {
                     if (codes != null && codes.size() > 0) {
                         Barcode code = codes.valueAt(0);
                         text = code.rawValue;
+                        cornerPoints = toPointF(code.cornerPoints, width, height);
                         if (code.cornerPoints == null || code.cornerPoints.length == 0) {
                             bounds = null;
                         } else {
@@ -1195,6 +1346,7 @@ public class CameraScanActivity extends BaseFragment {
                         if (codes != null && codes.size() > 0) {
                             Barcode code = codes.valueAt(0);
                             text = code.rawValue;
+                            cornerPoints = toPointF(code.cornerPoints, width, height);
                             if (code.cornerPoints == null || code.cornerPoints.length == 0) {
                                 bounds = null;
                             } else {
@@ -1224,7 +1376,7 @@ public class CameraScanActivity extends BaseFragment {
                     bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
                     source = new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), intArray);
                     width = bitmap.getWidth();
-                    height = bitmap.getWidth();
+                    height = bitmap.getHeight();
                 } else {
                     source = new PlanarYUVLuminanceSource(data, size.getWidth(), size.getHeight(), x, y, side, side, false);
                     width = size.getWidth();
@@ -1251,6 +1403,15 @@ public class CameraScanActivity extends BaseFragment {
                         maxY = Math.max(maxY, point.getY());
                     }
                     bounds.set(minX, minY, maxX, maxY);
+                    if (result.getResultPoints().length == 4) {
+                        cornerPoints = new PointF[4];
+                        for (int i = 0; i < 4; ++i) {
+                            cornerPoints[i] = new PointF(
+                                result.getResultPoints()[i].getX() / width,
+                                result.getResultPoints()[i].getY() / height
+                            );
+                        }
+                    }
                 }
             } else {
                 text = null;
@@ -1263,21 +1424,22 @@ public class CameraScanActivity extends BaseFragment {
                 Uri uri = Uri.parse(text);
                 String path = uri.getPath().replace("/", "");
             } else {
-                if (!text.startsWith("tg://login?token=") && currentType != TYPE_QR_WEB_BOT) {
+                if (currentType == TYPE_QR_LOGIN && !text.startsWith("tg://login?token=")) {
                     onNoQrFound();
                     return null;
                 }
             }
             QrResult qrResult = new QrResult();
             if (bounds != null) {
-                int paddingx = AndroidUtilities.dp(25),
-                    paddingy = AndroidUtilities.dp(15);
+                int paddingx = dp(25),
+                    paddingy = dp(15);
                 bounds.set(bounds.left - paddingx, bounds.top - paddingy, bounds.right + paddingx, bounds.bottom + paddingy);
                 bounds.set(
                     bounds.left / (float) width, bounds.top / (float) height,
                     bounds.right / (float) width, bounds.bottom / (float) height
                 );
             }
+            qrResult.cornerPoints = cornerPoints;
             qrResult.bounds = bounds;
             qrResult.text = text;
             return qrResult;
@@ -1299,11 +1461,7 @@ public class CameraScanActivity extends BaseFragment {
             return themeDescriptions;
         }
 
-        themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_windowBackgroundWhite));
 
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_windowBackgroundWhite));
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_ITEMSCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteGrayText2));
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SELECTORCOLOR, null, null, null, null, Theme.key_actionBarWhiteSelector));
 
         themeDescriptions.add(new ThemeDescription(titleTextView, ThemeDescription.FLAG_AB_SELECTORCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
         themeDescriptions.add(new ThemeDescription(descriptionText, ThemeDescription.FLAG_AB_SELECTORCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteGrayText6));

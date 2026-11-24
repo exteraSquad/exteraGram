@@ -1,1 +1,84 @@
+pluginManagement {
+    repositories {
+        maven {
+            url = uri("./Tools/maven")
+        }
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+def localBuildProperties = new Properties()
+def localPropsFile = file("local.properties")
+if (localPropsFile.exists()) {
+    localBuildProperties.load(localPropsFile.newDataInputStream())
+}
+
+def configuredBuildPython = localBuildProperties.getProperty("python.build") ?: System.getenv("BUILD_PYTHON")
+
+gradle.ext.configuredBuildPython = configuredBuildPython
+
 include ':TMessagesProj'
+include ':baselineprofile'
+def jlatexmathDir = file('TMessagesProj/lib/jlatexmath/jlatexmath')
+if (!jlatexmathDir.exists()) {
+    throw new GradleException(
+        "Submodule TMessagesProj/lib/jlatexmath is not checked out.\n" +
+        "Run: git submodule update --init --recursive")
+}
+include ':jlatexmath'
+project(':jlatexmath').projectDir = jlatexmathDir
+
+def mediaSettings = file('TMessagesProj_Modules/media/core_settings.gradle')
+if (!mediaSettings.exists()) {
+    throw new GradleException(
+        "Submodule TMessagesProj_Modules/media is not checked out.\n" +
+        "Run: git submodule update --init --recursive")
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+gradle.ext.androidxMediaSettingsDir = file('TMessagesProj_Modules/media').getCanonicalPath()
+gradle.ext.androidxMediaModulePrefix = 'TMessagesProj_Modules:media3:media-'
+
+def mediaPrefix = ':' + gradle.ext.androidxMediaModulePrefix
+def mediaRoot = 'TMessagesProj_Modules/media/libraries/'
+[
+        'lib-common': 'common',
+        'lib-container': 'container',
+        'lib-database': 'database',
+        'lib-datasource': 'datasource',
+        'lib-decoder': 'decoder',
+        'lib-decoder-ffmpeg': 'decoder_ffmpeg',
+        'lib-effect': 'effect',
+        'lib-exoplayer': 'exoplayer',
+        'lib-exoplayer-dash': 'exoplayer_dash',
+        'lib-exoplayer-hls': 'exoplayer_hls',
+        'lib-extractor': 'extractor',
+        'lib-inspector': 'inspector',
+        'lib-inspector-frame': 'inspector_frame',
+        'lib-muxer': 'muxer',
+        'lib-session': 'session',
+        'lib-transformer': 'transformer',
+        'test-data': 'test_data',
+        'test-utils': 'test_utils',
+        'test-utils-robolectric': 'test_utils_robolectric',
+].each { name, dir ->
+    include mediaPrefix + name
+    project(mediaPrefix + name).projectDir = file(mediaRoot + dir)
+    if (dir in ['effect', 'exoplayer', 'test_utils']) {
+        project(mediaPrefix + name).buildFileName = file(mediaRoot + dir).toPath()
+                .relativize(file('TMessagesProj/gradle/media-library.gradle').toPath()).toString()
+    }
+}
+project(':TMessagesProj_Modules:media3').projectDir = file(mediaRoot)

@@ -25,7 +25,7 @@ public class GroupCallStatusIcon {
     boolean lastMuted;
     boolean lastRaisedHand;
     Callback callback;
-    TLRPC.TL_groupCallParticipant participant;
+    TLRPC.GroupCallParticipant participant;
 
     private Runnable shakeHandCallback = () -> {
         shakeHandDrawable.setOnFinishCallback(null, 0);
@@ -68,8 +68,8 @@ public class GroupCallStatusIcon {
     private boolean mutedByMe;
 
     public GroupCallStatusIcon() {
-        micDrawable = new RLottieDrawable(R.raw.voice_mini, "" + R.raw.voice_mini, AndroidUtilities.dp(24), AndroidUtilities.dp(24), true, null);
-        shakeHandDrawable = new RLottieDrawable(R.raw.hand_2, "" + R.raw.hand_2, AndroidUtilities.dp(15), AndroidUtilities.dp(15), true, null);
+        micDrawable = new RLottieDrawable(R.raw.voice_mini, AndroidUtilities.dp(24), AndroidUtilities.dp(24), true, null);
+        shakeHandDrawable = new RLottieDrawable(R.raw.hand_2, AndroidUtilities.dp(15), AndroidUtilities.dp(15), true, null);
     }
 
     private Runnable updateRunnable = () -> {
@@ -106,7 +106,7 @@ public class GroupCallStatusIcon {
         updateIcon(false);
     }
 
-    public void setParticipant(TLRPC.TL_groupCallParticipant participant, boolean animated) {
+    public void setParticipant(TLRPC.GroupCallParticipant participant, boolean animated) {
         this.participant = participant;
         updateIcon(animated);
     }

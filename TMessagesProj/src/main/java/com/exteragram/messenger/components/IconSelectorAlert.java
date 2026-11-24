@@ -5,116 +5,78 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2023
+ Copyright @exteraGram, 2022-2026
+
+ Licensed under the GNU GPL v. 3 or later, with the additional terms
+ in ADDITIONAL_TERMS.md at the root of the repository.
 
 */
 
 package com.exteragram.messenger.components;
 
-import android.annotation.SuppressLint;
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 
-import androidx.core.content.ContextCompat;
-
-import com.exteragram.messenger.utils.FolderIcons;
+import com.exteragram.messenger.utils.folders.FolderUiHelper;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.R;
-import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
-
-import java.util.concurrent.atomic.AtomicReference;
+import org.telegram.ui.Components.RecyclerListView;
 
 public class IconSelectorAlert {
-    private final static Paint selectedPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public static void show(BaseFragment fragment, View view, String selectedIcon, OnIconSelectedListener onIconSelectedListener) {
-        selectedPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText));
+        Context context = fragment.getContext();
+        if (context == null) {
+            return;
+        }
+        Theme.ResourcesProvider resourcesProvider = fragment.getResourceProvider();
+        int selectedColor = Theme.getColor(Theme.key_windowBackgroundWhiteValueText, resourcesProvider);
+        int iconColor = Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon, resourcesProvider);
+        int selectorColor = Theme.getColor(Theme.key_listSelector, resourcesProvider);
 
-        Context context = fragment.getParentActivity();
-
-        ActionBarPopupWindow.ActionBarPopupWindowLayout layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(context, R.drawable.popup_fixed_alert3, null);
-        Rect backgroundPaddings = new Rect();
-        Drawable shadowDrawable = fragment.getParentActivity().getResources().getDrawable(R.drawable.popup_fixed_alert3).mutate();
-        shadowDrawable.getPadding(backgroundPaddings);
-        layout.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground));
-
-        int[] location = new int[2];
-        view.getLocationInWindow(location);
-
-        int popupX = location[0] - AndroidUtilities.dp(8) - backgroundPaddings.left + view.getMeasuredWidth();
-        int popupY = location[1] - AndroidUtilities.dp(8) - backgroundPaddings.top + view.getMeasuredHeight();
-
-        AtomicReference<ActionBarPopupWindow> scrimPopupWindowRef = new AtomicReference<>();
+        View cell = (View) view.getParent();
+        ItemOptions options = ItemOptions.makeOptions(fragment, cell)
+                .setGravity(Gravity.LEFT)
+                .translate(view.getX() - dp(8 + 4 + 1), 0);
+        if (cell.getParent() instanceof RecyclerListView) {
+            options.setScrimViewBackground(((RecyclerListView) cell.getParent()).getClipBackground(cell));
+        }
 
         GridLayout gridLayout = new GridLayout(context);
         int columnCount = 6;
-        while (AndroidUtilities.displaySize.x - popupX < 48 * columnCount + AndroidUtilities.dp(8)) {
+        while (columnCount > 1 && dp(50 * columnCount + 40) > AndroidUtilities.displaySize.x) {
             columnCount--;
         }
         gridLayout.setColumnCount(columnCount);
-
-        for (String icon : FolderIcons.folderIcons.keySet().toArray(new String[0])) {
-            FrameLayout imageView = new FrameLayout(context) {
-                @SuppressLint("DrawAllocation")
-                @Override
-                protected void onDraw(Canvas canvas) {
-                    int p = AndroidUtilities.dp(6);
-                    Drawable d = ContextCompat.getDrawable(context, FolderIcons.getTabIcon(icon));
-                    assert d != null;
-                    d.setColorFilter(new PorterDuffColorFilter(Theme.getColor(isSelected() ? Theme.key_windowBackgroundWhiteValueText : Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
-                    d.setBounds(p, p, getMeasuredWidth() - p, getMeasuredHeight() - p);
-                    if (isSelected()) {
-                        AndroidUtilities.rectTmp.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
-                        selectedPaint.setAlpha(40);
-                        canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(7), AndroidUtilities.dp(7), selectedPaint);
-                    }
-                    d.draw(canvas);
-                    super.onDraw(canvas);
-                }
-            };
-            imageView.setBackground(Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector), 7, 7));
-            imageView.setSelected(icon.equals(selectedIcon));
+        for (String icon : FolderUiHelper.folderIcons.keySet()) {
+            boolean selected = icon.equals(selectedIcon);
+            ImageView imageView = new ImageView(context);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setPadding(dp(6), dp(6), dp(6), dp(6));
+            imageView.setImageResource(FolderUiHelper.getTabIcon(icon));
+            imageView.setColorFilter(new PorterDuffColorFilter(selected ? selectedColor : iconColor, PorterDuff.Mode.MULTIPLY));
+            imageView.setBackground(Theme.createRadSelectorDrawable(selected ? Theme.multAlpha(selectedColor, 40 / 255f) : 0, selectorColor, 7, 7));
             imageView.setOnClickListener(v -> {
-                if (selectedIcon.equals(icon)) {
-                    return;
+                options.dismiss();
+                if (!selected) {
+                    onIconSelectedListener.onIconSelected(icon);
                 }
-                if (scrimPopupWindowRef.get() != null) {
-                    scrimPopupWindowRef.getAndSet(null).dismiss();
-                }
-                onIconSelectedListener.onIconSelected(icon);
             });
             gridLayout.addView(imageView, LayoutHelper.createFrame(48, 48, Gravity.CENTER, 1, 1, 1, 1));
         }
-        layout.addView(gridLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 4, 4, 4, 4));
-
-        ActionBarPopupWindow scrimPopupWindow = new ActionBarPopupWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT);
-        scrimPopupWindowRef.set(scrimPopupWindow);
-        scrimPopupWindow.setPauseNotifications(true);
-        scrimPopupWindow.setDismissAnimationDuration(220);
-        scrimPopupWindow.setOutsideTouchable(true);
-        scrimPopupWindow.setClippingEnabled(true);
-        scrimPopupWindow.setAnimationStyle(R.style.PopupContextAnimation);
-        scrimPopupWindow.setFocusable(true);
-        layout.measure(View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST));
-        scrimPopupWindow.setInputMethodMode(ActionBarPopupWindow.INPUT_METHOD_NOT_NEEDED);
-        scrimPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
-        scrimPopupWindow.getContentView().setFocusableInTouchMode(true);
-        scrimPopupWindow.showAtLocation(view, Gravity.LEFT | Gravity.TOP, popupX, popupY);
-        scrimPopupWindow.dimBehind();
+        options.addView(gridLayout, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4, 4, 4, 4));
+        options.show();
     }
 
     public interface OnIconSelectedListener {

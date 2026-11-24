@@ -37,6 +37,7 @@ import org.telegram.messenger.voip.VoIPService;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.MotionBackgroundDrawable;
 import org.telegram.ui.Components.RLottieDrawable;
@@ -56,12 +57,12 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
     private boolean isDismissed;
     private float outProgress;
 
-    private ViewPager viewPager;
-    private TextView positiveButton;
-    private LinearLayout titlesLayout;
+    private final ViewPager viewPager;
+    private final TextView positiveButton;
+    private final LinearLayout titlesLayout;
     private RLottieImageView micIconView;
-    private TextView[] titles;
-    private VoIPTextureView textureView;
+    private final TextView[] titles;
+    private final VoIPTextureView textureView;
     private int currentTexturePage = 1;
     private int visibleCameraPage = 1;
     private boolean cameraReady;
@@ -137,7 +138,7 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
         ActionBar actionBar = new ActionBar(context);
         actionBar.setBackButtonDrawable(new BackDrawable(false));
         actionBar.setBackgroundColor(Color.TRANSPARENT);
-        actionBar.setItemsColor(Theme.getColor(Theme.key_voipgroup_actionBarItems), false);
+        ThemeBind.actionBarItemsColor(actionBar, Theme.key_voipgroup_actionBarItems, false);
         actionBar.setOccupyStatusBar(true);
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
@@ -204,10 +205,10 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
         positiveButton.setMinWidth(AndroidUtilities.dp(64));
         positiveButton.setTag(Dialog.BUTTON_POSITIVE);
         positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        positiveButton.setTextColor(Theme.getColor(Theme.key_voipgroup_nameText));
+        ThemeBind.textColor(positiveButton, Theme.key_voipgroup_nameText);
         positiveButton.setGravity(Gravity.CENTER);
-        positiveButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        positiveButton.setText(LocaleController.getString("VoipShareVideo", R.string.VoipShareVideo));
+        positiveButton.setTypeface(AndroidUtilities.bold());
+        positiveButton.setText(LocaleController.getString(R.string.VoipShareVideo));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             positiveButton.setForeground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_voipgroup_nameText), (int) (255 * 0.3f))));
         }
@@ -233,17 +234,17 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
             titles[a] = new TextView(context);
             titles[a].setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
             titles[a].setTextColor(0xffffffff);
-            titles[a].setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titles[a].setTypeface(AndroidUtilities.bold());
             titles[a].setPadding(AndroidUtilities.dp(10), 0, AndroidUtilities.dp(10), 0);
             titles[a].setGravity(Gravity.CENTER_VERTICAL);
             titles[a].setSingleLine(true);
             titlesLayout.addView(titles[a], LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT));
             if (a == 0 && needScreencast) {
-                titles[a].setText(LocaleController.getString("VoipPhoneScreen", R.string.VoipPhoneScreen));
+                titles[a].setText(LocaleController.getString(R.string.VoipPhoneScreen));
             } else if (a == 0 || a == 1 && needScreencast) {
-                titles[a].setText(LocaleController.getString("VoipFrontCamera", R.string.VoipFrontCamera));
+                titles[a].setText(LocaleController.getString(R.string.VoipFrontCamera));
             } else {
-                titles[a].setText(LocaleController.getString("VoipBackCamera", R.string.VoipBackCamera));
+                titles[a].setText(LocaleController.getString(R.string.VoipBackCamera));
             }
             int num = a;
             titles[a].setOnClickListener(view -> viewPager.setCurrentItem(num, true));
@@ -277,7 +278,7 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
             micIconView = new RLottieImageView(context);
             micIconView.setPadding(AndroidUtilities.dp(9), AndroidUtilities.dp(9), AndroidUtilities.dp(9), AndroidUtilities.dp(9));
             micIconView.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(48), ColorUtils.setAlphaComponent(Color.BLACK, (int) (255 * 0.3f))));
-            RLottieDrawable micIcon = new RLottieDrawable(R.raw.voice_mini, "" + R.raw.voice_mini, AndroidUtilities.dp(24), AndroidUtilities.dp(24), true, null);
+            RLottieDrawable micIcon = new RLottieDrawable(R.raw.voice_mini, AndroidUtilities.dp(24), AndroidUtilities.dp(24), true, null);
             micIconView.setAnimation(micIcon);
             micIconView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             micEnabled = true;
@@ -303,6 +304,9 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
 
         layoutParams = (FrameLayout.LayoutParams) titlesLayout.getLayoutParams();
         layoutParams.bottomMargin = padding;
+
+        layoutParams = (FrameLayout.LayoutParams) micIconView.getLayoutParams();
+        layoutParams.bottomMargin = AndroidUtilities.dp(136) + padding;
     }
 
     private void updateTitlesLayout() {
@@ -394,7 +398,7 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
                     if (lastBitmap != bitmap) {
                         bitmap.recycle();
                     }
-                    Utilities.blurBitmap(lastBitmap, 7, 1, lastBitmap.getWidth(), lastBitmap.getHeight(), lastBitmap.getRowBytes());
+                    Utilities.blurBitmap(lastBitmap, 7);
                     File file = new File(ApplicationLoader.getFilesDirFixed(), "cthumb" + visibleCameraPage + ".jpg");
                     FileOutputStream stream = new FileOutputStream(file);
                     lastBitmap.compress(Bitmap.CompressFormat.JPEG, 87, stream);
@@ -518,12 +522,12 @@ public abstract class PrivateVideoPreviewDialog extends FrameLayout implements V
                 frameLayout.addView(imageView, LayoutHelper.createFrame(82, 82, Gravity.CENTER, 0, 0, 0, 60));
 
                 TextView textView = new TextView(getContext());
-                textView.setText(LocaleController.getString("VoipVideoPrivateScreenSharing", R.string.VoipVideoPrivateScreenSharing));
+                textView.setText(LocaleController.getString(R.string.VoipVideoPrivateScreenSharing));
                 textView.setGravity(Gravity.CENTER);
                 textView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
                 textView.setTextColor(0xffffffff);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-                textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                textView.setTypeface(AndroidUtilities.bold());
                 frameLayout.addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 21, 28, 21, 0));
             } else {
                 ImageView imageView = new ImageView(getContext());

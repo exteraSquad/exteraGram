@@ -16,6 +16,8 @@ import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.WindowManager;
@@ -29,7 +31,7 @@ import java.util.List;
 
 public class CameraSession {
 
-    protected CameraInfo cameraInfo;
+    public CameraInfo cameraInfo;
     private String currentFlashMode;
     private OrientationEventListener orientationEventListener;
     private int lastOrientation = -1;
@@ -51,6 +53,8 @@ public class CameraSession {
     private boolean useTorch;
     private boolean isRound;
     private boolean destroyed;
+
+    public ArrayList<String> availableFlashModes = new ArrayList<>();
 
     private int infoCameraId = -1;
     Camera.CameraInfo info = new Camera.CameraInfo();
@@ -130,31 +134,62 @@ public class CameraSession {
     }
 
     public void checkFlashMode(String mode) {
-        ArrayList<String> modes = CameraController.getInstance().availableFlashModes;
+        ArrayList<String> modes = availableFlashModes;
         if (modes.contains(currentFlashMode)) {
             return;
         }
         currentFlashMode = mode;
-        configurePhotoCamera();
-        SharedPreferences sharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("camera", Activity.MODE_PRIVATE);
-        sharedPreferences.edit().putString(cameraInfo.frontCamera != 0 ? "flashMode_front" : "flashMode", mode).apply();
+        if (isRound) {
+            configureRoundCamera(false);
+        } else {
+            configurePhotoCamera();
+            SharedPreferences sharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("camera", Activity.MODE_PRIVATE);
+            sharedPreferences.edit().putString(cameraInfo.frontCamera != 0 ? "flashMode_front" : "flashMode", mode).commit();
+        }
     }
 
     public void setCurrentFlashMode(String mode) {
         currentFlashMode = mode;
-        configurePhotoCamera();
-        SharedPreferences sharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("camera", Activity.MODE_PRIVATE);
-        sharedPreferences.edit().putString(cameraInfo.frontCamera != 0 ? "flashMode_front" : "flashMode", mode).apply();
+        if (isRound) {
+            configureRoundCamera(false);
+        } else {
+            configurePhotoCamera();
+            SharedPreferences sharedPreferences = ApplicationLoader.applicationContext.getSharedPreferences("camera", Activity.MODE_PRIVATE);
+            sharedPreferences.edit().putString(cameraInfo.frontCamera != 0 ? "flashMode_front" : "flashMode", mode).commit();
+        }
+    }
+
+    public boolean flashAvailable() {
+        if (cameraInfo.camera == null) {
+            return false;
+        }
+
+        Camera.Parameters params = null;
+        try {
+            params = cameraInfo.camera.getParameters();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+
+        if (params == null || params.getFlashMode() == null) {
+            return false;
+        }
+
+        List<String> supportedFlashModes = params.getSupportedFlashModes();
+
+        return supportedFlashModes != null && !supportedFlashModes.isEmpty() && (supportedFlashModes.size() != 1 || !supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF));
     }
 
     public void setTorchEnabled(boolean enabled) {
         try {
-            useTorch = enabled;
+            String beforeFlashMode = currentFlashMode;
             currentFlashMode = enabled ? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_OFF;
-            if (isRound) {
-                configureRoundCamera(false);
-            } else {
-                configurePhotoCamera();
+            if (!TextUtils.equals(beforeFlashMode, currentFlashMode)) {
+                if (isRound) {
+                    configureRoundCamera(false);
+                } else {
+                    configurePhotoCamera();
+                }
             }
         } catch (Exception e) {
             FileLog.e(e);
@@ -166,7 +201,7 @@ public class CameraSession {
     }
 
     public String getNextFlashMode() {
-        ArrayList<String> modes = CameraController.getInstance().availableFlashModes;
+        ArrayList<String> modes = availableFlashModes;
         for (int a = 0; a < modes.size(); a++) {
             String mode = modes.get(a);
             if (mode.equals(currentFlashMode)) {
@@ -264,7 +299,7 @@ public class CameraSession {
                     } catch (Exception e) {
                         //
                     }
-                    params.setFlashMode(useTorch ? Camera.Parameters.FLASH_MODE_TORCH : currentFlashMode);
+                    params.setFlashMode(currentFlashMode);
                     params.setZoom((int) (currentZoom * maxZoom));
                     try {
                         camera.setParameters(params);
@@ -301,10 +336,10 @@ public class CameraSession {
         displayOrientation = getDisplayOrientation(info, true);
         int cameraDisplayOrientation;
 
+        int degrees = 0;
         if ("samsung".equals(Build.MANUFACTURER) && "sf2wifixx".equals(Build.PRODUCT)) {
             cameraDisplayOrientation = 0;
         } else {
-            int degrees = 0;
             int temp = displayOrientation;
             switch (temp) {
                 case Surface.ROTATION_0:
@@ -419,7 +454,7 @@ public class CameraSession {
         }
     }
 
-    protected void focusToRect(Rect focusRect, Rect meteringRect) {
+    public void focusToRect(Rect focusRect, Rect meteringRect) {
         try {
             Camera camera = cameraInfo.camera;
             if (camera != null) {
@@ -466,7 +501,7 @@ public class CameraSession {
 
     public void setZoom(float value) {
         currentZoom = value;
-        if (isVideo && Camera.Parameters.FLASH_MODE_ON.equals(currentFlashMode) || isRound && Camera.Parameters.FLASH_MODE_TORCH.equals(currentFlashMode)) {
+        if (isVideo && Camera.Parameters.FLASH_MODE_ON.equals(currentFlashMode)) {
             useTorch = true;
         }
         if (isRound) {
@@ -502,7 +537,7 @@ public class CameraSession {
         isVideo = true;
     }
 
-    protected void stopVideoRecording() {
+    public void stopVideoRecording() {
         isVideo = false;
         useTorch = false;
         configurePhotoCamera();

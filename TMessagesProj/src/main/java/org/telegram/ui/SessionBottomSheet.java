@@ -1,12 +1,14 @@
 package org.telegram.ui;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -18,7 +20,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -26,18 +27,20 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.tgnet.tl.TL_account;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.SessionCell;
-import org.telegram.ui.Cells.TextCheckCell2;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.Switch;
+import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 
-import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.utils.ui.UIUtil;
 
 public class SessionBottomSheet extends BottomSheet {
 
@@ -55,6 +58,7 @@ public class SessionBottomSheet extends BottomSheet {
 
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(dp(4), 0, dp(4), 0);
 
         imageView = new RLottieImageView(context);
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -71,24 +75,24 @@ public class SessionBottomSheet extends BottomSheet {
 
         TextView nameView = new TextView(context);
         nameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        nameView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
-        nameView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        nameView.setTypeface(AndroidUtilities.bold());
+        ThemeBind.textColor(nameView, Theme.key_windowBackgroundWhiteBlackText);
         nameView.setGravity(Gravity.CENTER);
         linearLayout.addView(nameView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 21, 12, 21, 0));
 
         TextView timeView = new TextView(context);
-        timeView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        ThemeBind.textColor(timeView, Theme.key_windowBackgroundWhiteGrayText);
         timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
-        timeView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
+        timeView.setTypeface(AndroidUtilities.regular());
         timeView.setGravity(Gravity.CENTER);
         linearLayout.addView(timeView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 21, 4, 21, 21));
 
 
         String timeText;
         if ((session.flags & 1) != 0) {
-            timeText = LocaleController.getString("Online", R.string.Online);
+            timeText = LocaleController.getString(R.string.Online);
         } else {
-            timeText = LocaleController.formatDateTime(session.date_active);
+            timeText = LocaleController.formatDateTime(session.date_active, true);
         }
         timeView.setText(timeText);
 
@@ -116,9 +120,9 @@ public class SessionBottomSheet extends BottomSheet {
         stringBuilder.append(" ").append(session.app_version);
         applicationItemView.valueText.setText(stringBuilder);
         Drawable drawable = ContextCompat.getDrawable(context, R.drawable.menu_devices).mutate();
-        drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN));
+        ThemeBind.drawableColorFilter(applicationItemView.iconView, drawable, Theme.key_windowBackgroundWhiteGrayIcon, PorterDuff.Mode.SRC_IN);
         applicationItemView.iconView.setImageDrawable(drawable);
-        applicationItemView.descriptionText.setText(LocaleController.getString("Application", R.string.Application));
+        applicationItemView.descriptionText.setText(LocaleController.getString(R.string.Application));
 
         linearLayout.addView(applicationItemView);
 
@@ -127,9 +131,9 @@ public class SessionBottomSheet extends BottomSheet {
             ItemView locationItemView = new ItemView(context, false);
             locationItemView.valueText.setText(session.country);
             drawable = ContextCompat.getDrawable(context, R.drawable.msg_location).mutate();
-            drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN));
+            ThemeBind.drawableColorFilter(locationItemView.iconView, drawable, Theme.key_windowBackgroundWhiteGrayIcon, PorterDuff.Mode.SRC_IN);
             locationItemView.iconView.setImageDrawable(drawable);
-            locationItemView.descriptionText.setText(LocaleController.getString("Location", R.string.Location));
+            locationItemView.descriptionText.setText(LocaleController.getString(R.string.Location));
 
             locationItemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -144,7 +148,7 @@ public class SessionBottomSheet extends BottomSheet {
                     return true;
                 }
             });
-            locationItemView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+            ThemeBind.selectorBackground(locationItemView, Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2), null, ThemeBind.of(Theme.key_listSelector));
 
             linearLayout.addView(locationItemView);
             if (prevItem != null) {
@@ -157,9 +161,9 @@ public class SessionBottomSheet extends BottomSheet {
             ItemView locationItemView = new ItemView(context, false);
             locationItemView.valueText.setText(session.ip);
             drawable = ContextCompat.getDrawable(context, R.drawable.msg_language).mutate();
-            drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN));
+            ThemeBind.drawableColorFilter(locationItemView.iconView, drawable, Theme.key_windowBackgroundWhiteGrayIcon, PorterDuff.Mode.SRC_IN);
             locationItemView.iconView.setImageDrawable(drawable);
-            locationItemView.descriptionText.setText(LocaleController.getString("IpAddress", R.string.IpAddress));
+            locationItemView.descriptionText.setText(LocaleController.getString(R.string.IpAddress));
 
 
             locationItemView.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +180,7 @@ public class SessionBottomSheet extends BottomSheet {
                 }
             });
 
-            locationItemView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
+            ThemeBind.selectorBackground(locationItemView, Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2), null, ThemeBind.of(Theme.key_listSelector));
 
             linearLayout.addView(locationItemView);
 
@@ -188,12 +192,12 @@ public class SessionBottomSheet extends BottomSheet {
 
         if (secretChatsEnabled(session)) {
             ItemView acceptSecretChats = new ItemView(context, true);
-            acceptSecretChats.valueText.setText(LocaleController.getString("AcceptSecretChats", R.string.AcceptSecretChats));
+            acceptSecretChats.valueText.setText(LocaleController.getString(R.string.AcceptSecretChats));
             drawable = ContextCompat.getDrawable(context, R.drawable.msg_secret).mutate();
-            drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN));
+            ThemeBind.drawableColorFilter(acceptSecretChats.iconView, drawable, Theme.key_windowBackgroundWhiteGrayIcon, PorterDuff.Mode.SRC_IN);
             acceptSecretChats.iconView.setImageDrawable(drawable);
             acceptSecretChats.switchView.setChecked(!session.encrypted_requests_disabled, false);
-            acceptSecretChats.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 7));
+            ThemeBind.selectorBackground(acceptSecretChats, Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 7), null, ThemeBind.of(Theme.key_listSelector));
             acceptSecretChats.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -206,43 +210,38 @@ public class SessionBottomSheet extends BottomSheet {
             if (prevItem != null) {
                 prevItem.needDivider = true;
             }
-            acceptSecretChats.descriptionText.setText(LocaleController.getString("AcceptSecretChatsDescription", R.string.AcceptSecretChatsDescription));
+            acceptSecretChats.descriptionText.setText(LocaleController.getString(R.string.AcceptSecretChatsDescription));
             linearLayout.addView(acceptSecretChats);
             prevItem = acceptSecretChats;
         }
 
-        ItemView acceptCalls = new ItemView(context, true);
-        acceptCalls.valueText.setText(LocaleController.getString("AcceptCalls", R.string.AcceptCalls));
-        drawable = ContextCompat.getDrawable(context, R.drawable.msg_calls).mutate();
-        drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN));
-        acceptCalls.iconView.setImageDrawable(drawable);
-        acceptCalls.switchView.setChecked(!session.call_requests_disabled, false);
-        acceptCalls.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 7));
-        acceptCalls.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                acceptCalls.switchView.setChecked(!acceptCalls.switchView.isChecked(), true);
-                session.call_requests_disabled = !acceptCalls.switchView.isChecked();
-                uploadSessionSettings();
+        if (acceptCallsEnabled(session)) {
+            ItemView acceptCalls = new ItemView(context, true);
+            acceptCalls.valueText.setText(LocaleController.getString(R.string.AcceptCalls));
+            drawable = ContextCompat.getDrawable(context, R.drawable.msg_calls).mutate();
+            ThemeBind.drawableColorFilter(acceptCalls.iconView, drawable, Theme.key_windowBackgroundWhiteGrayIcon, PorterDuff.Mode.SRC_IN);
+            acceptCalls.iconView.setImageDrawable(drawable);
+            acceptCalls.switchView.setChecked(!session.call_requests_disabled, false);
+            ThemeBind.selectorBackground(acceptCalls, Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 7), null, ThemeBind.of(Theme.key_listSelector));
+            acceptCalls.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    acceptCalls.switchView.setChecked(!acceptCalls.switchView.isChecked(), true);
+                    session.call_requests_disabled = !acceptCalls.switchView.isChecked();
+                    uploadSessionSettings();
+                }
+            });
+            if (prevItem != null) {
+                prevItem.needDivider = true;
             }
-        });
 
-        if (prevItem != null) {
-            prevItem.needDivider = true;
+            acceptCalls.descriptionText.setText(LocaleController.getString(R.string.AcceptCallsChatsDescription));
+            linearLayout.addView(acceptCalls);
         }
-        acceptCalls.descriptionText.setText(LocaleController.getString("AcceptCallsChatsDescription", R.string.AcceptCallsChatsDescription));
-        linearLayout.addView(acceptCalls);
 
         if (!isCurrentSession) {
-            TextView buttonTextView = new TextView(context);
-            buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
-            buttonTextView.setGravity(Gravity.CENTER);
-            buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            buttonTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
-            buttonTextView.setText(LocaleController.getString("TerminateSession", R.string.TerminateSession));
-
-            buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-            buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_chat_attachAudioBackground), ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhite), 120)));
+            ButtonWithCounterView buttonTextView = new ButtonWithCounterView(context, null);
+            buttonTextView.setText(LocaleController.getString(R.string.TerminateSession), false);
 
             linearLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
 
@@ -252,20 +251,20 @@ public class SessionBottomSheet extends BottomSheet {
                     AlertDialog.Builder builder = new AlertDialog.Builder(parentFragment.getParentActivity());
                     final boolean[] param = new boolean[1];
                     String buttonText;
-                    builder.setMessage(LocaleController.getString("TerminateSessionText", R.string.TerminateSessionText));
-                    builder.setTitle(LocaleController.getString("AreYouSureSessionTitle", R.string.AreYouSureSessionTitle));
-                    buttonText = LocaleController.getString("Terminate", R.string.Terminate);
+                    builder.setMessage(LocaleController.getString(R.string.TerminateSessionText));
+                    builder.setTitle(LocaleController.getString(R.string.AreYouSureSessionTitle));
+                    buttonText = LocaleController.getString(R.string.Terminate);
 
                     builder.setPositiveButton(buttonText, (dialogInterface, option) -> {
                         callback.onSessionTerminated(session);
                         dismiss();
                     });
-                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                    builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
                     AlertDialog alertDialog = builder.create();
                     fragment.showDialog(alertDialog);
                     TextView button = (TextView) alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     if (button != null) {
-                        button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                        ThemeBind.textColor(button, Theme.key_text_RedBold);
                     }
                 }
             });
@@ -276,15 +275,16 @@ public class SessionBottomSheet extends BottomSheet {
         setCustomView(scrollView);
     }
 
+    private boolean acceptCallsEnabled(TLRPC.TL_authorization session) {
+        return session.api_id != 22;
+    }
+
     private boolean secretChatsEnabled(TLRPC.TL_authorization session) {
-        if (session.api_id == 2040 || session.api_id == 2496) {
-            return false;
-        }
-        return true;
+        return session.api_id != 2040 && session.api_id != 2496;
     }
 
     private void uploadSessionSettings() {
-        TLRPC.TL_account_changeAuthorizationSettings req = new TLRPC.TL_account_changeAuthorizationSettings();
+        TL_account.changeAuthorizationSettings req = new TL_account.changeAuthorizationSettings();
         req.encrypted_requests_disabled = session.encrypted_requests_disabled;
         req.call_requests_disabled = session.call_requests_disabled;
         req.flags = 1 | 2;
@@ -296,11 +296,11 @@ public class SessionBottomSheet extends BottomSheet {
 
     private void copyText(String text) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setItems(new CharSequence[]{LocaleController.getString("Copy", R.string.Copy)}, (dialogInterface, i) -> {
+        builder.setItems(new CharSequence[]{LocaleController.getString(R.string.Copy)}, (dialogInterface, i) -> {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
             android.content.ClipData clip = android.content.ClipData.newPlainText("label", text);
             clipboard.setPrimaryClip(clip);
-            BulletinFactory.of(getContainer(), null).createCopyBulletin(LocaleController.getString("TextCopied", R.string.TextCopied)).show();
+            BulletinFactory.of(getContainer(), null).createCopyBulletin(LocaleController.getString(R.string.TextCopied)).show();
         });
         builder.show();
 
@@ -329,6 +329,10 @@ public class SessionBottomSheet extends BottomSheet {
             iconId = R.raw.chrome_30;
             colorKey = Theme.key_avatar_backgroundPink;
             colorKey2 = Theme.key_avatar_background2Pink;
+        } else if (deviceModel.contains("firefox")) {
+            iconId = R.raw.firefox_30;
+            colorKey = Theme.key_avatar_backgroundRed;
+            colorKey2 = Theme.key_avatar_background2Red;
         } else if (deviceModel.contains("opera") || deviceModel.contains("firefox") || deviceModel.contains("vivaldi")) {
             animation = false;
             if (deviceModel.contains("opera")) {
@@ -342,6 +346,10 @@ public class SessionBottomSheet extends BottomSheet {
             colorKey2 = Theme.key_avatar_background2Pink;
         } else if (platform.contains("ubuntu")) {
             iconId = R.raw.ubuntu_30;
+            colorKey = Theme.key_avatar_backgroundBlue;
+            colorKey2 = Theme.key_avatar_background2Blue;
+        } else if (platform.contains("linux")) {
+            iconId = R.raw.linux_30;
             colorKey = Theme.key_avatar_backgroundBlue;
             colorKey2 = Theme.key_avatar_background2Blue;
         } else if (platform.contains("ios")) {
@@ -371,14 +379,21 @@ public class SessionBottomSheet extends BottomSheet {
                 colorKey2 = Theme.key_avatar_background2Pink;
             }
         }
-
-        imageView.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(42), Theme.getColor(colorKey)));
-//        imageView.setBackground(new SessionCell.CircleGradientDrawable(AndroidUtilities.dp(42), Theme.getColor(colorKey), Theme.getColor(colorKey2)));
-        if (animation) {
+        boolean isExtera = session.app_name.toLowerCase().contains("exteragram");
+        if (isExtera) {
+            imageView.setBackground(Theme.createCircleDrawable(dp(42), ContextCompat.getColor(ApplicationLoader.applicationContext, R.color.ic_background)));
+        } else {
+            imageView.setBackground(new SessionCell.CircleGradientDrawable(AndroidUtilities.dp(42), Theme.getColor(colorKey), Theme.getColor(colorKey2)));
+        }
+        if (animation && !isExtera) {
             int[] colors = new int[]{0x000000, Theme.getColor(colorKey)};
             imageView.setAnimation(iconId, 50, 50, colors);
         } else {
-            imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), iconId));
+            var icon = ContextCompat.getDrawable(getContext(), isExtera ? R.drawable.ic_foreground : iconId).mutate();
+            if (isExtera) {
+                icon = new BitmapDrawable(ApplicationLoader.applicationContext.getResources(), UIUtil.drawableToBitmap(icon, dp(70), dp(70)));
+            }
+            imageView.setImageDrawable(icon);
         }
     }
 
@@ -402,31 +417,33 @@ public class SessionBottomSheet extends BottomSheet {
 
             valueText = new TextView(context);
             valueText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            valueText.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
+            valueText.setTypeface(AndroidUtilities.regular());
             valueText.setGravity(Gravity.LEFT);
-            valueText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+            ThemeBind.textColor(valueText, Theme.key_windowBackgroundWhiteBlackText);
             linearLayout.addView(valueText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, needSwitch ? 64 : 0, 0));
 
             descriptionText = new TextView(context);
             descriptionText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
-            descriptionText.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
+            descriptionText.setTypeface(AndroidUtilities.regular());
             descriptionText.setGravity(Gravity.LEFT);
-            descriptionText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+            ThemeBind.textColor(descriptionText, Theme.key_windowBackgroundWhiteGrayText);
             linearLayout.addView(descriptionText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 4, needSwitch ? 64 : 0, 0));
-            setPadding(0, AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4));
+            setPadding(0, dp(4), 0, dp(4));
 
             if (needSwitch) {
                 switchView = new Switch(context);
                 switchView.setDrawIconType(1);
                 addView(switchView, LayoutHelper.createFrame(37, 40, Gravity.RIGHT | Gravity.CENTER_VERTICAL, 21, 0, 21, 0));
             }
+
+            setClipChildren(false);
         }
 
         @Override
         protected void dispatchDraw(Canvas canvas) {
             super.dispatchDraw(canvas);
-            if (needDivider && !ExteraConfig.disableDividers) {
-                canvas.drawRect(AndroidUtilities.dp(64), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
+            if (needDivider) {
+                canvas.drawRect(dp(64), getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight(), Theme.dividerPaint);
             }
         }
 
@@ -437,7 +454,7 @@ public class SessionBottomSheet extends BottomSheet {
                 info.setClassName("android.widget.Switch");
                 info.setCheckable(true);
                 info.setChecked(switchView.isChecked());
-                info.setText(valueText.getText() + "\n" + descriptionText.getText() + "\n" + (switchView.isChecked() ? LocaleController.getString("NotificationsOn", R.string.NotificationsOn) : LocaleController.getString("NotificationsOff", R.string.NotificationsOff)));
+                info.setText(valueText.getText() + "\n" + descriptionText.getText() + "\n" + (switchView.isChecked() ? LocaleController.getString(R.string.NotificationsOn) : LocaleController.getString(R.string.NotificationsOff)));
             }
         }
     }

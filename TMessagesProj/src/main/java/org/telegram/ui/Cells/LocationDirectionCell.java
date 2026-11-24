@@ -1,6 +1,9 @@
 package org.telegram.ui.Cells;
 
+import org.telegram.messenger.FileLog;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 
@@ -9,10 +12,13 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
+import org.telegram.ui.BadWayToMakeButtonRound;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.ScaleStateListAnimator;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class LocationDirectionCell extends FrameLayout {
+public class LocationDirectionCell extends FrameLayout implements Theme.Colorable {
 
     private final Theme.ResourcesProvider resourcesProvider;
     private SimpleTextView buttonTextView;
@@ -23,19 +29,23 @@ public class LocationDirectionCell extends FrameLayout {
         this.resourcesProvider = resourcesProvider;
 
         frameLayout = new FrameLayout(context);
-        frameLayout.setBackground(Theme.AdaptiveRipple.filledRect(getThemedColor(Theme.key_featuredStickers_addButton), 4));
+        frameLayout.setBackground(Theme.AdaptiveRipple.filledRect(getThemedColor(Theme.key_featuredStickers_addButton), 8));
         addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.TOP, 16, 10, 16, 0));
 
         buttonTextView = new SimpleTextView(context);
         buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setDrawablePadding(AndroidUtilities.dp(8));
-        buttonTextView.setTextColor(getThemedColor(Theme.key_featuredStickers_buttonText));
+        ThemeBind.textColor(buttonTextView, Theme.key_featuredStickers_buttonText, resourcesProvider);
         buttonTextView.setTextSize(14);
-        buttonTextView.setText(LocaleController.getString("Directions", R.string.Directions));
-        buttonTextView.setLeftDrawable(R.drawable.navigate);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setText(LocaleController.getString(R.string.Directions));
+        buttonTextView.setLeftDrawable(R.drawable.filled_directions);
+        if (Theme.isCurrentThemeMonet()) buttonTextView.getLeftDrawable().setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.SRC_IN));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         frameLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
+        BadWayToMakeButtonRound.round(frameLayout);
+        ScaleStateListAnimator.apply(frameLayout, 0.02f, 1.2f);
     }
 
     @Override
@@ -49,5 +59,26 @@ public class LocationDirectionCell extends FrameLayout {
 
     private int getThemedColor(int key) {
         return Theme.getColor(key, resourcesProvider);
+    }
+
+    private int lastButtonColor;
+    private boolean lastButtonColorDark;
+
+    @Override
+    public void updateColors() {
+        try {
+            final int color = getThemedColor(Theme.key_featuredStickers_addButton);
+            if (frameLayout != null && (color != lastButtonColor || lastButtonColorDark != Theme.isCurrentThemeDark())) {
+                lastButtonColorDark = Theme.isCurrentThemeDark(); // the ripple shade depends on dark / light
+                lastButtonColor = color;
+                // recolor in place (content + adaptive ripple) instead of a new drawable per frame
+                Theme.setSelectorDrawableColor(frameLayout.getBackground(), color, false);
+                Theme.setSelectorDrawableColor(frameLayout.getBackground(), Theme.AdaptiveRipple.calcRippleColor(color), true);
+                frameLayout.invalidate();
+            }
+            invalidate();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 }

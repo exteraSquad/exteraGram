@@ -5,9 +5,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.core.util.Consumer;
 
@@ -120,6 +122,11 @@ public class GoogleMapsProvider implements IMapsProvider {
             return googleMap.getMaxZoomLevel();
         }
 
+        @Override
+        public float getMinZoomLevel() {
+            return googleMap.getMinZoomLevel();
+        }
+
         @SuppressLint("MissingPermission")
         @Override
         public void setMyLocationEnabled(boolean enabled) {
@@ -149,6 +156,11 @@ public class GoogleMapsProvider implements IMapsProvider {
                 }
                 onCameraMoveStartedListener.onCameraMoveStarted(outReason);
             });
+        }
+
+        @Override
+        public void setOnCameraIdleListener(Runnable callback) {
+            googleMap.setOnCameraIdleListener(callback::run);
         }
 
         @Override
@@ -523,6 +535,8 @@ public class GoogleMapsProvider implements IMapsProvider {
         private ITouchInterceptor interceptInterceptor;
         private Runnable onLayoutListener;
 
+        private GLSurfaceView glSurfaceView;
+
         private GoogleMapView(Context context) {
             mapView = new MapView(context) {
                 @Override
@@ -573,7 +587,28 @@ public class GoogleMapsProvider implements IMapsProvider {
 
         @Override
         public void getMapAsync(Consumer<IMap> callback) {
-            mapView.getMapAsync(googleMap -> callback.accept(new GoogleMapImpl(googleMap)));
+            mapView.getMapAsync(googleMap -> {
+                callback.accept(new GoogleMapImpl(googleMap));
+                findGlSurfaceView(mapView);
+            });
+        }
+
+        @Override
+        public GLSurfaceView getGlSurfaceView() {
+            return glSurfaceView;
+        }
+
+        private void findGlSurfaceView(View v) {
+            if (v instanceof GLSurfaceView) {
+                glSurfaceView = (GLSurfaceView) v;
+            }
+
+            if (v instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) v;
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    findGlSurfaceView(vg.getChildAt(i));
+                }
+            }
         }
 
         @Override

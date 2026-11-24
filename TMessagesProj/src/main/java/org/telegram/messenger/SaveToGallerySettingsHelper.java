@@ -198,19 +198,19 @@ public class SaveToGallerySettingsHelper {
             StringBuilder builder = new StringBuilder();
             if (enabled()) {
                 if (savePhoto) {
-                    builder.append(LocaleController.getString("SaveToGalleryPhotos", R.string.SaveToGalleryPhotos));
+                    builder.append(LocaleController.getString(R.string.SaveToGalleryPhotos));
                 }
                 if (saveVideo) {
                     if (builder.length() != 0) {
                         builder.append(", ");
                     }
-                    builder.append(LocaleController.getString("SaveToGalleryVideos", R.string.SaveToGalleryVideos));
+                    builder.append(LocaleController.getString(R.string.SaveToGalleryVideos));
                     if (limitVideo > 0 && limitVideo < 4L * 1000 * 1024 * 1024) {
-                        builder.append(" (").append(AndroidUtilities.formatFileSize(limitVideo, true)).append(")");
+                        builder.append(" (").append(AndroidUtilities.formatFileSize(limitVideo, true, false)).append(")");
                     }
                 }
             } else {
-                builder.append(LocaleController.getString("SaveToGalleryOff", R.string.SaveToGalleryOff));
+                builder.append(LocaleController.getString(R.string.SaveToGalleryOff));
             }
             LongSparseArray<DialogException> exceptions = UserConfig.getInstance(currentAccount).getSaveGalleryExceptions(type);
             if (exceptions.size() != 0) {
@@ -236,7 +236,7 @@ public class SaveToGallerySettingsHelper {
             StringBuilder builder = new StringBuilder();
             if (enabled()) {
                 if (savePhoto) {
-                    builder.append(LocaleController.getString("SaveToGalleryPhotos", R.string.SaveToGalleryPhotos));
+                    builder.append(LocaleController.getString(R.string.SaveToGalleryPhotos));
                 }
                 if (saveVideo) {
                     if (builder.length() != 0) {
@@ -244,13 +244,13 @@ public class SaveToGallerySettingsHelper {
                     }
 
                     if (limitVideo > 0 && limitVideo < 4L * 1000 * 1024 * 1024) {
-                        builder.append(LocaleController.formatString("SaveToGalleryVideosUpTo", R.string.SaveToGalleryVideosUpTo, AndroidUtilities.formatFileSize(limitVideo, true)));
+                        builder.append(LocaleController.formatString("SaveToGalleryVideosUpTo", R.string.SaveToGalleryVideosUpTo, AndroidUtilities.formatFileSize(limitVideo, true, false)));
                     } else {
                         builder.append(LocaleController.formatString("SaveToGalleryVideos", R.string.SaveToGalleryVideos));
                     }
                 }
             } else {
-                builder.append(LocaleController.getString("SaveToGalleryOff", R.string.SaveToGalleryOff));
+                builder.append(LocaleController.getString(R.string.SaveToGalleryOff));
             }
             return builder;
         }

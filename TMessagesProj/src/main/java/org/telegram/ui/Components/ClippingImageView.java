@@ -50,7 +50,9 @@ public class ClippingImageView extends View {
     private Path roundPath = new Path();
     private static float[] radii = new float[8];
 
+    private boolean in;
     private float animationProgress;
+    private boolean fade;
     private float[][] animationValues;
 
     private float additionalTranslationY;
@@ -69,8 +71,10 @@ public class ClippingImageView extends View {
         shaderMatrix = new Matrix();
     }
 
-    public void setAnimationValues(float[][] values) {
+    public void setAnimationValues(float[][] values, boolean in, boolean fade) {
         animationValues = values;
+        this.in = in;
+        this.fade = fade;
     }
 
     public void setAdditionalTranslationY(float value) {
@@ -114,6 +118,9 @@ public class ClippingImageView extends View {
         if (animationValues[0].length > 11) {
             setImageY((int) (animationValues[0][11] + (animationValues[1][11] - animationValues[0][11]) * animationProgress));
             setImageX((int) (animationValues[0][12] + (animationValues[1][12] - animationValues[0][12]) * animationProgress));
+        }
+        if (fade) {
+            setAlpha(in ? progress : 1 - progress);
         }
         invalidate();
     }
@@ -285,13 +292,28 @@ public class ClippingImageView extends View {
             bmp.release();
             bitmapShader = null;
         }
+        if (bitmap != null && bitmap.isRecycled()) {
+            bitmap = null;
+        }
         bmp = bitmap;
         if (bitmap != null && bitmap.bitmap != null) {
             bitmapRect.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
             bitmapShader = new BitmapShader(bmp.bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
             roundPaint.setShader(bitmapShader);
         }
+
+        // fix official memory leak
+        if (bitmap == null) {
+            bitmapShader = null;
+            if (roundPaint != null) {
+                roundPaint.setShader(null);
+            }
+        }
         invalidate();
+    }
+
+    public ImageReceiver.BitmapHolder getBitmapHolder() {
+        return bmp;
     }
 
     public Bitmap getBitmap() {

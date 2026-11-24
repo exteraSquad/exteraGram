@@ -15,6 +15,7 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShapeDetector {
 
@@ -150,6 +151,7 @@ public class ShapeDetector {
         synchronized (this) {
             points.clear();
         }
+        generation.incrementAndGet();
         queue.cancelRunnable(detect);
         scheduled.set(false);
         shapeDetected = false;
@@ -216,9 +218,13 @@ public class ShapeDetector {
     private static final double angleRange = Math.PI / 2.0;
     private static final double anglePrecision = Math.PI / 45.;
     private static final double minThreshold = 0.8;
+    private static final double oneDimensionalRatio = 0.2;
+    private static final int arrowTurnWindow = 3;
+    private static final double arrowMinTurn = Math.PI / 2;
 
     private AtomicBoolean busy = new AtomicBoolean(false);
     private AtomicBoolean scheduled = new AtomicBoolean(false);
+    private final AtomicInteger generation = new AtomicInteger();
     private Runnable detect = () -> {
         if (busy.get()) {
             return;
@@ -227,6 +233,7 @@ public class ShapeDetector {
         busy.set(true);
 
         long start = System.currentTimeMillis();
+        final int detectGeneration = generation.get();
 
         ArrayList<Point> initialPoints, points;
         synchronized (this) {
@@ -237,18 +244,19 @@ public class ShapeDetector {
             initialPoints = fullClone(this.points);
         }
         initialPoints = resample(initialPoints, pointsCount);
-        points = fullClone(initialPoints);
-        rotate(points, indicativeAngle(points));
-        Point centroid = centroid(points);
-        translate(points, -centroid.x, -centroid.y);
-        scale(points, squareSize);
+        points = normalize(initialPoints, indicativeAngle(initialPoints), false);
+        ArrayList<Point> alignedPoints = normalize(initialPoints, -indicativeAngle(initialPoints), true);
 
         double bestDistance = Double.MAX_VALUE;
         int bestShape = -1, a = -1;
 
         Point pointsCentroid = centroid(points);
+        Point alignedPointsCentroid = centroid(alignedPoints);
         for (int i = 0; i < templates.size(); ++i) {
-            double templateDistance = distanceAtBestAngle(points, pointsCentroid, templates.get(i).points, -angleRange, angleRange, anglePrecision);
+            double templateDistance = Math.min(
+                distanceAtBestAngle(points, pointsCentroid, templates.get(i).points, -angleRange, angleRange, anglePrecision),
+                distanceAtBestAngle(alignedPoints, alignedPointsCentroid, templates.get(i).points, -angleRange, angleRange, anglePrecision)
+            );
             if (templateDistance < bestDistance) {
                 a = i;
                 bestDistance = templateDistance;
@@ -265,6 +273,9 @@ public class ShapeDetector {
             Log.i("shapedetector", "took " + (System.currentTimeMillis() - start) + "ms to " + (shape != null ? "" : "not ") + "detect a shape" + (shape != null ? " (template#" + A + " shape#" + bestShape + ")" : ""));
         }
         AndroidUtilities.runOnUIThread(() -> {
+            if (detectGeneration != generation.get()) {
+                return;
+            }
             shapeDetected = shape != null;
 
             if (shapeDetected && A >= 0 && A < templates.size()) {
@@ -374,13 +385,26 @@ public class ShapeDetector {
         }
     }
 
-    private void scale(ArrayList<Point> points, double size) {
+    private ArrayList<Point> normalize(ArrayList<Point> initialPoints, double angle, boolean keepOneDimensional) {
+        ArrayList<Point> points = fullClone(initialPoints);
+        rotate(points, angle);
+        Point centroid = centroid(points);
+        translate(points, -centroid.x, -centroid.y);
+        scale(points, squareSize, keepOneDimensional);
+        return points;
+    }
+
+    private void scale(ArrayList<Point> points, double size, boolean keepOneDimensional) {
         RectD boundingBox = boundingBox(points);
         double width = boundingBox.right - boundingBox.left, height = boundingBox.bottom - boundingBox.top;
+        double scaleX = size / width, scaleY = size / height;
+        if (keepOneDimensional && Math.min(width, height) / Math.max(width, height) < oneDimensionalRatio) {
+            scaleX = scaleY = size / Math.max(width, height);
+        }
         for (int i = 0; i < points.size(); ++i) {
             Point point = points.get(i);
-            point.x *= size / width;
-            point.y *= size / height;
+            point.x *= scaleX;
+            point.y *= scaleY;
         }
     }
 
@@ -455,6 +479,18 @@ public class ShapeDetector {
         return -1;
     }
 
+    private boolean hasSharpTurn(ArrayList<Point> points) {
+        for (int i = arrowTurnWindow; i < points.size() - arrowTurnWindow; ++i) {
+            Point prev = points.get(i - arrowTurnWindow), cur = points.get(i), next = points.get(i + arrowTurnWindow);
+            double turn = Math.atan2(next.y - cur.y, next.x - cur.x) - Math.atan2(cur.y - prev.y, cur.x - prev.x);
+            turn = Math.abs(Math.atan2(Math.sin(turn), Math.cos(turn)));
+            if (turn >= arrowMinTurn) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private Shape constructShape(int type, ArrayList<Point> points) {
         if (type < 0 || type >= Brush.Shape.SHAPES_LIST.size() || points.size() < 1) {
             return null;
@@ -463,7 +499,7 @@ public class ShapeDetector {
         if (type == Brush.Shape.SHAPE_TYPE_ARROW) {
             Point pointer, middle, first;
             int pointerIndex = findAnglePoint(points);
-            if (pointerIndex > 0) {
+            if (pointerIndex > 0 && hasSharpTurn(points)) {
                 if (pointerIndex > 10) {
                     pointerIndex -= 2;
                 }

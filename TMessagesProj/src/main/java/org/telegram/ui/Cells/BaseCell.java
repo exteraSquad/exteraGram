@@ -9,13 +9,22 @@
 package org.telegram.ui.Cells;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
-public abstract class BaseCell extends ViewGroup {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import org.telegram.messenger.FileLog;
+import org.telegram.ui.Components.SizeNotifierFrameLayout;
+
+public abstract class BaseCell extends ViewGroup implements SizeNotifierFrameLayout.IViewWithInvalidateCallback {
 
     private final class CheckForTap implements Runnable {
         public void run() {
@@ -34,7 +43,9 @@ public abstract class BaseCell extends ViewGroup {
             if (checkingForLongPress && getParent() != null && currentPressCount == pressCount) {
                 checkingForLongPress = false;
                 if (onLongPress()) {
-                    performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                    try {
+                        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                    } catch (Exception ignore) {}
                     MotionEvent event = MotionEvent.obtain(0, 0, MotionEvent.ACTION_CANCEL, 0, 0, 0);
                     onTouchEvent(event);
                     event.recycle();
@@ -109,5 +120,52 @@ public abstract class BaseCell extends ViewGroup {
 
     protected boolean onLongPress() {
         return true;
+    }
+
+    public int getBoundsLeft() {
+        return 0;
+    }
+
+    public int getBoundsRight() {
+        return getWidth();
+    }
+
+    protected Runnable invalidateCallback;
+    @Override
+    public void listenInvalidate(Runnable callback) {
+        invalidateCallback = callback;
+    }
+
+    public void invalidateLite() {
+        super.invalidate();
+    }
+    @Override
+    public void invalidate() {
+        if (invalidateCallback != null) {
+            invalidateCallback.run();
+        }
+        super.invalidate();
+    }
+
+    public static class RippleDrawableSafe extends RippleDrawable {
+
+        public Drawable mask;
+
+        public RippleDrawableSafe(@NonNull ColorStateList color, @Nullable Drawable content, @Nullable Drawable mask) {
+            super(color, content, mask);
+            this.mask = mask;
+        }
+
+        @Override
+        public void draw(@NonNull Canvas canvas) {
+            final int save = canvas.save();
+            try {
+                super.draw(canvas);
+            } catch (Exception e) {
+                FileLog.e("probably forgot to put setCallback", e);
+            } finally {
+                canvas.restoreToCount(save);
+            }
+        }
     }
 }

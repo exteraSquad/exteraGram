@@ -37,7 +37,7 @@ public class StickerImageView extends BackupImageView implements NotificationCen
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         setSticker();
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.diceStickersDidLoad);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.diceStickersDidLoad);
     }
 
     @Override
@@ -49,8 +49,7 @@ public class StickerImageView extends BackupImageView implements NotificationCen
     @Override
     public void didReceivedNotification(int id, int account, Object... args) {
         if (id == NotificationCenter.diceStickersDidLoad) {
-            String name = (String) args[0];
-            if (stickerPackName.equals(name)) {
+            if (stickerPackName.equals(args[0])) {
                 setSticker();
             }
         }

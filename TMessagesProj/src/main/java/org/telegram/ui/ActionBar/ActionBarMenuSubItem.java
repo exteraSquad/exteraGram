@@ -1,5 +1,10 @@
 package org.telegram.ui.ActionBar;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -13,30 +18,54 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.graphics.ColorUtils;
+
 import org.telegram.messenger.AndroidUtilities;
+import com.exteragram.messenger.utils.ui.UIUtil;
+import org.telegram.messenger.FileLog;
+import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
+import org.telegram.ui.Components.AnimatedEmojiSpan;
+import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CheckBox2;
+import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RLottieImageView;
 
-public class ActionBarMenuSubItem extends FrameLayout {
+import java.util.HashSet;
 
-    private TextView textView;
-    private TextView subtextView;
-    private RLottieImageView imageView;
-    private CheckBox2 checkView;
+public class ActionBarMenuSubItem extends FrameLayout implements Theme.Colorable {
+
+    public AnimatedEmojiSpan.TextViewEmojis textView;
+    public TextView subtextView;
+    public RLottieImageView imageView;
+    public boolean checkViewLeft;
+    public CheckBox2 checkView;
     private ImageView rightIcon;
+    private BackupImageView backupImageView;
 
     private int textColor;
     private int iconColor;
+    private PorterDuff.Mode iconColorMode;
     private int selectorColor;
 
+    // theme keys the current colors came from (-1: custom color set by caller) and the colors they produced
+    private int textColorKey = Theme.key_actionBarDefaultSubmenuItem, iconColorKey = Theme.key_actionBarDefaultSubmenuItemIcon, selectorColorKey = Theme.key_dialogButtonSelector;
+    private int themedTextColor, themedIconColor, themedSelectorColor;
+    private boolean iconColorSet; // imageView filter mode is SRC_IN until setIconColor applies one
+    private android.graphics.ColorFilter appliedIconFilter;
+    private Drawable appliedSelectorBackground;
+
+    int selectorRad = 12;
+    private int selectorRadOverride = -1;
+    private int selectorBasePaddingOverride = -1;
+    private int extraHeightOverride;
     boolean top;
     boolean bottom;
 
     private int itemHeight = 48;
-    private final Theme.ResourcesProvider resourcesProvider;
-    Runnable openSwipeBackLayout;
+    protected final Theme.ResourcesProvider resourcesProvider;
+    public Runnable openSwipeBackLayout;
 
     public ActionBarMenuSubItem(Context context, boolean top, boolean bottom) {
         this(context, false, top, bottom);
@@ -63,43 +92,61 @@ public class ActionBarMenuSubItem extends FrameLayout {
 
         textColor = getThemedColor(Theme.key_actionBarDefaultSubmenuItem);
         iconColor = getThemedColor(Theme.key_actionBarDefaultSubmenuItemIcon);
+        iconColorMode = PorterDuff.Mode.MULTIPLY;
         selectorColor = getThemedColor(Theme.key_dialogButtonSelector);
+        themedTextColor = textColor;
+        themedIconColor = iconColor;
+        themedSelectorColor = selectorColor;
 
         updateBackground();
-        setPadding(AndroidUtilities.dp(18), 0, AndroidUtilities.dp(18), 0);
+        setPadding(dp(18), 0, dp(18), 0);
 
         imageView = new RLottieImageView(context);
         imageView.setScaleType(ImageView.ScaleType.CENTER);
-        imageView.setColorFilter(new PorterDuffColorFilter(iconColor, PorterDuff.Mode.MULTIPLY));
+        imageView.setColorFilter(appliedIconFilter = new PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN));
         addView(imageView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 40, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT)));
 
-        textView = new TextView(context);
+        textView = new AnimatedEmojiSpan.TextViewEmojis(context);
         textView.setLines(1);
         textView.setSingleLine(true);
         textView.setGravity(Gravity.LEFT);
         textView.setEllipsize(TextUtils.TruncateAt.END);
         textView.setTextColor(textColor);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
+        textView.setTypeface(AndroidUtilities.regular());
         addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL));
 
+        checkViewLeft = LocaleController.isRTL;
+        makeCheckView(needCheck);
+    }
+
+    public void makeCheckView(int needCheck) {
         if (needCheck > 0) {
-            checkView = new CheckBox2(context, 26, resourcesProvider);
+            checkView = new CheckBox2(getContext(), 26, resourcesProvider);
             checkView.setDrawUnchecked(false);
-            checkView.setColor(-1, -1, Theme.key_radioBackgroundChecked);
+            checkView.setColor(-1, -1, Theme.key_actionBarDefaultSubmenuItem);
             checkView.setDrawBackgroundAsArc(-1);
             if (needCheck == 1) {
+                checkViewLeft = !LocaleController.isRTL;
                 addView(checkView, LayoutHelper.createFrame(26, LayoutHelper.MATCH_PARENT, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT)));
+                textView.setPadding(!LocaleController.isRTL ? dp(34) : 0, 0, !LocaleController.isRTL ? 0 : dp(34), 0);
             } else {
                 addView(checkView, LayoutHelper.createFrame(26, LayoutHelper.MATCH_PARENT, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT)));
-                textView.setPadding(LocaleController.isRTL ? AndroidUtilities.dp(34) : 0, 0, LocaleController.isRTL ? 0 : AndroidUtilities.dp(34), 0);
+                textView.setPadding(LocaleController.isRTL ? dp(34) : 0, 0, LocaleController.isRTL ? 0 : dp(34), 0);
             }
         }
     }
 
+    public void setEmojiCacheType(int cacheType) {
+        textView.setCacheType(cacheType);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(itemHeight), View.MeasureSpec.EXACTLY));
+        super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(dp(itemHeight + extraHeightOverride), View.MeasureSpec.EXACTLY));
+        if (expandIfMultiline && textView.getLayout().getLineCount() > 1) {
+            super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(dp(itemHeight + extraHeightOverride + 8), View.MeasureSpec.EXACTLY));
+        }
     }
 
     public void setItemHeight(int itemHeight) {
@@ -138,17 +185,45 @@ public class ActionBarMenuSubItem extends FrameLayout {
             }
             addView(rightIcon, LayoutHelper.createFrame(24, LayoutHelper.MATCH_PARENT, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT)));
         }
-        setPadding(AndroidUtilities.dp(LocaleController.isRTL ? 8 : 18), 0, AndroidUtilities.dp(LocaleController.isRTL ? 18 : 8), 0);
-        rightIcon.setImageResource(icon);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) textView.getLayoutParams();
+        if (LocaleController.isRTL) {
+            layoutParams.leftMargin = rightIcon != null ? dp(43) : 0;
+        } else {
+            layoutParams.rightMargin = rightIcon != null ? dp(43) : 0;
+        }
+        textView.setLayoutParams(layoutParams);
+        if (subtextView != null) {
+            FrameLayout.LayoutParams subtextParams = (FrameLayout.LayoutParams) subtextView.getLayoutParams();
+            subtextParams.leftMargin = layoutParams.leftMargin;
+            subtextParams.rightMargin = layoutParams.rightMargin;
+            subtextView.setLayoutParams(subtextParams);
+        }
+        setPadding(dp(LocaleController.isRTL ? 8 : 18), 0, dp(LocaleController.isRTL ? 18 : 8), 0);
+        if (icon == 0) {
+            rightIcon.setVisibility(View.GONE);
+        } else {
+            rightIcon.setVisibility(View.VISIBLE);
+            rightIcon.setImageResource(icon);
+        }
     }
 
     public void setTextAndIcon(CharSequence text, int icon) {
         setTextAndIcon(text, icon, null);
     }
 
+    boolean expandIfMultiline;
+
     public void setMultiline() {
+        setMultiline(true);
+    }
+
+    public void setMultiline(boolean changeSize) {
         textView.setLines(2);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        if (changeSize) {
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        } else {
+            expandIfMultiline = true;
+        }
         textView.setSingleLine(false);
         textView.setGravity(Gravity.CENTER_VERTICAL);
     }
@@ -157,21 +232,63 @@ public class ActionBarMenuSubItem extends FrameLayout {
         textView.setText(text);
         if (icon != 0 || iconDrawable != null || checkView != null) {
             if (iconDrawable != null) {
+                iconResId = 0;
                 imageView.setImageDrawable(iconDrawable);
             } else {
+                iconResId = icon;
                 imageView.setImageResource(icon);
             }
             imageView.setVisibility(VISIBLE);
-            textView.setPadding(LocaleController.isRTL ? 0 : AndroidUtilities.dp(43), 0, LocaleController.isRTL ? AndroidUtilities.dp(43) : 0, 0);
+            textView.setPadding(checkViewLeft ? (checkView != null ? dp(43) : 0) : dp(icon != 0 || iconDrawable != null ? 43 : 0), 0, checkViewLeft ? dp(icon != 0 || iconDrawable != null ? 43 : 0) : (checkView != null ? dp(43) : 0), 0);
         } else {
+            iconResId = 0;
             imageView.setVisibility(INVISIBLE);
             textView.setPadding(0, 0, 0, 0);
         }
+        if (subtextView != null) {
+            subtextView.setPadding(textView.getPaddingLeft(), 0, textView.getPaddingRight(), 0);
+        }
     }
+
+    public void setTextAndIcon(CharSequence text, ImageLocation imageLocation, String imageFilter, Drawable thumb, Object parentObject) {
+        textView.setText(text);
+        textView.setPadding(checkViewLeft ? (checkView != null ? dp(43) : 0) : dp(43), 0, checkViewLeft ? dp(43) : (checkView != null ? dp(43) : 0), 0);
+        if (backupImageView == null) {
+            backupImageView = new BackupImageView(getContext());
+            backupImageView.setRoundRadius(dp(5));
+            addView(backupImageView, LayoutHelper.createFrame(28, 28, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT)));
+        }
+        imageView.setVisibility(INVISIBLE);
+        backupImageView.setImage(imageLocation, imageFilter, thumb, parentObject);
+    }
+
+
+    public void setIconColorImage(int iconColor) {
+        if (backupImageView != null) {
+            backupImageView.setColorFilter(new PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN));
+        }
+    }
+
+    public void setImageSize(int widthDp, int heightDp) {
+        if (backupImageView != null) {
+            backupImageView.setLayoutParams(LayoutHelper.createFrame(widthDp, heightDp, Gravity.CENTER_VERTICAL | (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT)));
+        }
+    }
+
 
     public ActionBarMenuSubItem setColors(int textColor, int iconColor) {
         setTextColor(textColor);
         setIconColor(iconColor);
+        return this;
+    }
+
+    /** same as setColors(getThemedColor(textKey), getThemedColor(iconKey)), but follows theme changes */
+    public ActionBarMenuSubItem setColorKeys(int textKey, int iconKey) {
+        setColors(getThemedColor(textKey), getThemedColor(iconKey));
+        textColorKey = textKey;
+        iconColorKey = iconKey;
+        themedTextColor = textColor;
+        themedIconColor = iconColor;
         return this;
     }
 
@@ -182,16 +299,80 @@ public class ActionBarMenuSubItem extends FrameLayout {
     }
 
     public void setIconColor(int iconColor) {
-        if (this.iconColor != iconColor) {
-            imageView.setColorFilter(new PorterDuffColorFilter(this.iconColor = iconColor, PorterDuff.Mode.MULTIPLY));
+        setIconColor(iconColor, PorterDuff.Mode.SRC_IN);
+    }
+
+    public void setIconColor(int iconColor, PorterDuff.Mode mode) {
+        if (this.iconColor != iconColor || this.iconColorMode != mode) {
+            imageView.setColorFilter(appliedIconFilter = new PorterDuffColorFilter(this.iconColor = iconColor, this.iconColorMode = mode));
+            iconColorSet = true;
         }
     }
 
+    private ValueAnimator enabledAnimator;
+    private boolean enabled;
+    public void setEnabledByColor(boolean enabled, int colorDisabled, int colorEnabled) {
+        if (enabledAnimator != null) {
+            enabledAnimator.cancel();
+        }
+        enabledAnimator = ValueAnimator.ofFloat(this.enabled ? 1.0f : 0.0f, enabled ? 1.0f : 0.0f);
+        this.enabled = enabled;
+        enabledAnimator.addUpdateListener(anm -> {
+            final float t = (float) anm.getAnimatedValue();
+            setTextColor(ColorUtils.blendARGB(colorDisabled, colorEnabled, t));
+            setIconColor(ColorUtils.blendARGB(colorDisabled, colorEnabled, t));
+        });
+        enabledAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                final float t = enabled ? 1.0f : 0.0f;
+                setTextColor(ColorUtils.blendARGB(colorDisabled, colorEnabled, t));
+                setIconColor(ColorUtils.blendARGB(colorDisabled, colorEnabled, t));
+            }
+        });
+        enabledAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
+        enabledAnimator.start();
+    }
+
+    public void setEnabledByColor(boolean enabled, int textColorDisabled, int iconColorDisabled, int colorEnabled) {
+        if (enabledAnimator != null) {
+            enabledAnimator.cancel();
+        }
+        enabledAnimator = ValueAnimator.ofFloat(this.enabled ? 1.0f : 0.0f, enabled ? 1.0f : 0.0f);
+        this.enabled = enabled;
+        enabledAnimator.addUpdateListener(anm -> {
+            final float t = (float) anm.getAnimatedValue();
+            setTextColor(ColorUtils.blendARGB(textColorDisabled, colorEnabled, t));
+            setIconColor(ColorUtils.blendARGB(iconColorDisabled, colorEnabled, t));
+        });
+        enabledAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                final float t = enabled ? 1.0f : 0.0f;
+                setTextColor(ColorUtils.blendARGB(textColorDisabled, colorEnabled, t));
+                setIconColor(ColorUtils.blendARGB(iconColorDisabled, colorEnabled, t));
+            }
+        });
+        enabledAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
+        enabledAnimator.start();
+    }
+
+    private int iconResId;
+    public int getIconResId() {
+        return iconResId;
+    }
+
     public void setIcon(int resId) {
-        imageView.setImageResource(resId);
+        imageView.setImageResource(iconResId = resId);
+    }
+
+    public void setIcon(Drawable drawable) {
+        iconResId = 0;
+        imageView.setImageDrawable(drawable);
     }
 
     public void setAnimatedIcon(int resId) {
+        iconResId = 0;
         imageView.setAnimation(resId, 24, 24);
     }
 
@@ -206,34 +387,42 @@ public class ActionBarMenuSubItem extends FrameLayout {
     }
 
     public void setSubtextColor(int color) {
-        subtextView.setTextColor(color);
+        if (subtextView != null) {
+            // the caller owns the subtext color now: drop the default key binding
+            ThemeBind.clear(subtextView);
+            subtextView.setTextColor(color);
+        }
     }
 
-    public void setSubtext(String text) {
+    public void setSubtext(CharSequence text) {
         if (subtextView == null) {
             subtextView = new TextView(getContext());
             subtextView.setLines(1);
             subtextView.setSingleLine(true);
             subtextView.setGravity(Gravity.LEFT);
             subtextView.setEllipsize(TextUtils.TruncateAt.END);
-            subtextView.setTextColor(getThemedColor(Theme.key_groupcreate_sectionText));
+            ThemeBind.textColor(subtextView, Theme.key_groupcreate_sectionText, resourcesProvider);
             subtextView.setVisibility(GONE);
             subtextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
-            subtextView.setPadding(LocaleController.isRTL ? 0 : AndroidUtilities.dp(43), 0, LocaleController.isRTL ? AndroidUtilities.dp(43) : 0, 0);
-            addView(subtextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, 0, 10, 0, 0));
+            subtextView.setPadding(textView.getPaddingLeft(), 0, textView.getPaddingRight(), 0);
+            FrameLayout.LayoutParams textParams = (FrameLayout.LayoutParams) textView.getLayoutParams();
+            FrameLayout.LayoutParams subtextParams = LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, 0, 10, 0, 0);
+            subtextParams.leftMargin = textParams.leftMargin;
+            subtextParams.rightMargin = textParams.rightMargin;
+            addView(subtextView, subtextParams);
         }
         boolean visible = !TextUtils.isEmpty(text);
         boolean oldVisible = subtextView.getVisibility() == VISIBLE;
         if (visible != oldVisible) {
             subtextView.setVisibility(visible ? VISIBLE : GONE);
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) textView.getLayoutParams();
-            layoutParams.bottomMargin = visible ? AndroidUtilities.dp(10) : 0;
+            layoutParams.bottomMargin = visible ? dp(10) : 0;
             textView.setLayoutParams(layoutParams);
         }
         subtextView.setText(text);
     }
 
-    public TextView getTextView() {
+    public AnimatedEmojiSpan.TextViewEmojis getTextView() {
         return textView;
     }
 
@@ -241,10 +430,24 @@ public class ActionBarMenuSubItem extends FrameLayout {
         return imageView;
     }
 
+    private float selectorAlpha = 1f;
+
+    /** same as setSelectorColor(Theme.multAlpha(getThemedColor(key), alpha)), but follows theme changes */
+    public void setSelectorColorKey(int key, float alpha) {
+        selectorAlpha = alpha;
+        setSelectorColor(Theme.multAlpha(getThemedColor(key), alpha));
+        selectorColorKey = key;
+        themedSelectorColor = selectorColor;
+    }
+
     public void setSelectorColor(int selectorColor) {
         if (this.selectorColor != selectorColor) {
             this.selectorColor = selectorColor;
-            updateBackground();
+            if (appliedSelectorBackground != null && getBackground() == appliedSelectorBackground) {
+                Theme.setSelectorDrawableColor(appliedSelectorBackground, selectorColor, true);
+            } else {
+                updateBackground();
+            }
         }
     }
 
@@ -257,8 +460,35 @@ public class ActionBarMenuSubItem extends FrameLayout {
         updateBackground();
     }
 
-    void updateBackground() {
-        setBackground(Theme.createRadSelectorDrawable(selectorColor, top ? 6 : 0, bottom ? 6 : 0));
+    public void updateSelectorBackground(boolean top, boolean bottom, int selectorRad) {
+        if (this.top == top && this.bottom == bottom && this.selectorRad == selectorRad) {
+            return;
+        }
+        this.top = top;
+        this.bottom = bottom;
+        this.selectorRad = selectorRad;
+        updateBackground();
+    }
+
+    public void setSelectorOverride(int selectorRad, int basePadding, int extraHeight) {
+        if (selectorRadOverride == selectorRad && selectorBasePaddingOverride == basePadding && extraHeightOverride == extraHeight) {
+            return;
+        }
+        selectorRadOverride = selectorRad;
+        selectorBasePaddingOverride = basePadding;
+        if (extraHeightOverride != extraHeight) {
+            extraHeightOverride = extraHeight;
+            requestLayout();
+        }
+        updateBackground();
+    }
+
+    public void updateBackground() {
+        final int rad = selectorRadOverride >= 0 ? selectorRadOverride : selectorRad;
+        final int basePadding = selectorBasePaddingOverride >= 0 ? selectorBasePaddingOverride : 3;
+        setBackground(appliedSelectorBackground = Theme.createRadSelectorDrawable(selectorColor, rad, rad));
+        final boolean overridden = selectorRadOverride >= 0;
+        UIUtil.applyScaleStateListAnimator(this, rad, top && !overridden, bottom && !overridden, basePadding, 0.04f, 1.5f);
     }
 
     private int getThemedColor(int key) {
@@ -277,5 +507,50 @@ public class ActionBarMenuSubItem extends FrameLayout {
 
     public ImageView getRightIcon() {
         return rightIcon;
+    }
+
+    public TextView getSubtextView() {
+        return subtextView;
+    }
+
+    @Override
+    public void updateColors() {
+        try {
+            if (textColorKey >= 0 && textColor == themedTextColor && textView != null && textView.getCurrentTextColor() == textColor) {
+                final int color = getThemedColor(textColorKey);
+                setTextColor(color);
+                themedTextColor = color;
+            }
+            if (iconColorKey >= 0 && iconColor == themedIconColor && imageView != null && imageView.getColorFilter() == appliedIconFilter) {
+                final int color = getThemedColor(iconColorKey);
+                if (color != iconColor) {
+                    imageView.setColorFilter(appliedIconFilter = new PorterDuffColorFilter(iconColor = color, iconColorSet && iconColorMode != null ? iconColorMode : PorterDuff.Mode.SRC_IN));
+                    if (rightIcon != null) {
+                        rightIcon.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                    }
+                }
+                themedIconColor = color;
+            }
+            if (selectorColorKey >= 0 && selectorColor == themedSelectorColor) {
+                final int color = Theme.multAlpha(getThemedColor(selectorColorKey), selectorAlpha);
+                if (color != selectorColor) {
+                    selectorColor = color;
+                    final Drawable background = getBackground();
+                    if (background == appliedSelectorBackground && background instanceof android.graphics.drawable.RippleDrawable) {
+                        ((android.graphics.drawable.RippleDrawable) background).setColor(android.content.res.ColorStateList.valueOf(color));
+                    }
+                }
+                themedSelectorColor = color;
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    @Override
+    public void addColorKeys(HashSet<Integer> colors) {
+        if (textColorKey >= 0) colors.add(textColorKey);
+        if (iconColorKey >= 0) colors.add(iconColorKey);
+        if (selectorColorKey >= 0) colors.add(selectorColorKey);
     }
 }

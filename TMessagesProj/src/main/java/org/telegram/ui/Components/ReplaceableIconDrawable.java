@@ -17,9 +17,10 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
-public class ReplaceableIconDrawable extends Drawable implements Animator.AnimatorListener {
+public class ReplaceableIconDrawable extends Drawable implements Animator.AnimatorListener, Drawable.Callback {
 
     private Context context;
+    private final int maxIconSize;
     private ColorFilter colorFilter;
     private int currentResId = 0;
 
@@ -29,11 +30,16 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
     private ValueAnimator animation;
     private float progress = 1f;
     ArrayList<View> parentViews = new ArrayList<>();
+    public boolean exactlyBounds;
 
     public ReplaceableIconDrawable(Context context) {
-        this.context = context;
+        this(context, 0);
     }
 
+    public ReplaceableIconDrawable(Context context, int maxIconSize) {
+        this.context = context;
+        this.maxIconSize = maxIconSize;
+    }
 
     public void setIcon(@DrawableRes int resId, boolean animated) {
         if (currentResId == resId) {
@@ -43,8 +49,15 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
         currentResId = resId;
     }
 
+    public Drawable getIcon() {
+        return currentDrawable;
+    }
+
     public void setIcon(Drawable drawable, boolean animated) {
         if (drawable == null) {
+            if (currentDrawable != null) {
+                currentDrawable.setCallback(null);
+            }
             currentDrawable = null;
             outDrawable = null;
             invalidateSelf();
@@ -61,8 +74,15 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
         }
 
         currentResId = 0;
+
+        if (currentDrawable != null) {
+            currentDrawable.setCallback(null);
+        }
+
         outDrawable = currentDrawable;
         currentDrawable = drawable;
+
+        currentDrawable.setCallback(this);
         currentDrawable.setColorFilter(colorFilter);
 
         updateBounds(currentDrawable, getBounds());
@@ -76,6 +96,7 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
         if (!animated) {
             progress = 1f;
             outDrawable = null;
+            invalidateSelf();
             return;
         }
 
@@ -89,7 +110,6 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
         animation.start();
     }
 
-
     @Override
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
@@ -98,29 +118,41 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
     }
 
     private void updateBounds(Drawable d, Rect bounds) {
-        if (d == null) return;
+        if (d == null) {
+            return;
+        }
+        if (exactlyBounds) {
+            d.setBounds(bounds);
+            return;
+        }
+        int intrinsicWidth = d.getIntrinsicWidth();
+        int intrinsicHeight = d.getIntrinsicHeight();
+        if (maxIconSize > 0 && Math.min(intrinsicWidth, intrinsicHeight) > 0 && Math.max(intrinsicWidth, intrinsicHeight) > maxIconSize) {
+            float scale = (float) maxIconSize / Math.max(intrinsicWidth, intrinsicHeight);
+            intrinsicWidth = Math.round(intrinsicWidth * scale);
+            intrinsicHeight = Math.round(intrinsicHeight * scale);
+        }
         int left;
         int right;
         int bottom;
         int top;
 
-        if (d.getIntrinsicHeight() < 0) {
+        if (intrinsicHeight < 0) {
             top = bounds.top;
             bottom = bounds.bottom;
         } else {
-            int offset = (bounds.height() - d.getIntrinsicHeight()) / 2;
+            int offset = (bounds.height() - intrinsicHeight) / 2;
             top = bounds.top + offset;
-            bottom = bounds.top + offset + d.getIntrinsicHeight();
+            bottom = bounds.top + offset + intrinsicHeight;
         }
 
-
-        if (d.getIntrinsicWidth() < 0) {
+        if (intrinsicWidth < 0) {
             left = bounds.left;
             right = bounds.right;
         } else {
-            int offset = (bounds.width() - d.getIntrinsicWidth()) / 2;
+            int offset = (bounds.width() - intrinsicWidth) / 2;
             left = bounds.left + offset;
-            right = bounds.left + offset + d.getIntrinsicWidth();
+            right = bounds.left + offset + intrinsicWidth;
         }
         d.setBounds(left, top, right, bottom);
     }
@@ -156,7 +188,8 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
 
     @Override
     public void setAlpha(int alpha) {
-
+        if (currentDrawable != null) currentDrawable.setAlpha(alpha);
+        if (outDrawable != null) outDrawable.setAlpha(alpha);
     }
 
     @Override
@@ -187,7 +220,6 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
 
     }
 
-
     @Override
     public void onAnimationCancel(Animator animation) {
 
@@ -199,7 +231,9 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
     }
 
     public void addView(View view) {
-        parentViews.add(view);
+        if (!parentViews.contains(view)) {
+            parentViews.add(view);
+        }
     }
 
     @Override
@@ -210,5 +244,24 @@ public class ReplaceableIconDrawable extends Drawable implements Animator.Animat
                 parentViews.get(i).invalidate();
             }
         }
+    }
+
+    public void removeView(View view) {
+        parentViews.remove(view);
+    }
+
+    @Override
+    public void invalidateDrawable(@NonNull Drawable who) {
+        invalidateSelf();
+    }
+
+    @Override
+    public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
+        scheduleSelf(what, when);
+    }
+
+    @Override
+    public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
+        unscheduleSelf(what);
     }
 }

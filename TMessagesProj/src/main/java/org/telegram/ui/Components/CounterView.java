@@ -9,9 +9,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.text.Layout;
-import android.text.SpannableStringBuilder;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -82,13 +82,17 @@ public class CounterView extends View {
         public boolean addServiceGradient;
 
         int currentCount;
+        CharSequence currentText;
         private boolean countAnimationIncrement;
         private ValueAnimator countAnimator;
         public float countChangeProgress = 1f;
+        private float countLayoutWidth;
         private StaticLayout countLayout;
         private StaticLayout countOldLayout;
-        private StaticLayout countAnimationStableLayout;
-        private StaticLayout countAnimationInLayout;
+        private String countAnimationOldText;
+        private String countAnimationNewText;
+        private float[] countAnimationOldX;
+        private float[] countAnimationNewX;
 
         private int countWidthOld;
         private int countWidth;
@@ -128,7 +132,7 @@ public class CounterView extends View {
                 circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 circlePaint.setColor(Color.BLACK);
             }
-            textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textPaint.setTypeface(AndroidUtilities.bold());
             textPaint.setTextSize(AndroidUtilities.dp(13));
         }
 
@@ -172,7 +176,15 @@ public class CounterView extends View {
         }
 
         public void setCount(int count, boolean animated) {
-            if (count == currentCount) {
+            setText(getStringOfCCount(count), animated, count, false);
+        }
+
+        public void setText(CharSequence text, boolean animated) {
+            setText(text, animated, 1, true);
+        }
+
+        public void setText(CharSequence text, boolean animated, int count, boolean isText) {
+            if (TextUtils.equals(text, currentText)) {
                 return;
             }
             if (countAnimator != null) {
@@ -186,21 +198,23 @@ public class CounterView extends View {
             }
             if (!animated) {
                 currentCount = count;
+                currentText = text;
                 if (count == 0) {
                     if (updateVisibility && parent != null) {
                         parent.setVisibility(View.GONE);
                     }
                     return;
                 }
-                String newStr = getStringOfCCount(count);
-                countWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(newStr)));
+                CharSequence newStr = text; // getStringOfCCount(count);
+                countWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(newStr.toString())));
                 countLayout = new StaticLayout(newStr, textPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                countLayoutWidth = countLayout.getLineCount() >= 1 ? countLayout.getLineWidth(0) : 0;
                 if (parent != null) {
                     parent.invalidate();
                 }
                 return;
             }
-            String newStr = getStringOfCCount(count);
+            CharSequence newStr = text; // getStringOfCCount(count);
 
             if (animated) {
                 if (countAnimator != null) {
@@ -219,8 +233,10 @@ public class CounterView extends View {
                     public void onAnimationEnd(Animator animation) {
                         countChangeProgress = 1f;
                         countOldLayout = null;
-                        countAnimationStableLayout = null;
-                        countAnimationInLayout = null;
+                        countAnimationOldText = null;
+                        countAnimationNewText = null;
+                        countAnimationOldX = null;
+                        countAnimationNewX = null;
                         if (parent != null) {
                             if (currentCount == 0 && updateVisibility) {
                                 parent.setVisibility(View.GONE);
@@ -244,25 +260,13 @@ public class CounterView extends View {
                     countAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
                 }
                 if (countLayout != null) {
-                    String oldStr = getStringOfCCount(currentCount);
+                    CharSequence oldStr = currentText; // getStringOfCCount(currentCount);
 
-                    if (oldStr.length() == newStr.length()) {
-                        SpannableStringBuilder oldSpannableStr = new SpannableStringBuilder(oldStr);
-                        SpannableStringBuilder newSpannableStr = new SpannableStringBuilder(newStr);
-                        SpannableStringBuilder stableStr = new SpannableStringBuilder(newStr);
-                        for (int i = 0; i < oldStr.length(); i++) {
-                            if (oldStr.charAt(i) == newStr.charAt(i)) {
-                                oldSpannableStr.setSpan(new EmptyStubSpan(), i, i + 1, 0);
-                                newSpannableStr.setSpan(new EmptyStubSpan(), i, i + 1, 0);
-                            } else {
-                                stableStr.setSpan(new EmptyStubSpan(), i, i + 1, 0);
-                            }
-                        }
-
-                        int countOldWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(oldStr)));
-                        countOldLayout = new StaticLayout(oldSpannableStr, textPaint, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
-                        countAnimationStableLayout = new StaticLayout(stableStr, textPaint, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
-                        countAnimationInLayout = new StaticLayout(newSpannableStr, textPaint, countOldWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                    if (oldStr.length() == newStr.length() && !isText) {
+                        countAnimationOldText = oldStr.toString();
+                        countAnimationNewText = newStr.toString();
+                        countAnimationOldX = getCharOffsets(countAnimationOldText);
+                        countAnimationNewX = getCharOffsets(countAnimationNewText);
                     } else {
                         countOldLayout = countLayout;
                     }
@@ -272,14 +276,31 @@ public class CounterView extends View {
                 countAnimator.start();
             }
             if (count > 0) {
-                countWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(newStr)));
+                countWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textPaint.measureText(newStr.toString())));
                 countLayout = new StaticLayout(newStr, textPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+                countLayoutWidth = countLayout.getLineCount() >= 1 ? countLayout.getLineWidth(0) : 0;
             }
 
             currentCount = count;
+            currentText = newStr;
             if (parent != null) {
                 parent.invalidate();
             }
+        }
+
+        private float[] getCharOffsets(String text) {
+            float textWidth = textPaint.measureText(text);
+            int layoutWidth = Math.max(AndroidUtilities.dp(12), (int) Math.ceil(textWidth));
+            float left = -layoutWidth / 2f + ((layoutWidth - (((int) textWidth) & ~1)) >> 1);
+            float[] offsets = new float[text.length()];
+            for (int i = 0; i < offsets.length; i++) {
+                offsets[i] = left + textPaint.measureText(text, 0, i);
+            }
+            return offsets;
+        }
+
+        public int getCurrentWidth() {
+            return (int) Math.ceil(countLayoutWidth);
         }
 
         private String getStringOfCCount(int count) {
@@ -357,34 +378,38 @@ public class CounterView extends View {
                     canvas.clipRect(rectF);
 
                     boolean increment = reverseAnimation != countAnimationIncrement;
-                    if (countAnimationInLayout != null) {
-                        canvas.save();
-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf));
-                        textPaint.setAlpha((int) (255 * progressHalf));
-                        countAnimationInLayout.draw(canvas);
-                        canvas.restore();
-                    } else if (countLayout != null) {
-                        canvas.save();
-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf));
-                        textPaint.setAlpha((int) (255 * progressHalf));
-                        countLayout.draw(canvas);
-                        canvas.restore();
-                    }
+                    if (countAnimationNewText != null && countLayout != null) {
+                        float cx = countLeft + countWidth / 2f;
+                        float baseline = countTop + AndroidUtilities.dp(4) + countLayout.getLineBaseline(0);
+                        float inY = baseline + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf);
+                        float outY = baseline + (increment ? -AndroidUtilities.dp(13) : AndroidUtilities.dp(13)) * progressHalf;
+                        for (int i = 0; i < countAnimationNewText.length(); i++) {
+                            if (countAnimationOldText.charAt(i) == countAnimationNewText.charAt(i)) {
+                                textPaint.setAlpha(255);
+                                canvas.drawText(countAnimationNewText, i, i + 1, cx + AndroidUtilities.lerp(countAnimationOldX[i], countAnimationNewX[i], progressHalf), baseline, textPaint);
+                            } else {
+                                textPaint.setAlpha((int) (255 * (1f - progressHalf)));
+                                canvas.drawText(countAnimationOldText, i, i + 1, cx + countAnimationOldX[i], outY, textPaint);
+                                textPaint.setAlpha((int) (255 * progressHalf));
+                                canvas.drawText(countAnimationNewText, i, i + 1, cx + countAnimationNewX[i], inY, textPaint);
+                            }
+                        }
+                    } else {
+                        if (countLayout != null) {
+                            canvas.save();
+                            canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? AndroidUtilities.dp(13) : -AndroidUtilities.dp(13)) * (1f - progressHalf));
+                            textPaint.setAlpha((int) (255 * progressHalf));
+                            countLayout.draw(canvas);
+                            canvas.restore();
+                        }
 
-                    if (countOldLayout != null) {
-                        canvas.save();
-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? -AndroidUtilities.dp(13) : AndroidUtilities.dp(13)) * (progressHalf));
-                        textPaint.setAlpha((int) (255 * (1f - progressHalf)));
-                        countOldLayout.draw(canvas);
-                        canvas.restore();
-                    }
-
-                    if (countAnimationStableLayout != null) {
-                        canvas.save();
-                        canvas.translate(countLeft, countTop + AndroidUtilities.dp(4));
-                        textPaint.setAlpha(255);
-                        countAnimationStableLayout.draw(canvas);
-                        canvas.restore();
+                        if (countOldLayout != null) {
+                            canvas.save();
+                            canvas.translate(countLeft, countTop + AndroidUtilities.dp(4) + (increment ? -AndroidUtilities.dp(13) : AndroidUtilities.dp(13)) * (progressHalf));
+                            textPaint.setAlpha((int) (255 * (1f - progressHalf)));
+                            countOldLayout.draw(canvas);
+                            canvas.restore();
+                        }
                     }
                     textPaint.setAlpha(255);
                     canvas.restore();

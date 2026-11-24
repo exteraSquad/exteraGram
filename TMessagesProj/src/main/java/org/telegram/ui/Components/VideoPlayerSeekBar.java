@@ -23,11 +23,12 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Pair;
-import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.core.graphics.ColorUtils;
+
+import com.exteragram.messenger.player.ui.WavySeekBar;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
@@ -73,6 +74,7 @@ public class VideoPlayerSeekBar {
     private float currentRadius;
     private long lastUpdateTime;
     private View parentView;
+    private WavySeekBar wavy;
 
     private int lineHeight = AndroidUtilities.dp(4);
     private int smallLineHeight = AndroidUtilities.dp(2);
@@ -249,6 +251,39 @@ public class VideoPlayerSeekBar {
         return horizontalPadding;
     }
 
+    public void setWavy(boolean wavy) {
+        if (wavy == (this.wavy != null)) {
+            return;
+        }
+        this.wavy = !wavy ? null : new WavySeekBar(parentView.getContext()) {
+            @Override
+            public boolean isShown() {
+                return parentView.isShown() && parentView.getAlpha() > 0;
+            }
+
+            @Override
+            public boolean isAttachedToWindow() {
+                return parentView.isAttachedToWindow();
+            }
+
+            @Override
+            public void invalidate() {
+                parentView.invalidate();
+            }
+
+            @Override
+            public void postInvalidateOnAnimation() {
+                parentView.postInvalidateOnAnimation();
+            }
+        };
+    }
+
+    public void setWavyPlaying(boolean playing) {
+        if (wavy != null) {
+            wavy.setPlaying(playing, 1f, true);
+        }
+    }
+
     public void setHorizontalPadding(int horizontalPadding) {
         this.horizontalPadding = horizontalPadding;
     }
@@ -324,7 +359,7 @@ public class VideoPlayerSeekBar {
                     float position = seconds * 1000L / (float) videoDuration;
                     String label = link.label;
                     SpannableStringBuilder builder = new SpannableStringBuilder(label);
-                    Emoji.replaceEmoji(builder, timestampLabelPaint.getFontMetricsInt(), AndroidUtilities.dp(14), false);
+                    Emoji.replaceEmoji(builder, timestampLabelPaint.getFontMetricsInt(), false);
                     timestamps.add(new Pair<>(position, builder));
                 }
             }
@@ -368,6 +403,11 @@ public class VideoPlayerSeekBar {
         float loopBack = animateThumbLoopBackProgress.set(0);
         if (pressed) {
             loopBack = 0;
+        }
+
+        if (wavy != null && (timestamps == null || timestamps.isEmpty())) {
+            drawWavy(canvas, (pressed ? draggingThumbX : currentThumbX) / (width - thumbWidth));
+            return;
         }
 
         // background
@@ -464,6 +504,37 @@ public class VideoPlayerSeekBar {
         canvas.drawCircle(rect.right, rect.centerY(), circleRadius * (1f - loopBack), paint);
 
         drawTimestampLabel(canvas);
+    }
+
+    private void drawWavy(Canvas canvas, float progress) {
+        final float t = transitionProgress;
+        final float edge = AndroidUtilities.dpf2(2);
+        final float lineWidth = AndroidUtilities.lerp(lineHeight, smallLineHeight, t);
+        final float start = AndroidUtilities.lerp(thumbWidth / 2f, 0, t) - edge * (1f - t) + lineWidth / 2f;
+        final float end = AndroidUtilities.lerp(width - thumbWidth / 2f, parentView.getWidth() - horizontalPadding * 2f, t) + edge * (1f - t) - lineWidth / 2f;
+        final float cy = AndroidUtilities.lerp(height / 2f, height - AndroidUtilities.dp(3) - smallLineHeight / 2f, t);
+        final int baseY = height / 2;
+        final float dx = horizontalPadding + start - edge;
+        final float dy = cy - baseY;
+        final int trackColor = selected ? backgroundSelectedColor : backgroundColor;
+        final int bufferColor = selected ? backgroundSelectedColor : cacheColor;
+        wavy.layout(0, 0, Math.round(end - start + edge * 2f), baseY + AndroidUtilities.dp(16));
+        wavy.setColors(ColorUtils.blendARGB(progressColor, smallLineColor, t), ColorUtils.setAlphaComponent(trackColor, (int) (Color.alpha(trackColor) * (1f - t))), ColorUtils.setAlphaComponent(bufferColor, (int) (Color.alpha(bufferColor) * (1f - t))), 0, 0);
+        wavy.setCollapse(t, smallLineHeight);
+        wavy.setBufferedProgress(bufferedProgress);
+        wavy.setExternalDragging(pressed);
+        wavy.setProgress(progress, !pressed);
+        canvas.translate(dx, dy);
+        wavy.draw(canvas);
+        canvas.translate(-dx, -dy);
+        if (t > 0f) {
+            final float right = start + (end - start) * wavy.getProgress() + lineWidth / 2f;
+            rect.set(horizontalPadding + start - lineWidth / 2f, cy - lineWidth / 2f, horizontalPadding + right, cy + lineWidth / 2f);
+            if (rect.width() > lineWidth) {
+                strokePaint.setAlpha((int) (t * 255 * 0.2f));
+                canvas.drawRoundRect(rect, lineWidth / 2f, lineWidth / 2f, strokePaint);
+            }
+        }
     }
 
     private float timestampsAppearing = 0;
@@ -598,9 +669,7 @@ public class VideoPlayerSeekBar {
         if (timestampIndex != currentTimestamp) {
             timestampLabel[1] = timestampLabel[0];
             if (pressed) {
-                try {
-                    parentView.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-                } catch (Exception ignore) {}
+                AndroidUtilities.vibrateCursor(parentView);
             }
             if (timestampIndex >= 0 && timestampIndex < timestamps.size()) {
                 CharSequence label = timestamps.get(timestampIndex).second;

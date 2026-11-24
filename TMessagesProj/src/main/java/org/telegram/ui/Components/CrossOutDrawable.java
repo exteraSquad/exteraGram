@@ -1,5 +1,6 @@
 package org.telegram.ui.Components;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
@@ -79,7 +81,7 @@ public class CrossOutDrawable extends Drawable {
                 progress = 0;
             }
         }
-        int newColor = colorKey < 0 ? Color.WHITE : Theme.getColor(colorKey);
+        int newColor = colorKey < 0 ? ColorUtils.blendARGB(Color.WHITE, Color.BLACK, inversionProgress) : Theme.getColor(colorKey);
         if (color != newColor) {
             color = newColor;
             paint.setColor(newColor);
@@ -167,5 +169,18 @@ public class CrossOutDrawable extends Drawable {
 
     public float getProgress() {
         return progress;
+    }
+
+    private float inversionProgress = 0f;
+
+    public void invertColor(boolean invert) {
+        float to = invert ? 1f : 0f;
+        ValueAnimator animator = ValueAnimator.ofFloat(1f - to, to).setDuration(350);
+        animator.setInterpolator(Easings.easeOutQuad);
+        animator.addUpdateListener(animation -> {
+            inversionProgress = (Float) animation.getAnimatedValue();
+            invalidateSelf();
+        });
+        animator.start();
     }
 }

@@ -137,14 +137,18 @@ public class PhotoPickerPhotoCell extends FrameLayout {
             imageView.setImage(photoEntry.thumbPath, null, thumb);
         } else if (photoEntry.path != null) {
             imageView.setOrientation(photoEntry.orientation, photoEntry.invert, true);
-            if (photoEntry.isVideo) {
+            if (photoEntry.isLivePhoto()) {
+                videoInfoContainer.setVisibility(View.INVISIBLE);
+                setContentDescription(LocaleController.getString(R.string.AttachLivePhoto));
+                imageView.setImage("thumb://" + photoEntry.imageId + ":" + photoEntry.path, null, thumb);
+            } else if (photoEntry.isVideo) {
                 videoInfoContainer.setVisibility(View.VISIBLE);
                 videoTextView.setText(AndroidUtilities.formatShortDuration(photoEntry.duration));
-                setContentDescription(LocaleController.getString("AttachVideo", R.string.AttachVideo) + ", " + LocaleController.formatDuration(photoEntry.duration));
+                setContentDescription(LocaleController.getString(R.string.AttachVideo) + ", " + LocaleController.formatDuration(photoEntry.duration));
                 imageView.setImage("vthumb://" + photoEntry.imageId + ":" + photoEntry.path, null, thumb);
             } else {
                 videoInfoContainer.setVisibility(View.INVISIBLE);
-                setContentDescription(LocaleController.getString("AttachPhoto", R.string.AttachPhoto));
+                setContentDescription(LocaleController.getString(R.string.AttachPhoto));
                 imageView.setImage("thumb://" + photoEntry.imageId + ":" + photoEntry.path, null, thumb);
             }
         } else {

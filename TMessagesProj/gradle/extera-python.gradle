@@ -1,0 +1,161 @@
+import javax.inject.Inject
+
+abstract class PythonSdkBuildTask extends DefaultTask {
+    @Inject
+    abstract ExecOperations getExecOperations()
+
+    @Input
+    abstract ListProperty<String> getPythonCommand()
+
+    @Input
+    abstract Property<String> getPythonVersion()
+
+    @InputFile
+    @PathSensitive(PathSensitivity.NONE)
+    abstract RegularFileProperty getBuildScript()
+
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    abstract ConfigurableFileCollection getSources()
+
+    @Input
+    abstract Property<String> getChannel()
+
+    @Input
+    abstract ListProperty<String> getAbis()
+
+    @OutputDirectory
+    abstract DirectoryProperty getAssetsDir()
+
+    @TaskAction
+    void build() {
+        def command = pythonCommand.get() + [
+                buildScript.get().asFile.absolutePath,
+                "--out", assetsDir.get().asFile.absolutePath,
+                "--channel", channel.get(),
+                "--python", pythonVersion.get()
+        ] + abis.get().collectMany { ["--abi", it] }
+        execOperations.exec { it.commandLine(command) }
+    }
+}
+
+abstract class PluginAnalyzerBundleTask extends Exec {
+    @OutputDirectory
+    abstract DirectoryProperty getLibsDir()
+
+    @OutputDirectory
+    abstract DirectoryProperty getAssetsDir()
+}
+
+def requiredPythonVersion = "3.11"
+def configuredBuildPython = gradle.ext.has("configuredBuildPython") ? gradle.ext.configuredBuildPython : System.getenv("BUILD_PYTHON")
+def buildPythonCommand = configuredBuildPython
+        ? [configuredBuildPython]
+        : (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")
+            ? ["py", "-${requiredPythonVersion}"]
+            : ["python${requiredPythonVersion}"])
+def pythonSdkAbiByMinApiFlavor = [
+        armv7: ['armeabi-v7a'],
+        x86  : ['x86'],
+        arm64: ['arm64-v8a'],
+        x64  : ['x86_64'],
+        afat : ['armeabi-v7a', 'arm64-v8a'],
+        beta : ['armeabi-v7a', 'arm64-v8a']
+]
+
+android {
+    productFlavors {
+        full {
+            python {
+                version = requiredPythonVersion
+                buildPython = buildPythonCommand
+                pip {
+                    install("beautifulsoup4")
+                    install("debugpy")
+                    install("lxml")
+                    install("packaging")
+                    install("pillow")
+                    install("requests")
+                    install("PyYAML")
+                }
+            }
+        }
+    }
+}
+
+configurations.liteImplementation {
+    exclude group: 'com.chaquo.python'
+}
+
+configurations.configureEach { config ->
+    if (config.name.toLowerCase().contains("lite")) {
+        exclude group: 'com.chaquo.python'
+    }
+}
+
+androidComponents {
+    onVariants(selector().withFlavor("appType", "lite")) { variant ->
+        variant.packaging.jniLibs.excludes.add("**/*chaquopy*.so")
+        variant.packaging.jniLibs.excludes.add("**/*python*.so")
+        variant.packaging.jniLibs.excludes.add("**/liblsplant.so")
+        variant.packaging.jniLibs.excludes.add("**/libexterahook.so")
+        variant.packaging.jniLibs.excludes.add("**/libc++_shared.so")
+    }
+
+    onVariants(selector().withFlavor("appType", "full")) { variant ->
+        def apiFlavorName = variant.productFlavors.find { it.first == "minApi" }?.second
+        def sdkAbis = pythonSdkAbiByMinApiFlavor[apiFlavorName] ?: []
+        def abiList = sdkAbis.join(",")
+        def variantTaskName = variant.name.capitalize()
+        def isBeta = apiFlavorName == "beta" || variant.name.contains("Beta")
+        def buildSdkTask = tasks.register("buildPythonSdk${variantTaskName}", PythonSdkBuildTask) {
+            pythonCommand.set(buildPythonCommand)
+            pythonVersion.set(requiredPythonVersion)
+            buildScript.set(rootProject.file("plugins-pysdk/tools/build_sdk.py"))
+            sources.from(fileTree(rootProject.file("plugins-pysdk/src")) {
+                exclude "**/__pycache__/**", "**/*.pyc", "**/.DS_Store"
+            })
+            channel.set(isBeta ? "beta" : "stable")
+            abis.set(sdkAbis)
+            assetsDir.set(layout.buildDirectory.dir("generated/plugins/pysdk/${variant.name}"))
+        }
+        variant.sources.assets?.addGeneratedSourceDirectory(buildSdkTask, { it.assetsDir })
+
+        def analyzerTask = tasks.register("packagePluginAnalyzer${variantTaskName}", PluginAnalyzerBundleTask) {
+            libsDir.set(layout.buildDirectory.dir("generated/plugins/analyzer/${variant.name}/jniLibs"))
+            assetsDir.set(layout.buildDirectory.dir("generated/plugins/analyzer/${variant.name}/assets"))
+            outputs.upToDateWhen { false }
+            commandLine(*(buildPythonCommand + ["$rootDir/Tools/download_analyzer.py", libsDir.get().asFile.absolutePath, assetsDir.get().asFile.absolutePath, isBeta ? "1" : "0", abiList]))
+        }
+        variant.sources.jniLibs?.addGeneratedSourceDirectory(analyzerTask, { it.libsDir })
+        variant.sources.assets?.addGeneratedSourceDirectory(analyzerTask, { it.assetsDir })
+
+        def installRequirementsTaskName = "install${variantTaskName}PythonRequirements"
+        gradle.taskGraph.whenReady { graph ->
+            graph.allTasks.findAll { it.project == project && it.name == installRequirementsTaskName }.each { task ->
+                task.doLast {
+                    project.fileTree(task.outputDir.get().asFile) {
+                        include "**/*.pdb", "**/*.exe", "**/*.dll", "**/*.pyd", "**/*.dylib"
+                        include "**/*.c", "**/*.h", "**/*.hpp", "**/*.pyx", "**/*.pxd", "**/*.pxi"
+                        include "**/winappdbg/**"
+                    }.each { it.delete() }
+                }
+            }
+        }
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name.contains("Python") && task.name.toLowerCase().contains("lite")) {
+        task.enabled = false
+    }
+    if (task.name == "mergeLiteBetaDebugAssets") {
+        task.outputs.upToDateWhen { false }
+        task.doLast {
+            def chaquopyDir = new File(it.outputDir.get().asFile, "chaquopy")
+            if (chaquopyDir.exists()) {
+                chaquopyDir.deleteDir()
+            }
+        }
+    }
+}

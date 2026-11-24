@@ -44,17 +44,24 @@ public class CellFlickerDrawable {
     Runnable onRestartCallback;
 
     public CellFlickerDrawable() {
-        this(64, 204);
+        this(64, 204, 160);
     }
 
-    public CellFlickerDrawable(int a1, int a2) {
-        size = AndroidUtilities.dp(160);
-        gradientShader = new LinearGradient(0, 0, size, 0, new int[]{Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, a1), Color.TRANSPARENT}, null, Shader.TileMode.CLAMP);
-        gradientShader2 = new LinearGradient(0, 0, size, 0, new int[]{Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, a2), Color.TRANSPARENT}, null, Shader.TileMode.CLAMP);
+    public CellFlickerDrawable(int a1, int a) {
+        this(a1, a, 160);
+    }
+    public CellFlickerDrawable(int a1, int a2, int size) {
+        this.size = AndroidUtilities.dp(size);
+        gradientShader = new LinearGradient(0, 0, this.size, 0, new int[]{Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, a1), Color.TRANSPARENT}, null, Shader.TileMode.CLAMP);
+        gradientShader2 = new LinearGradient(0, 0, this.size, 0, new int[]{Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, a2), Color.TRANSPARENT}, null, Shader.TileMode.CLAMP);
         paint.setShader(gradientShader);
         paintOutline.setShader(gradientShader2);
         paintOutline.setStyle(Paint.Style.STROKE);
         paintOutline.setStrokeWidth(AndroidUtilities.dp(2));
+    }
+
+    public void setStrokeWidth(float width) {
+        paintOutline.setStrokeWidth(width);
     }
 
     public void setColors(int color) {
@@ -174,6 +181,11 @@ public class CellFlickerDrawable {
 
     public void setOnRestartCallback(Runnable runnable) {
         onRestartCallback = runnable;
+    }
+
+    public void setAlpha(int alpha) {
+        paint.setAlpha(alpha);
+        paintOutline.setAlpha(alpha);
     }
 
     public class DrawableInterface extends Drawable {

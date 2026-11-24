@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram inställningar</string>
+    <!-- Main Menu -->
+    <string name="Links">Länkar</string>
+    <string name="Crowdin">Översätt</string>
+    <string name="Website">Webbplats</string>
+    <string name="Categories">Kategorier</string>
+    <string name="Developer">**%1$s** är medlem i **exteraGram**s utvecklingsteam.</string>
+    <string name="DeveloperCompact">Medlem i **exteraGram**s utvecklingsteam.</string>
+    <string name="Supporter">**%1$s** stödde utvecklingen av **exteraGram** och fick ett unikt märke.</string>
+    <string name="OfficialChannel">**%1$s** är den officiella resursen för **exteraGram**.</string>
+    <string name="NoSuchSetting">Det verkar som att en sådan inställning inte finns.</string>
+    <string name="SettingLinkToSavedMessages">Inställningslänk skickad till **Sparade meddelanden**.</string>
+    <string name="SettingLinkToUser">Inställningslänk skickad till **%1$s**.</string>
+    <string name="SettingLinkToChats">Inställningslänk skickad till **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Använd systemets batterisparläge</string>
+    <string name="LiteBatteryFollowSystemInfo">Styrs av systemets batterisparläge.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Pillerstack</string>
+    <string name="PillStackPillsInfo">Visa interaktiva piller i sökfältet</string>
+    <string name="PillStackActivePills">Aktiva piller</string>
+    <string name="PillStackHiddenPills">Dolda piller</string>
+    <string name="CurrentLocation">Aktuell plats</string>
+    <string name="SelectLocation">Välj på karta</string>
+    <string name="WeatherPill">Väder</string>
+    <string name="WeatherSettingsInfo">Välj hur platsen för vädervisningen i sökningen ska bestämmas.</string>
+    <string name="WeatherLocation">Platsdetektering</string>
+    <string name="WeatherLocationPermissionNo">exteraGram behöver åtkomst till din plats för att visa aktuellt väder.</string>
+    <string name="WeatherLocationPermissionGrant">Bevilja behörighet</string>
+    <string name="WeatherLocationServicesEnable">Aktivera plats</string>
+    <string name="WeatherPillTopInfo">Väderwidgetinställningar för Pillerstack.</string>
+    <string name="PillStackInfiniteScrolling">Oändlig rullning</string>
+    <string name="CryptoPillTargetCurrency">Målvaluta</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Inaktivera proxy</string>
+    <string name="ProxyDisableNever">Aldrig</string>
+    <string name="ProxyDisableAlways">Alltid</string>
+    <string name="ProxyDisableOnMobileData">Mobildata</string>
+    <string name="ProxyType">Typ</string>
+    <string name="Unknown">Okänd</string>
+    <string name="ProxyRename">Proxynamn (valfritt)</string>
+    <string name="ProxyPinLimitReached">Du kan fästa upp till %1$d proxyservrar.</string>
+    <string name="CopyIpAddress">Kopiera IP-adress</string>
+    <string name="IpInfoUnavailable">Kunde inte ladda IP-adressinformation.</string>
+    <string name="IpInfoOrganization">Organisation</string>
+    <string name="IpInfoDomain">Domän</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Översättningsleverantör</string>
+    <string name="TranslationTarget">Målspråk</string>
+    <string name="TranslationTargetApp">Följ app</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Inaktivera avrundning av tal</string>
+    <string name="FormatTimeWithSeconds">Formatera tid med sekunder</string>
+    <string name="RelativeLastSeen">Relativ senast sedd</string>
+    <string name="InAppVibration">Vibration i appen</string>
+    <string name="FilterZalgo">Filtrera \"Zalgo\"</string>
+    <string name="FilterZalgoInfo">Tar bort \"%1$s\"-symboler i namn och meddelanden.</string>
+    <string name="RestartRequired">Starta om appen för att ändringarna ska träda i kraft.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Kod</string>
+    <string name="CreateCode">Skapa kodblock</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Hastighetsförbättring för nedladdning</string>
+    <string name="UploadSpeedBoost">Hastighetsförbättring för uppladdning</string>
+    <string name="SpeedBoostInfo">Ultra Boost kan orsaka problem med nedladdning av filer och strömning av videor på långsamma internetanslutningar.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Lagring</string>
+    <string name="CustomSavePath">Anpassad sparmapp</string>
+    <string name="CustomSavePathHint">Lämna tomt för att spara direkt i roten</string>
+    <string name="CustomSavePathDefault">Spara i roten</string>
+    <string name="CustomSavePathInfo">Sparade filer lagras direkt i Bilder, Nedladdningar, etc.</string>
+    <string name="CustomSavePathInfoFolder">Sparade filer lagras i Bilder/%1$s, Nedladdningar/%1$s, etc.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Dölj telefonnummer</string>
+    <string name="ShowIdAndDc">Visa ID och DC</string>
+    <string name="ShowIdAndDcInfo">Telegram API visar ID som de är, medan Bot API lägger till ett minustecken för grupper och -100 för supergrupper och kanaler.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Dölj arkivmapp</string>
+    <string name="ArchiveOnPull">Öppna arkiv vid nedåtdrag</string>
+    <string name="DisableUnarchiveSwipe">Inaktivera svep för att avarkivera</string>
+    <string name="DisableUnarchiveSwipeInfo">Svep åt vänster tar inte bort chattar från arkivet.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Utseende</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Avatarhörn</string>
+    <string name="SingleCornerRadius">Enkel hörnradie</string>
+    <string name="SingleCornerRadiusInfo">Forum kommer att ha samma avatarform som chattar.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Chattlista</string>
+    <string name="ActionBarTitle">Rubriktext</string>
+    <string name="ActionBarTitleName">Förnamn</string>
+    <string name="HideStories">Dölj berättelser</string>
+    <string name="HideActionBarStatus">Dölj status</string>
+    <string name="CenterTitle">Centrera rubrik</string>
+    <string name="ChatHeader">Chatthuvud</string>
+    <string name="HideFloatingButton">Dölj flytande knapp</string>
+    <string name="HideDialogsSearchBar">Dölj sökfält</string>
+    <string name="BottomNavigationBarMode">Nedre navigeringsfält</string>
+    <string name="BottomNavigationModeShow">Visa</string>
+    <string name="BottomNavigationModeHide">Dölj</string>
+    <string name="BottomNavigationModeFloating">Flytande</string>
+    <string name="SenderMiniAvatars">Avsändares mini-avatars</string>
+    <string name="ListOfChatsInfo">När \"Endast ikoner\" är aktiverat för mappar, kommer huvudrubriken att visa mappnamnet.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Mapprubrik</string>
+    <string name="TabTitleStyleTextWithIcons">Namn med ikoner</string>
+    <string name="TabTitleStyleIconsOnly">Endast ikoner</string>
+    <string name="TabTitleStyleTextOnly">Endast namn</string>
+    <string name="TabCounter">Aviseringsräknare</string>
+    <string name="HideAllChats">Dölj fliken \"%1$s\"</string>
+    <string name="FoldersInfo">Ikoner synkroniseras med ditt konto.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Appnavigation</string>
+    <string name="AppNavigationInfo">Meny uppe till höger och inställningar för sidmeny</string>
+    <string name="NavigationDrawer">Navigeringslåda</string>
+    <string name="NavigationDrawerInfo">Ersätter menyn uppe till höger med en klassisk sidomeny som öppnas med svep och en hamburgerknapp.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Immersiv animation</string>
+    <string name="MainMenuItems">Menyobjekt</string>
+    <string name="MainMenuItemsInfo">Tryck för att visa eller dölja objekt, håll för att ändra ordning. Layouten delas mellan menyn och sidomenyn.</string>
+    <string name="MainMenuHiddenItems">Dolda menyobjekt</string>
+    <string name="MainMenuAddDivider">Lägg till avgränsare</string>
+    <string name="MainMenuRemoveSettingsInfo">Inställningar kan inte döljas när den nedre navigeringsfältet är inaktiverat.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Ikonpaket</string>
+    <string name="IconPacksInfo">Anpassa ikoner i hela appen</string>
+    <string name="IconPickerFilter">Filtrera</string>
+    <string name="IconPickerAllIcons">Alla ikoner</string>
+    <string name="IconPickerReplacedIcons">Ersatta ikoner</string>
+    <string name="IconPickerNotReplacedIcons">Icke ersatta ikoner</string>
+    <string name="IconPickerSaveAndExit">Spara &amp; avsluta</string>
+    <string name="BasePacks">Baspaket</string>
+    <string name="BaseIconPackInfo">Basikonpaketet används som reserv för ikoner som inte ersatts av andra paket.</string>
+    <string name="IconPacksHint">Tryck för att aktivera eller inaktivera ett paket. Håll för att redigera eller ta bort.</string>
+    <string name="NewIconPack">Skapa ett nytt ikonpaket</string>
+    <string name="EnabledPacks">Aktiverade paket</string>
+    <string name="AllPacks">Alla paket</string>
+    <string name="PackName">Paketnamn</string>
+    <string name="AuthorNameOptional">Författarnamn (valfritt)</string>
+    <string name="NameCannotBeEmpty">Namn kan inte vara tomt.</string>
+    <string name="InstallPack">Installera paket</string>
+    <string name="IconCount_one">%1$d ikon</string>
+    <string name="IconCount_two">%1$d ikoner</string>
+    <string name="IconCount_few">%1$d ikoner</string>
+    <string name="IconCount_many">%1$d ikoner</string>
+    <string name="IconCount_other">%1$d ikoner</string>
+    <string name="UpdatePack">Uppdatera paket</string>
+    <string name="DeletePack">Ta bort paket</string>
+    <string name="DeletePackInfo">Är du säker på att du vill ta bort **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Ikonpaketsarkivet är ogiltigt.</string>
+    <string name="IconPackErrorMissingMetadata">Ikonpaketsarkivet saknar metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Ikonpaketsmetadata är för stor.</string>
+    <string name="IconPackErrorInvalidMetadata">Ikonpaketsmetadata är ogiltig.</string>
+    <string name="IconPackErrorTooManyFiles">Ikonpaketet innehåller för många filer.</string>
+    <string name="IconPackErrorArchiveTooLarge">Ikonpaketet är för stort.</string>
+    <string name="IconPackErrorFileTooLarge">En av ikonfilerna är för stor.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Ikonpaketsarkivet är komprimerat för kraftigt.</string>
+    <string name="IconPackErrorStorage">Kunde inte spara ikonpaket.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Ikonpaket</string>
+    <string name="AppIconSunset">Solnedgång</string>
+    <string name="AppIconAmethyst">Ametist</string>
+    <string name="AppIconInvincible">Oövervinnelig</string>
+    <string name="AppIconSpace">Rymd</string>
+    <string name="AppIconIceAge">Istid</string>
+    <string name="AppIconEditor">Redigerare</string>
+    <string name="AppIconOrbit">Omloppsbana</string>
+    <string name="AppIconSus">Bedragare</string>
+    <string name="AppIconWinter">Vinter</string>
+    <!-- General Appearance -->
+    <string name="Sections">Avsnitt</string>
+    <string name="SeparateHeaders">Separata rubriker</string>
+    <string name="DividerStyle">Avgränsarstil</string>
+    <string name="DividerStyleHidden">Dold</string>
+    <string name="DividerStyleLine">Linje</string>
+    <string name="DividerStyleSegments">Segment</string>
+    <string name="UseSystemFonts">Använd systemtypsnitt</string>
+    <string name="UseSystemEmoji">Använd systememoji</string>
+    <string name="NewLoadingStyle">Laddningsstil</string>
+    <string name="NewSliderStyle">Reglagestil</string>
+    <string name="NewSwitchStyle">Växlingsstil</string>
+    <string name="TabletMode">Surfplatteläge</string>
+    <string name="RemoveMessageTail">Ta bort meddelandesvans</string>
+    <string name="GooeyAvatarAnimation">\"Klibbig\" avataranimation</string>
+    <string name="CustomChatThemes">Anpassade teman i chattar</string>
+    <string name="CustomChatThemesInfo">Varje chatt visar det tema som specifikt valts för den.</string>
+    <string name="PredictiveBackIntensity">Intensitet för prediktiv bakåt</string>
+    <string name="PredictiveBackInfo">Justera hur långt skärmen rör sig när du sveper bakåt.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Oskärpealternativ</string>
+    <string name="GlassOutlineStyle">Glas kontur</string>
+    <string name="GlassOutlineGlare">Bländning</string>
+    <string name="GlassOutlineHidden">Dold</string>
+    <string name="ForceSnow">Tvinga snöflingor</string>
+    <string name="ForceSnowInfo">Fallande snöflingor visas i åtgärdsfältet, sidomenyn och chattbakgrunder.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Klistermärkesstorlek</string>
+    <string name="StickerSizeLeft">Liten</string>
+    <string name="StickerSizeRight">Stor</string>
+    <string name="StickerSizeDialogMessage">wow, så söt!</string>
+    <string name="StickerShape">Klistermärkesform</string>
+    <string name="StickerShapeRounded">Rundad</string>
+    <string name="StickerShapeRoundedMsg">Meddelande</string>
+    <string name="ViewEmojiSet">Visa emojiuppsättning</string>
+    <string name="UnlimitedRecentStickers">Obegränsat med senaste klistermärken</string>
+    <string name="HideReactions">Dölj reaktioner</string>
+    <string name="HideReactionsInfo">Reaktioner kommer att döljas helt från gränssnittet.</string>
+    <string name="ReplyBackground">Bakgrund</string>
+    <string name="ChatSettingsInfo">Medieinställningar, appikon och annat</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Konfigurera tjänster, roller och historik</string>
+    <string name="AIChatInfo2">Generera text från meddelanden eller innan sändning.</string>
+    <!-- AI Services -->
+    <string name="Services">Tjänster</string>
+    <string name="ServicesInfo">Välj lämplig tjänst för interaktion med språkmodeller.</string>
+    <string name="NewService">Ny tjänst</string>
+    <string name="EditService">Redigera tjänst</string>
+    <string name="ServiceModel">Modell</string>
+    <string name="ServiceKey">API-nyckel</string>
+    <string name="ServiceInfo">Tjänstinformation</string>
+    <string name="ServiceProvider">Leverantör</string>
+    <string name="ServiceProviderCustom">Anpassad</string>
+    <string name="ServiceTestAndSave">Testa och spara</string>
+    <string name="ServicePasteService">Klistra in tjänst</string>
+    <string name="ServicePasteKey">Klistra in API-nyckel</string>
+    <string name="DeleteServiceInfo">Är du säker på att du vill ta bort **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Roller</string>
+    <string name="RolesInfo">Skapa roller för dina specifika behov!</string>
+    <string name="Suggestions">Förslag</string>
+    <string name="RoleName">Namn</string>
+    <string name="PromptInfo">En prompt är den inledande text som ges till modellen för att börja generera ett svar eller fortsätta en dialog.</string>
+    <string name="NewRole">Ny roll</string>
+    <string name="EditRole">Redigera roll</string>
+    <string name="DeleteRoleInfo">Är du säker på att du vill ta bort **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Konversationshistorik gör att AI:n kan förstå tidigare förfrågningar och ta hänsyn till dem när nya svar genereras.</string>
+    <string name="AIGeneration">Generering</string>
+    <string name="AIReasoning">Resonemang</string>
+    <string name="AIReasoningInfo">Låter modeller som stöds på denna tjänst använda extra tokens för att tänka innan de svarar.</string>
+    <string name="AITemperature">Temperatur</string>
+    <string name="AITemperatureInfo">Temperatur styr slumpmässigheten i svar: högre värden är mer kreativa, lägre värden är mer fokuserade.</string>
+    <string name="ResponseStreaming">Strömmande svar</string>
+    <string name="ResponseStreamingInfo">Säkerställer smidigare och snabbare visning av svar.</string>
+    <string name="ShowResponseOnly">Visa endast svar</string>
+    <string name="InsertResponseAsQuote">Infoga svar som citat</string>
+    <string name="TapToAddApiKey">Tryck för att lägga till en API-nyckel för att komma igång med AI-funktioner.</string>
+    <string name="Generate">Generera</string>
+    <string name="ClearConversationHistoryInfo">Är du säker på att du vill rensa **all** AI-konversationshistorik?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Ogiltig begäran</string>
+    <string name="AIError400Info">Kontrollera begärans parametrar.</string>
+    <string name="AIError401">Ogiltiga autentiseringsuppgifter</string>
+    <string name="AIError401Info">API-nyckeln är ogiltig eller inaktiverad. Kontrollera dina autentiseringsuppgifter.</string>
+    <string name="AIError402">Otillräckligt med krediter</string>
+    <string name="AIError402Info">Ditt konto eller API-nyckel har otillräckligt med krediter. Lägg till fler krediter och försök igen.</string>
+    <string name="AIError403">Åtkomst nekad</string>
+    <string name="AIError403Info">Du har inte behörighet att komma åt den här modellen eller resursen. Kontrollera din API-nyckel och kontobehörigheter.</string>
+    <string name="AIError408">Begäran tog för lång tid</string>
+    <string name="AIError408Info">Din begäran hanterades inte i tid. Försök igen senare.</string>
+    <string name="AIError429">Hastighetsgräns överskriden</string>
+    <string name="AIError429Info">Du skickar förfrågningar för ofta. Vänta en stund och försök igen.</string>
+    <string name="AIError502">Modelfel</string>
+    <string name="AIError502Info">Den valda modellen är inte tillgänglig eller så fick vi ett ogiltigt svar från den.</string>
+    <string name="AIError503">Tjänsten ej tillgänglig</string>
+    <string name="AIError503Info">Tjänsten är tillfälligt otillgänglig eller överbelastad. Försök igen senare.</string>
+    <string name="AIError">Serverfel</string>
+    <string name="AIErrorInfo">Försök igen efter en kort väntan.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Inkommande meddelanden</string>
+    <string name="DoubleTapOutgoing">Utgående meddelanden</string>
+    <string name="DoubleTapInfo">Vissa åtgärder kräver administratörsbehörighet i chatten eller kanalen.</string>
+    <string name="BottomButton">Nedre knapp</string>
+    <string name="ChannelDiscussNoCaps">Diskutera</string>
+    <string name="QuickTransitions">Snabb svepövergång</string>
+    <string name="DisableGreetingSticker">Inaktivera hälsningsklistermärke</string>
+    <string name="AdminShortcuts">Snabba administratörsgenvägar</string>
+    <string name="HideKeyboardOnScroll">Dölj tangentbord vid rullning</string>
+    <string name="HideShareButton">Dölj sidoknappen \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">Ersätt \"%1$s\" med en ikon</string>
+    <string name="MessageMenu">Meddelandemeny</string>
+    <string name="GroupMessageMenu">Gruppmeddelandemeny</string>
+    <string name="GroupMessageMenuInfo">Gruppering flyttar huvudåtgärderna till botten av meddelandemenyn.</string>
+    <string name="GlassMessageMenu">Glas meddelandemeny</string>
+    <string name="GlassMessageMenuBlurOff">Glasmenyer kräver oskärpa, vilket för närvarande är avstängt.</string>
+    <string name="AddCommaAfterMention">Lägg till kommatecken efter omnämnande</string>
+    <string name="HideSendAsPeer">Dölj knappen \"Skicka som…\"</string>
+    <string name="HideSendAsPeerInfo">Du kan fortfarande komma åt menyn \"Skicka som…\" genom att hålla ned knappen för Emojis/klistermärken/GIF:er.</string>
+    <string name="ShowPollResultsBeforeVoting">Visa resultat före röstning</string>
+    <string name="ShowPollResultsBeforeVotingHint">Visa resultat för varje alternativ innan du skickar din röst.</string>
+    <string name="ShowOnlineStatus">Visa onlineindikator</string>
+    <string name="MessagePreviewDialogMessage">Jag kan äta glas och det gör mig inte ont.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Igenkänningsspråk</string>
+    <string name="RecognitionInfo">Använder Vosk API. Fungerar offline. Kvaliteten på den transkriberade texten kan vara låg.</string>
+    <string name="MissingLanguageModel">Saknar språkmodell</string>
+    <string name="DownloadingModel">Laddar ner modell…</string>
+    <string name="DownloadingModelInfo">Håll detta fönster öppet medan språkmodellen laddas ner.</string>
+    <string name="ModelDownload">Ladda ner (%1$s)</string>
+    <string name="ModelDownloadInfo">För att fortsätta måste du ladda ner språkmodellen \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Modell nedladdad.</string>
+    <string name="ModelError">Fel vid nedladdning av modellen.</string>
+    <string name="ModelUnzipping">Packar upp…</string>
+    <string name="DeleteRecognitionModel">Ta bort modell</string>
+    <string name="DeleteRecognitionModelInfo">Är du säker på att du vill ta bort språkmodellen \"**%1$s**\"?</string>
+    <string name="RecognitionModelDeleted">Modell borttagen.</string>
+    <string name="RecognitionModelDeleteError">Fel vid borttagning av modellen.</string>
+    <string name="PostProcessingWithAi">Använd AI för efterbearbetning</string>
+    <string name="PostProcessingWithAiInfo">AI kommer att förbättra läsbarheten genom att korrigera fel, lägga till skiljetecken och förtydliga otydliga delar.</string>
+    <!-- Camera -->
+    <string name="CameraType">Kameratyp</string>
+    <string name="ExtendedSettings">Utökade inställningar</string>
+    <string name="SeamlessSwitching">Sömlös växling</string>
+    <string name="ExtendedFramesPerSecond">Utökad FPS-intervall</string>
+    <string name="CameraStabilization">Stabilisering</string>
+    <string name="CameraMirrorMode">Spegelläge</string>
+    <string name="StartWithWideAngleCamera">Starta med vidvinkel</string>
+    <string name="ZoomSlider">Zoomreglage</string>
+    <string name="ZoomSliderInfo">Visa zoomkontrollen under videomeddelandekameran.</string>
+    <string name="StaticZoom">Statisk zoom</string>
+    <string name="StaticZoomInfo">När du spelar in videomeddelanden återställs inte zoomnivån om du släpper fingrarna.</string>
+    <string name="VideoMessagesCamera">Kamera i videomeddelanden</string>
+    <string name="VideoMessagesCameraRear">Bakre</string>
+    <string name="VideoMessagesCameraFront">Främre</string>
+    <string name="VideoMessagesCameraAsk">Fråga</string>
+    <string name="RearCamera">Bakre kamera</string>
+    <string name="FrontCamera">Främre kamera</string>
+    <string name="RememberLastUsedCamera">Kom ihåg senast använda kamera</string>
+    <string name="RememberLastUsedCameraInfo">När du spelar in videomeddelanden väljs den senast använda kameran automatiskt.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Skicka alltid i HD</string>
+    <string name="HideCameraTile">Dölj omedelbar kameraruta</string>
+    <string name="HideCameraTileInfo">Kamerarutan ersätts av en flytande knapp. Tryckning startar Telegram-kameran; hållning startar systemkameran.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Hopptid vid dubbeltryck</string>
+    <string name="PreferOriginalQuality">Föredra originalkvalitet</string>
+    <string name="PauseOnMinimize">Autopaus</string>
+    <string name="PauseOnMinimizeVoice">Röst</string>
+    <string name="PauseOnMinimizeRound">Rund</string>
+    <string name="PauseOnMinimizeInfo">Pausar mediauppspelning när enheten låses eller exteraGram minimeras.</string>
+    <string name="SwipeToPip">Svep för bild-i-bild</string>
+    <string name="UnmuteWithVolumeButtons">Ljud på videor med volymknappar</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Att trycka på en volymknapp aktiverar ljudet på videon istället för att ändra systemvolymen.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">När dessa alternativ är aktiverade samlas data om enheten in och skickas till Google Analytics och Crashlytics, vilket gör att vi kan hålla användningsstatistik och spåra fel i appen. \n\nOm alternativen stängs av stoppas datainsamlingen och eventuella skickade data raderas omedelbart.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Ange filnamn…</string>
+    <string name="ExportSettings">Exportera inställningar</string>
+    <string name="ApplySettings">Tillämpa inställningar</string>
+    <string name="ImportTitle">Är du säker på att du vill tillämpa dessa inställningar?</string>
+    <string name="ImportConfirm">Ja, tillämpa</string>
+    <string name="CancelConfirm">Nej, lämna som det är</string>
+    <string name="SettingsSaved">Inställningsfil sparad.</string>
+    <string name="SettingsImported">Inställningar tillämpade.</string>
+    <string name="ImportChanges_one">**1** ändring kommer att tillämpas på de aktuella inställningarna.</string>
+    <string name="ImportChanges_two">**%1$d** ändringar kommer att tillämpas på de aktuella inställningarna.</string>
+    <string name="ImportChanges_few">**%1$d** ändringar kommer att tillämpas på de aktuella inställningarna.</string>
+    <string name="ImportChanges_many">**%1$d** ändringar kommer att tillämpas på de aktuella inställningarna.</string>
+    <string name="ImportChanges_other">**%1$d** ändringar kommer att tillämpas på de aktuella inställningarna.</string>
+    <string name="SameSettings">Det verkar som om inställningarna är desamma som de nuvarande.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Av säkerhetsskäl kommer du att kunna börja ladda ner dina data om %1$s. Vi har meddelat alla dina enheter om exportbegäran för att säkerställa att den är auktoriserad och ge dig tid att reagera om den inte är det.\n\nKom tillbaka den %2$s och upprepa begäran med samma enhet.</string>
+    <string name="ExportInvalid">Tyvärr, du startade en ny dataexport, så denna dataexport har avbrutits.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Ta bort konto</string>
+    <string name="ResetSettings">Återställ inställningar</string>
+    <string name="ResetPreferences">**exteraGram**-inställningar har återställts.</string>
+    <string name="ResetPreferencesInfo">Är du säker på att du vill återställa **alla** exteraGram-inställningar till standardvärden?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Stöd utvecklingen</string>
+    <string name="SupportDevelopmentInfo">Genom att stödja projektet bidrar du inte bara till dess utveckling utan får också ett unikt märke.</string>
+    <string name="MakeDonation">Gör en donation</string>
+    <string name="ReceiveBadge">Motta ditt märke</string>
+    <string name="NowPlaying">Spelas nu</string>
+    <string name="ScrobblingService">Scrobbling-tjänst</string>
+    <string name="SelectService">Välj tjänst</string>
+    <string name="SelectServiceInfo">Visar det aktuella spåret i profilen som ett kort från scrobbling-tjänsten.</string>
+    <string name="EnterUsername">Ange användarnamn</string>
+    <string name="EnterUsernameInfo">Du kan få ditt användarnamn på den **officiella webbplatsen**.</string>
+    <string name="BoostyPeopleCount_two">%1$d personer</string>
+    <string name="BoostyPeopleCount_few">%1$d personer</string>
+    <string name="BoostyPeopleCount_many">%1$d personer</string>
+    <string name="BoostyPeopleCount_other">%1$d personer</string>
+    <string name="BoostyInfo">Aktivt stödja **exteraGram** på **Boosty**.</string>
+    <string name="BoostyInfo2">Tack för ditt stöd!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Plugininstallation är endast tillgänglig i **Full**-versionen av **exteraGram**.</string>
+    <string name="Plugins">Plugin</string>
+    <string name="PluginsEngine">Pluginmotor</string>
+    <string name="EnablePluginsEngine">Aktivera pluginmotor</string>
+    <string name="PluginsInfo">Du hittar plugins i @exteraPlugins.</string>
+    <string name="PluginsNotFound">Inga plugins hittades.</string>
+    <string name="InstallPlugin">Installera</string>
+    <string name="UpdatePlugin">Uppdatera</string>
+    <string name="PluginNotEnabled">Aktivera **Pluginmotorn** för att installera **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** installerades.</string>
+    <string name="PluginUpdated">**%1$s** uppdaterades.</string>
+    <string name="PluginEnableError">Kunde inte aktivera **%1$s**.</string>
+    <string name="PluginDisableError">Kunde inte inaktivera **%1$s**.</string>
+    <string name="PluginInstallError">Kunde inte installera **%1$s**.</string>
+    <string name="PluginSourceTrusted">Betrodd källa</string>
+    <string name="PluginSourceTrustedInfo">Plugin från denna källa är **verifierade** och säkra att använda.</string>
+    <string name="PluginSourceUnknown">Okänd källa</string>
+    <string name="PluginSourceUnknownInfo">Plugin från denna källa är **overifierade** och kan utgöra en säkerhetsrisk.</string>
+    <string name="PluginNoDescription">Ingen beskrivning angiven.</string>
+    <string name="PluginIsNotResponding">Plugin svarar inte.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s svarar inte</string>
+    <string name="PluginNoAuthor">Okänd författare</string>
+    <string name="EnableAfterInstallation">Aktivera efter installation</string>
+    <string name="EnterValue">Ange ett värde</string>
+    <string name="PluginDelete">Ta bort plugin</string>
+    <string name="PluginDeleteInfo">Är du säker på att du vill ta bort **%1$s**?</string>
+    <string name="ResetPluginSettings">Inställningar för **%1$s** har återställts.</string>
+    <string name="ResetPluginSettingsInfo">Är du säker på att du vill återställa inställningarna för **%1$s** till standard?</string>
+    <string name="PluginsSafeMode">Säkert läge</string>
+    <string name="PluginsSafeModeShortcut">Starta i säkert läge</string>
+    <string name="PluginsSafeModeInfo">Pluginmotorn är inaktiverad på grund av en krasch. Att inaktivera säkert läge kan leda till oförutsedda konsekvenser.</string>
+    <string name="PluginsSafeModeInfo2">I säkert läge är alla plugin inaktiva. Detta gör att du säkert kan hitta och inaktivera ett problematiskt plugin.</string>
+    <string name="PluginsDevMode">Utvecklarläge</string>
+    <string name="PluginsCompactView">Kompakt vy för plugin</string>
+    <string name="PluginsDocumentation">Dokumentation</string>
+    <string name="PluginsTrusted">Betrodda plugin</string>
+    <string name="PluginsDevServerLaunched">Utvecklarservern är startad.</string>
+    <string name="PluginsDevServerStopped">Utvecklarservern är stoppad.</string>
+    <string name="PluginEngineNotEnabled">Aktivera **Pluginmotorn** för att öppna inställningar för **%1$s**.</string>
+    <string name="PluginNotFound">**%1$s** hittades inte.</string>
+    <string name="PluginHasNoSettings">**%1$s** har inga inställningar.</string>
+    <string name="PluginsPySdkAutoUpdate">Uppdatera automatiskt</string>
+    <string name="PluginsPySdkEnableBetaVersion">Installera betaversioner</string>
+    <string name="PluginsPySdkCheckUpdates">Sök efter uppdateringar</string>
+    <string name="CheckingForUpdates">Söker efter uppdateringar…</string>
+    <string name="LatestVersionInstalled">Senaste versionen är installerad</string>
+    <string name="RestartPluginSystemToApplyUpdate">Uppdatering laddad, starta om Pluginmotorn för att tillämpa</string>
+    <string name="LoadingUpdate">Laddar uppdatering…</string>
+    <string name="RestoreSdkFromApk">Återställ SDK från APK</string>
+    <string name="EnableAutoUpdate">Aktivera automatisk uppdatering</string>
+    <string name="PluginsDisableArt">Kompatibilitetsläge</string>
+    <string name="PluginsDisableArtInfo">Förhindrar plugin-hook-fel genom att inaktivera ART Profile Saver.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Uppdatering pågår…</string>
+    <string name="UpdateInstallingRelaunch">Appen startar om när uppdateringen är klar.</string>
+    <string name="UpdateInstallingNotification">Du kommer att meddelas när uppdateringen är klar.</string>
+    <string name="UpdateInstalledNotification">Uppdateringen klar. Tryck för att öppna appen.</string>
+    <string name="UpdateFailedToInstall">Uppdateringsinstallation misslyckades med felkod: %d</string>
+    <string name="UpdateAvailable">Uppdatering tillgänglig!</string>
+    <!-- Message Details -->
+    <string name="Details">Detaljer</string>
+    <string name="Date">Datum</string>
+    <string name="EditedDate">Redigeringsdatum</string>
+    <string name="ForwardedDate">Vidarebefordringsdatum</string>
+    <string name="FileSize">Filstorlek</string>
+    <string name="FileName">Filnamn</string>
+    <string name="FilePath">Filsökväg</string>
+    <string name="Platform">Plattform</string>
+    <string name="Resolution">Upplösning</string>
+    <string name="Duration">Varaktighet</string>
+    <string name="MimeType">Mime-typ</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOptionNone">Ingen</string>
+    <string name="DateFormatOptionRelative">Relativ</string>
+    <string name="DateFormatOptionShortTime">Kort tid</string>
+    <string name="DateFormatOptionLongTime">Lång tid</string>
+    <string name="DateFormatOptionShortDate">Kort datum</string>
+    <string name="DateFormatOptionLongDate">Långt datum</string>
+    <string name="DateFormatOptionDayOfWeek">Veckodag</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">Inloggning med QR-kod</string>
+    <string name="LoginQrSubtitle">Använd en annan enhet för att skanna denna QR-kod.</string>
+    <string name="WifiConnect">Anslut</string>
+    <string name="WifiDisabled">Wi-Fi är inaktiverat.</string>
+    <string name="WifiFailed">Misslyckades att ansluta till Wi-Fi.</string>
+    <string name="WifiSuccess">Ansluten till Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Är du säker på att du vill logga in på detta konto på en annan enhet?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Sida blockerad</string>
+    <string name="PageBlockedDescription">exteraGram har förhindrat att följande sida laddas:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Gå tillbaka</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Ange som märke</string>
+    <string name="AutoLockInstant">Omedelbar</string>
+    <string name="TestBackend">Testa backend</string>
+    <string name="SearchPhotoInfo">Tjänster kan använda bilder i enlighet med deras integritetspolicy och användarvillkor.</string>
+    <string name="PhotoUploadFailed">Misslyckades att ladda upp foto.</string>
+    <string name="TrackSaved">Spår sparat till **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Spår kommer att sparas till **%1$s**.</string>
+    <string name="DeletedMessage">Borttaget meddelande</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Kopiera rubrik</string>
+    <string name="CopyCallback">Kopiera callback-data</string>
+    <string name="CopyInlineQuery">Kopiera inline-fråga</string>
+    <string name="CopyID">Kopiera användar-ID</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Märkesstatus inställd.</string>
+    <string name="UserNotFound">Användare med detta **ID** hittades inte.</string>
+    <string name="ChatNotFound">Chatt med detta **ID** hittades inte.</string>
+    <string name="PhotoCopied">Foto kopierat till urklipp.</string>
+    <string name="FrameCopied">Bildruta kopierad till urklipp.</string>
+    <string name="TapToCopy">Tryck för att kopiera</string>
+    <string name="ProfileUsesEmojiPack">Denna profil använder emoji från paketet %s för sin bakgrund.</string>
+    <string name="ProfileUsesEmojiPacks">Denna profil använder emoji från **%d paket** för sin bakgrund.</string>
+    <string name="ReplyUsesEmojiPacks">Detta svar använder emoji från paketet %s för sin bakgrund.</string>
+    <string name="StickerSavedHint">Klistermärke sparat i galleriet.</string>
+    <string name="EmojiSavedHint">Emoji sparad i galleriet.</string>
+    <string name="GifGallerySavedHint">GIF sparad i galleriet.</string>
+    <string name="MutualContactInfo">Denna kontakt är ömsesidig.</string>
+    <string name="LocalPremiumEmojiHint">Du har inte ett **Telegram Premium**-abonnemang, så endast **exteraGram**-användare kommer att kunna se denna emoji.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Dölj kontakter-flik</string>
+    <string name="ShowContactsTab">Visa kontakter-flik</string>
+    <string name="ContactsTabWasShownTitle">Fliken **Kontakter** är nu synlig.</string>
+    <string name="ContactsTabWasHiddenTitle">Fliken **Kontakter** är nu dold.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Denna funktion fungerar endast med lösenordshanterare som tillåter användaren att hantera förtroendeinställningar för privilegierade appar, som **Bitwarden** eller **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Ej stödd lösenordshanterare</string>
+    <string name="PasskeyUnsupportedMessage">Prova andra lösenordshanterare som **Bitwarden** eller **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** skapade sitt konto ungefär den **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** skapade sitt konto tidigare än **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** skapade sitt konto senare än **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** skapades den **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Du skapade ditt konto ungefär den **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">Du skapade ditt konto tidigare än **%1$s**.</string>
+    <string name="CreationDateSelfLater">Du skapade ditt konto senare än **%1$s**.</string>
+    <string name="JoinDateChat">Du gick med i **%1$s** den **%2$s**.</string>
+    <string name="GroupMemberJoined">gick med i %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Till början</string>
+    <string name="MessageHistory">Historik</string>
+    <string name="BoldItalic">Fet kursiv</string>
+    <string name="CopyPhoto">Kopiera foto</string>
+    <string name="CopyFrame">Kopiera bildruta</string>
+    <string name="Repeat">Upprepa</string>
+    <string name="Subtitles">Undertexter</string>
+    <string name="ChooseSubtitles">Välj undertexter</string>
+    <string name="DisableSubtitles">Inaktivera undertexter</string>
+    <string name="SubtitlesAdded">Undertexter aktiverade.</string>
+    <string name="SubtitlesRemoved">Undertexter inaktiverade.</string>
+    <string name="SubtitlesLoadError">Kunde inte ladda undertexter.</string>
+    <string name="SubtitlesUnsupportedFormat">Undertextformat stöds inte.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Klistermärkeshörn</string>
+    <string name="StickerCornerRadiusInfo">Välj hur rundade klistermärkeshörnen ska se ut.</string>
+    <string name="StickerCornerRadiusLarge">Stor</string>
+    <string name="StickerCornerRadiusMedium">Mellan</string>
+    <string name="StickerCornerRadiusSmall">Liten</string>
+    <string name="StickerCornerRadiusNone">Ingen</string>
+    <!-- Feed -->
+    <string name="Feed">Flöde</string>
+    <string name="FeedShownChannels">Visas i flödet</string>
+    <string name="FeedHiddenChannels">Dold</string>
+    <string name="FeedChannels">Kanaler</string>
+    <string name="FeedSettings">Flödesinställningar</string>
+    <string name="FeedNoPosts">Inga kanalinlägg ännu.</string>
+    <string name="FeedAllChannelsExcluded">Alla kanaler är exkluderade från flödet.</string>
+    <string name="FeedMarkAllReadConfirm">Markera alla inlägg i dina flödeskanaler som lästa? Detta markerar dem även som lästa i originalkanalerna.</string>
+    <string name="FeedMarkAllReadDone">Alla inlägg markerade som lästa</string>
+    <string name="FeedIncludeArchived">Visa chattar från arkiv</string>
+    <string name="FeedIncludeArchivedInfo">Inkludera även kanaler från dina arkiverade chattar i flödet.</string>
+    <string name="FeedHideChannel">Dölj från flöde</string>
+    <string name="FeedChannelHidden">**%1$s** dold från flöde</string>
+    <string name="FeedBottomTab">Visa i nedre flikar</string>
+    <string name="FeedBottomTabInfo">Visa flödet som en nedre navigeringsflik istället för kontakter-fliken.</string>
+    <string name="FeedUnreadCounter">Räknare för olästa inlägg</string>
+    <string name="HideFeedTab">Dölj flödesflik</string>
+    <string name="DisableMarkdown">Inaktivera Markdown</string>
+    <string name="EnableMarkdown">Aktivera Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

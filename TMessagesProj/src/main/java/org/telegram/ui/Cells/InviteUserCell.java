@@ -8,29 +8,42 @@
 
 package org.telegram.ui.Cells;
 
+import static org.telegram.messenger.LocaleController.getString;
+
+import org.telegram.messenger.FileLog;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+
+import androidx.annotation.Nullable;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.ProgressButton;
 
-import com.exteragram.messenger.ExteraConfig;
+@SuppressLint("ViewConstructor")
+public class InviteUserCell extends FrameLayout implements Theme.Colorable {
 
-public class InviteUserCell extends FrameLayout {
-
-    private BackupImageView avatarImageView;
-    private SimpleTextView nameTextView;
-    private SimpleTextView statusTextView;
-    private CheckBox2 checkBox;
-    private AvatarDrawable avatarDrawable;
+    private final BackupImageView avatarImageView;
+    private final SimpleTextView nameTextView;
+    private final SimpleTextView statusTextView;
+    private final AvatarDrawable avatarDrawable;
+    private @Nullable final ProgressButton button;
+    private @Nullable final CheckBox2 checkBox;
     private ContactsController.Contact currentContact;
     private CharSequence currentName;
 
@@ -39,27 +52,48 @@ public class InviteUserCell extends FrameLayout {
         avatarDrawable = new AvatarDrawable();
 
         avatarImageView = new BackupImageView(context);
-        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(50));
-        addView(avatarImageView, LayoutHelper.createFrame(50, 50, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 11, 11, LocaleController.isRTL ? 11 : 0, 0));
+        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(46));
+        addView(avatarImageView, LayoutHelper.createFrame(46, 46, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 13, 6, 13, 6));
+
+        LinearLayout nameAndButton = new LinearLayout(context);
+        nameAndButton.setOrientation(LinearLayout.HORIZONTAL);
+        addView(nameAndButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL,
+                (LocaleController.isRTL ? 0 : 72), 0, (LocaleController.isRTL ? 72 : 0), 0));
+
+        FrameLayout namesLayout = new FrameLayout(context);
+        nameAndButton.addView(namesLayout, LayoutHelper.createLinear(0, 58, 1f));
 
         nameTextView = new SimpleTextView(context);
-        nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        nameTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        nameTextView.setTextSize(17);
+        ThemeBind.textColor(nameTextView, Theme.key_windowBackgroundWhiteBlackText);
+        nameTextView.setTypeface(AndroidUtilities.bold());
+        nameTextView.setTextSize(15);
         nameTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
-        addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 28 : 72, 14, LocaleController.isRTL ? 72 : 28, 0));
+        namesLayout.addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 0, 9, 0, 0));
 
         statusTextView = new SimpleTextView(context);
-        statusTextView.setTextSize(16);
+        statusTextView.setTextSize(13);
         statusTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
-        addView(statusTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 28 : 72, 39, LocaleController.isRTL ? 72 : 28, 0));
+        namesLayout.addView(statusTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 0, 33, 0, 0));
 
         if (needCheck) {
+            button = null;
             checkBox = new CheckBox2(context, 21);
             checkBox.setColor(-1, Theme.key_windowBackgroundWhite, Theme.key_checkboxCheck);
             checkBox.setDrawUnchecked(false);
             checkBox.setDrawBackgroundAsArc(3);
-            addView(checkBox, LayoutHelper.createFrame(24, 24, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 40, 40, LocaleController.isRTL ? 39 : 0, 0));
+            addView(checkBox, LayoutHelper.createFrame(24, 24, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 40, 32, LocaleController.isRTL ? 39 : 0, 0));
+        } else {
+            checkBox = null;
+
+            button = new ProgressButton(context);
+            button.setText(getString(R.string.Invite));
+            button.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            ThemeBind.textColor(button, Theme.key_featuredStickers_buttonText);
+            button.setProgressColor(Theme.getColor(Theme.key_featuredStickers_buttonProgress));
+            ThemeBind.selectorBackground(button, Theme.AdaptiveRipple.filledRect(Theme.getColor(Theme.key_telegram_color), 16), ThemeBind.of(Theme.key_telegram_color), ThemeBind.adaptiveRipple(Theme.key_telegram_color));
+            button.setPadding(AndroidUtilities.dp(14), 0, AndroidUtilities.dp(14), 0);
+            nameAndButton.addView(button, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 28, 0f, Gravity.CENTER_VERTICAL, 18, 0, 18, 0));
+            button.setOnClickListener(v -> InviteUserCell.this.performClick());
         }
     }
 
@@ -70,16 +104,13 @@ public class InviteUserCell extends FrameLayout {
     }
 
     public void setChecked(boolean checked, boolean animated) {
-        checkBox.setChecked(checked, animated);
+        if (checkBox != null) {
+            checkBox.setChecked(checked, animated);
+        }
     }
 
     public ContactsController.Contact getContact() {
         return currentContact;
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(72), MeasureSpec.EXACTLY));
     }
 
     public void recycle() {
@@ -92,7 +123,8 @@ public class InviteUserCell extends FrameLayout {
         }
         String newName = null;
 
-        avatarDrawable.setInfo(currentContact.contact_id, currentContact.first_name, currentContact.last_name);
+        avatarDrawable.setInfo(currentContact.contact_id, currentContact.first_name, currentContact.last_name, null, null, null, false);
+
 
         if (currentName != null) {
             nameTextView.setText(currentName, true);
@@ -101,7 +133,7 @@ public class InviteUserCell extends FrameLayout {
         }
 
         statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
-        statusTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        ThemeBind.textColor(statusTextView, Theme.key_windowBackgroundWhiteGrayText);
         if (currentContact.imported > 0) {
             statusTextView.setText(LocaleController.formatPluralString("TelegramContacts", currentContact.imported));
         } else {
@@ -114,5 +146,32 @@ public class InviteUserCell extends FrameLayout {
     @Override
     public boolean hasOverlappingRendering() {
         return false;
+    }
+
+    private int lastAvatarColorsHash;
+
+    @Override
+    public void updateColors() {
+        try {
+            // avatar colors: re-run update only when they changed (the status color is bound with ThemeBind)
+            int hash = Theme.getColor(Theme.key_avatar_text);
+            hash = hash * 31 + Theme.getColor(Theme.key_avatar_backgroundRed);
+            hash = hash * 31 + Theme.getColor(Theme.key_avatar_backgroundOrange);
+            hash = hash * 31 + Theme.getColor(Theme.key_avatar_backgroundViolet);
+            hash = hash * 31 + Theme.getColor(Theme.key_avatar_backgroundGreen);
+            hash = hash * 31 + Theme.getColor(Theme.key_avatar_backgroundCyan);
+            hash = hash * 31 + Theme.getColor(Theme.key_avatar_backgroundBlue);
+            hash = hash * 31 + Theme.getColor(Theme.key_avatar_backgroundPink);
+            if (hash == lastAvatarColorsHash) {
+                return;
+            }
+            lastAvatarColorsHash = hash;
+            // the avatar drawable re-reads its theme colors on draw: no full update(0) re-bind
+            if (avatarImageView != null) {
+                avatarImageView.invalidate();
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 }

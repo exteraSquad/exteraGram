@@ -1,5 +1,7 @@
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -27,6 +29,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,15 +38,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
+import org.telegram.messenger.utils.TextWatcherImpl;
 import org.telegram.ui.ActionBar.AdjustPanLayoutHelper;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Cells.GraySectionCell;
 import org.telegram.ui.Cells.GroupCallTextCell;
 import org.telegram.ui.Cells.GroupCallUserCell;
 
 public class UsersAlertBase extends BottomSheet {
 
+    private TextView titleView;
     protected FrameLayout frameLayout;
     protected RecyclerListView listView;
     protected RecyclerView.Adapter searchListViewAdapter;
@@ -79,10 +85,12 @@ public class UsersAlertBase extends BottomSheet {
     protected int keySearchIcon = Theme.key_dialogSearchIcon;
     protected int keySearchIconUnscrolled = Theme.key_dialogSearchIcon;
     protected final FillLastLinearLayoutManager layoutManager;
+    private boolean drawTitle = true;
 
 
     public UsersAlertBase(Context context, boolean needFocus, int account, Theme.ResourcesProvider resourcesProvider) {
         super(context, needFocus, resourcesProvider);
+        this.resourcesProvider = resourcesProvider;
         updateColorKeys();
         setDimBehindAlpha(75);
 
@@ -97,26 +105,28 @@ public class UsersAlertBase extends BottomSheet {
 
         frameLayout = new FrameLayout(context);
 
-        searchView = new SearchField(context);
-        frameLayout.addView(searchView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
+        searchView = new SearchField(context, resourcesProvider);
+        searchView.setWhiteBackground();
+        searchView.setPadding(dp(4), dp(4), dp(4), dp(4));
+        frameLayout.addView(searchView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 7, 7, 7, 7));
 
         flickerLoadingView = new FlickerLoadingView(context);
         flickerLoadingView.setViewType(FlickerLoadingView.USERS_TYPE);
         flickerLoadingView.showDate(false);
         flickerLoadingView.setUseHeaderOffset(true);
-        flickerLoadingView.setColors(keyInviteMembersBackground, keySearchBackground, keyActionBarUnscrolled);
+        // flickerLoadingView.setColors(keyInviteMembersBackground, keySearchBackground, keyActionBarUnscrolled);
 
         emptyView = new StickerEmptyView(context, flickerLoadingView, StickerEmptyView.STICKER_TYPE_SEARCH);
         emptyView.addView(flickerLoadingView, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, 0, 0, 2, 0, 0));
-        emptyView.title.setText(LocaleController.getString("NoResult", R.string.NoResult));
-        emptyView.subtitle.setText(LocaleController.getString("SearchEmptyViewFilteredSubtitle2", R.string.SearchEmptyViewFilteredSubtitle2));
+        emptyView.title.setText(LocaleController.getString(R.string.NoResult));
+        emptyView.subtitle.setText(LocaleController.getString(R.string.SearchEmptyViewFilteredSubtitle2));
         emptyView.setVisibility(View.GONE);
         emptyView.setAnimateLayoutChange(true);
         emptyView.showProgress(true, false);
         emptyView.setColors(keyNameText, keyLastSeenText, keyInviteMembersBackground, keySearchBackground);
         containerView.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 0, 58 + 4, 0, 0));
 
-        listView = new RecyclerListView(context) {
+        listView = new RecyclerListView(context, resourcesProvider) {
 
             @Override
             public void setTranslationY(float translationY) {
@@ -133,11 +143,12 @@ public class UsersAlertBase extends BottomSheet {
                 return isEmptyViewVisible && getAdapter().getItemCount() <= 2;
             }
         };
+        listView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         listView.setTag(13);
         listView.setPadding(0, 0, 0, AndroidUtilities.dp(48));
         listView.setClipToPadding(false);
         listView.setHideIfEmpty(false);
-        listView.setSelectorDrawableColor(Theme.getColor(keyListSelector));
+        ThemeBind.listSelectorColor(listView, keyListSelector, resourcesProvider);
         layoutManager = new FillLastLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false, AndroidUtilities.dp(8), listView);
         layoutManager.setBind(false);
         listView.setLayoutManager(layoutManager);
@@ -167,7 +178,7 @@ public class UsersAlertBase extends BottomSheet {
         FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight(), Gravity.TOP | Gravity.LEFT);
         frameLayoutParams.topMargin = AndroidUtilities.dp(58);
         shadow = new View(context);
-        shadow.setBackgroundColor(Theme.getColor(Theme.key_dialogShadowLine));
+        // shadow.setBackgroundColor(Theme.getColor(Theme.key_dialogShadowLine));
         shadow.setAlpha(0.0f);
         shadow.setTag(1);
         containerView.addView(shadow, frameLayoutParams);
@@ -180,12 +191,6 @@ public class UsersAlertBase extends BottomSheet {
         listView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        AndroidUtilities.statusBarHeight = AndroidUtilities.getStatusBarHeight(getContext());
-    }
-
     protected ContainerView createContainerView(Context context) {
         return new ContainerView(context);
     }
@@ -195,95 +200,20 @@ public class UsersAlertBase extends BottomSheet {
     }
 
     @SuppressWarnings("FieldCanBeLocal")
-    protected class SearchField extends FrameLayout {
+    protected class SearchField extends FragmentSearchField {
 
-        private final View searchBackground;
-        private final ImageView searchIconImageView;
-        private final ImageView clearSearchImageView;
-        private final CloseProgressDrawable2 progressDrawable;
         protected EditTextBoldCursor searchEditText;
 
-        public SearchField(Context context) {
-            super(context);
+        public SearchField(Context context, Theme.ResourcesProvider resourcesProvider) {
+            super(context, resourcesProvider);
 
-            searchBackground = new View(context);
-            searchBackground.setBackgroundDrawable(Theme.createRoundRectDrawable(AndroidUtilities.dp(18), Theme.getColor(keySearchBackground)));
-            addView(searchBackground, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 14, 11, 14, 0));
+            searchEditText = editText;
 
-            searchIconImageView = new ImageView(context);
-            searchIconImageView.setScaleType(ImageView.ScaleType.CENTER);
-            searchIconImageView.setImageResource(R.drawable.smiles_inputsearch);
-            searchIconImageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(keySearchPlaceholder), PorterDuff.Mode.MULTIPLY));
-            addView(searchIconImageView, LayoutHelper.createFrame(36, 36, Gravity.LEFT | Gravity.TOP, 16, 11, 0, 0));
-
-            clearSearchImageView = new ImageView(context);
-            clearSearchImageView.setScaleType(ImageView.ScaleType.CENTER);
-            clearSearchImageView.setImageDrawable(progressDrawable = new CloseProgressDrawable2() {
-                @Override
-                protected int getCurrentColor() {
-                    return Theme.getColor(keySearchPlaceholder);
-                }
-            });
-            progressDrawable.setSide(AndroidUtilities.dp(7));
-            clearSearchImageView.setScaleX(0.1f);
-            clearSearchImageView.setScaleY(0.1f);
-            clearSearchImageView.setAlpha(0.0f);
-            addView(clearSearchImageView, LayoutHelper.createFrame(36, 36, Gravity.RIGHT | Gravity.TOP, 14, 11, 14, 0));
-            clearSearchImageView.setOnClickListener(v -> {
-                searchEditText.setText("");
-                AndroidUtilities.showKeyboard(searchEditText);
-            });
-
-            searchEditText = new EditTextBoldCursor(context) {
-                @Override
-                public boolean dispatchTouchEvent(MotionEvent event) {
-                    MotionEvent e = MotionEvent.obtain(event);
-                    e.setLocation(e.getRawX(), e.getRawY() - listView.getMeasuredHeight());
-                    if (e.getAction() == MotionEvent.ACTION_UP) {
-                        e.setAction(MotionEvent.ACTION_CANCEL);
-                    }
-                    listView.dispatchTouchEvent(e);
-                    e.recycle();
-                    return super.dispatchTouchEvent(event);
-                }
-            };
-            searchEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-            searchEditText.setHintTextColor(Theme.getColor(keySearchPlaceholder));
-            searchEditText.setTextColor(Theme.getColor(keySearchText));
-            searchEditText.setBackgroundDrawable(null);
-            searchEditText.setPadding(0, 0, 0, 0);
-            searchEditText.setMaxLines(1);
-            searchEditText.setLines(1);
-            searchEditText.setSingleLine(true);
             searchEditText.setImeOptions(EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-            searchEditText.setHint(LocaleController.getString("VoipGroupSearchMembers", R.string.VoipGroupSearchMembers));
-            searchEditText.setCursorColor(Theme.getColor(keySearchText));
-            searchEditText.setCursorSize(AndroidUtilities.dp(20));
-            searchEditText.setCursorWidth(1.5f);
-            addView(searchEditText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 40, Gravity.LEFT | Gravity.TOP, 16 + 38, 9, 16 + 30, 0));
-            searchEditText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                }
-
+            searchEditText.setHint(LocaleController.getString(R.string.VoipGroupSearchMembers));
+            searchEditText.addTextChangedListener(new TextWatcherImpl() {
                 @Override
                 public void afterTextChanged(Editable s) {
-                    boolean show = searchEditText.length() > 0;
-                    boolean showed = clearSearchImageView.getAlpha() != 0;
-                    if (show != showed) {
-                        clearSearchImageView.animate()
-                                .alpha(show ? 1.0f : 0.0f)
-                                .setDuration(150)
-                                .scaleX(show ? 1.0f : 0.1f)
-                                .scaleY(show ? 1.0f : 0.1f)
-                                .start();
-                    }
                     String text = searchEditText.getText().toString();
                     int oldItemsCount = listView.getAdapter() == null ? 0 : listView.getAdapter().getItemCount();
                     search(text);
@@ -317,7 +247,6 @@ public class UsersAlertBase extends BottomSheet {
         }
 
         public void closeSearch() {
-            clearSearchImageView.callOnClick();
             AndroidUtilities.hideKeyboard(searchEditText);
         }
     }
@@ -348,9 +277,11 @@ public class UsersAlertBase extends BottomSheet {
 
     protected void setColorProgress(float progress) {
         colorProgress = progress;
-        backgroundColor = AndroidUtilities.getOffsetColor(Theme.getColor(keyInviteMembersBackground), Theme.getColor(keyListViewBackground), progress, 1.0f);
+        backgroundColor = AndroidUtilities.getOffsetColor(
+            Theme.getColor(keyInviteMembersBackground, resourcesProvider),
+            Theme.getColor(keyListViewBackground, resourcesProvider), progress, 1.0f);
         shadowDrawable.setColorFilter(new PorterDuffColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY));
-        frameLayout.setBackgroundColor(backgroundColor);
+        // frameLayout.setBackgroundColor(backgroundColor);
         fixNavigationBar(backgroundColor);
         navBarColor = backgroundColor;
         listView.setGlowColor(backgroundColor);
@@ -540,7 +471,7 @@ public class UsersAlertBase extends BottomSheet {
                     setTranslationY(snapToTopOffset);
                 }
             } else {
-                padding = availableHeight - (availableHeight / 5 * 3) + AndroidUtilities.dp(8);
+                padding = measurePadding(availableHeight);
                 setAllowNestedScroll(true);
             }
             if (listView.getPaddingTop() != padding) {
@@ -604,20 +535,21 @@ public class UsersAlertBase extends BottomSheet {
             shadowDrawable.setBounds(0, top, getMeasuredWidth(), height);
             shadowDrawable.draw(canvas);
 
-            if (radProgress != 1.0f) {
-                Theme.dialogs_onlineCirclePaint.setColor(backgroundColor);
-                rect.set(backgroundPaddingLeft, backgroundPaddingTop + top, getMeasuredWidth() - backgroundPaddingLeft, backgroundPaddingTop + top + AndroidUtilities.dp(24));
-                canvas.drawRoundRect(rect, AndroidUtilities.dp(12) * radProgress, AndroidUtilities.dp(12) * radProgress, Theme.dialogs_onlineCirclePaint);
+            if(!drawTitle) {
+                if (radProgress != 1.0f) {
+                    Theme.dialogs_onlineCirclePaint.setColor(backgroundColor);
+                    rect.set(backgroundPaddingLeft, backgroundPaddingTop + top, getMeasuredWidth() - backgroundPaddingLeft, backgroundPaddingTop + top + AndroidUtilities.dp(24));
+                    canvas.drawRoundRect(rect, AndroidUtilities.dp(12) * radProgress, AndroidUtilities.dp(12) * radProgress, Theme.dialogs_onlineCirclePaint);
+                }
+
+                int w = AndroidUtilities.dp(36);
+                rect.set((getMeasuredWidth() - w) / 2, y, (getMeasuredWidth() + w) / 2, y + AndroidUtilities.dp(4));
+                Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(keyScrollUp));
+                canvas.drawRoundRect(rect, AndroidUtilities.dp(2), AndroidUtilities.dp(2), Theme.dialogs_onlineCirclePaint);
             }
-
-            int w = AndroidUtilities.dp(36);
-            rect.set((getMeasuredWidth() - w) / 2, y, (getMeasuredWidth() + w) / 2, y + AndroidUtilities.dp(4));
-            Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(keyScrollUp));
-            canvas.drawRoundRect(rect, AndroidUtilities.dp(2), AndroidUtilities.dp(2), Theme.dialogs_onlineCirclePaint);
-
             if (statusBarHeight > 0) {
                 Theme.dialogs_onlineCirclePaint.setColor(backgroundColor);
-                canvas.drawRect(backgroundPaddingLeft, AndroidUtilities.statusBarHeight - statusBarHeight - getTranslationY(), getMeasuredWidth() - backgroundPaddingLeft, AndroidUtilities.statusBarHeight - getTranslationY(), Theme.dialogs_onlineCirclePaint);
+                // canvas.drawRect(backgroundPaddingLeft, AndroidUtilities.statusBarHeight - statusBarHeight - getTranslationY(), getMeasuredWidth() - backgroundPaddingLeft, AndroidUtilities.statusBarHeight - getTranslationY(), Theme.dialogs_onlineCirclePaint);
             }
             updateLightStatusBar(statusBarHeight > AndroidUtilities.statusBarHeight / 2);
             canvas.restore();
@@ -641,6 +573,35 @@ public class UsersAlertBase extends BottomSheet {
             super.dispatchDraw(canvas);
             canvas.restore();
         }
+    }
 
+    protected int measurePadding(int availableHeight) {
+        return availableHeight - (availableHeight / 5 * 3) + AndroidUtilities.dp(8);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        if (titleView == null) {
+            titleView = new TextView(getContext());
+            ThemeBind.textColor(titleView, Theme.key_dialogTextBlack, resourcesProvider);
+            titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+            titleView.setTypeface(AndroidUtilities.bold());
+            titleView.setLines(1);
+            titleView.setMaxLines(1);
+            titleView.setSingleLine(true);
+            titleView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
+            titleView.setEllipsize(TextUtils.TruncateAt.END);
+            frameLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.TOP | Gravity.LEFT, 16, 0, 0, 0));
+
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) searchView.getLayoutParams();
+            layoutParams.topMargin = AndroidUtilities.dp(30);
+            frameLayout.getLayoutParams().height = AndroidUtilities.dp(58 + 36);
+        }
+        titleView.setText(title);
+    }
+
+    public void showSearch(boolean show) {
+        searchView.setVisibility(show ? View.VISIBLE : View.GONE);
+        frameLayout.getLayoutParams().height = titleView == null ? 0 : AndroidUtilities.dp(36);
     }
 }

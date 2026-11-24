@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.chaquo.python.runtime</groupId>
+  <artifactId>bootstrap</artifactId>
+  <versioning>
+    <latest>17.0.2</latest>
+    <release>17.0.2</release>
+    <versions>
+      <version>17.0.2</version>
+    </versions>
+    <lastUpdated>20261021094631</lastUpdated>
+  </versioning>
+</metadata>

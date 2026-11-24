@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram beállítások</string>
+    <!-- Main Menu -->
+    <string name="Links">Linkek</string>
+    <string name="Crowdin">Fordítás</string>
+    <string name="Website">Weboldal</string>
+    <string name="Categories">Kategóriák</string>
+    <string name="Developer">**%1$s** tagja az **exteraGram** fejlesztői csapatának.</string>
+    <string name="DeveloperCompact">Az **exteraGram** fejlesztői csapatának tagja.</string>
+    <string name="Supporter">**%1$s** támogatta az **exteraGram** fejlesztését, és egyedi jelvényt kapott.</string>
+    <string name="OfficialChannel">**%1$s** az **exteraGram** hivatalos forrása.</string>
+    <string name="NoSuchSetting">Úgy tűnik, hogy ilyen beállítás nem létezik.</string>
+    <string name="SettingLinkToSavedMessages">Beállítási hivatkozás elküldve a **Mentett üzenetek**-be.</string>
+    <string name="SettingLinkToUser">Beállítási hivatkozás elküldve **%1$s**-nek.</string>
+    <string name="SettingLinkToChats">Beállítási hivatkozás elküldve **%1$s**-nek.</string>
+    <string name="LiteBatteryFollowSystem">Rendszer akkumulátor-kímélő használata</string>
+    <string name="LiteBatteryFollowSystemState">Rendszer</string>
+    <string name="LiteBatteryFollowSystemInfo">A rendszer akkumulátor-kímélője vezérli.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPillsInfo">Interaktív tabletták megjelenítése a keresőmezőben</string>
+    <string name="PillStackActivePills">Aktív tabletták</string>
+    <string name="PillStackHiddenPills">Rejtett tabletták</string>
+    <string name="CurrentLocation">Jelenlegi hely</string>
+    <string name="SelectLocation">Kiválasztás a térképen</string>
+    <string name="WeatherPill">Időjárás</string>
+    <string name="WeatherSettingsInfo">Válaszd ki, hogyan határozd meg a helyet az időjárás megjelenítéséhez a keresésben.</string>
+    <string name="WeatherLocation">Helymeghatározás</string>
+    <string name="WeatherLocationPermissionNo">Az exteraGram hozzáférést igényel a helyzetedhez az aktuális időjárás megjelenítéséhez.</string>
+    <string name="WeatherLocationPermissionGrant">Engedély megadása</string>
+    <string name="WeatherLocationServicesEnable">Hely engedélyezése</string>
+    <string name="WeatherPillTopInfo">Időjárás-widget beállítások a Pill Stack-hez.</string>
+    <string name="PillStackInfiniteScrolling">Végtelen görgetés</string>
+    <string name="CryptoPillTargetCurrency">Cél pénznem</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Proxy letiltása</string>
+    <string name="ProxyDisableNever">Soha</string>
+    <string name="ProxyDisableAlways">Mindig</string>
+    <string name="ProxyDisableOnMobileData">Mobil adat</string>
+    <string name="ProxyType">Típus</string>
+    <string name="Unknown">Ismeretlen</string>
+    <string name="ProxyRename">Proxy név (opcionális)</string>
+    <string name="ProxyPinLimitReached">Legfeljebb %1$d proxy-t rögzíthetsz.</string>
+    <string name="CopyIpAddress">IP-cím másolása</string>
+    <string name="IpInfoUnavailable">Nem sikerült betölteni az IP-cím adatait.</string>
+    <string name="IpInfoIsp">Internetszolgáltató</string>
+    <string name="IpInfoOrganization">Szervezet</string>
+    <string name="IpInfoDomain">Tartomány</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Fordítási szolgáltató</string>
+    <string name="TranslationTarget">Célnyelv</string>
+    <string name="TranslationTargetApp">Kövesd az alkalmazást</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Számok kerekítésének kikapcsolása</string>
+    <string name="FormatTimeWithSeconds">Idő formázása másodpercekkel</string>
+    <string name="RelativeLastSeen">Relatív utolsó látogatás</string>
+    <string name="InAppVibration">Alkalmazáson belüli rezgés</string>
+    <string name="FilterZalgo">\"Zalgo\" szűrése</string>
+    <string name="FilterZalgoInfo">Eltávolítja a \"%1$s\" szimbólumokat a nevekből és üzenetekből.</string>
+    <string name="RestartRequired">Indítsd újra az alkalmazást a változtatások érvénybe lépéséhez.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Kód</string>
+    <string name="CreateCode">Kódblokk létrehozása</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Letöltési sebesség fokozása</string>
+    <string name="UploadSpeedBoost">Feltöltési sebesség fokozása</string>
+    <string name="SpeedBoostInfo">Az Ultra Boost problémákat okozhat fájlok letöltésekor és videók streamelésekor lassú internetkapcsolaton.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Tárhely</string>
+    <string name="CustomSavePath">Egyéni mentési mappa</string>
+    <string name="CustomSavePathHint">Hagyd üresen a közvetlen gyökérbe mentéshez</string>
+    <string name="CustomSavePathDefault">Mentés a gyökérbe</string>
+    <string name="CustomSavePathInfo">A mentett fájlok közvetlenül a Képek, Letöltések stb. mappákba kerülnek.</string>
+    <string name="CustomSavePathInfoFolder">A mentett fájlok a következő mappákba kerülnek: Képek/%1$s, Letöltések/%1$s stb.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Telefonszám elrejtése</string>
+    <string name="ShowIdAndDc">ID és DC megjelenítése</string>
+    <string name="ShowIdAndDcInfo">A Telegram API az ID-kat úgy mutatja, ahogy vannak, míg a Bot API mínuszjelet ad a csoportokhoz és -100-at a szupercsoportokhoz és csatornákhoz.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Archívum mappa elrejtése</string>
+    <string name="ArchiveOnPull">Archívum megnyitása legördítésre</string>
+    <string name="DisableUnarchiveSwipe">\"Kibontás\" csúsztatás letiltása</string>
+    <string name="DisableUnarchiveSwipeInfo">Balra csúsztatás nem távolítja el a csevegéseket az archívumból.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Megjelenés</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Avatar sarkok</string>
+    <string name="SingleCornerRadius">Egyedi saroksugár</string>
+    <string name="SingleCornerRadiusInfo">A fórumok ugyanolyan avatar alakkal rendelkeznek, mint a csevegések.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Csevegéslista</string>
+    <string name="ActionBarTitle">Cím szövege</string>
+    <string name="ActionBarTitleName">Keresztnév</string>
+    <string name="HideStories">Történetek elrejtése</string>
+    <string name="HideActionBarStatus">Állapot elrejtése</string>
+    <string name="CenterTitle">Cím középre</string>
+    <string name="ChatHeader">Csevegés fejléc</string>
+    <string name="HideFloatingButton">Lebegő gomb elrejtése</string>
+    <string name="HideDialogsSearchBar">Keresősáv elrejtése</string>
+    <string name="BottomNavigationBarMode">Alsó navigációs sáv</string>
+    <string name="BottomNavigationModeShow">Megjelenítés</string>
+    <string name="BottomNavigationModeHide">Elrejtés</string>
+    <string name="BottomNavigationModeFloating">Lebegő</string>
+    <string name="SenderMiniAvatars">Feladó mini avatarjai</string>
+    <string name="ListOfChatsInfo">Ha a mappákhoz csak az ikonok vannak engedélyezve, a főcím a mappa nevét jeleníti meg.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Mappa címe</string>
+    <string name="TabTitleStyleTextWithIcons">Nevek ikonokkal</string>
+    <string name="TabTitleStyleIconsOnly">Csak ikonok</string>
+    <string name="TabTitleStyleTextOnly">Csak nevek</string>
+    <string name="TabCounter">Értesítésszámláló</string>
+    <string name="HideAllChats">\"%1$s\" fül elrejtése</string>
+    <string name="FoldersInfo">Az ikonok szinkronizálva vannak a fiókoddal.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Alkalmazás navigáció</string>
+    <string name="AppNavigationInfo">Jobb felső menü és fiókbeállítások</string>
+    <string name="NavigationDrawer">Navigációs fiók</string>
+    <string name="NavigationDrawerInfo">A jobb felső menüt egy klasszikus, csúsztatható fiókra és hamburger gombra cseréli.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Immerzív animáció</string>
+    <string name="MainMenuItems">Menüelemek</string>
+    <string name="MainMenuItemsInfo">Koppints az elemek megjelenítéséhez vagy elrejtéséhez, tartsd lenyomva az átrendezéshez. Az elrendezés megosztott a menü és a fiók között.</string>
+    <string name="MainMenuHiddenItems">Rejtett menüelemek</string>
+    <string name="MainMenuAddDivider">Elválasztó hozzáadása</string>
+    <string name="MainMenuRemoveSettingsInfo">A beállítások nem rejthetők el, ha az alsó navigációs sáv le van tiltva.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Ikoncsomagok</string>
+    <string name="IconPacksInfo">Ikonok testreszabása az alkalmazásban</string>
+    <string name="IconPickerFilter">Szűrő</string>
+    <string name="IconPickerAllIcons">Összes ikon</string>
+    <string name="IconPickerReplacedIcons">Cserélt ikonok</string>
+    <string name="IconPickerNotReplacedIcons">Nem cserélt ikonok</string>
+    <string name="IconPickerSaveAndExit">Mentés és kilépés</string>
+    <string name="BasePacks">Alapcsomagok</string>
+    <string name="BaseIconPackInfo">Az alap ikoncsomag tartalékként szolgál azokhoz az ikonokhoz, amelyeket más csomagok nem helyettesítenek.</string>
+    <string name="IconPacksHint">Koppints a csomag engedélyezéséhez vagy letiltásához. Tartsd lenyomva a szerkesztéshez vagy törléshez.</string>
+    <string name="NewIconPack">Új ikoncsomag létrehozása</string>
+    <string name="EnabledPacks">Engedélyezett csomagok</string>
+    <string name="AllPacks">Összes csomag</string>
+    <string name="PackName">Csomag neve</string>
+    <string name="AuthorNameOptional">Szerző neve (opcionális)</string>
+    <string name="NameCannotBeEmpty">A név nem lehet üres.</string>
+    <string name="Version">Verzió</string>
+    <string name="InstallPack">Csomag telepítése</string>
+    <string name="IconCount_one">%1$d ikon</string>
+    <string name="IconCount_two">%1$d ikon</string>
+    <string name="IconCount_few">%1$d ikon</string>
+    <string name="IconCount_many">%1$d ikon</string>
+    <string name="IconCount_other">%1$d ikon</string>
+    <string name="UpdatePack">Csomag frissítése</string>
+    <string name="DeletePack">Csomag törlése</string>
+    <string name="DeletePackInfo">Biztosan törölni szeretnéd a(z) **%1$s** csomagot?</string>
+    <string name="IconPackErrorInvalidArchive">Az ikoncsomag archívum érvénytelen.</string>
+    <string name="IconPackErrorMissingMetadata">Az ikoncsomag archívumból hiányzik a metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Az ikoncsomag metaadata túl nagy.</string>
+    <string name="IconPackErrorInvalidMetadata">Az ikoncsomag metaadata érvénytelen.</string>
+    <string name="IconPackErrorTooManyFiles">Az ikoncsomag túl sok fájlt tartalmaz.</string>
+    <string name="IconPackErrorArchiveTooLarge">Az ikoncsomag túl nagy.</string>
+    <string name="IconPackErrorFileTooLarge">Az egyik ikonfájl túl nagy.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Az ikoncsomag archívum túlzottan tömörített.</string>
+    <string name="IconPackErrorStorage">Nem sikerült menteni az ikoncsomagot.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Ikoncsomag</string>
+    <string name="AppIconSunset">Naplemente</string>
+    <string name="AppIconAurora">Auróra</string>
+    <string name="AppIconAmethyst">Ametiszt</string>
+    <string name="AppIconInvincible">Legyőzhetetlen</string>
+    <string name="AppIconSpace">Űr</string>
+    <string name="AppIconIceAge">Jégkorszak</string>
+    <string name="AppIconEditor">Szerkesztő</string>
+    <string name="AppIconOrbit">Pálya</string>
+    <string name="AppIconSus">Imposztor</string>
+    <string name="AppIconWinter">Tél</string>
+    <!-- General Appearance -->
+    <string name="Sections">Szakaszok</string>
+    <string name="SeparateHeaders">Külön fejlécek</string>
+    <string name="DividerStyle">Elválasztó stílusa</string>
+    <string name="DividerStyleHidden">Rejtett</string>
+    <string name="DividerStyleLine">Vonal</string>
+    <string name="DividerStyleSegments">Szegmensek</string>
+    <string name="UseSystemFonts">Rendszerbetűk használata</string>
+    <string name="UseSystemEmoji">Rendszer-emoji használata</string>
+    <string name="NewLoadingStyle">Betöltési stílus</string>
+    <string name="NewSliderStyle">Csúszka stílus</string>
+    <string name="NewSwitchStyle">Kapcsoló stílus</string>
+    <string name="TabletMode">Tablet mód</string>
+    <string name="RemoveMessageTail">Üzenet farok eltávolítása</string>
+    <string name="GooeyAvatarAnimation">\"Ragacsos\" avatar animáció</string>
+    <string name="CustomChatThemes">Egyéni témák a csevegésekben</string>
+    <string name="CustomChatThemesInfo">Minden csevegés a számára kiválasztott témát jeleníti meg.</string>
+    <string name="PredictiveBackIntensity">Prediktív vissza intenzitás</string>
+    <string name="PredictiveBackMax">Maximum</string>
+    <string name="PredictiveBackInfo">Beállítja, mennyire mozdul el a képernyő visszacsúsztatáskor.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Elmosási beállítások</string>
+    <string name="GlassOutlineStyle">Üveg körvonal</string>
+    <string name="GlassOutlineGlare">Tükröződés</string>
+    <string name="GlassOutlineSolid">Tömör</string>
+    <string name="GlassOutlineHidden">Rejtett</string>
+    <string name="ForceSnow">Hópelyhek kényszerítése</string>
+    <string name="ForceSnowInfo">Hulló hópelyhek jelennek meg a műveletsávban, az oldalsó menüben és a csevegések hátterében.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Matrica méret</string>
+    <string name="StickerSizeLeft">Kicsi</string>
+    <string name="StickerSizeRight">Nagy</string>
+    <string name="StickerSizeDialogMessage">hűha, milyen aranyos!</string>
+    <string name="StickerShape">Matrica alak</string>
+    <string name="StickerShapeRounded">Lekerekített</string>
+    <string name="StickerShapeRoundedMsg">Üzenet</string>
+    <string name="ViewEmojiSet">Emoji-készlet megtekintése</string>
+    <string name="UnlimitedRecentStickers">Korlátlan legutóbbi matricák</string>
+    <string name="HideReactions">Reakciók elrejtése</string>
+    <string name="HideReactionsInfo">A reakciók teljesen elrejtésre kerülnek a felületen.</string>
+    <string name="ReplyBackground">Háttér</string>
+    <string name="ChatSettingsInfo">Média beállítások, alkalmazás ikon és egyéb</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Szolgáltatások, szerepek és előzmények beállítása</string>
+    <string name="AIChatInfo2">Szöveg generálása üzenetekből vagy küldés előtt.</string>
+    <!-- AI Services -->
+    <string name="Services">Szolgáltatások</string>
+    <string name="ServicesInfo">Válaszd ki a megfelelő szolgáltatást a nyelvi modellekkel való interakcióhoz.</string>
+    <string name="NewService">Új szolgáltatás</string>
+    <string name="EditService">Szolgáltatás szerkesztése</string>
+    <string name="ServiceModel">Modell</string>
+    <string name="ServiceKey">API-kulcs</string>
+    <string name="ServiceInfo">Szolgáltatás információ</string>
+    <string name="ServiceProvider">Szolgáltató</string>
+    <string name="ServiceProviderCustom">Egyéni</string>
+    <string name="ServiceTestAndSave">Tesztelés és mentés</string>
+    <string name="ServicePasteService">Szolgáltatás beillesztése</string>
+    <string name="ServicePasteKey">API-kulcs beillesztése</string>
+    <string name="DeleteServiceInfo">Biztosan törölni szeretnéd a(z) **%1$s** szolgáltatást?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Szerepek</string>
+    <string name="RolesInfo">Hozz létre szerepeket az egyedi igényeidhez!</string>
+    <string name="Suggestions">Javaslatok</string>
+    <string name="RoleName">Név</string>
+    <string name="PromptInfo">A prompt a modellnek adott kezdeti szöveg a válasz generálásának elindításához vagy a párbeszéd folytatásához.</string>
+    <string name="NewRole">Új szerep</string>
+    <string name="EditRole">Szerep szerkesztése</string>
+    <string name="DeleteRoleInfo">Biztosan törölni szeretnéd a(z) **%1$s** szerepet?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">A beszélgetés előzményei lehetővé teszik a mesterséges intelligencia számára, hogy megértse a korábbi kéréseket, és figyelembe vegye azokat új válaszok generálásakor.</string>
+    <string name="AIGeneration">Generálás</string>
+    <string name="AIReasoning">Érvelés</string>
+    <string name="AIReasoningInfo">Lehetővé teszi a támogatott modellek számára, hogy extra tokeneket költsenek gondolkodásra a válaszadás előtt.</string>
+    <string name="AITemperature">Hőmérséklet</string>
+    <string name="AITemperatureInfo">A hőmérséklet szabályozza a válasz véletlenszerűségét: a magasabb értékek kreatívabbak, az alacsonyabbak fókuszáltabbak.</string>
+    <string name="ResponseStreaming">Válasz streamelés</string>
+    <string name="ResponseStreamingInfo">Biztosítja a válaszok gördülékenyebb és gyorsabb megjelenítését.</string>
+    <string name="ShowResponseOnly">Csak válasz megjelenítése</string>
+    <string name="InsertResponseAsQuote">Válasz beszúrása idézetként</string>
+    <string name="TapToAddApiKey">Koppints az API-kulcs hozzáadásához az AI funkciók elindításához.</string>
+    <string name="Generate">Generálás</string>
+    <string name="ClearConversationHistoryInfo">Biztosan törölni szeretnéd az **összes** AI beszélgetés előzményt?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Érvénytelen kérés</string>
+    <string name="AIError400Info">Ellenőrizd a kérés paramétereit.</string>
+    <string name="AIError401">Érvénytelen hitelesítő adatok</string>
+    <string name="AIError401Info">Az API-kulcs érvénytelen vagy letiltva. Ellenőrizd a hitelesítő adataidat.</string>
+    <string name="AIError402">Nem elegendő kredit</string>
+    <string name="AIError402Info">A fiókodnak vagy az API-kulcsodnak nincs elegendő kreditje. Több kredit hozzáadása és a kérés ismétlése.</string>
+    <string name="AIError403">Hozzáférés megtagadva</string>
+    <string name="AIError403Info">Nincs jogosultságod a modell vagy erőforrás eléréséhez. Ellenőrizd az API-kulcsodat és a fiók jogosultságait.</string>
+    <string name="AIError408">Kérés időtúllépés</string>
+    <string name="AIError408Info">A kérésed nem került feldolgozásra időben. Kérlek, próbáld újra később.</string>
+    <string name="AIError429">Korlát túllépve</string>
+    <string name="AIError429Info">Túl gyakran küldesz kéréseket. Kérlek, várj egy pillanatot és próbáld újra.</string>
+    <string name="AIError502">Modell hiba</string>
+    <string name="AIError502Info">A kiválasztott modell nem elérhető, vagy érvénytelen választ kaptunk tőle.</string>
+    <string name="AIError503">Szolgáltatás nem elérhető</string>
+    <string name="AIError503Info">A szolgáltatás átmenetileg nem elérhető vagy túlterhelt. Kérlek, próbáld újra később.</string>
+    <string name="AIError">Szerverhiba</string>
+    <string name="AIErrorInfo">Kérlek, próbáld újra a kérést rövid várakozás után.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Bejövő üzenetek</string>
+    <string name="DoubleTapOutgoing">Kimenő üzenetek</string>
+    <string name="DoubleTapInfo">Néhány művelethez adminisztrátori jogosultság szükséges a csevegésben vagy csatornában.</string>
+    <string name="BottomButton">Alsó gomb</string>
+    <string name="ChannelDiscussNoCaps">Megbeszélés</string>
+    <string name="QuickTransitions">Gyors csúsztatásos átmenet</string>
+    <string name="DisableGreetingSticker">Köszöntő matrica letiltása</string>
+    <string name="AdminShortcuts">Gyors adminisztrátori parancsikonok</string>
+    <string name="HideKeyboardOnScroll">Billentyűzet elrejtése görgetéskor</string>
+    <string name="HideShareButton">Oldalsó \"%1$s\" gomb elrejtése</string>
+    <string name="ReplaceEditedWithIcon">\"%1$s\" helyettesítése ikonnal</string>
+    <string name="MessageMenu">Üzenet menü</string>
+    <string name="GroupMessageMenu">Csoportos üzenet menü</string>
+    <string name="GroupMessageMenuInfo">A csoportosítás a fő műveleteket az üzenet menü aljára helyezi.</string>
+    <string name="GlassMessageMenu">Üveg üzenet menü</string>
+    <string name="GlassMessageMenuBlurOff">Az üveg menükhöz elmosás szükséges, ami jelenleg ki van kapcsolva.</string>
+    <string name="AddCommaAfterMention">Vessző hozzáadása említés után</string>
+    <string name="HideSendAsPeer">\"Küldés mint…\" gomb elrejtése</string>
+    <string name="HideSendAsPeerInfo">Továbbra is elérheted a \"Küldés mint…\" menüt az Emojik/Matricák/GIF-ek gomb hosszan nyomva tartásával.</string>
+    <string name="ShowPollResultsBeforeVoting">Eredmények megjelenítése szavazás előtt</string>
+    <string name="ShowPollResultsBeforeVotingHint">Tekintsd meg az egyes opciók eredményeit a szavazat elküldése előtt.</string>
+    <string name="ShowOnlineStatus">Online állapot jelző megjelenítése</string>
+    <string name="MessagePreviewDialogMessage">Tudok üveget enni, és nem fáj.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Felismerési nyelv</string>
+    <string name="RecognitionInfo">Vosk API-t használ. Offline működik. Az átírt szöveg minősége alacsony lehet.</string>
+    <string name="MissingLanguageModel">Hiányzó nyelvi modell</string>
+    <string name="DownloadingModel">Modell letöltése…</string>
+    <string name="DownloadingModelInfo">Kérlek, tartsd nyitva ezt az ablakot, amíg a nyelvi modell letöltődik.</string>
+    <string name="ModelDownload">Modell letöltése (%1$s)</string>
+    <string name="ModelDownloadInfo">A folytatáshoz le kell töltened a \"**%1$s**\" nyelvi modellt.</string>
+    <string name="ModelDownloaded">A modell sikeresen letöltve.</string>
+    <string name="ModelError">Hiba a modell letöltése során.</string>
+    <string name="ModelUnzipping">Kicsomagolás…</string>
+    <string name="DeleteRecognitionModel">Modell törlése</string>
+    <string name="DeleteRecognitionModelInfo">Biztosan törölni szeretnéd a \"**%1$s**\" nyelvi modellt?</string>
+    <string name="RecognitionModelDeleted">Modell sikeresen törölve.</string>
+    <string name="RecognitionModelDeleteError">Hiba a modell törlése során.</string>
+    <string name="PostProcessingWithAi">AI használata utófeldolgozáshoz</string>
+    <string name="PostProcessingWithAiInfo">Az AI javítja az olvashatóságot a hibák kijavításával, írásjelek hozzáadásával és a homályos részek tisztázásával.</string>
+    <!-- Camera -->
+    <string name="CameraType">Kamera típusa</string>
+    <string name="ExtendedSettings">Kiterjesztett beállítások</string>
+    <string name="SeamlessSwitching">Zökkenőmentes váltás</string>
+    <string name="ExtendedFramesPerSecond">Kiterjesztett FPS tartomány</string>
+    <string name="CameraStabilization">Stabilizálás</string>
+    <string name="CameraMirrorMode">Tükör mód</string>
+    <string name="StartWithWideAngleCamera">Indítás nagylátószögűvel</string>
+    <string name="ZoomSlider">Nagyítás csúszka</string>
+    <string name="ZoomSliderInfo">A nagyítás vezérlő megjelenítése a videóüzenet kamera alatt.</string>
+    <string name="StaticZoom">Statikus nagyítás</string>
+    <string name="StaticZoomInfo">Videóüzenetek rögzítésekor a nagyítási szint nem áll vissza, ha elengeded az ujjaidat.</string>
+    <string name="VideoMessagesCamera">Kamera a videóüzenetekben</string>
+    <string name="VideoMessagesCameraRear">Hátulsó</string>
+    <string name="VideoMessagesCameraFront">Elülső</string>
+    <string name="VideoMessagesCameraAsk">Kérdezz</string>
+    <string name="RearCamera">Hátulsó kamera</string>
+    <string name="FrontCamera">Elülső kamera</string>
+    <string name="RememberLastUsedCamera">Utolsó használt kamera megjegyzése</string>
+    <string name="RememberLastUsedCameraInfo">Videóüzenetek rögzítésekor az utoljára használt kamera automatikusan kiválasztásra kerül.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Mindig HD-ben küldés</string>
+    <string name="HideCameraTile">Azonnali kamera csempe elrejtése</string>
+    <string name="HideCameraTileInfo">A kamera csempe helyét egy lebegő gomb veszi át. Megnyomása elindítja a Telegram kamerát; lenyomva tartva a rendszerkamerát.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Dupla koppintás ugrási idő</string>
+    <string name="PreferOriginalQuality">Eredeti minőség preferálása</string>
+    <string name="PauseOnMinimize">Automatikus szünet</string>
+    <string name="PauseOnMinimizeVideo">Videó</string>
+    <string name="PauseOnMinimizeVoice">Hang</string>
+    <string name="PauseOnMinimizeRound">Kör</string>
+    <string name="PauseOnMinimizeInfo">Szünetelteti a média lejátszását, amikor az eszköz zárolva van, vagy az exteraGram minimalizálva van.</string>
+    <string name="SwipeToPip">Csúsztatás a kép a képben módhoz</string>
+    <string name="UnmuteWithVolumeButtons">Videók némításának feloldása a hangerőgombokkal</string>
+    <string name="UnmuteWithVolumeButtonsInfo">A hangerőgomb megnyomása feloldja a videó némítását a rendszer hangerő módosítása helyett.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Ha ezek a beállítások engedélyezve vannak, az eszköz adatai gyűjtésre kerülnek és elküldésre a Google Analytics és Crashlytics számára, lehetővé téve a használati statisztikák és hibák nyomon követését az alkalmazásban. \n\nHa azonban a beállítások ki vannak kapcsolva, az adatgyűjtés leáll, és a már elküldött adatok azonnal törlésre kerülnek.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Add meg a fájlnevet…</string>
+    <string name="ExportSettings">Beállítások exportálása</string>
+    <string name="ApplySettings">Beállítások alkalmazása</string>
+    <string name="ImportTitle">Biztosan alkalmazni szeretnéd ezeket a beállításokat?</string>
+    <string name="ImportConfirm">Igen, alkalmaz</string>
+    <string name="CancelConfirm">Nem, hagyja így</string>
+    <string name="SettingsSaved">A beállítások fájl sikeresen mentve.</string>
+    <string name="SettingsImported">Beállítások sikeresen alkalmazva.</string>
+    <string name="ImportChanges_one">**1** változtatás kerül alkalmazásra a jelenlegi beállításokra.</string>
+    <string name="ImportChanges_two">**%1$d** változtatás kerül alkalmazásra a jelenlegi beállításokra.</string>
+    <string name="ImportChanges_few">**%1$d** változtatás kerül alkalmazásra a jelenlegi beállításokra.</string>
+    <string name="ImportChanges_many">**%1$d** változtatás kerül alkalmazásra a jelenlegi beállításokra.</string>
+    <string name="ImportChanges_other">**%1$d** változtatás kerül alkalmazásra a jelenlegi beállításokra.</string>
+    <string name="SameSettings">Úgy tűnik, hogy a beállítások megegyeznek a jelenlegiekkel.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Biztonsági okokból %1$s múlva kezdheted meg az adataid letöltését. Értesítettük minden eszközödet az exportálási kérésről, hogy megbizonyosodjunk arról, hogy jogosult, és időt adjunk a reagálásra, ha nem az.\n\nKérlek, térj vissza %2$s-kor, és ismételd meg a kérést ugyanazon az eszközön.</string>
+    <string name="ExportInvalid">Sajnáljuk, új adatexportot indítottál, így ez az adatexport megszakításra került.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Fiók törlése</string>
+    <string name="ResetSettings">Beállítások visszaállítása</string>
+    <string name="ResetPreferences">Az **exteraGram** beállítások visszaállításra kerültek.</string>
+    <string name="ResetPreferencesInfo">Biztosan vissza szeretnéd állítani az **összes** exteraGram beállítást az alapértelmezettre?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Fejlesztés támogatása</string>
+    <string name="SupportDevelopmentInfo">A projekt támogatásával nemcsak a fejlesztéséhez járulsz hozzá, hanem egyedi jelvényt is kapsz.</string>
+    <string name="MakeDonation">Adományozás</string>
+    <string name="ReceiveBadge">Jelvényed átvétele</string>
+    <string name="NowPlaying">Jelenleg játszik</string>
+    <string name="ScrobblingService">Scrobbling szolgáltatás</string>
+    <string name="SelectService">Szolgáltatás kiválasztása</string>
+    <string name="SelectServiceInfo">Megjeleníti az aktuális számot a profilban kártyaként, amelyet a scrobbling szolgáltatásból szerez.</string>
+    <string name="EnterUsername">Add meg a felhasználónevet</string>
+    <string name="EnterUsernameInfo">A felhasználónevedet a **hivatalos weboldalon** szerezheted be.</string>
+    <string name="BoostyPeopleCount_one">%1$d fő</string>
+    <string name="BoostyPeopleCount_two">%1$d fő</string>
+    <string name="BoostyPeopleCount_few">%1$d fő</string>
+    <string name="BoostyPeopleCount_many">%1$d fő</string>
+    <string name="BoostyPeopleCount_other">%1$d fő</string>
+    <string name="BoostyInfo">Aktívan támogasd az **exteraGram**-ot a **Boosty**-n.</string>
+    <string name="BoostyInfo2">Köszönjük a támogatásodat!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">A bővítmény telepítése csak az **exteraGram** **Teljes** verziójában érhető el.</string>
+    <string name="Plugins">Bővítmények</string>
+    <string name="PluginsEngine">Bővítmény motor</string>
+    <string name="EnablePluginsEngine">Bővítmény motor engedélyezése</string>
+    <string name="PluginsInfo">Bővítményeket találsz a @exteraPlugins csatornán.</string>
+    <string name="PluginsNotFound">Nem található bővítmény.</string>
+    <string name="InstallPlugin">Telepítés</string>
+    <string name="UpdatePlugin">Frissítés</string>
+    <string name="PluginNotEnabled">Engedélyezd a **Bővítmény motort** a **%1$s** telepítéséhez.</string>
+    <string name="PluginInstalled">**%1$s** sikeresen telepítve.</string>
+    <string name="PluginUpdated">**%1$s** sikeresen frissítve.</string>
+    <string name="PluginEnableError">Nem sikerült engedélyezni a(z) **%1$s**-t.</string>
+    <string name="PluginDisableError">Nem sikerült letiltani a(z) **%1$s**-t.</string>
+    <string name="PluginInstallError">Nem sikerült telepíteni a(z) **%1$s**-t.</string>
+    <string name="PluginSourceTrusted">Megbízható forrás</string>
+    <string name="PluginSourceTrustedInfo">Az ebből a forrásból származó bővítmények **ellenőrzöttek** és biztonságosak.</string>
+    <string name="PluginSourceUnknown">Ismeretlen forrás</string>
+    <string name="PluginSourceUnknownInfo">Az ebből a forrásból származó bővítmények **nem ellenőrzöttek** és biztonsági kockázatot jelenthetnek.</string>
+    <string name="PluginVersion">Verzió</string>
+    <string name="PluginNoDescription">Nincs leírás.</string>
+    <string name="PluginIsNotResponding">A bővítmény nem válaszol.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s nem válaszol</string>
+    <string name="PluginNoAuthor">Ismeretlen szerző</string>
+    <string name="EnableAfterInstallation">Engedélyezés telepítés után</string>
+    <string name="EnterValue">Adj meg egy értéket</string>
+    <string name="PluginDelete">Bővítmény törlése</string>
+    <string name="PluginDeleteInfo">Biztosan törölni szeretnéd a(z) **%1$s** bővítményt?</string>
+    <string name="ResetPluginSettings">A(z) **%1$s** beállításai visszaállításra kerültek.</string>
+    <string name="ResetPluginSettingsInfo">Biztosan vissza szeretnéd állítani a(z) **%1$s** beállításait az alapértelmezettre?</string>
+    <string name="PluginsSafeMode">Biztonságos mód</string>
+    <string name="PluginsSafeModeShortcut">Indítás biztonságos móddal</string>
+    <string name="PluginsSafeModeInfo">A Bővítmény motor le van tiltva egy összeomlás miatt. A biztonságos mód letiltása kiszámíthatatlan következményekhez vezethet.</string>
+    <string name="PluginsSafeModeInfo2">Biztonságos módban minden bővítmény inaktív. Ez lehetővé teszi, hogy biztonságosan megtaláld és letiltsd a problémás bővítményt.</string>
+    <string name="PluginsDevMode">Fejlesztői mód</string>
+    <string name="PluginsCompactView">Bővítmények kompakt nézet</string>
+    <string name="PluginsDocumentation">Dokumentáció</string>
+    <string name="PluginsTrusted">Megbízható bővítmények</string>
+    <string name="PluginsDevServerLaunched">Fejlesztői szerver elindítva.</string>
+    <string name="PluginsDevServerStopped">Fejlesztői szerver leállítva.</string>
+    <string name="PluginEngineNotEnabled">Engedélyezd a **Bővítmény motort** a(z) **%1$s** beállításainak megnyitásához.</string>
+    <string name="PluginNotFound">**%1$s** nem található.</string>
+    <string name="PluginHasNoSettings">A(z) **%1$s** nem rendelkezik beállításokkal.</string>
+    <string name="PluginsPySdkAutoUpdate">Automatikus frissítés</string>
+    <string name="PluginsPySdkEnableBetaVersion">Béta verziók telepítése</string>
+    <string name="PluginsPySdkCheckUpdates">Frissítések keresése</string>
+    <string name="CheckingForUpdates">Frissítések keresése…</string>
+    <string name="LatestVersionInstalled">A legújabb verzió telepítve van</string>
+    <string name="RestartPluginSystemToApplyUpdate">Frissítés betöltve, indítsd újra a Bővítmény motort az alkalmazáshoz</string>
+    <string name="LoadingUpdate">Frissítés betöltése…</string>
+    <string name="RestoreSdkFromApk">SDK visszaállítása az APK-ból</string>
+    <string name="EnableAutoUpdate">Automatikus frissítés engedélyezése</string>
+    <string name="PluginsDisableArt">Kompatibilitási mód</string>
+    <string name="PluginsDisableArtInfo">Megakadályozza a bővítmény hook hibákat az ART Profile Saver letiltásával.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Frissítés folyamatban…</string>
+    <string name="UpdateInstallingRelaunch">Az alkalmazás újraindul, ha a frissítés befejeződött.</string>
+    <string name="UpdateInstallingNotification">Értesítést kapsz, amikor a frissítés befejeződött.</string>
+    <string name="UpdateInstalledNotification">Frissítés kész. Koppints az alkalmazás megnyitásához.</string>
+    <string name="UpdateFailedToInstall">A frissítés telepítése nem sikerült, hibakód: %d</string>
+    <string name="UpdateAvailable">Frissítés elérhető!</string>
+    <!-- Message Details -->
+    <string name="Details">Részletek</string>
+    <string name="Date">Dátum</string>
+    <string name="EditedDate">Szerkesztés dátuma</string>
+    <string name="ForwardedDate">Továbbítás dátuma</string>
+    <string name="FileSize">Fájlméret</string>
+    <string name="FileName">Fájlnév</string>
+    <string name="FilePath">Fájl elérési út</string>
+    <string name="Resolution">Felbontás</string>
+    <string name="Bitrate">Bitráta</string>
+    <string name="Duration">Időtartam</string>
+    <string name="MimeType">MIME típus</string>
+    <string name="Datacenter">Adatközpont</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">Formátum:</string>
+    <string name="DateFormatOptionNone">Nincs</string>
+    <string name="DateFormatOptionRelative">Relatív</string>
+    <string name="DateFormatOptionShortTime">Rövid idő</string>
+    <string name="DateFormatOptionLongTime">Hosszú idő</string>
+    <string name="DateFormatOptionShortDate">Rövid dátum</string>
+    <string name="DateFormatOptionLongDate">Hosszú dátum</string>
+    <string name="DateFormatOptionDayOfWeek">A hét napja</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">QR-kódos bejelentkezés</string>
+    <string name="LoginQrSubtitle">Használj másik eszközt a QR-kód beolvasásához.</string>
+    <string name="WifiConnect">Csatlakozás</string>
+    <string name="WifiDisabled">A Wi-Fi le van tiltva.</string>
+    <string name="WifiFailed">Nem sikerült csatlakozni a Wi-Fi-hez.</string>
+    <string name="WifiSuccess">Sikeresen csatlakozva a Wi-Fi-hez.</string>
+    <string name="AreYouSureToLogin">Biztosan be szeretnél jelentkezni ebbe a fiókba egy másik eszközön?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Oldal blokkolva</string>
+    <string name="PageBlockedDescription">Az exteraGram megakadályozta a következő oldal betöltését:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Vissza</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Beállítás jelvényként</string>
+    <string name="AutoLockInstant">Azonnali</string>
+    <string name="TestBackend">Backend tesztelése</string>
+    <string name="SearchPhotoInfo">A szolgáltatások az adatvédelmi irányelveik és felhasználási feltételeik szerint használhatják a képeket.</string>
+    <string name="PhotoUploadFailed">Nem sikerült feltölteni a fényképet.</string>
+    <string name="TrackSaved">A szám mentve ide: **%1$s**.</string>
+    <string name="ChannelToSaveChanged">A számok ide lesznek mentve: **%1$s**.</string>
+    <string name="DeletedMessage">Törölt üzenet</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Cím másolása</string>
+    <string name="CopyCallback">Visszahívási adatok másolása</string>
+    <string name="CopyInlineQuery">Inline lekérdezés másolása</string>
+    <string name="CopyID">Felhasználói azonosító másolása</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Jelvény állapot beállítva.</string>
+    <string name="UserNotFound">Nem található felhasználó ezzel az **ID**-vel.</string>
+    <string name="ChatNotFound">Nem található csevegés ezzel az **ID**-vel.</string>
+    <string name="PhotoCopied">Fénykép másolva a vágólapra.</string>
+    <string name="FrameCopied">Képkocka másolva a vágólapra.</string>
+    <string name="TapToCopy">Koppints a másoláshoz</string>
+    <string name="ProfileUsesEmojiPack">Ez a profil a %s csomag emoji-it használja a hátteréhez.</string>
+    <string name="ProfileUsesEmojiPacks">Ez a profil **%d csomag** emoji-it használja a hátteréhez.</string>
+    <string name="ReplyUsesEmojiPacks">Ez a válasz a %s csomag emoji-it használja a hátteréhez.</string>
+    <string name="StickerSavedHint">Matrica mentve a galériába.</string>
+    <string name="EmojiSavedHint">Emoji mentve a galériába.</string>
+    <string name="GifGallerySavedHint">GIF mentve a galériába.</string>
+    <string name="MutualContactInfo">Ez a kapcsolat kölcsönös.</string>
+    <string name="LocalPremiumEmojiHint">Nincs **Telegram Premium** előfizetésed, így csak az **exteraGram** felhasználók láthatják ezt az emojit.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Névjegyek fül elrejtése</string>
+    <string name="ShowContactsTab">Névjegyek fül megjelenítése</string>
+    <string name="ContactsTabWasShownTitle">A **Névjegyek** fül most látható.</string>
+    <string name="ContactsTabWasHiddenTitle">A **Névjegyek** fül most rejtett.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Ez a funkció csak olyan jelszókezelőkkel működik, amelyek lehetővé teszik a felhasználó számára a jogosult alkalmazások megbízhatósági beállításainak kezelését, például a **Bitwarden** vagy **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Nem támogatott jelszókezelő</string>
+    <string name="PasskeyUnsupportedMessage">Próbálj ki más jelszókezelőket, mint a **Bitwarden** vagy a **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** hozzávetőlegesen **%2$s**-kor hozta létre a fiókját.</string>
+    <string name="CreationDateUserEarlier">**%1$s** korábban hozta létre a fiókját, mint **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** később hozta létre a fiókját, mint **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** létrehozva **%2$s**-kor.</string>
+    <string name="CreationDateSelfApproximately">Hozzávetőlegesen **%1$s**-kor hoztad létre a fiókodat.</string>
+    <string name="CreationDateSelfEarlier">Korábban hoztad létre a fiókodat, mint **%1$s**.</string>
+    <string name="CreationDateSelfLater">Később hoztad létre a fiókodat, mint **%1$s**.</string>
+    <string name="JoinDateChat">Csatlakoztál a(z) **%1$s**-hez **%2$s**-kor.</string>
+    <string name="GroupMemberJoined">csatlakozott: %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Az elejére</string>
+    <string name="MessageHistory">Előzmények</string>
+    <string name="BoldItalic">Félkövér dőlt</string>
+    <string name="CopyPhoto">Fénykép másolása</string>
+    <string name="CopyFrame">Képkocka másolása</string>
+    <string name="Repeat">Ismétlés</string>
+    <string name="Subtitles">Feliratok</string>
+    <string name="ChooseSubtitles">Feliratok kiválasztása</string>
+    <string name="DisableSubtitles">Feliratok letiltása</string>
+    <string name="SubtitlesAdded">Feliratok engedélyezve.</string>
+    <string name="SubtitlesRemoved">Feliratok letiltva.</string>
+    <string name="SubtitlesLoadError">Nem sikerült betölteni a feliratokat.</string>
+    <string name="SubtitlesUnsupportedFormat">Nem támogatott felirat formátum.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Matrica sarkok</string>
+    <string name="StickerCornerRadiusInfo">Válaszd ki, mennyire lekerekítettek legyenek a matrica sarkai.</string>
+    <string name="StickerCornerRadiusLarge">Nagy</string>
+    <string name="StickerCornerRadiusMedium">Közepes</string>
+    <string name="StickerCornerRadiusSmall">Kicsi</string>
+    <string name="StickerCornerRadiusNone">Nincs</string>
+    <!-- Feed -->
+    <string name="Feed">Hírfolyam</string>
+    <string name="FeedShownChannels">Megjelenik a hírfolyamban</string>
+    <string name="FeedHiddenChannels">Rejtett</string>
+    <string name="FeedChannels">Csatornák</string>
+    <string name="FeedSettings">Hírfolyam beállításai</string>
+    <string name="FeedNoPosts">Még nincsenek csatorna bejegyzések.</string>
+    <string name="FeedAllChannelsExcluded">Minden csatorna ki van zárva a hírfolyamból.</string>
+    <string name="FeedMarkAllReadConfirm">Összes bejegyzés olvasottnak jelölése a hírfolyam csatornáidban? Ez az eredeti csatornákban is olvasottként jelöli őket.</string>
+    <string name="FeedMarkAllReadDone">Minden bejegyzés olvasottként jelölve</string>
+    <string name="FeedIncludeArchived">Csevegések megjelenítése az archívumból</string>
+    <string name="FeedIncludeArchivedInfo">Az archív csevegésekből származó csatornák is szerepeljenek a hírfolyamban.</string>
+    <string name="FeedHideChannel">Elrejtés a hírfolyamból</string>
+    <string name="FeedChannelHidden">**%1$s** elrejtve a hírfolyamból</string>
+    <string name="FeedBottomTab">Megjelenítés az alsó lapokon</string>
+    <string name="FeedBottomTabInfo">A hírfolyam megjelenítése alsó navigációs lapként a Névjegyek lap helyén.</string>
+    <string name="FeedUnreadCounter">Olvasatlan bejegyzések számlálója</string>
+    <string name="HideFeedTab">Hírfolyam fül elrejtése</string>
+    <string name="DisableMarkdown">Markdown letiltása</string>
+    <string name="EnableMarkdown">Markdown engedélyezése</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

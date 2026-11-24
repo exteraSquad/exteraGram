@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">Preferències d\'exteraGram</string>
+    <!-- Main Menu -->
+    <string name="Links">Enllaços</string>
+    <string name="Crowdin">Traduir</string>
+    <string name="Website">Lloc web</string>
+    <string name="Developer">**%1$s** és membre de l\'equip de desenvolupament d\'**exteraGram**.</string>
+    <string name="DeveloperCompact">Membre de l\'equip de desenvolupament d\'**exteraGram**.</string>
+    <string name="Supporter">**%1$s** ha donat suport al desenvolupament d\'**exteraGram** i ha rebut una insígnia única.</string>
+    <string name="OfficialChannel">**%1$s** és el recurs oficial d\'**exteraGram**.</string>
+    <string name="NoSuchSetting">Sembla que aquesta opció no existeix.</string>
+    <string name="SettingLinkToSavedMessages">Enllaç de configuració enviat a **Missatges guardats**.</string>
+    <string name="SettingLinkToUser">Enllaç de configuració enviat a **%1$s**.</string>
+    <string name="SettingLinkToChats">Enllaç de configuració enviat a **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Utilitza l\'estalvi de bateria del sistema</string>
+    <string name="LiteBatteryFollowSystemState">Sistema</string>
+    <string name="LiteBatteryFollowSystemInfo">Controlat per l\'estalvi de bateria del sistema.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Pila de pastilles</string>
+    <string name="PillStackPillsInfo">Mostra pastilles interactives al camp de cerca</string>
+    <string name="PillStackActivePills">Pastilles actives</string>
+    <string name="PillStackHiddenPills">Pastilles ocultes</string>
+    <string name="CurrentLocation">Ubicació actual</string>
+    <string name="SelectLocation">Seleccionar al mapa</string>
+    <string name="WeatherPill">Temps</string>
+    <string name="WeatherSettingsInfo">Tria com determinar la ubicació per a la visualització del temps a la cerca.</string>
+    <string name="WeatherLocation">Detecció d\'ubicació</string>
+    <string name="WeatherLocationPermissionNo">exteraGram necessita accés a la teva ubicació per mostrar el temps actual.</string>
+    <string name="WeatherLocationPermissionGrant">Concedir permís</string>
+    <string name="WeatherLocationServicesEnable">Activa la ubicació</string>
+    <string name="WeatherPillTopInfo">Configuració del widget del temps per a la pila de pastilles.</string>
+    <string name="PillStackInfiniteScrolling">Desplaçament infinit</string>
+    <string name="CryptoPillTargetCurrency">Moneda objectiu</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Desactivar el proxy</string>
+    <string name="ProxyDisableNever">Mai</string>
+    <string name="ProxyDisableAlways">Sempre</string>
+    <string name="ProxyDisableOnMobileData">Dades mòbils</string>
+    <string name="ProxyType">Tipus</string>
+    <string name="Unknown">Desconegut</string>
+    <string name="ProxyRename">Nom del proxy (opcional)</string>
+    <string name="ProxyPinLimitReached">Pots fixar fins a %1$d proxies.</string>
+    <string name="CopyIpAddress">Copia l\'adreça IP</string>
+    <string name="IpInfoUnavailable">No s\'ha pogut carregar la informació de l\'adreça IP.</string>
+    <string name="IpInfoOrganization">Organització</string>
+    <string name="IpInfoDomain">Domini</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Proveïdor de traducció</string>
+    <string name="TranslationTarget">Idioma de destinació</string>
+    <string name="TranslationTargetApp">Segueix l\'aplicació</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Desactivar l\'arrodoniment de números</string>
+    <string name="FormatTimeWithSeconds">Format de l\'hora amb segons</string>
+    <string name="RelativeLastSeen">Última connexió relativa</string>
+    <string name="InAppVibration">Vibració a l\'aplicació</string>
+    <string name="FilterZalgo">Filtra \"Zalgo\"</string>
+    <string name="FilterZalgoInfo">Elimina els símbols \"%1$s\" als noms i missatges.</string>
+    <string name="RestartRequired">Reinicia l\'aplicació perquè els canvis tinguin efecte.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Codi</string>
+    <string name="CreateCode">Crea un bloc de codi</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Acceleració de baixada</string>
+    <string name="UploadSpeedBoost">Acceleració de pujada</string>
+    <string name="SpeedBoostInfo">L\'acceleració Ultra pot causar problemes en baixar fitxers i reproduir vídeos en connexions lentes.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Emmagatzematge</string>
+    <string name="CustomSavePath">Carpeta de desament personalitzada</string>
+    <string name="CustomSavePathHint">Deixa en blanc per desar directament a l\'arrel</string>
+    <string name="CustomSavePathDefault">Desar a l\'arrel</string>
+    <string name="CustomSavePathInfo">Els fitxers desats s\'emmagatzemaran directament a Imatges, Descàrregues, etc.</string>
+    <string name="CustomSavePathInfoFolder">Els fitxers desats s\'emmagatzemaran a Imatges/%1$s, Descàrregues/%1$s, etc.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Amaga el número de telèfon</string>
+    <string name="ShowIdAndDc">Mostra l\'ID i el DC</string>
+    <string name="ShowIdAndDcInfo">L\'API de Telegram mostra els ID tal com són, mentre que l\'API de Bot afegeix un signe menys per a grups i -100 per a supergrups i canals.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Amaga la carpeta d\'arxiu</string>
+    <string name="ArchiveOnPull">Obre l\'arxiu en tirar cap avall</string>
+    <string name="DisableUnarchiveSwipe">Desactiva el lliscament per \"Desarxivar\"</string>
+    <string name="DisableUnarchiveSwipeInfo">En lliscar cap a l\'esquerra no s\'eliminaran els xats de l\'arxiu.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Aparença</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Cantonades de l\'avatar</string>
+    <string name="SingleCornerRadius">Radi únic de cantonada</string>
+    <string name="SingleCornerRadiusInfo">Els fòrums tindran la mateixa forma d\'avatar que els xats.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Llista de xats</string>
+    <string name="ActionBarTitle">Text del títol</string>
+    <string name="ActionBarTitleName">Nom</string>
+    <string name="HideStories">Amaga les històries</string>
+    <string name="HideActionBarStatus">Amaga l\'estat</string>
+    <string name="CenterTitle">Centra el títol</string>
+    <string name="ChatHeader">Capçalera del xat</string>
+    <string name="HideFloatingButton">Amaga el botó flotant</string>
+    <string name="HideDialogsSearchBar">Amaga la barra de cerca</string>
+    <string name="BottomNavigationBarMode">Barra de navegació inferior</string>
+    <string name="BottomNavigationModeShow">Mostra</string>
+    <string name="BottomNavigationModeHide">Amaga</string>
+    <string name="BottomNavigationModeFloating">Flotant</string>
+    <string name="SenderMiniAvatars">Mini avatars del remitent</string>
+    <string name="ListOfChatsInfo">Quan \"Només icones\" està activat per a les carpetes, el títol principal mostrarà el nom de la carpeta.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Títol de la carpeta</string>
+    <string name="TabTitleStyleTextWithIcons">Noms amb icones</string>
+    <string name="TabTitleStyleIconsOnly">Només icones</string>
+    <string name="TabTitleStyleTextOnly">Només noms</string>
+    <string name="TabCounter">Comptador de notificacions</string>
+    <string name="HideAllChats">Amaga la pestanya \"%1$s\"</string>
+    <string name="FoldersInfo">Les icones estan sincronitzades amb el teu compte.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Navegació de l\'aplicació</string>
+    <string name="AppNavigationInfo">Menú superior dret i configuració del calaix</string>
+    <string name="NavigationDrawer">Calaix de navegació</string>
+    <string name="NavigationDrawerInfo">Substitueix el menú superior dret per un calaix clàssic que s\'obre lliscant i un botó d\'hamburguesa.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Animació immersiva</string>
+    <string name="MainMenuItems">Elements del menú</string>
+    <string name="MainMenuItemsInfo">Toca per mostrar o ocultar elements, mantén premut per reordenar. La disposició és compartida entre el menú i el calaix.</string>
+    <string name="MainMenuHiddenItems">Elements del menú ocults</string>
+    <string name="MainMenuAddDivider">Afegeix un separador</string>
+    <string name="MainMenuRemoveSettingsInfo">La configuració no es pot ocultar mentre la barra de navegació inferior estigui desactivada.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Paquets d\'icones</string>
+    <string name="IconPacksInfo">Personalitza les icones a tota l\'aplicació</string>
+    <string name="IconPickerFilter">Filtre</string>
+    <string name="IconPickerAllIcons">Totes les icones</string>
+    <string name="IconPickerReplacedIcons">Icones substituïdes</string>
+    <string name="IconPickerNotReplacedIcons">Icions no substituïdes</string>
+    <string name="IconPickerSaveAndExit">Desa i surt</string>
+    <string name="BasePacks">Paquets base</string>
+    <string name="BaseIconPackInfo">El paquet d\'icones base s\'utilitza com a alternativa per a les icones no substituïdes per altres paquets.</string>
+    <string name="IconPacksHint">Toca per activar o desactivar un paquet. Mantén premut per editar o eliminar.</string>
+    <string name="NewIconPack">Crea un nou paquet d\'icones</string>
+    <string name="EnabledPacks">Paquets activats</string>
+    <string name="AllPacks">Tots els paquets</string>
+    <string name="PackName">Nom del paquet</string>
+    <string name="AuthorNameOptional">Nom de l\'autor (opcional)</string>
+    <string name="NameCannotBeEmpty">El nom no pot estar buit.</string>
+    <string name="Version">Versió</string>
+    <string name="InstallPack">Instal·la el paquet</string>
+    <string name="IconCount_one">%1$d icona</string>
+    <string name="IconCount_two">%1$d icones</string>
+    <string name="IconCount_few">%1$d icones</string>
+    <string name="IconCount_many">%1$d icones</string>
+    <string name="IconCount_other">%1$d icones</string>
+    <string name="UpdatePack">Actualitza el paquet</string>
+    <string name="DeletePack">Elimina el paquet</string>
+    <string name="DeletePackInfo">Segur que vols eliminar **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">L\'arxiu del paquet d\'icones no és vàlid.</string>
+    <string name="IconPackErrorMissingMetadata">L\'arxiu del paquet d\'icones no conté metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Les metadades del paquet d\'icones són massa grans.</string>
+    <string name="IconPackErrorInvalidMetadata">Les metadades del paquet d\'icones no són vàlides.</string>
+    <string name="IconPackErrorTooManyFiles">El paquet d\'icones conté massa fitxers.</string>
+    <string name="IconPackErrorArchiveTooLarge">El paquet d\'icones és massa gran.</string>
+    <string name="IconPackErrorFileTooLarge">Un dels fitxers d\'icona és massa gran.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">L\'arxiu del paquet d\'icones està comprimit de manera massa agressiva.</string>
+    <string name="IconPackErrorStorage">No s\'ha pogut desar el paquet d\'icones.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Paquet d\'icones</string>
+    <string name="AppIconSunset">Posta de sol</string>
+    <string name="AppIconAmethyst">Ametista</string>
+    <string name="AppIconInvincible">Invencible</string>
+    <string name="AppIconSpace">Espai</string>
+    <string name="AppIconIceAge">Edat de gel</string>
+    <string name="AppIconOrbit">Òrbita</string>
+    <string name="AppIconWinter">Hivern</string>
+    <!-- General Appearance -->
+    <string name="Sections">Seccions</string>
+    <string name="SeparateHeaders">Capçaleres separades</string>
+    <string name="DividerStyle">Estil de separador</string>
+    <string name="DividerStyleHidden">Ocult</string>
+    <string name="DividerStyleLine">Línia</string>
+    <string name="UseSystemFonts">Utilitza les fonts del sistema</string>
+    <string name="UseSystemEmoji">Utilitza els emojis del sistema</string>
+    <string name="NewLoadingStyle">Estil de càrrega</string>
+    <string name="NewSliderStyle">Estil de control lliscant</string>
+    <string name="NewSwitchStyle">Estil d\'interruptor</string>
+    <string name="TabletMode">Mode tauleta</string>
+    <string name="RemoveMessageTail">Elimina la cua del missatge</string>
+    <string name="GooeyAvatarAnimation">Animació d\'avatar \"Gooey\"</string>
+    <string name="CustomChatThemes">Temes personalitzats als xats</string>
+    <string name="CustomChatThemesInfo">Cada xat mostrarà el tema que s\'ha escollit específicament per a ell.</string>
+    <string name="PredictiveBackIntensity">Intensitat de la predicció enrere</string>
+    <string name="PredictiveBackMax">Màxim</string>
+    <string name="PredictiveBackInfo">Ajusta fins on es mou la pantalla en lliscar cap enrere.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Opcions de desenfocament</string>
+    <string name="GlassOutlineStyle">Contorn de vidre</string>
+    <string name="GlassOutlineGlare">Reflex</string>
+    <string name="GlassOutlineSolid">Sòlid</string>
+    <string name="GlassOutlineHidden">Ocult</string>
+    <string name="ForceSnow">Forçar els flocs de neu</string>
+    <string name="ForceSnowInfo">Apareixeran flocs de neu caient a la barra d\'accions, al menú lateral i als fons dels xats.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Mida de l\'adhesiu</string>
+    <string name="StickerSizeLeft">Petit</string>
+    <string name="StickerSizeRight">Gran</string>
+    <string name="StickerSizeDialogMessage">uau, què maco!</string>
+    <string name="StickerShape">Forma de l\'adhesiu</string>
+    <string name="StickerShapeRounded">Arrodonit</string>
+    <string name="StickerShapeRoundedMsg">Missatge</string>
+    <string name="ViewEmojiSet">Mostra el conjunt d\'emojis</string>
+    <string name="UnlimitedRecentStickers">Adhesius recents il·limitats</string>
+    <string name="HideReactions">Amaga les reaccions</string>
+    <string name="HideReactionsInfo">Les reaccions quedaran completament ocultes a la interfície.</string>
+    <string name="ReplyBackground">Fons</string>
+    <string name="ChatSettingsInfo">Configuració multimèdia, icona de l\'aplicació i altres</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Configura serveis, rols i historial</string>
+    <string name="AIChatInfo2">Genera text a partir de missatges o abans d\'enviar.</string>
+    <!-- AI Services -->
+    <string name="Services">Serveis</string>
+    <string name="ServicesInfo">Tria el servei adequat per interactuar amb els models de llenguatge.</string>
+    <string name="NewService">Nou servei</string>
+    <string name="EditService">Edita el servei</string>
+    <string name="ServiceKey">Clau API</string>
+    <string name="ServiceInfo">Informació del servei</string>
+    <string name="ServiceProvider">Proveïdor</string>
+    <string name="ServiceProviderCustom">Personalitzat</string>
+    <string name="ServiceTestAndSave">Prova i desa</string>
+    <string name="ServicePasteService">Enganxa el servei</string>
+    <string name="ServicePasteKey">Enganxa la clau API</string>
+    <string name="DeleteServiceInfo">Segur que vols eliminar **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Rols</string>
+    <string name="RolesInfo">Crea rols per a les teves necessitats específiques!</string>
+    <string name="Suggestions">Suggeriments</string>
+    <string name="RoleName">Nom</string>
+    <string name="RolePrompt">Indicació</string>
+    <string name="PromptInfo">Una indicació és el text inicial que es dóna al model per començar a generar una resposta o continuar un diàleg.</string>
+    <string name="NewRole">Nou rol</string>
+    <string name="EditRole">Edita el rol</string>
+    <string name="DeleteRoleInfo">Segur que vols eliminar **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">L\'historial de conversa permet a la IA entendre les sol·licituds anteriors i tenir-les en compte en generar noves respostes.</string>
+    <string name="AIGeneration">Generació</string>
+    <string name="AIReasoning">Raonament</string>
+    <string name="AIReasoningInfo">Permet als models compatibles d\'aquest servei gastar més tokens per pensar abans de respondre.</string>
+    <string name="AITemperature">Temperatura</string>
+    <string name="AITemperatureInfo">La temperatura controla l\'aleatorietat de la resposta: valors més alts són més creatius, valors més baixos són més enfocats.</string>
+    <string name="ResponseStreaming">Transmissió de resposta</string>
+    <string name="ResponseStreamingInfo">Assegura una visualització més suau i ràpida de les respostes.</string>
+    <string name="ShowResponseOnly">Mostra només la resposta</string>
+    <string name="InsertResponseAsQuote">Insereix la resposta com a citació</string>
+    <string name="TapToAddApiKey">Toca per afegir una clau API i començar a utilitzar les funcions d\'IA.</string>
+    <string name="Generate">Genera</string>
+    <string name="ClearConversationHistoryInfo">Segur que vols esborrar **tot** l\'historial de conversa de la IA?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Sol·licitud incorrecta</string>
+    <string name="AIError400Info">Comprova els paràmetres de la sol·licitud.</string>
+    <string name="AIError401">Credencials no vàlides</string>
+    <string name="AIError401Info">La clau API no és vàlida o està desactivada. Comprova les teves credencials.</string>
+    <string name="AIError402">Crèdits insuficients</string>
+    <string name="AIError402Info">El teu compte o clau API no té suficients crèdits. Afegeix més crèdits i torna a intentar-ho.</string>
+    <string name="AIError403">Accés denegat</string>
+    <string name="AIError403Info">No tens permís per accedir a aquest model o recurs. Comprova la teva clau API i els permisos del compte.</string>
+    <string name="AIError408">Temps d\'espera esgotat</string>
+    <string name="AIError408Info">La teva sol·licitud no s\'ha processat a temps. Torna-ho a provar més tard.</string>
+    <string name="AIError429">Límit de velocitat superat</string>
+    <string name="AIError429Info">Estàs enviant sol·licituds amb massa freqüència. Espera un moment i torna-ho a provar.</string>
+    <string name="AIError502">Error del model</string>
+    <string name="AIError502Info">El model seleccionat no està disponible o hem rebut una resposta no vàlida.</string>
+    <string name="AIError503">Servei no disponible</string>
+    <string name="AIError503Info">El servei està temporalment no disponible o sobrecarregat. Torna-ho a provar més tard.</string>
+    <string name="AIError">Error del servidor</string>
+    <string name="AIErrorInfo">Torna a intentar la sol·licitud després d\'una breu espera.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Missatges entrants</string>
+    <string name="DoubleTapOutgoing">Missatges sortints</string>
+    <string name="DoubleTapInfo">Algunes accions requereixen drets d\'administrador al xat o canal.</string>
+    <string name="BottomButton">Botó inferior</string>
+    <string name="ChannelDiscussNoCaps">Debat</string>
+    <string name="QuickTransitions">Transició ràpida amb lliscament</string>
+    <string name="DisableGreetingSticker">Desactiva l\'adhesiu de salutació</string>
+    <string name="AdminShortcuts">Dreceres ràpides d\'administrador</string>
+    <string name="HideKeyboardOnScroll">Amaga el teclat en desplaçar</string>
+    <string name="HideShareButton">Amaga el botó lateral \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">Substitueix \"%1$s\" per una icona</string>
+    <string name="MessageMenu">Menú del missatge</string>
+    <string name="GroupMessageMenu">Menú de missatges agrupats</string>
+    <string name="GroupMessageMenuInfo">L\'agrupació mou les accions principals a la part inferior del menú de missatges.</string>
+    <string name="GlassMessageMenu">Menú de missatges de vidre</string>
+    <string name="GlassMessageMenuBlurOff">Els menús de vidre necessiten desenfocament, que actualment està desactivat.</string>
+    <string name="AddCommaAfterMention">Afegeix una coma després de la menció</string>
+    <string name="HideSendAsPeer">Amaga el botó \"Enviar com a…\"</string>
+    <string name="HideSendAsPeerInfo">Encara pots accedir al menú \"Enviar com a…\" mantenint premut el botó d\'Emojis/Adhesius/GIF.</string>
+    <string name="ShowPollResultsBeforeVoting">Mostra els resultats abans de votar</string>
+    <string name="ShowPollResultsBeforeVotingHint">Mostra els resultats de cada opció abans d\'enviar el teu vot.</string>
+    <string name="ShowOnlineStatus">Mostra l\'indicador de connexió</string>
+    <string name="MessagePreviewDialogMessage">Puc menjar vidre i no em fa mal.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Idioma de reconeixement</string>
+    <string name="RecognitionInfo">Utilitza l\'API de Vosk. Funciona sense connexió. La qualitat del text transcrit pot ser baixa.</string>
+    <string name="MissingLanguageModel">Falta el model de llenguatge</string>
+    <string name="DownloadingModel">Descarregant el model…</string>
+    <string name="DownloadingModelInfo">Mantén aquesta finestra oberta mentre es descarrega el model de llenguatge.</string>
+    <string name="ModelDownload">Descarrega (%1$s)</string>
+    <string name="ModelDownloadInfo">Per continuar, has de descarregar el model de llenguatge \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Model descarregat correctament.</string>
+    <string name="ModelError">Error en descarregar el model.</string>
+    <string name="ModelUnzipping">Descomprimint…</string>
+    <string name="DeleteRecognitionModel">Elimina el model</string>
+    <string name="DeleteRecognitionModelInfo">Segur que vols eliminar el model de llenguatge \"**%1$s**\"?</string>
+    <string name="RecognitionModelDeleted">Model eliminat correctament.</string>
+    <string name="RecognitionModelDeleteError">Error en eliminar el model.</string>
+    <string name="PostProcessingWithAi">Utilitza la IA per al postprocessament</string>
+    <string name="PostProcessingWithAiInfo">La IA millorarà la llegibilitat corregint errors, afegint puntuació i aclarint parts confuses.</string>
+    <!-- Camera -->
+    <string name="CameraType">Tipus de càmera</string>
+    <string name="ExtendedSettings">Configuració ampliada</string>
+    <string name="SeamlessSwitching">Canvi sense interrupcions</string>
+    <string name="ExtendedFramesPerSecond">Rang de FPS ampliat</string>
+    <string name="CameraStabilization">Estabilització</string>
+    <string name="CameraMirrorMode">Mode mirall</string>
+    <string name="StartWithWideAngleCamera">Inicia amb gran angular</string>
+    <string name="ZoomSlider">Control lliscant de zoom</string>
+    <string name="ZoomSliderInfo">Mostra el control de zoom sota la càmera de missatges de vídeo.</string>
+    <string name="StaticZoom">Zoom estàtic</string>
+    <string name="StaticZoomInfo">En gravar missatges de vídeo, el nivell de zoom no es restablirà si deixes anar els dits.</string>
+    <string name="VideoMessagesCamera">Càmera als missatges de vídeo</string>
+    <string name="VideoMessagesCameraRear">Posterior</string>
+    <string name="VideoMessagesCameraFront">Frontal</string>
+    <string name="VideoMessagesCameraAsk">Pregunta</string>
+    <string name="RearCamera">Càmera posterior</string>
+    <string name="FrontCamera">Càmera frontal</string>
+    <string name="RememberLastUsedCamera">Recorda l\'última càmera utilitzada</string>
+    <string name="RememberLastUsedCameraInfo">En gravar missatges de vídeo, s\'escollirà automàticament l\'última càmera utilitzada.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Envia sempre en HD</string>
+    <string name="HideCameraTile">Amaga la icona de càmera instantània</string>
+    <string name="HideCameraTileInfo">La icona de càmera serà substituïda per un botó flotant. En prémer-lo s\'obre la càmera de Telegram; en mantenir-lo premut s\'obre la càmera del sistema.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Salt de temps amb doble toc</string>
+    <string name="PreferOriginalQuality">Prefereix la qualitat original</string>
+    <string name="PauseOnMinimize">Pausa automàtica</string>
+    <string name="PauseOnMinimizeVideo">Vídeo</string>
+    <string name="PauseOnMinimizeVoice">Veu</string>
+    <string name="PauseOnMinimizeRound">Rodó</string>
+    <string name="PauseOnMinimizeInfo">Atura la reproducció multimèdia quan el dispositiu es bloqueja o exteraGram es minimitza.</string>
+    <string name="SwipeToPip">Llisca per a PiP</string>
+    <string name="UnmuteWithVolumeButtons">Activa el so dels vídeos amb els botons de volum</string>
+    <string name="UnmuteWithVolumeButtonsInfo">En prémer un botó de volum s\'activarà el so del vídeo en lloc de canviar el volum del sistema.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Quan aquestes opcions estan activades, es recullen dades del dispositiu i s\'envien a Google Analytics i Crashlytics, cosa que ens permet mantenir estadístiques d\'ús i fer un seguiment d\'errors a l\'aplicació. \n\nTanmateix, si les opcions estan desactivades, la recollida de dades s\'atura i les dades enviades s\'eliminen a l\'instant.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Introdueix el nom del fitxer…</string>
+    <string name="ExportSettings">Exporta la configuració</string>
+    <string name="ApplySettings">Aplica la configuració</string>
+    <string name="ImportTitle">Segur que vols aplicar aquesta configuració?</string>
+    <string name="ImportConfirm">Sí, aplica</string>
+    <string name="CancelConfirm">No, deixa-ho com està</string>
+    <string name="SettingsSaved">Fitxer de configuració desat correctament.</string>
+    <string name="SettingsImported">Configuració aplicada correctament.</string>
+    <string name="ImportChanges_one">S\'aplicarà **1** canvi a la configuració actual.</string>
+    <string name="ImportChanges_two">S\'aplicaran **%1$d** canvis a la configuració actual.</string>
+    <string name="ImportChanges_few">S\'aplicaran **%1$d** canvis a la configuració actual.</string>
+    <string name="ImportChanges_many">S\'aplicaran **%1$d** canvis a la configuració actual.</string>
+    <string name="ImportChanges_other">S\'aplicaran **%1$d** canvis a la configuració actual.</string>
+    <string name="SameSettings">Sembla que la configuració és la mateixa que l\'actual.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Per raons de seguretat, podràs començar a baixar les teves dades en %1$s. Hem notificat tots els teus dispositius sobre la sol·licitud d\'exportació per assegurar-nos que està autoritzada i donar-te temps per reaccionar si no ho està.\n\nTorna el %2$s i repeteix la sol·licitud amb el mateix dispositiu.</string>
+    <string name="ExportInvalid">Ho sentim, has iniciat una nova exportació de dades, de manera que aquesta exportació s\'ha cancel·lat.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Elimina el compte</string>
+    <string name="ResetSettings">Restableix la configuració</string>
+    <string name="ResetPreferences">Les preferències d\'**exteraGram** s\'han restablert.</string>
+    <string name="ResetPreferencesInfo">Segur que vols restablir **totes** les preferències d\'exteraGram als valors predeterminats?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Dóna suport al desenvolupament</string>
+    <string name="SupportDevelopmentInfo">En donar suport al projecte, no només contribueixes al seu desenvolupament, sinó que també obtens una insígnia única.</string>
+    <string name="MakeDonation">Fes una donació</string>
+    <string name="ReceiveBadge">Rep la teva insígnia</string>
+    <string name="NowPlaying">Reproduint ara</string>
+    <string name="ScrobblingService">Servei de scrobbling</string>
+    <string name="SelectService">Selecciona el servei</string>
+    <string name="SelectServiceInfo">Mostra la pista actual al perfil com a targeta obtinguda del servei de scrobbling.</string>
+    <string name="EnterUsername">Introdueix el nom d\'usuari</string>
+    <string name="EnterUsernameInfo">Pots obtenir el teu nom d\'usuari al **lloc web oficial**.</string>
+    <string name="BoostyPeopleCount_one">%1$d persona</string>
+    <string name="BoostyPeopleCount_two">%1$d persones</string>
+    <string name="BoostyPeopleCount_few">%1$d persones</string>
+    <string name="BoostyPeopleCount_many">%1$d persones</string>
+    <string name="BoostyPeopleCount_other">%1$d persones</string>
+    <string name="BoostyInfo">Dóna suport activament a **exteraGram** a **Boosty**.</string>
+    <string name="BoostyInfo2">Gràcies pel teu suport!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">La instal·lació de complements només està disponible a la versió **Completa** d\'**exteraGram**.</string>
+    <string name="Plugins">Complements</string>
+    <string name="PluginsEngine">Motor de complements</string>
+    <string name="EnablePluginsEngine">Activa el motor de complements</string>
+    <string name="PluginsInfo">Pots trobar complements a @exteraPlugins.</string>
+    <string name="PluginsNotFound">No s\'han trobat complements.</string>
+    <string name="InstallPlugin">Instal·la</string>
+    <string name="UpdatePlugin">Actualitza</string>
+    <string name="PluginNotEnabled">Activa el **Motor de complements** per instal·lar **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** s\'ha instal·lat correctament.</string>
+    <string name="PluginUpdated">**%1$s** s\'ha actualitzat correctament.</string>
+    <string name="PluginEnableError">No s\'ha pogut activar **%1$s**.</string>
+    <string name="PluginDisableError">No s\'ha pogut desactivar **%1$s**.</string>
+    <string name="PluginInstallError">No s\'ha pogut instal·lar **%1$s**.</string>
+    <string name="PluginSourceTrusted">Font fiable</string>
+    <string name="PluginSourceTrustedInfo">Els complements d\'aquesta font estan **verificats** i són segurs.</string>
+    <string name="PluginSourceUnknown">Font desconeguda</string>
+    <string name="PluginSourceUnknownInfo">Els complements d\'aquesta font no estan **verificats** i poden suposar un risc de seguretat.</string>
+    <string name="PluginVersion">Versió</string>
+    <string name="PluginNoDescription">No s\'ha proporcionat cap descripció.</string>
+    <string name="PluginIsNotResponding">El complement no respon.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s no respon</string>
+    <string name="PluginNoAuthor">Autor desconegut</string>
+    <string name="EnableAfterInstallation">Activa després de la instal·lació</string>
+    <string name="EnterValue">Introdueix un valor</string>
+    <string name="PluginDelete">Elimina el complement</string>
+    <string name="PluginDeleteInfo">Segur que vols eliminar **%1$s**?</string>
+    <string name="ResetPluginSettings">La configuració de **%1$s** s\'ha restablert.</string>
+    <string name="ResetPluginSettingsInfo">Segur que vols restablir la configuració de **%1$s** als valors predeterminats?</string>
+    <string name="PluginsSafeMode">Mode segur</string>
+    <string name="PluginsSafeModeShortcut">Inicia en mode segur</string>
+    <string name="PluginsSafeModeInfo">El motor de complements està desactivat a causa d\'una fallada. Desactivar el mode segur pot comportar conseqüències imprevisibles.</string>
+    <string name="PluginsSafeModeInfo2">En mode segur, tots els complements estan inactius. Això et permet trobar i desactivar amb seguretat un complement problemàtic.</string>
+    <string name="PluginsDevMode">Mode desenvolupador</string>
+    <string name="PluginsCompactView">Visualització compacta de complements</string>
+    <string name="PluginsDocumentation">Documentació</string>
+    <string name="PluginsTrusted">Complements de confiança</string>
+    <string name="PluginsDevServerLaunched">El servidor de desenvolupament s\'ha iniciat.</string>
+    <string name="PluginsDevServerStopped">El servidor de desenvolupament s\'ha aturat.</string>
+    <string name="PluginEngineNotEnabled">Activa el **Motor de complements** per obrir la configuració de **%1$s**.</string>
+    <string name="PluginNotFound">No s\'ha trobat **%1$s**.</string>
+    <string name="PluginHasNoSettings">**%1$s** no té configuració.</string>
+    <string name="PluginsPySdkAutoUpdate">Actualitza automàticament</string>
+    <string name="PluginsPySdkEnableBetaVersion">Instal·la versions beta</string>
+    <string name="PluginsPySdkCheckUpdates">Comprova actualitzacions</string>
+    <string name="CheckingForUpdates">Comprovant actualitzacions…</string>
+    <string name="LatestVersionInstalled">La versió més recent està instal·lada</string>
+    <string name="RestartPluginSystemToApplyUpdate">Actualització carregada, reinicia el motor de complements per aplicar-la</string>
+    <string name="LoadingUpdate">Carregant actualització…</string>
+    <string name="RestoreSdkFromApk">Restaura el SDK des de l\'APK</string>
+    <string name="EnableAutoUpdate">Activa l\'actualització automàtica</string>
+    <string name="PluginsDisableArt">Mode de compatibilitat</string>
+    <string name="PluginsDisableArtInfo">Evita errors d\'enganxada de complements desactivant ART Profile Saver.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Actualització en curs…</string>
+    <string name="UpdateInstallingRelaunch">L\'aplicació es reiniciarà quan finalitzi l\'actualització.</string>
+    <string name="UpdateInstallingNotification">Se\'t notificarà quan l\'actualització s\'hagi completat.</string>
+    <string name="UpdateInstalledNotification">Actualització completada. Toca per obrir l\'aplicació.</string>
+    <string name="UpdateFailedToInstall">La instal·lació de l\'actualització ha fallat amb el codi d\'error: %d</string>
+    <string name="UpdateAvailable">Actualització disponible!</string>
+    <!-- Message Details -->
+    <string name="Details">Detalls</string>
+    <string name="Date">Data</string>
+    <string name="EditedDate">Data d\'edició</string>
+    <string name="ForwardedDate">Data de reenviament</string>
+    <string name="FileSize">Mida del fitxer</string>
+    <string name="FileName">Nom del fitxer</string>
+    <string name="FilePath">Ruta del fitxer</string>
+    <string name="Platform">Plataforma</string>
+    <string name="Resolution">Resolució</string>
+    <string name="Bitrate">Taxa de bits</string>
+    <string name="Duration">Durada</string>
+    <string name="MimeType">Tipus MIME</string>
+    <string name="Datacenter">Centre de dades</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOptionNone">Cap</string>
+    <string name="DateFormatOptionRelative">Relatiu</string>
+    <string name="DateFormatOptionShortTime">Hora curta</string>
+    <string name="DateFormatOptionLongTime">Hora llarga</string>
+    <string name="DateFormatOptionShortDate">Data curta</string>
+    <string name="DateFormatOptionLongDate">Data llarga</string>
+    <string name="DateFormatOptionDayOfWeek">Dia de la setmana</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">Inici de sessió amb codi QR</string>
+    <string name="LoginQrSubtitle">Utilitza un altre dispositiu per escanejar aquest codi QR.</string>
+    <string name="WifiConnect">Connecta</string>
+    <string name="WifiDisabled">El Wi-Fi està desactivat.</string>
+    <string name="WifiFailed">No s\'ha pogut connectar al Wi-Fi.</string>
+    <string name="WifiSuccess">Connectat correctament al Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Segur que vols iniciar sessió en aquest compte en un altre dispositiu?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Pàgina bloquejada</string>
+    <string name="PageBlockedDescription">exteraGram ha impedit la càrrega de la pàgina següent:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Torna enrere</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Establir com a insígnia</string>
+    <string name="TestBackend">Prova el backend</string>
+    <string name="SearchPhotoInfo">Els serveis poden utilitzar imatges seguint les seves polítiques de privacitat i termes d\'ús.</string>
+    <string name="PhotoUploadFailed">No s\'ha pogut pujar la foto.</string>
+    <string name="TrackSaved">Pista desada a **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Les pistes es desaran a **%1$s**.</string>
+    <string name="DeletedMessage">Missatge eliminat</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Copia el títol</string>
+    <string name="CopyCallback">Copia les dades de retorn</string>
+    <string name="CopyInlineQuery">Copia la consulta en línia</string>
+    <string name="CopyID">Copia l\'ID d\'usuari</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Estat de la insígnia establert.</string>
+    <string name="UserNotFound">No s\'ha trobat cap usuari amb aquest **ID**.</string>
+    <string name="ChatNotFound">No s\'ha trobat cap xat amb aquest **ID**.</string>
+    <string name="PhotoCopied">Foto copiada al porta-retalls.</string>
+    <string name="FrameCopied">Fotograma copiat al porta-retalls.</string>
+    <string name="TapToCopy">Toca per copiar</string>
+    <string name="ProfileUsesEmojiPack">Aquest perfil utilitza emojis del paquet %s per al seu fons.</string>
+    <string name="ProfileUsesEmojiPacks">Aquest perfil utilitza emojis de **%d paquets** per al seu fons.</string>
+    <string name="ReplyUsesEmojiPacks">Aquesta resposta utilitza emojis del paquet %s per al seu fons.</string>
+    <string name="StickerSavedHint">Adhesiu desat a la galeria.</string>
+    <string name="EmojiSavedHint">Emoji desat a la galeria.</string>
+    <string name="GifGallerySavedHint">GIF desat a la galeria.</string>
+    <string name="MutualContactInfo">Aquest contacte és mutu.</string>
+    <string name="LocalPremiumEmojiHint">No tens subscripció a **Telegram Premium**, per tant només els usuaris d\'**exteraGram** podran veure aquest emoji.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Amaga la pestanya de contactes</string>
+    <string name="ShowContactsTab">Mostra la pestanya de contactes</string>
+    <string name="ContactsTabWasShownTitle">La pestanya **Contactes** ara és visible.</string>
+    <string name="ContactsTabWasHiddenTitle">La pestanya **Contactes** ara està oculta.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Aquesta funció només funciona amb gestors de contrasenyes que permetin gestionar la confiança per a aplicacions privilegiades, com ara **Bitwarden** o **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Gestor de contrasenyes no compatible</string>
+    <string name="PasskeyUnsupportedMessage">Prova altres gestors de contrasenyes com ara **Bitwarden** o **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** va crear el seu compte aproximadament el **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** va crear el seu compte abans de **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** va crear el seu compte després de **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** es va crear el **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Vas crear el teu compte aproximadament el **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">Vas crear el teu compte abans de **%1$s**.</string>
+    <string name="CreationDateSelfLater">Vas crear el teu compte després de **%1$s**.</string>
+    <string name="JoinDateChat">Vas unir-te a **%1$s** el **%2$s**.</string>
+    <string name="GroupMemberJoined">s\'ha unit a %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">A l\'inici</string>
+    <string name="MessageHistory">Historial</string>
+    <string name="BoldItalic">Negreta cursiva</string>
+    <string name="CopyPhoto">Copia la foto</string>
+    <string name="CopyFrame">Copia el fotograma</string>
+    <string name="Repeat">Repeteix</string>
+    <string name="Subtitles">Subtítols</string>
+    <string name="ChooseSubtitles">Tria els subtítols</string>
+    <string name="DisableSubtitles">Desactiva els subtítols</string>
+    <string name="SubtitlesAdded">Subtítols activats.</string>
+    <string name="SubtitlesRemoved">Subtítols desactivats.</string>
+    <string name="SubtitlesLoadError">No s\'han pogut carregar els subtítols.</string>
+    <string name="SubtitlesUnsupportedFormat">Format de subtítol no compatible.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Cantonades de l\'adhesiu</string>
+    <string name="StickerCornerRadiusInfo">Tria com d\'arrodonides han de ser les cantonades de l\'adhesiu.</string>
+    <string name="StickerCornerRadiusLarge">Gran</string>
+    <string name="StickerCornerRadiusMedium">Mitjà</string>
+    <string name="StickerCornerRadiusSmall">Petit</string>
+    <string name="StickerCornerRadiusNone">Cap</string>
+    <!-- Feed -->
+    <string name="Feed">Canal</string>
+    <string name="FeedShownChannels">Mostrats al canal</string>
+    <string name="FeedHiddenChannels">Ocult</string>
+    <string name="FeedChannels">Canals</string>
+    <string name="FeedSettings">Configuració del canal</string>
+    <string name="FeedNoPosts">Encara no hi ha publicacions al canal.</string>
+    <string name="FeedAllChannelsExcluded">Tots els canals estan exclosos del canal.</string>
+    <string name="FeedMarkAllReadConfirm">Marcar totes les publicacions dels teus canals com a llegides? Això també les marcarà com a llegides als canals originals.</string>
+    <string name="FeedMarkAllReadDone">Totes les publicacions marcades com a llegides</string>
+    <string name="FeedIncludeArchived">Mostra xats de l\'arxiu</string>
+    <string name="FeedIncludeArchivedInfo">Inclou també els canals dels teus xats arxivats al canal.</string>
+    <string name="FeedHideChannel">Amaga del canal</string>
+    <string name="FeedChannelHidden">**%1$s** amagat del canal</string>
+    <string name="FeedBottomTab">Mostra a les pestanyes inferiors</string>
+    <string name="FeedBottomTabInfo">Mostra el canal com a pestanya de navegació inferior en lloc de la pestanya de contactes.</string>
+    <string name="FeedUnreadCounter">Comptador de publicacions no llegides</string>
+    <string name="HideFeedTab">Amaga la pestanya del canal</string>
+    <string name="DisableMarkdown">Desactiva Markdown</string>
+    <string name="EnableMarkdown">Activa Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

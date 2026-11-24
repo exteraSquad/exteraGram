@@ -3,7 +3,7 @@ package org.telegram.messenger;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.android.exoplayer2.util.Log;
+
 
 import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
@@ -66,10 +66,14 @@ public class AuthTokensHelper {
         ArrayList<TLRPC.TL_auth_authorization> tokens = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             String value = preferences.getString("log_in_token_" + i, "");
-            SerializedData serializedData = new SerializedData(Utilities.hexToBytes(value));
-            TLRPC.auth_Authorization token = TLRPC.auth_Authorization.TLdeserialize(serializedData, serializedData.readInt32(true), true);
-            if (token instanceof TLRPC.TL_auth_authorization) {
-                tokens.add((TLRPC.TL_auth_authorization) token);
+            try {
+                SerializedData serializedData = new SerializedData(Utilities.hexToBytes(value));
+                TLRPC.auth_Authorization token = TLRPC.auth_Authorization.TLdeserialize(serializedData, serializedData.readInt32(true), true);
+                if (token instanceof TLRPC.TL_auth_authorization) {
+                    tokens.add((TLRPC.TL_auth_authorization) token);
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
             }
         }
 
@@ -104,7 +108,7 @@ public class AuthTokensHelper {
                 editor.putString("log_in_token_" + i, Utilities.bytesToHex(data.toByteArray()));
             }
             editor.apply();
-            BackupAgent.requestBackup(ApplicationLoader.applicationContext);
+            BackupAgent.requestBackup();
         }
     }
 
@@ -114,6 +118,11 @@ public class AuthTokensHelper {
         SerializedData data = new SerializedData(response.getObjectSize());
         response.serializeToStream(data);
         preferences.edit().putString("log_out_token_" + count, Utilities.bytesToHex(data.toByteArray())).putInt("count", count + 1).apply();
-        BackupAgent.requestBackup(ApplicationLoader.applicationContext);
+        BackupAgent.requestBackup();
+    }
+
+    public static void clearLogInTokens() {
+        ApplicationLoader.applicationContext.getSharedPreferences("saved_tokens_login", Context.MODE_PRIVATE).edit().clear().apply();
+        ApplicationLoader.applicationContext.getSharedPreferences("saved_tokens", Context.MODE_PRIVATE).edit().clear().apply();
     }
 }

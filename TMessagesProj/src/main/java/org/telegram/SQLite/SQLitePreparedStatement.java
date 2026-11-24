@@ -13,6 +13,7 @@ import android.os.SystemClock;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.tgnet.NativeByteBuffer;
+import org.telegram.tgnet.TLObject;
 
 import java.nio.ByteBuffer;
 
@@ -23,7 +24,6 @@ public class SQLitePreparedStatement {
 
     private long startTime;
     private String query;
-    //private static HashMap<SQLitePreparedStatement, String> hashMap;
 
     public long getStatementHandle() {
         return sqliteStatementHandle;
@@ -110,9 +110,6 @@ public class SQLitePreparedStatement {
             }
         }
         try {
-            /*if (BuildVars.DEBUG_PRIVATE_VERSION) {
-                hashMap.remove(this);
-            }*/
             isFinalized = true;
             finalize(sqliteStatementHandle);
         } catch (SQLiteException e) {
@@ -136,6 +133,16 @@ public class SQLitePreparedStatement {
 
     public void bindByteBuffer(int index, NativeByteBuffer value) throws SQLiteException {
         bindByteBuffer(sqliteStatementHandle, index, value.buffer, value.limit());
+    }
+
+    public void bindTlObject(int index, TLObject object) throws Exception {
+        NativeByteBuffer data = new NativeByteBuffer(object.getObjectSize());
+        try {
+            object.serializeToStream(data);
+            bindByteBuffer(index, data);
+        } finally {
+            data.reuse();
+        }
     }
 
     public void bindString(int index, String value) throws SQLiteException {

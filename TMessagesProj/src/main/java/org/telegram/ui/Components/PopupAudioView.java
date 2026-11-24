@@ -24,6 +24,7 @@ import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.MediaController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.FileLoader;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.MessageObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
@@ -31,7 +32,19 @@ import org.telegram.ui.Cells.BaseCell;
 
 import java.io.File;
 
-public class PopupAudioView extends BaseCell implements SeekBar.SeekBarDelegate, DownloadController.FileDownloadProgressListener {
+public class PopupAudioView extends BaseCell implements SeekBar.SeekBarDelegate, DownloadController.FileDownloadProgressListener, Theme.Colorable {
+
+    @Override
+    public void updateColors() {
+        try {
+            if (seekBar != null && currentMessageObject != null) {
+                seekBar.setColors(Theme.getColor(Theme.key_chat_inAudioSeekbar), Theme.getColor(Theme.key_chat_inAudioSeekbar), Theme.getColor(Theme.key_chat_inAudioSeekbarFill), Theme.getColor(Theme.key_chat_inAudioSeekbarFill), Theme.getColor(Theme.key_chat_inAudioSeekbarSelected));
+                invalidate();
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
 
     private boolean wasLayout = false;
     protected MessageObject currentMessageObject;
@@ -217,7 +230,7 @@ public class PopupAudioView extends BaseCell implements SeekBar.SeekBarDelegate,
     private void didPressedButton() {
         if (buttonState == 0) {
             boolean result = MediaController.getInstance().playMessage(currentMessageObject);
-            if (!currentMessageObject.isOut() && currentMessageObject.isContentUnread()) {
+            if (!currentMessageObject.isOut() && (currentMessageObject.isContentUnread())) {
                 if (currentMessageObject.messageOwner.peer_id.channel_id == 0) {
                     MessagesController.getInstance(currentAccount).markMessageContentAsRead(currentMessageObject);
                     currentMessageObject.setContentIsRead();
@@ -258,7 +271,7 @@ public class PopupAudioView extends BaseCell implements SeekBar.SeekBarDelegate,
             for (int a = 0; a < currentMessageObject.getDocument().attributes.size(); a++) {
                 TLRPC.DocumentAttribute attribute = currentMessageObject.getDocument().attributes.get(a);
                 if (attribute instanceof TLRPC.TL_documentAttributeAudio) {
-                    duration = attribute.duration;
+                    duration = (int) attribute.duration;
                     break;
                 }
             }

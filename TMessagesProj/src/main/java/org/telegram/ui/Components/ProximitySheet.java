@@ -26,8 +26,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.exteragram.messenger.ExteraConfig;
-
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
@@ -36,6 +34,7 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 import java.util.Locale;
 
@@ -95,7 +94,7 @@ public class ProximitySheet extends FrameLayout {
 
         Rect padding = new Rect();
         Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
-        shadowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
+        ThemeBind.drawableColorFilter(this, shadowDrawable, Theme.key_dialogBackground, PorterDuff.Mode.MULTIPLY);
         shadowDrawable.getPadding(padding);
         backgroundPaddingLeft = padding.left;
 
@@ -163,10 +162,10 @@ public class ProximitySheet extends FrameLayout {
         customView.addView(titleLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 22, 0, 0, 4));
 
         TextView titleView = new TextView(context);
-        titleView.setText(LocaleController.getString("LocationNotifiation", R.string.LocationNotifiation));
-        titleView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+        titleView.setText(LocaleController.getString(R.string.LocationNotifiation));
+        ThemeBind.textColor(titleView, Theme.key_dialogTextBlack);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -245,10 +244,10 @@ public class ProximitySheet extends FrameLayout {
 
         buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
         buttonTextView.setGravity(Gravity.CENTER);
-        buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+        ThemeBind.textColor(buttonTextView, Theme.key_featuredStickers_buttonText);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         buttonTextView.setMaxLines(2);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setBackgroundDrawable(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 4));
         buttonContainer.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48));
         buttonTextView.setOnClickListener(v -> {
@@ -263,7 +262,7 @@ public class ProximitySheet extends FrameLayout {
 
         infoTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
         infoTextView.setGravity(Gravity.CENTER);
-        infoTextView.setTextColor(Theme.getColor(Theme.key_dialogTextGray2));
+        ThemeBind.textColor(infoTextView, Theme.key_dialogTextGray2);
         infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         infoTextView.setAlpha(0.0f);
         infoTextView.setScaleX(0.5f);
@@ -320,7 +319,7 @@ public class ProximitySheet extends FrameLayout {
             if (currentUser == null) {
                 buttonTextView.setText(LocaleController.formatString("LocationNotifiationButtonGroup", R.string.LocationNotifiationButtonGroup, distance));
             } else {
-                String format = LocaleController.getString("LocationNotifiationButtonUser", R.string.LocationNotifiationButtonUser);
+                String format = LocaleController.getString(R.string.LocationNotifiationButtonUser);
                 int width = (int) Math.ceil(buttonTextView.getPaint().measureText(format));
                 int restWidth = (int) ((totalWidth - AndroidUtilities.dp(32 + 62)) * 1.5f - width);
                 CharSequence name = TextUtils.ellipsize(UserObject.getFirstName(currentUser), buttonTextView.getPaint(), Math.max(AndroidUtilities.dp(10), restWidth), TextUtils.TruncateAt.END);

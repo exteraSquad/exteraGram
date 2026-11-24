@@ -1,6 +1,7 @@
 package org.telegram.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -8,36 +9,44 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import org.telegram.messenger.LocaleController;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.SeekBarView;
+import org.telegram.ui.Components.SizeNotifierFrameLayout;
 
 public class BlurSettingsBottomSheet extends BottomSheet {
 
     BaseFragment fragment;
 
-    public static float saturation = 0.2f;
+    public static float saturation = 1f;
     public static float blurRadius = 1f;
-    public static float blurAlpha = 0.176f;
+    public static float blurAlpha = 1f - Color.alpha(Theme.getColor(Theme.key_chat_BlurAlpha)) / 255f;
+    SizeNotifierFrameLayout contentView;
 
 
-    public static void show(ChatActivity fragment) {
+    public static void show(BaseFragment fragment) {
         new BlurSettingsBottomSheet(fragment).show();
     }
 
-    private BlurSettingsBottomSheet(ChatActivity fragment) {
+    private BlurSettingsBottomSheet(BaseFragment fragment) {
         super(fragment.getParentActivity(), false);
         this.fragment = fragment;
+        if (fragment.getFragmentView() instanceof SizeNotifierFrameLayout) {
+            contentView = (SizeNotifierFrameLayout) fragment.getFragmentView();
+        }
         Context context = fragment.getParentActivity();
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         TextView saturationTextView = new TextView(context);
         saturationTextView.setText("Saturation " + (saturation * 5));
-        saturationTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(saturationTextView, Theme.key_dialogTextBlue2);
         saturationTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         saturationTextView.setLines(1);
         saturationTextView.setMaxLines(1);
@@ -51,8 +60,8 @@ public class BlurSettingsBottomSheet extends BottomSheet {
             public void onSeekBarDrag(boolean stop, float progress) {
                 saturation = progress;
                 saturationTextView.setText("Saturation " + (progress * 5));
-                fragment.contentView.invalidateBlurredViews();
-                fragment.contentView.invalidateBlur();
+                contentView.invalidateBlurredViews();
+                contentView.invalidateBlur();
             }
 
             @Override
@@ -66,7 +75,7 @@ public class BlurSettingsBottomSheet extends BottomSheet {
 
         TextView alphaTextView = new TextView(context);
         alphaTextView.setText("Alpha " + blurAlpha);
-        alphaTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(alphaTextView, Theme.key_dialogTextBlue2);
         alphaTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         alphaTextView.setLines(1);
         alphaTextView.setMaxLines(1);
@@ -80,7 +89,7 @@ public class BlurSettingsBottomSheet extends BottomSheet {
             public void onSeekBarDrag(boolean stop, float progress) {
                 alphaTextView.setText("Alpha " + blurAlpha);
                 blurAlpha = progress;
-                fragment.contentView.invalidateBlur();
+                contentView.invalidateBlur();
             }
 
             @Override
@@ -95,7 +104,7 @@ public class BlurSettingsBottomSheet extends BottomSheet {
 
         TextView radiusTextView = new TextView(context);
         radiusTextView.setText("Blur Radius");
-        radiusTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2));
+        ThemeBind.textColor(radiusTextView, Theme.key_dialogTextBlue2);
         radiusTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         radiusTextView.setLines(1);
         radiusTextView.setMaxLines(1);
@@ -108,13 +117,13 @@ public class BlurSettingsBottomSheet extends BottomSheet {
             @Override
             public void onSeekBarDrag(boolean stop, float progress) {
                 blurRadius = progress;
-                fragment.contentView.invalidateBlur();
-                fragment.contentView.invalidateBlurredViews();
+                contentView.invalidateBlur();
+                contentView.invalidateBlurredViews();
             }
 
             @Override
             public void onSeekBarPressed(boolean pressed) {
-                fragment.contentView.invalidateBlurredViews();
+                contentView.invalidateBlurredViews();
             }
         });
         seekBar2.setReportChanges(true);
@@ -134,4 +143,7 @@ public class BlurSettingsBottomSheet extends BottomSheet {
         setCustomView(scrollView);
     }
 
+    public static void onThemeApplyed() {
+        blurAlpha = 1f - Color.alpha(Theme.getColor(Theme.key_chat_BlurAlpha, null, true)) / 255f;
+    }
 }

@@ -19,9 +19,10 @@ import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.Pair;
-import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.exteragram.messenger.player.ui.WavySeekBar;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
@@ -39,9 +40,16 @@ public class SeekBar {
         default void onSeekBarContinuousDrag(float progress) {
 
         }
-
         default void onSeekBarPressed() {}
         default void onSeekBarReleased() {}
+
+        default boolean isSeekBarDragAllowed() {
+            return true;
+        }
+
+        default boolean reverseWaveform() {
+            return false;
+        }
     }
 
     private static Paint paint;
@@ -67,6 +75,8 @@ public class SeekBar {
     private long lastUpdateTime;
     private View parentView;
     private float alpha = 1f;
+    private WavySeekBar wavy;
+    private long lastWavyDrawTime;
 
     public SeekBar(View parent) {
         if (paint == null) {
@@ -75,6 +85,10 @@ public class SeekBar {
         parentView = parent;
         thumbWidth = AndroidUtilities.dp(24);
         currentRadius = AndroidUtilities.dp(6);
+    }
+
+    public void setParent(View parent) {
+        parentView = parent;
     }
 
     public void setDelegate(SeekBarDelegate seekBarDelegate) {
@@ -183,12 +197,61 @@ public class SeekBar {
         lineHeight = value;
     }
 
+    public void setWavy(boolean wavy) {
+        this.wavy = !wavy ? null : new WavySeekBar(parentView.getContext()) {
+            @Override
+            public boolean isShown() {
+                return parentView.isShown();
+            }
+
+            @Override
+            public boolean isAttachedToWindow() {
+                return parentView.isAttachedToWindow();
+            }
+
+            @Override
+            public void invalidate() {
+                parentView.invalidate();
+            }
+
+            @Override
+            public void postInvalidateOnAnimation() {
+                parentView.postInvalidateOnAnimation();
+            }
+        };
+        if (this.wavy != null) {
+            this.wavy.setWaveStyle(2.5f, 2f, 20, 12, 3, 14);
+        }
+    }
+
+    public void setWavyPlaying(boolean playing, boolean animated) {
+        if (wavy != null) {
+            wavy.setPlaying(playing, 1f, animated);
+        }
+    }
+
     public void draw(Canvas canvas) {
         if (alpha <= 0) {
             return;
         }
         if (alpha < 1) {
             canvas.saveLayerAlpha(0, 0, width, height, (int) (255 * alpha), Canvas.ALL_SAVE_FLAG);
+        }
+        if (wavy != null && (timestamps == null || timestamps.isEmpty())) {
+            wavy.layout(0, 0, width - thumbWidth + AndroidUtilities.dp(4), height / 2 + AndroidUtilities.dp(16));
+            wavy.setColors(progressColor, selected ? backgroundSelectedColor : backgroundColor, selected ? backgroundSelectedColor : cacheColor, 0, 0);
+            wavy.setBufferedProgress(bufferedProgress);
+            final long now = SystemClock.uptimeMillis();
+            wavy.setExternalDragging(pressed);
+            wavy.setProgress((pressed ? draggingThumbX : thumbX) / (float) (width - thumbWidth), !pressed && now - lastWavyDrawTime < 100);
+            lastWavyDrawTime = now;
+            canvas.translate(thumbWidth / 2 - AndroidUtilities.dp(2), 0);
+            wavy.draw(canvas);
+            canvas.translate(AndroidUtilities.dp(2) - thumbWidth / 2, 0);
+            if (alpha < 1) {
+                canvas.restore();
+            }
+            return;
         }
         rect.set(thumbWidth / 2, height / 2 - lineHeight / 2, width - thumbWidth / 2, height / 2 + lineHeight / 2);
         paint.setColor(selected ? backgroundSelectedColor : backgroundColor);
@@ -332,7 +395,7 @@ public class SeekBar {
                         float position = seconds * 1000L / (float) videoDuration;
                         String label = link.label;
                         SpannableStringBuilder builder = new SpannableStringBuilder(label);
-                        Emoji.replaceEmoji(builder, timestampLabelPaint.getFontMetricsInt(), AndroidUtilities.dp(14), false);
+                        Emoji.replaceEmoji(builder, timestampLabelPaint.getFontMetricsInt(), false);
                         timestamps.add(new Pair<>(position, link));
                     }
                 }
@@ -458,10 +521,8 @@ public class SeekBar {
         lastWidth = width;
 
         if (timestampIndex != currentTimestamp) {
-            if (pressed && parentView != null) {
-                try {
-                    parentView.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-                } catch (Exception ignore) {}
+            if (pressed) {
+                AndroidUtilities.vibrateCursor(parentView);
             }
             currentTimestamp = timestampIndex;
             if (currentTimestamp >= 0 && currentTimestamp < timestamps.size()) {

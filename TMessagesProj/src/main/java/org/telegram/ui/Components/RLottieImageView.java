@@ -28,6 +28,7 @@ public class RLottieImageView extends ImageView {
     private RLottieDrawable drawable;
     private ImageReceiver imageReceiver;
     private boolean autoRepeat;
+    private int autoRepeatCount = -1;
     private boolean attachedToWindow;
     private boolean playing;
     private boolean startOnAttach;
@@ -72,7 +73,7 @@ public class RLottieImageView extends ImageView {
     }
 
     public void setAnimation(int resId, int w, int h, int[] colorReplacement) {
-        setAnimation(new RLottieDrawable(resId, "" + resId, AndroidUtilities.dp(w), AndroidUtilities.dp(h), false, colorReplacement));
+        setAnimation(new RLottieDrawable(resId, AndroidUtilities.dp(w), AndroidUtilities.dp(h), false, colorReplacement));
     }
 
     public void setOnAnimationEndListener(Runnable r) {
@@ -93,6 +94,9 @@ public class RLottieImageView extends ImageView {
         drawable.setMasterParent(this);
         if (autoRepeat) {
             drawable.setAutoRepeat(1);
+        }
+        if (autoRepeatCount != -1) {
+            drawable.setAutoRepeatCount(autoRepeatCount);
         }
         if (layerColors != null) {
             drawable.beginApplyLayerColors();
@@ -135,18 +139,24 @@ public class RLottieImageView extends ImageView {
                 return super.setImageBitmapByKey(drawable, key, type, memCache, guid);
             }
         };
+        imageReceiver.setAllowLoadingOnAttachedOnly(true);
+        ImageLocation thumbLocation = null;
+        String thumbFilter = null;
+        if (document.localThumbPath != null) {
+            thumbLocation = ImageLocation.getForPath(document.localThumbPath);
+            thumbFilter = w + "_" + h;
+        }
+        TLRPC.PhotoSize thumb = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, 90);
         if (onlyLastFrame) {
-            imageReceiver.setImage(ImageLocation.getForDocument(document), w + "_" + h + "_lastframe", null, null, null, null, null, 0, null, document, 1);
+            imageReceiver.setImage(ImageLocation.getForDocument(document), w + "_" + h + "_lastframe", ImageLocation.getForDocument(thumb, document), w + "_" + h, thumbLocation, thumbFilter, null, 0, null, document, 1);
         } else if ("video/webm".equals(document.mime_type)) {
-            TLRPC.PhotoSize thumb = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, 90);
-            imageReceiver.setImage(ImageLocation.getForDocument(document), w + "_" + h + (cached ? "_pcache" : "") + "_" + ImageLoader.AUTOPLAY_FILTER, ImageLocation.getForDocument(thumb, document), null, null, document.size, null, document, 1);
+            imageReceiver.setImage(ImageLocation.getForDocument(document), w + "_" + h + (cached ? "_pcache" : "") + "_" + ImageLoader.AUTOPLAY_FILTER, thumbLocation != null ? thumbLocation : ImageLocation.getForDocument(thumb, document), thumbFilter, null, document.size, null, document, 1);
         } else {
             SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(document.thumbs, Theme.key_windowBackgroundWhiteGrayIcon, 0.2f);
             if (svgThumb != null) {
                 svgThumb.overrideWidthAndHeight(512, 512);
             }
-            TLRPC.PhotoSize thumb = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, 90);
-            imageReceiver.setImage(ImageLocation.getForDocument(document), w + "_" + h + (cached ? "_pcache" : ""), ImageLocation.getForDocument(thumb, document), null, null, null, svgThumb, 0, null, document, 1);
+            imageReceiver.setImage(ImageLocation.getForDocument(document), w + "_" + h + (cached ? "_pcache" : ""), ImageLocation.getForDocument(thumb, document), w + "_" + h, thumbLocation, thumbFilter, svgThumb, 0, null, document, 1);
         }
         imageReceiver.setAspectFit(true);
         imageReceiver.setParentView(this);
@@ -156,6 +166,9 @@ public class RLottieImageView extends ImageView {
             imageReceiver.setAllowStartAnimation(true);
         } else {
             imageReceiver.setAutoRepeat(0);
+        }
+        if (autoRepeatCount != -1) {
+            imageReceiver.setAutoRepeatCount(autoRepeatCount);
         }
         imageReceiver.setLayerNum(layerNum != null ? layerNum : 7);
         imageReceiver.clip = false;
@@ -249,6 +262,10 @@ public class RLottieImageView extends ImageView {
         autoRepeat = repeat;
     }
 
+    public void setAutoRepeatCount(int n) {
+        autoRepeatCount = n;
+    }
+    
     public void setProgress(float progress) {
         if (drawable != null) {
             drawable.setProgress(progress);

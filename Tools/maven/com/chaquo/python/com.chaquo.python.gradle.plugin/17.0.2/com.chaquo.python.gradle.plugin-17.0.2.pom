@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.chaquo.python</groupId>
+  <artifactId>com.chaquo.python.gradle.plugin</artifactId>
+  <version>17.0.2</version>
+  <packaging>pom</packaging>
+  <name>Chaquopy</name>
+  <description>The Python SDK for Android</description>
+  <url>https://chaquo.com/chaquopy/</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Malcolm Smith</name>
+      <email>smith@chaquo.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/chaquo/chaquopy.git</connection>
+    <url>https://github.com/chaquo/chaquopy</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>com.chaquo.python</groupId>
+      <artifactId>gradle</artifactId>
+      <version>17.0.2</version>
+    </dependency>
+  </dependencies>
+</project>

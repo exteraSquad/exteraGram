@@ -78,6 +78,7 @@ public class VoIPFloatingLayout extends FrameLayout {
     public float updatePositionFromX;
     public float updatePositionFromY;
     public boolean switchingToPip;
+    public boolean isAppearing;
     Drawable outerShadow;
 
     ValueAnimator switchToFloatingModeAnimator;
@@ -263,12 +264,16 @@ public class VoIPFloatingLayout extends FrameLayout {
     protected void dispatchDraw(Canvas canvas) {
         boolean animated = false;
         if (updatePositionFromX >= 0) {
-            animate().setListener(null).cancel();
+            if(!isAppearing) {
+                animate().setListener(null).cancel();
+            }
             setTranslationX(updatePositionFromX);
             setTranslationY(updatePositionFromY);
-            setScaleX(1f);
-            setScaleY(1f);
-            setAlpha(1f);
+            if(!isAppearing) {
+                setScaleX(1f);
+                setScaleY(1f);
+                setAlpha(1f);
+            }
             updatePositionFromX = -1f;
             updatePositionFromY = -1f;
         }
@@ -356,7 +361,7 @@ public class VoIPFloatingLayout extends FrameLayout {
                     .translationX(xPoint)
                     .translationY(yPoint)
                     .alpha(1f)
-                    .setStartDelay(0)
+                    .setStartDelay(uiVisible ? 0 : 150)
                     .setDuration(150).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
         } else {
             if (!alwaysFloating) {

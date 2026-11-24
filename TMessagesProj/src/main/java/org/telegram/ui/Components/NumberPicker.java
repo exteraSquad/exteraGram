@@ -43,10 +43,30 @@ import android.widget.TextView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Utilities;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 import java.util.Locale;
 
-public class NumberPicker extends LinearLayout {
+public class NumberPicker extends LinearLayout implements Theme.Colorable {
+
+    private boolean customSelectorColor;
+
+    @Override
+    public void updateColors() {
+        try {
+            if (!customSelectorColor && mSelectionDivider != null) {
+                mSelectionDivider.setColor(getThemedColor(Theme.key_featuredStickers_addButton));
+                invalidate();
+            }
+        } catch (Exception e) {
+            org.telegram.messenger.FileLog.e(e);
+        }
+    }
+
+    @Override
+    public void addColorKeys(java.util.HashSet<Integer> colors) {
+        colors.add(Theme.key_featuredStickers_addButton);
+    }
 
     public static final int DEFAULT_SIZE_PER_COUNT = 42;
     private int SELECTOR_WHEEL_ITEM_COUNT = 3;
@@ -150,7 +170,7 @@ public class NumberPicker extends LinearLayout {
     private void init() {
         mSolidColor = 0;
         mSelectionDivider = new Paint();
-        mSelectionDivider.setColor(getThemedColor(Theme.key_dialogButton));
+        mSelectionDivider.setColor(getThemedColor(Theme.key_featuredStickers_addButton));
 
         mSelectionDividerHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, UNSCALED_DEFAULT_SELECTION_DIVIDER_HEIGHT, getResources().getDisplayMetrics());
         mSelectionDividersDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, UNSCALED_DEFAULT_SELECTION_DIVIDERS_DISTANCE, getResources().getDisplayMetrics());
@@ -178,7 +198,7 @@ public class NumberPicker extends LinearLayout {
         mInputText = new TextView(getContext());
         mInputText.setGravity(Gravity.CENTER);
         mInputText.setSingleLine(true);
-        mInputText.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
+        ThemeBind.textColor(mInputText, Theme.key_dialogTextBlack, resourcesProvider);
         mInputText.setBackgroundResource(0);
         mInputText.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
         mInputText.setVisibility(INVISIBLE);
@@ -223,9 +243,18 @@ public class NumberPicker extends LinearLayout {
 
             @Override
             public CharSequence getContentDescription(View host) {
+                if (contentDescriptionCallback != null) {
+                    return contentDescriptionCallback.run(mValue);
+                }
                 return NumberPicker.this.getContentDescription(mValue);
             }
         });
+    }
+
+    private Utilities.CallbackReturn<Integer, CharSequence> contentDescriptionCallback;
+
+    public void setContentDescriptionCallback(Utilities.CallbackReturn<Integer, CharSequence> contentDescriptionCallback) {
+        this.contentDescriptionCallback = contentDescriptionCallback;
     }
 
     protected CharSequence getContentDescription(int value) {
@@ -233,11 +262,14 @@ public class NumberPicker extends LinearLayout {
     }
 
     public void setTextColor(int color) {
+        // custom color from the caller (also used by the wheel paint): drop the default key binding
+        ThemeBind.clear(mInputText);
         mInputText.setTextColor(color);
         mSelectorWheelPaint.setColor(color);
     }
 
     public void setSelectorColor(int color) {
+        customSelectorColor = true;
         mSelectionDivider.setColor(color);
     }
 
@@ -675,6 +707,9 @@ public class NumberPicker extends LinearLayout {
         updateInputTextView();
         tryComputeMaxWidth();
         invalidate();
+        if (mScrollState == OnScrollListener.SCROLL_STATE_IDLE && mOnScrollListener != null) {
+            mOnScrollListener.onScrollStateChange(this, OnScrollListener.SCROLL_STATE_IDLE);
+        }
     }
 
     public int getMaxValue() {
@@ -702,6 +737,9 @@ public class NumberPicker extends LinearLayout {
         updateInputTextView();
         tryComputeMaxWidth();
         invalidate();
+        if (mScrollState == OnScrollListener.SCROLL_STATE_IDLE && mOnScrollListener != null) {
+            mOnScrollListener.onScrollStateChange(this, OnScrollListener.SCROLL_STATE_IDLE);
+        }
     }
 
     public String[] getDisplayedValues() {
@@ -734,10 +772,27 @@ public class NumberPicker extends LinearLayout {
         removeAllCallbacks();
     }
 
+    private int thisGravity;
+    @Override
+    public void setGravity(int gravity) {
+        super.setGravity(thisGravity = gravity);
+    }
+
     private final static CubicBezierInterpolator interpolator = new CubicBezierInterpolator(0, 0.5f, 0.5f, 1f);
     @Override
     protected void onDraw(Canvas canvas) {
-        float x = (getRight() - getLeft()) / 2 + textOffset;
+        float x;
+        if (thisGravity == Gravity.RIGHT) {
+            mSelectorWheelPaint.setTextAlign(Align.RIGHT);
+            x = getWidth();
+        } else if (thisGravity == Gravity.LEFT) {
+            mSelectorWheelPaint.setTextAlign(Align.LEFT);
+            x = 0;
+        } else {
+            mSelectorWheelPaint.setTextAlign(Align.CENTER);
+            x = getWidth() / 2f;
+        }
+        x += textOffset;
         float y = mCurrentScrollOffset;
 
         // draw the selector wheel
@@ -877,16 +932,17 @@ public class NumberPicker extends LinearLayout {
         int previous = mValue;
         mValue = mFantomValue = current;
         updateInputTextView();
-        if (Math.abs(previous - current) > 0.9f && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            try {
-                performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-            } catch (Exception ignore) {}
+        if (Math.abs(previous - current) > 0.9f) {
+            AndroidUtilities.vibrateCursor(this);
         }
         if (notifyChange) {
             notifyChange(previous, current);
         }
         initializeSelectorWheelIndices();
         invalidate();
+        if (mScrollState == OnScrollListener.SCROLL_STATE_IDLE && mOnScrollListener != null) {
+            mOnScrollListener.onScrollStateChange(this, OnScrollListener.SCROLL_STATE_IDLE);
+        }
     }
 
     protected void changeValueByOne(boolean increment) {

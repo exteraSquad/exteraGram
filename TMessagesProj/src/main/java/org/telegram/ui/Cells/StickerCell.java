@@ -19,6 +19,8 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.FileLoader;
@@ -30,6 +32,7 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.messenger.SvgHelper;
@@ -51,11 +54,15 @@ public class StickerCell extends FrameLayout {
     private boolean showPremiumLock;
     private boolean isPremiumSticker;
 
-    public StickerCell(Context context) {
+    Theme.ResourcesProvider resourcesProvider;
+
+    public StickerCell(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context);
+        this.resourcesProvider = resourcesProvider;
 
         imageView = new BackupImageView(context);
         imageView.setAspectFit(true);
+        imageView.setRoundRadius(ExteraConfig.getStickerShape() == 0 ? 0 : AndroidUtilities.dp(4));
         imageView.setLayerNum(1);
         addView(imageView, LayoutHelper.createFrame(66, 66, Gravity.CENTER_HORIZONTAL, 0, 5, 0, 0));
         setFocusable(true);
@@ -97,7 +104,7 @@ public class StickerCell extends FrameLayout {
         }
         if (document != null) {
             TLRPC.PhotoSize thumb = FileLoader.getClosestPhotoSizeWithSize(document.thumbs, 90);
-            SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(document, Theme.key_windowBackgroundGray, 1.0f);
+            SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(document, Theme.key_windowBackgroundGray, 1.0f, 1f, resourcesProvider);
             if (MessageObject.canAutoplayAnimatedSticker(document)) {
                 if (svgThumb != null) {
                     imageView.setImage(ImageLocation.getForDocument(document), "80_80", null, svgThumb, parentObject);
@@ -122,7 +129,7 @@ public class StickerCell extends FrameLayout {
         Drawable background = getBackground();
         if (background != null) {
             background.setAlpha(230);
-            background.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_stickersHintPanel), PorterDuff.Mode.MULTIPLY));
+            ThemeBind.drawableColorFilter(this, background, Theme.key_chat_stickersHintPanel, PorterDuff.Mode.MULTIPLY);
         }
         updatePremiumStatus(false);
     }
@@ -199,9 +206,9 @@ public class StickerCell extends FrameLayout {
             }
         }
         if (emoji != null)
-            info.setText(emoji + " " + LocaleController.getString("AttachSticker", R.string.AttachSticker));
+            info.setText(emoji + " " + LocaleController.getString(R.string.AttachSticker));
         else
-            info.setText(LocaleController.getString("AttachSticker", R.string.AttachSticker));
+            info.setText(LocaleController.getString(R.string.AttachSticker));
         info.setEnabled(true);
     }
 

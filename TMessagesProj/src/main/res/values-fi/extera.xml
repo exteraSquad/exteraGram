@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram Asetukset</string>
+    <!-- Main Menu -->
+    <string name="Links">exteraGram-asetukset</string>
+    <string name="Crowdin">Käännä</string>
+    <string name="Website">Verkkosivusto</string>
+    <string name="Categories">Kategoriat</string>
+    <string name="Developer">**%1$s** on **exteraGramin** kehitystiimin jäsen.</string>
+    <string name="DeveloperCompact">**exteraGramin** kehitystiimin jäsen.</string>
+    <string name="Supporter">**%1$s** on tukenut **exteraGramin** kehitystä ja saanut ainutlaatuisen merkin.	</string>
+    <string name="OfficialChannel">**%1$s** on **exteraGramin** virallinen resurssi.</string>
+    <string name="NoSuchSetting">Näyttää siltä, ettei tällaista asetusta ole olemassa.</string>
+    <string name="SettingLinkToSavedMessages">Asetuslinkki lähetetty **Tallennettuihin viesteihin**.</string>
+    <string name="SettingLinkToUser">Asetuslinkki lähetetty käyttäjälle **%1$s**.</string>
+    <string name="SettingLinkToChats">Asetuslinkki lähetetty keskusteluun **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Käytä järjestelmän virransäästöä</string>
+    <string name="LiteBatteryFollowSystemState">Järjestelmä</string>
+    <string name="LiteBatteryFollowSystemInfo">Järjestelmän virransäästön ohjaama.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Tunnistepino</string>
+    <string name="PillStackPillsInfo">Näytä interaktiiviset tunnisteet hakukentässä</string>
+    <string name="PillStackActivePills">Aktiiviset tunnisteet</string>
+    <string name="PillStackHiddenPills">Piilotetut tunnisteet</string>
+    <string name="CurrentLocation">Nykyinen sijainti</string>
+    <string name="SelectLocation">Valitse kartalta</string>
+    <string name="WeatherPill">Sää</string>
+    <string name="WeatherSettingsInfo">Valitse, miten haun säänäytön sijainti määritetään.</string>
+    <string name="WeatherLocation">Sijainnin tunnistus</string>
+    <string name="WeatherLocationPermissionNo">exteraGram tarvitsee sijaintitietosi näyttääkseen nykyisen sään.</string>
+    <string name="WeatherLocationPermissionGrant">Myönnä lupa</string>
+    <string name="WeatherLocationServicesEnable">Ota sijainti käyttöön</string>
+    <string name="WeatherPillTopInfo">Sää-widgetin asetukset tunnistepinoa varten.</string>
+    <string name="PillStackInfiniteScrolling">Loputon vieritys</string>
+    <string name="CryptoPillTargetCurrency">Kohdevaluutta</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Poista välityspalvelin käytöstä</string>
+    <string name="ProxyDisableNever">Ei koskaan</string>
+    <string name="ProxyDisableAlways">Aina</string>
+    <string name="ProxyDisableOnMobileData">Mobiilidata</string>
+    <string name="ProxyType">Tyyppi</string>
+    <string name="Unknown">Tuntematon</string>
+    <string name="ProxyRename">Proxy nimi (valinnainen)</string>
+    <string name="ProxyPinLimitReached">Voit kiinnittää %1$d proxia.</string>
+    <string name="CopyIpAddress">Kopioi IP-osoite</string>
+    <string name="IpInfoUnavailable">IP-osoitteen tietoja ei voitu ladata.</string>
+    <string name="IpInfoIsp">Palveluntarjoaja</string>
+    <string name="IpInfoOrganization">Organisaatio</string>
+    <string name="IpInfoDomain">Verkkotunnus</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Käännöspalvelu</string>
+    <string name="TranslationTarget">Kohdekieli</string>
+    <string name="TranslationTargetApp">Seuraa Sovellusta</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Poista Numeron Pyöristys Käytöstä</string>
+    <string name="FormatTimeWithSeconds">Muotoile aika sekunnilla</string>
+    <string name="RelativeLastSeen">Suhteellinen Viimeksi Nähty</string>
+    <string name="InAppVibration">Värinä Sovelluksessa</string>
+    <string name="FilterZalgo">Suodatin \"Zalgo\"</string>
+    <string name="FilterZalgoInfo">Poistaa \"%1$s\" symbolit nimissä ja viesteissä.</string>
+    <string name="RestartRequired">Käynnistä sovellus uudelleen, jotta muutokset tulevat voimaan.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Koodi</string>
+    <string name="CreateCode">Luo Koodilohko</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Lataa Nopeustehostin</string>
+    <string name="UploadSpeedBoost">Latausnopeuden tehostus</string>
+    <string name="SpeedBoostInfo">Ultra Boost voi aiheuttaa ongelmia tiedostojen lataamisessa ja videoiden suoratoistossa hitaissa Internet-yhteyksissä.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Tallennustila</string>
+    <string name="CustomSavePath">Mukautettu Tallennuskansio</string>
+    <string name="CustomSavePathHint">Jätä tyhjäksi tallentaaksesi suoraan root</string>
+    <string name="CustomSavePathDefault">Tallenna juuriin</string>
+    <string name="CustomSavePathInfo">Tallennetut tiedostot tallennetaan suoraan kuviin, latauksiin jne.</string>
+    <string name="CustomSavePathInfoFolder">Tallennetut tiedostot tallennetaan kuviin /%1$s, Lataukset/%1$s, jne.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Piilota Puhelinnumero</string>
+    <string name="ShowIdAndDc">Näytä ID ja DC</string>
+    <string name="ShowIdAndDcInfo">Telegram API näyttää tunnukset sellaisina kuin ne ovat, kun taas Bot API lisää miinusmerkin ryhmille ja -100 superryhmille ja kanaville.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Piilota Arkistokansio</string>
+    <string name="ArchiveOnPull">Avaa arkisto alasvedossa</string>
+    <string name="DisableUnarchiveSwipe">Poista \"Unarchive\" Pyyhkäisy</string>
+    <string name="DisableUnarchiveSwipeInfo">Vasemman pyyhkäisemällä ei poisteta chatteja arkistosta.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Ulkoasu</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Avatarin kulmat</string>
+    <string name="SingleCornerRadius">Yhden kulman säde</string>
+    <string name="SingleCornerRadiusInfo">Foorumeilla on sama avatarin muoto kuin chateissa.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Keskusteluluettelo</string>
+    <string name="ActionBarTitle">Otsikkoteksti</string>
+    <string name="ActionBarTitleName">Etunimi</string>
+    <string name="HideStories">Piilota tarinat</string>
+    <string name="HideActionBarStatus">Piilota tila</string>
+    <string name="CenterTitle">Keskitä otsikko</string>
+    <string name="ChatHeader">Keskustelun otsikko</string>
+    <string name="HideFloatingButton">Piilota kelluva painike</string>
+    <string name="HideDialogsSearchBar">Piilota hakupalkki</string>
+    <string name="BottomNavigationBarMode">Alareunan navigointipalkki</string>
+    <string name="BottomNavigationModeShow">Näytä</string>
+    <string name="BottomNavigationModeHide">Piilota</string>
+    <string name="BottomNavigationModeFloating">Kelluva</string>
+    <string name="SenderMiniAvatars">Lähettäjän pienet avatarit</string>
+    <string name="ListOfChatsInfo">Kun kansioissa on käytössä vain kuvakkeet, pääotsikossa näkyy kansion nimi.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Kansion otsikko</string>
+    <string name="TabTitleStyleTextWithIcons">Nimet kuvakkeilla</string>
+    <string name="TabTitleStyleIconsOnly">Vain kuvakkeet</string>
+    <string name="TabTitleStyleTextOnly">Vain nimet</string>
+    <string name="TabCounter">Ilmoituslaskuri</string>
+    <string name="HideAllChats">Piilota \"%1$s\"-välilehti</string>
+    <string name="FoldersInfo">Kuvakkeet synkronoidaan tilisi kanssa.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Sovelluksen navigointi</string>
+    <string name="AppNavigationInfo">Oikean yläkulman valikko ja valikkolaatikon asetukset</string>
+    <string name="NavigationDrawer">Navigointivalikkolaatikko</string>
+    <string name="NavigationDrawerInfo">Korvaa oikean yläkulman valikon perinteisellä pyyhkäisyllä avattavalla laatikolla ja hampurilaispainikkeella.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Upottava animaatio</string>
+    <string name="MainMenuItems">Valikon kohteet</string>
+    <string name="MainMenuItemsInfo">Napauta näyttääksesi tai piilottaaksesi kohteita, pidä painettuna järjestääksesi. Asettelu on yhteinen valikon ja laatikon välillä.</string>
+    <string name="MainMenuHiddenItems">Piilotetut valikon kohteet</string>
+    <string name="MainMenuAddDivider">Lisää erotin</string>
+    <string name="MainMenuRemoveSettingsInfo">Asetuksia ei voi piilottaa, kun alareunan navigointipalkki on pois käytöstä.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Kuvakepaketit</string>
+    <string name="IconPacksInfo">Mukauta sovelluksen kuvakkeita</string>
+    <string name="IconPickerFilter">Suodatin</string>
+    <string name="IconPickerAllIcons">Kaikki kuvakkeet</string>
+    <string name="IconPickerReplacedIcons">Korvatut kuvakkeet</string>
+    <string name="IconPickerNotReplacedIcons">Korvaamattomat kuvakkeet</string>
+    <string name="IconPickerSaveAndExit">Tallenna ja poistu</string>
+    <string name="BasePacks">Peruspaketit</string>
+    <string name="BaseIconPackInfo">Peruskuvakepakettia käytetään varalla kuvakkeille, joita muut paketit eivät korvaa.</string>
+    <string name="IconPacksHint">Napauta ottaaksesi paketin käyttöön tai pois käytöstä. Pidä painettuna muokataksesi tai poistaaksesi.</string>
+    <string name="NewIconPack">Luo uusi kuvakepaketti</string>
+    <string name="EnabledPacks">Käytössä olevat paketit</string>
+    <string name="AllPacks">Kaikki paketit</string>
+    <string name="PackName">Paketin nimi</string>
+    <string name="AuthorNameOptional">Tekijän nimi (valinnainen)</string>
+    <string name="NameCannotBeEmpty">Nimi ei voi olla tyhjä.</string>
+    <string name="Version">Versio</string>
+    <string name="InstallPack">Asenna paketti</string>
+    <string name="IconCount_one">%1$d kuvake</string>
+    <string name="IconCount_two">%1$d kuvaketta</string>
+    <string name="IconCount_few">%1$d kuvaketta</string>
+    <string name="IconCount_many">%1$d kuvaketta</string>
+    <string name="IconCount_other">%1$d kuvaketta</string>
+    <string name="UpdatePack">Päivitä paketti</string>
+    <string name="DeletePack">Poista paketti</string>
+    <string name="DeletePackInfo">Oletko varma, että haluat poistaa **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Kuvakepaketin arkisto on virheellinen.</string>
+    <string name="IconPackErrorMissingMetadata">Kuvakepaketista puuttuu metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Kuvakepaketin metatiedot ovat liian suuret.</string>
+    <string name="IconPackErrorInvalidMetadata">Kuvakepaketin metatiedot ovat virheelliset.</string>
+    <string name="IconPackErrorTooManyFiles">Kuvakepaketti sisältää liian monta tiedostoa.</string>
+    <string name="IconPackErrorArchiveTooLarge">Kuvakepaketti on liian suuri.</string>
+    <string name="IconPackErrorFileTooLarge">Yksi kuvaketiedostoista on liian suuri.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Kuvakepaketin pakkaussuhde on liian korkea.</string>
+    <string name="IconPackErrorStorage">Kuvakepaketin tallentaminen epäonnistui.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Kuvakepaketti</string>
+    <string name="AppIconSunset">Auringonlasku</string>
+    <string name="AppIconAurora">Revontulet</string>
+    <string name="AppIconAmethyst">Ametisti</string>
+    <string name="AppIconInvincible">Voittamaton</string>
+    <string name="AppIconSpace">Avaruus</string>
+    <string name="AppIconIceAge">Jääkausi</string>
+    <string name="AppIconEditor">Editori</string>
+    <string name="AppIconOrbit">Kiertorata</string>
+    <string name="AppIconSus">Impostori</string>
+    <string name="AppIconWinter">Talvi</string>
+    <!-- General Appearance -->
+    <string name="Sections">Osiot</string>
+    <string name="SeparateHeaders">Erilliset otsikot</string>
+    <string name="DividerStyle">Erottimen tyyli</string>
+    <string name="DividerStyleHidden">Piilotettu</string>
+    <string name="DividerStyleLine">Viiva</string>
+    <string name="DividerStyleSegments">Segmentit</string>
+    <string name="UseSystemFonts">Käytä järjestelmän fontteja</string>
+    <string name="UseSystemEmoji">Käytä järjestelmän emojeita</string>
+    <string name="NewLoadingStyle">Lataustyyli</string>
+    <string name="NewSliderStyle">Liukutyyli</string>
+    <string name="NewSwitchStyle">Kytkimen tyyli</string>
+    <string name="TabletMode">Tablettitila</string>
+    <string name="RemoveMessageTail">Poista viestin häntä</string>
+    <string name="GooeyAvatarAnimation">\"Gooey\"-avatar-animaatio</string>
+    <string name="CustomChatThemes">Mukautetut teemat chateissa</string>
+    <string name="CustomChatThemesInfo">Jokaisessa chatissa näkyy sille erikseen valittu teema.</string>
+    <string name="PredictiveBackIntensity">Ennakoivan paluun voimakkuus</string>
+    <string name="PredictiveBackMax">Maksimi</string>
+    <string name="PredictiveBackInfo">Säätää, kuinka pitkälle näyttö liikkuu pyyhkäistäessä takaisin.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Sumennusasetukset</string>
+    <string name="GlassOutlineStyle">Lasireunus</string>
+    <string name="GlassOutlineGlare">Heijastus</string>
+    <string name="GlassOutlineSolid">Täysi</string>
+    <string name="GlassOutlineHidden">Piilotettu</string>
+    <string name="ForceSnow">Pakota lumihiutaleet</string>
+    <string name="ForceSnowInfo">Lumihiutaleita ilmestyy toimintopalkkiin, sivumenuun ja chat-taustoihin.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Tarran koko</string>
+    <string name="StickerSizeLeft">Pieni</string>
+    <string name="StickerSizeRight">Suuri</string>
+    <string name="StickerSizeDialogMessage">woah, niin söpö!</string>
+    <string name="StickerShape">Tarran muoto</string>
+    <string name="StickerShapeRounded">Pyöristetty</string>
+    <string name="StickerShapeRoundedMsg">Viesti</string>
+    <string name="ViewEmojiSet">Näytä emojisarja</string>
+    <string name="UnlimitedRecentStickers">Rajoittamattomat viimeisimmät tarrat</string>
+    <string name="HideReactions">Piilota reaktiot</string>
+    <string name="HideReactionsInfo">Reaktiot piilotetaan kokonaan käyttöliittymästä.</string>
+    <string name="ReplyBackground">Tausta</string>
+    <string name="ChatSettingsInfo">Median asetukset, sovelluskuvake ja muut</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Asenna palvelut, roolit ja historia</string>
+    <string name="AIChatInfo2">Luo tekstiä viesteistä tai ennen lähettämistä.</string>
+    <!-- AI Services -->
+    <string name="Services">Palvelut</string>
+    <string name="ServicesInfo">Valitse sopiva palvelu kielimallien kanssa vuorovaikutukseen.</string>
+    <string name="NewService">Uusi palvelu</string>
+    <string name="EditService">Muokkaa palvelua</string>
+    <string name="ServiceModel">Malli</string>
+    <string name="ServiceKey">API-avain</string>
+    <string name="ServiceInfo">Palvelun tiedot</string>
+    <string name="ServiceProvider">Tarjoaja</string>
+    <string name="ServiceProviderCustom">Mukautettu</string>
+    <string name="ServiceTestAndSave">Testaa ja tallenna</string>
+    <string name="ServicePasteService">Liitä palvelu</string>
+    <string name="ServicePasteKey">Liitä API-avain</string>
+    <string name="DeleteServiceInfo">Oletko varma, että haluat poistaa **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Roolit</string>
+    <string name="RolesInfo">Luo rooleja omiin tarpeisiisi!</string>
+    <string name="Suggestions">Ehdotukset</string>
+    <string name="RoleName">Nimi</string>
+    <string name="RolePrompt">Kehote</string>
+    <string name="PromptInfo">Kehote on aloitusviesti, joka annetaan mallille vastauksen aloittamiseksi tai keskustelun jatkamiseksi.</string>
+    <string name="NewRole">Uusi rooli</string>
+    <string name="EditRole">Muokkaa roolia</string>
+    <string name="DeleteRoleInfo">Oletko varma, että haluat poistaa **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Keskusteluhistoria antaa tekoälyn ymmärtää aiemmat pyynnöt ja ottaa ne huomioon uusia vastauksia luodessa.</string>
+    <string name="AIGeneration">Luominen</string>
+    <string name="AIReasoning">Päättely</string>
+    <string name="AIReasoningInfo">Antaa tuetuissa malleissa tässä palvelussa käyttää ylimääräisiä tokeneita ajatteluun ennen vastaamista.</string>
+    <string name="AITemperature">Lämpötila</string>
+    <string name="AITemperatureInfo">Lämpötila ohjaa vastausten satunnaisuutta: korkeammat arvot ovat luovempia, matalammat arvot keskittyneempiä.</string>
+    <string name="ResponseStreaming">Vastauksen suoratoisto</string>
+    <string name="ResponseStreamingInfo">Takaa sujuvamman ja nopeamman vastausten näyttämisen.</string>
+    <string name="ShowResponseOnly">Näytä vain vastaus</string>
+    <string name="InsertResponseAsQuote">Lisää vastaus lainauksena</string>
+    <string name="TapToAddApiKey">Napauta lisätäksesi API-avaimen aloittaaksesi AI-ominaisuuksien käytön.</string>
+    <string name="Generate">Luo</string>
+    <string name="ClearConversationHistoryInfo">Oletko varma, että haluat tyhjentää **kaiken** AI-keskusteluhistorian?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Virheellinen pyyntö</string>
+    <string name="AIError400Info">Tarkista pyynnön parametrit.</string>
+    <string name="AIError401">Virheelliset tunnistetiedot</string>
+    <string name="AIError401Info">API-avain on virheellinen tai poissa käytöstä. Tarkista tunnistetietosi.</string>
+    <string name="AIError402">Riittämättömät hyvitykset</string>
+    <string name="AIError402Info">Tililläsi tai API-avaimessasi ei ole riittävästi hyvityksiä. Lisää hyvityksiä ja yritä uudelleen.</string>
+    <string name="AIError403">Pääsy estetty</string>
+    <string name="AIError403Info">Sinulla ei ole oikeuksia käyttää tätä mallia tai resurssia. Tarkista API-avaimesi ja tilin oikeudet.</string>
+    <string name="AIError408">Pyyntö aikakatkaistu</string>
+    <string name="AIError408Info">Pyyntöäsi ei käsitelty ajoissa. Yritä myöhemmin uudelleen.</string>
+    <string name="AIError429">Rajoitus ylitetty</string>
+    <string name="AIError429Info">Lähetät pyyntöjä liian usein. Odota hetki ja yritä uudelleen.</string>
+    <string name="AIError502">Mallin virhe</string>
+    <string name="AIError502Info">Valittu malli ei ole käytettävissä tai saimme siitä virheellisen vastauksen.</string>
+    <string name="AIError503">Palvelu ei käytettävissä</string>
+    <string name="AIError503Info">Palvelu on tilapäisesti pois käytöstä tai ylikuormitettu. Yritä myöhemmin uudelleen.</string>
+    <string name="AIError">Palvelinvirhe</string>
+    <string name="AIErrorInfo">Yritä pyyntöä uudelleen lyhyen odotuksen jälkeen.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Saapuvat viestit</string>
+    <string name="DoubleTapOutgoing">Lähtevät viestit</string>
+    <string name="DoubleTapInfo">Jotkin toiminnot vaativat ylläpitäjän oikeuksia chatissa tai kanavassa.</string>
+    <string name="BottomButton">Alapainike</string>
+    <string name="ChannelDiscussNoCaps">Keskustele</string>
+    <string name="QuickTransitions">Nopea pyyhkäisysiirtymä</string>
+    <string name="DisableGreetingSticker">Poista tervehdystarra käytöstä</string>
+    <string name="AdminShortcuts">Pikaylläpitäjäpikavalinnat</string>
+    <string name="HideKeyboardOnScroll">Piilota näppäimistö vierittäessä</string>
+    <string name="HideShareButton">Piilota sivupainike \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">Korvaa \"%1$s\" kuvakkeella</string>
+    <string name="MessageMenu">Viestivalikko</string>
+    <string name="GroupMessageMenu">Ryhmäviestivalikko</string>
+    <string name="GroupMessageMenuInfo">Ryhmittely siirtää tärkeimmät toiminnot viestivalikon alaosaan.</string>
+    <string name="GlassMessageMenu">Lasinen viestivalikko</string>
+    <string name="GlassMessageMenuBlurOff">Lasivalikot tarvitsevat sumennuksen, joka on tällä hetkellä pois päältä.</string>
+    <string name="AddCommaAfterMention">Lisää pilkku maininnan jälkeen</string>
+    <string name="HideSendAsPeer">Piilota \"Lähetä nimellä…\" -painike</string>
+    <string name="HideSendAsPeerInfo">Voit edelleen käyttää \"Lähetä nimellä…\" -valikkoa pitämällä painettuna Emojit/Tarrat/GIFit -painiketta.</string>
+    <string name="ShowPollResultsBeforeVoting">Näytä tulokset ennen äänestystä</string>
+    <string name="ShowPollResultsBeforeVotingHint">Näe kunkin vaihtoehdon tulokset ennen äänen lähettämistä.</string>
+    <string name="ShowOnlineStatus">Näytä online-ilmaisin</string>
+    <string name="MessagePreviewDialogMessage">Voin syödä lasia eikä se satuta minua.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Tunnistuskieli</string>
+    <string name="RecognitionInfo">Käyttää Vosk API:ta. Toimii offline-tilassa. Transkription laatu voi olla heikko.</string>
+    <string name="MissingLanguageModel">Kielimalli puuttuu</string>
+    <string name="DownloadingModel">Ladataan mallia…</string>
+    <string name="DownloadingModelInfo">Pidä tämä ikkuna auki, kun kielimallia ladataan.</string>
+    <string name="ModelDownload">Lataa (%1$s)</string>
+    <string name="ModelDownloadInfo">Jatkaaksesi sinun on ladattava kielimalli \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Malli ladattu onnistuneesti.</string>
+    <string name="ModelError">Virhe mallia ladattaessa.</string>
+    <string name="ModelUnzipping">Puretaan…</string>
+    <string name="DeleteRecognitionModel">Poista malli</string>
+    <string name="DeleteRecognitionModelInfo">Oletko varma, että haluat poistaa kielimallin \"**%1$s**\"?</string>
+    <string name="RecognitionModelDeleted">Malli poistettu onnistuneesti.</string>
+    <string name="RecognitionModelDeleteError">Virhe mallia poistettaessa.</string>
+    <string name="PostProcessingWithAi">Käytä tekoälyä jälkikäsittelyyn</string>
+    <string name="PostProcessingWithAiInfo">Tekoäly parantaa luettavuutta korjaamalla virheet, lisäämällä välimerkkejä ja selkeyttämällä epäselviä kohtia.</string>
+    <!-- Camera -->
+    <string name="CameraType">Kameratyyppi</string>
+    <string name="ExtendedSettings">Laajennetut asetukset</string>
+    <string name="SeamlessSwitching">Saumaton vaihto</string>
+    <string name="ExtendedFramesPerSecond">Laajennettu FPS-alue</string>
+    <string name="CameraStabilization">Vakautus</string>
+    <string name="CameraMirrorMode">Peilitila</string>
+    <string name="StartWithWideAngleCamera">Aloita laajakulmalla</string>
+    <string name="ZoomSlider">Zoomausliuku</string>
+    <string name="ZoomSliderInfo">Näytä zoomauksen säätö videoviestikameran alla.</string>
+    <string name="StaticZoom">Staattinen zoomaus</string>
+    <string name="StaticZoomInfo">Kun nauhoitat videoviestiä, zoomaus ei palaudu, jos irrotat sormet.</string>
+    <string name="VideoMessagesCamera">Kamera videoviesteissä</string>
+    <string name="VideoMessagesCameraRear">Takakamera</string>
+    <string name="VideoMessagesCameraFront">Etukamera</string>
+    <string name="VideoMessagesCameraAsk">Kysy</string>
+    <string name="RearCamera">Takakamera</string>
+    <string name="FrontCamera">Etukamera</string>
+    <string name="RememberLastUsedCamera">Muista viimeksi käytetty kamera</string>
+    <string name="RememberLastUsedCameraInfo">Kun nauhoitat videoviestiä, viimeksi käytetty kamera valitaan automaattisesti.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Lähetä aina HD-laadulla</string>
+    <string name="HideCameraTile">Piilota pika-kamera-ruutu</string>
+    <string name="HideCameraTileInfo">Kameraruutu korvataan kelluvalla painikkeella. Painamalla se avaa Telegram-kameran; pitämällä painettuna avaa järjestelmäkameran.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Kaksoisnapautuksen ohitusaika</string>
+    <string name="PreferOriginalQuality">Suosi alkuperäistä laatua</string>
+    <string name="PauseOnMinimize">Automaattinen keskeytys</string>
+    <string name="PauseOnMinimizeVoice">Ääni</string>
+    <string name="PauseOnMinimizeRound">Pyöreä</string>
+    <string name="PauseOnMinimizeInfo">Keskeyttää median toiston, kun laite lukitaan tai exteraGram pienennetään.</string>
+    <string name="SwipeToPip">Pyyhkäise PiP-tilaan</string>
+    <string name="UnmuteWithVolumeButtons">Poista videoista äänenvaiennus äänenvoimakkuuspainikkeilla</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Äänenvoimakkuuspainikkeen painaminen poistaa videon äänenvaiennus tilan, eikä muuta järjestelmän äänenvoimakkuutta.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Kun nämä asetukset ovat käytössä, tietoja laitteesta kerätään ja lähetetään Google Analyticsiin ja Crashlyticsiin, mikä mahdollistaa käyttötilastojen ylläpidon ja virheiden seurannan sovelluksessa.\n\nJos asetukset ovat pois päältä, tietojen keruu loppuu ja kaikki lähetetyt tiedot poistetaan välittömästi.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Anna tiedostonimi…</string>
+    <string name="ExportSettings">Vie asetukset</string>
+    <string name="ApplySettings">Käytä asetuksia</string>
+    <string name="ImportTitle">Oletko varma, että haluat käyttää näitä asetuksia?</string>
+    <string name="ImportConfirm">Kyllä, käytä</string>
+    <string name="CancelConfirm">Ei, jätä ennalleen</string>
+    <string name="SettingsSaved">Asetustiedosto tallennettu onnistuneesti.</string>
+    <string name="SettingsImported">Asetukset käytetty onnistuneesti.</string>
+    <string name="ImportChanges_one">**1** muutos käytetään nykyisiin asetuksiin.</string>
+    <string name="ImportChanges_two">**%1$d** muutosta käytetään nykyisiin asetuksiin.</string>
+    <string name="ImportChanges_few">**%1$d** muutosta käytetään nykyisiin asetuksiin.</string>
+    <string name="ImportChanges_many">**%1$d** muutosta käytetään nykyisiin asetuksiin.</string>
+    <string name="ImportChanges_other">**%1$d** muutosta käytetään nykyisiin asetuksiin.</string>
+    <string name="SameSettings">Näyttää siltä, että asetukset ovat samat kuin nykyiset.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Turvallisuussyistä voit aloittaa tietojesi lataamisen %1$s. Olemme ilmoittaneet kaikille laitteillesi vientipyynnöstä varmistaaksemme, että se on valtuutettu, ja antaaksemme sinulle aikaa reagoida, jos se ei ole.\n\nPalaa %2$s ja toista pyyntö samalla laitteella.</string>
+    <string name="ExportInvalid">Valitettavasti aloitit uuden tietojen viennin, joten tämä tietojen vienti on peruutettu.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Poista tili</string>
+    <string name="ResetSettings">Nollaa asetukset</string>
+    <string name="ResetPreferences">**exteraGram**-asetukset on nollattu.</string>
+    <string name="ResetPreferencesInfo">Oletko varma, että haluat nollata **kaikki** exteraGram-asetukset oletusarvoihinsa?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Tue kehitystä</string>
+    <string name="SupportDevelopmentInfo">Tukemalla projektia et vain edistä sen kehitystä, vaan saat myös ainutlaatuisen merkin.</string>
+    <string name="MakeDonation">Tee lahjoitus</string>
+    <string name="ReceiveBadge">Vastaanota merkki</string>
+    <string name="NowPlaying">Soi nyt</string>
+    <string name="ScrobblingService">Scrobbling-palvelu</string>
+    <string name="SelectService">Valitse palvelu</string>
+    <string name="SelectServiceInfo">Näyttää nykyisen kappaleen profiilissa korttina, joka on saatu scrobbling-palvelusta.</string>
+    <string name="EnterUsername">Syötä käyttäjänimi</string>
+    <string name="EnterUsernameInfo">Voit hankkia käyttäjätunnuksesi **virallisella verkkosivustolla**.</string>
+    <string name="BoostyPeopleCount_one">%1$d henkilö</string>
+    <string name="BoostyPeopleCount_two">%1$d henkilöä</string>
+    <string name="BoostyPeopleCount_few">%1$d henkilöä</string>
+    <string name="BoostyPeopleCount_many">%1$d henkilöä</string>
+    <string name="BoostyPeopleCount_other">%1$d henkilöä</string>
+    <string name="BoostyInfo">Tue aktiivisesti **exteraGramia** **Boosty**-alustalla.</string>
+    <string name="BoostyInfo2">Kiitos tuestasi!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Laajennusten asennus on mahdollista vain **Full**-versiossa **exteraGram**.</string>
+    <string name="Plugins">Laajennukset</string>
+    <string name="PluginsEngine">Laajennusmoottori</string>
+    <string name="EnablePluginsEngine">Ota laajennusmoottori käyttöön</string>
+    <string name="PluginsInfo">Löydät laajennuksia @exteraPlugins.</string>
+    <string name="PluginsNotFound">Laajennuksia ei löytynyt.</string>
+    <string name="InstallPlugin">Asenna</string>
+    <string name="UpdatePlugin">Päivitä</string>
+    <string name="PluginNotEnabled">Ota **Laajennusmoottori** käyttöön asentaaksesi **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** asennettu onnistuneesti.</string>
+    <string name="PluginUpdated">**%1$s** päivitetty onnistuneesti.</string>
+    <string name="PluginEnableError">**%1$s** käyttöönotto epäonnistui.</string>
+    <string name="PluginDisableError">**%1$s** käytöstä poistaminen epäonnistui.</string>
+    <string name="PluginInstallError">**%1$s** asennus epäonnistui.</string>
+    <string name="PluginSourceTrusted">Luotettu lähde</string>
+    <string name="PluginSourceTrustedInfo">Tämän lähteen laajennukset ovat **varmennettuja** ja turvallisia käyttää.</string>
+    <string name="PluginSourceUnknown">Tuntematon lähde</string>
+    <string name="PluginSourceUnknownInfo">Tämän lähteen laajennukset ovat **varmistamattomia** ja voivat aiheuttaa tietoturvariskin.</string>
+    <string name="PluginVersion">Versio</string>
+    <string name="PluginNoDescription">Kuvausta ei ole annettu.</string>
+    <string name="PluginIsNotResponding">Laajennus ei vastaa.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s ei vastaa</string>
+    <string name="PluginNoAuthor">Tuntematon tekijä</string>
+    <string name="EnableAfterInstallation">Ota käyttöön asennuksen jälkeen</string>
+    <string name="EnterValue">Syötä arvo</string>
+    <string name="PluginDelete">Poista laajennus</string>
+    <string name="PluginDeleteInfo">Oletko varma, että haluat poistaa **%1$s**?</string>
+    <string name="ResetPluginSettings">**%1$s**-asetukset on nollattu.</string>
+    <string name="ResetPluginSettingsInfo">Oletko varma, että haluat nollata **%1$s**-asetukset oletusarvoihin?</string>
+    <string name="PluginsSafeMode">Vikasietotila</string>
+    <string name="PluginsSafeModeShortcut">Käynnistä vikasietotilassa</string>
+    <string name="PluginsSafeModeInfo">Laajennusmoottori on poistettu käytöstä kaatumisen vuoksi. Vikasietotilan poistaminen käytöstä voi johtaa ennakoimattomiin seurauksiin.</string>
+    <string name="PluginsSafeModeInfo2">Vikasietotilassa kaikki laajennukset ovat passiivisia. Tämän avulla voit turvallisesti löytää ja poistaa ongelmallisen laajennuksen.</string>
+    <string name="PluginsDevMode">Kehittäjätila</string>
+    <string name="PluginsCompactView">Laajennusten tiivis näkymä</string>
+    <string name="PluginsDocumentation">Dokumentaatio</string>
+    <string name="PluginsTrusted">Luotetut laajennukset</string>
+    <string name="PluginsDevServerLaunched">Kehittäjäpalvelin on käynnissä.</string>
+    <string name="PluginsDevServerStopped">Kehittäjäpalvelin on pysäytetty.</string>
+    <string name="PluginEngineNotEnabled">Ota **Laajennusmoottori** käyttöön avataksesi **%1$s**-asetukset.</string>
+    <string name="PluginNotFound">**%1$s** ei löytynyt.</string>
+    <string name="PluginHasNoSettings">**%1$s**-laajennuksella ei ole asetuksia.</string>
+    <string name="PluginsPySdkAutoUpdate">Päivitä automaattisesti</string>
+    <string name="PluginsPySdkEnableBetaVersion">Asenna beetaversiot</string>
+    <string name="PluginsPySdkCheckUpdates">Tarkista päivitykset</string>
+    <string name="CheckingForUpdates">Tarkistetaan päivityksiä…</string>
+    <string name="LatestVersionInstalled">Uusin versio on asennettu</string>
+    <string name="RestartPluginSystemToApplyUpdate">Päivitys ladattu, käynnistä laajennusmoottori uudelleen ottaaksesi käyttöön</string>
+    <string name="LoadingUpdate">Ladataan päivitystä…</string>
+    <string name="RestoreSdkFromApk">Palauta SDK APK:sta</string>
+    <string name="EnableAutoUpdate">Ota automaattinen päivitys käyttöön</string>
+    <string name="PluginsDisableArt">Yhteensopivuustila</string>
+    <string name="PluginsDisableArtInfo">Estää laajennuskoukkujen epäonnistumisen poistamalla ART Profile Saverin käytöstä.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Päivitys käynnissä…</string>
+    <string name="UpdateInstallingRelaunch">Sovellus käynnistyy uudelleen, kun päivitys on valmis.</string>
+    <string name="UpdateInstallingNotification">Sinulle ilmoitetaan, kun päivitys on valmis.</string>
+    <string name="UpdateInstalledNotification">Päivitys valmis. Napauta avataksesi sovelluksen.</string>
+    <string name="UpdateFailedToInstall">Päivityksen asennus epäonnistui virhekoodilla: %d</string>
+    <string name="UpdateAvailable">Päivitys saatavilla!</string>
+    <!-- Message Details -->
+    <string name="Details">Tiedot</string>
+    <string name="Date">Päivämäärä</string>
+    <string name="EditedDate">Muokkauspäivä</string>
+    <string name="ForwardedDate">Edelleenlähetyspäivä</string>
+    <string name="FileSize">Tiedostokoko</string>
+    <string name="FileName">Tiedostonimi</string>
+    <string name="FilePath">Tiedostopolku</string>
+    <string name="Platform">Alusta</string>
+    <string name="Resolution">Tarkkuus</string>
+    <string name="Bitrate">Bittinopeus</string>
+    <string name="Duration">Kesto</string>
+    <string name="MimeType">MIME-tyyppi</string>
+    <string name="Datacenter">Tietokeskus</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">Muoto:</string>
+    <string name="DateFormatOptionNone">Ei mitään</string>
+    <string name="DateFormatOptionRelative">Suhteellinen</string>
+    <string name="DateFormatOptionShortTime">Lyhyt aika</string>
+    <string name="DateFormatOptionLongTime">Pitkä aika</string>
+    <string name="DateFormatOptionShortDate">Lyhyt päivämäärä</string>
+    <string name="DateFormatOptionLongDate">Pitkä päivämäärä</string>
+    <string name="DateFormatOptionDayOfWeek">Viikonpäivä</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">QR-koodilla kirjautuminen</string>
+    <string name="LoginQrSubtitle">Käytä toista laitetta skannataksesi tämän QR-koodin.</string>
+    <string name="WifiConnect">Yhdistä</string>
+    <string name="WifiDisabled">Wi-Fi on poistettu käytöstä.</string>
+    <string name="WifiFailed">Wi-Fi-yhteyden muodostaminen epäonnistui.</string>
+    <string name="WifiSuccess">Yhdistetty Wi-Fi-verkkoon onnistuneesti.</string>
+    <string name="AreYouSureToLogin">Oletko varma, että haluat kirjautua tälle tilille toisella laitteella?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Sivu estetty</string>
+    <string name="PageBlockedDescription">exteraGram esti seuraavan sivun latauksen:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Palaa takaisin</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Aseta merkiksi</string>
+    <string name="AutoLockInstant">Välitön</string>
+    <string name="TestBackend">Testaa tausta</string>
+    <string name="SearchPhotoInfo">Palvelut voivat käyttää kuvia omien tietosuojakäytäntöjensä ja käyttöehtojensa mukaisesti.</string>
+    <string name="PhotoUploadFailed">Kuvan lataus epäonnistui.</string>
+    <string name="TrackSaved">Kappale tallennettu kohteeseen **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Kappaleet tallennetaan kohteeseen **%1$s**.</string>
+    <string name="DeletedMessage">Poistettu viesti</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Kopioi otsikko</string>
+    <string name="CopyCallback">Kopioi takaisinkutsudata</string>
+    <string name="CopyInlineQuery">Kopioi rivinsisäinen kysely</string>
+    <string name="CopyID">Kopioi käyttäjätunnus</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Merkin tila asetettu.</string>
+    <string name="UserNotFound">Käyttäjää tällä **ID:llä** ei löytynyt.</string>
+    <string name="ChatNotFound">Keskustelua tällä **ID:llä** ei löytynyt.</string>
+    <string name="PhotoCopied">Kuva kopioitu leikepöydälle.</string>
+    <string name="FrameCopied">Kehys kopioitu leikepöydälle.</string>
+    <string name="TapToCopy">Napauta kopioidaksesi</string>
+    <string name="ProfileUsesEmojiPack">Tämä profiili käyttää emojeita %s-paketista taustassaan.</string>
+    <string name="ProfileUsesEmojiPacks">Tämä profiili käyttää emojeita **%d paketista** taustassaan.</string>
+    <string name="ReplyUsesEmojiPacks">Tämä vastaus käyttää emojeita %s-paketista taustassaan.</string>
+    <string name="StickerSavedHint">Tarran tallennettu galleriaan.</string>
+    <string name="EmojiSavedHint">Emoji tallennettu galleriaan.</string>
+    <string name="GifGallerySavedHint">GIF tallennettu galleriaan.</string>
+    <string name="MutualContactInfo">Tämä yhteystieto on molemminpuolinen.</string>
+    <string name="LocalPremiumEmojiHint">Sinulla ei ole **Telegram Premium** -tilausta, joten vain **exteraGram**-käyttäjät näkevät tämän emojin.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Piilota yhteystietovälilehti</string>
+    <string name="ShowContactsTab">Näytä yhteystietovälilehti</string>
+    <string name="ContactsTabWasShownTitle">**Yhteystiedot**-välilehti on nyt näkyvissä.</string>
+    <string name="ContactsTabWasHiddenTitle">**Yhteystiedot**-välilehti on nyt piilotettu.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Tämä ominaisuus toimii vain salasanojen hallintaohjelmien kanssa, jotka sallivat käyttäjän hallita luotettujen sovellusten luottamusasetuksia, kuten **Bitwarden** tai **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Tukematon salasanan hallinta</string>
+    <string name="PasskeyUnsupportedMessage">Kokeile muita salasanojen hallintaohjelmia, kuten **Bitwarden** tai **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** loi tilinsä noin **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** loi tilinsä aikaisemmin kuin **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** loi tilinsä myöhemmin kuin **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** luotiin **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Loit tilisi noin **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">Loit tilisi aikaisemmin kuin **%1$s**.</string>
+    <string name="CreationDateSelfLater">Loit tilisi myöhemmin kuin **%1$s**.</string>
+    <string name="JoinDateChat">Liityit **%1$s**-kanavaan **%2$s**.</string>
+    <string name="GroupMemberJoined">liittyi %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Alkuun</string>
+    <string name="MessageHistory">Historia</string>
+    <string name="BoldItalic">Lihavoitu kursiivi</string>
+    <string name="CopyPhoto">Kopioi kuva</string>
+    <string name="CopyFrame">Kopioi kehys</string>
+    <string name="Repeat">Toista</string>
+    <string name="Subtitles">Tekstitykset</string>
+    <string name="ChooseSubtitles">Valitse tekstitykset</string>
+    <string name="DisableSubtitles">Poista tekstitykset käytöstä</string>
+    <string name="SubtitlesAdded">Tekstitykset käytössä.</string>
+    <string name="SubtitlesRemoved">Tekstitykset poistettu.</string>
+    <string name="SubtitlesLoadError">Tekstitysten lataus epäonnistui.</string>
+    <string name="SubtitlesUnsupportedFormat">Tukematon tekstitysmuoto.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Tarran kulmat</string>
+    <string name="StickerCornerRadiusInfo">Valitse, kuinka pyöristetyt tarran kulmat ovat.</string>
+    <string name="StickerCornerRadiusLarge">Suuri</string>
+    <string name="StickerCornerRadiusMedium">Keskikoko</string>
+    <string name="StickerCornerRadiusSmall">Pieni</string>
+    <string name="StickerCornerRadiusNone">Ei mitään</string>
+    <!-- Feed -->
+    <string name="Feed">Syöte</string>
+    <string name="FeedShownChannels">Näkyy syötteessä</string>
+    <string name="FeedHiddenChannels">Piilotettu</string>
+    <string name="FeedChannels">Kanavat</string>
+    <string name="FeedSettings">Syötteen asetukset</string>
+    <string name="FeedNoPosts">Ei vielä kanavajulkaisuja.</string>
+    <string name="FeedAllChannelsExcluded">Kaikki kanavat on jätetty syötteen ulkopuolelle.</string>
+    <string name="FeedMarkAllReadConfirm">Merkitäänkö kaikki syötekanavien julkaisut luetuiksi? Tämä merkitsee ne myös luetuiksi alkuperäisissä kanavissa.</string>
+    <string name="FeedMarkAllReadDone">Kaikki julkaisut merkitty luetuiksi</string>
+    <string name="FeedIncludeArchived">Näytä keskustelut arkistosta</string>
+    <string name="FeedIncludeArchivedInfo">Sisällytä syötteeseen myös arkistoitujen keskustelujen kanavat.</string>
+    <string name="FeedHideChannel">Piilota syötteestä</string>
+    <string name="FeedChannelHidden">**%1$s** piilotettu syötteestä</string>
+    <string name="FeedBottomTab">Näytä alareunan välilehdissä</string>
+    <string name="FeedBottomTabInfo">Näytä syöte alareunan navigointivälilehtenä Yhteystiedot-välilehden tilalla.</string>
+    <string name="FeedUnreadCounter">Lukemattomien julkaisujen laskuri</string>
+    <string name="HideFeedTab">Piilota syöte-välilehti</string>
+    <string name="DisableMarkdown">Poista Markdown käytöstä</string>
+    <string name="EnableMarkdown">Ota Markdown käyttöön</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

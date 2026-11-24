@@ -1,5 +1,7 @@
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.content.Context;
 import android.view.View;
 
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.ui.ActionBar.BottomSheet;
 
+@Deprecated
 public class NestedSizeNotifierLayout extends SizeNotifierFrameLayout implements NestedScrollingParent3, View.OnLayoutChangeListener {
     public NestedSizeNotifierLayout(Context context) {
         super(context);
@@ -22,7 +25,7 @@ public class NestedSizeNotifierLayout extends SizeNotifierFrameLayout implements
     ChildLayout childLayout;
     BottomSheet.ContainerView bottomSheetContainerView;
 
-    int maxTop;
+    int maxTop, maxTopPadding;
     boolean attached;
 
     private boolean childAttached() {
@@ -37,7 +40,11 @@ public class NestedSizeNotifierLayout extends SizeNotifierFrameLayout implements
 
     private void updateMaxTop() {
         if (targetListView != null && childLayout != null) {
-            maxTop = targetListView.getMeasuredHeight() - targetListView.getPaddingBottom() - childLayout.getMeasuredHeight();
+            if (maxTopPadding != 0) {
+                maxTop = targetListView.getPaddingTop() + maxTopPadding;
+            } else {
+                maxTop = targetListView.getMeasuredHeight() - targetListView.getPaddingBottom() - childLayout.getMeasuredHeight();
+            }
         }
     }
 
@@ -46,7 +53,7 @@ public class NestedSizeNotifierLayout extends SizeNotifierFrameLayout implements
         if (target == targetListView && childAttached()) {
             RecyclerListView innerListView = childLayout.getListView();
             int top = childLayout.getTop();
-            if (top == maxTop) {
+            if (top <= maxTop + dp(4)) {
                 consumed[1] = dyUnconsumed;
                 innerListView.scrollBy(0, dyUnconsumed);
             }
@@ -67,9 +74,9 @@ public class NestedSizeNotifierLayout extends SizeNotifierFrameLayout implements
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed, int type) {
         if (target == targetListView && childAttached()) {
             int t = childLayout.getTop();
+            RecyclerListView innerListView = childLayout.getListView();
             if (dy < 0) {
-                if (t <= maxTop) {
-                    RecyclerListView innerListView = childLayout.getListView();
+                if (t <= maxTop + dp(4)) {
                     LinearLayoutManager linearLayoutManager = (LinearLayoutManager) innerListView.getLayoutManager();
                     int pos = linearLayoutManager.findFirstVisibleItemPosition();
                     if (pos != RecyclerView.NO_POSITION) {
@@ -121,13 +128,17 @@ public class NestedSizeNotifierLayout extends SizeNotifierFrameLayout implements
     }
 
     public void setChildLayout(ChildLayout childLayout) {
+        setChildLayout(childLayout, 0);
+    }
+    public void setChildLayout(ChildLayout childLayout, int maxTopPadding) {
+        this.maxTopPadding = maxTopPadding;
         if (this.childLayout != childLayout) {
             this.childLayout = childLayout;
             if (attached && childLayout != null && childLayout.getListView() != null) {
                 childLayout.getListView().addOnLayoutChangeListener(this);
             }
-            updateMaxTop();
         }
+        updateMaxTop();
     }
 
     @Override

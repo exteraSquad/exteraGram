@@ -3,6 +3,7 @@ package org.telegram.ui.Components.Paint.Views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Path;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,10 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.ui.Components.Paint.PaintTypeface;
 import org.telegram.ui.Components.RecyclerListView;
 
-public class PaintTypefaceListView extends RecyclerListView {
+public class PaintTypefaceListView extends RecyclerListView implements NotificationCenter.NotificationCenterDelegate {
     private Path mask = new Path();
     private Consumer<Path> maskProvider;
 
@@ -52,6 +54,31 @@ public class PaintTypefaceListView extends RecyclerListView {
         });
 
         setPadding(0, AndroidUtilities.dp(8), 0, AndroidUtilities.dp(8));
+        setClipToPadding(false);
+    }
+
+    @Override
+    public Integer getSelectorColor(int position) {
+        return 0x10ffffff;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.customTypefacesLoaded);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.customTypefacesLoaded);
+    }
+
+    @Override
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.customTypefacesLoaded) {
+            getAdapter().notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -76,5 +103,15 @@ public class PaintTypefaceListView extends RecyclerListView {
     public void setMaskProvider(Consumer<Path> maskProvider) {
         this.maskProvider = maskProvider;
         invalidate();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        return super.onTouchEvent(e);
     }
 }

@@ -10,7 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.view.MotionEvent;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.core.graphics.ColorUtils;
@@ -48,13 +48,34 @@ public class UnreadCounterTextView extends View {
 
     int textColorKey = Theme.key_chat_fieldOverlayText;
 
+    private boolean singleLine = true;
+    private int maxLines = 1;
+    private int horizontalPadding;
+
     public UnreadCounterTextView(Context context) {
         super(context);
         textPaint.setTextSize(AndroidUtilities.dp(13));
-        textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        textPaint.setTypeface(AndroidUtilities.bold());
 
         layoutPaint.setTextSize(AndroidUtilities.dp(15));
-        layoutPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        layoutPaint.setTypeface(AndroidUtilities.bold());
+    }
+
+    public void setHorizontalPadding(int padding) {
+        this.horizontalPadding = padding;
+        invalidate();
+    }
+
+    public void setSingleLine(boolean singleLine) {
+        this.singleLine = singleLine;
+        if (singleLine) maxLines = 1;
+        requestLayout();
+    }
+
+    public void setMaxLines(int maxLines) {
+        this.maxLines = maxLines;
+        if (maxLines > 1) singleLine = false;
+        requestLayout();
     }
 
     public void setText(CharSequence text, boolean animatedFromBottom) {
@@ -65,10 +86,21 @@ public class UnreadCounterTextView extends View {
         this.animatedFromBottom = animatedFromBottom;
         textLayoutOut = textLayout;
         iconOut = icon;
-        layoutPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        layoutPaint.setTypeface(AndroidUtilities.bold());
+
+        int maxWidth = AndroidUtilities.displaySize.x - horizontalPadding * 2;
+        if (singleLine) {
+            layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        } else {
+            layoutTextWidth = 0;
+            StaticLayout temp = new StaticLayout(text, layoutPaint, maxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+            for (int i = 0; i < Math.min(temp.getLineCount(), maxLines); i++) {
+                layoutTextWidth = Math.max(layoutTextWidth, (int) Math.ceil(temp.getLineWidth(i)));
+            }
+        }
+
         icon = null;
-        textLayout = new StaticLayout(text, layoutPaint, layoutTextWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+        textLayout = StaticLayoutEx.createStaticLayout(text, layoutPaint, layoutTextWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false, TextUtils.TruncateAt.END, layoutTextWidth, maxLines, false);
         setContentDescription(text);
         invalidate();
 
@@ -88,28 +120,74 @@ public class UnreadCounterTextView extends View {
     }
 
     public void setText(CharSequence text) {
-        layoutPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        if (lastText == text) {
+            return;
+        }
+        lastText = text;
+
+        layoutPaint.setTypeface(AndroidUtilities.bold());
+
+        int maxWidth = AndroidUtilities.displaySize.x - horizontalPadding * 2;
+        if (singleLine) {
+            layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        } else {
+            layoutTextWidth = 0;
+            StaticLayout temp = new StaticLayout(text, layoutPaint, maxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+            for (int i = 0; i < Math.min(temp.getLineCount(), maxLines); i++) {
+                layoutTextWidth = Math.max(layoutTextWidth, (int) Math.ceil(temp.getLineWidth(i)));
+            }
+        }
+
         icon = null;
-        textLayout = new StaticLayout(text, layoutPaint, layoutTextWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+        textLayout = StaticLayoutEx.createStaticLayout(text, layoutPaint, layoutTextWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false, TextUtils.TruncateAt.END, layoutTextWidth, maxLines, false);
         setContentDescription(text);
         invalidate();
     }
 
     public void setTextInfo(CharSequence text) {
+        if (lastText == text) {
+            return;
+        }
+        lastText = text;
+
         layoutPaint.setTypeface(null);
-        layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        int maxWidth = AndroidUtilities.displaySize.x - horizontalPadding * 2;
+        if (singleLine) {
+            layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        } else {
+            layoutTextWidth = 0;
+            StaticLayout temp = new StaticLayout(text, layoutPaint, maxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+            for (int i = 0; i < Math.min(temp.getLineCount(), maxLines); i++) {
+                layoutTextWidth = Math.max(layoutTextWidth, (int) Math.ceil(temp.getLineWidth(i)));
+            }
+        }
+
         icon = null;
-        textLayout = new StaticLayout(text, layoutPaint, layoutTextWidth + 1, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+        textLayout = StaticLayoutEx.createStaticLayout(text, layoutPaint, layoutTextWidth + 1, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false, TextUtils.TruncateAt.END, layoutTextWidth + 1, maxLines, false);
         setContentDescription(text);
         invalidate();
     }
 
     public void setTextInfo(Drawable icon, CharSequence text) {
+        if (lastText == text) {
+            return;
+        }
+        lastText = text;
+
         layoutPaint.setTypeface(null);
-        layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        int maxWidth = AndroidUtilities.displaySize.x - horizontalPadding * 2;
+        if (singleLine) {
+            layoutTextWidth = (int) Math.ceil(layoutPaint.measureText(text, 0, text.length()));
+        } else {
+            layoutTextWidth = 0;
+            StaticLayout temp = new StaticLayout(text, layoutPaint, maxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+            for (int i = 0; i < Math.min(temp.getLineCount(), maxLines); i++) {
+                layoutTextWidth = Math.max(layoutTextWidth, (int) Math.ceil(temp.getLineWidth(i)));
+            }
+        }
+
         this.icon = icon;
-        textLayout = new StaticLayout(text, layoutPaint, layoutTextWidth + 1, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+        textLayout = StaticLayoutEx.createStaticLayout(text, layoutPaint, layoutTextWidth + 1, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false, TextUtils.TruncateAt.END, layoutTextWidth + 1, maxLines, false);
         setContentDescription(text);
         invalidate();
     }
@@ -143,41 +221,15 @@ public class UnreadCounterTextView extends View {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (textLayout != null) {
-                int lineWidth = (int) Math.ceil(textLayout.getLineWidth(0));
-                int contentWidth;
-                if (getMeasuredWidth() == ((View)getParent()).getMeasuredWidth()) {
-                    contentWidth = getMeasuredWidth() - AndroidUtilities.dp(96);
-                } else {
-                    if (isTouchFullWidth())  {
-                        contentWidth = getMeasuredWidth();
-                    } else {
-                        contentWidth = lineWidth + (circleWidth > 0 ? circleWidth + AndroidUtilities.dp(8) : 0);
-                        contentWidth += AndroidUtilities.dp(48);
-                    }
-                }
-                int x = (getMeasuredWidth() - contentWidth) / 2;
-                rect.set(
-                        x, getMeasuredHeight() / 2f - contentWidth / 2f,
-                        x + contentWidth, getMeasuredHeight() / 2f + contentWidth / 2f
-                );
-                if (!rect.contains(event.getX(), event.getY())) {
-                    setPressed(false);
-                    return false;
-                }
-            }
+    public void drawableHotspotChanged(float x, float y) {
+        super.drawableHotspotChanged(x, y);
+        if (selectableBackground != null) {
+            selectableBackground.setHotspot(x, y);
         }
-        return super.onTouchEvent(event);
     }
 
     protected Theme.ResourcesProvider getResourceProvider() {
         return null;
-    }
-
-    protected boolean isTouchFullWidth() {
-        return false;
     }
 
     protected void updateCounter() {

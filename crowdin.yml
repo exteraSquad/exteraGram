@@ -1,0 +1,17 @@
+project_id: "494595"
+api_token_env: CROWDIN_PERSONAL_TOKEN
+base_path: .
+base_url: https://api.crowdin.com
+preserve_hierarchy: true
+
+files:
+  - source: /TMessagesProj/src/main/res/values/extera.xml
+    dest: /extera.xml
+    translation: /TMessagesProj/src/main/res/values-%two_letters_code%/extera.xml
+    languages_mapping:
+      two_letters_code:
+        he: iw
+        id: in
+        pt-BR: pt-rBR
+        zh-CN: zh-rCN
+    skip_untranslated_strings: true

@@ -80,13 +80,13 @@ public class StorageDiagramView extends View implements NotificationCenter.Notif
         avatarImageReceiver.setParentView(this);
 
         if (dialogId == CacheControlActivity.UNKNOWN_CHATS_DIALOG_ID) {
-            dialogText = LocaleController.getString("CacheOtherChats", R.string.CacheOtherChats);
+            dialogText = LocaleController.getString(R.string.CacheOtherChats);
             avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_OTHER_CHATS);
             avatarImageReceiver.setForUserOrChat(null, avatarDrawable);
         } else {
             TLObject dialog = MessagesController.getInstance(UserConfig.selectedAccount).getUserOrChat(dialogId);
             dialogText = DialogObject.setDialogPhotoTitle(avatarImageReceiver, avatarDrawable, dialog);
-            dialogText = Emoji.replaceEmoji(dialogText, null, AndroidUtilities.dp(6), false);
+            dialogText = Emoji.replaceEmoji(dialogText, null, false);
         }
     }
 
@@ -112,7 +112,7 @@ public class StorageDiagramView extends View implements NotificationCenter.Notif
 
         text1.setAnimationProperties(.18f, 0, 300, CubicBezierInterpolator.EASE_OUT_QUINT);
         text1.setTextSize(AndroidUtilities.dp(24));
-        text1.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        text1.setTypeface(AndroidUtilities.bold());
 
         text2.setAnimationProperties(.18f, 0, 300, CubicBezierInterpolator.EASE_OUT_QUINT);
 
@@ -482,7 +482,7 @@ public class StorageDiagramView extends View implements NotificationCenter.Notif
         if (avatarImageReceiver != null) {
             avatarImageReceiver.onAttachedToWindow();
         }
-        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
+        NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.emojiLoaded);
     }
 
     @Override

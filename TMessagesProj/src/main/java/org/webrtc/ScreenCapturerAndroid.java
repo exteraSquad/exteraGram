@@ -18,6 +18,7 @@ import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
+import android.os.Build;
 import androidx.annotation.Nullable;
 import android.view.Surface;
 
@@ -63,9 +64,9 @@ public class ScreenCapturerAndroid implements VideoCapturer, VideoSink {
    *     calling this method.
    * @param mediaProjectionCallback MediaProjection callback to implement application specific
    *     logic in events such as when the user revokes a previously granted capture permission.
-  **/
+   **/
   public ScreenCapturerAndroid(Intent mediaProjectionPermissionResultData,
-      MediaProjection.Callback mediaProjectionCallback) {
+                               MediaProjection.Callback mediaProjectionCallback) {
     this.mediaProjectionPermissionResultData = mediaProjectionPermissionResultData;
     this.mediaProjectionCallback = mediaProjectionCallback;
   }
@@ -85,7 +86,7 @@ public class ScreenCapturerAndroid implements VideoCapturer, VideoSink {
   // TODO(bugs.webrtc.org/8491): Remove NoSynchronizedMethodCheck suppression.
   @SuppressWarnings("NoSynchronizedMethodCheck")
   public synchronized void initialize(final SurfaceTextureHelper surfaceTextureHelper,
-      final Context applicationContext, final CapturerObserver capturerObserver) {
+                                      final Context applicationContext, final CapturerObserver capturerObserver) {
     checkNotDisposed();
 
     if (capturerObserver == null) {
@@ -117,7 +118,7 @@ public class ScreenCapturerAndroid implements VideoCapturer, VideoSink {
       this.height = height;
 
       mediaProjection = mediaProjectionManager.getMediaProjection(
-              Activity.RESULT_OK, mediaProjectionPermissionResultData);
+          Activity.RESULT_OK, mediaProjectionPermissionResultData);
 
       // Let MediaProjection callback use the SurfaceTextureHelper thread.
       mediaProjection.registerCallback(mediaProjectionCallback, surfaceTextureHelper.getHandler());
@@ -189,8 +190,20 @@ public class ScreenCapturerAndroid implements VideoCapturer, VideoSink {
     // with frame processing, which happens on the same thread (we serialize events by running
     // them on the same thread).
     ThreadUtils.invokeAtFrontUninterruptibly(surfaceTextureHelper.getHandler(), () -> {
-      virtualDisplay.release();
-      createVirtualDisplay();
+      if (virtualDisplay == null) {
+        return;
+      }
+      // Since Android 14 a MediaProjection allows only one createVirtualDisplay() call and
+      // re-creating it stops the projection, so resize the existing display instead
+      // (before Android 12 resizing can scale the captured screen incorrectly).
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        virtualDisplay.release();
+        createVirtualDisplay();
+      } else {
+        surfaceTextureHelper.setTextureSize(width, height);
+        virtualDisplay.resize(width, height, VIRTUAL_DISPLAY_DPI);
+        virtualDisplay.setSurface(new Surface(surfaceTextureHelper.getSurfaceTexture()));
+      }
     });
   }
 
@@ -198,8 +211,8 @@ public class ScreenCapturerAndroid implements VideoCapturer, VideoSink {
     surfaceTextureHelper.setTextureSize(width, height);
     try {
       virtualDisplay = mediaProjection.createVirtualDisplay("WebRTC_ScreenCapture", width, height,
-              VIRTUAL_DISPLAY_DPI, DISPLAY_FLAGS, new Surface(surfaceTextureHelper.getSurfaceTexture()),
-              null /* callback */, null /* callback handler */);
+          VIRTUAL_DISPLAY_DPI, DISPLAY_FLAGS, new Surface(surfaceTextureHelper.getSurfaceTexture()),
+          null /* callback */, null /* callback handler */);
     } catch (Throwable e) {
       FileLog.e(e);
     }

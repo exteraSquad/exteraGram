@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.SparseIntArray;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -44,6 +45,7 @@ public class PopupSwipeBackLayout extends FrameLayout {
     private Paint overlayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint foregroundPaint = new Paint();
     private int foregroundColor = 0;
+    private Drawable foregroundDrawable;
 
     private Path mPath = new Path();
     private RectF mRect = new RectF();
@@ -129,17 +131,55 @@ public class PopupSwipeBackLayout extends FrameLayout {
         onSwipeBackProgressListeners.add(onSwipeBackProgressListener);
     }
 
+    /**
+     * On glass (a menu bubble) the pages have no background: the main page fades out and the nested one fades
+     * in instead of covering it with the menu's color.
+     */
+    private boolean foregroundOnGlass;
+
+    public void setForegroundOnGlass(boolean onGlass) {
+        if (foregroundOnGlass != onGlass) {
+            foregroundOnGlass = onGlass;
+            invalidate();
+        }
+    }
+
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         int i = indexOfChild(child);
+        if (foregroundOnGlass) {
+            final View foreground = i == 0 && transitionProgress > 0 && currentForegroundIndex > 0 && currentForegroundIndex < getChildCount() ? getChildAt(currentForegroundIndex) : null;
+            if (foreground == null) {
+                return super.drawChild(canvas, child, drawingTime);
+            }
+            if (transitionProgress >= 1f) {
+                return false;
+            }
+            final int s = canvas.save();
+            if (foreground.getX() > 0) {
+                canvas.clipRect(0, 0, foreground.getX(), getHeight());
+            } else {
+                canvas.clipRect(foreground.getX() + foreground.getWidth(), 0, getWidth(), getHeight());
+            }
+            final boolean b = super.drawChild(canvas, child, drawingTime);
+            overlayPaint.setAlpha((int) (transitionProgress * 0x40));
+            canvas.drawRect(0, 0, getWidth(), getHeight(), overlayPaint);
+            canvas.restoreToCount(s);
+            return b;
+        }
         int s = canvas.save();
         if (i != 0) {
-            if (foregroundColor == 0) {
-                foregroundPaint.setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider));
+            if (foregroundDrawable != null) {
+                foregroundDrawable.setBounds((int) child.getX(), 0, (int) (child.getX() + child.getMeasuredWidth()), getMeasuredHeight());
+                foregroundDrawable.draw(canvas);
             } else {
-                foregroundPaint.setColor(foregroundColor);
+                if (foregroundColor == 0) {
+                    foregroundPaint.setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider));
+                } else {
+                    foregroundPaint.setColor(foregroundColor);
+                }
+                canvas.drawRect(child.getX(), 0, child.getX() + child.getMeasuredWidth(), getMeasuredHeight(), foregroundPaint);
             }
-            canvas.drawRect(child.getX(), 0, child.getX() + child.getMeasuredWidth(), getMeasuredHeight(), foregroundPaint);
         }
         boolean b = super.drawChild(canvas, child, drawingTime);
         if (i == 0) {
@@ -194,17 +234,19 @@ public class PopupSwipeBackLayout extends FrameLayout {
             return;
         }
 
-        ActionBarPopupWindow.ActionBarPopupWindowLayout p = (ActionBarPopupWindow.ActionBarPopupWindowLayout) getParent();
-        float w = fW + (tW - fW) * transitionProgress;
-        float h = fH + (tH - fH) * transitionProgress;
-        w += p.getPaddingLeft() + p.getPaddingRight();
-        h += p.getPaddingTop() + p.getPaddingBottom();
-        p.updateAnimation = false;
-        p.setBackScaleX(w / p.getMeasuredWidth());
-        if (applyBackScaleY) {
-            p.setBackScaleY(h / p.getMeasuredHeight());
+        var parent = getParent();
+        if (parent instanceof ActionBarPopupWindow.ActionBarPopupWindowLayout p) {
+            float w = fW + (tW - fW) * transitionProgress;
+            float h = fH + (tH - fH) * transitionProgress;
+            w += p.getPaddingLeft() + p.getPaddingRight();
+            h += p.getPaddingTop() + p.getPaddingBottom();
+            p.updateAnimation = false;
+            p.setBackScaleX(w / p.getMeasuredWidth());
+            if (applyBackScaleY) {
+                p.setBackScaleY(Math.min(1, h / p.getMeasuredHeight()));
+            }
+            p.updateAnimation = true;
         }
-        p.updateAnimation = true;
 
         for (int i = 0; i < getChildCount(); i++) {
             View ch = getChildAt(i);
@@ -241,7 +283,10 @@ public class PopupSwipeBackLayout extends FrameLayout {
         View bv = getChildAt(0);
         View fv = getChildAt(currentForegroundIndex);
 
-        boolean b = (transitionProgress > 0.5f ? fv : bv).dispatchTouchEvent(ev);
+        View target = transitionProgress > 0.5f ? fv : bv;
+        ev.offsetLocation(-target.getLeft(), -target.getTop());
+        boolean b = target.dispatchTouchEvent(ev);
+        ev.offsetLocation(target.getLeft(), target.getTop());
         if (!b && act == MotionEvent.ACTION_DOWN) {
             return true;
         }
@@ -314,9 +359,18 @@ public class PopupSwipeBackLayout extends FrameLayout {
                 }
                 invalidateTransforms();
                 isAnimationInProgress = false;
+
+                if (onForegroundOpen != null && Math.abs(f - 1f) < .01f) {
+                    onForegroundOpen.run();
+                }
             }
         });
         val.start();
+    }
+
+    private Runnable onForegroundOpen;
+    public void setOnForegroundOpenFinished(Runnable listener) {
+        onForegroundOpen = listener;
     }
 
     /**
@@ -357,15 +411,40 @@ public class PopupSwipeBackLayout extends FrameLayout {
         }
     }
 
+    public boolean stickToRight;
+    public boolean stickToCenterHorizontal;
+
+    public void setStickToRight(boolean right) {
+        stickToRight = right;
+        if (right) {
+            stickToCenterHorizontal = false;
+        }
+    }
+
+    public void setStickToCenterHorizontal(boolean center) {
+        stickToCenterHorizontal = center;
+        if (center) {
+            stickToRight = false;
+        }
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         for (int i = 0; i < getChildCount(); i++) {
             View ch = getChildAt(i);
             boolean shownFromBottom = ch.getLayoutParams() instanceof FrameLayout.LayoutParams && ((LayoutParams) ch.getLayoutParams()).gravity == Gravity.BOTTOM;
-            if (shownFromBottom) {
-                ch.layout(0, bottom - top - ch.getMeasuredHeight(), ch.getMeasuredWidth(), bottom - top);
+            int childLeft;
+            if (stickToRight) {
+                childLeft = (right - left) - ch.getMeasuredWidth();
+            } else if (stickToCenterHorizontal) {
+                childLeft = ((right - left) - ch.getMeasuredWidth()) / 2;
             } else {
-                ch.layout(0, 0, ch.getMeasuredWidth(), ch.getMeasuredHeight());
+                childLeft = 0;
+            }
+            if (shownFromBottom) {
+                ch.layout(childLeft, bottom - top - ch.getMeasuredHeight(), childLeft + ch.getMeasuredWidth(), bottom - top);
+            } else {
+                ch.layout(childLeft, 0, childLeft + ch.getMeasuredWidth(), ch.getMeasuredHeight());
             }
         }
     }
@@ -406,8 +485,15 @@ public class PopupSwipeBackLayout extends FrameLayout {
 
         int s = canvas.save();
         mPath.rewind();
-        int rad = AndroidUtilities.dp(6);
-        mRect.set(0, y, w, y + h);
+        int rad = AndroidUtilities.dp(12);
+        if (stickToRight) {
+            mRect.set(getWidth() - w, y, getWidth(), y + h);
+        } else if (stickToCenterHorizontal) {
+            float left = (getWidth() - w) / 2f;
+            mRect.set(left, y, left + w, y + h);
+        } else {
+            mRect.set(0, y, w, y + h);
+        }
         mPath.addRoundRect(mRect, rad, rad, Path.Direction.CW);
         canvas.clipPath(mPath);
         super.dispatchDraw(canvas);
@@ -509,6 +595,11 @@ public class PopupSwipeBackLayout extends FrameLayout {
 
     public void setForegroundColor(int color) {
         foregroundColor = color;
+    }
+
+    public void setForegroundDrawable(Drawable drawable) {
+        foregroundDrawable = drawable;
+        invalidate();
     }
 
     public interface OnSwipeBackProgressListener {

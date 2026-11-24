@@ -10,11 +10,9 @@ package org.telegram.ui.Components;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.MotionEvent;
@@ -32,17 +30,16 @@ public class ShutterButton extends View {
 
     public enum State {
         DEFAULT,
-        RECORDING,
-        RECORDING_LOCKED,
+        RECORDING
     }
 
     private final static int LONG_PRESS_TIME = 800;
 
-    private Drawable shadowDrawable;
+    private final Drawable shadowDrawable;
 
-    private DecelerateInterpolator interpolator = new DecelerateInterpolator();
-    private Paint whitePaint;
-    private Paint redPaint;
+    private final DecelerateInterpolator interpolator = new DecelerateInterpolator();
+    private final Paint whitePaint;
+    private final Paint redPaint;
     private ShutterButtonDelegate delegate;
     private State state;
     private boolean pressed;
@@ -51,7 +48,7 @@ public class ShutterButton extends View {
     private long totalTime;
     private boolean processRelease;
 
-    private Runnable longPressed = new Runnable() {
+    private final Runnable longPressed = new Runnable() {
         public void run() {
             if (delegate != null) {
                 if (!delegate.shutterLongPressed()) {
@@ -64,8 +61,8 @@ public class ShutterButton extends View {
     public interface ShutterButtonDelegate {
         boolean shutterLongPressed();
         void shutterReleased();
-        void shutterCancel(boolean animate);
-        boolean onTranslationChanged(float x, float y, float width, float height);
+        void shutterCancel();
+        boolean onTranslationChanged(float x, float y);
     }
 
     public ShutterButton(Context context) {
@@ -142,26 +139,6 @@ public class ShutterButton extends View {
                     invalidate();
                 }
                 canvas.drawCircle(cx, cy, AndroidUtilities.dp(26.5f) * scale * redProgress, redPaint);
-            } else if (state == State.RECORDING_LOCKED) {
-                canvas.drawCircle(cx, cy, AndroidUtilities.dp(26.5f) * scale, redPaint);
-                if (redProgress != 1.0f) {
-                    long dt = Math.abs(System.currentTimeMillis() - lastUpdateTime);
-                    if (dt > 17) {
-                        dt = 17;
-                    }
-                    totalTime += dt;
-                    if (totalTime > 120) {
-                        totalTime = 120;
-                    }
-                    redProgress = interpolator.getInterpolation(totalTime / 120.0f);
-                    invalidate();
-                }
-                int blockW = Math.round(getMeasuredWidth() * 0.2f * redProgress);
-                int xBlock = cx - (blockW >> 1);
-                int yBlock = cy - (blockW >> 1);
-                @SuppressLint("DrawAllocation")
-                RectF rectF = new RectF(xBlock, yBlock, xBlock + blockW, yBlock + blockW);
-                canvas.drawRoundRect(rectF, blockW * 0.2f, blockW * 0.2f, whitePaint);
             } else if (redProgress != 0) {
                 canvas.drawCircle(cx, cy, AndroidUtilities.dp(26.5f) * scale, redPaint);
             }
@@ -177,16 +154,6 @@ public class ShutterButton extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        if (state == State.RECORDING_LOCKED) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                setHighlighted(false);
-                AndroidUtilities.cancelRunOnUIThread(longPressed);
-                if (processRelease) {
-                    delegate.shutterReleased();
-                }
-            }
-            return false;
-        };
         float x = motionEvent.getX();
         float y = motionEvent.getY();
         switch (motionEvent.getAction()) {
@@ -204,12 +171,14 @@ public class ShutterButton extends View {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (delegate.onTranslationChanged(x, y, getMeasuredWidth(), getMeasuredHeight())) {
+                float dx = x >= 0 && x <= getMeasuredWidth() ? 0 : x;
+                float dy = y >= 0 && y <= getMeasuredHeight() ? 0 : y;
+                if (delegate.onTranslationChanged(dx, dy)) {
                     AndroidUtilities.cancelRunOnUIThread(longPressed);
-                    if (state == State.RECORDING || state == State.RECORDING_LOCKED) {
+                    if (state == State.RECORDING) {
                         processRelease = false;
                         setHighlighted(false);
-                        delegate.shutterCancel(true);
+                        delegate.shutterCancel();
                         setState(State.DEFAULT, true);
                     }
                 }
@@ -237,11 +206,6 @@ public class ShutterButton extends View {
                     redProgress = 0.0f;
                 }
             }
-            if (value == State.DEFAULT) {
-                setHighlighted(false);
-                AndroidUtilities.cancelRunOnUIThread(longPressed);
-                pressed = false;
-            }
             invalidate();
         }
     }
@@ -252,7 +216,9 @@ public class ShutterButton extends View {
         info.setClassName("android.widget.Button");
         info.setClickable(true);
         info.setLongClickable(true);
-        info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK.getId(), LocaleController.getString("AccActionTakePicture", R.string.AccActionTakePicture)));
-        info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_LONG_CLICK.getId(), LocaleController.getString("AccActionRecordVideo", R.string.AccActionRecordVideo)));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_CLICK.getId(), LocaleController.getString(R.string.AccActionTakePicture)));
+            info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_LONG_CLICK.getId(), LocaleController.getString(R.string.AccActionRecordVideo)));
+        }
     }
 }

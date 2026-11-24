@@ -20,13 +20,13 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.UserConfig;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.VoIPFragment;
+import org.webrtc.OrientationHelper;
 
 public class VoIPWindowView extends FrameLayout {
 
     Activity activity;
     protected boolean lockOnScreen;
 
-    private int orientationBefore;
     private AnimationNotificationsLocker notificationsLocker = new AnimationNotificationsLocker();
 
     VelocityTracker velocityTracker;
@@ -35,10 +35,9 @@ public class VoIPWindowView extends FrameLayout {
         super(activity);
         this.activity = activity;
         setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        setFitsSystemWindows(true);
 
-        orientationBefore = activity.getRequestedOrientation();
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        AndroidUtilities.lockOrientation(activity, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        OrientationHelper.cameraRotationDisabled = true;
         if (!enterAnimation) {
             runEnterTransition = true;
         }
@@ -82,24 +81,24 @@ public class VoIPWindowView extends FrameLayout {
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
             float dx = event.getX() - startX;
             float dy = event.getY() - startY;
-            if (!startDragging && Math.abs(dx) > AndroidUtilities.getPixelsInCM(0.4f, true) && Math.abs(dx) / 3 > dy) {
-                startX = event.getX();
-                dx = 0;
+            if (!startDragging && Math.abs(dy) > AndroidUtilities.getPixelsInCM(0.4f, true) && Math.abs(dy) / 3 > dx) {
+                startY = event.getY();
+                dy = 0;
                 startDragging = true;
             }
             if (startDragging) {
-                if (dx < 0) {
-                    dx = 0;
+                if (dy < 0) {
+                    dy = 0;
                 }
                 if (velocityTracker == null) {
                     velocityTracker = VelocityTracker.obtain();
                 }
                 velocityTracker.addMovement(event);
-                setTranslationX(dx);
+                setTranslationY(dy);
             }
             return startDragging;
         } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-            float x = getTranslationX();
+            float y = getTranslationY();
             if (velocityTracker == null) {
                 velocityTracker = VelocityTracker.obtain();
             }
@@ -108,12 +107,12 @@ public class VoIPWindowView extends FrameLayout {
             float velX = velocityTracker.getXVelocity();
             float velY = velocityTracker.getYVelocity();
 
-            final boolean backAnimation = x < getMeasuredWidth() / 3.0f && (velX < 3500 || velX < velY);
+            final boolean backAnimation = y < getMeasuredHeight() / 3.0f && (velX < 3500 || velX < velY);
             if (!backAnimation) {
-                float distToMove = getMeasuredWidth() - getTranslationX();
-                finish(Math.max((int) (200.0f / getMeasuredWidth() * distToMove), 50));
+                float distToMove = getMeasuredHeight() - getTranslationY();
+                finish(Math.max((int) (200.0f / getMeasuredHeight() * distToMove), 50));
             } else {
-                animate().translationX(0).start();
+                animate().translationY(0).start();
             }
             startDragging = false;
         }
@@ -121,7 +120,7 @@ public class VoIPWindowView extends FrameLayout {
     }
 
     public void finish() {
-        finish(150);
+        finish(330);
     }
 
     public void finish(long animDuration) {
@@ -139,13 +138,12 @@ public class VoIPWindowView extends FrameLayout {
             } else {
                 int account = UserConfig.selectedAccount;
                 notificationsLocker.lock();
-                animate().translationX(getMeasuredWidth()).setListener(new AnimatorListenerAdapter() {
+                animate().translationY(getMeasuredHeight()).alpha(0f).setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         notificationsLocker.unlock();
+                        AndroidUtilities.unlockOrientation(activity);
                         if (getParent() != null) {
-                            activity.setRequestedOrientation(orientationBefore);
-
                             WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
                             setVisibility(View.GONE);
                             try {
@@ -153,6 +151,8 @@ public class VoIPWindowView extends FrameLayout {
                             } catch (Exception ignore) {
 
                             }
+
+                            OrientationHelper.cameraRotationDisabled = false;
                         }
                     }
                 }).setDuration(animDuration).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
@@ -162,8 +162,9 @@ public class VoIPWindowView extends FrameLayout {
 
     public void startEnterTransition() {
         if (!lockOnScreen) {
-            setTranslationX(getMeasuredWidth());
-            animate().translationX(0).setDuration(150).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
+            setTranslationY(getMeasuredHeight());
+            setAlpha(0f);
+            animate().translationY(0).alpha(1f).setDuration(330).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
         }
     }
 
@@ -180,14 +181,12 @@ public class VoIPWindowView extends FrameLayout {
         windowLayoutParams.type = WindowManager.LayoutParams.LAST_APPLICATION_WINDOW;
         windowLayoutParams.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
-        if (Build.VERSION.SDK_INT >= 28) {
-            windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        }
+        AndroidUtilities.applyEdgeToEdgeLayoutParams(windowLayoutParams);
         windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
                 WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
                 WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM |
-                WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
-        windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         return windowLayoutParams;
@@ -210,10 +209,12 @@ public class VoIPWindowView extends FrameLayout {
 
     public void finishImmediate() {
         if (getParent() != null) {
-            activity.setRequestedOrientation(orientationBefore);
+            AndroidUtilities.unlockOrientation(activity);
             WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
             setVisibility(View.GONE);
             wm.removeView(VoIPWindowView.this);
+
+            OrientationHelper.cameraRotationDisabled = false;
         }
     }
 }

@@ -6,155 +6,332 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2023
+ Copyright @exteraGram, 2022-2026
 
 -->
 <resources>
     <string name="Preferences">تفضيلات exteraGram</string>
     <!-- Main Menu -->
     <string name="Links">الروابط</string>
-    <string name="AboutExteraDescription">بديل تليجرام تجريبي، مبني على مصادر تليجرام الرسمية!</string>
-    <string name="Channel">قناة</string>
-    <string name="Crowdin">ترجمة</string>
-    <string name="SourceCode">الكود المصدري</string>
+    <string name="Crowdin">تَرْجَمَة</string>
+    <string name="Website">موقع إلكتروني</string>
     <string name="Categories">الفئات</string>
+    <string name="DeveloperCompact">Arabic.</string>
+    <string name="NoSuchSetting">يبدو أن مثل هذا الإعداد غير موجود.</string>
+    <string name="SettingLinkToSavedMessages">: تم إرسال رابط الإعدادات إلى الرسائل المحفوظة</string>
+    <string name="SettingLinkToUser">تم إرسال رابط الإعداد إلى **%1$s**.</string>
+    <string name="SettingLinkToChats">تم إرسال رابط اللغة %1$s</string>
+    <string name="LiteBatteryFollowSystem">استخدام موفر بطارية النظام</string>
+    <string name="LiteBatteryFollowSystemState">النظام</string>
+    <string name="LiteBatteryFollowSystemInfo">التحكم بواسطة توفير البطارية للنظام.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">تجميع الرسائل</string>
+    <string name="PillStackPillsInfo">إظهار عناصر البحث التفاعلية</string>
+    <string name="PillStackActivePills">العناصر النشطة</string>
+    <string name="PillStackHiddenPills">العناصر المخفية</string>
+    <string name="CurrentLocation">الموقع الحالي </string>
+    <string name="SelectLocation">تحديث على الخريطة </string>
+    <string name="WeatherPill">الطقس </string>
+    <string name="WeatherSettingsInfo">اختر كيفية تحديد الموقع لعرض الطقس في  البحت </string>
+    <string name="WeatherLocation">اكتشاف الموقع </string>
+    <string name="WeatherLocationPermissionNo">
+يحتاج تطبيق exteraGram إلى الوصول إلى موقعك لعرض الطقس الحالي</string>
+    <string name="WeatherLocationPermissionGrant">منح الادن </string>
+    <string name="WeatherLocationServicesEnable">تفعيل الموقع </string>
+    <string name="WeatherPillTopInfo">اعدادات التطبيقات المصغرة ل مدكس بيل </string>
+    <string name="PillStackInfiniteScrolling">التمرير  النهائي </string>
+    <string name="CryptoPillTargetCurrency">العملة المستهدفة </string>
+    <!-- Custom Pills -->
+    <string name="CustomPillNew">عنصر جديد</string>
+    <string name="CustomPillEditTitle">تعديل العنصر</string>
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">تعطيل البروكسي</string>
+    <string name="ProxyDisableNever">أبداً</string>
+    <string name="ProxyDisableAlways">دائماً</string>
+    <string name="ProxyDisableOnMobileData">بيانات الجوال</string>
+    <string name="ProxyType">نوع</string>
+    <string name="Unknown">غير معروف</string>
+    <string name="ProxyRename">اسم البروكسي (اختياري)</string>
+    <string name="ProxyPinLimitReached">يمكنك تثبيت حتى وكيل %1$d.</string>
+    <string name="CopyIpAddress">نسخ عنوان IP</string>
+    <string name="IpInfoUnavailable">تعذر تحميل معلومات عنوان IP.</string>
+    <string name="IpInfoIsp">مزود الخدمة</string>
+    <string name="IpInfoOrganization">المؤسسة</string>
+    <string name="IpInfoDomain">المجال</string>
+    <!-- Translator -->
+    <string name="TranslationTarget">كيف حالك</string>
+    <string name="TranslationTargetApp">اللغة الإفتراضية</string>
+    <string name="ShowTranslateChatButtonLocked">اختر مزوّد ترجمة آخر أو اشترك في **Telegram Premium**.</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">تعطيل تقريب الأرقام</string>
+    <string name="FormatTimeWithSeconds">تنسيق الوقت بالثواني</string>
+    <string name="RelativeLastSeen">آخر ظهور نسبيآ</string>
+    <string name="DisableNotificationDelay">تعطيل تأخير الإشعارات</string>
+    <string name="AccountNotificationsInfo">لا تعرض إشعارات الحسابات غير المحددة في أثناء استخدام حساب آخر.</string>
+    <string name="AccountNotificationsCurrent">يتم عرض الإشعارات من الحساب الحالي دائمًا.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">كود</string>
+    <string name="CreateCode">إنشاء كتلة كود</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">زيادة سرعة التحميل</string>
+    <string name="UploadSpeedBoost">زيادة سرعة الرفع</string>
+    <string name="Ultra">الفائق</string>
+    <!-- Storage -->
+    <string name="StorageSettings">التخزين</string>
+    <string name="CustomSavePath">مجلد حفظ مخصص</string>
+    <string name="CustomSavePathHint">اتركه فارغاً للحفظ مباشرة في الجذر</string>
+    <string name="CustomSavePathDefault">حفظ في الجذر</string>
+    <string name="CustomSavePathInfo">سيتم تخزين الملفات المحفوظة مباشرة في الصور، التنزيلات، إلخ.</string>
+    <string name="CustomSavePathInfoFolder">سيتم تخزين الملفات المحفوظة في الصور/%1$s، التنزيلات/%1$s، إلخ.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">إخفاء رقم الهاتف</string>
+    <string name="ShowIdAndDc">إظهار المعرف وDC</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">إخفاء مجلد الأرشيف</string>
+    <string name="ArchiveOnPull">فتح الأرشيف عند السحب للأسفل</string>
     <!-- Appearance -->
+    <string name="Appearance">المظهر</string>
+    <!-- Avatars -->
     <string name="AvatarCorners">زوايا الصورة الرمزية</string>
-    <string name="AvatarCornersLeft">مربع</string>
-    <string name="AvatarCornersRight">دائري</string>
+    <string name="SingleCornerRadius">نصف قطر ركن واحد</string>
+    <string name="SingleCornerRadiusInfo">المنتديات سيكون لها نفس الشكل الرمزي كالدردشة.</string>
+    <!-- Chat List -->
     <string name="ListOfChats">قائمة الدردشة</string>
     <string name="ActionBarTitle">نص العنوان</string>
-    <string name="ActionBarTitleUsername">اسم المستخدم</string>
     <string name="ActionBarTitleName">الاسم الأول</string>
+    <string name="HideStories">إخفاء القصص</string>
     <string name="HideActionBarStatus">إخفاء الحالة</string>
     <string name="CenterTitle">عنوان متوسط</string>
-    <string name="ListOfChatsInfo">سيتم استبدال نص العنوان باسم المجلد عند تمكين الرموز.</string>
+    <string name="ChatHeader">رأس المحادثة</string>
+    <string name="HideFloatingButton">إخفاء الزر العائم</string>
+    <string name="HideDialogsSearchBar">إخفاء شريط البحث</string>
+    <string name="BottomNavigationBarMode">شريط التنقل السفلي</string>
+    <string name="BottomNavigationModeShow">إظهار</string>
+    <string name="BottomNavigationModeHide">إخفاء</string>
+    <string name="BottomNavigationModeFloating">عائمة</string>
+    <string name="ListOfChatsInfo">عند تمكين\" الرموز فقط\" للمجلدات، سيعرض العنوان الرئيس اسم المجلد.</string>
+    <!-- Folders (Tabs) -->
     <string name="TabTitleStyle">عنوان علامة التبويب</string>
     <string name="TabTitleStyleTextWithIcons">أسماء مع أيقونات</string>
     <string name="TabTitleStyleIconsOnly">أيقونات فقط</string>
     <string name="TabTitleStyleTextOnly">أسماء فقط</string>
-    <string name="TabStyle">نمط المجلد</string>
-    <string name="TabStyleTextOnly">نص</string>
-    <string name="TabStyleRounded">مدوّر</string>
-    <string name="TabStyleChips">رقائق</string>
-    <string name="TabStylePills">حبوب</string>
     <string name="TabCounter">عداد علامات التبويب</string>
+    <string name="TabCounterUnmuted">غير المكتومة</string>
     <string name="HideAllChats">إخفاء تبويب \"%1$s\"</string>
-    <string name="FoldersInfo">يتم مزامنة الأيقونات مع تليجرام.</string>
-    <string name="IconPack">أيقونات</string>
-    <string name="SolarIcons">استخدام الأيقونات \"الشمسية\"</string>
-    <string name="ForceBlur">ضبابية إجبارية</string>
-    <string name="ForceBlurInfo">سيتم تطبيق الضبابية على جميع المواضيع بشكل مطلق.</string>
-    <string name="ForceSnow">فرض الثلج</string>
-    <string name="ForceSnowInfo">سيظهر الثلج في شريط الحركة، والدرج وخلفية المحادثات.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">التنقل في التطبيق</string>
+    <string name="AppNavigationInfo">إعدادات القائمة ودرج القائمة أعلى اليمين</string>
+    <string name="NavigationDrawer">شريط التنقل</string>
+    <string name="NavigationDrawerInfo">يستبدل القائمة العلوية اليمنى بالقائمة الكلاسيكية للسحب للفتح و زر هامبرغر.</string>
+    <string name="NavigationDrawerImmersiveAnimation">الرسوم المتحركة الغامرة</string>
+    <string name="NavigationDrawerProxyPingShort">%1$d ميلي ثانية</string>
+    <string name="MainMenuItems">عناصر القائمة</string>
+    <string name="MainMenuItemsInfo">انقر لإظهار أو إخفاء العناصر، مع الاستمرار لإعادة الترتيب. يتم مشاركة التخطيط بين القائمة ودرج التخطيط.</string>
+    <string name="MainMenuHiddenItems">عناصر القائمة المخفية</string>
+    <string name="MainMenuAddDivider">إضافة فاصل</string>
+    <string name="MainMenuRemoveSettingsInfo">لا يمكن إخفاء الإعدادات أثناء تعطيل شريط التنقل السفلي.</string>
+    <!-- Icon Packs -->
+    <string name="IconPickerFilter">فلتر</string>
+    <string name="IconPickerReplacedIcons">الأيقونات المستبدلة</string>
+    <string name="IconPickerNotReplacedIcons">الأيقونات غير المستبدلة</string>
+    <string name="NewIconPack">إنشاء حزمة أيقونات جديدة</string>
+    <string name="EnabledPacks">الحزم المفعلة</string>
+    <string name="PackName">اسم الحزمة</string>
+    <string name="AuthorNameOptional">اسم المؤلف (اختياري)</string>
+    <string name="NameCannotBeEmpty">الاسم لا يمكن أن يكون فارغاً.</string>
+    <string name="Version">إصدار</string>
+    <string name="InstallPack">تثبيت الحزمة</string>
+    <string name="IconCount_one">أيقونة %1$d</string>
+    <string name="IconCount_two">أيقونات %1$d</string>
+    <string name="IconCount_few">أيقونات %1$d</string>
+    <string name="IconCount_many">أيقونة %1$d</string>
+    <string name="IconCount_other">أيقونات %1$d</string>
+    <string name="UpdatePack">ايوجرام</string>
+    <string name="DeletePack">حذف الحزمة</string>
+    <string name="DeletePackInfo">هل أنت متأكد من أنك تريد حذف %1$s؟</string>
+    <string name="IconPackErrorInvalidArchive">أرشيف حزمة الأيقونات غير صالح.</string>
+    <string name="IconPackErrorMissingMetadata">أرشيف حزمة الأيقونات يفتقر إلى metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">بيانات حزمة الأيقونات كبيرة جداً.</string>
+    <string name="IconPackErrorInvalidMetadata">بيانات حزمة الأيقونات غير صالحة.</string>
+    <string name="IconPackErrorTooManyFiles">حزمة الأيقونات تحتوي على عدد كبير جداً من الملفات.</string>
+    <string name="IconPackErrorArchiveTooLarge">حزمة الأيقونات كبيرة جداً.</string>
+    <string name="IconPackErrorFileTooLarge">أحد ملفات الأيقونات كبير جداً.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">أرشيف حزمة الأيقونات مضغوط بشكل مفرط.</string>
+    <string name="IconPackErrorStorage">تعذر حفظ حزمة الأيقونات.</string>
+    <!-- App Icons -->
+    <string name="AppIconAurora">أضواء قطبية</string>
+    <string name="AppIconAmethyst">يَاقُوتٌ بَنَفْسَجِىّ‎</string>
+    <string name="AppIconCyberpunk">Hh</string>
+    <string name="AppIconSpace">فضاء</string>
+    <string name="AppIconIceAge">العصر الجليدي</string>
+    <string name="AppIconEditor">المؤلّف</string>
+    <string name="AppIconOrbit">مدار</string>
+    <string name="AppIconSus">مستورد</string>
+    <string name="AppIconWinter">شتاء</string>
+    <string name="AppIconsKeep">احتفظ بهذا</string>
+    <!-- General Appearance -->
+    <string name="Sections">الأقسام</string>
+    <string name="SeparateHeaders">\".\"</string>
+    <string name="DividerStyle">نمط الفاصل</string>
+    <string name="DividerStyleHidden">مخفي</string>
+    <string name="DividerStyleLine">خط</string>
+    <string name="DividerStyleSegments">قطاعات</string>
     <string name="UseSystemFonts">استخدام خطوط النظام</string>
     <string name="UseSystemEmoji">استخدام رموز النظام التعبيرية</string>
-    <string name="NewSwitchStyle">نمط تبديل MD3</string>
-    <string name="DisableDividers">تعطيل المقسمات</string>
-    <string name="AlternativeNavigation">التنقل البديل</string>
-    <string name="AlternativeNavigationInfo">خيار تجريبي يحتوي على رسوم متحركة جديدة وسلسة للتنقل بين الشاشات.</string>
-    <string name="DrawerOptions">خيارات القائمة</string>
-    <string name="DrawerIconSet">تعيين الأيقونة</string>
-    <string name="DrawerAlternativeOpeningAnimation">حركة فتح بديلة</string>
-    <string name="DependsOnTheDate">يعتمد على التاريخ</string>
-    <string name="NewYear">السنة الجديدة</string>
-    <string name="ValentinesDay">عيد الحب</string>
-    <string name="Halloween">عيد الهالوين</string>
-    <string name="DrawerElements">عناصر القائمة</string>
-    <!-- General -->
-    <string name="CameraType">نوع الكاميرا</string>
-    <string name="CameraTypeSystem">النظام</string>
-    <string name="DefaultCameraInfo">استخدم كاميرا تيليجرام المدمجة.</string>
-    <string name="CameraXInfo">CameraX مدعوم فقط على <![CDATA[<a href="https://developer.android.com/training/camerax/devices">الأجهزة المحددة</a>]]>، يعتمد دعم المؤثرات والعدسات على الشركة المصنعة الخاصة بك.</string>
-    <string name="SystemCameraInfo">الوصول مباشرة إلى كاميرا النظام (لا تنطبق على رسائل الفيديو).</string>
-    <string name="PerformanceMode">وضع الأداء</string>
-    <string name="PerformanceModeInfo">سيتم خفض جودة CameraX لصالح الأداء.</string>
-    <string name="CameraQuality">جودة الكاميرا</string>
-    <string name="DisableNumberRounding">تعطيل تقريب الأرقام</string>
-    <string name="FormatTimeWithSeconds">تنسيق الوقت بالثواني</string>
+    <string name="NewLoadingStyle">تحميل المظهر</string>
+    <string name="NewSliderStyle">نمط شريط التمرير</string>
+    <string name="NewSwitchStyle">تغيير النمط</string>
+    <string name="NewFabStyle">زر عائم</string>
     <string name="TabletMode">وضع الجهاز اللوحي</string>
-    <string name="DownloadSpeedBoost">زيادة سرعة التحميل</string>
-    <string name="UploadSpeedBoost">زيادة سرعة الرفع</string>
-    <string name="Ultra">الفائق</string>
-    <string name="SpeedBoostInfo">يمكن أن يسبب Ultra Boost مشاكل في تنزيل الملفات وبث مقاطع الفيديو على اتصال إنترنت بطيء.</string>
-    <string name="Profile">الملف الشخصي</string>
-    <string name="HidePhoneNumber">إخفاء رقم الهاتف</string>
-    <string name="ShowIdAndDc">إظهار المعرف وDC</string>
-    <string name="ShowIdAndDcInfo">يُظهِر Telegram API المعرفات كما هي، في حين ان Bot API يضيف علامة \'-\" للمجموعات و-100 للمجموعات الخارقة والقنوات.</string>
-    <string name="ArchiveOnPull">فتح الأرشيف عند السحب للأسفل</string>
-    <string name="DisableUnarchiveSwipe">تعطيل \"إلغاء الأرشيف\" بالسحب</string>
-    <string name="DisableUnarchiveSwipeInfo">السحب إلى اليسار لن يزيل المحادثات من الأرشيف.</string>
-    <!-- Other -->
-    <string name="AnalyticsInfo">عند تمكين هذه الخيارات، يتم جمع البيانات حول الجهاز وإرسالها إلى Google Analytics و Crashlytics، السماح لنا بحفظ إحصائيات الاستخدام وتتبع الأخطاء في التطبيق. \n\nومع ذلك، إذا تم إيقاف تشغيل الخيارات، تتوقف عملية جمع البيانات ويتم حذف البيانات المرسلة على الفور.</string>
-    <string name="DeleteAccount">حذف الحساب</string>
-    <string name="ResetSettings">إعادة تعيين الإعدادات</string>
+    <string name="RemoveMessageTail">إزالة ذيل الرسالة</string>
+    <string name="GooeyAvatarAnimation">\".\"</string>
+    <string name="CustomChatThemes">سمات مخصصة في الدردشات</string>
+    <string name="CustomChatThemesInfo">ستعرض كل دردشة السمة التي تم اختيارها خصيصا لها.</string>
+    <string name="PredictiveBackIntensity">شدة الرجوع التوقعية</string>
+    <string name="PredictiveBackMax">الحد الأقصى</string>
+    <string name="PredictiveBackInfo">يضبط مدى تحرك الشاشة عند السحب للرجوع.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">خيارات طمس</string>
+    <string name="GlassOutlineStyle">مخطط زجاجي</string>
+    <string name="GlassOutlineGlare">وهج</string>
+    <string name="GlassOutlineSolid">صلب</string>
+    <string name="GlassOutlineHidden">مخفي</string>
+    <string name="ForceSnow">فرض رقاقات الثلج</string>
+    <string name="ForceSnowInfo">ستظهر رقاقات الثلج المتساقطة في شريط الإجراءات والقائمة الجانبية وخلفيات الدردشة.</string>
     <!-- Chats -->
-    <string name="StickerSize">حجم الملصقات</string>
+    <!-- Chat Media & Appearance -->
     <string name="StickerSizeLeft">صغير</string>
-    <string name="StickerSizeRight">كبيرة</string>
     <string name="StickerSizeDialogMessageReplyTo">رائع</string>
-    <string name="StickerSizeDialogMessage">واو! إنه لطيف جداً!</string>
-    <string name="StickerShape">شكل الملصقات</string>
     <string name="StickerShapeRounded">مدوّر</string>
     <string name="StickerShapeRoundedMsg">رسالة</string>
-    <string name="StickerTime">إخفاء الوقت على الملصقات</string>
+    <string name="ViewEmojiSet">عرض مجموعة الإيموجي</string>
     <string name="UnlimitedRecentStickers">الملصقات الأخيرة غير المحدودة</string>
-    <string name="HideCategories">إخفاء الفئات</string>
-    <string name="HideCategoriesInfo">ستختفي الفئات من شريط البحث في مربع حوار اختيار التفاعلات ولوحة الرموز التعبيرية.</string>
-    <string name="DoubleTap">نقر مزدوج</string>
+    <!-- AI -->
+    <string name="AIChatInfo2">إنشاء نص من الرسائل أو قبل الإرسال.</string>
+    <!-- AI Services -->
+    <string name="ServiceInfo">معلومات الخدمة</string>
+    <string name="ServiceProvider">المزود</string>
+    <string name="ServiceProviderCustom">مخصص</string>
+    <string name="ServiceTestAndSave">اختبار وحفظ</string>
+    <string name="ServicePasteService">لصق الخدمة</string>
+    <string name="ServicePasteKey">لصق مفتاح API</string>
+    <string name="DeleteServiceInfo">هل أنت متأكد من رغبتك في حذف **%1$s**؟</string>
+    <!-- AI Roles -->
+    <string name="Suggestions">الاقتراحات</string>
+    <string name="DeleteRoleInfo">هل أنت متأكد من رغبتك في حذف **%1$s**؟</string>
+    <!-- AI History & Behavior -->
+    <string name="AIGeneration">التوليد</string>
+    <string name="AIReasoning">التفكير المنطقي</string>
+    <string name="AIReasoningInfo">يسمح للنماذج المدعومة في هذه الخدمة بإنفاق رموز إضافية للتفكير قبل الإجابة.</string>
+    <string name="AITemperature">درجة الحرارة</string>
+    <string name="AITemperatureInfo">تتحكم درجة الحرارة في عشوائية الاستجابة: القيم الأعلى تكون أكثر إبداعاً، والقيم الأدنى أكثر تركيزاً.</string>
+    <!-- AI Errors -->
+    <string name="AIError403">تم رفض الوصول</string>
+    <string name="AIError403Info">ليس لديك إذن للوصول إلى هذا النموذج أو المورد. تحقق من مفتاح API الخاص بك وأذونات الحساب.</string>
+    <string name="AIError503">الخدمة غير متوفرة</string>
+    <string name="AIError503Info">الخدمة غير متوفرة مؤقتاً أو مزدحمة. يرجى المحاولة مرة أخرى لاحقاً.</string>
+    <string name="AIAskMore">أسأل المزيد</string>
+    <!-- Chat Actions -->
     <string name="DoubleTapIncoming">الرسائل الواردة</string>
     <string name="DoubleTapOutgoing">الرسائل المرسلة</string>
     <string name="DoubleTapInfo">تتطلب بعض الإجراءات حقوق المسؤول في المحادثة أو القناة.</string>
     <string name="BottomButton">الزر السفلي</string>
+    <string name="ChannelDiscussNoCaps">مناقشة</string>
+    <string name="DisableGreetingSticker">تعطيل ملصق التحية</string>
     <string name="AdminShortcuts">اختصارات المشرف السريعة</string>
     <string name="HideKeyboardOnScroll">إخفاء لوحة المفاتيح عند التمرير</string>
-    <string name="DisableJumpToNextChannel">تعطيل \"الانتقال إلى القناة التالية\"</string>
-    <string name="ShowActionTimestamps">عرض الطوابع الزمنية للإجراءات</string>
     <string name="HideShareButton">إخفاء الزر%1$s\" الجانبي</string>
     <string name="MessageMenu">قائمة الرسائل</string>
+    <string name="GlassMessageMenu">قائمة الرسائل الزجاجية</string>
+    <string name="GlassMessageMenuBlurOff">القوائم الزجاجية تحتاج إلى تأثير الضبابية، وهو معطل حالياً.</string>
     <string name="AddCommaAfterMention">إضافة فاصلة بعد الإشارة</string>
-    <string name="AddCommaAfterMentionInfo">سيتم وضع فاصلة تلقائيًا بعد النقر على المستخدم الذي تريد ذكره.</string>
-    <string name="HidePhotoCounter">إخفاء عدد الصور</string>
-    <string name="HidePhotoCounterInfo">سوف يختفي عداد الصور المزعج في الجزء العلوي من الشاشة من منظورك.</string>
-    <string name="HideCameraTile">إخفاء شريط الكاميرا الفوري</string>
-    <string name="HideCameraTileInfo">سيتم استبدال مربع الكاميرا بزر عائم. الضغط على الزر سيفتح كاميرا تيليجرام، استمرار الضغط عليها سيفتح كاميرا النظام.</string>
+    <string name="HideSendAsPeer">MUSTAFA</string>
+    <string name="ShowPollResultsBeforeVoting">عرض النتائج قبل التصويت</string>
+    <string name="ShowPollResultsBeforeVotingHint">عرض النتائج لكل خيار قبل إرسال تصويتك.</string>
+    <string name="ShowOnlineStatus">إظهار مؤشر الإنترنت</string>
+    <string name="MessagePreviewDialogMessage">يمكنني تناول الزجاج ولا يؤذيني.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="DeleteRecognitionModel">حذف النموذج</string>
+    <string name="DeleteRecognitionModelInfo">هل أنت متأكد من رغبتك في حذف نموذج اللغة \"**%1$s**\"؟</string>
+    <string name="RecognitionModelDeleted">تم حذف النموذج بنجاح.</string>
+    <string name="RecognitionModelDeleteError">حدث خطأ أثناء حذف النموذج.</string>
+    <!-- Camera -->
+    <string name="StartWithWideAngleCamera">بدء بالزاوية الواسعة</string>
+    <string name="ZoomSlider">شريط التكبير</string>
+    <string name="ZoomSliderInfo">إظهار التحكم في التكبير أسفل كاميرا رسالة الفيديو.</string>
     <string name="StaticZoom">التكبير الثابت</string>
-    <string name="StaticZoomInfo">عند تسجيل رسائل الفيديو، لن يعاد ضبط التكبير إذا قمت بتحرير أصابعك.</string>
     <string name="VideoMessagesCamera">الكاميرا في رسائل الفيديو</string>
     <string name="VideoMessagesCameraRear">الخلفية</string>
     <string name="VideoMessagesCameraFront">الأمامية</string>
     <string name="VideoMessagesCameraAsk">اطلب</string>
     <string name="RearCamera">الكاميرا الخلفية</string>
     <string name="FrontCamera">الكاميرا الأمامية</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">أرسل دائما بدقة عالية</string>
+    <string name="HideCameraTile">إخفاء شريط الكاميرا الفوري</string>
+    <string name="ShortStandardQuality">الذاكرة</string>
+    <!-- Playback -->
     <string name="DoubleTapSeekDuration">مدة البحث بالضغط المزدوج</string>
-    <string name="RememberLastUsedCamera">تذكّر آخر كاميرا مستخدمة</string>
-    <string name="RememberLastUsedCameraInfo">عند تسجيل رسائل الفيديو، سيتم تحديد آخر كاميرا مستخدمة.</string>
     <string name="PauseOnMinimize">إيقاف مؤقت تلقائي</string>
-    <string name="PauseOnMinimizeInfo">إيقاف تشغيل الفيديو عندما يكون الجهاز مقفلاً، أو يتم تصغير ExteraGram.</string>
-    <string name="DisablePlayback">تعطيل التشغيل في الخلفية</string>
-    <string name="DisablePlaybackInfo">تعطيل التشغيل عند الضغط على زر الصوت.</string>
-    <!-- Boost -->
-    <string name="Encryptors">المشفرات</string>
-    <string name="Encrypt">تشفير</string>
-    <string name="Decrypt">فك التشفير</string>
-    <string name="EncryptionKeyInfo">سيتم استخدام هذا المفتاح لتشفير وفك تشفير الرسائل في غرفة المحادثة هذه.</string>
+    <string name="UnmuteWithVolumeButtons">\".\"</string>
+    <string name="UnmuteWithVolumeButtonsInfo">\".\".</string>
+    <!-- Other -->
+    <!-- Google -->
+    <!-- Backup & Restore -->
+    <string name="ImportTitle">هل أنت متأكد أنك تريد تطبيق هذه الإعدادات؟</string>
+    <!-- Export data -->
+    <string name="ExportDelay">لأسباب أمنية، ستتمكن من بدء تنزيل بياناتك خلال %1$s. لقد أبلغنا جميع أجهزتك بطلب التصدير للتأكد من أنه مصرح به ومنحك وقتاً للرد إذا لم يكن كذلك.\n\nيرجى العودة في %2$s وتكرار الطلب باستخدام نفس الجهاز.</string>
+    <string name="ExportInvalid">عذراً، لقد بدأت تصدير بيانات جديد، لذلك تم إلغاء تصدير البيانات هذا.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">حذف الحساب</string>
+    <string name="ResetSettings">إعادة تعيين الإعدادات</string>
+    <!-- Donates -->
+    <string name="NowPlaying">اللعب الآن</string>
+    <string name="ScrobblingService">خدمة التمرير</string>
+    <string name="SelectService">اختر الخدمة</string>
+    <string name="SelectServiceInfo">يعرض المسار الحالي في المِلَفّ الشخصي كبطاقة تم الحصول عليها من خدمة التمرير.</string>
+    <string name="EnterUsername">أدخل اسم المستخدم</string>
+    <string name="EnterUsernameInfo">يمكنك الحصول على اسم المستخدم الخاص بك على **الموقع الرسمي**.</string>
+    <string name="BoostyPeopleCount_one">%1$d شخص</string>
+    <string name="BoostyPeopleCount_two">%1$d شخص</string>
+    <string name="BoostyPeopleCount_few">%1$d أشخاص</string>
+    <string name="BoostyPeopleCount_many">%1$d شخص</string>
+    <string name="BoostyPeopleCount_other">%1$d شخص</string>
+    <string name="BoostyInfo">ادعم **exteraGram** بنشاط على **Boosty**.</string>
+    <string name="BoostyInfo2">شكراً لدعمك!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">تثبيت الإضافات متاح فقط في النسخة **الكاملة** من **exteraGram**.</string>
+    <string name="PluginsEngine">محرك الإضافات</string>
+    <string name="EnablePluginsEngine">تمكين محرك الإضافات</string>
+    <string name="PluginDisableError">فشل في تعطيل **%1$s**.</string>
+    <string name="PluginIsNotResponding">الإضافة لا تستجيب.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s لا تستجيب</string>
+    <string name="PluginsSafeMode">الوضع الآمن</string>
+    <string name="PluginsSafeModeShortcut">بدء التشغيل في الوضع الآمن</string>
+    <string name="PluginsSafeModeInfo">تم تعطيل محرك المكون الإضافي بسبب حدوث عطل. قد يؤدي تعطيل الوضع الآمن إلى عواقب غير متوقعة.</string>
+    <string name="PluginsSafeModeInfo2">في الوضع الآمن ، تكون جميع المكونات الإضافية غير نشطة. يتيح لك ذلك العثور على مكون إضافي إشكالي وتعطيله بأمان.</string>
+    <string name="PluginsDevMode">وضع المطور</string>
+    <string name="PluginsCompactView">الإضافات عرض مضغوط</string>
+    <string name="PluginsDocumentation">الوثائق</string>
+    <string name="PluginsTrusted">الإضافات الموثوقة</string>
+    <string name="PluginsDevServerLaunched">بدأ خادم المطور.</string>
+    <string name="PluginsDevServerStopped">تم إيقاف خادم المطور.</string>
+    <string name="PluginNotFound">**%1$s** غير موجود.</string>
+    <string name="PluginHasNoSettings">**%1$s** ليس لديه إعدادات.</string>
+    <string name="PluginsPySdkAutoUpdate">تحديث تلقائي</string>
+    <string name="PluginsPySdkEnableBetaVersion">تثبيت الإصدارات التجريبية</string>
+    <string name="PluginsPySdkCheckUpdates">التحقق من التحديثات</string>
+    <string name="CheckingForUpdates">جاري التحقق من التحديثات…</string>
+    <string name="LatestVersionInstalled">آخر إصدار مثبت</string>
+    <string name="RestartPluginSystemToApplyUpdate">تم تحميل التحديث، أعد تشغيل محرك الإضافات لتطبيقه</string>
+    <string name="LoadingUpdate">جاري تحميل التحديث…</string>
+    <string name="RestoreSdkFromApk">استعادة SDK من APK</string>
+    <string name="EnableAutoUpdate">تفعيل التحديث التلقائي</string>
+    <string name="PluginsDisableArt">وضع التوافق</string>
+    <string name="PluginsDisableArtInfo">يمنع فشل خطافات الإضافات عن طريق تعطيل أداة حفظ ملفات تعريف ART.</string>
     <!-- Updates -->
-    <string name="LastCheck">آخر تحقق</string>
-    <string name="CurrentVersion">الإصدار الحالي</string>
-    <string name="BuildType">نوع النسخة</string>
-    <string name="BTRelease">إصدار</string>
-    <string name="BTBeta">نسخة تجريبية</string>
-    <string name="CheckOnLaunch">التحقق عند التشغيل</string>
-    <string name="ClearUpdatesCache">مسح ذاكرة التخزين المؤقت للتحديثات</string>
-    <string name="ClearedUpdatesCache">تم مسح %1$s من ذاكرة التخزين المؤقت.</string>
-    <string name="NothingToClear">لا شيء لمسحه.</string>
-    <string name="CheckForUpdates">التحقق من وجود تحديثات</string>
-    <string name="CheckingForUpdates">التحقق من وجود تحديثات…</string>
-    <string name="NoUpdates">لم يتم العثور على تحديثات.</string>
     <string name="UpdateAvailable">يتوفر تحديث!</string>
-    <string name="Version">إصدار</string>
-    <string name="UpdateSize">حجم التحديث</string>
-    <string name="Changelog">سجل التغييرات:</string>
     <!-- Message Details -->
     <string name="Details">التفاصيل</string>
     <string name="Date">التاريخ</string>
@@ -163,33 +340,92 @@
     <string name="FileSize">حجم الملف</string>
     <string name="FileName">اسم الملف</string>
     <string name="FilePath">مسار الملف</string>
+    <string name="Platform">المنصة</string>
     <string name="Resolution">الدقة</string>
     <string name="Bitrate">معدل البت</string>
     <string name="MimeType">نوع الـMime</string>
     <string name="Datacenter">قاعدة البيانات</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">التنسيق:</string>
+    <string name="DateFormatOptionNone">لا شيء</string>
+    <string name="DateFormatOptionRelative">نسبي</string>
+    <string name="DateFormatOptionShortTime">وقت قصير</string>
+    <string name="DateFormatOptionLongTime">وقت طويل</string>
+    <string name="DateFormatOptionShortDate">تاريخ قصير</string>
+    <string name="DateFormatOptionLongDate">تاريخ طويل</string>
+    <string name="DateFormatOptionDayOfWeek">يوم الأسبوع</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">تسجيل الدخول برمز QR</string>
+    <string name="LoginQrSubtitle">استخدم جهازاً آخر لمسح رمز QR هذا.</string>
+    <string name="WifiSuccess">تم التوصيل بشبكة الواي-فاي بنجاح.</string>
+    <!-- AdBlock -->
     <!-- Other -->
-    <string name="RestartRequired">إعادة تشغيل التطبيق، لتطبيق الميزات.</string>
-    <string name="ResetSettingsBulletin">تمت إعادة تعيين تفضيلات **exteraGram**.</string>
+    <string name="SetAsBadge">تعيين كشارة</string>
+    <string name="TrackSaved">تم حفظ الموسيقى في **%1$s**.</string>
+    <string name="ChannelToSaveChanged">سيتم حفظ الأصوات في **%1$s**.</string>
+    <string name="DeletedMessage">رسالة محذوفة</string>
+    <!-- Bot Button Context Menu -->
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">تم تعيين حالة الشارة.</string>
     <string name="UserNotFound">لم يتم العثور على مستخدم مع هذا **المعرف**.</string>
+    <string name="ChatNotFound">لم يتم العثور على محادثة بهذا **المعرف**.</string>
     <string name="PhotoCopied">تم نسخ الصورة إلى الحافظة.</string>
-    <string name="MutualContact">جهة اتصال مشتركة</string>
+    <string name="TapToCopy">اضغط للنسخ</string>
+    <string name="ProfileUsesEmojiPack">يستخدم هذا الملف الشخصي إيموجي من حزمة %s لخلفيته.</string>
+    <string name="GifGallerySavedHint">تم حفظ GIF في المعرض.</string>
+    <string name="LocalPremiumEmojiHint">ليس لديك اشتراك **Telegram Premium**، لذلك سيتمكن مستخدمو **exteraGram** فقط من رؤية هذا الإيموجي.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">إخفاء علامة تبويب جهات الاتصال</string>
+    <string name="ShowContactsTab">إظهار علامة تبويب جهات الاتصال</string>
+    <string name="ContactsTabWasShownTitle">علامة تبويب **جهات الاتصال** مرئية الآن.</string>
+    <string name="ContactsTabWasHiddenTitle">علامة تبويب **جهات الاتصال** مخفية الآن.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">تعمل هذه الميزة فقط مع مديري كلمات المرور التي تسمح للمستخدم بإدارة إعدادات الثقة للتطبيقات المميزة، مثل **Bitwarden** أو **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">مدير كلمات مرور غير مدعوم</string>
+    <string name="PasskeyUnsupportedMessage">جرب مديري كلمات مرور آخرين مثل **Bitwarden** أو **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="GroupMemberJoined">انضم %1$s</string>
+    <!-- Menu Items -->
     <string name="ToBeginning">إلى البداية</string>
     <string name="MessageHistory">السجل</string>
     <string name="BoldItalic">عريض مائل</string>
-    <string name="OpenPremiumBot">فتح البوت الرسمي</string>
     <string name="CopyPhoto">نسخ الصورة</string>
-    <string name="CopySticker">نسخ الملصق</string>
-    <string name="SaveMessage">حفظ الرسالة</string>
-    <string name="TrackSaved">تم حفظ الموسيقى في **%1$s**.</string>
-    <string name="ChannelToSaveChanged">سيتم حفظ الأصوات في **%1$s**.</string>
-    <string name="ConfirmCall">قبول المكالمة</string>
-    <string name="CallTo">الاتصال ب **%1$s**؟</string>
-    <string name="AppIconGradient">متدرج</string>
-    <string name="AppIconAurora">أضواء قطبية</string>
-    <string name="AppIconNeo">Neo</string>
-    <string name="AppIconAmethyst">يَاقُوتٌ بَنَفْسَجِىّ‎</string>
-    <string name="AppIconSpace">فضاء</string>
-    <string name="AppIconOrbit">مدار</string>
-    <string name="AppIconSus">مستورد</string>
-    <string name="AppIconWinter">شتاء</string>
+    <string name="Repeat">تكرار</string>
+    <string name="Subtitles">الترجمات</string>
+    <string name="ChooseSubtitles">اختر الترجمات</string>
+    <string name="DisableSubtitles">تعطيل الترجمات</string>
+    <string name="SubtitlesAdded">تم تفعيل الترجمات.</string>
+    <string name="SubtitlesRemoved">تم تعطيل الترجمات.</string>
+    <string name="SubtitlesLoadError">تعذر تحميل الترجمات.</string>
+    <string name="SubtitlesUnsupportedFormat">تنسيق ترجمات غير مدعوم.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">زوايا الملصق</string>
+    <string name="StickerCornerRadiusInfo">اختر مدى استدارة زوايا الملصق.</string>
+    <string name="StickerCornerRadiusLarge">كبير</string>
+    <string name="StickerCornerRadiusMedium">متوسط</string>
+    <string name="StickerCornerRadiusSmall">صغير</string>
+    <string name="StickerCornerRadiusNone">لا شيء</string>
+    <!-- Feed -->
+    <string name="Feed">الخلاصة</string>
+    <string name="FeedShownChannels">ظاهرة في الخلاصة</string>
+    <string name="FeedHiddenChannels">مخفي</string>
+    <string name="FeedChannels">القنوات</string>
+    <string name="FeedSettings">إعدادات الخلاصة</string>
+    <string name="FeedNoPosts">لا توجد منشورات قناة حتى الآن.</string>
+    <string name="FeedAllChannelsExcluded">جميع القنوات مستبعدة من الخلاصة.</string>
+    <string name="FeedMarkAllReadConfirm">تعيين جميع المنشورات في قنوات الخلاصة كمقروءة؟ سيؤدي هذا أيضاً إلى تعيينها كمقروءة في القنوات الأصلية.</string>
+    <string name="FeedMarkAllReadDone">تم تعيين جميع المنشورات كمقروءة</string>
+    <string name="FeedIncludeArchived">إظهار المحادثات من الأرشيف</string>
+    <string name="FeedIncludeArchivedInfo">قم أيضاً بتضمين القنوات من محادثاتك المؤرشفة في الخلاصة.</string>
+    <string name="FeedHideChannel">إخفاء من الخلاصة</string>
+    <string name="FeedChannelHidden">**%1$s** مخفية من الخلاصة</string>
+    <string name="FeedBottomTab">إظهار في علامات التبويب السفلية</string>
+    <string name="FeedBottomTabInfo">إظهار الخلاصة كعلامة تبويب تنقل سفلية بدلاً من علامة تبويب جهات الاتصال.</string>
+    <string name="FeedUnreadCounter">عداد المنشورات غير المقروءة</string>
+    <string name="HideFeedTab">إخفاء علامة تبويب الخلاصة</string>
+    <string name="DisableMarkdown">تعطيل Markdown</string>
+    <string name="EnableMarkdown">تفعيل Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
 </resources>

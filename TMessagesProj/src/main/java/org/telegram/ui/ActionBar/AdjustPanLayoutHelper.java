@@ -21,14 +21,18 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.ChatListItemAnimator;
+import org.telegram.ui.recyclerview.ChatListItemAnimator;
+
+
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.AnimationNotificationsLocker;
 import org.telegram.messenger.UserConfig;
+import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class AdjustPanLayoutHelper {
 
@@ -134,7 +138,6 @@ public class AdjustPanLayoutHelper {
                 updateTransition((float) animation.getAnimatedValue());
             }
         });
-        int selectedAccount = UserConfig.selectedAccount;
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -157,6 +160,7 @@ public class AdjustPanLayoutHelper {
         }
     }
 
+    public boolean showingKeyboard;
     public void startTransition(int previousHeight, int contentHeight, boolean isKeyboardVisible) {
         if (animator != null) {
             animator.cancel();
@@ -171,7 +175,11 @@ public class AdjustPanLayoutHelper {
                 additionalContentHeight = ((View) viewParent).getHeight() - contentHeight;
             }
         }
-        setViewHeight(Math.max(previousHeight, contentHeight + additionalContentHeight));
+        int bottomTabsHeight = 0;
+        if (LaunchActivity.instance != null && LaunchActivity.instance.getBottomSheetTabs() != null) {
+            bottomTabsHeight += LaunchActivity.instance.getBottomSheetTabs().getExpandedHeight();
+        }
+        if (applyTranslation()) setViewHeight(Math.max(previousHeight, contentHeight + additionalContentHeight + bottomTabsHeight));
         resizableView.requestLayout();
 
         onTransitionStart(isKeyboardVisible, previousHeight, contentHeight);
@@ -180,15 +188,16 @@ public class AdjustPanLayoutHelper {
         keyboardSize = Math.abs(dy);
 
         animationInProgress = true;
+        showingKeyboard = contentHeight <= previousHeight;
         if (contentHeight > previousHeight) {
             dy -= startOffset;
-            parent.setTranslationY(-dy);
+            if (applyTranslation()) parent.setTranslationY(-dy);
             onPanTranslationUpdate(dy, 1f, isKeyboardVisible);
             from = -dy;
-            to = 0;
+            to = -bottomTabsHeight;
             inverse = true;
         } else {
-            parent.setTranslationY(previousStartOffset);
+            if (applyTranslation()) parent.setTranslationY(previousStartOffset);
             onPanTranslationUpdate(-previousStartOffset, 0f, isKeyboardVisible);
             to = -previousStartOffset;
             from = dy;
@@ -203,7 +212,7 @@ public class AdjustPanLayoutHelper {
             t = 1f - t;
         }
         float y = (int) (from * t + to * (1f - t));
-        parent.setTranslationY(y);
+        if (applyTranslation()) parent.setTranslationY(y);
         onPanTranslationUpdate(-y, t, isKeyboardVisible);
     }
 
@@ -218,8 +227,8 @@ public class AdjustPanLayoutHelper {
         setViewHeight(ViewGroup.LayoutParams.MATCH_PARENT);
         viewsToHeightSet.clear();
         resizableView.requestLayout();
-            onPanTranslationUpdate(0, isKeyboardVisible ? 1f : 0f, isKeyboardVisible);
-        parent.setTranslationY(0);
+        onPanTranslationUpdate(0, isKeyboardVisible ? 1f : 0f, isKeyboardVisible);
+        if (applyTranslation()) parent.setTranslationY(0);
         onTransitionEnd();
     }
     public void stopTransition(float t, boolean isKeyboardVisible) {
@@ -233,7 +242,7 @@ public class AdjustPanLayoutHelper {
         viewsToHeightSet.clear();
         resizableView.requestLayout();
         onPanTranslationUpdate(0, t, this.isKeyboardVisible = isKeyboardVisible);
-        parent.setTranslationY(0);
+        if (applyTranslation()) parent.setTranslationY(0);
         onTransitionEnd();
     }
 
@@ -343,6 +352,9 @@ public class AdjustPanLayoutHelper {
     }
 
     protected boolean heightAnimationEnabled() {
+        return true;
+    }
+    protected boolean applyTranslation() {
         return true;
     }
 

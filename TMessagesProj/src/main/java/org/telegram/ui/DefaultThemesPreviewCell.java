@@ -30,7 +30,7 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.EmojiThemes;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Cells.DrawerProfileCell;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Components.ChatThemeBottomSheet;
 import org.telegram.ui.Components.FlickerLoadingView;
@@ -42,7 +42,10 @@ import org.telegram.ui.Components.ThemeSmallPreviewView;
 import java.util.ArrayList;
 
 @SuppressLint("ViewConstructor")
-public class DefaultThemesPreviewCell extends LinearLayout {
+public class DefaultThemesPreviewCell extends LinearLayout implements Theme.Colorable {
+
+    public final static int TYPE_CUSTOM_LIST = -1;
+    public final static int TYPE_CUSTOM_GRID = -2; // not implemented
 
     private final RecyclerListView recyclerView;
     private LinearLayoutManager layoutManager = null;
@@ -50,7 +53,6 @@ public class DefaultThemesPreviewCell extends LinearLayout {
     private final ChatThemeBottomSheet.Adapter adapter;
     RLottieDrawable darkThemeDrawable;
     TextCell dayNightCell;
-    TextCell browseThemesCell;
     private ValueAnimator navBarAnimator;
     private int navBarColor;
 
@@ -70,8 +72,13 @@ public class DefaultThemesPreviewCell extends LinearLayout {
         addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
 
-        adapter = new ChatThemeBottomSheet.Adapter(parentFragment.getCurrentAccount(), null, currentType == ThemeActivity.THEME_TYPE_BASIC ? ThemeSmallPreviewView.TYPE_DEFAULT : ThemeSmallPreviewView.TYPE_GRID);
-        recyclerView = new RecyclerListView(getContext());
+        adapter = new ChatThemeBottomSheet.Adapter(parentFragment.getCurrentAccount(), null, currentType == ThemeActivity.THEME_TYPE_BASIC || currentType == TYPE_CUSTOM_LIST ? ThemeSmallPreviewView.TYPE_DEFAULT : ThemeSmallPreviewView.TYPE_GRID);
+        recyclerView = new RecyclerListView(getContext()) {
+            @Override
+            public Integer getSelectorColor(int position) {
+                return 0;
+            }
+        };
         recyclerView.setAdapter(adapter);
         recyclerView.setSelectorDrawableColor(0);
         recyclerView.setClipChildren(false);
@@ -87,7 +94,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
             ChatThemeBottomSheet.ChatThemeItem chatTheme = adapter.items.get(position);
             Theme.ThemeInfo info = chatTheme.chatTheme.getThemeInfo(themeIndex);
             int accentId = -1;
-            if (chatTheme.chatTheme.getEmoticon().equals("\uD83C\uDFE0") || chatTheme.chatTheme.getEmoticon().equals("\uD83C\uDFA8")) {
+            if (chatTheme.chatTheme.getEmoticonOrSlug().equals("\uD83C\uDFE0") || chatTheme.chatTheme.getEmoticonOrSlug().equals("\uD83C\uDFA8")) {
                 accentId = chatTheme.chatTheme.getAccentId(themeIndex);
             }
             if (info == null) {
@@ -107,7 +114,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
                 }
             }
 
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, info, false, null, accentId);
+            Theme.switchThemeWithReveal(info, false, accentId, view);
 
             selectedPosition = position;
             for (int i = 0; i < adapter.items.size(); i++) {
@@ -136,7 +143,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
         progressView.setViewType(FlickerLoadingView.CHAT_THEMES_TYPE);
         progressView.setVisibility(View.VISIBLE);
 
-        if (currentType == ThemeActivity.THEME_TYPE_BASIC) {
+        if (currentType == ThemeActivity.THEME_TYPE_BASIC || currentType == TYPE_CUSTOM_LIST) {
             frameLayout.addView(progressView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 104, Gravity.START, 0, 8, 0, 8));
             frameLayout.addView(recyclerView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 104, Gravity.START, 0, 8, 0, 8));
         } else {
@@ -149,31 +156,24 @@ public class DefaultThemesPreviewCell extends LinearLayout {
         recyclerView.setAnimateEmptyView(true, RecyclerListView.EMPTY_VIEW_ANIMATION_TYPE_ALPHA);
 
         if (currentType == ThemeActivity.THEME_TYPE_BASIC) {
-            darkThemeDrawable = new RLottieDrawable(R.raw.sun_outline, "" + R.raw.sun_outline, AndroidUtilities.dp(28), AndroidUtilities.dp(28), true, null);
+            darkThemeDrawable = new RLottieDrawable(R.raw.sun_outline, AndroidUtilities.dp(28), AndroidUtilities.dp(28), true, null);
             darkThemeDrawable.setPlayInDirectionOfCustomEndFrame(true);
             darkThemeDrawable.beginApplyLayerColors();
             darkThemeDrawable.commitApplyLayerColors();
 
             dayNightCell = new TextCell(context);
-            dayNightCell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
-            dayNightCell.imageLeft = 21;
+            ThemeBind.selectorBackground(dayNightCell, Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL), null, ThemeBind.of(Theme.key_listSelector));
             addView(dayNightCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-
-            browseThemesCell = new TextCell(context);
-            browseThemesCell.setTextAndIcon(LocaleController.getString("SettingsBrowseThemes", R.string.SettingsBrowseThemes), R.drawable.msg_colors, false);
-
-            addView(browseThemesCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             dayNightCell.setOnClickListener(new OnClickListener() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onClick(View view) {
-                    if (DrawerProfileCell.switchingTheme) {
+                    if (DialogsActivity.switchingTheme) {
                         return;
                     }
-                    int iconOldColor = Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4);
                     int navBarOldColor = Theme.getColor(Theme.key_windowBackgroundGray);
-                    DrawerProfileCell.switchingTheme = true;
+                    DialogsActivity.switchingTheme = true;
                     SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
                     String dayThemeName = preferences.getString("lastDayTheme", "Blue");
                     if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark()) {
@@ -211,28 +211,22 @@ public class DefaultThemesPreviewCell extends LinearLayout {
                         updateDayNightMode();
                         updateSelectedPosition();
 
+                        if (Theme.isCurrentThemeDay()) {
+                            dayNightCell.textView.setText(LocaleController.getString(R.string.SettingsSwitchToNightMode));
+                        } else {
+                            dayNightCell.textView.setText(LocaleController.getString(R.string.SettingsSwitchToDayMode));
+                        }
+
                         int iconNewColor = Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4);
-                        darkThemeDrawable.setColorFilter(new PorterDuffColorFilter(iconNewColor, PorterDuff.Mode.SRC_IN));
-                        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1f);
-                        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                int iconColor = ColorUtils.blendARGB(iconOldColor, iconNewColor, (float) valueAnimator.getAnimatedValue());
-                                darkThemeDrawable.setColorFilter(new PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN));
-                            }
-                        });
-                        valueAnimator.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                darkThemeDrawable.setColorFilter(new PorterDuffColorFilter(iconNewColor, PorterDuff.Mode.SRC_IN));
-                                super.onAnimationEnd(animation);
-                            }
-                        });
-                        valueAnimator.setDuration(350);
-                        valueAnimator.start();
+                        PorterDuffColorFilter iconFilter = new PorterDuffColorFilter(iconNewColor, PorterDuff.Mode.SRC_IN);
+                        darkThemeDrawable.setColorFilter(iconFilter);
+                        dayNightCell.getImageView().setColorFilter(iconFilter);
+                        dayNightCell.getImageView().setImageDrawable(darkThemeDrawable);
+                        dayNightCell.getImageView().setVisibility(View.VISIBLE);
 
                         int navBarNewColor = Theme.getColor(Theme.key_windowBackgroundGray);
-                        final Window window = context instanceof Activity ? ((Activity) context).getWindow() : null;
+                        final Activity activity = context instanceof Activity ? ((Activity) context) : null;
+                        final Window window = activity != null ? activity.getWindow() : null;
                         if (window != null) {
                             if (navBarAnimator != null && navBarAnimator.isRunning()) {
                                 navBarAnimator.cancel();
@@ -245,25 +239,19 @@ public class DefaultThemesPreviewCell extends LinearLayout {
                                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                                     float t = Math.max(0, Math.min(1, ((float) valueAnimator.getAnimatedValue() * fullDuration - startDelay) / duration));
                                     navBarColor = ColorUtils.blendARGB(navBarFromColor, navBarNewColor, t);
-                                    AndroidUtilities.setNavigationBarColor(window, navBarColor, false);
-                                    AndroidUtilities.setLightNavigationBar(window, AndroidUtilities.computePerceivedBrightness(navBarColor) >= 0.721f);
+                                    AndroidUtilities.setNavigationBarColor(activity, navBarColor, false);
+                                    AndroidUtilities.setLightNavigationBar(activity, AndroidUtilities.computePerceivedBrightness(navBarColor) >= 0.721f);
                                 }
                             });
                             navBarAnimator.addListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
-                                    AndroidUtilities.setNavigationBarColor(window, navBarNewColor, false);
-                                    AndroidUtilities.setLightNavigationBar(window, AndroidUtilities.computePerceivedBrightness(navBarNewColor) >= 0.721f);
+                                    AndroidUtilities.setNavigationBarColor(activity, navBarNewColor, false);
+                                    AndroidUtilities.setLightNavigationBar(activity, AndroidUtilities.computePerceivedBrightness(navBarNewColor) >= 0.721f);
                                 }
                             });
                             navBarAnimator.setDuration((long) fullDuration);
                             navBarAnimator.start();
-                        }
-
-                        if (Theme.isCurrentThemeDay()) {
-                            dayNightCell.setTextAndIcon(LocaleController.getString("SettingsSwitchToNightMode", R.string.SettingsSwitchToNightMode), darkThemeDrawable, true);
-                        } else {
-                            dayNightCell.setTextAndIcon(LocaleController.getString("SettingsSwitchToDayMode", R.string.SettingsSwitchToDayMode), darkThemeDrawable, true);
                         }
 
                         Theme.turnOffAutoNight(parentFragment);
@@ -274,15 +262,14 @@ public class DefaultThemesPreviewCell extends LinearLayout {
             });
 
             darkThemeDrawable.setPlayInDirectionOfCustomEndFrame(true);
-            browseThemesCell.setOnClickListener(view -> {
-                parentFragment.presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_THEMES_BROWSER));
-            });
 
             if (!Theme.isCurrentThemeDay()) {
                 darkThemeDrawable.setCurrentFrame(darkThemeDrawable.getFramesCount() - 1);
-                dayNightCell.setTextAndIcon(LocaleController.getString("SettingsSwitchToDayMode", R.string.SettingsSwitchToDayMode), darkThemeDrawable, true);
+                dayNightCell.setTextAndIcon(LocaleController.getString(R.string.SettingsSwitchToDayMode), darkThemeDrawable, true);
+                dayNightCell.imageLeft += 2;
             } else {
-                dayNightCell.setTextAndIcon(LocaleController.getString("SettingsSwitchToNightMode", R.string.SettingsSwitchToNightMode), darkThemeDrawable, true);
+                dayNightCell.setTextAndIcon(LocaleController.getString(R.string.SettingsSwitchToNightMode), darkThemeDrawable, true);
+                dayNightCell.imageLeft += 2;
             }
         }
 
@@ -290,7 +277,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
             ArrayList<ChatThemeBottomSheet.ChatThemeItem> themes = new ArrayList<>(MediaDataController.getInstance(parentFragment.getCurrentAccount()).defaultEmojiThemes);
             if (currentType == ThemeActivity.THEME_TYPE_BASIC) {
 
-                EmojiThemes chatTheme = EmojiThemes.createPreviewCustom();
+                EmojiThemes chatTheme = EmojiThemes.createPreviewCustom(parentFragment.getCurrentAccount());
                 chatTheme.loadPreviewColors(parentFragment.getCurrentAccount());
                 ChatThemeBottomSheet.ChatThemeItem item = new ChatThemeBottomSheet.ChatThemeItem(chatTheme);
                 item.themeIndex = !Theme.isCurrentThemeDay() ? 2 : 0;
@@ -312,7 +299,7 @@ public class DefaultThemesPreviewCell extends LinearLayout {
         if (wasPortrait != null && wasPortrait == isPortrait) {
             return;
         }
-        if (currentType == ThemeActivity.THEME_TYPE_BASIC) {
+        if (currentType == ThemeActivity.THEME_TYPE_BASIC || currentType == TYPE_CUSTOM_LIST) {
             if (layoutManager == null) {
                 recyclerView.setLayoutManager(layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
             }
@@ -341,8 +328,14 @@ public class DefaultThemesPreviewCell extends LinearLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    // the app theme the previews were last switched for (see updateColors)
+    private Theme.ThemeInfo previewsTheme;
+    private boolean previewsDay;
+
     public void updateDayNightMode() {
-        if (currentType == ThemeActivity.THEME_TYPE_BASIC) {
+        previewsTheme = Theme.getActiveTheme();
+        previewsDay = Theme.isCurrentThemeDay();
+        if (currentType == ThemeActivity.THEME_TYPE_BASIC || currentType == TYPE_CUSTOM_LIST) {
             themeIndex = !Theme.isCurrentThemeDay() ? 2 : 0;
         } else {
             if (Theme.getActiveTheme().getKey().equals("Blue")) {
@@ -435,18 +428,32 @@ public class DefaultThemesPreviewCell extends LinearLayout {
             if (themeInfo == Theme.getActiveTheme()) {
                 return;
             }
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needSetDayNightTheme, themeInfo, false, null, -1);
+            Theme.switchThemeWithReveal(themeInfo, false, -1, null);
         }
     }
 
+    /** also called on every theme update (Theme.Colorable) */
+    @Override
     public void updateColors() {
-        if (currentType == ThemeActivity.THEME_TYPE_BASIC) {
-            darkThemeDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4), PorterDuff.Mode.SRC_IN));
-
-            Theme.setSelectorDrawableColor(dayNightCell.getBackground(), Theme.getColor(Theme.key_listSelector), true);
-            browseThemesCell.setBackground(Theme.createSelectorWithBackgroundDrawable(Theme.getColor(Theme.key_windowBackgroundWhite), Theme.getColor(Theme.key_listSelector)));
-            dayNightCell.setColors(-1, Theme.key_windowBackgroundWhiteBlueText4);
-            browseThemesCell.setColors(Theme.key_windowBackgroundWhiteBlueText4, Theme.key_windowBackgroundWhiteBlueText4);
+        if (adapter != null && previewsTheme != null && (previewsTheme != Theme.getActiveTheme() || previewsDay != Theme.isCurrentThemeDay())) {
+            // switched by anything but this cell's own button (other switches, automatic night mode): previews follow
+            updateDayNightMode();
+            if (dayNightCell != null && darkThemeDrawable != null) {
+                if (!darkThemeDrawable.isRunning()) {
+                    darkThemeDrawable.setCurrentFrame(Theme.isCurrentThemeDay() ? 0 : darkThemeDrawable.getFramesCount() - 1);
+                }
+                dayNightCell.setTextAndIcon(LocaleController.getString(Theme.isCurrentThemeDay() ? R.string.SettingsSwitchToNightMode : R.string.SettingsSwitchToDayMode), darkThemeDrawable, true);
+                dayNightCell.imageLeft += 2;
+            }
+        }
+        if (currentType == ThemeActivity.THEME_TYPE_BASIC || currentType == TYPE_CUSTOM_LIST) {
+            if (darkThemeDrawable != null && !DialogsActivity.switchingTheme) {
+                darkThemeDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4), PorterDuff.Mode.SRC_IN));
+            }
+            if (dayNightCell != null) {
+                Theme.setSelectorDrawableColor(dayNightCell.getBackground(), Theme.getColor(Theme.key_listSelector), true);
+                dayNightCell.setColors(-1, Theme.key_windowBackgroundWhiteBlueText4);
+            }
         }
     }
 

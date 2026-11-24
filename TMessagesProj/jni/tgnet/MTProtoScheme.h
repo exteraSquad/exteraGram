@@ -27,6 +27,7 @@ class TL_api_request : public TLObject {
 
 public:
     NativeByteBuffer *request = nullptr;
+    uint32_t downloadSize = 0; // Local scheduling metadata; never serialized.
 
     ~TL_api_request();
     bool isNeedLayer();
@@ -725,6 +726,29 @@ public:
     static const uint32_t constructor = 0xda9b0d0d;
 
     int32_t layer;
+    std::unique_ptr<TLObject> query;
+
+    void serializeToStream(NativeByteBuffer *stream);
+};
+
+class invokeWithGooglePlayIntegrity : public TLObject {
+
+public:
+    static const uint32_t constructor = 0x1df92984;
+
+    std::string nonce;
+    std::string token;
+    std::unique_ptr<TLObject> query;
+
+    void serializeToStream(NativeByteBuffer *stream);
+};
+
+class invokeWithReCaptcha : public TLObject {
+
+public:
+    static const uint32_t constructor = 0xadbb0f94;
+
+    std::string token;
     std::unique_ptr<TLObject> query;
 
     void serializeToStream(NativeByteBuffer *stream);

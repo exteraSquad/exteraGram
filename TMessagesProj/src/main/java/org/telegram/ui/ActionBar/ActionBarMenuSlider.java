@@ -25,6 +25,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -33,11 +34,13 @@ import android.view.ViewConfiguration;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 
+import com.exteragram.messenger.utils.ui.material.ColorTones;
+
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -47,20 +50,19 @@ import org.telegram.ui.Components.AnimatedFloat;
 import org.telegram.ui.Components.AnimatedTextView;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.FloatSeekBarAccessibilityDelegate;
-import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.MotionBackgroundDrawable;
 import org.telegram.ui.Components.SeekBarAccessibilityDelegate;
-import org.telegram.ui.Components.SeekBarView;
 import org.telegram.ui.Components.SpeedIconDrawable;
 
-public class ActionBarMenuSlider extends FrameLayout {
+public class ActionBarMenuSlider extends FrameLayout implements Theme.Colorable {
 
     private static final float BLUR_RADIUS = 8f;
 
     private float value = .5f;
     private Utilities.Callback2<Float, Boolean> onValueChange;
 
-    private AnimatedTextView.AnimatedTextDrawable textDrawable;
+    private AnimatedTextView.AnimatedTextDrawable leftTextDrawable;
+    private AnimatedTextView.AnimatedTextDrawable rightTextDrawable;
 
     private AnimatedFloat blurBitmapAlpha = new AnimatedFloat(1, this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
     private Bitmap blurBitmap;
@@ -74,14 +76,20 @@ public class ActionBarMenuSlider extends FrameLayout {
 
     protected Theme.ResourcesProvider resourcesProvider;
 
-    private Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint blurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint brightenBlurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint darkenBlurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint pseudoBlurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint blurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint brightenBlurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint darkenBlurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pseudoBlurPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint stopPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private boolean backgroundDark;
+
+    private float[] stops;
+    public void setStops(float[] stops) {
+        this.stops = stops;
+    }
 
     private boolean blurIsInChat = true;
 
@@ -104,19 +112,33 @@ public class ActionBarMenuSlider extends FrameLayout {
         this.resourcesProvider = resourcesProvider;
         setWillNotDraw(false);
 
-        textDrawable = new AnimatedTextView.AnimatedTextDrawable(false, true, true) {
+        leftTextDrawable = new AnimatedTextView.AnimatedTextDrawable(false, true, true) {
             @Override
             public void invalidateSelf() {
                 ActionBarMenuSlider.this.invalidate();
             }
         };
-        textDrawable.setCallback(this);
-        textDrawable.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
-        textDrawable.setAnimationProperties(.3f, 0, 165, CubicBezierInterpolator.EASE_OUT_QUINT);
-        textDrawable.setTextSize(AndroidUtilities.dpf2(14));
-        textDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
-        textDrawable.getPaint().setStrokeWidth(AndroidUtilities.dpf2(.3f));
-        textDrawable.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
+        leftTextDrawable.setCallback(this);
+        leftTextDrawable.setTypeface(AndroidUtilities.bold());
+        leftTextDrawable.setAnimationProperties(.3f, 0, 165, CubicBezierInterpolator.EASE_OUT_QUINT);
+        leftTextDrawable.setTextSize(AndroidUtilities.dpf2(14));
+        leftTextDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
+        leftTextDrawable.getPaint().setStrokeWidth(AndroidUtilities.dpf2(.3f));
+        leftTextDrawable.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
+
+        rightTextDrawable = new AnimatedTextView.AnimatedTextDrawable(false, true, true) {
+            @Override
+            public void invalidateSelf() {
+                ActionBarMenuSlider.this.invalidate();
+            }
+        };
+        rightTextDrawable.setCallback(this);
+        rightTextDrawable.setTypeface(AndroidUtilities.bold());
+        rightTextDrawable.setAnimationProperties(.3f, 0, 165, CubicBezierInterpolator.EASE_OUT_QUINT);
+        rightTextDrawable.setTextSize(AndroidUtilities.dpf2(14));
+        rightTextDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
+        rightTextDrawable.getPaint().setStrokeWidth(AndroidUtilities.dpf2(.3f));
+        rightTextDrawable.setGravity(LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT);
 
         shadowPaint.setColor(Color.TRANSPARENT);
         shadowPaint.setShadowLayer(dpf2(1.33f), 0, dpf2(.33f), 0x3f000000);
@@ -126,11 +148,13 @@ public class ActionBarMenuSlider extends FrameLayout {
         AndroidUtilities.adjustBrightnessColorMatrix(colorMatrix, .1f);
         pseudoBlurPaint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
 
-        backgroundPaint.setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider));
+        backgroundPaint.setColor(themeBackgroundColor = Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider));
         backgroundDark = AndroidUtilities.computePerceivedBrightness(backgroundPaint.getColor()) <= 0.721f;
-        textDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
+        leftTextDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
+        rightTextDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
         darkenBlurPaint.setColor(Theme.multAlpha(0xff000000, .025f));
         brightenBlurPaint.setColor(Theme.multAlpha(0xffffffff, .35f));
+        stopPaint.setColor(Theme.multAlpha(0xFFFFFFFF, .20f));
     }
 
     public float getValue() {
@@ -170,25 +194,68 @@ public class ActionBarMenuSlider extends FrameLayout {
             valueAnimator.start();
         }
 
-        String stringValue = getStringValue(value);
-        if (stringValue != null && !TextUtils.equals(textDrawable.getText(), stringValue)) {
-            textDrawable.cancelAnimation();
-            textDrawable.setText(stringValue, true);
+        String stringValue = getLeftStringValue(value);
+        if (stringValue != null && !TextUtils.equals(leftTextDrawable.getText(), stringValue)) {
+            leftTextDrawable.cancelAnimation();
+            leftTextDrawable.setText(stringValue, true);
         }
-        fillPaint.setColor(getColorValue(value));
+        stringValue = getRightStringValue(value);
+        if (stringValue != null && !TextUtils.equals(rightTextDrawable.getText(), stringValue)) {
+            rightTextDrawable.cancelAnimation();
+            rightTextDrawable.setText(stringValue, true);
+        }
+        fillPaint.setColor(getColorValue(value));;
     }
 
     public void setBackgroundColor(int color) {
         backgroundPaint.setColor(color);
         backgroundDark = AndroidUtilities.computePerceivedBrightness(backgroundPaint.getColor()) <= 0.721f;
-        textDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
+        leftTextDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
+        rightTextDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
+    }
+
+    private int themeBackgroundColor;
+    private boolean customTextColor;
+
+    @Override
+    public void updateColors() {
+        try {
+            if (backgroundPaint != null && backgroundPaint.getColor() == themeBackgroundColor) {
+                final int color = Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider);
+                if (color != themeBackgroundColor) {
+                    themeBackgroundColor = color;
+                    backgroundPaint.setColor(color);
+                    backgroundDark = AndroidUtilities.computePerceivedBrightness(color) <= 0.721f;
+                    if (!customTextColor) {
+                        if (leftTextDrawable != null) {
+                            leftTextDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
+                        }
+                        if (rightTextDrawable != null) {
+                            rightTextDrawable.setTextColor(backgroundDark ? 0xffffffff : 0xff000000);
+                        }
+                    }
+                }
+            }
+            if (fillPaint != null) {
+                fillPaint.setColor(getColorValue(value));
+            }
+            invalidate();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 
     public void setTextColor(int color) {
-        textDrawable.setTextColor(color);
+        customTextColor = true;
+        leftTextDrawable.setTextColor(color);
+        rightTextDrawable.setTextColor(color);
     }
 
-    protected String getStringValue(float value) {
+    protected String getLeftStringValue(float value) {
+        return null;
+    }
+
+    protected String getRightStringValue(float value) {
         return null;
     }
 
@@ -328,6 +395,7 @@ public class ActionBarMenuSlider extends FrameLayout {
         } else {
             canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(roundRadiusDp), dp(roundRadiusDp), backgroundPaint);
         }
+        drawStops(canvas);
 
         if (!backgroundDark) {
             drawText(canvas, false);
@@ -338,6 +406,7 @@ public class ActionBarMenuSlider extends FrameLayout {
             canvas.clipRect(getPaddingLeft(), getPaddingTop(), getPaddingLeft() + (getWidth() - getPaddingLeft() - getPaddingRight()) * value, getHeight() - getPaddingBottom());
         }
         canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(roundRadiusDp), dp(roundRadiusDp), fillPaint);
+        drawStops(canvas);
 
         if (!backgroundDark) {
             drawText(canvas, true);
@@ -352,12 +421,30 @@ public class ActionBarMenuSlider extends FrameLayout {
         }
     }
 
+    private void drawStops(Canvas canvas) {
+        if (stops == null) return;
+        for (int i = 0; i < stops.length; ++i) {
+            float stop = stops[i];
+            canvas.drawRect(
+                    AndroidUtilities.rectTmp.left + AndroidUtilities.rectTmp.width() * stop,
+                    AndroidUtilities.rectTmp.top,
+                    AndroidUtilities.rectTmp.left + AndroidUtilities.rectTmp.width() * stop + dp(0.66f),
+                    AndroidUtilities.rectTmp.bottom,
+                    stopPaint
+            );
+        }
+    }
+
     private ColorFilter whiteColorFilter;
 
     private void drawText(Canvas canvas, boolean white) {
-        textDrawable.setColorFilter(white ? (whiteColorFilter == null ? whiteColorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN) : whiteColorFilter) : null);
-        textDrawable.setBounds(getPaddingLeft() + dp(20), getMeasuredHeight() / 2, getMeasuredWidth() - getPaddingRight() - dp(20), getMeasuredHeight() / 2);
-        textDrawable.draw(canvas);
+        leftTextDrawable.setColorFilter(white ? (whiteColorFilter == null ? whiteColorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN) : whiteColorFilter) : null);
+        leftTextDrawable.setBounds(getPaddingLeft() + dp(20), getMeasuredHeight() / 2, getMeasuredWidth() - getPaddingRight() - dp(20), getMeasuredHeight() / 2);
+        leftTextDrawable.draw(canvas);
+
+        rightTextDrawable.setColorFilter(white ? (whiteColorFilter == null ? whiteColorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN) : whiteColorFilter) : null);
+        rightTextDrawable.setBounds(getPaddingLeft() + dp(20), getMeasuredHeight() / 2, getMeasuredWidth() - getPaddingRight() - dp(20), getMeasuredHeight() / 2);
+        rightTextDrawable.draw(canvas);
     }
 
     private Pair<Integer, Integer> getBitmapGradientColors(Bitmap bitmap) {
@@ -439,14 +526,30 @@ public class ActionBarMenuSlider extends FrameLayout {
             if (action == MotionEvent.ACTION_UP) {
                 dragging = false;
                 if (System.currentTimeMillis() - tapStart < ViewConfiguration.getTapTimeout()) {
-                    final float value = (x - getPaddingLeft()) / (getWidth() - getPaddingLeft() - getPaddingRight());
+                    float value = (x - getPaddingLeft()) / (getWidth() - getPaddingLeft() - getPaddingRight());
+                    if (stops != null) {
+                        for (int i = 0; i < stops.length; ++i) {
+                            if (Math.abs(value - stops[i]) < 0.1f) {
+                                value = stops[i];
+                                break;
+                            }
+                        }
+                    }
                     if (onValueChange != null) {
                         onValueChange.run(value, true);
                     }
                     return true;
                 }
             }
-            final float value = fromValue + (x - fromX) / Math.max(1, getWidth() - getPaddingLeft() - getPaddingRight());
+            float value = fromValue + (x - fromX) / Math.max(1, getWidth() - getPaddingLeft() - getPaddingRight());
+            if (stops != null) {
+                for (int i = 0; i < stops.length; ++i) {
+                    if (Math.abs(value - stops[i]) < 0.05f) {
+                        value = stops[i];
+                        break;
+                    }
+                }
+            }
             updateValue(value, !dragging);
         }
 
@@ -458,7 +561,7 @@ public class ActionBarMenuSlider extends FrameLayout {
         private final SeekBarAccessibilityDelegate seekBarAccessibilityDelegate;
 
         public static final float MIN_SPEED = 0.2f;
-        public static final float MAX_SPEED = 2.5f;
+        public static final float MAX_SPEED = 3.0f;
 
         public SpeedSlider(Context context, Theme.ResourcesProvider resourcesProvider) {
             super(context, resourcesProvider);
@@ -495,9 +598,14 @@ public class ActionBarMenuSlider extends FrameLayout {
 
                 @Override
                 public CharSequence getContentDescription(View host) {
-                    return SpeedIconDrawable.formatNumber(getSpeed()) + "x  " + LocaleController.getString("AccDescrSpeedSlider", R.string.AccDescrSpeedSlider);
+                    return SpeedIconDrawable.formatNumber(getSpeed()) + "x  " + LocaleController.getString(R.string.AccDescrSpeedSlider);
                 }
             });
+        }
+
+        String label = null;
+        public void setLabel(String s) {
+            label = s;
         }
 
         @Override
@@ -524,34 +632,35 @@ public class ActionBarMenuSlider extends FrameLayout {
         }
 
         @Override
-        protected String getStringValue(float value) {
+        protected String getLeftStringValue(float value) {
+            if (label != null) return label;
+            return SpeedIconDrawable.formatNumber(MIN_SPEED + value * (MAX_SPEED - MIN_SPEED)) + "x";
+        }
+
+        @Override
+        protected String getRightStringValue(float value) {
+            if (label == null) return null;
             return SpeedIconDrawable.formatNumber(MIN_SPEED + value * (MAX_SPEED - MIN_SPEED)) + "x";
         }
 
         @Override
         protected int getColorValue(float value) {
+            if (Theme.isCurrentThemeMonet()) {
+                return ColorTones.withTone(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), 40f, 64.0);
+            }
             final float speed = MIN_SPEED + value * (MAX_SPEED - MIN_SPEED);
-//            if (speed <= 0.3f) {
-//                return Theme.getColor(Theme.key_color_red, resourcesProvider);
-//            } else if (speed <= 0.5f) {
-//                return ColorUtils.blendARGB(
-//                        Theme.getColor(Theme.key_color_red, resourcesProvider),
-//                        Theme.getColor(Theme.key_color_yellow, resourcesProvider),
-//                        (speed - 0.3f) / (0.5f - 0.3f)
-//                );
-//            } else if (speed <= 1f) {
-//                return ColorUtils.blendARGB(
-//                        Theme.getColor(Theme.key_color_yellow, resourcesProvider),
-//                        Theme.getColor(Theme.key_color_lightblue, resourcesProvider),
-//                        MathUtils.clamp((speed - 0.5f) / (1f - 0.5f), 0, 1)
-//                );
-//            } else {
-                return ColorUtils.blendARGB(
-                        Theme.getColor(Theme.key_color_lightblue, resourcesProvider),
-                        Theme.getColor(Theme.key_color_blue, resourcesProvider),
-                        MathUtils.clamp((speed - 1f) / (2f - 1f), 0, 1)
-                );
-//            }
+            return ColorUtils.blendARGB(
+                Theme.getColor(Theme.key_color_lightblue, resourcesProvider),
+                Theme.getColor(Theme.key_color_blue, resourcesProvider),
+                MathUtils.clamp((speed - 1f) / (2f - 1f), 0, 1)
+            );
+        }
+
+        @Override
+        public void setStops(float[] stops) {
+            for (int i = 0; i < stops.length; ++i)
+                stops[i] = (stops[i] - MIN_SPEED) / (MAX_SPEED - MIN_SPEED);
+            super.setStops(stops);
         }
     }
 }

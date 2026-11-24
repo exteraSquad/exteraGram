@@ -22,9 +22,12 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.exteragram.messenger.icons.IconManager;
+
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.StickerImageView;
 
@@ -59,9 +62,9 @@ public class FilesMigrationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         NotificationsController.checkOtherNotificationsChannel();
         Notification notification = new Notification.Builder(this, NotificationsController.OTHER_NOTIFICATIONS_CHANNEL)
-                .setContentTitle(getText(R.string.MigratingFiles))
+                .setContentTitle(LocaleController.getString(R.string.MigratingFiles))
                 .setAutoCancel(false)
-                .setSmallIcon(R.drawable.notification)
+                .setSmallIcon(IconManager.getNotificationSystemIcon())
                 .build();
         isRunning = true;
         new Thread() {
@@ -75,7 +78,12 @@ public class FilesMigrationService extends Service {
                 });
             }
         }.start();
-        startForeground(301, notification);
+        try {
+            startForeground(301, notification);
+        } catch (Throwable e) {
+            // ForegroundServiceStartNotAllowedException, e.g. when the dataSync time limit is exhausted
+            FileLog.e(e);
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -172,9 +180,9 @@ public class FilesMigrationService extends Service {
             int currentCount = movedFilesCount;
             AndroidUtilities.runOnUIThread(() -> {
                 Notification notification = new Notification.Builder(FilesMigrationService.this, NotificationsController.OTHER_NOTIFICATIONS_CHANNEL)
-                        .setContentTitle(getText(R.string.MigratingFiles))
+                        .setContentTitle(LocaleController.getString(R.string.MigratingFiles))
                         .setContentText(String.format("%s/%s", currentCount, totalFilesCount))
-                        .setSmallIcon(R.drawable.notification)
+                        .setSmallIcon(IconManager.getNotificationSystemIcon())
                         .setAutoCancel(false)
                         .setProgress(totalFilesCount, currentCount, false)
                         .build();
@@ -245,17 +253,17 @@ public class FilesMigrationService extends Service {
 
             TextView title = new TextView(context);
             title.setGravity(Gravity.START);
-            title.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+            ThemeBind.textColor(title, Theme.key_dialogTextBlack);
             title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-            title.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            title.setText(LocaleController.getString("MigrateOldFolderTitle", R.string.MigrateOldFolderTitle));
+            title.setTypeface(AndroidUtilities.bold());
+            title.setText(LocaleController.getString(R.string.MigrateOldFolderTitle));
             linearLayout.addView(title, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 21, 30, 21, 0));
 
             TextView description = new TextView(context);
             description.setGravity(Gravity.START);
             description.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-            description.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
-            description.setText(AndroidUtilities.replaceTags(LocaleController.getString("MigrateOldFolderDescription", R.string.MigrateOldFolderDescription)));
+            ThemeBind.textColor(description, Theme.key_dialogTextBlack);
+            description.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.MigrateOldFolderDescription)));
             linearLayout.addView(description, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 21, 15, 21, 16));
 
 
@@ -263,10 +271,10 @@ public class FilesMigrationService extends Service {
             buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
             buttonTextView.setGravity(Gravity.CENTER);
             buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            buttonTextView.setText(LocaleController.getString("MigrateOldFolderButton", R.string.MigrateOldFolderButton));
+            buttonTextView.setTypeface(AndroidUtilities.bold());
+            buttonTextView.setText(LocaleController.getString(R.string.MigrateOldFolderButton));
 
-            buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+            ThemeBind.textColor(buttonTextView, Theme.key_featuredStickers_buttonText);
             buttonTextView.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 6));
 
             linearLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
@@ -283,12 +291,25 @@ public class FilesMigrationService extends Service {
         public void migrateOldFolder() {
             Activity activity = fragment.getParentActivity();
             boolean canWrite = activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-            boolean canRead = activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+            boolean canRead = (
+                Build.VERSION.SDK_INT >= 33 && (
+                    activity.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED &&
+                    activity.checkSelfPermission(Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED &&
+                    activity.checkSelfPermission(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED
+                ) ||
+                Build.VERSION.SDK_INT < 33 && activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            );
 
             if (!canRead || !canWrite) {
                 ArrayList<String> permissions = new ArrayList<>();
                 if (!canRead) {
-                    permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
+                        permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
+                        permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
+                    } else {
+                        permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    }
                 }
                 if (!canWrite) {
                     permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -306,5 +327,15 @@ public class FilesMigrationService extends Service {
             super.dismiss();
             filesMigrationBottomSheet = null;
         }
+    }
+
+    @Override
+    public void onTimeout(int startId, int fgsType) {
+        // dataSync time limit is exhausted (6 hours a day in background since Android 15), the service must stop now
+        FileLog.d("FilesMigrationService timeout, type = " + fgsType);
+        try {
+            stopForeground(true);
+        } catch (Throwable ignore) {}
+        stopSelf();
     }
 }

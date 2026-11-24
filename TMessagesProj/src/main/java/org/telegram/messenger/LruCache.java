@@ -65,7 +65,7 @@ public class LruCache<T> {
         return null;
     }
 
-    public ArrayList<String> getFilterKeys(String key) {
+    public synchronized ArrayList<String> getFilterKeys(String key) {
         ArrayList<String> arr = mapFilters.get(key);
         if (arr != null) {
             return new ArrayList<>(arr);
@@ -73,7 +73,7 @@ public class LruCache<T> {
         return null;
     }
 
-    public void moveToFront(String key) {
+    public synchronized void moveToFront(String key) {
         T value = map.remove(key);
         if (value != null) {
             map.put(key, value);
@@ -98,17 +98,17 @@ public class LruCache<T> {
             if (previous != null) {
                 size -= safeSizeOf(key, previous);
             }
-        }
 
-        String[] args = key.split("@");
-        if (args.length > 1) {
-            ArrayList<String> arr = mapFilters.get(args[0]);
-            if (arr == null) {
-                arr = new ArrayList<>();
-                mapFilters.put(args[0], arr);
-            }
-            if (!arr.contains(args[1])) {
-                arr.add(args[1]);
+            String[] args = key.split("@");
+            if (args.length > 1) {
+                ArrayList<String> arr = mapFilters.get(args[0]);
+                if (arr == null) {
+                    arr = new ArrayList<>();
+                    mapFilters.put(args[0], arr);
+                }
+                if (!arr.contains(args[1])) {
+                    arr.add(args[1]);
+                }
             }
         }
 
@@ -172,28 +172,28 @@ public class LruCache<T> {
             previous = map.remove(key);
             if (previous != null) {
                 size -= safeSizeOf(key, previous);
+
+                String[] args = key.split("@");
+                if (args.length > 1) {
+                    ArrayList<String> arr = mapFilters.get(args[0]);
+                    if (arr != null) {
+                        arr.remove(args[1]);
+                        if (arr.isEmpty()) {
+                            mapFilters.remove(args[0]);
+                        }
+                    }
+                }
             }
         }
 
         if (previous != null) {
-            String[] args = key.split("@");
-            if (args.length > 1) {
-                ArrayList<String> arr = mapFilters.get(args[0]);
-                if (arr != null) {
-                    arr.remove(args[1]);
-                    if (arr.isEmpty()) {
-                        mapFilters.remove(args[0]);
-                    }
-                }
-            }
-
             entryRemoved(false, key, previous, null);
         }
 
         return previous;
     }
     
-    public boolean contains(String key){
+    public synchronized boolean contains(String key){
     	return map.containsKey(key);
     }
 

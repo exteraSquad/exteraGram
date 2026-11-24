@@ -12,16 +12,24 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.view.View;
+import android.util.AttributeSet;
 import android.view.animation.DecelerateInterpolator;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.exteragram.messenger.ExteraConfig;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
 
-public class LineProgressView extends View {
+public class LineProgressView extends LinearProgressIndicator {
+    public static final int TYPE_FLAT = 0;
+    public static final int TYPE_WAVE = 1;
 
     private long lastUpdateTime;
-    private float currentProgress;
     private float animationProgressStart;
     private long currentProgressTime;
     private float animatedProgressValue;
@@ -33,22 +41,123 @@ public class LineProgressView extends View {
     private static DecelerateInterpolator decelerateInterpolator;
     private static Paint progressPaint;
 
-    private RectF rect = new RectF();
+    private final RectF rect = new RectF();
+    private CellFlickerDrawable cellFlickerDrawable;
 
-    CellFlickerDrawable cellFlickerDrawable;
+    private float currentProgress;
+    public int type;
 
-    public LineProgressView(Context context) {
-        super(context);
+    public LineProgressView(@NonNull Context context) {
+        this(context, null);
+    }
 
+    public LineProgressView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, com.google.android.material.R.attr.linearProgressIndicatorStyle);
+    }
+
+    public LineProgressView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         if (decelerateInterpolator == null) {
             decelerateInterpolator = new DecelerateInterpolator();
             progressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             progressPaint.setStrokeCap(Paint.Cap.ROUND);
             progressPaint.setStrokeWidth(AndroidUtilities.dp(2));
         }
+        init();
     }
 
-    private void updateAnimation() {
+    public void setProgressType(int type) {
+        if (!ExteraConfig.getNewLoadingStyle()) {
+            this.type = TYPE_FLAT;
+            return;
+        }
+        if (this.type == type) {
+            return;
+        }
+
+        this.type = type;
+        if (type == TYPE_FLAT) {
+            setWaveSpeed(0);
+            setWavelength(0);
+            setWaveAmplitude(0);
+        } else if (type == TYPE_WAVE) {
+            setWavelengthDeterminate(AndroidUtilities.dp(40));
+            setWaveAmplitude(AndroidUtilities.dp(3));
+            updateWaveSpeed(isAttachedToWindow());
+            setWaveAmplitudeRampProgressMin(0.05f);
+        }
+    }
+
+    private void updateWaveSpeed(boolean attached) {
+        setWaveSpeed(type == TYPE_WAVE && attached ? AndroidUtilities.dp(15) : 0);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        updateWaveSpeed(true);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        updateWaveSpeed(false);
+    }
+
+    private void init() {
+        setMax(1000);
+
+        setTrackThickness(AndroidUtilities.dp(2));
+        setTrackCornerRadius(AndroidUtilities.dp(1));
+        setTrackStopIndicatorSize(AndroidUtilities.dp(2));
+        setIndicatorTrackGapSize(AndroidUtilities.dp(2));
+        setTrackCornerRadiusFraction(0.5f);
+        setIndeterminate(false);
+
+        setProgressType(TYPE_FLAT);
+    }
+
+    public void setProgressColor(int color) {
+        progressColor = color;
+        if (ExteraConfig.getNewLoadingStyle()) {
+            setIndicatorColor(color);
+        }
+    }
+
+    public void setBackColor(int color) {
+        backColor = color;
+        if (ExteraConfig.getNewLoadingStyle()) {
+            setTrackColor(color);
+        }
+    }
+
+    public void setProgress(float value, boolean animated) {
+        currentProgress = value;
+        if (ExteraConfig.getNewLoadingStyle()) {
+            int targetProgress = (int) (value * getMax());
+            setProgressCompat(targetProgress, animated);
+        } else {
+            if (!animated) {
+                animatedProgressValue = value;
+                animationProgressStart = value;
+            } else {
+                animationProgressStart = animatedProgressValue;
+            }
+            if (value != 1) {
+                animatedAlphaValue = 1;
+            }
+            currentProgressTime = 0;
+
+            lastUpdateTime = System.currentTimeMillis();
+            invalidate();
+        }
+    }
+
+    public float getCurrentProgress() {
+        return currentProgress;
+    }
+
+    private void updateLegacyAnimation() {
         long newTime = System.currentTimeMillis();
         long dt = newTime - lastUpdateTime;
         lastUpdateTime = newTime;
@@ -76,40 +185,16 @@ public class LineProgressView extends View {
         }
     }
 
-    public void setProgressColor(int color) {
-        progressColor = color;
-    }
-
-    public void setBackColor(int color) {
-        backColor = color;
-    }
-
-    public void setProgress(float value, boolean animated) {
-        if (!animated) {
-            animatedProgressValue = value;
-            animationProgressStart = value;
-        } else {
-            animationProgressStart = animatedProgressValue;
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (ExteraConfig.getNewLoadingStyle()) {
+            super.onDraw(canvas);
+            return;
         }
-        if (value != 1) {
-            animatedAlphaValue = 1;
-        }
-        currentProgress = value;
-        currentProgressTime = 0;
 
-        lastUpdateTime = System.currentTimeMillis();
-        invalidate();
-    }
-
-    public float getCurrentProgress() {
-        return currentProgress;
-    }
-
-    public void onDraw(Canvas canvas) {
         if (backColor != 0 && animatedProgressValue != 1) {
             progressPaint.setColor(backColor);
             progressPaint.setAlpha((int) (255 * animatedAlphaValue));
-            int start = (int) (getWidth() * animatedProgressValue);
             rect.set(0, 0, getWidth(), getHeight());
             canvas.drawRoundRect(rect, getHeight() / 2f, getHeight() / 2f, progressPaint);
         }
@@ -128,8 +213,9 @@ public class LineProgressView extends View {
             }
             cellFlickerDrawable.setParentWidth(getMeasuredWidth());
             cellFlickerDrawable.draw(canvas, rect, getHeight() / 2f, null);
+            invalidate();
         }
 
-        updateAnimation();
+        updateLegacyAnimation();
     }
 }

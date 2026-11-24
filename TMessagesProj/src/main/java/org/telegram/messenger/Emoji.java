@@ -24,29 +24,37 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
+import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.exteragram.messenger.boost.filter.ZalgoFilter;
-import com.exteragram.messenger.utils.FontUtils;
+import com.exteragram.messenger.utils.text.ZalgoFilter;
+import com.exteragram.messenger.utils.ui.FontUtils;
 
+import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AnimatedEmojiSpan;
+import org.telegram.ui.Components.ColoredImageSpan;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Emoji {
 
-    private static HashMap<CharSequence, DrawableInfo> rects = new HashMap<>();
+    private final static HashMap<CharSequence, DrawableInfo> rects = new HashMap<>();
     public static int drawImgSize;
     public static int bigImgSize;
     private static boolean inited = false;
     public static Paint placeholderPaint;
-    private static int[] emojiCounts = new int[]{
+    private final static int[] emojiCounts = new int[]{
         EmojiData.data[0].length,
         EmojiData.data[1].length,
         EmojiData.data[2].length,
@@ -59,15 +67,17 @@ public class Emoji {
     private static final Bitmap[][] emojiBmp = new Bitmap[8][];
     private static final boolean[][] loadingEmoji = new boolean[8][];
 
-    public static HashMap<String, Integer> emojiUseHistory = new HashMap<>();
-    public static ArrayList<String> recentEmoji = new ArrayList<>();
-    public static HashMap<String, String> emojiColor = new HashMap<>();
+    public final static HashMap<String, Integer> emojiUseHistory = new HashMap<>();
+    public final static ArrayList<String> recentEmoji = new ArrayList<>();
+    public static int recentEmojiVersion;
+    private static int recentEmojiSortedVersion = -1;
+    public final static HashMap<String, String> emojiColor = new HashMap<>();
     private static boolean recentEmojiLoaded;
-    public static Runnable invalidateUiRunnable = () -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded);
+    public final static Runnable invalidateUiRunnable = () -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.emojiLoaded);
     public static float emojiDrawingYOffset;
     public static boolean emojiDrawingUseAlpha = true;
 
-    private static String[] DEFAULT_RECENT = new String[]{
+    private final static String[] DEFAULT_RECENT = new String[]{
         "\uD83D\uDE02", "\uD83D\uDE18", "\u2764", "\uD83D\uDE0D", "\uD83D\uDE0A", "\uD83D\uDE01",
         "\uD83D\uDC4D", "\u263A", "\uD83D\uDE14", "\uD83D\uDE04", "\uD83D\uDE2D", "\uD83D\uDC8B",
         "\uD83D\uDE12", "\uD83D\uDE33", "\uD83D\uDE1C", "\uD83D\uDE48", "\uD83D\uDE09", "\uD83D\uDE03",
@@ -102,6 +112,8 @@ public class Emoji {
         }
     }
 
+    private static int memoryUsage;
+
     private static void loadEmoji(final byte page, final short page2) {
         if (emojiBmp[page][page2] == null) {
             if (loadingEmoji[page][page2]) {
@@ -109,7 +121,13 @@ public class Emoji {
             }
             loadingEmoji[page][page2] = true;
             Utilities.globalQueue.postRunnable(() -> {
-                final Bitmap bitmap = loadBitmap("emoji/" + String.format(Locale.US, "%d_%d.png", page, page2));
+                Bitmap bitmap = null;
+                try {
+                    final EmojiPack emojiPack = EmojiPack.getInstance();
+                    bitmap = emojiPack.getEmoji(page, page2);
+                } catch (Exception e) {
+                    FileLog.e(e);
+                }
                 if (bitmap != null) {
                     emojiBmp[page][page2] = bitmap;
                     AndroidUtilities.cancelRunOnUIThread(invalidateUiRunnable);
@@ -206,12 +224,21 @@ public class Emoji {
             }
             return null;
         }
-        EmojiDrawable ed = new SimpleEmojiDrawable(info);
+        EmojiDrawable ed = new SimpleEmojiDrawable(info, endsWithRightArrow(code));
         ed.setBounds(0, 0, drawImgSize, drawImgSize);
         return ed;
     }
 
+    public static boolean endsWithRightArrow(CharSequence code) {
+        return code != null && code.length() > 2 &&
+            code.charAt(code.length() - 2) == '‍' &&
+            code.charAt(code.length() - 1) == '➡';
+    }
+
     private static DrawableInfo getDrawableInfo(CharSequence code) {
+        if (endsWithRightArrow(code)) {
+            code = code.subSequence(0, code.length() - 2);
+        }
         DrawableInfo info = rects.get(code);
         if (info == null) {
             CharSequence newCode = EmojiData.emojiAliasMap.get(code);
@@ -261,7 +288,7 @@ public class Emoji {
     }
 
     public static abstract class EmojiDrawable extends Drawable {
-        boolean fullSize = false;
+        public boolean fullSize = false;
         int placeholderColor = 0x10000000;
 
         public boolean isLoaded() {
@@ -275,9 +302,11 @@ public class Emoji {
         private static Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private static Rect rect = new Rect();
         private static final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private boolean invert;
 
-        public SimpleEmojiDrawable(DrawableInfo i) {
+        public SimpleEmojiDrawable(DrawableInfo i, boolean invert) {
             info = i;
+            this.invert = invert;
         }
 
         public DrawableInfo getDrawableInfo() {
@@ -320,7 +349,14 @@ public class Emoji {
             }
 
             if (!canvas.quickReject(b.left, b.top, b.right, b.bottom, Canvas.EdgeType.AA)) {
+                if (invert) {
+                    canvas.save();
+                    canvas.scale(-1, 1, b.centerX(), b.centerY());
+                }
                 canvas.drawBitmap(emojiBmp[info.page][info.page2], null, b, paint);
+                if (invert) {
+                    canvas.restore();
+                }
             }
         }
 
@@ -466,7 +502,12 @@ public class Emoji {
                     } else if (emojiCode.length() >= 2 && emojiCode.charAt(0) == 0xD83C && emojiCode.charAt(1) == 0xDFF4 && next == 0xDB40) {
                         i++;
                         while (true) {
-                            emojiCode.append(cs.charAt(i)).append(cs.charAt(i + 1));
+                            if (i < cs.length()) {
+                                emojiCode.append(cs.charAt(i));
+                            }
+                            if (i + 1 < cs.length()) {
+                                emojiCode.append(cs.charAt(i + 1));
+                            }
                             startLength += 2;
                             i += 2;
                             if (i >= cs.length() || cs.charAt(i) != 0xDB40) {
@@ -546,19 +587,22 @@ public class Emoji {
     }
 
     public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, boolean createNew) {
-        return replaceEmoji(cs, fontMetrics, AndroidUtilities.dp(16), createNew, null);
+        return replaceEmoji(cs, fontMetrics, createNew, null);
     }
 
-    public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, int size, boolean createNew) {
-        return replaceEmoji(cs, fontMetrics, size, createNew, null);
+    public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, boolean createNew, float scale) {
+        return replaceEmoji(cs, fontMetrics, createNew, null, DynamicDrawableSpan.ALIGN_BOTTOM, scale, 0);
     }
 
-    public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, int size, boolean createNew, int[] emojiOnly) {
+    public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, boolean createNew, int[] emojiOnly) {
         return replaceEmoji(cs, fontMetrics, createNew, emojiOnly, DynamicDrawableSpan.ALIGN_BOTTOM);
     }
 
     public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, boolean createNew, int[] emojiOnly, int alignment) {
-        cs = ZalgoFilter.filterMessage(cs);
+        return replaceEmoji(cs, fontMetrics, createNew, emojiOnly, alignment, 1.0f, 0);
+    }
+
+    public static CharSequence replaceEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, boolean createNew, int[] emojiOnly, int alignment, float scale, int minusLimit) {
         if (cs == null || cs.length() == 0) {
             return cs;
         }
@@ -566,9 +610,88 @@ public class Emoji {
         if (!createNew && cs instanceof Spannable) {
             s = (Spannable) cs;
         } else {
-            s = Spannable.Factory.getInstance().newSpannable(cs.toString());
+            s = Spannable.Factory.getInstance().newSpannable(cs);
         }
         ArrayList<EmojiSpanRange> emojis = parseEmojis(s, emojiOnly);
+        if (emojis.isEmpty()) {
+            return ZalgoFilter.filterSpannable(cs);
+        }
+
+        AnimatedEmojiSpan[] animatedEmojiSpans = s.getSpans(0, s.length(), AnimatedEmojiSpan.class);
+        ColoredImageSpan[] imageSpans = s.getSpans(0, s.length(), ColoredImageSpan.class);
+        EmojiSpan span;
+        Drawable drawable;
+        int limitCount = (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH ? 100 : 50) - minusLimit;
+        for (int i = 0; i < emojis.size(); ++i) {
+            try {
+                EmojiSpanRange emojiRange = emojis.get(i);
+                if (animatedEmojiSpans != null && animatedEmojiSpans.length > 0) {
+                    boolean hasAnimated = false;
+                    for (AnimatedEmojiSpan animatedSpan : animatedEmojiSpans) {
+                        if (animatedSpan != null && s.getSpanStart(animatedSpan) == emojiRange.start && s.getSpanEnd(animatedSpan) == emojiRange.end) {
+                            hasAnimated = true;
+                            break;
+                        }
+                    }
+                    if (hasAnimated) {
+                        continue;
+                    }
+                }
+                if (imageSpans != null && imageSpans.length > 0) {
+                    boolean hasImage = false;
+                    for (int j = 0; j < imageSpans.length; ++j) {
+                        ColoredImageSpan imageSpan = imageSpans[j];
+                        if (imageSpan != null && s.getSpanStart(imageSpan) == emojiRange.start && s.getSpanEnd(imageSpan) == emojiRange.end) {
+                            hasImage = true;
+                            break;
+                        }
+                    }
+                    if (hasImage) {
+                        continue;
+                    }
+                }
+                drawable = Emoji.getEmojiDrawable(emojiRange.code);
+                if (drawable != null) {
+                    span = new EmojiSpan(drawable, alignment, fontMetrics);
+                    span.emoji = emojiRange.code == null ? null : emojiRange.code.toString();
+                    span.scale = scale;
+                    s.setSpan(span, emojiRange.start, emojiRange.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+            if ((Build.VERSION.SDK_INT < 23 || Build.VERSION.SDK_INT >= 29)/* && !BuildVars.DEBUG_PRIVATE_VERSION*/ && (i + 1) >= limitCount) {
+                break;
+            }
+        }
+        return ZalgoFilter.filterSpannable(s);
+    }
+
+    public static CharSequence replaceWithRestrictedEmoji(CharSequence cs, TextView textView, Runnable update) {
+        return replaceWithRestrictedEmoji(cs, textView.getPaint().getFontMetricsInt(), update);
+    }
+
+    public static CharSequence replaceWithRestrictedEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, Runnable update) {
+        return replaceWithRestrictedEmoji(cs, fontMetrics, AnimatedEmojiDrawable.CACHE_TYPE_STANDARD_EMOJI, update);
+    }
+
+    public static CharSequence replaceWithRestrictedEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, int cacheType, Runnable update) {
+        if (SharedConfig.useSystemEmoji || cs == null || cs.length() == 0) {
+            return cs;
+        }
+
+        final int currentAccount = UserConfig.selectedAccount;
+        TLRPC.InputStickerSet inputStickerSet = new TLRPC.TL_inputStickerSetShortName();
+        inputStickerSet.short_name = "RestrictedEmoji";
+        TLRPC.TL_messages_stickerSet set = MediaDataController.getInstance(currentAccount).getStickerSet(inputStickerSet, 0, false, true, update == null ? null : s -> update.run());
+
+        Spannable s;
+        if (cs instanceof Spannable) {
+            s = (Spannable) cs;
+        } else {
+            s = Spannable.Factory.getInstance().newSpannable(cs.toString());
+        }
+        ArrayList<EmojiSpanRange> emojis = parseEmojis(s, null);
         if (emojis.isEmpty()) {
             return cs;
         }
@@ -582,7 +705,8 @@ public class Emoji {
                 EmojiSpanRange emojiRange = emojis.get(i);
                 if (animatedEmojiSpans != null) {
                     boolean hasAnimated = false;
-                    for (AnimatedEmojiSpan animatedSpan : animatedEmojiSpans) {
+                    for (int j = 0; j < animatedEmojiSpans.length; ++j) {
+                        AnimatedEmojiSpan animatedSpan = animatedEmojiSpans[j];
                         if (animatedSpan != null && s.getSpanStart(animatedSpan) == emojiRange.start && s.getSpanEnd(animatedSpan) == emojiRange.end) {
                             hasAnimated = true;
                             break;
@@ -592,12 +716,24 @@ public class Emoji {
                         continue;
                     }
                 }
-                drawable = Emoji.getEmojiDrawable(emojiRange.code);
-                if (drawable != null) {
-                    span = new EmojiSpan(drawable, alignment, fontMetrics);
-                    span.emoji = emojiRange.code == null ? null : emojiRange.code.toString();
-                    s.setSpan(span, emojiRange.start, emojiRange.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                TLRPC.Document document = null;
+                if (set != null) {
+                    for (TLRPC.Document d : set.documents) {
+                        if (MessageObject.findAnimatedEmojiEmoticon(d, null).contains(emojiRange.code)) {
+                            document = d;
+                            break;
+                        }
+                    }
                 }
+                AnimatedEmojiSpan animatedSpan;
+                if (document != null) {
+                    animatedSpan = new AnimatedEmojiSpan(document, fontMetrics);
+                } else {
+                    animatedSpan = new AnimatedEmojiSpan(0, fontMetrics);
+                }
+                animatedSpan.emoji = (emojiRange.code).toString();
+                animatedSpan.cacheType = cacheType;
+                s.setSpan(animatedSpan, emojiRange.start, emojiRange.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception e) {
                 FileLog.e(e);
             }
@@ -610,8 +746,11 @@ public class Emoji {
 
     public static class EmojiSpan extends ImageSpan {
         public Paint.FontMetricsInt fontMetrics;
+        public float scale = 1f;
         public int size = AndroidUtilities.dp(20);
         public String emoji;
+        private boolean preserveFontMetrics;
+        private int minimumLineHeight;
 
         public EmojiSpan(Drawable d, int verticalAlignment, Paint.FontMetricsInt original) {
             super(d, verticalAlignment);
@@ -639,12 +778,29 @@ public class Emoji {
             }
         }
 
+        public EmojiSpan setPreserveFontMetrics(boolean preserveFontMetrics) {
+            this.preserveFontMetrics = preserveFontMetrics;
+            return this;
+        }
+
+        public EmojiSpan setMinimumLineHeight(int minimumLineHeight) {
+            this.minimumLineHeight = minimumLineHeight;
+            return this;
+        }
+
         @Override
         public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+            final boolean preserveMetrics = preserveFontMetrics && fm != null;
+            final int originalTop = preserveMetrics ? fm.top : 0;
+            final int originalAscent = preserveMetrics ? fm.ascent : 0;
+            final int originalDescent = preserveMetrics ? fm.descent : 0;
+            final int originalBottom = preserveMetrics ? fm.bottom : 0;
+            final int originalLeading = preserveMetrics ? fm.leading : 0;
             if (fm == null) {
                 fm = new Paint.FontMetricsInt();
             }
 
+            int scaledSize = (int) (scale * size);
             if (fontMetrics == null) {
                 int sz = super.getSize(paint, text, start, end, fm);
 
@@ -656,6 +812,14 @@ public class Emoji {
                 fm.leading = 0;
                 fm.descent = w - offset;
 
+                if (preserveMetrics) {
+                    fm.top = originalTop;
+                    fm.ascent = originalAscent;
+                    fm.descent = originalDescent;
+                    fm.bottom = originalBottom;
+                    fm.leading = originalLeading;
+                    expandFontMetrics(fm, minimumLineHeight);
+                }
                 return sz;
             } else {
                 fm.ascent = fontMetrics.ascent;
@@ -664,10 +828,32 @@ public class Emoji {
                 fm.top = fontMetrics.top;
                 fm.bottom = fontMetrics.bottom;
                 if (getDrawable() != null) {
-                    getDrawable().setBounds(0, 0, size, size);
+                    getDrawable().setBounds(0, 0, scaledSize, scaledSize);
                 }
-                return size;
+                if (preserveMetrics) {
+                    fm.top = originalTop;
+                    fm.ascent = originalAscent;
+                    fm.descent = originalDescent;
+                    fm.bottom = originalBottom;
+                    fm.leading = originalLeading;
+                    expandFontMetrics(fm, minimumLineHeight);
+                }
+                return scaledSize;
             }
+        }
+
+        private static void expandFontMetrics(Paint.FontMetricsInt fm, int minimumHeight) {
+            final int currentHeight = fm.descent - fm.ascent;
+            if (minimumHeight <= currentHeight) {
+                return;
+            }
+            final int extra = minimumHeight - currentHeight;
+            final int above = (extra + 1) / 2;
+            final int below = extra - above;
+            fm.ascent -= above;
+            fm.descent += below;
+            fm.top = Math.min(fm.top, fm.ascent);
+            fm.bottom = Math.max(fm.bottom, fm.descent);
         }
 
         public boolean drawn;
@@ -675,7 +861,7 @@ public class Emoji {
 
         @Override
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-            lastDrawX = x + size / 2f;
+            lastDrawX = x + scale * size / 2f;
             lastDrawY = top + (bottom - top) / 2f;
             drawn = true;
 
@@ -685,10 +871,11 @@ public class Emoji {
                 getDrawable().setAlpha(paint.getAlpha());
             }
             boolean needRestore = false;
-            if (emojiDrawingYOffset != 0) {
+            float ty = emojiDrawingYOffset - (size - scale * size) / 2;
+            if (ty != 0) {
                 needRestore = true;
                 canvas.save();
-                canvas.translate(0, emojiDrawingYOffset);
+                canvas.translate(0, ty);
             }
             super.draw(canvas, text, start, end, x, top, y, bottom, paint);
             if (needRestore) {
@@ -706,9 +893,18 @@ public class Emoji {
             }
             super.updateDrawState(ds);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            EmojiSpan emojiSpan = (EmojiSpan) o;
+            return Float.compare(scale, emojiSpan.scale) == 0 && size == emojiSpan.size && Objects.equals(emoji, emojiSpan.emoji);
+        }
     }
 
     public static void addRecentEmoji(String code) {
+        recentEmojiVersion++;
         Integer count = emojiUseHistory.get(code);
         if (count == null) {
             count = 0;
@@ -722,6 +918,7 @@ public class Emoji {
     }
 
     public static void removeRecentEmoji(String code) {
+        recentEmojiVersion++;
         emojiUseHistory.remove(code);
         recentEmoji.remove(code);
         if (emojiUseHistory.isEmpty() || recentEmoji.isEmpty()) {
@@ -730,6 +927,7 @@ public class Emoji {
     }
 
     public static void sortEmoji() {
+        recentEmojiVersion++;
         recentEmoji.clear();
         for (HashMap.Entry<String, Integer> entry : emojiUseHistory.entrySet()) {
             recentEmoji.add(entry.getKey());
@@ -753,6 +951,11 @@ public class Emoji {
         while (recentEmoji.size() > MAX_RECENT_EMOJI_COUNT) {
             recentEmoji.remove(recentEmoji.size() - 1);
         }
+        recentEmojiSortedVersion = recentEmojiVersion;
+    }
+
+    public static boolean isRecentEmojiUnsorted() {
+        return recentEmojiSortedVersion != recentEmojiVersion;
     }
 
     public static void saveRecentEmoji() {
@@ -770,6 +973,7 @@ public class Emoji {
     }
 
     public static void clearRecentEmoji() {
+        recentEmojiVersion++;
         SharedPreferences preferences = MessagesController.getGlobalEmojiSettings();
         preferences.edit().putBoolean("filled_default", true).apply();
         emojiUseHistory.clear();

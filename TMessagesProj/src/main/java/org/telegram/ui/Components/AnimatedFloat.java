@@ -115,6 +115,8 @@ public class AnimatedFloat {
         this.firstSet = false;
     }
 
+    // get() is not recommended to use (unless to minimize System.currentTimeMillis() calls)
+    @Deprecated
     public float get() {
         return value;
     }
@@ -122,8 +124,26 @@ public class AnimatedFloat {
     // set() must be called inside onDraw/dispatchDraw
     // the main purpose of AnimatedFloat is to interpolate between abrupt changing states
 
+
     public float set(float mustBe) {
         return this.set(mustBe, false);
+    }
+
+    public float set(boolean mustBe) {
+        return this.set(mustBe ? 1 : 0, false);
+    }
+
+    // do set(value, true) when it's needed to skip animation
+    public void force(float value) {
+        this.set(value, true);
+    }
+
+    public void force(boolean value) {
+        this.set(value ? 1 : 0, true);
+    }
+
+    public float set(boolean mustBe, boolean force) {
+        return this.set(mustBe ? 1 : 0, force);
     }
 
     public float set(float mustBe, boolean force) {
@@ -137,6 +157,11 @@ public class AnimatedFloat {
             startValue = value;
             transitionStart = SystemClock.elapsedRealtime();
         }
+
+        return getValue();
+    }
+
+    public float getValue() {
         if (transition) {
             final long now = SystemClock.elapsedRealtime();
             final float t = MathUtils.clamp((now - transitionStart - transitionDelay) / (float) transitionDuration, 0, 1);
@@ -161,6 +186,18 @@ public class AnimatedFloat {
         return value;
     }
 
+    public void setDuration(long duration) {
+        transitionDuration = duration;
+    }
+
+    public void setDelay(long delay) {
+        transitionDelay = delay;
+    }
+
+    public long getDuration() {
+        return transitionDuration;
+    }
+
     public boolean isInProgress() {
         return transition;
     }
@@ -181,7 +218,15 @@ public class AnimatedFloat {
         }
     }
 
+    public float getTargetValue() {
+        return targetValue;
+    }
+
     public void setParent(View parent) {
         this.parent = parent;
+    }
+
+    public void setInvalidate(Runnable invalidate) {
+        this.invalidate = invalidate;
     }
 }

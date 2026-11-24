@@ -41,10 +41,11 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.exteragram.messenger.ExteraConfig;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import androidx.annotation.Keep;
+
+import androidx.media3.common.C;
+import androidx.media3.exoplayer.ExoPlayer;
+import org.telegram.ui.AspectRatioFrameLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -436,6 +437,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
             callJavaResultInterface = callJavaResult;
         }
 
+        @Keep
         @JavascriptInterface
         public void returnResultToJava(String value) {
             callJavaResultInterface.jsCallFinished(value);
@@ -1530,7 +1532,19 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
         addView(aspectRatioFrameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
 
         interfaceName = "JavaScriptInterface";
-        webView = new WebView(context);
+        webView = new WebView(context) {
+            @Override
+            protected void onAttachedToWindow() {
+                AndroidUtilities.checkAndroidTheme(context, true);
+                super.onAttachedToWindow();
+            }
+
+            @Override
+            protected void onDetachedFromWindow() {
+                AndroidUtilities.checkAndroidTheme(context, false);
+                super.onDetachedFromWindow();
+            }
+        };
         webView.addJavascriptInterface(new JavaScriptInterface(value -> {
             if (currentTask != null && !currentTask.isCancelled()) {
                 if (currentTask instanceof YoutubeVideoTask) {
@@ -1928,7 +1942,7 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
         if (inlineButton == null) {
             return;
         }
-        inlineButton.setImageResource(ExteraConfig.useSolarIcons ? R.drawable.header_goinline_solar : isInline ? R.drawable.ic_goinline : R.drawable.ic_outinline);
+        inlineButton.setImageResource(isInline ? R.drawable.ic_goinline : R.drawable.ic_outinline);
         inlineButton.setVisibility(videoPlayer.isPlayerPrepared() ? VISIBLE : GONE);
         if (isInline) {
             inlineButton.setLayoutParams(LayoutHelper.createFrame(40, 40, Gravity.RIGHT | Gravity.TOP));
@@ -2043,6 +2057,13 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
         return initied;
     }
 
+    /** Same as the inline button while the player is shown in the floating window. */
+    public void exitFromInlineMode() {
+        if (isInline && inlineButton != null) {
+            inlineButton.callOnClick();
+        }
+    }
+
     public boolean isInline() {
         return isInline || switchingInlineMode;
     }
@@ -2061,12 +2082,12 @@ public class WebPlayerView extends ViewGroup implements VideoPlayer.VideoPlayerD
     }
 
     public static String getYouTubeVideoId(String url) {
-        Matcher matcher = youtubeIdRegex.matcher(url);
-        String id = null;
-        if (matcher.find()) {
-            id = matcher.group(1);
+        if (url == null) return null;
+        final Matcher matcher = youtubeIdRegex.matcher(url);
+        if (!matcher.find()) {
+            return null;
         }
-        return id;
+        return matcher.group(1);
     }
 
     public boolean canHandleUrl(String url) {

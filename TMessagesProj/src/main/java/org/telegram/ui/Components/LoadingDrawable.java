@@ -20,6 +20,8 @@ import android.os.SystemClock;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
 
@@ -100,6 +102,7 @@ public class LoadingDrawable extends Drawable {
     private int gradientWidth;
     private float gradientWidthScale = 1f;
     private float speed = 1f;
+    private long singleCycleDuration;
 
     public Paint backgroundPaint;
     public Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -135,23 +138,30 @@ public class LoadingDrawable extends Drawable {
         this.speed = speed;
     }
 
+    /** Runs the gradient from left to right once instead of repeating it. */
+    public void setSingleCycleDuration(long duration) {
+        singleCycleDuration = Math.max(0, duration);
+    }
+
     public void setAppearByGradient(boolean enabled) {
         appearByGradient = enabled;
     }
 
     public void setRadiiDp(float allDp) {
+        setRadii(AndroidUtilities.dp(allDp));
+    }
+    public void setRadii(float all) {
         if (usePath != null) {
-            paint.setPathEffect(new CornerPathEffect(AndroidUtilities.dp(allDp)));
-            strokePaint.setPathEffect(new CornerPathEffect(AndroidUtilities.dp(allDp)));
+            paint.setPathEffect(new CornerPathEffect(all));
+            strokePaint.setPathEffect(new CornerPathEffect(all));
         } else {
-            setRadiiDp(allDp, allDp, allDp, allDp);
+            setRadii(all, all, all, all);
         }
     }
 
     public void setRadiiDp(float topLeftDp, float topRightDp, float bottomRightDp, float bottomLeftDp) {
         setRadii(AndroidUtilities.dp(topLeftDp), AndroidUtilities.dp(topRightDp), AndroidUtilities.dp(bottomRightDp), AndroidUtilities.dp(bottomLeftDp));
     }
-
     public void setRadii(float topLeft, float topRight, float bottomRight, float bottomLeft) {
         final boolean changed = (
             radii[0] != topLeft ||
@@ -191,6 +201,7 @@ public class LoadingDrawable extends Drawable {
 
     public void setBounds(@NonNull RectF bounds) {
         super.setBounds((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom);
+        lastBounds = null;
     }
 
     public void reset() {
@@ -247,9 +258,14 @@ public class LoadingDrawable extends Drawable {
         if (start < 0) {
             start = now;
         }
-        float t = (now - start) / 2000f;
-        t = (float) Math.pow(t * speed / 4, .85f) * 4f;
-        float offset = ((t * AndroidUtilities.density * gradientWidth) % gradientWidth);
+        float offset;
+        if (singleCycleDuration > 0) {
+            offset = Math.min(1f, (now - start) / (float) singleCycleDuration) * gradientWidth;
+        } else {
+            float t = (now - start) / 2000f;
+            t = (float) Math.pow(t * speed / 4, .85f) * 4f;
+            offset = ((t * AndroidUtilities.density * gradientWidth) % gradientWidth);
+        }
         float appearT = (now - start) / APPEAR_DURATION;
         float disappearT = disappearStart > 0 ? 1f - CubicBezierInterpolator.EASE_OUT.getInterpolation(Math.min(1, (now - disappearStart) / DISAPPEAR_DURATION)) : 0;
 
@@ -314,7 +330,11 @@ public class LoadingDrawable extends Drawable {
         } else {
             if (lastBounds == null || !lastBounds.equals(bounds)) {
                 path.rewind();
-                rectF.set(lastBounds = bounds);
+                if (lastBounds == null) {
+                    lastBounds = new Rect();
+                }
+                lastBounds.set(bounds);
+                rectF.set(lastBounds);
                 path.addRoundRect(rectF, radii, Path.Direction.CW);
             }
             drawPath = path;
@@ -322,10 +342,7 @@ public class LoadingDrawable extends Drawable {
         if (backgroundPaint != null) {
             canvas.drawPath(drawPath, backgroundPaint);
         }
-        canvas.drawPath(drawPath, paint);
-        if (stroke) {
-            canvas.drawPath(drawPath, strokePaint);
-        }
+        drawContent(canvas, drawPath);
 
         if (appearRestore) {
             canvas.save();
@@ -353,6 +370,13 @@ public class LoadingDrawable extends Drawable {
         }
     }
 
+    protected void drawContent(Canvas canvas, Path path) {
+        canvas.drawPath(path, paint);
+        if (stroke) {
+            canvas.drawPath(path, strokePaint);
+        }
+    }
+
     public void updateBounds() {
         if (usePath != null) {
             usePath.computeBounds(AndroidUtilities.rectTmp, false);
@@ -367,6 +391,7 @@ public class LoadingDrawable extends Drawable {
     @Override
     public void setAlpha(int i) {
         paint.setAlpha(i);
+        strokePaint.setAlpha(i);
         if (i > 0) {
             invalidateSelf();
         }

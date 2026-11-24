@@ -16,7 +16,11 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.view.animation.DecelerateInterpolator;
 
+import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
+
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.Utilities;
 
 public class BackDrawable extends Drawable {
 
@@ -35,6 +39,11 @@ public class BackDrawable extends Drawable {
     private float animationTime = 300.0f;
     private boolean rotated = true;
     private int arrowRotation;
+    private boolean centered;
+
+    public float getRotation() {
+        return finalRotation;
+    }
 
     public BackDrawable(boolean close) {
         super();
@@ -43,6 +52,13 @@ public class BackDrawable extends Drawable {
         prevPaint.setStrokeWidth(AndroidUtilities.dp(2));
         prevPaint.setColor(Color.RED);
         alwaysClose = close;
+    }
+
+    public void setCentered(boolean value) {
+        if (centered != value) {
+            centered = value;
+            invalidateSelf();
+        }
     }
 
     public void setColor(int value) {
@@ -91,12 +107,12 @@ public class BackDrawable extends Drawable {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         if (currentRotation != finalRotation) {
             if (lastFrameTime != 0) {
                 long dt = System.currentTimeMillis() - lastFrameTime;
 
-                currentAnimationTime += dt;
+                currentAnimationTime += (int) dt;
                 if (currentAnimationTime >= animationTime) {
                     currentRotation = finalRotation;
                 } else {
@@ -111,18 +127,17 @@ public class BackDrawable extends Drawable {
             invalidateSelf();
         }
 
-        int rD = rotated ? (int) ((Color.red(rotatedColor) - Color.red(color)) * currentRotation) : 0;
-        int rG = rotated ? (int) ((Color.green(rotatedColor) - Color.green(color)) * currentRotation) : 0;
-        int rB = rotated ? (int) ((Color.blue(rotatedColor) - Color.blue(color)) * currentRotation) : 0;
-        int c = Color.rgb(Color.red(color) + rD, Color.green(color) + rG, Color.blue(color) + rB);
-        paint.setColor(c);
+        paint.setColor(ColorUtils.blendARGB(color, rotatedColor, currentRotation));
 
         canvas.save();
-        canvas.translate(getIntrinsicWidth() / 2, getIntrinsicHeight() / 2);
+        canvas.translate(getIntrinsicWidth() / 2f, getIntrinsicHeight() / 2f);
         if (arrowRotation != 0) {
             canvas.rotate(arrowRotation);
         }
         float rotation = currentRotation;
+        if (!centered) {
+            canvas.translate(-AndroidUtilities.dp(0.66f)/* * (rotation)*/, 0);
+        }
         if (!alwaysClose) {
             canvas.rotate(currentRotation * (reverseAngle ? -225 : 135));
         } else {

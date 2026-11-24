@@ -5,7 +5,6 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -15,6 +14,7 @@ import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 public class AutoDeletePopupWrapper {
 
@@ -26,7 +26,7 @@ public class AutoDeletePopupWrapper {
     private final ActionBarMenuSubItem disableItem;
     Callback callback;
     long lastDismissTime;
-    TextView textView;
+    public TextView textView;
 
     public AutoDeletePopupWrapper(Context context, PopupSwipeBackLayout swipeBackLayout, Callback callback, boolean createBackground, int type, Theme.ResourcesProvider resourcesProvider) {
         windowLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(context, createBackground ? R.drawable.popup_fixed_alert : 0, resourcesProvider);
@@ -34,53 +34,56 @@ public class AutoDeletePopupWrapper {
         this.callback = callback;
 
         if (swipeBackLayout != null) {
-            backItem = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_arrow_back, LocaleController.getString("Back", R.string.Back), false, resourcesProvider);
+            backItem = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_arrow_back, LocaleController.getString(R.string.Back), false, resourcesProvider);
             backItem.setOnClickListener(view -> {
                 swipeBackLayout.closeForeground();
             });
         }
 
-        ActionBarMenuSubItem item = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_autodelete_1d, LocaleController.getString("AutoDelete1Day", R.string.AutoDelete1Day), false, resourcesProvider);
+        ActionBarMenuSubItem item = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_autodelete_1d, LocaleController.getString(R.string.AutoDelete1Day), false, resourcesProvider);
         item.setOnClickListener(view -> {
             dismiss();
             callback.setAutoDeleteHistory(24 * 60 * 60, UndoView.ACTION_AUTO_DELETE_ON);
         });
-        item = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_autodelete_1w, LocaleController.getString("AutoDelete7Days", R.string.AutoDelete7Days), false, resourcesProvider);
+        item = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_autodelete_1w, LocaleController.getString(R.string.AutoDelete7Days), false, resourcesProvider);
         item.setOnClickListener(view -> {
             dismiss();
             callback.setAutoDeleteHistory(7 * 24 * 60 * 60, UndoView.ACTION_AUTO_DELETE_ON);
         });
-        item = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_autodelete_1m, LocaleController.getString("AutoDelete1Month", R.string.AutoDelete1Month), false, resourcesProvider);
+        item = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_autodelete_1m, LocaleController.getString(R.string.AutoDelete1Month), false, resourcesProvider);
         item.setOnClickListener(view -> {
             dismiss();
             callback.setAutoDeleteHistory(31 * 24 * 60 * 60, UndoView.ACTION_AUTO_DELETE_ON);
         });
-        String customTitle = LocaleController.getString("AutoDeleteCustom", R.string.AutoDeleteCustom);
+        String customTitle = LocaleController.getString(R.string.AutoDeleteCustom);
         if (type == TYPE_GROUP_CREATE) {
-            customTitle =  LocaleController.getString("AutoDeleteCustom2", R.string.AutoDeleteCustom2);
+            customTitle =  LocaleController.getString(R.string.AutoDeleteCustom2);
         }
         item = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_customize, customTitle, false, resourcesProvider);
         item.setOnClickListener(view -> {
             dismiss();
-            AlertsCreator.createAutoDeleteDatePickerDialog(context, type, resourcesProvider, (notify, timeInMinutes) -> {
+            AlertsCreator.createAutoDeleteDatePickerDialog(context, type, resourcesProvider, (notify, timeInMinutes, scheduleRepeatPeriod) -> {
                 callback.setAutoDeleteHistory(timeInMinutes * 60, timeInMinutes == 0 ? UndoView.ACTION_AUTO_DELETE_OFF : UndoView.ACTION_AUTO_DELETE_ON);
             });
         });
-        disableItem = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_disable, LocaleController.getString("AutoDeleteDisable", R.string.AutoDeleteDisable), false, resourcesProvider);
+        disableItem = ActionBarMenuItem.addItem(windowLayout, R.drawable.msg_disable, LocaleController.getString(R.string.AutoDeleteDisable), false, resourcesProvider);
         disableItem.setOnClickListener(view -> {
             dismiss();
             callback.setAutoDeleteHistory(0, UndoView.ACTION_AUTO_DELETE_OFF);
         });
         if (type != TYPE_GROUP_CREATE) {
-            disableItem.setColors(Theme.getColor(Theme.key_text_RedBold), Theme.getColor(Theme.key_text_RedBold));
+            if (resourcesProvider == null) {
+                disableItem.setColorKeys(Theme.key_text_RedBold, Theme.key_text_RedBold);
+            } else {
+                // global (not themed) red, as before: follows theme changes
+                ThemeBind.custom(disableItem, 100, Theme.key_text_RedBold, null, AutoDeletePopupWrapper::getSubItemTextColor, AutoDeletePopupWrapper::setSubItemColors);
+            }
         }
 
         if (type != TYPE_GROUP_CREATE) {
-            FrameLayout gap = new FrameLayout(context);
-            gap.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuSeparator, resourcesProvider));
-            View gapShadow = new View(context);
-            gapShadow.setBackground(Theme.getThemedDrawableByKey(context, R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow, resourcesProvider));
-            gap.addView(gapShadow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+            // a gap of the popup: menus on glass recolor it (ItemOptions.setGapBackgroundColor)
+            ActionBarPopupWindow.GapView gap = new ActionBarPopupWindow.GapView(context, resourcesProvider);
+            ThemeBind.backgroundColor(gap, Theme.key_actionBarDefaultSubmenuSeparator, resourcesProvider);
             gap.setTag(R.id.fit_width_tag, 1);
             windowLayout.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
 
@@ -88,10 +91,10 @@ public class AutoDeletePopupWrapper {
             textView.setTag(R.id.fit_width_tag, 1);
             textView.setPadding(AndroidUtilities.dp(13), 0, AndroidUtilities.dp(13), AndroidUtilities.dp(8));
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
-            textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
+            ThemeBind.textColor(textView, Theme.key_actionBarDefaultSubmenuItem);
             textView.setMovementMethod(LinkMovementMethod.getInstance());
-            textView.setLinkTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteLinkText));
-            textView.setText(LocaleController.getString("AutoDeletePopupDescription", R.string.AutoDeletePopupDescription));
+            ThemeBind.linkTextColor(textView, Theme.key_windowBackgroundWhiteLinkText);
+            textView.setText(LocaleController.getString(R.string.AutoDeletePopupDescription));
             windowLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 8, 0, 0));
         }
     }
@@ -115,14 +118,14 @@ public class AutoDeletePopupWrapper {
         }
     }
 
-    public void allowExtenededHint() {
+    public void allowExtendedHint(int linkColor) {
         if (textView == null) {
             return;
         }
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-        spannableStringBuilder.append(LocaleController.getString("AutoDeletePopupDescription", R.string.AutoDeletePopupDescription));
+        spannableStringBuilder.append(LocaleController.getString(R.string.AutoDeletePopupDescription));
         spannableStringBuilder.append("\n\n");
-        spannableStringBuilder.append(AndroidUtilities.replaceSingleTag(LocaleController.getString("AutoDeletePopupDescription2", R.string.AutoDeletePopupDescription2), () -> {
+        spannableStringBuilder.append(AndroidUtilities.replaceSingleLink(LocaleController.getString(R.string.AutoDeletePopupDescription2), linkColor, () -> {
             callback.showGlobalAutoDeleteScreen();
         }));
         textView.setText(spannableStringBuilder);
@@ -138,5 +141,13 @@ public class AutoDeletePopupWrapper {
         default void showGlobalAutoDeleteScreen() {
 
         }
+    }
+
+    private static int getSubItemTextColor(ActionBarMenuSubItem item) {
+        return item.getTextView() != null ? item.getTextView().getCurrentTextColor() : 0;
+    }
+
+    private static void setSubItemColors(ActionBarMenuSubItem item, int color) {
+        item.setColors(color, color);
     }
 }

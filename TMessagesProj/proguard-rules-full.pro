@@ -1,0 +1,20 @@
+# Plugins
+-keep class com.exteragram.messenger.api.** { *; }
+-keep class com.exteragram.messenger.plugins.** { *; }
+-keep class !org.telegram.messenger.R,!org.telegram.messenger.R$*,org.telegram.messenger.* { *; }
+-keep class org.telegram.messenger.R
+-keep class org.telegram.messenger.R$* { public static <fields>; }
+-keep class de.robv.android.xposed.** { *; }
+-keep class com.exteragram.hook.ExteraHook { *; }
+-keep class android_utils.** { *; }
+-keep class client_utils.** { *; }
+-keep class org.mvel2.** { *; }
+-dontwarn org.mvel2.**
+-keep class okhttp3.** { *; }
+-keep class com.google.android.material.** { *; }
+-keep class com.android.dx.** { *; }
+-keep class kotlin.** { *; }
+-dontwarn androidx.car.app.SurfaceCallback
+-dontwarn androidx.car.app.SurfaceContainer
+-dontwarn java.awt.Component
+-dontwarn javax.script.**

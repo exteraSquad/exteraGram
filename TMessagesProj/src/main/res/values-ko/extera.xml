@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <!-- Main Menu -->
+    <string name="Crowdin">Немецкий </string>
+    <string name="Website">웹 사이트</string>
+    <string name="Categories">범주</string>
+    <string name="Developer">**%1$s**님은 **exteraGram** 개발 팀의 멤버입니다.</string>
+    <string name="DeveloperCompact">**exteraGram** 개발 팀의 멤버입니다.</string>
+    <string name="Supporter">**%1$s**님은 **exteraGram**의 개발을 지원해주셨기에 특별한 배지를 받으셨습니다.</string>
+    <string name="OfficialChannel">**%1$s**은(는) **exteraGram**의 공식 리소스입니다.</string>
+    <string name="NoSuchSetting">그런 설정은 없는 것 같습니다.</string>
+    <string name="SettingLinkToSavedMessages">설정 링크가 **저장된 메시지**로 전송되었습니다.</string>
+    <string name="SettingLinkToUser">설정 링크가 **%1$s**로 전송되었습니다.</string>
+    <string name="SettingLinkToChats">설정 링크가 **%1$s**로 전송되었습니다.</string>
+    <string name="LiteBatteryFollowSystem">시스템 배터리 절약 사용</string>
+    <string name="LiteBatteryFollowSystemState">시스템</string>
+    <string name="LiteBatteryFollowSystemInfo">시스템 배터리 절약에 의해 제어됩니다.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">필 스택</string>
+    <string name="PillStackPillsInfo">검색 필드에 상호작용형 필을 표시합니다.</string>
+    <string name="PillStackActivePills">활성 필</string>
+    <string name="PillStackHiddenPills">숨겨진 필</string>
+    <string name="CurrentLocation">현재 위치</string>
+    <string name="SelectLocation">지도에서 선택</string>
+    <string name="WeatherPill">날씨</string>
+    <string name="WeatherSettingsInfo">검색에서 날씨 표시를 위한 위치 결정 방법을 선택하세요.</string>
+    <string name="WeatherLocation">위치 감지</string>
+    <string name="WeatherLocationPermissionNo">현재 날씨를 표시하려면 exteraGram이 위치에 접근해야 합니다.</string>
+    <string name="WeatherLocationPermissionGrant">권한 부여</string>
+    <string name="WeatherLocationServicesEnable">위치 활성화</string>
+    <string name="WeatherPillTopInfo">Pill Stack을 위한 날씨 위젯 설정.</string>
+    <string name="PillStackInfiniteScrolling">무한 스크롤</string>
+    <string name="CryptoPillTargetCurrency">대상 통화</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">프록시 비활성화</string>
+    <string name="ProxyDisableNever">사용 안 함</string>
+    <string name="ProxyDisableAlways">항상</string>
+    <string name="ProxyDisableOnMobileData">모바일 데이터</string>
+    <string name="ProxyType">유형</string>
+    <string name="Unknown">알 수 없음</string>
+    <string name="ProxyRename">프록시 이름 (선택 사항)</string>
+    <string name="ProxyPinLimitReached">최대 %1$d개의 프록시를 고정할 수 있습니다.</string>
+    <string name="CopyIpAddress">IP 주소 복사</string>
+    <string name="IpInfoUnavailable">IP 주소 정보를 불러올 수 없습니다.</string>
+    <string name="IpInfoOrganization">조직</string>
+    <string name="IpInfoDomain">도메인</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">번역 제공자</string>
+    <string name="TranslationTarget">대상 언어</string>
+    <string name="TranslationTargetApp">앱 따르기</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">숫자 반올림 비활성화</string>
+    <string name="FormatTimeWithSeconds">시간을 초 단위로 표시</string>
+    <string name="RelativeLastSeen">상대적 마지막 접속</string>
+    <string name="InAppVibration">앱 내 진동</string>
+    <string name="FilterZalgo">\"Zalgo\" 필터링</string>
+    <string name="FilterZalgoInfo">이름과 메시지에서 \"%1$s\" 기호를 제거합니다.</string>
+    <string name="RestartRequired">변경 사항을 적용하려면 앱을 다시 시작하세요.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">코드</string>
+    <string name="CreateCode">코드 블록 만들기</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">다운로드 속도 부스트</string>
+    <string name="UploadSpeedBoost">업로드 속도 부스트</string>
+    <string name="Ultra">울트라</string>
+    <string name="SpeedBoostInfo">울트라 부스트는 느린 인터넷 연결에서 파일 다운로드 및 동영상 스트리밍에 문제를 일으킬 수 있습니다.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">저장소</string>
+    <string name="CustomSavePath">사용자 지정 저장 폴더</string>
+    <string name="CustomSavePathHint">비워두면 루트에 직접 저장됩니다.</string>
+    <string name="CustomSavePathDefault">루트에 저장</string>
+    <string name="CustomSavePathInfo">저장된 파일은 사진, 다운로드 등에 직접 저장됩니다.</string>
+    <string name="CustomSavePathInfoFolder">저장된 파일은 사진/%1$s, 다운로드/%1$s 등에 저장됩니다.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">전화번호 숨기기</string>
+    <string name="ShowIdAndDc">ID 및 DC 표시</string>
+    <string name="ShowIdAndDcInfo">Telegram API는 ID를 그대로 표시하고, Bot API는 그룹에 마이너스 기호를, 슈퍼그룹 및 채널에는 -100을 추가합니다.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">보관함 폴더 숨기기</string>
+    <string name="ArchiveOnPull">당겨서 보관함 열기</string>
+    <string name="DisableUnarchiveSwipe">\"보관 해제\" 스와이프 비활성화</string>
+    <string name="DisableUnarchiveSwipeInfo">왼쪽으로 스와이프해도 보관함에서 채팅이 제거되지 않습니다.</string>
+    <!-- Appearance -->
+    <string name="Appearance">모양</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">아바타 모서리</string>
+    <string name="SingleCornerRadius">단일 모서리 반경</string>
+    <string name="SingleCornerRadiusInfo">포럼은 채팅과 동일한 아바타 모양을 갖습니다.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">채팅 목록</string>
+    <string name="ActionBarTitle">제목 텍스트</string>
+    <string name="ActionBarTitleName">이름</string>
+    <string name="HideStories">스토리 숨기기</string>
+    <string name="HideActionBarStatus">상태 숨기기</string>
+    <string name="CenterTitle">제목 가운데 정렬</string>
+    <string name="ChatHeader">채팅 헤더</string>
+    <string name="HideFloatingButton">플로팅 버튼 숨기기</string>
+    <string name="HideDialogsSearchBar">검색 표시줄 숨기기</string>
+    <string name="BottomNavigationBarMode">하단 탐색 표시줄</string>
+    <string name="BottomNavigationModeShow">표시</string>
+    <string name="BottomNavigationModeHide">숨기기</string>
+    <string name="BottomNavigationModeFloating">플로팅</string>
+    <string name="SenderMiniAvatars">발신자 미니 아바타</string>
+    <string name="ListOfChatsInfo">폴더에 \'아이콘만\'이 활성화되면 기본 제목에 폴더 이름이 표시됩니다.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">폴더 제목</string>
+    <string name="TabTitleStyleTextWithIcons">아이콘이 있는 이름</string>
+    <string name="TabTitleStyleIconsOnly">아이콘만</string>
+    <string name="TabTitleStyleTextOnly">이름만</string>
+    <string name="TabCounter">알림 카운터</string>
+    <string name="HideAllChats">\"%1$s\" 탭 숨기기</string>
+    <string name="FoldersInfo">아이콘은 계정과 동기화됩니다.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">앱 탐색</string>
+    <string name="AppNavigationInfo">오른쪽 상단 메뉴 및 서랍 설정</string>
+    <string name="NavigationDrawer">탐색 서랍</string>
+    <string name="NavigationDrawerInfo">오른쪽 상단 메뉴를 클래식한 스와이프로 열리는 서랍과 햄버거 버튼으로 대체합니다.</string>
+    <string name="NavigationDrawerImmersiveAnimation">몰입형 애니메이션</string>
+    <string name="MainMenuItems">메뉴 항목</string>
+    <string name="MainMenuItemsInfo">탭하여 항목을 표시하거나 숨기고, 길게 눌러 순서를 변경합니다. 레이아웃은 메뉴와 서랍 간에 공유됩니다.</string>
+    <string name="MainMenuHiddenItems">숨겨진 메뉴 항목</string>
+    <string name="MainMenuAddDivider">구분선 추가</string>
+    <string name="MainMenuRemoveSettingsInfo">하단 탐색 표시줄이 비활성화된 경우 설정을 숨길 수 없습니다.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">아이콘 팩</string>
+    <string name="IconPacksInfo">앱 전체의 아이콘 사용자 정의</string>
+    <string name="IconPickerFilter">필터</string>
+    <string name="IconPickerAllIcons">모든 아이콘</string>
+    <string name="IconPickerReplacedIcons">대체된 아이콘</string>
+    <string name="IconPickerNotReplacedIcons">대체되지 않은 아이콘</string>
+    <string name="IconPickerSaveAndExit">저장 &amp; 나가기</string>
+    <string name="BasePacks">기본 팩</string>
+    <string name="BaseIconPackInfo">기본 아이콘 팩은 다른 팩으로 대체되지 않은 아이콘의 폴백으로 사용됩니다.</string>
+    <string name="IconPacksHint">팩을 탭하여 활성화하거나 비활성화하세요. 편집하거나 삭제하려면 길게 누르세요.</string>
+    <string name="NewIconPack">새 아이콘 팩 생성</string>
+    <string name="EnabledPacks">활성화된 팩</string>
+    <string name="AllPacks">모든 팩</string>
+    <string name="PackName">팩 이름</string>
+    <string name="AuthorNameOptional">작성자 이름 (선택 사항)</string>
+    <string name="NameCannotBeEmpty">이름을 반드시 입력해주세요.</string>
+    <string name="Version">버전</string>
+    <string name="InstallPack">팩 설치</string>
+    <string name="IconCount_one">%1$d개 아이콘</string>
+    <string name="IconCount_two">%1$d개의 아이콘</string>
+    <string name="IconCount_few">%1$d개의 아이콘</string>
+    <string name="IconCount_many">%1$d개의 아이콘</string>
+    <string name="IconCount_other">%1$d개 아이콘</string>
+    <string name="UpdatePack">팩 업데이트</string>
+    <string name="DeletePack">팩 삭제</string>
+    <string name="DeletePackInfo">정말로 **%1$s** 팩을 삭제하시겠습니까?</string>
+    <string name="IconPackErrorInvalidArchive">아이콘 팩 아카이브가 유효하지 않습니다.</string>
+    <string name="IconPackErrorMissingMetadata">아이콘 팩 아카이브에 metadata.json이 없습니다.</string>
+    <string name="IconPackErrorMetadataTooLarge">아이콘 팩 메타데이터가 너무 큽니다.</string>
+    <string name="IconPackErrorInvalidMetadata">아이콘 팩 메타데이터가 유효하지 않습니다.</string>
+    <string name="IconPackErrorTooManyFiles">아이콘 팩에 파일이 너무 많습니다.</string>
+    <string name="IconPackErrorArchiveTooLarge">아이콘 팩이 너무 큽니다.</string>
+    <string name="IconPackErrorFileTooLarge">아이콘 파일 중 하나가 너무 큽니다.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">아이콘 팩 아카이브가 너무 과도하게 압축되었습니다.</string>
+    <string name="IconPackErrorStorage">아이콘 팩을 저장할 수 없습니다.</string>
+    <!-- App Icons -->
+    <string name="IconPack">아이콘 팩</string>
+    <string name="AppIconSunset">일몰</string>
+    <string name="AppIconAurora">오로라</string>
+    <string name="AppIconAmethyst">자수정</string>
+    <string name="AppIconInvincible">인빈시블</string>
+    <string name="AppIconCyberpunk">사이버펑크</string>
+    <string name="AppIconSpace">우주</string>
+    <string name="AppIconIceAge">빙하기</string>
+    <string name="AppIconEditor">에디터</string>
+    <string name="AppIconOrbit">궤도</string>
+    <string name="AppIconSus">임포스터</string>
+    <string name="AppIconWinter">겨울</string>
+    <!-- General Appearance -->
+    <string name="Sections">섹션</string>
+    <string name="SeparateHeaders">별도 헤더</string>
+    <string name="DividerStyle">구분선 스타일</string>
+    <string name="DividerStyleHidden">숨김</string>
+    <string name="DividerStyleLine">선</string>
+    <string name="DividerStyleSegments">세그먼트</string>
+    <string name="UseSystemFonts">시스템 글꼴 사용</string>
+    <string name="UseSystemEmoji">시스템 이모지 사용</string>
+    <string name="NewLoadingStyle">로딩 스타일</string>
+    <string name="NewSliderStyle">슬라이더 스타일</string>
+    <string name="NewSwitchStyle">스위치 스타일</string>
+    <string name="TabletMode">태블릿 모드</string>
+    <string name="RemoveMessageTail">메시지 꼬리 제거</string>
+    <string name="GooeyAvatarAnimation">\"Gooey\" 아바타 애니메이션</string>
+    <string name="CustomChatThemes">채팅의 사용자 지정 테마</string>
+    <string name="CustomChatThemesInfo">각 채팅은 해당 채팅에 대해 특별히 선택된 테마를 표시합니다.</string>
+    <string name="PredictiveBackIntensity">예측 뒤로 가기 강도</string>
+    <string name="PredictiveBackMax">최대</string>
+    <string name="PredictiveBackInfo">뒤로 스와이프할 때 화면이 이동하는 정도를 조정합니다.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">블러 옵션</string>
+    <string name="GlassOutlineStyle">유리 윤곽선</string>
+    <string name="GlassOutlineGlare">눈부심</string>
+    <string name="GlassOutlineSolid">단색</string>
+    <string name="GlassOutlineHidden">숨김</string>
+    <string name="ForceSnow">눈송이 강제 표시</string>
+    <string name="ForceSnowInfo">눈송이가 작업 표시줄, 사이드 메뉴 및 채팅 배경에 나타납니다.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">스티커 크기</string>
+    <string name="StickerSizeLeft">작게</string>
+    <string name="StickerSizeRight">크게</string>
+    <string name="StickerSizeDialogMessage">와, 정말 귀엽네요!</string>
+    <string name="StickerShape">스티커 모양</string>
+    <string name="StickerShapeRounded">둥근</string>
+    <string name="StickerShapeRoundedMsg">메시지</string>
+    <string name="ViewEmojiSet">이모지 세트 보기</string>
+    <string name="UnlimitedRecentStickers">무제한 최근 스티커</string>
+    <string name="HideReactions">반응 숨기기</string>
+    <string name="HideReactionsInfo">반응이 인터페이스에서 완전히 숨겨집니다.</string>
+    <string name="ReplyBackground">배경</string>
+    <string name="ChatSettingsInfo">미디어 설정, 앱 아이콘 및 기타</string>
+    <!-- AI -->
+    <string name="AIChatInfo">서비스, 역할 및 기록 설정</string>
+    <string name="AIChatInfo2">메시지에서 텍스트를 생성하거나 전송하기 전에 생성합니다.</string>
+    <!-- AI Services -->
+    <string name="Services">서비스</string>
+    <string name="ServicesInfo">언어 모델과 상호작용할 적절한 서비스를 선택하세요.</string>
+    <string name="NewService">새 서비스</string>
+    <string name="EditService">서비스 편집</string>
+    <string name="ServiceModel">모델</string>
+    <string name="ServiceKey">API 키</string>
+    <string name="ServiceInfo">서비스 정보</string>
+    <string name="ServiceProvider">제공자</string>
+    <string name="ServiceProviderCustom">사용자 지정</string>
+    <string name="ServiceTestAndSave">테스트 및 저장</string>
+    <string name="ServicePasteService">서비스 붙여넣기</string>
+    <string name="ServicePasteKey">API 키 붙여넣기</string>
+    <string name="DeleteServiceInfo">**%1$s**를 삭제하시겠습니까?</string>
+    <!-- AI Roles -->
+    <string name="Roles">역할</string>
+    <string name="RolesInfo">특정 필요에 맞는 역할을 만드세요!</string>
+    <string name="Suggestions">제안</string>
+    <string name="RoleName">이름</string>
+    <string name="RolePrompt">프롬프트</string>
+    <string name="PromptInfo">프롬프트는 모델에 응답 생성 또는 대화 계속을 시작하도록 주는 초기 텍스트입니다.</string>
+    <string name="NewRole">새 역할</string>
+    <string name="EditRole">역할 편집</string>
+    <string name="DeleteRoleInfo">**%1$s**를 삭제하시겠습니까?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">대화 기록은 AI가 이전 요청을 이해하고 새 응답을 생성할 때 고려할 수 있게 합니다.</string>
+    <string name="AIGeneration">생성</string>
+    <string name="AIReasoning">추론</string>
+    <string name="AIReasoningInfo">이 서비스에서 지원하는 모델이 응답하기 전에 추가 토큰을 사용하여 생각할 수 있습니다.</string>
+    <string name="AITemperature">온도</string>
+    <string name="AITemperatureInfo">온도는 응답의 무작위성을 제어합니다: 값이 높을수록 더 창의적이고, 낮을수록 더 집중됩니다.</string>
+    <string name="ResponseStreaming">응답 스트리밍</string>
+    <string name="ResponseStreamingInfo">응답을 더 부드럽고 빠르게 표시합니다.</string>
+    <string name="ShowResponseOnly">응답만 표시</string>
+    <string name="InsertResponseAsQuote">응답을 인용으로 삽입</string>
+    <string name="TapToAddApiKey">AI 기능을 시작하려면 API 키를 추가하려면 탭하세요.</string>
+    <string name="Generate">생성</string>
+    <string name="ClearConversationHistoryInfo">**모든** AI 대화 기록을 지우시겠습니까?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">잘못된 요청</string>
+    <string name="AIError400Info">요청 매개변수를 확인하세요.</string>
+    <string name="AIError401">잘못된 자격 증명</string>
+    <string name="AIError401Info">API 키가 유효하지 않거나 비활성화되었습니다. 자격 증명을 확인하세요.</string>
+    <string name="AIError402">크레딧 부족</string>
+    <string name="AIError402Info">계정 또는 API 키에 크레딧이 부족합니다. 크레딧을 추가하고 요청을 다시 시도하세요.</string>
+    <string name="AIError403">접근 거부</string>
+    <string name="AIError403Info">이 모델 또는 리소스에 접근할 권한이 없습니다. API 키와 계정 권한을 확인하세요.</string>
+    <string name="AIError408">요청 시간 초과</string>
+    <string name="AIError408Info">요청이 제 시간에 처리되지 않았습니다. 나중에 다시 시도하세요.</string>
+    <string name="AIError429">속도 제한 초과</string>
+    <string name="AIError429Info">요청을 너무 자주 보내고 있습니다. 잠시 기다렸다가 다시 시도하세요.</string>
+    <string name="AIError502">모델 오류</string>
+    <string name="AIError502Info">선택한 모델을 사용할 수 없거나 유효하지 않은 응답을 받았습니다.</string>
+    <string name="AIError503">서비스를 사용할 수 없음</string>
+    <string name="AIError503Info">서비스를 일시적으로 사용할 수 없거나 과부하 상태입니다. 나중에 다시 시도하세요.</string>
+    <string name="AIError">서버 오류</string>
+    <string name="AIErrorInfo">잠시 후에 요청을 다시 시도하세요.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">수신 메시지</string>
+    <string name="DoubleTapOutgoing">발신 메시지</string>
+    <string name="DoubleTapInfo">일부 작업은 채팅 또는 채널에서 관리자 권한이 필요합니다.</string>
+    <string name="BottomButton">하단 버튼</string>
+    <string name="ChannelDiscussNoCaps">토론</string>
+    <string name="QuickTransitions">빠른 스와이프 전환</string>
+    <string name="DisableGreetingSticker">인사 스티커 비활성화</string>
+    <string name="AdminShortcuts">빠른 관리자 바로가기</string>
+    <string name="HideKeyboardOnScroll">스크롤 시 키보드 숨기기</string>
+    <string name="HideShareButton">\"%1$s\" 사이드 버튼 숨기기</string>
+    <string name="ReplaceEditedWithIcon">\"%1$s\"을(를) 아이콘으로 대체</string>
+    <string name="MessageMenu">메시지 메뉴</string>
+    <string name="GroupMessageMenu">그룹 메시지 메뉴</string>
+    <string name="GroupMessageMenuInfo">그룹화는 주요 작업을 메시지 메뉴 하단으로 이동합니다.</string>
+    <string name="GlassMessageMenu">유리 메시지 메뉴</string>
+    <string name="GlassMessageMenuBlurOff">유리 메뉴는 블러가 필요하지만 현재 꺼져 있습니다.</string>
+    <string name="AddCommaAfterMention">멘션 뒤에 쉼표 추가</string>
+    <string name="HideSendAsPeer">\"다른 이름으로 보내기…\" 버튼 숨기기</string>
+    <string name="HideSendAsPeerInfo">이모지/스티커/GIF 버튼을 길게 눌러 \"다른 이름으로 보내기…\" 메뉴에 계속 접근할 수 있습니다.</string>
+    <string name="ShowPollResultsBeforeVoting">투표 전 결과 표시</string>
+    <string name="ShowPollResultsBeforeVotingHint">투표를 보내기 전에 각 옵션의 결과를 확인하세요.</string>
+    <string name="ShowOnlineStatus">온라인 상태 표시기 표시</string>
+    <string name="MessagePreviewDialogMessage">나는 유리를 먹을 수 있고 아프지 않아요.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">음성 인식 언어</string>
+    <string name="RecognitionInfo">Vosk API를 사용합니다. 오프라인에서 작동합니다. 변환된 텍스트의 품질이 낮을 수 있습니다.</string>
+    <string name="MissingLanguageModel">언어 모델 누락</string>
+    <string name="DownloadingModel">모델 다운로드 중…</string>
+    <string name="DownloadingModelInfo">언어 모델을 다운로드하는 동안 이 창을 열어 두세요.</string>
+    <string name="ModelDownload">다운로드 (%1$s)</string>
+    <string name="ModelDownloadInfo">계속하려면 \"**%1$s**\" 언어 모델을 다운로드해야 합니다.</string>
+    <string name="ModelDownloaded">모델이 성공적으로 다운로드되었습니다.</string>
+    <string name="ModelError">모델 다운로드 중 오류가 발생했습니다.</string>
+    <string name="ModelUnzipping">압축 해제 중…</string>
+    <string name="DeleteRecognitionModel">모델 삭제</string>
+    <string name="DeleteRecognitionModelInfo">\"**%1$s**\" 언어 모델을 삭제하시겠습니까?</string>
+    <string name="RecognitionModelDeleted">모델이 성공적으로 삭제되었습니다.</string>
+    <string name="RecognitionModelDeleteError">모델 삭제 중 오류가 발생했습니다.</string>
+    <string name="PostProcessingWithAi">후처리에 AI 사용</string>
+    <string name="PostProcessingWithAiInfo">AI가 오류를 수정하고 구두점을 추가하며 불명확한 부분을 명확히 하여 가독성을 향상시킵니다.</string>
+    <!-- Camera -->
+    <string name="CameraType">카메라 유형</string>
+    <string name="ExtendedSettings">고급 설정</string>
+    <string name="SeamlessSwitching">매끄러운 전환</string>
+    <string name="ExtendedFramesPerSecond">확장 FPS 범위</string>
+    <string name="CameraStabilization">안정화</string>
+    <string name="CameraMirrorMode">미러 모드</string>
+    <string name="StartWithWideAngleCamera">광각으로 시작</string>
+    <string name="ZoomSlider">줌 슬라이더</string>
+    <string name="ZoomSliderInfo">비디오 메시지 카메라 아래에 줌 컨트롤을 표시합니다.</string>
+    <string name="StaticZoom">고정 줌</string>
+    <string name="StaticZoomInfo">비디오 메시지를 녹화할 때 손가락을 떼도 줌 레벨이 초기화되지 않습니다.</string>
+    <string name="VideoMessagesCamera">비디오 메시지의 카메라</string>
+    <string name="VideoMessagesCameraRear">후면</string>
+    <string name="VideoMessagesCameraFront">전면</string>
+    <string name="VideoMessagesCameraAsk">묻기</string>
+    <string name="RearCamera">후면 카메라</string>
+    <string name="FrontCamera">전면 카메라</string>
+    <string name="RememberLastUsedCamera">마지막으로 사용한 카메라 기억</string>
+    <string name="RememberLastUsedCameraInfo">비디오 메시지를 녹화할 때 마지막으로 사용한 카메라가 자동으로 선택됩니다.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">항상 HD로 전송</string>
+    <string name="HideCameraTile">즉시 카메라 타일 숨기기</string>
+    <string name="HideCameraTileInfo">카메라 타일이 플로팅 버튼으로 대체됩니다. 누르면 Telegram 카메라가 실행되고, 길게 누르면 시스템 카메라가 실행됩니다.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">더블 탭 건너뛰기 시간</string>
+    <string name="PreferOriginalQuality">원본 품질 선호</string>
+    <string name="PauseOnMinimize">자동 일시 중지</string>
+    <string name="PauseOnMinimizeVideo">비디오</string>
+    <string name="PauseOnMinimizeVoice">음성</string>
+    <string name="PauseOnMinimizeRound">원형</string>
+    <string name="PauseOnMinimizeInfo">기기가 잠기거나 exteraGram이 최소화되면 미디어 재생을 일시 중지합니다.</string>
+    <string name="SwipeToPip">스와이프로 PiP</string>
+    <string name="UnmuteWithVolumeButtons">볼륨 버튼으로 비디오 음소거 해제</string>
+    <string name="UnmuteWithVolumeButtonsInfo">볼륨 버튼을 누르면 시스템 볼륨을 변경하는 대신 비디오 음소거가 해제됩니다.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">이 옵션이 활성화되면 기기에 대한 데이터가 수집되어 Google Analytics 및 Crashlytics로 전송되어 사용 통계를 유지하고 앱 오류를 추적할 수 있습니다.\n\n그러나 옵션이 꺼지면 데이터 수집이 중지되고 전송된 데이터는 즉시 삭제됩니다.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">파일 이름을 입력하세요…</string>
+    <string name="ExportSettings">설정 내보내기</string>
+    <string name="ApplySettings">설정 적용</string>
+    <string name="ImportTitle">이 설정을 적용하시겠습니까?</string>
+    <string name="ImportConfirm">예, 적용</string>
+    <string name="CancelConfirm">아니요, 그대로 둡니다</string>
+    <string name="SettingsSaved">설정 파일이 성공적으로 저장되었습니다.</string>
+    <string name="SettingsImported">설정이 성공적으로 적용되었습니다.</string>
+    <string name="ImportChanges_one">**1**개의 변경 사항이 현재 설정에 적용됩니다.</string>
+    <string name="ImportChanges_two">**%1$d**개의 변경 사항이 현재 설정에 적용됩니다.</string>
+    <string name="ImportChanges_few">**%1$d**개의 변경 사항이 현재 설정에 적용됩니다.</string>
+    <string name="ImportChanges_many">**%1$d**개의 변경 사항이 현재 설정에 적용됩니다.</string>
+    <string name="ImportChanges_other">**%1$d**개의 변경 사항이 현재 설정에 적용됩니다.</string>
+    <string name="SameSettings">설정이 현재와 동일한 것 같습니다.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">보안상의 이유로 %1$s 후에 데이터 다운로드를 시작할 수 있습니다. 내보내기 요청이 승인되었는지 확인하고 그렇지 않은 경우 대응할 시간을 주기 위해 모든 기기에 알렸습니다.\n\n%2$s에 다시 와서 동일한 기기를 사용하여 요청을 반복하세요.</string>
+    <string name="ExportInvalid">죄송합니다. 새 데이터 내보내기를 시작했으므로 이 데이터 내보내기가 취소되었습니다.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">계정 삭제</string>
+    <string name="ResetSettings">설정 재설정</string>
+    <string name="ResetPreferences">**exteraGram** 기본 설정이 재설정되었습니다.</string>
+    <string name="ResetPreferencesInfo">**모든** exteraGram 기본 설정을 기본값으로 재설정하시겠습니까?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">개발 지원</string>
+    <string name="SupportDevelopmentInfo">프로젝트를 지원하면 개발에 기여할 뿐만 아니라 고유한 배지를 받을 수 있습니다.</string>
+    <string name="MakeDonation">기부하기</string>
+    <string name="ReceiveBadge">배지 받기</string>
+    <string name="NowPlaying">현재 재생 중</string>
+    <string name="ScrobblingService">스크로블링 서비스</string>
+    <string name="SelectService">서비스 선택</string>
+    <string name="SelectServiceInfo">프로필에 현재 트랙을 스크로블링 서비스에서 가져온 카드로 표시합니다.</string>
+    <string name="EnterUsername">사용자 이름 입력</string>
+    <string name="EnterUsernameInfo">사용자 이름은 **공식 웹사이트**에서 얻을 수 있습니다.</string>
+    <string name="BoostyPeopleCount_one">%1$d명</string>
+    <string name="BoostyPeopleCount_two">%1$d명</string>
+    <string name="BoostyPeopleCount_few">%1$d명</string>
+    <string name="BoostyPeopleCount_many">%1$d명</string>
+    <string name="BoostyPeopleCount_other">%1$d명</string>
+    <string name="BoostyInfo">**Boosty**에서 **exteraGram**을 적극적으로 지원하세요.</string>
+    <string name="BoostyInfo2">지원해 주셔서 감사합니다!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">플러그인 설치는 **exteraGram**의 **풀** 버전에서만 가능합니다.</string>
+    <string name="Plugins">플러그인</string>
+    <string name="PluginsEngine">플러그인 엔진</string>
+    <string name="EnablePluginsEngine">플러그인 엔진 활성화</string>
+    <string name="PluginsInfo">플러그인은 @exteraPlugins에서 찾을 수 있습니다.</string>
+    <string name="PluginsNotFound">플러그인을 찾을 수 없습니다.</string>
+    <string name="InstallPlugin">설치</string>
+    <string name="UpdatePlugin">업데이트</string>
+    <string name="PluginNotEnabled">**%1$s**를 설치하려면 **플러그인 엔진**을 활성화하세요.</string>
+    <string name="PluginInstalled">**%1$s**가 성공적으로 설치되었습니다.</string>
+    <string name="PluginUpdated">**%1$s**가 성공적으로 업데이트되었습니다.</string>
+    <string name="PluginEnableError">**%1$s**를 활성화하지 못했습니다.</string>
+    <string name="PluginDisableError">**%1$s**를 비활성화하지 못했습니다.</string>
+    <string name="PluginInstallError">**%1$s**를 설치하지 못했습니다.</string>
+    <string name="PluginSourceTrusted">신뢰할 수 있는 소스</string>
+    <string name="PluginSourceTrustedInfo">이 소스의 플러그인은 **검증**되었으며 사용해도 안전합니다.</string>
+    <string name="PluginSourceUnknown">알 수 없는 소스</string>
+    <string name="PluginSourceUnknownInfo">이 소스의 플러그인은 **검증되지 않았으며** 보안 위험이 있을 수 있습니다.</string>
+    <string name="PluginVersion">버전</string>
+    <string name="PluginNoDescription">설명이 제공되지 않았습니다.</string>
+    <string name="PluginIsNotResponding">플러그인이 응답하지 않습니다.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s이(가) 응답하지 않습니다.</string>
+    <string name="PluginNoAuthor">알 수 없는 작성자</string>
+    <string name="EnableAfterInstallation">설치 후 활성화</string>
+    <string name="EnterValue">값 입력</string>
+    <string name="PluginDelete">플러그인 삭제</string>
+    <string name="PluginDeleteInfo">**%1$s**를 삭제하시겠습니까?</string>
+    <string name="ResetPluginSettings">**%1$s** 설정이 재설정되었습니다.</string>
+    <string name="ResetPluginSettingsInfo">**%1$s** 설정을 기본값으로 재설정하시겠습니까?</string>
+    <string name="PluginsSafeMode">안전 모드</string>
+    <string name="PluginsSafeModeShortcut">안전 모드로 시작</string>
+    <string name="PluginsSafeModeInfo">충돌로 인해 플러그인 엔진이 비활성화되었습니다. 안전 모드를 비활성화하면 예측할 수 없는 결과가 발생할 수 있습니다.</string>
+    <string name="PluginsSafeModeInfo2">안전 모드에서는 모든 플러그인이 비활성화됩니다. 이를 통해 문제가 있는 플러그인을 안전하게 찾아 비활성화할 수 있습니다.</string>
+    <string name="PluginsDevMode">개발자 모드</string>
+    <string name="PluginsCompactView">플러그인 간략 보기</string>
+    <string name="PluginsDocumentation">문서</string>
+    <string name="PluginsTrusted">신뢰할 수 있는 플러그인</string>
+    <string name="PluginsDevServerLaunched">개발자 서버가 시작되었습니다.</string>
+    <string name="PluginsDevServerStopped">개발자 서버가 중지되었습니다.</string>
+    <string name="PluginEngineNotEnabled">**%1$s**의 설정을 열려면 **플러그인 엔진**을 활성화하세요.</string>
+    <string name="PluginNotFound">**%1$s**을(를) 찾을 수 없습니다.</string>
+    <string name="PluginHasNoSettings">**%1$s**에는 설정이 없습니다.</string>
+    <string name="PluginsPySdkAutoUpdate">자동 업데이트</string>
+    <string name="PluginsPySdkEnableBetaVersion">베타 버전 설치</string>
+    <string name="PluginsPySdkCheckUpdates">업데이트 확인</string>
+    <string name="CheckingForUpdates">업데이트 확인 중…</string>
+    <string name="LatestVersionInstalled">최신 버전이 설치되었습니다.</string>
+    <string name="RestartPluginSystemToApplyUpdate">업데이트가 로드되었습니다. 적용하려면 플러그인 엔진을 다시 시작하세요.</string>
+    <string name="LoadingUpdate">업데이트 로드 중…</string>
+    <string name="RestoreSdkFromApk">APK에서 SDK 복원</string>
+    <string name="EnableAutoUpdate">자동 업데이트 활성화</string>
+    <string name="PluginsDisableArt">호환성 모드</string>
+    <string name="PluginsDisableArtInfo">ART Profile Saver를 비활성화하여 플러그인 후크 실패를 방지합니다.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">업데이트 진행 중…</string>
+    <string name="UpdateInstallingRelaunch">업데이트가 완료되면 앱이 다시 시작됩니다.</string>
+    <string name="UpdateInstallingNotification">업데이트가 완료되면 알림을 받게 됩니다.</string>
+    <string name="UpdateInstalledNotification">업데이트가 완료되었습니다. 탭하여 앱을 여세요.</string>
+    <string name="UpdateFailedToInstall">업데이트 설치 실패, 오류 코드: %d</string>
+    <string name="UpdateAvailable">업데이트 가능!</string>
+    <!-- Message Details -->
+    <string name="Details">세부 정보</string>
+    <string name="Date">날짜</string>
+    <string name="EditedDate">편집 날짜</string>
+    <string name="ForwardedDate">전달 날짜</string>
+    <string name="FileSize">파일 크기</string>
+    <string name="FileName">파일 이름</string>
+    <string name="FilePath">파일 경로</string>
+    <string name="Platform">플랫폼</string>
+    <string name="Resolution">해상도</string>
+    <string name="Bitrate">비트레이트</string>
+    <string name="Duration">지속 시간</string>
+    <string name="MimeType">MIME 유형</string>
+    <string name="Datacenter">데이터 센터</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">형식:</string>
+    <string name="DateFormatOptionNone">없음</string>
+    <string name="DateFormatOptionRelative">상대적</string>
+    <string name="DateFormatOptionShortTime">짧은 시간</string>
+    <string name="DateFormatOptionLongTime">긴 시간</string>
+    <string name="DateFormatOptionShortDate">짧은 날짜</string>
+    <string name="DateFormatOptionLongDate">긴 날짜</string>
+    <string name="DateFormatOptionDayOfWeek">요일</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">QR 코드 로그인</string>
+    <string name="LoginQrSubtitle">다른 기기를 사용하여 이 QR 코드를 스캔하세요.</string>
+    <string name="WifiConnect">연결</string>
+    <string name="WifiDisabled">Wi-Fi가 비활성화되었습니다.</string>
+    <string name="WifiFailed">Wi-Fi에 연결하지 못했습니다.</string>
+    <string name="WifiSuccess">Wi-Fi에 성공적으로 연결되었습니다.</string>
+    <string name="AreYouSureToLogin">다른 기기에서 이 계정에 로그인하시겠습니까?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">페이지 차단됨</string>
+    <string name="PageBlockedDescription">exteraGram이 다음 페이지 로드를 차단했습니다:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">뒤로 가기</string>
+    <!-- Other -->
+    <string name="SetAsBadge">배지로 설정</string>
+    <string name="AutoLockInstant">즉시</string>
+    <string name="TestBackend">백엔드 테스트</string>
+    <string name="SearchPhotoInfo">서비스는 개인정보 보호정책 및 이용약관에 따라 이미지를 사용할 수 있습니다.</string>
+    <string name="PhotoUploadFailed">사진 업로드에 실패했습니다.</string>
+    <string name="TrackSaved">트랙이 **%1$s**에 저장되었습니다.</string>
+    <string name="ChannelToSaveChanged">트랙이 **%1$s**에 저장됩니다.</string>
+    <string name="DeletedMessage">삭제된 메시지</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">제목 복사</string>
+    <string name="CopyCallback">콜백 데이터 복사</string>
+    <string name="CopyInlineQuery">인라인 쿼리 복사</string>
+    <string name="CopyID">사용자 ID 복사</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">배지 상태가 설정되었습니다.</string>
+    <string name="UserNotFound">이 **ID**를 가진 사용자를 찾을 수 없습니다.</string>
+    <string name="ChatNotFound">이 **ID**를 가진 채팅을 찾을 수 없습니다.</string>
+    <string name="PhotoCopied">사진이 클립보드에 복사되었습니다.</string>
+    <string name="FrameCopied">프레임이 클립보드에 복사되었습니다.</string>
+    <string name="TapToCopy">탭하여 복사</string>
+    <string name="ProfileUsesEmojiPack">이 프로필은 배경에 %s 팩의 이모지를 사용합니다.</string>
+    <string name="ProfileUsesEmojiPacks">이 프로필은 배경에 **%d개 팩**의 이모지를 사용합니다.</string>
+    <string name="ReplyUsesEmojiPacks">이 답글은 배경에 %s 팩의 이모지를 사용합니다.</string>
+    <string name="StickerSavedHint">스티커가 갤러리에 저장되었습니다.</string>
+    <string name="EmojiSavedHint">이모지가 갤러리에 저장되었습니다.</string>
+    <string name="GifGallerySavedHint">GIF가 갤러리에 저장되었습니다.</string>
+    <string name="MutualContactInfo">이 연락처는 상호 연락처입니다.</string>
+    <string name="LocalPremiumEmojiHint">**Telegram Premium** 구독이 없으므로 **exteraGram** 사용자만 이 이모지를 볼 수 있습니다.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">연락처 탭 숨기기</string>
+    <string name="ShowContactsTab">연락처 탭 표시</string>
+    <string name="ContactsTabWasShownTitle">**연락처** 탭이 이제 표시됩니다.</string>
+    <string name="ContactsTabWasHiddenTitle">**연락처** 탭이 이제 숨겨집니다.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">이 기능은 사용자가 **Bitwarden** 또는 **KeePassDX**와 같은 권한 있는 앱에 대한 신뢰 설정을 관리할 수 있는 암호 관리자에서만 작동합니다.</string>
+    <string name="PasskeyUnsupportedTitle">지원되지 않는 암호 관리자</string>
+    <string name="PasskeyUnsupportedMessage">**Bitwarden** 또는 **KeePassDX**와 같은 다른 암호 관리자를 사용해 보세요.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** 님이 대략 **%2$s**에 계정을 만들었습니다.</string>
+    <string name="CreationDateUserEarlier">**%1$s** 님이 **%2$s**보다 먼저 계정을 만들었습니다.</string>
+    <string name="CreationDateUserLater">**%1$s** 님이 **%2$s**보다 나중에 계정을 만들었습니다.</string>
+    <string name="CreationDateChat">**%1$s**가 **%2$s**에 생성되었습니다.</string>
+    <string name="CreationDateSelfApproximately">당신은 대략 **%1$s**에 계정을 만들었습니다.</string>
+    <string name="CreationDateSelfEarlier">당신은 **%1$s**보다 먼저 계정을 만들었습니다.</string>
+    <string name="CreationDateSelfLater">당신은 **%1$s**보다 나중에 계정을 만들었습니다.</string>
+    <string name="JoinDateChat">당신은 **%2$s**에 **%1$s**에 가입했습니다.</string>
+    <string name="GroupMemberJoined">%1$s에 가입함</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">처음으로</string>
+    <string name="MessageHistory">기록</string>
+    <string name="BoldItalic">굵은 기울임</string>
+    <string name="CopyPhoto">사진 복사</string>
+    <string name="CopyFrame">프레임 복사</string>
+    <string name="Repeat">반복</string>
+    <string name="Subtitles">자막</string>
+    <string name="ChooseSubtitles">자막 선택</string>
+    <string name="DisableSubtitles">자막 비활성화</string>
+    <string name="SubtitlesAdded">자막이 활성화되었습니다.</string>
+    <string name="SubtitlesRemoved">자막이 비활성화되었습니다.</string>
+    <string name="SubtitlesLoadError">자막을 불러올 수 없습니다.</string>
+    <string name="SubtitlesUnsupportedFormat">지원되지 않는 자막 형식입니다.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">스티커 모서리</string>
+    <string name="StickerCornerRadiusInfo">스티커 모서리의 둥글기 정도를 선택하세요.</string>
+    <string name="StickerCornerRadiusLarge">크게</string>
+    <string name="StickerCornerRadiusMedium">중간</string>
+    <string name="StickerCornerRadiusSmall">작게</string>
+    <string name="StickerCornerRadiusNone">없음</string>
+    <!-- Feed -->
+    <string name="Feed">피드</string>
+    <string name="FeedShownChannels">피드에 표시됨</string>
+    <string name="FeedHiddenChannels">숨겨짐</string>
+    <string name="FeedChannels">채널</string>
+    <string name="FeedSettings">피드 설정</string>
+    <string name="FeedNoPosts">아직 채널 게시물이 없습니다.</string>
+    <string name="FeedAllChannelsExcluded">모든 채널이 피드에서 제외되었습니다.</string>
+    <string name="FeedMarkAllReadConfirm">피드 채널의 모든 게시물을 읽음으로 표시하시겠습니까? 이렇게 하면 원본 채널에서도 읽음으로 표시됩니다.</string>
+    <string name="FeedMarkAllReadDone">모든 게시물이 읽음으로 표시되었습니다.</string>
+    <string name="FeedIncludeArchived">보관함에서 채팅 표시</string>
+    <string name="FeedIncludeArchivedInfo">보관된 채팅의 채널도 피드에 포함합니다.</string>
+    <string name="FeedHideChannel">피드에서 숨기기</string>
+    <string name="FeedChannelHidden">**%1$s**이(가) 피드에서 숨겨졌습니다.</string>
+    <string name="FeedBottomTab">하단 탭에 표시</string>
+    <string name="FeedBottomTabInfo">연락처 탭 대신 하단 탐색 탭으로 피드를 표시합니다.</string>
+    <string name="FeedUnreadCounter">읽지 않은 게시물 카운터</string>
+    <string name="HideFeedTab">피드 탭 숨기기</string>
+    <string name="DisableMarkdown">Markdown 비활성화</string>
+    <string name="EnableMarkdown">Markdown 활성화</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

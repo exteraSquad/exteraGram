@@ -4,6 +4,8 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.text.Layout;
 import android.text.Spannable;
@@ -25,15 +27,17 @@ import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.FileLog;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 import java.util.ArrayList;
 
-public class MessageContainsEmojiButton extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
+public class MessageContainsEmojiButton extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, Theme.Colorable {
 
     private int currentAccount;
-    private Theme.ResourcesProvider resourcesProvider;
+    private final Theme.ResourcesProvider resourcesProvider;
     private TLRPC.InputStickerSet inputStickerSet;
 
     private Rect emojiDrawableBounds = new Rect();
@@ -53,12 +57,37 @@ public class MessageContainsEmojiButton extends FrameLayout implements Notificat
 
     public final static int EMOJI_TYPE = 0;
     public final static int REACTIONS_TYPE = 1;
+    public final static int EMOJI_STICKER_TYPE = 2;
+    public final static int SINGLE_REACTION_TYPE = 3;
+    public final static int REPLY_BACKGROUND = 4;
+    public final static int PROFILE_BACKGROUND = 5;
+    public final static int STICKERS_BOT_TYPE = 6;
+
     int type;
+
+    @Override
+    public void updateColors() {
+        try {
+            if (textPaint != null) {
+                final int alpha = textPaint.getAlpha();
+                textPaint.setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider));
+                textPaint.setAlpha(alpha);
+                invalidate();
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    @Override
+    public void addColorKeys(java.util.HashSet<Integer> colors) {
+        colors.add(Theme.key_actionBarDefaultSubmenuItem);
+    }
 
     private class BoldAndAccent extends CharacterStyle {
         @Override
         public void updateDrawState(TextPaint textPaint) {
-            textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textPaint.setTypeface(AndroidUtilities.bold());
             int wasAlpha = textPaint.getAlpha();
             textPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText, resourcesProvider));
             textPaint.setAlpha(wasAlpha);
@@ -67,10 +96,12 @@ public class MessageContainsEmojiButton extends FrameLayout implements Notificat
 
     public MessageContainsEmojiButton(int currentAccount, Context context, Theme.ResourcesProvider resourcesProvider, @NonNull ArrayList<TLRPC.InputStickerSet> inputStickerSets, int type) {
         super(context);
+
+        this.resourcesProvider = resourcesProvider;
         this.currentAccount = currentAccount;
         this.type = type;
 
-        setBackground(Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector, resourcesProvider), 0, 6));
+        ThemeBind.selectorBackground(this, Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector, resourcesProvider), 0, 16), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
 
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(AndroidUtilities.dp(13));
@@ -78,7 +109,9 @@ public class MessageContainsEmojiButton extends FrameLayout implements Notificat
 
         if (inputStickerSets.size() > 1) {
             String string;
-            if (type == EMOJI_TYPE) {
+            if (type == PROFILE_BACKGROUND) {
+                string = LocaleController.formatString(R.string.ProfileUsesEmojiPacks, inputStickerSets.size());
+            } else if (type == EMOJI_TYPE) {
                 string = LocaleController.formatPluralString("MessageContainsEmojiPacks", inputStickerSets.size());
             } else {
                 string = LocaleController.formatPluralString("MessageContainsReactionsPacks", inputStickerSets.size());
@@ -94,10 +127,16 @@ public class MessageContainsEmojiButton extends FrameLayout implements Notificat
             }
         } else if (inputStickerSets.size() == 1) {
             String string;
-            if (type == EMOJI_TYPE) {
-                string = LocaleController.getString("MessageContainsEmojiPack", R.string.MessageContainsEmojiPack);
+            if (type == REPLY_BACKGROUND) {
+                string = LocaleController.getString(R.string.ReplyUsesEmojiPacks);
+            } else if (type == PROFILE_BACKGROUND) {
+                string = LocaleController.getString(R.string.ProfileUsesEmojiPack);
+            } else if (type == EMOJI_TYPE) {
+                string = LocaleController.getString(R.string.MessageContainsEmojiPack);
+            } else if (type == SINGLE_REACTION_TYPE) {
+                string = LocaleController.getString(R.string.MessageContainsReactionPack);
             } else {
-                string = LocaleController.getString("MessageContainsReactionsPack", R.string.MessageContainsReactionsPack);
+                string = LocaleController.getString(R.string.MessageContainsReactionsPack);
             }
             String[] parts = string.split("%s");
             if (parts.length <= 1) {
@@ -130,7 +169,7 @@ public class MessageContainsEmojiButton extends FrameLayout implements Notificat
                         }
                     }, 0, emoji.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     emojiDrawable = AnimatedEmojiDrawable.make(currentAccount, AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, document);
-                    emojiDrawable.setColorFilter(Theme.chat_animatedEmojiTextColorFilter);
+                    ThemeBind.drawableColorFilter(this, emojiDrawable, Theme.key_windowBackgroundWhiteBlueText, resourcesProvider, PorterDuff.Mode.SRC_IN);
                     emojiDrawable.addView(this);
 
                     SpannableString stickerPack = new SpannableString(stickerPackName);
@@ -153,6 +192,13 @@ public class MessageContainsEmojiButton extends FrameLayout implements Notificat
                     loadingDrawable.colorKey2 = Theme.key_listSelector;
                     loadingDrawable.setRadiiDp(4);
                 }
+            }
+        } else {
+            if (type == STICKERS_BOT_TYPE) {
+                mainText = AndroidUtilities.replaceSingleTag(LocaleController.getString(R.string.StickersCheckStickersBotForMoreOptions),
+                        Theme.key_chat_messageLinkIn, AndroidUtilities.REPLACING_TAG_TYPE_LINKBOLD,
+                        null,
+                        resourcesProvider);
             }
         }
     }
@@ -370,6 +416,6 @@ public class MessageContainsEmojiButton extends FrameLayout implements Notificat
         if (emojiDrawable != null) {
             emojiDrawable.addView(this);
         }
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.groupStickersDidLoad);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.groupStickersDidLoad);
     }
 }

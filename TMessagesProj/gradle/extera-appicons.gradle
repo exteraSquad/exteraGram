@@ -1,0 +1,37 @@
+import com.exteragram.appicons.GenerateAppIconsTask
+
+ext.generatedExteraAppIconsManifest = file("$projectDir/src/main/AndroidManifest-appicons.xml")
+
+tasks.register("generateAppIcons", GenerateAppIconsTask) {
+    group = "extera"
+    description = "Rebuilds launcher icon resources, manifest aliases and the icon registry from appicons/icons.json"
+
+    sourceDir.set(file("$projectDir/appicons"))
+    colorFiles.from(file("$projectDir/src/main/res/values/colors.xml"))
+    resDir.set(file("$projectDir/src/main/res-appicons"))
+    manifestFile.set(generatedExteraAppIconsManifest)
+    registryFile.set(file("$projectDir/src/main/java/com/exteragram/messenger/appicons/GeneratedAppIcons.java"))
+
+    componentPackage.set(APP_PACKAGE.toString())
+    registryPackage.set("com.exteragram.messenger.appicons")
+    resourcePackage.set("org.telegram.messenger")
+
+    def overrides = [:]
+    ["rsvg-convert", "cwebp", "dwebp"].each { tool ->
+        def override = findProperty("appicons.$tool")
+        if (override != null) overrides[tool] = override.toString()
+    }
+    toolOverrides.set(overrides)
+}
+
+tasks.matching { it.name != "generateAppIcons" }.configureEach {
+    mustRunAfter(tasks.named("generateAppIcons"))
+}
+
+if (generatedExteraAppIconsManifest.exists()) {
+    androidComponents {
+        onVariants(selector().all()) { variant ->
+            variant.sources.manifests.addStaticManifestFile("src/main/AndroidManifest-appicons.xml")
+        }
+    }
+}

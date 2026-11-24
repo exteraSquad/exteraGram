@@ -20,7 +20,7 @@ import android.widget.RemoteViewsService;
 
 import androidx.collection.LongSparseArray;
 
-import com.google.android.exoplayer2.util.Log;
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
@@ -79,11 +79,11 @@ class ContactsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
     public RemoteViews getViewAt(int position) {
         if (deleted) {
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_deleted);
-            rv.setTextViewText(R.id.widget_deleted_text, LocaleController.getString("WidgetLoggedOff", R.string.WidgetLoggedOff));
+            rv.setTextViewText(R.id.widget_deleted_text, LocaleController.getString(R.string.WidgetLoggedOff));
             return rv;
         } else if (position >= getCount() - 1) {
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_edititem);
-            rv.setTextViewText(R.id.widget_edititem_text, LocaleController.getString("TapToEditWidgetShort", R.string.TapToEditWidgetShort));
+            rv.setTextViewText(R.id.widget_edititem_text, LocaleController.getString(R.string.TapToEditWidgetShort));
             Bundle extras = new Bundle();
             extras.putInt("appWidgetId", appWidgetId);
             extras.putInt("appWidgetType", EditWidgetActivity.TYPE_CONTACTS);
@@ -110,11 +110,11 @@ class ContactsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
                 if (DialogObject.isUserDialog(id)) {
                     user = accountInstance.getMessagesController().getUser(id);
                     if (UserObject.isUserSelf(user)) {
-                        name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
+                        name = LocaleController.getString(R.string.SavedMessages);
                     } else if (UserObject.isReplyUser(user)) {
-                        name = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
+                        name = LocaleController.getString(R.string.RepliesTitle);
                     } else if (UserObject.isDeleted(user)) {
-                        name = LocaleController.getString("HiddenName", R.string.HiddenName);
+                        name = LocaleController.getString(R.string.HiddenName);
                     } else {
                         name = UserObject.getFirstName(user);
                     }
@@ -155,9 +155,11 @@ class ContactsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
                                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                             }
                         } else {
-                            avatarDrawable = new AvatarDrawable(chat);
+                            avatarDrawable = new AvatarDrawable();
+                            avatarDrawable.setInfo(accountInstance.getCurrentAccount(), chat);
                         }
                         avatarDrawable.setBounds(0, 0, size, size);
+                        avatarDrawable.setRoundRadius(ExteraConfig.getAvatarCorners(size, true, chat != null && chat.forum));
                         avatarDrawable.draw(canvas);
                     } else {
                         BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
@@ -168,9 +170,10 @@ class ContactsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
                         float scale = size / (float) bitmap.getWidth();
                         canvas.save();
                         canvas.scale(scale, scale);
+                        float cornerRadius = ExteraConfig.getAvatarCorners(bitmap.getWidth(), true, chat != null && chat.forum);
                         roundPaint.setShader(shader);
                         bitmapRect.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
-                        canvas.drawRoundRect(bitmapRect, bitmap.getWidth(), bitmap.getHeight(), roundPaint);
+                        canvas.drawRoundRect(bitmapRect, cornerRadius, cornerRadius, roundPaint);
                         canvas.restore();
                     }
                     canvas.setBitmap(null);

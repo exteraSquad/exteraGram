@@ -1,5 +1,8 @@
 package org.telegram.ui.Components.voip;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import org.telegram.messenger.FileLog;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -37,7 +40,6 @@ import androidx.core.graphics.ColorUtils;
 
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.ImageLoader;
@@ -47,6 +49,7 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
@@ -56,6 +59,7 @@ import org.telegram.messenger.voip.VoIPService;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BlobDrawable;
 import org.telegram.ui.Components.CrossOutDrawable;
@@ -172,27 +176,27 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
         this.currentAccount = activity.getCurrentAccount();
         pausedVideoDrawable = new CrossOutDrawable(parentContainer.getContext(), R.drawable.calls_video, -1);
         pausedVideoDrawable.setCrossOut(true, false);
-        pausedVideoDrawable.setOffsets(-AndroidUtilities.dp(4), AndroidUtilities.dp(6), AndroidUtilities.dp(6));
+        pausedVideoDrawable.setOffsets(-dp(4), dp(6), dp(6));
         pausedVideoDrawable.setStrokeWidth(AndroidUtilities.dpf2(3.4f));
 
         castingScreenDrawable = parentContainer.getContext().getResources().getDrawable(R.drawable.screencast_big).mutate();
 
         TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        textPaint.setTextSize(AndroidUtilities.dp(13));
+        textPaint.setTypeface(AndroidUtilities.bold());
+        textPaint.setTextSize(dp(13));
         textPaint.setColor(Color.WHITE);
 
         TextPaint textPaint2 = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        textPaint2.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        textPaint2.setTextSize(AndroidUtilities.dp(15));
+        textPaint2.setTypeface(AndroidUtilities.bold());
+        textPaint2.setTextSize(dp(15));
         textPaint2.setColor(Color.WHITE);
 
-        String videoOnPauseString = LocaleController.getString("VoipVideoOnPause", R.string.VoipVideoOnPause);
-        StaticLayout staticLayout = new StaticLayout(LocaleController.getString("VoipVideoScreenSharingTwoLines", R.string.VoipVideoScreenSharingTwoLines), textPaint, AndroidUtilities.dp(400), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
+        String videoOnPauseString = LocaleController.getString(R.string.VoipVideoOnPause);
+        StaticLayout staticLayout = new StaticLayout(LocaleController.getString(R.string.VoipVideoScreenSharingTwoLines), textPaint, dp(400), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
         TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(call.chatId);
         String text = LocaleController.formatPluralString("Participants", MessagesController.getInstance(currentAccount).groupCallVideoMaxParticipants);
-        StaticLayout noVideoLayout = new StaticLayout(LocaleController.formatString("VoipVideoNotAvailable", R.string.VoipVideoNotAvailable, text), textPaint, AndroidUtilities.dp(400), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
-        String sharingScreenString = LocaleController.getString("VoipVideoScreenSharing", R.string.VoipVideoScreenSharing);
+        StaticLayout noVideoLayout = new StaticLayout(LocaleController.formatString("VoipVideoNotAvailable", R.string.VoipVideoNotAvailable, text), textPaint, dp(400), Layout.Alignment.ALIGN_CENTER, 1.0f, 0, false);
+        String sharingScreenString = LocaleController.getString(R.string.VoipVideoScreenSharing);
 
         float textW = textPaint.measureText(videoOnPauseString);
         float textW3 = textPaint2.measureText(sharingScreenString);
@@ -243,13 +247,13 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                     }
                     if (participant == call.videoNotAvailableParticipant) {
                         if (showingInFullscreen || !parentContainer.inFullscreenMode) {
-                            float iconSize = AndroidUtilities.dp(48);
+                            float iconSize = dp(48);
                             float x = (getMeasuredWidth() - iconSize) / 2f;
                             float y = getMeasuredHeight() / 2 - iconSize;
                             textPaint.setAlpha(255);
 
                             canvas.save();
-                            canvas.translate(x - AndroidUtilities.dp(400) / 2f + iconSize / 2f, y + iconSize + AndroidUtilities.dp(10));
+                            canvas.translate(x - dp(400) / 2f + iconSize / 2f, y + iconSize + dp(10));
                             noVideoLayout.draw(canvas);
                             canvas.restore();
                         }
@@ -263,11 +267,11 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                             stopSharingTextView.setScaleY(1.0f);
                         }
                         float progressToFullscreen = drawFirst ? 0 : parentContainer.progressToFullscreenMode;
-                        int size = AndroidUtilities.dp(33);
+                        int size = dp(33);
                         if (animateToFullscreen || showingInFullscreen) {
-                            size += (AndroidUtilities.dp(10) + AndroidUtilities.dp(39) * parentContainer.progressToFullscreenMode);
+                            size += (dp(10) + dp(39) * parentContainer.progressToFullscreenMode);
                         } else {
-                            size += AndroidUtilities.dp(10) * Math.max(1.0f - parentContainer.progressToFullscreenMode, showingAsScrimView || animateToScrimView ? parentContainer.progressToScrimView : 0.0f);
+                            size += dp(10) * Math.max(1.0f - parentContainer.progressToFullscreenMode, showingAsScrimView || animateToScrimView ? parentContainer.progressToScrimView : 0.0f);
                         }
 
                         int x = (getMeasuredWidth() - size) / 2;
@@ -280,7 +284,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                             smallProgress = animateToFullscreen ? parentContainer.progressToFullscreenMode : scrimProgress;
                             smallProgress2 = showingAsScrimView || animateToScrimView ? parentContainer.progressToScrimView : parentContainer.progressToFullscreenMode;
                         }
-                        int y = (int) ((getMeasuredHeight() - size) / 2 - AndroidUtilities.dp(28) - (AndroidUtilities.dp(17) + AndroidUtilities.dp(74) * (showingInFullscreen || animateToFullscreen ? parentContainer.progressToFullscreenMode : 0.0f)) * smallProgress + AndroidUtilities.dp(17) * smallProgress2);
+                        int y = (int) ((getMeasuredHeight() - size) / 2 - dp(28) - (dp(17) + dp(74) * (showingInFullscreen || animateToFullscreen ? parentContainer.progressToFullscreenMode : 0.0f)) * smallProgress + dp(17) * smallProgress2);
                         castingScreenDrawable.setBounds(x, y, x + size, y + size);
                         castingScreenDrawable.draw(canvas);
 
@@ -292,16 +296,16 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                             } else {
                                 stopSharingTextView.setAlpha(0.0f);
                             }
-                            canvas.drawText(sharingScreenString, x - textW3 / 2f + size / 2f, y + size + AndroidUtilities.dp(32), textPaint2);
+                            canvas.drawText(sharingScreenString, x - textW3 / 2f + size / 2f, y + size + dp(32), textPaint2);
                         } else {
                             stopSharingTextView.setAlpha(0.0f);
                         }
-                        stopSharingTextView.setTranslationY(y + size + AndroidUtilities.dp(72) + swipeToBackDy - currentClipVertical);
+                        stopSharingTextView.setTranslationY(y + size + dp(72) + swipeToBackDy - currentClipVertical);
                         stopSharingTextView.setTranslationX((getMeasuredWidth() - stopSharingTextView.getMeasuredWidth()) / 2f - currentClipHorizontal);
                         if (parentContainer.progressToFullscreenMode < 1 && scrimProgress < 1) {
                             textPaint.setAlpha((int) (255 * (1.0 - Math.max(parentContainer.progressToFullscreenMode, scrimProgress))));
                             canvas.save();
-                            canvas.translate(x - AndroidUtilities.dp(400) / 2f + size / 2f, y + size + AndroidUtilities.dp(10));
+                            canvas.translate(x - dp(400) / 2f + size / 2f, y + size + dp(10));
                             staticLayout.draw(canvas);
                             canvas.restore();
                         }
@@ -323,12 +327,12 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 }
                 super.dispatchDraw(canvas);
 
-                float y = getMeasuredHeight() - currentClipVertical - AndroidUtilities.dp(80);
+                float y = getMeasuredHeight() - currentClipVertical - dp(80);
 
                 if (participant != call.videoNotAvailableParticipant) {
                     canvas.save();
                     if ((showingInFullscreen || animateToFullscreen) && !GroupCallActivity.isLandscapeMode && !GroupCallActivity.isTabletMode) {
-                        y -= AndroidUtilities.dp(90) * parentContainer.progressToFullscreenMode * (1f - parentContainer.progressToHideUi);
+                        y -= dp(90) * parentContainer.progressToFullscreenMode * (1f - parentContainer.progressToHideUi);
                     }
                     canvas.translate(0, y);
                     canvas.drawPaint(gradientPaint);
@@ -357,7 +361,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                     a *= (isInAnimation() ? (overlayIconAlphaFrom * (1f - animationProgress) + overlayIconAlpha * animationProgress) : overlayIconAlpha);
 
                     if (a > 0) {
-                        float iconSize = AndroidUtilities.dp(48);
+                        float iconSize = dp(48);
                         float x = (getMeasuredWidth() - iconSize) / 2f;
                         y = (getMeasuredHeight() - iconSize) / 2f;
                         if (participant == call.videoNotAvailableParticipant) {
@@ -376,7 +380,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                         a *= parentContainer.progressToFullscreenMode;
                         if (a > 0 && participant != call.videoNotAvailableParticipant) {
                             textPaint.setAlpha((int) (255 * a));
-                            canvas.drawText(videoOnPauseString, x - textW / 2f + iconSize / 2f, y + iconSize + AndroidUtilities.dp(16), textPaint);
+                            canvas.drawText(videoOnPauseString, x - textW / 2f + iconSize / 2f, y + iconSize + dp(16), textPaint);
                         }
                     }
                 }
@@ -513,14 +517,14 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
         nameView = new SimpleTextView(parentContainer.getContext());
         nameView.setTextSize(13);
         nameView.setTextColor(ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * 0.9f)));
-        nameView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        nameView.setTypeface(AndroidUtilities.bold());
         nameView.setFullTextMaxLines(1);
         nameView.setBuildFullLayout(true);
         infoContainer = new FrameLayout(parentContainer.getContext());
         infoContainer.addView(nameView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL | Gravity.LEFT, 32, 0, 8, 0));
         addView(infoContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 32));
         speakingPaint.setStyle(Paint.Style.STROKE);
-        speakingPaint.setStrokeWidth(AndroidUtilities.dp(2));
+        speakingPaint.setStrokeWidth(dp(2));
         speakingPaint.setColor(Theme.getColor(Theme.key_voipgroup_speakingText));
         infoContainer.setClipChildren(false);
 
@@ -529,11 +533,11 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
 
         screencastIcon = new ImageView(parentContainer.getContext());
         addView(screencastIcon, LayoutHelper.createFrame(24, 24, 0, 4, 6, 4, 0));
-        screencastIcon.setPadding(AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4), AndroidUtilities.dp(4));
+        screencastIcon.setPadding(dp(4), dp(4), dp(4), dp(4));
         screencastIcon.setImageDrawable(ContextCompat.getDrawable(parentContainer.getContext(), R.drawable.voicechat_screencast));
         screencastIcon.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
 
-        final Drawable rippleDrawable = Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(19), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, 100));
+        final Drawable rippleDrawable = Theme.createSimpleSelectorRoundRectDrawable(dp(19), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.WHITE, 100));
         stopSharingTextView = new TextView(parentContainer.getContext()) {
             @Override
             public boolean onTouchEvent(MotionEvent event) {
@@ -543,10 +547,10 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 return super.onTouchEvent(event);
             }
         };
-        stopSharingTextView.setText(LocaleController.getString("VoipVideoScreenStopSharing", R.string.VoipVideoScreenStopSharing));
+        stopSharingTextView.setText(LocaleController.getString(R.string.VoipVideoScreenStopSharing));
         stopSharingTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        stopSharingTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        stopSharingTextView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), 0);
+        stopSharingTextView.setTypeface(AndroidUtilities.bold());
+        stopSharingTextView.setPadding(dp(21), 0, dp(21), 0);
         stopSharingTextView.setTextColor(0xffffffff);
         stopSharingTextView.setBackground(rippleDrawable);
         stopSharingTextView.setGravity(Gravity.CENTER);
@@ -560,8 +564,8 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
 
         noRtmpStreamTextView = new TextView(parentContainer.getContext());
         noRtmpStreamTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        noRtmpStreamTextView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), 0);
-        noRtmpStreamTextView.setTextColor(Theme.getColor(Theme.key_voipgroup_lastSeenText));
+        noRtmpStreamTextView.setPadding(dp(21), 0, dp(21), 0);
+        ThemeBind.textColor(noRtmpStreamTextView, Theme.key_voipgroup_lastSeenText);
         noRtmpStreamTextView.setBackground(rippleDrawable);
         noRtmpStreamTextView.setGravity(Gravity.CENTER);
         noRtmpStreamTextView.setAlpha(0f);
@@ -590,7 +594,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 micIconView.setAlpha(1f - parentContainer.progressToScrimView);
             } else if (showingInFullscreen || animateToFullscreen) {
                 if (!GroupCallActivity.isLandscapeMode && !GroupCallActivity.isTabletMode) {
-                    y -= AndroidUtilities.dp(90) * parentContainer.progressToFullscreenMode * (1f - parentContainer.progressToHideUi);
+                    y -= dp(90) * parentContainer.progressToFullscreenMode * (1f - parentContainer.progressToHideUi);
                 }
                 infoContainer.setAlpha(1f);
                 micIconView.setAlpha(1f);
@@ -608,15 +612,15 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 nameView.setFullAlpha(0f);
             }
             micIconView.setTranslationX(infoContainer.getX());
-            micIconView.setTranslationY(y - AndroidUtilities.dp(2));
+            micIconView.setTranslationY(y - dp(2));
 
             if (screencastIcon.getVisibility() == View.VISIBLE) {
-                screencastIcon.setTranslationX(textureView.getMeasuredWidth() - 2 * textureView.currentClipHorizontal - AndroidUtilities.dp(32));
-                screencastIcon.setTranslationY(y - AndroidUtilities.dp(2));
+                screencastIcon.setTranslationX(textureView.getMeasuredWidth() - 2 * textureView.currentClipHorizontal - dp(32));
+                screencastIcon.setTranslationY(y - dp(2));
                 screencastIcon.setAlpha(Math.min(1f - parentContainer.progressToFullscreenMode, 1f - parentContainer.progressToScrimView));
             }
             infoContainer.setTranslationY(y);
-            infoContainer.setTranslationX(drawFirst ? 0 : AndroidUtilities.dp(6) * parentContainer.progressToFullscreenMode);
+            infoContainer.setTranslationX(drawFirst ? 0 : dp(6) * parentContainer.progressToFullscreenMode);
         }
         super.dispatchDraw(canvas);
 
@@ -643,7 +647,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             if (progressToSpeaking > 0) {
                 speakingPaint.setAlpha((int) (255 * selectionProgress));
 
-                float scale = 0.9f + 0.1f * Math.max(0, 1f - Math.abs(swipeToBackDy) / AndroidUtilities.dp(300));
+                float scale = 0.9f + 0.1f * Math.max(0, 1f - Math.abs(swipeToBackDy) / dp(300));
                 canvas.save();
                 AndroidUtilities.rectTmp.set(textureView.getX() + textureView.currentClipHorizontal, textureView.getY() + textureView.currentClipVertical, textureView.getX() + textureView.getMeasuredWidth() - textureView.currentClipHorizontal, textureView.getY() + textureView.getMeasuredHeight() - textureView.currentClipVertical);
                 canvas.scale(scale, scale, AndroidUtilities.rectTmp.centerX(), AndroidUtilities.rectTmp.centerY());
@@ -661,7 +665,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
         if (swipeToBack && (child == textureView || child == noVideoStubLayout)) {
-            float scale = 0.9f + 0.1f * Math.max(0, 1f - Math.abs(swipeToBackDy) / AndroidUtilities.dp(300));
+            float scale = 0.9f + 0.1f * Math.max(0, 1f - Math.abs(swipeToBackDy) / dp(300));
             canvas.save();
             canvas.scale(scale, scale, child.getX() + child.getMeasuredWidth() / 2f, child.getY() + child.getMeasuredHeight() / 2f);
             canvas.translate(0, swipeToBackDy);
@@ -685,7 +689,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             checkScale = true;
             lastLandscapeMode = GroupCallActivity.isLandscapeMode;
         }
-        layoutParams.leftMargin = layoutParams.rightMargin = AndroidUtilities.dp(2);
+        layoutParams.leftMargin = layoutParams.rightMargin = dp(2);
 
         if (updateNextLayoutAnimated) {
             nameView.animate().scaleX(nameScale).scaleY(nameScale).start();
@@ -709,26 +713,26 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             overlayIconAlpha = 1f;
             if (GroupCallActivity.isTabletMode) {
                 int w = MeasureSpec.getSize(widthMeasureSpec);
-                w -= AndroidUtilities.dp(GroupCallActivity.TABLET_LIST_SIZE + 8);
+                w -= dp(GroupCallActivity.TABLET_LIST_SIZE + 8);
                 int h = MeasureSpec.getSize(heightMeasureSpec);
-                h -= AndroidUtilities.dp(4);
+                h -= dp(4);
                 super.onMeasure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(h, MeasureSpec.EXACTLY));
             } else if (!GroupCallActivity.isLandscapeMode) {
                 int h = MeasureSpec.getSize(heightMeasureSpec);
                 if (!call.call.rtmp_stream) {
-                    h -= AndroidUtilities.dp(92);
+                    h -= dp(92);
                 }
                 super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(h, MeasureSpec.EXACTLY));
             } else {
                 int w = MeasureSpec.getSize(widthMeasureSpec);
                 if (!call.call.rtmp_stream) {
-                    w -= AndroidUtilities.dp(92);
+                    w -= dp(92);
                 }
                 super.onMeasure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec), MeasureSpec.EXACTLY));
             }
         } else if (showingAsScrimView) {
             overlayIconAlpha = 1f;
-            int size = Math.min(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec)) - AndroidUtilities.dp(14) * 2;
+            int size = Math.min(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec)) - dp(14) * 2;
             super.onMeasure(MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(size + getPaddingBottom(), MeasureSpec.EXACTLY));
         } else if (useSpanSize) {
             overlayIconAlpha = 1f;
@@ -740,29 +744,29 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             }
             float listSize;
             if (tabletGridView != null) {
-                listSize = MeasureSpec.getSize(widthMeasureSpec) - AndroidUtilities.dp(GroupCallActivity.TABLET_LIST_SIZE + 16 + 8);
+                listSize = MeasureSpec.getSize(widthMeasureSpec) - dp(GroupCallActivity.TABLET_LIST_SIZE + 16 + 8);
             } else if (GroupCallActivity.isTabletMode) {
-                listSize = AndroidUtilities.dp(GroupCallActivity.TABLET_LIST_SIZE);
+                listSize = dp(GroupCallActivity.TABLET_LIST_SIZE);
             } else {
-                listSize = MeasureSpec.getSize(widthMeasureSpec) - AndroidUtilities.dp(14) * 2 + (GroupCallActivity.isLandscapeMode ? -AndroidUtilities.dp(90) : 0);
+                listSize = MeasureSpec.getSize(widthMeasureSpec) - dp(14) * 2 + (GroupCallActivity.isLandscapeMode ? -dp(90) : 0);
             }
             float w = listSize * (spanCount / (float) spanCountTotal);
             float h;
             if (tabletGridView != null) {
-                h = tabletGridView.getItemHeight() - AndroidUtilities.dp(4);
-                w -= AndroidUtilities.dp(4);
+                h = tabletGridView.getItemHeight() - dp(4);
+                w -= dp(4);
             } else {
                 if (GroupCallActivity.isTabletMode) {
                     h = listSize / 2f;
                 } else {
                     h = listSize / (float) (GroupCallActivity.isLandscapeMode ? 3 : 2);
                 }
-                w -= AndroidUtilities.dp(2);
+                w -= dp(2);
             }
             float layoutContainerW = w;
             layoutParams = (LayoutParams) infoContainer.getLayoutParams();
             if (screencastIcon.getVisibility() == View.VISIBLE) {
-                layoutContainerW -= AndroidUtilities.dp(28);
+                layoutContainerW -= dp(28);
             }
             updateSize((int) layoutContainerW);
             layoutParams.width = (int) (layoutContainerW - layoutParams.leftMargin * 2);
@@ -775,12 +779,17 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
         int size = MeasureSpec.getSize(heightMeasureSpec) + (MeasureSpec.getSize(widthMeasureSpec) << 16);
         if (lastSize != size) {
             lastSize = size;
-            gradientShader = new LinearGradient(0, 0, 0, AndroidUtilities.dp(120), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.BLACK, 120), Shader.TileMode.CLAMP);
+            gradientShader = new LinearGradient(0, 0, 0, dp(120), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Color.BLACK, 120), Shader.TileMode.CLAMP);
             gradientPaint.setShader(gradientShader);
         }
 
         nameView.setPivotX(0);
         nameView.setPivotY(nameView.getMeasuredHeight() / 2f);
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
     }
 
     public static GroupCallMiniTextureView getOrCreate(ArrayList<GroupCallMiniTextureView> attachedRenderers, GroupCallRenderersContainer renderersContainer, GroupCallGridCell primaryView, GroupCallFullscreenAdapter.GroupCallUserCell secondaryView, GroupCallGridCell tabletGridView, ChatObject.VideoParticipant participant, ChatObject.Call call, GroupCallActivity activity) {
@@ -811,6 +820,10 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             this.tabletGridView = tabletGridView;
             updateAttachState(true);
         }
+    }
+
+    public GroupCallGridCell getPrimaryView() {
+        return primaryView;
     }
 
     public void setPrimaryView(GroupCallGridCell primaryView) {
@@ -849,12 +862,13 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
         }
     }
 
+    private Runnable hideRunnable;
     public void updateAttachState(boolean animated) {
         if (forceDetached) {
             return;
         }
         if (call.call.rtmp_stream) {
-            int padding = AndroidUtilities.dp(showingInFullscreen ? 36 : 21);
+            int padding = dp(showingInFullscreen ? 36 : 21);
             noRtmpStreamTextView.setPadding(padding, 0, padding, 0);
         }
         if (participant == null && (primaryView != null || secondaryView != null || tabletGridView != null)) {
@@ -877,28 +891,49 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
 
                 saveThumb();
 
+                final boolean full = SharedConfig.getDevicePerformanceClass() <= SharedConfig.PERFORMANCE_CLASS_LOW;
                 if (textureView.currentAnimation == null && needDetach) {
                     GroupCallMiniTextureView viewToRemove = this;
-                    parentContainer.detach(viewToRemove);
+                    if (full) {
+                        parentContainer.detach(viewToRemove);
+                    }
                     animate().scaleX(0.5f).scaleY(0.5f).alpha(0).setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             viewToRemove.setScaleX(1f);
                             viewToRemove.setScaleY(1f);
                             viewToRemove.setAlpha(1f);
-                            parentContainer.removeView(viewToRemove);
-                            release();
+                            if (full) {
+                                parentContainer.removeView(viewToRemove);
+                                release();
+                            }
+                            viewToRemove.setVisibility(View.GONE);
                         }
                     }).setDuration(150).start();
                 } else {
                     if (parentContainer.inLayout) {
                         View viewToRemove = this;
-                        AndroidUtilities.runOnUIThread(() -> parentContainer.removeView(viewToRemove));
+                        if (hideRunnable != null) {
+                            AndroidUtilities.cancelRunOnUIThread(hideRunnable);
+                            hideRunnable = null;
+                        }
+                        AndroidUtilities.runOnUIThread(hideRunnable = () -> {
+                            if (full) {
+                                parentContainer.removeView(viewToRemove);
+                            }
+                            viewToRemove.setVisibility(View.GONE);
+                            hideRunnable = null;
+                        });
                     } else {
-                        parentContainer.removeView(this);
+                        if (full) {
+                            parentContainer.removeView(this);
+                        }
+                        this.setVisibility(View.GONE);
                     }
-                    parentContainer.detach(this);
-                    release();
+                    if (full) {
+                        parentContainer.detach(this);
+                        release();
+                    }
                 }
 
                 if (participant.participant.self) {
@@ -938,13 +973,13 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                     videoActive = (call.canStreamVideo || participant == call.videoNotAvailableParticipant) && ChatObject.Call.videoIsActive(participant.participant, participant.presentation, call);
                 }
                 if (showingInFullscreen || (!VoIPService.getSharedInstance().isFullscreen(participant.participant, participant.presentation) && !VoIPService.getSharedInstance().isFullscreen(participant.participant, participant.presentation) && videoActive)) {
-                    if (BuildVars.DEBUG_PRIVATE_VERSION) {
-                        for (int i = 0; i < attachedRenderers.size(); i++) {
-                            if (attachedRenderers.get(i).participant.equals(participant)) {
-                                throw new RuntimeException("try add two same renderers");
-                            }
-                        }
-                    }
+//                    if (BuildVars.DEBUG_PRIVATE_VERSION) {
+//                        for (int i = 0; i < attachedRenderers.size(); i++) {
+//                            if (attachedRenderers.get(i).participant.equals(participant)) {
+//                                throw new RuntimeException("try add two same renderers");
+//                            }
+//                        }
+//                    }
                     forceRequestLayout = true;
                     attached = true;
 
@@ -957,9 +992,16 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                     statusIcon.setImageView(micIconView);
                     updateIconColor(false);
 
+                    if (hideRunnable != null) {
+                        AndroidUtilities.cancelRunOnUIThread(hideRunnable);
+                        hideRunnable = null;
+                    }
                     if (getParent() == null) {
                         parentContainer.addView(this, LayoutHelper.createFrame(46, 46, Gravity.LEFT | Gravity.TOP));
                         parentContainer.attach(this);
+                        setVisibility(View.VISIBLE);
+                    } else if (getVisibility() == View.GONE) {
+                        setVisibility(View.VISIBLE);
                     }
 
                     checkScale = true;
@@ -1017,7 +1059,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             } else if (showingAsScrimView) {
                 size = LayoutHelper.MATCH_PARENT;
             } else if (secondaryView != null && primaryView == null) {
-                size = AndroidUtilities.dp(80);
+                size = dp(80);
             } else if (tabletGridView != null && useTablet) {
                 if (tabletGridView != null) {
                     useSpanSize = true;
@@ -1025,7 +1067,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                     spanCount = tabletGridView.spanCount;
                     gridItemsCount = tabletGridView.gridAdapter.getItemCount();
                 } else {
-                    size = AndroidUtilities.dp(46);
+                    size = dp(46);
                 }
             } else if (primaryView != null && secondaryView == null || !isFullscreenMode) {
                 if (primaryView != null) {
@@ -1033,10 +1075,10 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                     size = LayoutHelper.MATCH_PARENT;
                     spanCount = primaryView.spanCount;
                 } else {
-                    size = AndroidUtilities.dp(46);
+                    size = dp(46);
                 }
             } else if (primaryView != null) {
-                size = AndroidUtilities.dp(80);
+                size = dp(80);
             } else {
                 size = 0;
             }
@@ -1085,15 +1127,15 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 Object parentObject;
                 if (DialogObject.isUserDialog(peerId)) {
                     TLRPC.User currentUser = AccountInstance.getInstance(currentAccount).getMessagesController().getUser(peerId);
-                    noVideoStubLayout.avatarDrawable.setInfo(currentUser);
-                    imageLocation = ImageLocation.getForUser(currentUser, ImageLocation.TYPE_BIG);
-                    thumbLocation = ImageLocation.getForUser(currentUser, ImageLocation.TYPE_SMALL);
+                    noVideoStubLayout.avatarDrawable.setInfo(currentAccount, currentUser);
+                    imageLocation = ImageLocation.getForUser(currentAccount, currentUser, ImageLocation.TYPE_BIG);
+                    thumbLocation = ImageLocation.getForUser(currentAccount, currentUser, ImageLocation.TYPE_SMALL);
                     parentObject = currentUser;
                 } else {
                     TLRPC.Chat currentChat = AccountInstance.getInstance(UserConfig.selectedAccount).getMessagesController().getChat(-peerId);
-                    noVideoStubLayout.avatarDrawable.setInfo(currentChat);
-                    imageLocation = ImageLocation.getForChat(currentChat, ImageLocation.TYPE_BIG);
-                    thumbLocation = ImageLocation.getForChat(currentChat, ImageLocation.TYPE_SMALL);
+                    noVideoStubLayout.avatarDrawable.setInfo(currentAccount, currentChat);
+                    imageLocation = ImageLocation.getForChat(currentAccount, currentChat, ImageLocation.TYPE_BIG);
+                    thumbLocation = ImageLocation.getForChat(currentAccount, currentChat, ImageLocation.TYPE_SMALL);
                     parentObject = currentChat;
                 }
 
@@ -1233,13 +1275,13 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             } else {
                 if (peerId > 0) {
                     TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(peerId);
-                    ImageLocation imageLocation = ImageLocation.getForUser(user, ImageLocation.TYPE_SMALL);
+                    ImageLocation imageLocation = ImageLocation.getForUser(currentAccount, user, ImageLocation.TYPE_SMALL);
                     int color = user != null ? AvatarDrawable.getColorForId(user.id) : ColorUtils.blendARGB(Color.BLACK, Color.WHITE, 0.2f);
                     GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{ColorUtils.blendARGB(color, Color.BLACK, 0.2f), ColorUtils.blendARGB(color, Color.BLACK, 0.4f)});
                     imageReceiver.setImage(imageLocation, "50_50_b", gradientDrawable, null, user, 0);
                 } else {
                     TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-peerId);
-                    ImageLocation imageLocation = ImageLocation.getForChat(chat, ImageLocation.TYPE_SMALL);
+                    ImageLocation imageLocation = ImageLocation.getForChat(currentAccount, chat, ImageLocation.TYPE_SMALL);
                     int color = chat != null ? AvatarDrawable.getColorForId(chat.id) : ColorUtils.blendARGB(Color.BLACK, Color.WHITE, 0.2f);
                     GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{ColorUtils.blendARGB(color, Color.BLACK, 0.2f), ColorUtils.blendARGB(color, Color.BLACK, 0.4f)});
                     imageReceiver.setImage(imageLocation, "50_50_b", gradientDrawable, null, chat, 0);
@@ -1285,7 +1327,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 GroupCallGridCell callUserCell = tabletGridView != null ? tabletGridView : primaryView;
                 ViewGroup fromListView = tabletGridView != null ? tabletGridListView : listView;
                 float fromX = callUserCell.getX() + fromListView.getX() - getLeft() - renderersContainer.getLeft();
-                float fromY = callUserCell.getY() + AndroidUtilities.dp(2) + fromListView.getY() - getTop() - renderersContainer.getTop();
+                float fromY = callUserCell.getY() + dp(2) + fromListView.getY() - getTop() - renderersContainer.getTop();
 
                 float toX = 0;
                 float toY = 0;
@@ -1297,7 +1339,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 setTranslationY(0);
             }
 
-            textureView.setRoundCorners(AndroidUtilities.dp(8));
+            textureView.setRoundCorners(dp(8));
 
             if (secondaryView != null) {
                 secondaryView.setAlpha(progressToFullscreen);
@@ -1324,8 +1366,8 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             }
 
             setTranslationX(secondaryView.getX() + fullscreenListView.getX() - getLeft());
-            setTranslationY(AndroidUtilities.dp(2) * (1f - progressToFullscreen) + secondaryView.getY() + fullscreenListView.getY() - getTop());
-            textureView.setRoundCorners(AndroidUtilities.dp(13) * progressToFullscreen + AndroidUtilities.dp(8) * (1f - progressToFullscreen));
+            setTranslationY(dp(2) * (1f - progressToFullscreen) + secondaryView.getY() + fullscreenListView.getY() - getTop());
+            textureView.setRoundCorners(dp(13) * progressToFullscreen + dp(8) * (1f - progressToFullscreen));
         } else if (primaryView != null || tabletGridView != null) {
             GroupCallGridCell callUserCell;
             ViewGroup fromListView;
@@ -1338,8 +1380,8 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                 fromListView = tabletGridView != null ? tabletGridListView : listView;
             }
             setTranslationX(callUserCell.getX() + fromListView.getX() - getLeft() - renderersContainer.getLeft());
-            setTranslationY(callUserCell.getY() + AndroidUtilities.dp(2) + fromListView.getY() - getTop() - renderersContainer.getTop());
-            textureView.setRoundCorners(AndroidUtilities.dp(8));
+            setTranslationY(callUserCell.getY() + dp(2) + fromListView.getY() - getTop() - renderersContainer.getTop());
+            textureView.setRoundCorners(dp(8));
 
             if (attached && !animateEnter) {
                 if (!GroupCallActivity.isTabletMode) {
@@ -1416,7 +1458,8 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
                     VoIPService.getSharedInstance().setLocalSink(null, participant.presentation);
                 }
             } else {
-                if (VoIPService.getSharedInstance() != null && !RTMPStreamPipOverlay.isVisible()) {
+                // a PiP window keeps its own receiver of the stream (VoIPService extra sinks)
+                if (VoIPService.getSharedInstance() != null) {
                     VoIPService.getSharedInstance().removeRemoteSink(participant.participant, participant.presentation);
                 }
             }
@@ -1564,7 +1607,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
     int fullSize;
 
     public void updateSize(int collapseSize) {
-        int fullSize = parentContainer.getMeasuredWidth() - AndroidUtilities.dp(6);
+        int fullSize = parentContainer.getMeasuredWidth() - dp(6);
         if ((this.collapseSize != collapseSize && collapseSize > 0) || (this.fullSize != fullSize && fullSize > 0)) {
             if (collapseSize != 0) {
                 this.collapseSize = collapseSize;
@@ -1576,7 +1619,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
         }
     }
 
-    private class NoVideoStubLayout extends View {
+    private class NoVideoStubLayout extends View implements Theme.Colorable {
 
         public ImageReceiver avatarImageReceiver = new ImageReceiver();
         public ImageReceiver backgroundImageReceiver = new ImageReceiver();
@@ -1601,12 +1644,12 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             tinyWaveDrawable = new BlobDrawable(9);
             bigWaveDrawable = new BlobDrawable(12);
 
-            tinyWaveDrawable.minRadius = AndroidUtilities.dp(76);
-            tinyWaveDrawable.maxRadius = AndroidUtilities.dp(92);
+            tinyWaveDrawable.minRadius = dp(76);
+            tinyWaveDrawable.maxRadius = dp(92);
             tinyWaveDrawable.generateBlob();
 
-            bigWaveDrawable.minRadius = AndroidUtilities.dp(80);
-            bigWaveDrawable.maxRadius = AndroidUtilities.dp(95);
+            bigWaveDrawable.minRadius = dp(80);
+            bigWaveDrawable.maxRadius = dp(95);
             bigWaveDrawable.generateBlob();
 
             paint.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_voipgroup_listeningText), Theme.getColor(Theme.key_voipgroup_speakingText), speakingProgress));
@@ -1618,7 +1661,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            float size = AndroidUtilities.dp(157);
+            float size = dp(157);
             cx = getMeasuredWidth() >> 1;
             cy = (getMeasuredHeight() >> 1) + (GroupCallActivity.isLandscapeMode ? 0 : -getMeasuredHeight() * 0.12f);
             avatarImageReceiver.setRoundRadius((int) (size / 2f));
@@ -1664,7 +1707,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             canvas.scale(scale, scale, cx, cy);
 
             if (currentState != null) {
-                currentState.update((int) (cy - AndroidUtilities.dp(100)), (int) (cx - AndroidUtilities.dp(100)), AndroidUtilities.dp(200), 16, amplitude);
+                currentState.update((int) (cy - dp(100)), (int) (cx - dp(100)), dp(200), 16, amplitude);
             }
             bigWaveDrawable.update(amplitude, 1f);
             tinyWaveDrawable.update(amplitude, 1f);
@@ -1767,7 +1810,18 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
             avatarImageReceiver.onDetachedFromWindow();
             backgroundImageReceiver.onDetachedFromWindow();
         }
-    }
+    
+        @Override
+        public void updateColors() {
+            try {
+                paint.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_voipgroup_listeningText), Theme.getColor(Theme.key_voipgroup_speakingText), speakingProgress));
+                invalidate();
+        
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        }
+}
 
     public String getName() {
         long peerId = MessageObject.getPeerId(participant.participant.peer);
@@ -1810,7 +1864,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
         if (textureView.renderer.isFirstFrameRendered()) {
             Bitmap bitmap = textureView.blurRenderer.getBitmap(100, 100);
             if (bitmap != null) {
-                Utilities.blurBitmap(bitmap, 3, 1, bitmap.getWidth(), bitmap.getHeight(), bitmap.getRowBytes());
+                Utilities.blurBitmap(bitmap, 3);
                 Drawable drawable = new BitmapDrawable(bitmap);
                 blurredFlippingStub.setBackground(drawable);
             }

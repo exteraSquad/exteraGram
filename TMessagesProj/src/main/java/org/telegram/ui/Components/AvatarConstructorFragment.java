@@ -1,6 +1,11 @@
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+import static org.telegram.messenger.AndroidUtilities.lerp;
+import static org.telegram.messenger.AndroidUtilities.premiumText;
+import static org.telegram.messenger.LocaleController.getString;
 import static org.telegram.ui.Components.ImageUpdater.FOR_TYPE_CHANNEL;
+import static org.telegram.ui.Components.ImageUpdater.FOR_TYPE_COMMUNITY;
 import static org.telegram.ui.Components.ImageUpdater.FOR_TYPE_GROUP;
 import static org.telegram.ui.Components.ImageUpdater.TYPE_SUGGEST_PHOTO_FOR_USER;
 
@@ -10,6 +15,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -18,6 +24,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -45,8 +53,10 @@ import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SvgHelper;
+import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.tgnet.tl.TL_stars;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
@@ -56,7 +66,10 @@ import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
+import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.SelectAnimatedEmojiDialog;
+import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -77,7 +90,10 @@ public class AvatarConstructorFragment extends BaseFragment {
     LinearLayout linearLayout;
 
     boolean forGroup;
-    private FrameLayout button;
+    private CharSequence buttonText, lockedButtonText;
+    private boolean buttonIsLocked;
+    private ButtonWithCounterView button;
+    private FrameLayout bottomBulletinContainer;
 
     float progressToExpand;
     boolean expandWithKeyboard;
@@ -96,13 +112,45 @@ public class AvatarConstructorFragment extends BaseFragment {
     private int gradientBackgroundItemWidth;
 
     public static final int[][] defaultColors = new int[][]{
-            new int[]{0xFF4D8DFF, 0xFF2BBFFF, 0xFF20E2CD, 0xFF0EE1F1},
-            new int[]{0xFF5EB6FB, 0xFF1FCEEB, 0xFF45F7B7, 0xFF1FF1D9},
-            new int[]{0xFF09D260, 0xFF5EDC40, 0xFFC1E526, 0xFF80DF2B},
-            new int[]{0xFFF5694E, 0xFFF5772C, 0xFFFFD412, 0xFFFFA743},
-            new int[]{0xFFF64884, 0xFFEF5B41, 0xFFF6A730, 0xFFFF7742},
-            new int[]{0xFFF94BA0, 0xFFFB5C80, 0xFFFFB23A, 0xFFFE7E62},
-            new int[]{0xFF837CFF, 0xFFB063FF, 0xFFFF72A9, 0xFFE269FF}
+            new int[]{ 0xFF5387DB, 0xFF4F90DB, 0xFF60D6BB, 0xFF50D2D9 },
+            new int[]{ 0xFF54A5E3, 0xFF48ADC7, 0xFF63D695, 0xFF5AE6BC },
+            new int[]{ 0xFF3ABD86, 0xFF55BD4A, 0xFFCCCC52, 0xFFB0C756 },
+            new int[]{ 0xFF836CEB, 0xFFAF68E8, 0xFFDE6D9A, 0xFFD974ED },
+            new int[]{ 0xFFEC5BA1, 0xFFEB6577, 0xFFEB9744, 0xFFF27E64 },
+            new int[]{ 0xFFEA5877, 0xFFE2724D, 0xFFF4AA49, 0xFFF08550 },
+            new int[]{ 0xFFF07854, 0xFFED7E39, 0xFFF0C241, 0xFFF0B04A }
+    };
+    public static final int[][] premiumColors = new int[][] {
+            new int[] { 0xFF94A3B0, 0xFF6C7B87 },
+            new int[] { 0xFFEBA15B, 0xFFA16730 },
+            new int[] { 0xFFE8B948, 0xFFB87C30 },
+            new int[] { 0xFF565D61, 0xFF3B4347 },
+            new int[] { 0xFF1B1B1B, 0xFF000000 },
+            new int[] { 0xFF5E6F91, 0xFF415275 },
+            new int[] { 0xFFAE72E3, 0xFF8854B5 },
+            new int[] { 0xFFAF75BC, 0xFF895196 },
+            new int[] { 0xFFC269BE, 0xFF8B4384 },
+            new int[] { 0xFFDA76A8, 0xFFAE5891 },
+            new int[] { 0xFFE66473, 0xFFA74559 },
+            new int[] { 0xFF6C9CF4, 0xFF5C6AEC },
+            new int[] { 0xFF469CD3, 0xFF2E78A8 },
+            new int[] { 0xFF438CB9, 0xFF2D6283 },
+            new int[] { 0xFF66B27A, 0xFF33786D },
+            new int[] { 0xFF81B6B2, 0xFF4B9A96 },
+            new int[] { 0xFF5BCEC5, 0xFF36928E },
+            new int[] { 0xFF5FD66F, 0xFF319F76 },
+            new int[] { 0xFFE68A3C, 0xFFD45393 },
+            new int[] { 0xFF6BE2F2, 0xFF6675F7 },
+            new int[] { 0xFFC56DF4, 0xFF6073F4 },
+            new int[] { 0xFFEBC92F, 0xFF54B848 },
+            new int[] { 0xFF66B27A, 0xFF33786D },
+            new int[] { 0xFFCAB560, 0xFF8C803C },
+            new int[] { 0xFFADB070, 0xFF6B7D54 },
+            new int[] { 0xFF949487, 0xFF707062 },
+            new int[] { 0xFFB09F99, 0xFF8F7E72 },
+            new int[] { 0xFFC7835E, 0xFF9E6345 },
+            new int[] { 0xFFBC7051, 0xFF975547 },
+            new int[] { 0xFF8F6655, 0xFF68443F }
     };
     public boolean finishOnDone = true;
     private ActionBarMenuItem setPhotoItem;
@@ -125,12 +173,12 @@ public class AvatarConstructorFragment extends BaseFragment {
         actionBar.setCastShadows(false);
         actionBar.setAddToContainer(false);
         actionBar.setOccupyStatusBar(true);
-        actionBar.setTitleColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        actionBar.setItemsColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), false);
-        actionBar.setItemsBackgroundColor(Theme.getColor(Theme.key_listSelector), false);
+        ThemeBind.actionBarTitleColor(actionBar, Theme.key_windowBackgroundWhiteBlackText);
+        ThemeBind.actionBarItemsColor(actionBar, Theme.key_windowBackgroundWhiteBlackText, false);
+        ThemeBind.actionBarItemsBackgroundColor(actionBar, Theme.key_listSelector, false);
         actionBar.setBackButtonDrawable(new BackDrawable(false));
         actionBar.setAllowOverlayTitle(false);
-        actionBar.setTitle(LocaleController.getString("PhotoEditor", R.string.PhotoEditor));
+        actionBar.setTitle(getString(R.string.PhotoEditor));
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
@@ -155,8 +203,8 @@ public class AvatarConstructorFragment extends BaseFragment {
         ActionBarMenu menuOverlay = overlayActionBar.createMenu();
         menuOverlay.setClipChildren(false);
         setPhotoItem = menuOverlay.addItem(1, avatarFor != null && avatarFor.type == TYPE_SUGGEST_PHOTO_FOR_USER ?
-                LocaleController.getString("SuggestPhoto", R.string.SuggestPhoto) :
-                LocaleController.getString("SetPhoto", R.string.SetPhoto)
+                getString(R.string.SuggestPhoto) :
+                getString(R.string.SetPhoto)
         );
         setPhotoItem.setBackground(Theme.createSelectorDrawable(selectorColor, Theme.RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE));
         overlayActionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
@@ -206,25 +254,25 @@ public class AvatarConstructorFragment extends BaseFragment {
                     ((MarginLayoutParams) linearLayout.getLayoutParams()).bottomMargin = 0;
                     ((MarginLayoutParams) linearLayout.getLayoutParams()).leftMargin = avatarWidth;
                     ((MarginLayoutParams) previewView.getLayoutParams()).rightMargin = contentWidth;
-                    ((MarginLayoutParams) button.getLayoutParams()).rightMargin = contentWidth + AndroidUtilities.dp(16);
+                    ((MarginLayoutParams) button.getLayoutParams()).rightMargin = contentWidth + dp(16);
                     ((MarginLayoutParams) chooseBackgroundHint.getLayoutParams()).topMargin = 0;
-                    ((MarginLayoutParams) chooseEmojiHint.getLayoutParams()).topMargin = AndroidUtilities.dp(10);
+                    ((MarginLayoutParams) chooseEmojiHint.getLayoutParams()).topMargin = dp(10);
                 } else {
-                    ((MarginLayoutParams) linearLayout.getLayoutParams()).bottomMargin = AndroidUtilities.dp(64);
+                    ((MarginLayoutParams) linearLayout.getLayoutParams()).bottomMargin = dp(64);
                     ((MarginLayoutParams) linearLayout.getLayoutParams()).leftMargin = 0;
                     ((MarginLayoutParams) previewView.getLayoutParams()).rightMargin = 0;
-                    ((MarginLayoutParams) button.getLayoutParams()).rightMargin = AndroidUtilities.dp(16);
-                    ((MarginLayoutParams) chooseBackgroundHint.getLayoutParams()).topMargin = AndroidUtilities.dp(10);
-                    ((MarginLayoutParams) chooseEmojiHint.getLayoutParams()).topMargin = AndroidUtilities.dp(18);
+                    ((MarginLayoutParams) button.getLayoutParams()).rightMargin = dp(16);
+                    ((MarginLayoutParams) chooseBackgroundHint.getLayoutParams()).topMargin = dp(10);
+                    ((MarginLayoutParams) chooseEmojiHint.getLayoutParams()).topMargin = dp(18);
                 }
                 boolean oldKeyboardVisible = keyboardVisible;
-                keyboardVisible = keyboardHeight >= AndroidUtilities.dp(20);
+                keyboardVisible = keyboardHeight >= dp(20);
 
                 if (oldKeyboardVisible != keyboardVisible) {
                     int newMargin;
                     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
                     if (keyboardVisible) {
-                        newMargin = -selectAnimatedEmojiDialog.getTop() + actionBar.getMeasuredHeight() + AndroidUtilities.dp(8);
+                        newMargin = -selectAnimatedEmojiDialog.getTop() + actionBar.getMeasuredHeight() + dp(8);
                     } else {
                         newMargin = 0;
                     }
@@ -263,7 +311,7 @@ public class AvatarConstructorFragment extends BaseFragment {
                         float y = linearLayout.getY() + previewView.getY();
                         int additionalH = expandedHeight - collapsedHeight;
                         int yKeyboardVisible = AndroidUtilities.statusBarHeight + ((ActionBar.getCurrentActionBarHeight() - collapsedHeight) >> 1);
-                        y = AndroidUtilities.lerp(y, yKeyboardVisible, keyboardVisibleProgress);
+                        y = lerp(y, yKeyboardVisible, keyboardVisibleProgress);
                         canvas.translate(x, y);
                         previewView.draw(canvas);
                         AndroidUtilities.rectTmp.set(x, y - additionalH / 2f * progressToExpand, x + previewView.getMeasuredWidth(), y + previewView.getMeasuredHeight() + additionalH / 2f * progressToExpand);
@@ -297,7 +345,7 @@ public class AvatarConstructorFragment extends BaseFragment {
 
             @Override
             public boolean onInterceptTouchEvent(MotionEvent ev) {
-                if (keyboardVisibleProgress == 0 && AndroidUtilities.findClickableView(this, ev.getX(), ev.getY())) {
+                if (keyboardVisibleProgress == 0) {
                     return false;
                 }
                 return onTouchEvent(ev);
@@ -350,7 +398,7 @@ public class AvatarConstructorFragment extends BaseFragment {
             }
         };
         nestedSizeNotifierLayout.setFitsSystemWindows(true);
-        nestedSizeNotifierLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+        ThemeBind.backgroundColor(nestedSizeNotifierLayout, Theme.key_windowBackgroundGray);
 
 
         linearLayout.setClipChildren(false);
@@ -366,8 +414,8 @@ public class AvatarConstructorFragment extends BaseFragment {
         });
 
         chooseBackgroundHint = new TextView(getContext());
-        chooseBackgroundHint.setText(LocaleController.getString("ChooseBackground", R.string.ChooseBackground));
-        chooseBackgroundHint.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        chooseBackgroundHint.setText(getString(R.string.ChooseBackground));
+        ThemeBind.textColor(chooseBackgroundHint, Theme.key_windowBackgroundWhiteGrayText);
         chooseBackgroundHint.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         chooseBackgroundHint.setGravity(Gravity.CENTER);
         linearLayout.addView(chooseBackgroundHint, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 21, 10, 21, 10));
@@ -387,7 +435,7 @@ public class AvatarConstructorFragment extends BaseFragment {
                         0, 0, getMeasuredWidth(), getMeasuredHeight()
                 );
                 path.rewind();
-                path.addRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(12), AndroidUtilities.dp(12), Path.Direction.CW);
+                path.addRoundRect(AndroidUtilities.rectTmp, dp(12), dp(12), Path.Direction.CW);
                 canvas.drawPath(path, paint);
                 super.dispatchDraw(canvas);
             }
@@ -396,13 +444,13 @@ public class AvatarConstructorFragment extends BaseFragment {
         linearLayout.addView(backgroundContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, 0, 12, 0, 12, 0));
 
         chooseEmojiHint = new TextView(getContext());
-        chooseEmojiHint.setText(LocaleController.getString("ChooseEmojiOrSticker", R.string.ChooseEmojiOrSticker));
-        chooseEmojiHint.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        chooseEmojiHint.setText(getString(R.string.ChooseEmojiOrSticker));
+        ThemeBind.textColor(chooseEmojiHint, Theme.key_windowBackgroundWhiteGrayText);
         chooseEmojiHint.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         chooseEmojiHint.setGravity(Gravity.CENTER);
         linearLayout.addView(chooseEmojiHint, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 21, 18, 21, 10));
 
-        selectAnimatedEmojiDialog = new SelectAnimatedEmojiDialog(this, getContext(), false, null, SelectAnimatedEmojiDialog.TYPE_AVATAR_CONSTRUCTOR, null) {
+        selectAnimatedEmojiDialog = new SelectAnimatedEmojiDialog(this, getContext(), false, null, SelectAnimatedEmojiDialog.TYPE_AVATAR_CONSTRUCTOR, true, null, 16, getThemedColor(Theme.key_windowBackgroundWhiteBlackText)) {
 
             private boolean firstLayout = true;
 
@@ -415,9 +463,27 @@ public class AvatarConstructorFragment extends BaseFragment {
                 }
             }
 
-            protected void onEmojiSelected(View view, Long documentId, TLRPC.Document document, Integer until) {
-                long docId = documentId == null ? 0 : documentId;
-                setPreview(docId, document);
+            protected void onEmojiSelected(View view, Long documentId, TLRPC.Document document, TL_stars.TL_starGiftUnique gift, Integer until) {
+//                final TLRPC.TL_inputStickerSetShortName inputStickerSet = new TLRPC.TL_inputStickerSetShortName();
+//                inputStickerSet.short_name = avatarsPack;
+//                final TLRPC.TL_messages_stickerSet set = MediaDataController.getInstance(currentAccount).getStickerSet(inputStickerSet, false);
+//                boolean isFree = false;
+//                if (set != null && set.documents != null) {
+//                    for (TLRPC.Document d : set.documents) {
+//                        if (d.id == (document != null ? document.id : (documentId != null ? documentId : 0))) {
+//                            isFree = true;
+//                            break;
+//                        }
+//                    }
+//                }
+                boolean isFree = false;
+                final TLRPC.TL_emojiList emojiList = forUser ? MediaDataController.getInstance(currentAccount).profileAvatarConstructorDefault : MediaDataController.getInstance(currentAccount).groupAvatarConstructorDefault;
+                if (emojiList != null) {
+                    final long did = document != null ? document.id : (documentId != null ? documentId : 0);
+                    isFree = emojiList.document_id.contains(did);
+                }
+                final long docId = documentId == null ? 0 : documentId;
+                setPreview(isFree, docId, document);
             }
         };
         selectAnimatedEmojiDialog.forUser = !forGroup;
@@ -432,28 +498,33 @@ public class AvatarConstructorFragment extends BaseFragment {
         colorPickerPreviewView = new View(getContext());
         colorPickerPreviewView.setVisibility(View.GONE);
 
-
-        button = new FrameLayout(getContext());
-        button.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 8));
-
-        TextView textView = new TextView(getContext());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        button = new ButtonWithCounterView(context, resourceProvider);
+        button.setRound();
+        button.text.setHacks(false, true, false);
         if (imageUpdater.setForType == FOR_TYPE_CHANNEL) {
-            textView.setText(LocaleController.getString("SetChannelPhoto", R.string.SetChannelPhoto));
+            buttonText = getString(R.string.SetChannelPhoto);
+        } else if (imageUpdater.setForType == FOR_TYPE_COMMUNITY) {
+            buttonText = getString(R.string.SetCommunityPhoto);
         } else if (imageUpdater.setForType == FOR_TYPE_GROUP) {
-            textView.setText(LocaleController.getString("SetGroupPhoto", R.string.SetGroupPhoto));
+            buttonText = getString(R.string.SetGroupPhoto);
         } else if (avatarFor != null && avatarFor.type == TYPE_SUGGEST_PHOTO_FOR_USER) {
-            textView.setText(LocaleController.getString("SuggestPhoto", R.string.SuggestPhoto));
+            buttonText = getString(R.string.SuggestPhoto);
         } else {
-            textView.setText(LocaleController.getString("SetProfilePhotoAvatarConstructor", R.string.SetProfilePhotoAvatarConstructor));
+            buttonText = getString(R.string.SetMyProfilePhotoAvatarConstructor);
         }
-        textView.setGravity(Gravity.CENTER);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        textView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-        button.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
+        buttonText = new SpannableStringBuilder(buttonText);
+        SpannableStringBuilder lockedButtonText = new SpannableStringBuilder(buttonText);
+        lockedButtonText.append(" l");
+        lockedButtonText.setSpan(new ColoredImageSpan(R.drawable.msg_mini_lock2), lockedButtonText.length() - 1, lockedButtonText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        this.lockedButtonText = lockedButtonText;
+        buttonIsLocked = false;
+        button.setText(buttonText, false);
         button.setOnClickListener(v -> onDonePressed());
 
+        bottomBulletinContainer = new FrameLayout(context);
+
         nestedSizeNotifierLayout.addView(button, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.BOTTOM, 16, 16, 16, 16));
+        nestedSizeNotifierLayout.addView(bottomBulletinContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 80, Gravity.BOTTOM, 8, 16, 8, 16 + 48));
         nestedSizeNotifierLayout.addView(actionBar);
 
         nestedSizeNotifierLayout.addView(overlayActionBar);
@@ -467,9 +538,28 @@ public class AvatarConstructorFragment extends BaseFragment {
         return fragmentView;
     }
 
-    private void setPreview(long docId, TLRPC.Document document) {
+    private boolean isLocked() {
+        if (UserConfig.getInstance(currentAccount).isPremium()) return false;
+        if (previewView.backgroundGradient != null && previewView.backgroundGradient.premium || previewView.isCustomGradient) {
+            return true;
+        }
+        if (!previewView.freeEmoji) {
+            return false;
+        }
+        return false;
+    }
+
+    private void updateButton() {
+        final boolean locked = isLocked();
+        if (buttonIsLocked != locked) {
+            button.setText((buttonIsLocked = locked) ? lockedButtonText : buttonText, true);
+        }
+    }
+
+    private void setPreview(boolean free, long docId, TLRPC.Document document) {
         previewView.documentId = docId;
         previewView.document = document;
+        previewView.freeEmoji = free;
         if (docId == 0) {
             previewView.backupImageView.setAnimatedEmojiDrawable(null);
             SvgHelper.SvgDrawable svgThumb = DocumentObject.getSvgThumb(document, Theme.key_windowBackgroundWhiteGrayIcon, 0.2f);
@@ -485,6 +575,7 @@ public class AvatarConstructorFragment extends BaseFragment {
             previewView.getImageReceiver().getLottieAnimation().setCurrentFrame(0, false, true);
         }
         wasChanged = true;
+        updateButton();
     }
 
     private void discardEditor() {
@@ -492,11 +583,11 @@ public class AvatarConstructorFragment extends BaseFragment {
             return;
         }
         if (wasChanged) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-            builder.setMessage(LocaleController.getString("PhotoEditorDiscardAlert", R.string.PhotoEditorDiscardAlert));
-            builder.setTitle(LocaleController.getString("DiscardChanges", R.string.DiscardChanges));
-            builder.setPositiveButton(LocaleController.getString("PassportDiscard", R.string.PassportDiscard), (dialogInterface, i) -> finishFragment());
-            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+            builder.setMessage(getString(R.string.PhotoEditorDiscardAlert));
+            builder.setTitle(getString(R.string.DiscardChanges));
+            builder.setPositiveButton(getString(R.string.PassportDiscard), (dialogInterface, i) -> finishFragment());
+            builder.setNegativeButton(getString(R.string.Cancel), null);
             AlertDialog dialog = builder.create();
             showDialog(dialog);
             dialog.redPositive();
@@ -529,7 +620,7 @@ public class AvatarConstructorFragment extends BaseFragment {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 keyboardVisibleProgress = (float) animation.getAnimatedValue();
-                float offset = AndroidUtilities.lerp(translationYFrom, translationYTo, keyboardVisibleProgress);
+                float offset = lerp(translationYFrom, translationYTo, keyboardVisibleProgress);
                 actionBar.getTitleTextView().setAlpha(keyboardVisibleProgress);
                 if (expandWithKeyboard && !keyboardVisible) {
                     setProgressToExpand(1f - keyboardVisibleProgress, false);
@@ -554,6 +645,12 @@ public class AvatarConstructorFragment extends BaseFragment {
 
     private void onDonePressed() {
         if (previewView.getImageReceiver() == null || !previewView.getImageReceiver().hasImageLoaded()) {
+            return;
+        }
+        if (isLocked()) {
+            BulletinFactory.of(bottomBulletinContainer, resourceProvider).createSimpleBulletin(R.raw.star_premium_2, premiumText(getString(R.string.PremiumAvatarToast), () -> {
+                presentFragment(new PremiumPreviewFragment("avatar"));
+            })).show();
             return;
         }
         if (delegate != null) {
@@ -634,32 +731,53 @@ public class AvatarConstructorFragment extends BaseFragment {
         }
     }
 
+    private boolean forUser;
     public void startFrom(AvatarConstructorPreviewCell previewCell) {
         BackgroundGradient gradient = previewCell.getBackgroundGradient();
         if (previewView == null) {
             return;
         }
-        previewView.setGradient(gradient);
+        previewView.setGradient(gradient, false);
+        updateButton();
         if (previewCell.getAnimatedEmoji() != null) {
             long docId = previewCell.getAnimatedEmoji().getDocumentId();
             previewView.documentId = docId;
             previewView.backupImageView.setAnimatedEmojiDrawable(new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_AVATAR_CONSTRUCTOR_PREVIEW, currentAccount, docId));
         }
         backgroundSelectView.selectGradient(gradient);
-        selectAnimatedEmojiDialog.setForUser(previewCell.forUser);
+        selectAnimatedEmojiDialog.setForUser(forUser = previewCell.forUser);
+    }
+
+    public void startFrom(long docId, boolean forUser) {
+        if (previewView == null) {
+            return;
+        }
+        AvatarConstructorFragment.BackgroundGradient gradient = new AvatarConstructorFragment.BackgroundGradient();
+        gradient.color1 = AvatarConstructorFragment.defaultColors[0][0];
+        gradient.color2 = AvatarConstructorFragment.defaultColors[0][1];
+        gradient.color3 = AvatarConstructorFragment.defaultColors[0][2];
+        gradient.color4 = AvatarConstructorFragment.defaultColors[0][3];
+
+        previewView.setGradient(gradient, false);
+        updateButton();
+        previewView.documentId = docId;
+        previewView.backupImageView.setAnimatedEmojiDrawable(new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_AVATAR_CONSTRUCTOR_PREVIEW, currentAccount, docId));
+        backgroundSelectView.selectGradient(gradient);
+        selectAnimatedEmojiDialog.setForUser(this.forUser = forUser);
     }
 
     public void startFrom(TLRPC.VideoSize emojiMarkup) {
         BackgroundGradient gradient = new BackgroundGradient();
         gradient.color1 = ColorUtils.setAlphaComponent(emojiMarkup.background_colors.get(0), 255);
-        gradient.color2 =  emojiMarkup.background_colors.size() > 1 ? ColorUtils.setAlphaComponent(emojiMarkup.background_colors.get(1), 255) : 0;
+        gradient.color2 = emojiMarkup.background_colors.size() > 1 ? ColorUtils.setAlphaComponent(emojiMarkup.background_colors.get(1), 255) : 0;
         gradient.color3 = emojiMarkup.background_colors.size() > 2 ? ColorUtils.setAlphaComponent(emojiMarkup.background_colors.get(2), 255) : 0;
         gradient.color4 = emojiMarkup.background_colors.size() > 3 ? ColorUtils.setAlphaComponent(emojiMarkup.background_colors.get(3), 255) : 0;
-        previewView.setGradient(gradient);
+        previewView.setGradient(gradient, false);
+        updateButton();
 
 
         if (emojiMarkup instanceof TLRPC.TL_videoSizeEmojiMarkup) {
-            setPreview(((TLRPC.TL_videoSizeEmojiMarkup) emojiMarkup).emoji_id, null);
+            setPreview(false, ((TLRPC.TL_videoSizeEmojiMarkup) emojiMarkup).emoji_id, null);
         } else {
             TLRPC.TL_videoSizeStickerMarkup stickerMarkup = new TLRPC.TL_videoSizeStickerMarkup();
             TLRPC.TL_messages_stickerSet set = MediaDataController.getInstance(currentAccount).getStickerSet(stickerMarkup.stickerset, false);
@@ -671,14 +789,15 @@ public class AvatarConstructorFragment extends BaseFragment {
                     }
                 }
             }
-            setPreview(0, document);
+            setPreview(false, 0, document);
         }
         backgroundSelectView.selectGradient(gradient);
-        selectAnimatedEmojiDialog.setForUser(true);
+        selectAnimatedEmojiDialog.setForUser(forUser = true);
     }
 
     public class PreviewView extends FrameLayout {
 
+        public boolean freeEmoji;
         public long documentId;
         public TLRPC.Document document;
         BackupImageView backupImageView;
@@ -686,7 +805,9 @@ public class AvatarConstructorFragment extends BaseFragment {
         GradientTools outGradientTools = new GradientTools();
         float changeBackgroundProgress = 1f;
         BackgroundGradient backgroundGradient;
+        boolean isCustomGradient;
 
+        private ColorFilter colorFilter = new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
         AnimatedFloat expandProgress = new AnimatedFloat(this, 200, CubicBezierInterpolator.EASE_OUT);
         boolean expanded;
         float overrideExpandProgress = -1f;
@@ -742,7 +863,7 @@ public class AvatarConstructorFragment extends BaseFragment {
             if (isLandscapeMode) {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             } else {
-                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(140), MeasureSpec.EXACTLY));
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(dp(140), MeasureSpec.EXACTLY));
             }
         }
 
@@ -750,14 +871,14 @@ public class AvatarConstructorFragment extends BaseFragment {
         protected void dispatchDraw(Canvas canvas) {
             cx = getMeasuredWidth() / 2f;
             cy = getMeasuredHeight() / 2f;
-            float radius = isLandscapeMode ? getMeasuredWidth() * 0.3f : AndroidUtilities.dp(50);
+            float radius = isLandscapeMode ? getMeasuredWidth() * 0.3f : dp(50);
             expandProgress.set(expanded ? 1f : 0f);
             if (overrideExpandProgress >= 0) {
                 expandProgress.set(overrideExpandProgress, true);
             }
-            size = AndroidUtilities.lerp(radius, getMeasuredWidth() / 2f, expandProgress.get());
-            size = AndroidUtilities.lerp(size, AndroidUtilities.dp(21), keyboardVisibleProgress);
-            cx = AndroidUtilities.lerp(cx, getMeasuredWidth() - AndroidUtilities.dp(12) - AndroidUtilities.dp(21), keyboardVisibleProgress);
+            size = lerp(radius, getMeasuredWidth() / 2f, expandProgress.get());
+            size = lerp(size, dp(21), keyboardVisibleProgress);
+            cx = lerp(cx, getMeasuredWidth() - dp(12) - dp(21), keyboardVisibleProgress);
 
 
             canvas.save();
@@ -782,19 +903,19 @@ public class AvatarConstructorFragment extends BaseFragment {
                     drawBackround(canvas, cx, cy, radius, size, gradientTools.paint);
                 }
             }
-            int imageHeight = isLandscapeMode ? (int) (radius * 2 * STICKER_DEFAULT_SCALE) : AndroidUtilities.dp(70);
+            int imageHeight = isLandscapeMode ? (int) (radius * 2 * STICKER_DEFAULT_SCALE) : dp(70);
             int imageHeightExpanded = (int) (getMeasuredWidth() * STICKER_DEFAULT_SCALE);
-            int imageHeightKeyboardVisible = (int) (AndroidUtilities.dp(42) * STICKER_DEFAULT_SCALE);
-            float imageSize = AndroidUtilities.lerp(imageHeight, imageHeightExpanded, expandProgress.get());
-            imageSize = AndroidUtilities.lerp(imageSize, imageHeightKeyboardVisible, keyboardVisibleProgress);
+            int imageHeightKeyboardVisible = (int) (dp(42) * STICKER_DEFAULT_SCALE);
+            float imageSize = lerp(imageHeight, imageHeightExpanded, expandProgress.get());
+            imageSize = lerp(imageSize, imageHeightKeyboardVisible, keyboardVisibleProgress);
             imageSize /= 2;
             if (backupImageView.animatedEmojiDrawable != null) {
                 if (backupImageView.animatedEmojiDrawable.getImageReceiver() != null) {
                     backupImageView.animatedEmojiDrawable.getImageReceiver().setRoundRadius((int) (imageSize * 2 * STICKER_DEFAULT_ROUND_RADIUS));
                 }
                 backupImageView.animatedEmojiDrawable.setBounds((int) (cx - imageSize), (int) (cy - imageSize), (int) (cx + imageSize), (int) (cy + imageSize));
+                backupImageView.animatedEmojiDrawable.setColorFilter(colorFilter);
                 backupImageView.animatedEmojiDrawable.draw(canvas);
-
             } else {
                 backupImageView.imageReceiver.setImageCoords(cx - imageSize, cy - imageSize, imageSize * 2, imageSize * 2);
                 backupImageView.imageReceiver.setRoundRadius((int) (imageSize * 2 * STICKER_DEFAULT_ROUND_RADIUS));
@@ -809,19 +930,20 @@ public class AvatarConstructorFragment extends BaseFragment {
                 //canvas.drawCircle(cx, cy, size, paint);
             } else {
                 float roundRadius = AndroidUtilities.lerp(ExteraConfig.getAvatarCorners(size * 2, true), 0, p);
-                //float roundRadius = AndroidUtilities.lerp(radius, 0, p);
+                //float roundRadius = lerp(radius, 0, p);
                 AndroidUtilities.rectTmp.set(cx - size, cy - size, cx + size, cy + size);
                 canvas.drawRoundRect(AndroidUtilities.rectTmp, roundRadius, roundRadius, paint);
             }
         }
 
-        public void setGradient(BackgroundGradient backgroundGradient) {
+        public void setGradient(BackgroundGradient backgroundGradient, boolean isCustom) {
             if (this.backgroundGradient != null) {
                 outGradientTools.setColors(this.backgroundGradient.color1, this.backgroundGradient.color2, this.backgroundGradient.color3, this.backgroundGradient.color4);
                 changeBackgroundProgress = 0f;
                 wasChanged = true;
             }
             this.backgroundGradient = backgroundGradient;
+            this.isCustomGradient = isCustom;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
             }
@@ -846,6 +968,7 @@ public class AvatarConstructorFragment extends BaseFragment {
             ImageReceiver imageReceiver = backupImageView.getImageReceiver();
             if (backupImageView.animatedEmojiDrawable != null) {
                 imageReceiver = backupImageView.animatedEmojiDrawable.getImageReceiver();
+                backupImageView.animatedEmojiDrawable.setColorFilter(colorFilter);
             }
             return imageReceiver;
         }
@@ -886,20 +1009,35 @@ public class AvatarConstructorFragment extends BaseFragment {
                 backgroundGradient.color4 = defaultColors[i][3];
                 gradients.add(backgroundGradient);
             }
+            for (int i = 0; i < premiumColors.length; i++) {
+                BackgroundGradient backgroundGradient = new BackgroundGradient();
+                backgroundGradient.stableId = stableIdPointer++;
+                backgroundGradient.color1 = premiumColors[i][0];
+                backgroundGradient.color2 = premiumColors[i][1];
+                backgroundGradient.color3 = 0;
+                backgroundGradient.color4 = 0;
+                backgroundGradient.premium = true;
+                gradients.add(backgroundGradient);
+            }
+            setPadding(dp(4), 0, dp(4), 0);
+            setClipToPadding(false);
+            useLayoutPositionOnClick = true;
             setOnItemClickListener((view, position) -> {
                 if (view instanceof GradientSelectorView && !((GradientSelectorView) view).isCustom) {
                     selectedItemId = ((GradientSelectorView) view).backgroundGradient.stableId;
-                    previewView.setGradient(((GradientSelectorView) view).backgroundGradient);
+                    previewView.setGradient(((GradientSelectorView) view).backgroundGradient, false);
                     if (adapter != null) {
                         adapter.notifyDataSetChanged();
                     }
+                    updateButton();
                 } else {
                     if (selectedItemId != 1 && customSelectedGradient != null) {
                         selectedItemId = 1;
-                        previewView.setGradient(customSelectedGradient);
+                        previewView.setGradient(customSelectedGradient, true);
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
                         }
+                        updateButton();
                     } else {
                         showColorPicker();
                     }
@@ -926,15 +1064,18 @@ public class AvatarConstructorFragment extends BaseFragment {
 
                 @Override
                 public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+                    final GradientSelectorView view = (GradientSelectorView) holder.itemView;
                     if (holder.getItemViewType() == VIEW_TYPE_GRADIENT) {
-                        GradientSelectorView gradientSelectorView = (GradientSelectorView) holder.itemView;
-                        gradientSelectorView.setGradient(gradients.get(position));
-                        gradientSelectorView.setSelectedInternal(selectedItemId == gradients.get(position).stableId, true);
+                        view.setCustom(false);
+                        final BackgroundGradient gradient = gradients.get(position);
+                        view.setLocked(gradient.premium && !UserConfig.getInstance(currentAccount).isPremium());
+                        view.setGradient(gradient);
+                        view.setSelectedInternal(selectedItemId == gradients.get(position).stableId, true);
                     } else {
-                        GradientSelectorView gradientSelectorView = (GradientSelectorView) holder.itemView;
-                        gradientSelectorView.setCustom(true);
-                        gradientSelectorView.setGradient(customSelectedGradient);
-                        gradientSelectorView.setSelectedInternal(selectedItemId == 1, true);
+                        view.setCustom(true);
+                        view.setLocked(!UserConfig.getInstance(currentAccount).isPremium());
+                        view.setGradient(customSelectedGradient);
+                        view.setSelectedInternal(selectedItemId == 1, true);
                     }
                 }
 
@@ -967,10 +1108,10 @@ public class AvatarConstructorFragment extends BaseFragment {
             int availableWidth = MeasureSpec.getSize(widthSpec);
             int itemsCount = adapter.getItemCount();
             gradientBackgroundItemWidth = availableWidth / itemsCount;
-            if (gradientBackgroundItemWidth < AndroidUtilities.dp(36)) {
-                gradientBackgroundItemWidth = AndroidUtilities.dp(36);
-            } else if (gradientBackgroundItemWidth > AndroidUtilities.dp(150)) {
-                gradientBackgroundItemWidth = AndroidUtilities.dp(48);
+            if (gradientBackgroundItemWidth < dp(39)) {
+                gradientBackgroundItemWidth = dp(39);
+            } else if (gradientBackgroundItemWidth > dp(150)) {
+                gradientBackgroundItemWidth = dp(48);
             }
             super.onMeasure(widthSpec, heightSpec);
         }
@@ -1056,28 +1197,32 @@ public class AvatarConstructorFragment extends BaseFragment {
                 case 0:
                     if (colorPickerGradient.color1 != color && (colorPickerGradient.color1 == 0 || color == 0)) {
                         colorPickerGradient = colorPickerGradient.copy();
-                        previewView.setGradient(colorPickerGradient);
+                        previewView.setGradient(colorPickerGradient, true);
+                        updateButton();
                     }
                     colorPickerGradient.color1 = color;
                     break;
                 case 1:
                     if (colorPickerGradient.color2 != color && (colorPickerGradient.color2 == 0 || color == 0)) {
                         colorPickerGradient = colorPickerGradient.copy();
-                        previewView.setGradient(colorPickerGradient);
+                        previewView.setGradient(colorPickerGradient, true);
+                        updateButton();
                     }
                     colorPickerGradient.color2 = color;
                     break;
                 case 2:
                     if (colorPickerGradient.color3 != color && (colorPickerGradient.color3 == 0 || color == 0)) {
                         colorPickerGradient = colorPickerGradient.copy();
-                        previewView.setGradient(colorPickerGradient);
+                        previewView.setGradient(colorPickerGradient, true);
+                        updateButton();
                     }
                     colorPickerGradient.color3 = color;
                     break;
                 case 3:
                     if (colorPickerGradient.color4 != color && (colorPickerGradient.color4 == 0 || color == 0)) {
                         colorPickerGradient = colorPickerGradient.copy();
-                        previewView.setGradient(colorPickerGradient);
+                        previewView.setGradient(colorPickerGradient, true);
+                        updateButton();
                     }
                     colorPickerGradient.color4 = color;
                     break;
@@ -1089,7 +1234,7 @@ public class AvatarConstructorFragment extends BaseFragment {
         }) {
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(300), MeasureSpec.EXACTLY));
+                super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(dp(300), MeasureSpec.EXACTLY));
             }
         };
 
@@ -1102,11 +1247,12 @@ public class AvatarConstructorFragment extends BaseFragment {
 
         colorPicker.setType(-1, true, 4, colorPickerGradient.colorsCount(), false, 0, false);
 
-        previewView.setGradient(colorPickerGradient);
+        previewView.setGradient(colorPickerGradient, true);
+        updateButton();
 
         LinearLayout colorPickerContainer = new LinearLayout(getContext());
         colorPickerContainer.setOrientation(LinearLayout.VERTICAL);
-        colorPickerContainer.setPadding(0, AndroidUtilities.dp(8), 0, 0);
+        colorPickerContainer.setPadding(0, dp(8), 0, 0);
         colorPickerContainer.addView(colorPicker);
 
         FrameLayout button = new FrameLayout(getContext());
@@ -1114,10 +1260,10 @@ public class AvatarConstructorFragment extends BaseFragment {
 
         TextView textView = new TextView(getContext());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        textView.setText(LocaleController.getString("SetColor", R.string.SetColor));
+        textView.setText(getString(R.string.SetColor));
         textView.setGravity(Gravity.CENTER);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        textView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+        textView.setTypeface(AndroidUtilities.bold());
+        ThemeBind.textColor(textView, Theme.key_featuredStickers_buttonText);
         button.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
 
         colorPickerContainer.addView(button, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, -8, 16, 16));
@@ -1136,6 +1282,7 @@ public class AvatarConstructorFragment extends BaseFragment {
     public static class BackgroundGradient {
 
         public int stableId;
+        public boolean premium;
 
         int color1;
         int color2;
@@ -1148,6 +1295,7 @@ public class AvatarConstructorFragment extends BaseFragment {
             backgroundGradient.color2 = color2;
             backgroundGradient.color3 = color3;
             backgroundGradient.color4 = color4;
+            backgroundGradient.premium = premium;
             return backgroundGradient;
         }
 
@@ -1202,6 +1350,8 @@ public class AvatarConstructorFragment extends BaseFragment {
 
         GradientTools gradientTools = new GradientTools();
         Drawable addIcon;
+        Drawable lockIcon;
+        boolean lockIconIsEmptyCustom;
         Paint optionsPaint;
         Paint defaultPaint;
 
@@ -1212,7 +1362,10 @@ public class AvatarConstructorFragment extends BaseFragment {
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            super.onMeasure(MeasureSpec.makeMeasureSpec(gradientBackgroundItemWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48), MeasureSpec.EXACTLY));
+            super.onMeasure(
+                MeasureSpec.makeMeasureSpec(gradientBackgroundItemWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(dp(48), MeasureSpec.EXACTLY)
+            );
         }
 
         @Override
@@ -1235,23 +1388,40 @@ public class AvatarConstructorFragment extends BaseFragment {
                 paint = defaultPaint;
             }
             if (progressToSelect.get() == 0) {
-                canvas.drawCircle(cx, cy, AndroidUtilities.dp(15), paint);
+                canvas.drawCircle(cx, cy, dp(15), paint);
             } else {
                 paint.setStyle(Paint.Style.STROKE);
-                paint.setStrokeWidth(AndroidUtilities.dp(2));
+                paint.setStrokeWidth(dp(2));
                 canvas.drawCircle(cx, cy, AndroidUtilities.dpf2(13.5f), paint);
                 paint.setStyle(Paint.Style.FILL);
-                canvas.drawCircle(cx, cy, AndroidUtilities.dp(10) + AndroidUtilities.dp(5) * (1f - progressToSelect.get()), paint);
+                canvas.drawCircle(cx, cy, dp(10) + dp(5) * (1f - progressToSelect.get()), paint);
             }
 
-            if (isCustom) {
+            if (isLocked) {
+                if (lockIcon == null || lockIconIsEmptyCustom != (isCustom && backgroundGradient == null)) {
+                    lockIcon = getContext().getResources().getDrawable(R.drawable.msg_mini_lock2).mutate();
+                    final int color = (lockIconIsEmptyCustom = isCustom && backgroundGradient == null) ? Theme.getColor(Theme.key_chat_emojiSearchIcon) : 0xFFFFFFFF;
+                    lockIcon.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+                }
+                lockIcon.setBounds(
+                    (int) (cx - lockIcon.getIntrinsicWidth() / 2f), (int) (cy - lockIcon.getIntrinsicHeight() / 2f),
+                    (int) (cx + lockIcon.getIntrinsicWidth() / 2f), (int) (cy + lockIcon.getIntrinsicHeight() / 2f)
+                );
+                final float s = lerp(1.05f, 0.92f, progressToSelect.get());
+                canvas.save();
+                canvas.scale(s, s, cx, cy);
+                lockIcon.draw(canvas);
+                canvas.restore();
+            } else if (isCustom) {
                 if (backgroundGradient == null) {
                     if (addIcon == null) {
                         addIcon = ContextCompat.getDrawable(getContext(), R.drawable.msg_filled_plus);
                         addIcon.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_emojiSearchIcon), PorterDuff.Mode.MULTIPLY));
                     }
-                    addIcon.setBounds((int) (cx - addIcon.getIntrinsicWidth() / 2f), (int) (cy - addIcon.getIntrinsicHeight() / 2f),
-                            (int) (cx + addIcon.getIntrinsicWidth() / 2f), (int) (cy + addIcon.getIntrinsicHeight() / 2f));
+                    addIcon.setBounds(
+                        (int) (cx - addIcon.getIntrinsicWidth() / 2f), (int) (cy - addIcon.getIntrinsicHeight() / 2f),
+                        (int) (cx + addIcon.getIntrinsicWidth() / 2f), (int) (cy + addIcon.getIntrinsicHeight() / 2f)
+                    );
                     addIcon.draw(canvas);
                 } else {
                     if (optionsPaint == null) {
@@ -1259,12 +1429,18 @@ public class AvatarConstructorFragment extends BaseFragment {
                         optionsPaint.setColor(0xffffffff);
                     }
                     optionsPaint.setAlpha(Math.round(255f * Utilities.clamp(progressToSelect.get(), 1f, 0f)));
-                    canvas.drawCircle(cx, cy, AndroidUtilities.dp(1.5f), optionsPaint);
-                    canvas.drawCircle(cx - AndroidUtilities.dp(5) * progressToSelect.get(), cy, AndroidUtilities.dp(1.5f), optionsPaint);
-                    canvas.drawCircle(cx + AndroidUtilities.dp(5) * progressToSelect.get(), cy, AndroidUtilities.dp(1.5f), optionsPaint);
-
+                    canvas.drawCircle(cx, cy, dp(1.5f), optionsPaint);
+                    canvas.drawCircle(cx - dp(5) * progressToSelect.get(), cy, dp(1.5f), optionsPaint);
+                    canvas.drawCircle(cx + dp(5) * progressToSelect.get(), cy, dp(1.5f), optionsPaint);
                 }
             }
+        }
+
+        private boolean isLocked;
+        void setLocked(boolean locked) {
+            if (this.isLocked == locked) return;
+            this.isLocked = locked;
+            invalidate();
         }
 
         void setGradient(BackgroundGradient backgroundGradient) {
@@ -1316,7 +1492,7 @@ public class AvatarConstructorFragment extends BaseFragment {
             }
         }
         if (bottomSheet != null) {
-            AndroidUtilities.setLightStatusBar(bottomSheet.getWindow(), isLight);
+            AndroidUtilities.setLightStatusBar(bottomSheet, isLight);
         }
         return isLight;
     }
@@ -1428,9 +1604,21 @@ public class AvatarConstructorFragment extends BaseFragment {
     }
 
     @Override
-    public boolean onBackPressed() {
-        discardEditor();
-        return false;
+    public boolean onBackPressed(boolean invoked) {
+        if (wasChanged) {
+            if (invoked) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+                builder.setMessage(getString(R.string.PhotoEditorDiscardAlert));
+                builder.setTitle(getString(R.string.DiscardChanges));
+                builder.setPositiveButton(getString(R.string.PassportDiscard), (dialogInterface, i) -> finishFragment());
+                builder.setNegativeButton(getString(R.string.Cancel), null);
+                AlertDialog dialog = builder.create();
+                showDialog(dialog);
+                dialog.redPositive();
+            }
+            return false;
+        }
+        return super.onBackPressed(invoked);
     }
 
     public interface Delegate {

@@ -8,19 +8,37 @@
 
 package org.telegram.ui.Cells;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import org.telegram.messenger.FileLog;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.utils.folders.FolderRoles;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
+import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
@@ -31,26 +49,36 @@ import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.tgnet.tl.TL_account;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
+import org.telegram.ui.Components.AnimatedFloat;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CheckBox2;
+import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.Premium.PremiumGradient;
+import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.LaunchActivity;
 
-import com.exteragram.messenger.ExteraConfig;
-
-public class GroupCreateUserCell extends FrameLayout {
+public class GroupCreateUserCell extends FrameLayout implements Theme.Colorable {
 
     private BackupImageView avatarImageView;
     private SimpleTextView nameTextView;
     private SimpleTextView statusTextView;
+
+    private ImageView openChatView; // extera
+
     private CheckBox2 checkBox;
     private AvatarDrawable avatarDrawable;
     private Object currentObject;
     private CharSequence currentName;
     private CharSequence currentStatus;
+    public boolean currentPremium;
+    public boolean currentMiniapps;
 
     private int checkBoxType;
 
@@ -71,13 +99,53 @@ public class GroupCreateUserCell extends FrameLayout {
     private boolean forceDarkTheme;
 
     private boolean showSelfAsSaved;
+    Theme.ResourcesProvider resourcesProvider;
 
-    public GroupCreateUserCell(Context context, int checkBoxType, int pad, boolean selfAsSaved) {
-        this(context, checkBoxType, pad, selfAsSaved, false);
+    private final AnimatedFloat premiumBlockedT = new AnimatedFloat(this, 0, 350, CubicBezierInterpolator.EASE_OUT_QUINT);
+    private boolean premiumBlocked;
+    private final AnimatedFloat starsBlockedT = new AnimatedFloat(this, 0, 350, CubicBezierInterpolator.EASE_OUT_QUINT);
+    private long starsPriceBlocked;
+    private TL_account.RequirementToContact blockedOverridden;
+    private boolean showPremiumBlocked;
+
+    public boolean isBlocked() {
+        return premiumBlocked;
     }
 
-    public GroupCreateUserCell(Context context, int checkBoxType, int pad, boolean selfAsSaved, boolean forCall) {
+    public GroupCreateUserCell showPremiumBlocked() {
+        if (showPremiumBlocked) return this;
+        showPremiumBlocked = true;
+        NotificationCenter.getInstance(currentAccount).listen(this, NotificationCenter.userIsPremiumBlockedUpadted, args -> {
+            updatePremiumBlocked(true);
+        });
+        return this;
+    }
+
+    private void updatePremiumBlocked(boolean animated) {
+        final TL_account.RequirementToContact r = showPremiumBlocked ? (blockedOverridden != null ? blockedOverridden : currentObject instanceof TLRPC.User ? MessagesController.getInstance(currentAccount).isUserContactBlocked(((TLRPC.User) currentObject).id) : null) : null;
+        if (premiumBlocked != DialogObject.isPremiumBlocked(r) || starsPriceBlocked != DialogObject.getMessagesStarsPrice(r)) {
+            premiumBlocked = DialogObject.isPremiumBlocked(r);
+            starsPriceBlocked = DialogObject.getMessagesStarsPrice(r);
+            if (!animated) {
+                premiumBlockedT.set(premiumBlocked, true);
+            }
+            invalidate();
+        }
+    }
+
+    public void overridePremiumBlocked(TL_account.RequirementToContact blocked, boolean animated) {
+        showPremiumBlocked = true;
+        blockedOverridden = blocked;
+        updatePremiumBlocked(animated);
+    }
+
+    public GroupCreateUserCell(Context context, int checkBoxType, int pad, boolean selfAsSaved) {
+        this(context, checkBoxType, pad, selfAsSaved, false, null);
+    }
+
+    public GroupCreateUserCell(Context context, int checkBoxType, int pad, boolean selfAsSaved, boolean forCall, Theme.ResourcesProvider resourcesProvider) {
         super(context);
+        this.resourcesProvider = resourcesProvider;
         this.checkBoxType = checkBoxType;
         forceDarkTheme = forCall;
 
@@ -93,13 +161,13 @@ public class GroupCreateUserCell extends FrameLayout {
         nameTextView = new SimpleTextView(context) {
             @Override
             public boolean setText(CharSequence value, boolean force) {
-                value = Emoji.replaceEmoji(value, getPaint().getFontMetricsInt(), AndroidUtilities.dp(14), false);
+                value = Emoji.replaceEmoji(value, getPaint().getFontMetricsInt(), false);
                 return super.setText(value, force);
             }
         };
         NotificationCenter.listenEmojiLoading(nameTextView);
-        nameTextView.setTextColor(Theme.getColor(forceDarkTheme ? Theme.key_voipgroup_nameText : Theme.key_windowBackgroundWhiteBlackText));
-        nameTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        ThemeBind.textColor(nameTextView, forceDarkTheme ? Theme.key_voipgroup_nameText : Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
+        nameTextView.setTypeface(AndroidUtilities.bold());
         nameTextView.setTextSize(16);
         nameTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
         addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? 28 : 72) + padding, 10, (LocaleController.isRTL ? 72 : 28) + padding, 0));
@@ -109,8 +177,19 @@ public class GroupCreateUserCell extends FrameLayout {
         statusTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
         addView(statusTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? 28 : 72) + padding, 32, (LocaleController.isRTL ? 72 : 28) + padding, 0));
 
+
+        // extera
+        openChatView = new ImageView(context);
+        openChatView.setImageResource(R.drawable.msg_arrow_forward);
+        openChatView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_player_actionBarSelector)));
+        openChatView.setScaleType(ImageView.ScaleType.CENTER);
+        openChatView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
+        openChatView.setVisibility(GONE);
+        addView(openChatView, LayoutHelper.createFrame(40, 40, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 10 : 0, 0, LocaleController.isRTL ? 0 : 10, 0));
+        // extera
+
         if (checkBoxType == 1) {
-            checkBox = new CheckBox2(context, 21);
+            checkBox = new CheckBox2(context, 21, resourcesProvider);
             checkBox.setColor(-1, Theme.key_windowBackgroundWhite, Theme.key_checkboxCheck);
             checkBox.setDrawUnchecked(false);
             checkBox.setDrawBackgroundAsArc(3);
@@ -134,7 +213,97 @@ public class GroupCreateUserCell extends FrameLayout {
         currentStatus = status;
         currentName = name;
         drawDivider = false;
+        currentPremium = false;
+        currentMiniapps = false;
+        openChatView.setVisibility(GONE);
+        updateTextMargins();
         update(0);
+    }
+
+    public void setPremium() {
+        currentPremium = true;
+        currentObject = "premium";
+        avatarImageView.setImageDrawable(makePremiumUsersDrawable(getContext(), false));
+        nameTextView.setText(LocaleController.getString(R.string.PrivacyPremium));
+        statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
+        ThemeBind.textColor(statusTextView, forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
+        statusTextView.setEmojiColor(statusTextView.getTextColor());
+        statusTextView.setText(LocaleController.getString(R.string.PrivacyPremiumText));
+        openChatView.setVisibility(GONE);
+        updateTextMargins();
+    }
+
+
+    public void setOpenChatView(Runnable r) {
+        // extera
+        openChatView.setVisibility(VISIBLE);
+        openChatView.setOnClickListener(v -> {
+            r.run();
+        });
+        updateTextMargins();
+    }
+
+    private void updateTextMargins() {
+        int rightMargin = (LocaleController.isRTL ? 72 : (openChatView.getVisibility() == VISIBLE ? 64 : 28)) + padding;
+        int leftMargin = (LocaleController.isRTL ? (openChatView.getVisibility() == VISIBLE ? 64 : 28) : 72) + padding;
+
+        LayoutParams lp = (LayoutParams) nameTextView.getLayoutParams();
+        lp.rightMargin = AndroidUtilities.dp(rightMargin);
+        lp.leftMargin = AndroidUtilities.dp(leftMargin);
+        lp = (LayoutParams) statusTextView.getLayoutParams();
+        lp.rightMargin = AndroidUtilities.dp(rightMargin);
+        lp.leftMargin = AndroidUtilities.dp(leftMargin);
+    }
+
+    public void setMiniapps() {
+        currentMiniapps = true;
+        currentObject = "miniapps";
+        avatarImageView.setImageDrawable(makeMiniAppsDrawable(getContext(), false));
+        nameTextView.setText(LocaleController.getString(R.string.PrivacyMiniapps));
+        statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
+        ThemeBind.textColor(statusTextView, forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
+        statusTextView.setEmojiColor(statusTextView.getTextColor());
+        statusTextView.setText(LocaleController.getString(R.string.PrivacyMiniappsText));
+        openChatView.setVisibility(GONE);
+        updateTextMargins();
+    }
+
+    public static Drawable makePremiumUsersDrawable(Context context, boolean small) {
+        PremiumGradient.PremiumGradientTools gradientTools = new PremiumGradient.PremiumGradientTools(Theme.key_premiumGradient2, Theme.key_premiumGradient1, -1, -1, -1, null);
+        Drawable backgroundDrawable = new Drawable() {
+            @Override
+            public void draw(@NonNull Canvas canvas) {
+                gradientTools.gradientMatrix(getBounds());
+                canvas.drawCircle(
+                        getBounds().centerX(),
+                        getBounds().centerY(),
+                        Math.min(getBounds().width(), getBounds().height()) / 2f,
+                        gradientTools.paint
+                );
+            }
+            @Override
+            public void setAlpha(int alpha) {}
+            @Override
+            public void setColorFilter(@Nullable ColorFilter colorFilter) {}
+            @Override
+            public int getOpacity() {
+                return PixelFormat.TRANSPARENT;
+            }
+        };
+        Drawable starDrawable = context.getResources().getDrawable(R.drawable.msg_settings_premium);
+        CombinedDrawable drawable = new CombinedDrawable(backgroundDrawable, starDrawable, 0, 0);
+        if (small) {
+            drawable.setIconSize(dp(18), dp(18));
+        }
+        return drawable;
+    }
+
+    public static Drawable makeMiniAppsDrawable(Context context, boolean small) {
+        AvatarDrawable avatarDrawable = new AvatarDrawable();
+        avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_BOTS);
+        avatarDrawable.setScaleSize(small ? .8f : 1.1f);
+        avatarDrawable.setColor(Theme.getColor(Theme.key_avatar_backgroundBlue), Theme.getColor(Theme.key_avatar_background2Blue));
+        return avatarDrawable;
     }
 
     public void setForbiddenCheck(boolean forbidden) {
@@ -208,7 +377,7 @@ public class GroupCreateUserCell extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(currentObject instanceof String ? 50 : 58), MeasureSpec.EXACTLY));
+        super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(currentObject instanceof String && !"premium".equalsIgnoreCase((String) currentObject) && !"miniapps".equalsIgnoreCase((String) currentObject) ? 50 : 58), MeasureSpec.EXACTLY));
     }
 
     public void recycle() {
@@ -216,7 +385,7 @@ public class GroupCreateUserCell extends FrameLayout {
     }
 
     public void update(int mask) {
-        if (currentObject == null) {
+        if (currentObject == null || currentPremium || currentMiniapps) {
             return;
         }
         TLRPC.FileLocation photo = null;
@@ -243,8 +412,14 @@ public class GroupCreateUserCell extends FrameLayout {
                 case "non_contacts":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_NON_CONTACTS);
                     break;
+                case "existing_chats":
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_EXISTING_CHATS);
+                    break;
                 case "groups":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_GROUPS);
+                    break;
+                case "new_chats":
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_NEW_CHATS);
                     break;
                 case "channels":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_CHANNELS);
@@ -260,6 +435,12 @@ public class GroupCreateUserCell extends FrameLayout {
                     break;
                 case "archived":
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_ARCHIVED);
+                    break;
+                case FolderRoles.TYPE_OWNER:
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_OWNER);
+                    break;
+                case FolderRoles.TYPE_ADMIN:
+                    avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_FILTER_ADMIN);
                     break;
             }
             lastName = null;
@@ -285,7 +466,7 @@ public class GroupCreateUserCell extends FrameLayout {
             if (currentObject instanceof TLRPC.User) {
                 TLRPC.User currentUser = (TLRPC.User) currentObject;
                 if (showSelfAsSaved && UserObject.isUserSelf(currentUser)) {
-                    nameTextView.setText(LocaleController.getString("SavedMessages", R.string.SavedMessages), true);
+                    nameTextView.setText(LocaleController.getString(R.string.SavedMessages), true);
                     statusTextView.setText(null);
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                     avatarImageView.setImage(null, "50_50", avatarDrawable, currentUser);
@@ -321,7 +502,7 @@ public class GroupCreateUserCell extends FrameLayout {
                         return;
                     }
                 }
-                avatarDrawable.setInfo(currentUser);
+                avatarDrawable.setInfo(currentAccount, currentUser);
                 lastStatus = currentUser.status != null ? currentUser.status.expires : 0;
 
                 if (currentName != null) {
@@ -335,19 +516,20 @@ public class GroupCreateUserCell extends FrameLayout {
                 if (currentStatus == null) {
                     if (currentUser.bot) {
                         statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
-                        statusTextView.setTextColor(Theme.getColor(forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText));
-                        statusTextView.setText(LocaleController.getString("Bot", R.string.Bot));
+                        ThemeBind.textColor(statusTextView, forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
+                        statusTextView.setText(LocaleController.getString(R.string.Bot));
                     } else {
                         if (currentUser.id == UserConfig.getInstance(currentAccount).getClientUserId() || currentUser.status != null && currentUser.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(currentUser.id)) {
                             statusTextView.setTag(Theme.key_windowBackgroundWhiteBlueText);
-                            statusTextView.setTextColor(Theme.getColor(forceDarkTheme ? Theme.key_voipgroup_listeningText : Theme.key_windowBackgroundWhiteBlueText));
-                            statusTextView.setText(LocaleController.getString("Online", R.string.Online));
+                            ThemeBind.textColor(statusTextView, forceDarkTheme ? Theme.key_voipgroup_listeningText : Theme.key_windowBackgroundWhiteBlueText, resourcesProvider);
+                            statusTextView.setText(LocaleController.getString(R.string.Online));
                         } else {
                             statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
-                            statusTextView.setTextColor(Theme.getColor(forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText));
+                            ThemeBind.textColor(statusTextView, forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
                             statusTextView.setText(LocaleController.formatUserStatus(currentAccount, currentUser));
                         }
                     }
+                    statusTextView.setEmojiColor(statusTextView.getTextColor());
                 }
 
                 avatarImageView.setForUserOrChat(currentUser, avatarDrawable);
@@ -374,7 +556,7 @@ public class GroupCreateUserCell extends FrameLayout {
                     }
                 }
 
-                avatarDrawable.setInfo(currentChat);
+                avatarDrawable.setInfo(currentAccount, currentChat);
 
                 if (currentName != null) {
                     lastName = null;
@@ -386,7 +568,8 @@ public class GroupCreateUserCell extends FrameLayout {
 
                 if (currentStatus == null) {
                     statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
-                    statusTextView.setTextColor(Theme.getColor(forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText));
+                    ThemeBind.textColor(statusTextView, forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText);
+                    statusTextView.setEmojiColor(statusTextView.getTextColor());
                     if (currentChat.participants_count != 0) {
                         if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {
                             statusTextView.setText(LocaleController.formatPluralString("Subscribers", currentChat.participants_count));
@@ -394,18 +577,18 @@ public class GroupCreateUserCell extends FrameLayout {
                             statusTextView.setText(LocaleController.formatPluralString("Members", currentChat.participants_count));
                         }
                     } else if (currentChat.has_geo) {
-                        statusTextView.setText(LocaleController.getString("MegaLocation", R.string.MegaLocation));
+                        statusTextView.setText(LocaleController.getString(R.string.MegaLocation));
                     } else if (!ChatObject.isPublic(currentChat)) {
                         if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {
-                            statusTextView.setText(LocaleController.getString("ChannelPrivate", R.string.ChannelPrivate));
+                            statusTextView.setText(LocaleController.getString(R.string.ChannelPrivate));
                         } else {
-                            statusTextView.setText(LocaleController.getString("MegaPrivate", R.string.MegaPrivate));
+                            statusTextView.setText(LocaleController.getString(R.string.MegaPrivate));
                         }
                     } else {
                         if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {
-                            statusTextView.setText(LocaleController.getString("ChannelPublic", R.string.ChannelPublic));
+                            statusTextView.setText(LocaleController.getString(R.string.ChannelPublic));
                         } else {
-                            statusTextView.setText(LocaleController.getString("MegaPublic", R.string.MegaPublic));
+                            statusTextView.setText(LocaleController.getString(R.string.MegaPublic));
                         }
                     }
                 }
@@ -414,34 +597,89 @@ public class GroupCreateUserCell extends FrameLayout {
             }
         }
 
-
-        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(currentChat != null && currentChat.forum ? 46 * 0.65f : 46));
+        avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(46, false, currentChat != null && currentChat.forum));
         if (currentStatus != null) {
             statusTextView.setText(currentStatus, true);
             statusTextView.setTag(Theme.key_windowBackgroundWhiteGrayText);
-            statusTextView.setTextColor(Theme.getColor(forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText));
+            ThemeBind.textColor(statusTextView, forceDarkTheme ? Theme.key_voipgroup_lastSeenText : Theme.key_windowBackgroundWhiteGrayText, resourcesProvider);
+            statusTextView.setEmojiColor(statusTextView.getTextColor());
         }
+
+        updatePremiumBlocked(false);
     }
+
+    private PremiumGradient.PremiumGradientTools premiumGradient;
+    private Drawable lockDrawable;
+    private Paint lockBackgroundPaint;
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (checkBoxType == 2 && (isChecked || checkProgress > 0.0f)) {
-            paint.setColor(Theme.getColor(Theme.key_checkboxSquareBackground));
+        float lockT = premiumBlockedT.set(premiumBlocked);
+        if (lockT > 0) {
+
+        } else if (checkBoxType == 2 && (isChecked || checkProgress > 0.0f)) {
+            paint.setColor(Theme.getColor(Theme.key_checkboxSquareBackground, resourcesProvider));
             float cx = avatarImageView.getLeft() + avatarImageView.getMeasuredWidth() / 2;
             float cy = avatarImageView.getTop() + avatarImageView.getMeasuredHeight() / 2;
             float rad = AndroidUtilities.dp(18) + AndroidUtilities.dp(4) * checkProgress;
-            canvas.drawRoundRect(cx - rad, cy - rad, cx + rad, cy + rad, ExteraConfig.getAvatarCorners(rad * 2, true), ExteraConfig.getAvatarCorners(rad * 2, true), paint);
+            float avatarScale = avatarImageView.getScaleX();
+            float cornerRadius = Math.max(0, avatarImageView.getImageReceiver().getRoundRadius()[0] * avatarScale
+                    + rad - avatarImageView.getMeasuredWidth() / 2f * avatarScale);
+            canvas.drawRoundRect(cx - rad, cy - rad, cx + rad, cy + rad, cornerRadius, cornerRadius, paint);
         }
         if (drawDivider) {
             int start = AndroidUtilities.dp(LocaleController.isRTL ? 0 : 72 + padding);
             int end = getMeasuredWidth() - AndroidUtilities.dp(!LocaleController.isRTL ? 0 : 72 + padding);
             if (forceDarkTheme) {
-                Theme.dividerExtraPaint.setColor(Theme.getColor(Theme.key_voipgroup_actionBar));
+                Theme.dividerExtraPaint.setColor(Theme.getColor(Theme.key_voipgroup_actionBar, resourcesProvider));
                 canvas.drawRect(start, getMeasuredHeight() - 1, end, getMeasuredHeight(), Theme.dividerExtraPaint);
             } else {
-                canvas.drawRect(start, getMeasuredHeight() - 1, end, getMeasuredHeight(), Theme.dividerPaint);
+                canvas.drawRect(start, getMeasuredHeight() - 1, end, getMeasuredHeight(), Theme.getThemePaint(Theme.key_paint_divider, resourcesProvider));
             }
+        }
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+
+        float lockT = premiumBlockedT.set(premiumBlocked);
+        if (lockT > 0) {
+            float top =  avatarImageView.getY() + avatarImageView.getHeight() / 2f + dp(18);
+            float left = avatarImageView.getX() + avatarImageView.getWidth() / 2f + dp(18);
+
+            canvas.save();
+            Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
+            canvas.drawCircle(left, top, dp(10 + 1.33f) * lockT, Theme.dialogs_onlineCirclePaint);
+            Paint paint;
+            if (blockedOverridden == null) {
+                if (premiumGradient == null) {
+                    premiumGradient = new PremiumGradient.PremiumGradientTools(Theme.key_premiumGradient1, Theme.key_premiumGradient2, -1, -1, -1, resourcesProvider);
+                }
+                premiumGradient.gradientMatrix((int) (left - dp(10)), (int) (top - dp(10)), (int) (left + dp(10)), (int) (top + dp(10)), 0, 0);
+                paint = premiumGradient.paint;
+            } else {
+                if (lockBackgroundPaint == null) {
+                    lockBackgroundPaint = new Paint();
+                }
+                lockBackgroundPaint.setColor(Theme.getColor(Theme.key_avatar_backgroundGray, resourcesProvider));
+                paint = lockBackgroundPaint;
+            }
+            canvas.drawCircle(left, top, dp(10) * lockT, paint);
+            if (lockDrawable == null) {
+                lockDrawable = getContext().getResources().getDrawable(R.drawable.msg_mini_lock2).mutate();
+                lockDrawable.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
+            }
+            lockDrawable.setBounds(
+                    (int) (left - lockDrawable.getIntrinsicWidth() / 2f * .875f * lockT),
+                    (int) (top  - lockDrawable.getIntrinsicHeight() / 2f * .875f * lockT),
+                    (int) (left + lockDrawable.getIntrinsicWidth() / 2f * .875f * lockT),
+                    (int) (top  + lockDrawable.getIntrinsicHeight() / 2f * .875f * lockT)
+            );
+            lockDrawable.setAlpha((int) (0xFF * lockT));
+            lockDrawable.draw(canvas);
+            canvas.restore();
         }
     }
 
@@ -461,5 +699,42 @@ public class GroupCreateUserCell extends FrameLayout {
 
     public SimpleTextView getStatusTextView() {
         return statusTextView;
+    }
+
+    private int lastEmojiColor;
+
+    @Override
+    public void updateColors() {
+        try {
+            // no full update(0) re-bind per theme frame: the status color is bound, the avatar re-reads its colors on draw
+            if (statusTextView != null && currentObject != null && !currentPremium && !currentMiniapps) {
+                final int statusColor = statusTextView.getTextColor();
+                if (statusColor != lastEmojiColor) {
+                    lastEmojiColor = statusColor;
+                    statusTextView.setEmojiColor(statusColor);
+                }
+            }
+            if (avatarImageView != null) {
+                avatarImageView.invalidate();
+            }
+            updateMiniAppsAvatarColors();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    private void updateMiniAppsAvatarColors() {
+        try {
+            if (!currentMiniapps || avatarImageView == null) {
+                return;
+            }
+            final Drawable drawable = avatarImageView.getImageReceiver().getDrawable();
+            if (drawable instanceof AvatarDrawable) {
+                ((AvatarDrawable) drawable).setColor(Theme.getColor(Theme.key_avatar_backgroundBlue), Theme.getColor(Theme.key_avatar_background2Blue));
+                avatarImageView.invalidate();
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 }

@@ -8,8 +8,12 @@
 
 package org.telegram.ui.Cells;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -19,20 +23,36 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
+import org.telegram.messenger.UserObject;
+import org.telegram.tgnet.TLObject;
+import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
+import org.telegram.ui.Components.AnimatedTextView;
+import org.telegram.ui.Components.AvatarDrawable;
+import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.CheckBoxSquare;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
-
-import com.exteragram.messenger.ExteraConfig;
+import org.telegram.ui.Components.LinkSpanDrawable;
 
 public class CheckBoxCell extends FrameLayout {
 
@@ -41,20 +61,31 @@ public class CheckBoxCell extends FrameLayout {
             TYPE_CHECK_BOX_ENTER_PHONE = 2,
             TYPE_CHECK_BOX_UNKNOWN = 3,
             TYPE_CHECK_BOX_ROUND = 4,
-            TYPE_CHECK_BOX_URL = 5;
+            TYPE_CHECK_BOX_URL = 5,
+            TYPE_CHECK_BOX_USER_GROUP = 6,
+            TYPE_CHECK_BOX_USER = 7,
+            TYPE_CHECK_BOX_ROUND_GROUP = 8;
+
+    public int itemId;
 
     private final Theme.ResourcesProvider resourcesProvider;
-    private final TextView textView;
+    private LinkSpanDrawable.LinksTextView linksTextView;
+    private AnimatedTextView animatedTextView;
+    private View textView;
     private final TextView valueTextView;
     private final View checkBox;
     private CheckBoxSquare checkBoxSquare;
     private CheckBox2 checkBoxRound;
     private View collapsedArrow;
+    private CollapseButton collapseButton;
+    private BackupImageView avatarImageView;
+    private AvatarDrawable avatarDrawable;
 
     private final int currentType;
     private final int checkBoxSize;
     private boolean needDivider;
     private boolean isMultiline;
+    private boolean textAnimated;
 
     public CheckBoxCell(Context context, int type) {
         this(context, type, 17, null);
@@ -65,47 +96,93 @@ public class CheckBoxCell extends FrameLayout {
     }
 
     public CheckBoxCell(Context context, int type, int padding, Theme.ResourcesProvider resourcesProvider) {
+        this(context, type, padding, false, resourcesProvider);
+    }
+
+    public CheckBoxCell(Context context, int type, int padding, boolean textAnimated, Theme.ResourcesProvider resourcesProvider) {
         super(context);
         this.resourcesProvider = resourcesProvider;
         this.currentType = type;
+        this.textAnimated = textAnimated;
 
-        textView = new TextView(context) {
-            @Override
-            protected void onDraw(Canvas canvas) {
-                super.onDraw(canvas);
-                updateCollapseArrowTranslation();
-            }
-
-            @Override
-            public void setText(CharSequence text, BufferType type) {
-                text = Emoji.replaceEmoji(text, getPaint().getFontMetricsInt(), false);
-                super.setText(text, type);
-            }
-        };
-        NotificationCenter.listenEmojiLoading(textView);
-        textView.setTag(getThemedColor(type == TYPE_CHECK_BOX_DEFAULT || type == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        textView.setLines(1);
-        textView.setMaxLines(1);
-        textView.setSingleLine(true);
-        textView.setEllipsize(TextUtils.TruncateAt.END);
-        if (type == TYPE_CHECK_BOX_UNKNOWN) {
-            textView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 29, 0, 0, 0));
-            textView.setPadding(0, 0, 0, AndroidUtilities.dp(3));
-        } else {
-            textView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
-            if (type == TYPE_CHECK_BOX_ENTER_PHONE) {
-                addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? 8 : 29), 0, (LocaleController.isRTL ? 29 : 8), 0));
+        if (textAnimated) {
+            animatedTextView = new AnimatedTextView(context) {
+                @Override
+                protected void onDraw(Canvas canvas) {
+                    super.onDraw(canvas);
+                    updateCollapseArrowTranslation();
+                }
+            };
+            NotificationCenter.listenEmojiLoading(animatedTextView);
+            animatedTextView.setEllipsizeByGradient(true);
+            animatedTextView.setRightPadding(dp(8));
+            animatedTextView.getDrawable().setHacks(true, true, false);
+            animatedTextView.setTag(getThemedColor(type == TYPE_CHECK_BOX_DEFAULT || type == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText));
+            animatedTextView.setTextSize(dp(16));
+            animatedTextView.setTypeface(type == TYPE_CHECK_BOX_USER ? AndroidUtilities.bold() : AndroidUtilities.regular());
+            if (type == TYPE_CHECK_BOX_UNKNOWN) {
+                animatedTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+                addView(animatedTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL, 29, 0, 0, 0));
+                animatedTextView.setPadding(0, 0, 0, dp(3));
             } else {
-                int offset = type == TYPE_CHECK_BOX_ROUND ? 56 : 46;
-                addView(textView, LayoutHelper.createFrame(type == TYPE_CHECK_BOX_ROUND ? LayoutHelper.WRAP_CONTENT : LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? padding : offset + (padding - 17)), 0, (LocaleController.isRTL ? offset + (padding - 17) : padding), 0));
+                animatedTextView.setRightPadding(dp(padding));
+                animatedTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
+                if (type == TYPE_CHECK_BOX_ENTER_PHONE) {
+                    addView(animatedTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, (LocaleController.isRTL ? 8 : 29), 0, (LocaleController.isRTL ? 29 : 8), 0));
+                } else {
+                    int offset = isCheckboxRound() ? 56 : 46;
+                    if (type == TYPE_CHECK_BOX_USER) {
+                        offset += 39;
+                    }
+                    addView(animatedTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, (LocaleController.isRTL ? padding : offset + (padding - 17)), 0, (LocaleController.isRTL ? offset + (padding - 17) : padding), 0));
+                }
             }
+            textView = animatedTextView;
+        } else {
+            linksTextView = new LinkSpanDrawable.LinksTextView(context) {
+                @Override
+                protected void onDraw(Canvas canvas) {
+                    super.onDraw(canvas);
+                    updateCollapseArrowTranslation();
+                }
+
+                @Override
+                public void setText(CharSequence text, BufferType type) {
+                    text = Emoji.replaceEmoji(text, getPaint().getFontMetricsInt(), false);
+                    super.setText(text, type);
+                }
+            };
+            NotificationCenter.listenEmojiLoading(linksTextView);
+            linksTextView.setTag(getThemedColor(type == TYPE_CHECK_BOX_DEFAULT || type == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText));
+            linksTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+            linksTextView.setLines(1);
+            linksTextView.setMaxLines(1);
+            linksTextView.setSingleLine(true);
+            linksTextView.setEllipsize(TextUtils.TruncateAt.END);
+            linksTextView.setTypeface(type == TYPE_CHECK_BOX_USER ? AndroidUtilities.bold() : AndroidUtilities.regular());
+            if (type == TYPE_CHECK_BOX_UNKNOWN) {
+                linksTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+                addView(linksTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL, 29, 0, 0, 0));
+                linksTextView.setPadding(0, 0, 0, dp(3));
+            } else {
+                linksTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
+                if (type == TYPE_CHECK_BOX_ENTER_PHONE) {
+                    addView(linksTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, (LocaleController.isRTL ? 8 : 29), 0, (LocaleController.isRTL ? 29 : 8), 0));
+                } else {
+                    int offset = isCheckboxRound() ? 56 : 46;
+                    if (type == TYPE_CHECK_BOX_USER) {
+                        offset += 39;
+                    }
+                    addView(linksTextView, LayoutHelper.createFrame(isCheckboxRound() ? LayoutHelper.WRAP_CONTENT : LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, (LocaleController.isRTL ? padding : offset + (padding - 17)), 0, (LocaleController.isRTL ? offset + (padding - 17) : padding), 0));
+                }
+            }
+            textView = linksTextView;
         }
 
         valueTextView = new TextView(context);
         valueTextView.setTag(type == TYPE_CHECK_BOX_DEFAULT || type == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlue : Theme.key_windowBackgroundWhiteValueText);
         valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+        valueTextView.setTypeface(AndroidUtilities.regular());
         valueTextView.setLines(1);
         valueTextView.setMaxLines(1);
         valueTextView.setSingleLine(true);
@@ -113,7 +190,7 @@ public class CheckBoxCell extends FrameLayout {
         valueTextView.setGravity((LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL);
         addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, padding, 0, padding, 0));
 
-        if (type == TYPE_CHECK_BOX_ROUND) {
+        if (isCheckboxRound()) {
             checkBox = checkBoxRound = new CheckBox2(context, 21, resourcesProvider);
             checkBoxRound.setDrawUnchecked(true);
             checkBoxRound.setChecked(true, false);
@@ -133,13 +210,44 @@ public class CheckBoxCell extends FrameLayout {
                 addView(checkBox, LayoutHelper.createFrame(checkBoxSize, checkBoxSize, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? 0 : padding), 16, (LocaleController.isRTL ? padding : 0), 0));
             }
         }
+
+        if (type == TYPE_CHECK_BOX_USER_GROUP) {
+            collapseButton = new CollapseButton(context, R.drawable.msg_folders_groups);
+            addView(collapseButton, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.END | Gravity.CENTER_VERTICAL, padding, 0, padding - 11, 0));
+        } else if (type == TYPE_CHECK_BOX_ROUND_GROUP) {
+            collapseButton = new CollapseButton(context, 0);
+            addView(collapseButton, LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.END | Gravity.CENTER_VERTICAL, padding, 0, padding - 11, 0));
+        } else if (type == TYPE_CHECK_BOX_USER) {
+            avatarDrawable = new AvatarDrawable();
+            avatarImageView = new BackupImageView(context);
+            avatarImageView.setRoundRadius(ExteraConfig.getAvatarCorners(34));
+            addView(avatarImageView, LayoutHelper.createFrameRelatively(34, 34, Gravity.START | Gravity.CENTER_VERTICAL, 56, 0, 0, 0));
+        }
+
         updateTextColor();
     }
 
+    public boolean isCheckboxRound() {
+        return currentType == TYPE_CHECK_BOX_ROUND || currentType == TYPE_CHECK_BOX_ROUND_GROUP || currentType == TYPE_CHECK_BOX_USER_GROUP || currentType == TYPE_CHECK_BOX_USER;
+    }
+
+    public void allowMultiline() {
+        if (textAnimated) {
+            return;
+        }
+        linksTextView.setLines(3);
+        linksTextView.setMaxLines(3);
+        linksTextView.setSingleLine(false);
+    }
+
     public void updateTextColor() {
-        textView.setTextColor(getThemedColor(currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText));
-        textView.setLinkTextColor(getThemedColor(currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextLink : Theme.key_windowBackgroundWhiteLinkText));
-        valueTextView.setTextColor(getThemedColor(currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlue : Theme.key_windowBackgroundWhiteValueText));
+        if (textAnimated) {
+            ThemeBind.textColor(animatedTextView, currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
+        } else {
+            ThemeBind.textColor(linksTextView, currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
+            ThemeBind.linkTextColor(linksTextView, currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextLink : Theme.key_windowBackgroundWhiteLinkText, resourcesProvider);
+        }
+        ThemeBind.textColor(valueTextView, currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlue : Theme.key_windowBackgroundWhiteValueText, resourcesProvider);
     }
 
     private View click1Container, click2Container;
@@ -152,7 +260,7 @@ public class CheckBoxCell extends FrameLayout {
         } else {
             if (click1Container == null) {
                 click1Container = new View(getContext());
-                click1Container.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
+                ThemeBind.selectorBackground(click1Container, Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL), null, ThemeBind.of(Theme.key_listSelector), resourcesProvider);
                 addView(click1Container, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
             }
             click1Container.setOnClickListener(onTextClick);
@@ -182,11 +290,14 @@ public class CheckBoxCell extends FrameLayout {
             if (collapsedArrow == null) {
                 collapsedArrow = new View(getContext());
                 Drawable drawable = getContext().getResources().getDrawable(R.drawable.arrow_more).mutate();
-                drawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.MULTIPLY));
+                ThemeBind.drawableColorFilter(this, drawable, Theme.key_windowBackgroundWhiteBlackText, resourcesProvider, PorterDuff.Mode.MULTIPLY);
                 collapsedArrow.setBackground(drawable);
                 addView(collapsedArrow, LayoutHelper.createFrame(16, 16, Gravity.CENTER_VERTICAL));
             }
 
+            if (collapsedArrow.getVisibility() == GONE) {
+                collapsedArrow.setVisibility(VISIBLE);
+            }
             updateCollapseArrowTranslation();
             collapsedArrow.animate().cancel();
             collapsedArrow.animate().rotation(collapsed ? 0 : 180).setDuration(340).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).start();
@@ -205,9 +316,9 @@ public class CheckBoxCell extends FrameLayout {
 
         float translateX;
         if (LocaleController.isRTL) {
-            translateX = textView.getRight() - textWidth - AndroidUtilities.dp(20);
+            translateX = textView.getRight() - textWidth - dp(20);
         } else {
-            translateX = textView.getLeft() + textWidth + AndroidUtilities.dp(4);
+            translateX = textView.getLeft() + textWidth + dp(4);
         }
         collapsedArrow.setTranslationX(translateX);
     }
@@ -216,43 +327,74 @@ public class CheckBoxCell extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         if (currentType == TYPE_CHECK_BOX_UNKNOWN) {
-            valueTextView.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(10), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(50), MeasureSpec.EXACTLY));
-            textView.measure(MeasureSpec.makeMeasureSpec(width - AndroidUtilities.dp(34), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(50), MeasureSpec.EXACTLY));
-            checkBox.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(checkBoxSize), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(checkBoxSize), MeasureSpec.EXACTLY));
+            valueTextView.measure(MeasureSpec.makeMeasureSpec(dp(10), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(50), MeasureSpec.EXACTLY));
+            textView.measure(MeasureSpec.makeMeasureSpec(width - dp(34), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(50), MeasureSpec.AT_MOST));
+            checkBox.measure(MeasureSpec.makeMeasureSpec(dp(checkBoxSize), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(checkBoxSize), MeasureSpec.EXACTLY));
 
-            setMeasuredDimension(textView.getMeasuredWidth() + AndroidUtilities.dp(29), AndroidUtilities.dp(50));
+            setMeasuredDimension(textView.getMeasuredWidth() + dp(29), dp(50));
         } else if (isMultiline) {
             super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         } else {
-            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), AndroidUtilities.dp(50) + (needDivider ? 1 : 0));
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), dp(50) + (needDivider ? 1 : 0));
 
-            int availableWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - AndroidUtilities.dp(currentType == TYPE_CHECK_BOX_ROUND ? 60 : 34);
+            int availableWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - dp(isCheckboxRound() ? 60 : 34);
+            if (textAnimated) {
+                availableWidth += (int) animatedTextView.getRightPadding();
+            }
+            if (currentType == TYPE_CHECK_BOX_USER) {
+                availableWidth -= dp(34);
+            }
             if (valueTextView.getLayoutParams() instanceof MarginLayoutParams) {
                 availableWidth -= ((MarginLayoutParams) valueTextView.getLayoutParams()).rightMargin;
             }
 
+            int takenSpace = 0;
             valueTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth / 2, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
-            textView.measure(MeasureSpec.makeMeasureSpec(availableWidth - (int) Math.abs(textView.getTranslationX()) - valueTextView.getMeasuredWidth() - AndroidUtilities.dp(8), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
-            checkBox.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(checkBoxSize), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(checkBoxSize), MeasureSpec.EXACTLY));
+            takenSpace += valueTextView.getMeasuredWidth();
+            if (collapseButton != null) {
+                collapseButton.measure(MeasureSpec.makeMeasureSpec(availableWidth / 2, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
+                takenSpace += collapseButton.getMeasuredWidth() - dp(11);
+            }
+            if (textView.getLayoutParams().width == LayoutHelper.MATCH_PARENT) {
+                textView.measure(MeasureSpec.makeMeasureSpec(availableWidth - (int) Math.abs(textView.getTranslationX()) - takenSpace - dp(8), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST));
+            } else {
+                textView.measure(MeasureSpec.makeMeasureSpec(availableWidth - (int) Math.abs(textView.getTranslationX()) - takenSpace - dp(8), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST));
+            }
+            if (avatarImageView != null) {
+                avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(34), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(34), MeasureSpec.EXACTLY));
+            }
+            checkBox.measure(MeasureSpec.makeMeasureSpec(dp(checkBoxSize), MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(checkBoxSize), MeasureSpec.EXACTLY));
         }
 
         if (click1Container != null) {
             MarginLayoutParams margin = (MarginLayoutParams) click1Container.getLayoutParams();
-            click1Container.measure(MeasureSpec.makeMeasureSpec(width - margin.leftMargin - margin.rightMargin, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(50), MeasureSpec.EXACTLY));
+            click1Container.measure(MeasureSpec.makeMeasureSpec(width - margin.leftMargin - margin.rightMargin, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(50), MeasureSpec.EXACTLY));
         }
         if (click2Container != null) {
-            click2Container.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(56), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(50), MeasureSpec.EXACTLY));
+            click2Container.measure(MeasureSpec.makeMeasureSpec(dp(56), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(50), MeasureSpec.EXACTLY));
         }
         if (collapsedArrow != null) {
             collapsedArrow.measure(
-                    MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(16), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(16), MeasureSpec.EXACTLY)
+                    MeasureSpec.makeMeasureSpec(dp(16), MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(dp(16), MeasureSpec.EXACTLY)
             );
         }
     }
 
     public void setTextColor(int color) {
-        textView.setTextColor(color);
+        // the caller owns the text color now: drop the default key binding so a theme switch does not overwrite it
+        if (textAnimated) {
+            ThemeBind.clear(animatedTextView);
+            animatedTextView.setTextColor(color);
+        } else {
+            ThemeBind.clear(linksTextView);
+            linksTextView.setTextColor(color);
+            // keep the link color binding (cleared above together with the text one) when it still shows the default key
+            final int linkKey = currentType == TYPE_CHECK_BOX_DEFAULT || currentType == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextLink : Theme.key_windowBackgroundWhiteLinkText;
+            if (linksTextView.getLinkTextColors() != null && linksTextView.getLinkTextColors().getDefaultColor() == getThemedColor(linkKey)) {
+                ThemeBind.linkTextColor(linksTextView, linkKey, resourcesProvider);
+            }
+        }
     }
 
     public void setText(CharSequence text, String value, boolean checked, boolean divider) {
@@ -260,23 +402,80 @@ public class CheckBoxCell extends FrameLayout {
     }
 
     public void setText(CharSequence text, String value, boolean checked, boolean divider, boolean animated) {
-        textView.setText(text);
+        if (textAnimated) {
+            text = Emoji.replaceEmoji(text, animatedTextView.getPaint().getFontMetricsInt(), false);
+            animatedTextView.setText(text, animated);
+        } else {
+            linksTextView.setText(text);
+        }
         if (checkBoxRound != null) {
             checkBoxRound.setChecked(checked, animated);
         } else {
             checkBoxSquare.setChecked(checked, animated);
         }
-        valueTextView.setText(value);
+        if (!TextUtils.isEmpty(value)) {
+            valueTextView.setText(value);
+            valueTextView.setVisibility(VISIBLE);
+        } else {
+            valueTextView.setText("");
+            valueTextView.setVisibility(GONE);
+        }
         needDivider = divider;
         setWillNotDraw(!divider);
     }
 
+    public void setText(CharSequence text, String value, boolean animated) {
+        if (textAnimated) {
+            text = Emoji.replaceEmoji(text, animatedTextView.getPaint().getFontMetricsInt(), false);
+            animatedTextView.setText(text, animated);
+        } else {
+            linksTextView.setText(text);
+        }
+        if (!TextUtils.isEmpty(value)) {
+            valueTextView.setText(value);
+            valueTextView.setVisibility(VISIBLE);
+        } else {
+            valueTextView.setText("");
+            valueTextView.setVisibility(GONE);
+        }
+    }
+
+    public void setUserOrChat(TLObject userOrChat) {
+        setUserOrChat(userOrChat, true);
+    }
+
+    public void setUserOrChat(TLObject userOrChat, boolean animated) {
+        if (avatarImageView.getVisibility() == GONE) {
+            avatarImageView.setVisibility(VISIBLE);
+        }
+        avatarDrawable.setInfo(userOrChat);
+        avatarImageView.setForUserOrChat(userOrChat, avatarDrawable);
+        CharSequence name;
+        if (userOrChat instanceof TLRPC.User) {
+            name = UserObject.getUserName((TLRPC.User) userOrChat);
+        } else {
+            name = ContactsController.formatName(userOrChat);
+        }
+        if (userOrChat instanceof TLRPC.User && ((TLRPC.User) userOrChat).id == MessagesController.getInstance(UserConfig.selectedAccount).telegramAntispamUserId) {
+            name = LocaleController.getString(R.string.ChannelAntiSpamUser);
+        }
+        if (textAnimated) {
+            name = Emoji.replaceEmoji(name, animatedTextView.getPaint().getFontMetricsInt(), false);
+            animatedTextView.setText(name, animated);
+        } else {
+            linksTextView.setText(name);
+        }
+    }
+
     public void setPad(int pad) {
-        int offset = AndroidUtilities.dp(pad * 40 * (LocaleController.isRTL ? -1 : 1));
+        int offset = dp(pad * 40 * (LocaleController.isRTL ? -1 : 1));
         if (checkBox != null) {
             checkBox.setTranslationX(offset);
         }
         textView.setTranslationX(offset);
+        if (avatarImageView != null) {
+            avatarImageView.setTranslationX(offset);
+        }
         if (click1Container != null) {
             click1Container.setTranslationX(offset);
         }
@@ -287,33 +486,40 @@ public class CheckBoxCell extends FrameLayout {
 
     public void setNeedDivider(boolean needDivider) {
         this.needDivider = needDivider;
+        setWillNotDraw(!needDivider);
     }
 
     public void setMultiline(boolean value) {
+        if (textAnimated) {
+            return;
+        }
         isMultiline = value;
         LayoutParams layoutParams = (LayoutParams) textView.getLayoutParams();
         LayoutParams layoutParams1 = (LayoutParams) checkBox.getLayoutParams();
         if (isMultiline) {
-            textView.setLines(0);
-            textView.setMaxLines(0);
-            textView.setSingleLine(false);
-            textView.setEllipsize(null);
+            linksTextView.setLines(0);
+            linksTextView.setMaxLines(0);
+            linksTextView.setSingleLine(false);
+            linksTextView.setEllipsize(null);
+            layoutParams1.gravity = Gravity.CENTER_VERTICAL | (layoutParams1.gravity & Gravity.HORIZONTAL_GRAVITY_MASK);
+            layoutParams1.topMargin = 0;
             if (currentType != TYPE_CHECK_BOX_URL) {
-                textView.setPadding(0, 0, 0, AndroidUtilities.dp(5));
-                layoutParams.height = LayoutParams.WRAP_CONTENT;
-                layoutParams.topMargin = AndroidUtilities.dp(10);
-                layoutParams1.topMargin = AndroidUtilities.dp(12);
+//                layoutParams.height = LayoutParams.WRAP_CONTENT;
+//                layoutParams.gravity = (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP;
+//                layoutParams.topMargin = dp(14);
+//                layoutParams.bottomMargin = dp(10);
             }
         } else {
-            textView.setLines(1);
-            textView.setMaxLines(1);
-            textView.setSingleLine(true);
-            textView.setEllipsize(TextUtils.TruncateAt.END);
+            linksTextView.setLines(1);
+            linksTextView.setMaxLines(1);
+            linksTextView.setSingleLine(true);
+            linksTextView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setPadding(0, 0, 0, 0);
 
             layoutParams.height = LayoutParams.MATCH_PARENT;
             layoutParams.topMargin = 0;
-            layoutParams1.topMargin = AndroidUtilities.dp(15);
+            layoutParams1.gravity = Gravity.TOP | (layoutParams1.gravity & Gravity.HORIZONTAL_GRAVITY_MASK);
+            layoutParams1.topMargin = dp(15);
         }
         textView.setLayoutParams(layoutParams);
         checkBox.setLayoutParams(layoutParams1);
@@ -344,7 +550,11 @@ public class CheckBoxCell extends FrameLayout {
     }
 
     public TextView getTextView() {
-        return textView;
+        return linksTextView;
+    }
+
+    public AnimatedTextView getAnimatedTextView() {
+        return animatedTextView;
     }
 
     public TextView getValueTextView() {
@@ -373,9 +583,16 @@ public class CheckBoxCell extends FrameLayout {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (needDivider && !ExteraConfig.disableDividers) {
-            int offset = AndroidUtilities.dp(currentType == TYPE_CHECK_BOX_ROUND ? 60 : 20) + (int) Math.abs(textView.getTranslationX());
-            canvas.drawLine(LocaleController.isRTL ? 0 : offset, getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? offset : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
+        if (needDivider) {
+            int offset = dp(isCheckboxRound() ? 60 : 20) + (int) Math.abs(textView.getTranslationX());
+            if (currentType == TYPE_CHECK_BOX_USER) {
+                offset += dp(39);
+            }
+            Paint paint = resourcesProvider != null ? resourcesProvider.getPaint(Theme.key_paint_divider) : null;
+            if (paint == null) {
+                paint = Theme.dividerPaint;
+            }
+            canvas.drawLine(LocaleController.isRTL ? 0 : offset, getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? offset : 0), getMeasuredHeight() - 1, paint);
         }
     }
 
@@ -384,6 +601,11 @@ public class CheckBoxCell extends FrameLayout {
         super.onInitializeAccessibilityNodeInfo(info);
         info.setClassName("android.widget.CheckBox");
         info.setCheckable(true);
+        if (animatedTextView != null) {
+            info.setText(animatedTextView.getText());
+        } else if (linksTextView != null) {
+            info.setText(linksTextView.getText());
+        }
         info.setChecked(isChecked());
     }
 
@@ -397,5 +619,100 @@ public class CheckBoxCell extends FrameLayout {
 
     public boolean hasIcon() {
         return checkBoxRound.hasIcon();
+    }
+
+    public void setCollapseButton(boolean collapsed, CharSequence text, View.OnClickListener onClick) {
+        if (collapseButton != null) {
+            if (collapseButton.getVisibility() == GONE) {
+                collapseButton.setVisibility(VISIBLE);
+            }
+            collapseButton.set(collapsed, text);
+            if (onClick != null) {
+                collapseButton.setOnClickListener(onClick);
+            }
+        }
+    }
+
+    public class CollapseButton extends LinearLayout {
+
+        @Nullable
+        private ImageView iconView;
+        private final AnimatedTextView textView;
+        private final View collapsedArrow;
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        public CollapseButton(@NonNull Context context, int iconResId) {
+            super(context);
+
+            final int color = getThemedColor(Theme.key_windowBackgroundWhiteBlackText);
+
+            if (iconResId != 0) {
+                iconView = new ImageView(context);
+                ThemeBind.colorFilter(iconView, Theme.key_windowBackgroundWhiteBlackText, CheckBoxCell.this.resourcesProvider, PorterDuff.Mode.MULTIPLY);
+                iconView.setImageResource(iconResId);
+            }
+
+            textView = new AnimatedTextView(context, false, true, false);
+            textView.setTextSize(dp(13));
+            ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteBlackText, CheckBoxCell.this.resourcesProvider);
+            textView.setIncludeFontPadding(false);
+            textView.setTypeface(AndroidUtilities.bold());
+
+            collapsedArrow = new View(context);
+            Drawable drawable = getContext().getResources().getDrawable(R.drawable.arrow_more).mutate();
+            ThemeBind.drawableColorFilter(this, drawable, Theme.key_windowBackgroundWhiteBlackText, CheckBoxCell.this.resourcesProvider, PorterDuff.Mode.MULTIPLY);
+            collapsedArrow.setBackground(drawable);
+
+            if (LocaleController.isRTL) {
+                addView(collapsedArrow, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 11, 0, 3, 0));
+                addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 16, Gravity.CENTER_VERTICAL, 0, 0, iconView == null ? 11 : 3, 0));
+                if (iconView != null) {
+                    addView(iconView, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 0, 0, 11, 0));
+                }
+            } else {
+                if (iconView != null) {
+                    addView(iconView, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 11, 0, 3, 0));
+                }
+                addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 16, Gravity.CENTER_VERTICAL, iconView == null ? 11 : 0, 0, 3, 0));
+                addView(collapsedArrow, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 0, 0, 11, 0));
+            }
+
+            ThemeBind.selectorBackground(this, Theme.createRadSelectorDrawable(getThemedColor(Theme.key_listSelector), 16, 16), null, ThemeBind.of(Theme.key_listSelector), CheckBoxCell.this.resourcesProvider);
+            setClickable(true);
+        }
+
+        @Override
+        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(dp(32), MeasureSpec.EXACTLY));
+        }
+
+        public void set(boolean collapsed, CharSequence text) {
+            textView.cancelAnimation();
+            textView.setText(text);
+            collapsedArrow.animate().cancel();
+            collapsedArrow.animate().rotation(collapsed ? 0 : 180).setDuration(340).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).start();
+        }
+    }
+
+    public void reset() {
+        if (textAnimated)
+            animatedTextView.setText("");
+        else
+            linksTextView.setText("");
+
+        if (avatarImageView != null) {
+            avatarImageView.setVisibility(GONE);
+            avatarImageView.setImage(null, null, null);
+        }
+        if (collapseButton != null) {
+            collapseButton.setVisibility(GONE);
+            collapseButton.setOnClickListener(null);
+        }
+        if (collapsedArrow != null) {
+            collapsedArrow.setVisibility(GONE);
+        }
+
+        setPad(0);
+        setMultiline(false);
     }
 }

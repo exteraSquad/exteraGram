@@ -15,6 +15,8 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
@@ -28,8 +30,6 @@ import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AvatarDrawable;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class DialogMeUrlCell extends BaseCell {
 
@@ -116,7 +116,7 @@ public class DialogMeUrlCell extends BaseCell {
                 nameLeft = AndroidUtilities.dp(14);
             }
             nameString = chat.title;
-            avatarDrawable.setInfo(chat);
+            avatarDrawable.setInfo(currentAccount, chat);
             avatarImage.setForUserOrChat(chat, avatarDrawable, recentMeUrl);
         } else if (recentMeUrl instanceof TLRPC.TL_recentMeUrlUser) {
             TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(recentMeUrl.user_id);
@@ -139,7 +139,7 @@ public class DialogMeUrlCell extends BaseCell {
                 drawVerified = user.verified;
             }
             nameString = UserObject.getUserName(user);
-            avatarDrawable.setInfo(user);
+            avatarDrawable.setInfo(currentAccount, user);
             avatarImage.setForUserOrChat(user, avatarDrawable, recentMeUrl);
         } else if (recentMeUrl instanceof TLRPC.TL_recentMeUrlStickerSet) {
             if (!LocaleController.isRTL) {
@@ -157,7 +157,7 @@ public class DialogMeUrlCell extends BaseCell {
                 nameLeft = AndroidUtilities.dp(14);
             }
             if (recentMeUrl.chat_invite.chat != null) {
-                avatarDrawable.setInfo(recentMeUrl.chat_invite.chat);
+                avatarDrawable.setInfo(currentAccount, recentMeUrl.chat_invite.chat);
                 nameString = recentMeUrl.chat_invite.chat.title;
                 drawVerified = recentMeUrl.chat_invite.chat.verified;
                 avatarImage.setForUserOrChat(recentMeUrl.chat_invite.chat, avatarDrawable, recentMeUrl);
@@ -188,7 +188,7 @@ public class DialogMeUrlCell extends BaseCell {
         messageString = MessagesController.getInstance(currentAccount).linkPrefix + "/" + recentMeUrl.url;
 
         if (TextUtils.isEmpty(nameString)) {
-            nameString = LocaleController.getString("HiddenName", R.string.HiddenName);
+            nameString = LocaleController.getString(R.string.HiddenName);
         }
 
         int nameWidth;
@@ -329,7 +329,7 @@ public class DialogMeUrlCell extends BaseCell {
             Theme.dialogs_verifiedCheckDrawable.draw(canvas);
         }
 
-        if (useSeparator && !ExteraConfig.disableDividers) {
+        if (useSeparator) {
             if (LocaleController.isRTL) {
                 canvas.drawLine(0, getMeasuredHeight() - 1, getMeasuredWidth() - AndroidUtilities.dp(AndroidUtilities.leftBaseline), getMeasuredHeight() - 1, Theme.dividerPaint);
             } else {

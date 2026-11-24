@@ -201,10 +201,6 @@ final class WebRtcAudioUtils {
             + "BT SCO: " + audioManager.isBluetoothScoOn());
   }
 
-  private static boolean isVolumeFixed(AudioManager audioManager) {
-    return audioManager.isVolumeFixed();
-  }
-
   // Adds volume information for all possible stream types.
   private static void logAudioStateVolume(String tag, AudioManager audioManager) {
     final int[] streams = {AudioManager.STREAM_VOICE_CALL, AudioManager.STREAM_MUSIC,
@@ -212,7 +208,7 @@ final class WebRtcAudioUtils {
         AudioManager.STREAM_SYSTEM};
     Logging.d(tag, "Audio State: ");
     // Some devices may not have volume controls and might use a fixed volume.
-    boolean fixedVolume = isVolumeFixed(audioManager);
+    boolean fixedVolume = audioManager.isVolumeFixed();
     Logging.d(tag, "  fixed volume=" + fixedVolume);
     if (!fixedVolume) {
       for (int stream : streams) {

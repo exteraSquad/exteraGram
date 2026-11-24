@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram 設定</string>
+    <!-- Main Menu -->
+    <string name="Links">リンク</string>
+    <string name="Crowdin">翻訳</string>
+    <string name="Website">ウェブサイト</string>
+    <string name="Categories">カテゴリ</string>
+    <string name="Developer">**%1$s** は **exteraGram** 開発チームのメンバーです。</string>
+    <string name="DeveloperCompact">**exteraGram** 開発チームのメンバー。</string>
+    <string name="Supporter">**%1$s** は **exteraGram** の開発を支援し、ユニークなバッジを受け取りました。</string>
+    <string name="OfficialChannel">**%1$s** は **exteraGram** の公式リソースです。</string>
+    <string name="NoSuchSetting">そのような設定は存在しないようです。</string>
+    <string name="SettingLinkToSavedMessages">**保存済みメッセージ**に送信されるリンクを設定します。</string>
+    <string name="SettingLinkToUser">設定リンクが **%1$s** に送信されました。</string>
+    <string name="SettingLinkToChats">設定リンクが **%1$s** に送信されました。</string>
+    <string name="LiteBatteryFollowSystem">システムバッテリーセーバーを使用する</string>
+    <string name="LiteBatteryFollowSystemState">システム</string>
+    <string name="LiteBatteryFollowSystemInfo">システ厶バッテリーセーバーが制御。</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">ピルスタック</string>
+    <string name="PillStackPillsInfo">検索フィールドにインタラクティブなピルを表示する</string>
+    <string name="PillStackActivePills">アクティブなピル</string>
+    <string name="PillStackHiddenPills">非表示のピル</string>
+    <string name="CurrentLocation">現在地</string>
+    <string name="SelectLocation">地図で選択</string>
+    <string name="WeatherPill">天気</string>
+    <string name="WeatherSettingsInfo">検索時の天気表示に使用する位置情報の決定方法を選択します。</string>
+    <string name="WeatherLocation">位置情報の検出</string>
+    <string name="WeatherLocationPermissionNo">現在の天気を表示するには、exteraGramが位置情報へのアクセスを必要とします。</string>
+    <string name="WeatherLocationPermissionGrant">許可する</string>
+    <string name="WeatherLocationServicesEnable">位置情報を有効にする</string>
+    <string name="WeatherPillTopInfo">ピルスタック用の天気ウィジェット設定。</string>
+    <string name="PillStackInfiniteScrolling">無限スクロール</string>
+    <string name="CryptoPillTargetCurrency">対象通貨</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">プロキシを無効にする</string>
+    <string name="ProxyDisableNever">しない</string>
+    <string name="ProxyDisableAlways">常に</string>
+    <string name="ProxyDisableOnMobileData">モバイルデータ</string>
+    <string name="ProxyType">タイプ</string>
+    <string name="Unknown">不明</string>
+    <string name="ProxyRename">プロキシ名（任意）</string>
+    <string name="ProxyPinLimitReached">最大 %1$d 個のプロキシをピン留めできます。</string>
+    <string name="CopyIpAddress">IPアドレスをコピー</string>
+    <string name="IpInfoUnavailable">IPアドレス情報を読み込めませんでした。</string>
+    <string name="IpInfoOrganization">組織</string>
+    <string name="IpInfoDomain">ドメイン</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">翻訳プロバイダー</string>
+    <string name="TranslationTarget">対象言語</string>
+    <string name="TranslationTargetApp">アプリに従う</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">数字の丸めを無効にする</string>
+    <string name="FormatTimeWithSeconds">秒単位で時刻をフォーマット</string>
+    <string name="RelativeLastSeen">相対的な最終オンライン</string>
+    <string name="InAppVibration">アプリ内振動</string>
+    <string name="DisableNotificationDelay">通知遅延を無効にする</string>
+    <string name="FilterZalgo">「Zalgo」をフィルター</string>
+    <string name="FilterZalgoInfo">名前とメッセージの「%1$s」記号を削除します。</string>
+    <string name="RestartRequired">変更を有効にするには、アプリを再起動してください。</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">コード</string>
+    <string name="CreateCode">コードブロックを作成</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">ダウンロード速度ブースト</string>
+    <string name="UploadSpeedBoost">アップロード速度ブースト</string>
+    <string name="Ultra">ウルトラ</string>
+    <string name="SpeedBoostInfo">ウルトラブーストは、低速のインターネット接続でファイルのダウンロードやビデオのストリーミングに問題を引き起こす可能性があります。</string>
+    <!-- Storage -->
+    <string name="StorageSettings">ストレージ</string>
+    <string name="CustomSavePath">カスタム保存フォルダ</string>
+    <string name="CustomSavePathHint">空白のままにするとルートに直接保存されます</string>
+    <string name="CustomSavePathDefault">ルートに保存</string>
+    <string name="CustomSavePathInfo">保存されたファイルは、Pictures、Downloadsなどに直接保存されます。</string>
+    <string name="CustomSavePathInfoFolder">保存されたファイルは、Pictures/%1$s、Downloads/%1$sなどに保存されます。</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">電話番号を隠す</string>
+    <string name="ShowIdAndDc">IDとDCを表示</string>
+    <string name="ShowIdAndDcInfo">Telegram APIはIDをそのまま表示しますが、Bot APIはグループにマイナス記号、スーパーグループとチャンネルに-100を追加します。</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">アーカイブフォルダを非表示</string>
+    <string name="ArchiveOnPull">プルダウンでアーカイブを開く</string>
+    <string name="DisableUnarchiveSwipe">「元に戻す」スワイプを無効にする</string>
+    <string name="DisableUnarchiveSwipeInfo">左にスワイプしても、チャットはアーカイブから削除されません。</string>
+    <!-- Appearance -->
+    <string name="Appearance">外観</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">アバターの角丸</string>
+    <string name="SingleCornerRadius">角丸を統一</string>
+    <string name="SingleCornerRadiusInfo">フォーラムはチャットと同じアバター形状になります。</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">チャットリスト</string>
+    <string name="ActionBarTitle">タイトルのテキスト</string>
+    <string name="ActionBarTitleName">名</string>
+    <string name="HideStories">ストーリーを隠す</string>
+    <string name="HideActionBarStatus">ステータスを隠す</string>
+    <string name="CenterTitle">タイトルを中央揃え</string>
+    <string name="ChatHeader">チャットヘッダー</string>
+    <string name="HideFloatingButton">フローティングボタンを非表示</string>
+    <string name="HideDialogsSearchBar">検索バーを非表示</string>
+    <string name="BottomNavigationBarMode">下部ナビゲーションバー</string>
+    <string name="BottomNavigationModeShow">表示</string>
+    <string name="BottomNavigationModeHide">非表示</string>
+    <string name="BottomNavigationModeFloating">フローティング</string>
+    <string name="SenderMiniAvatars">送信者のミニアバター</string>
+    <string name="ListOfChatsInfo">フォルダで「アイコンのみ」が有効になっている場合、メインタイトルにはフォルダ名が表示されます。</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">フォルダのタイトル</string>
+    <string name="TabTitleStyleTextWithIcons">名前とアイコン</string>
+    <string name="TabTitleStyleIconsOnly">アイコンのみ</string>
+    <string name="TabTitleStyleTextOnly">名前のみ</string>
+    <string name="TabCounter">通知カウンター</string>
+    <string name="HideAllChats">「%1$s」タブを隠す</string>
+    <string name="FoldersInfo">アイコンはアカウントと同期されます。</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">アプリナビゲーション</string>
+    <string name="AppNavigationInfo">右上メニューとドロワー設定</string>
+    <string name="NavigationDrawer">ナビゲーションドロワー</string>
+    <string name="NavigationDrawerInfo">右上メニューを、スワイプで開くクラシックなドロワーとハンバーガーボタンに置き換えます。</string>
+    <string name="NavigationDrawerImmersiveAnimation">没入感のあるアニメーション</string>
+    <string name="MainMenuItems">メニュー項目</string>
+    <string name="MainMenuItemsInfo">タップで項目を表示/非表示、長押しで並べ替え。レイアウトはメニューとドロワーで共有されます。</string>
+    <string name="MainMenuHiddenItems">非表示のメニュー項目</string>
+    <string name="MainMenuAddDivider">区切りを追加</string>
+    <string name="MainMenuRemoveSettingsInfo">下部ナビゲーションバーが無効の間は設定を非表示にできません。</string>
+    <!-- Icon Packs -->
+    <string name="IconPacksInfo">アプリ内のアイコンを編集</string>
+    <string name="IconPickerFilter">フィルター</string>
+    <string name="IconPickerReplacedIcons">置き換えられたアイコン</string>
+    <string name="IconPickerNotReplacedIcons">置き換えられていないアイコン</string>
+    <string name="BaseIconPackInfo">標準のアイコンパックは、他のパックに置き換えられない代替アイコンとして使用されます。</string>
+    <string name="IconPacksHint">タップしてパックを有効または無効にします。長押しして編集または削除します。</string>
+    <string name="NewIconPack">新しいアイコンパックを作成</string>
+    <string name="PackName">パック名</string>
+    <string name="NameCannotBeEmpty">Name cannot be empty。</string>
+    <string name="Version">バージョン</string>
+    <string name="InstallPack">インストールパック</string>
+    <string name="IconCount_two">%1$d 個のアイコン</string>
+    <string name="IconCount_few">%1$d 個のアイコン</string>
+    <string name="IconCount_many">%1$d 個のアイコン</string>
+    <string name="DeletePackInfo">Are you sure you want to delete **%1$s**？</string>
+    <string name="IconPackErrorInvalidArchive">アイコンパックのアーカイブが無効です。</string>
+    <string name="IconPackErrorMissingMetadata">アイコンパックのアーカイブに metadata.json がありません。</string>
+    <string name="IconPackErrorMetadataTooLarge">アイコンパックのメタデータが大きすぎます。</string>
+    <string name="IconPackErrorInvalidMetadata">アイコンパックのメタデータが無効です。</string>
+    <string name="IconPackErrorTooManyFiles">アイコンパックにファイルが多すぎます。</string>
+    <string name="IconPackErrorArchiveTooLarge">アイコンパックが大きすぎます。</string>
+    <string name="IconPackErrorFileTooLarge">アイコンファイルの一つが大きすぎます。</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">アイコンパックのアーカイブが過度に圧縮されています。</string>
+    <string name="IconPackErrorStorage">アイコンパックを保存できませんでした。</string>
+    <!-- App Icons -->
+    <string name="IconPack">アイコンパック</string>
+    <string name="AppIconSunset">夕日</string>
+    <string name="AppIconAurora">オーロラ</string>
+    <string name="AppIconAmethyst">アメジスト</string>
+    <string name="AppIconInvincible">無敵</string>
+    <string name="AppIconCyberpunk">サイバーパンク</string>
+    <string name="AppIconSpace">宇宙</string>
+    <string name="AppIconOrbit">軌道</string>
+    <string name="AppIconSus">詐欺師</string>
+    <string name="AppIconWinter">冬</string>
+    <!-- General Appearance -->
+    <string name="Sections">セクション</string>
+    <string name="SeparateHeaders">区切りヘッダー</string>
+    <string name="DividerStyle">区切り線のスタイル</string>
+    <string name="DividerStyleHidden">非表示</string>
+    <string name="DividerStyleLine">線</string>
+    <string name="DividerStyleSegments">セグメント</string>
+    <string name="UseSystemFonts">システムフォントを使用</string>
+    <string name="UseSystemEmoji">システム絵文字を使用</string>
+    <string name="NewLoadingStyle">ローディングスタイル</string>
+    <string name="NewSliderStyle">スライダースタイル</string>
+    <string name="NewSwitchStyle">スイッチスタイル</string>
+    <string name="NewFabStyle">フローティングボタン</string>
+    <string name="TabletMode">タブレットモード</string>
+    <string name="RemoveMessageTail">メッセージの末尾を削除</string>
+    <string name="GooeyAvatarAnimation">「Gooey」アバターアニメーション</string>
+    <string name="CustomChatThemes">チャットのカスタムテーマ</string>
+    <string name="CustomChatThemesInfo">各チャットには、そのチャット用に特別に選択されたテーマが表示されます。</string>
+    <string name="PredictiveBackIntensity">予測戻るの強度</string>
+    <string name="PredictiveBackMax">最大</string>
+    <string name="PredictiveBackInfo">スワイプで戻るときの画面の移動量を調整します。</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">ぼかしオプション</string>
+    <string name="GlassOutlineStyle">ガラスのアウトライン</string>
+    <string name="GlassOutlineGlare">グレア</string>
+    <string name="GlassOutlineSolid">ソリッド</string>
+    <string name="GlassOutlineHidden">非表示</string>
+    <string name="ForceSnow">強制雪</string>
+    <string name="ForceSnowInfo">アクションバー、サイドメニュー、チャットの背景に雪の結晶が舞い降ります。</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">ステッカーサイズ</string>
+    <string name="StickerSizeLeft">小</string>
+    <string name="StickerSizeRight">大</string>
+    <string name="StickerSizeDialogMessageReplyTo">すごい</string>
+    <string name="StickerSizeDialogMessage">わあ、かわいい！</string>
+    <string name="StickerShape">ステッカーの形</string>
+    <string name="StickerShapeRounded">丸みを帯びた</string>
+    <string name="StickerShapeRoundedMsg">メッセージ</string>
+    <string name="StickerTimeMode">ステッカー上の時間表示</string>
+    <string name="StickerTimeSide">ステッカー横</string>
+    <string name="ViewEmojiSet">絵文字セットを表示</string>
+    <string name="UnlimitedRecentStickers">無制限の最近のステッカー</string>
+    <string name="HideReactions">リアクションを隠す</string>
+    <string name="HideReactionsInfo">リアクションはインターフェースから完全に隠されます。</string>
+    <string name="ReplyBackground">背景</string>
+    <string name="ChatSettingsInfo">メディア設定、アプリアイコンなど</string>
+    <!-- AI -->
+    <string name="AIChatInfo">サービス、役割、履歴を設定</string>
+    <string name="AIChatInfo2">メッセージから、または送信前にテキストを生成します。</string>
+    <!-- AI Services -->
+    <string name="Services">サービス</string>
+    <string name="ServicesInfo">言語モデルと対話するための適切なサービスを選択してください。</string>
+    <string name="NewService">新しいサービス</string>
+    <string name="EditService">サービスを編集</string>
+    <string name="ServiceModel">モデル</string>
+    <string name="ServiceKey">APIキー</string>
+    <string name="ServiceInfo">サービス情報</string>
+    <string name="ServiceProvider">プロバイダー</string>
+    <string name="ServiceProviderCustom">カスタム</string>
+    <string name="ServiceTestAndSave">テストして保存</string>
+    <string name="ServicePasteService">サービスを貼り付け</string>
+    <string name="ServicePasteKey">APIキーを貼り付け</string>
+    <string name="DeleteServiceInfo">本当に **%1$s** を削除しますか？</string>
+    <!-- AI Roles -->
+    <string name="Roles">役割</string>
+    <string name="RolesInfo">特定のニーズに合わせて役割を作成してください！</string>
+    <string name="Suggestions">提案</string>
+    <string name="RoleName">名前</string>
+    <string name="RolePrompt">プロンプト</string>
+    <string name="PromptInfo">プロンプトは、応答の生成を開始したり、対話を続けたりするためにモデルに与えられる最初のテキストです。</string>
+    <string name="NewRole">新しい役割</string>
+    <string name="EditRole">役割を編集</string>
+    <string name="DeleteRoleInfo">本当に **%1$s** を削除しますか？</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">会話履歴により、AIは以前のリクエストを理解し、新しい応答を生成する際にそれらを考慮することができます。</string>
+    <string name="AIGeneration">生成</string>
+    <string name="AIReasoning">推論</string>
+    <string name="AIReasoningInfo">このサービスの対応モデルが回答前に余分なトークンを使って考えることを許可します。</string>
+    <string name="AITemperature">温度</string>
+    <string name="AITemperatureInfo">温度は応答のランダム性を制御します。値が高いほど創造的になり、低いほど焦点が絞られます。</string>
+    <string name="ResponseStreaming">応答ストリーミング</string>
+    <string name="ResponseStreamingInfo">応答のよりスムーズで高速な表示を保証します。</string>
+    <string name="ShowResponseOnly">応答のみ表示</string>
+    <string name="InsertResponseAsQuote">応答を引用として挿入</string>
+    <string name="TapToAddApiKey">AI機能を開始するには、タップしてAPIキーを追加してください。</string>
+    <string name="Generate">生成</string>
+    <string name="ClearConversationHistoryInfo">**すべての**AI会話履歴をクリアしてもよろしいですか？</string>
+    <!-- AI Errors -->
+    <string name="AIError400">不正なリクエスト</string>
+    <string name="AIError400Info">リクエストパラメータを確認してください。</string>
+    <string name="AIError401">無効な認証情報</string>
+    <string name="AIError401Info">APIキーが無効または無効化されています。認証情報を確認してください。</string>
+    <string name="AIError402">クレジット不足</string>
+    <string name="AIError402Info">アカウントまたはAPIキーのクレジットが不足しています。クレジットを追加してリクエストを再試行してください。</string>
+    <string name="AIError403">アクセス拒否</string>
+    <string name="AIError403Info">このモデルまたはリソースにアクセスする権限がありません。APIキーとアカウントの権限を確認してください。</string>
+    <string name="AIError408">リクエストタイムアウト</string>
+    <string name="AIError408Info">リクエストが時間内に処理されませんでした。後でもう一度お試しください。</string>
+    <string name="AIError429">レート制限を超えました</string>
+    <string name="AIError429Info">リクエストの送信頻度が高すぎます。しばらく待ってからもう一度お試しください。</string>
+    <string name="AIError502">モデルの障害</string>
+    <string name="AIError502Info">選択したモデルが利用できないか、無効な応答を受け取りました。</string>
+    <string name="AIError503">サービス利用不可</string>
+    <string name="AIError503Info">サービスが一時的に利用できないか、過負荷です。後でもう一度お試しください。</string>
+    <string name="AIError">サーバーエラー</string>
+    <string name="AIErrorInfo">しばらく待ってからリクエストを再試行してください。</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">受信メッセージ</string>
+    <string name="DoubleTapOutgoing">送信メッセージ</string>
+    <string name="DoubleTapInfo">一部のアクションには、チャットまたはチャンネルでの管理者権限が必要です。</string>
+    <string name="BottomButton">下部ボタン</string>
+    <string name="WidePosts">ワイド投稿</string>
+    <string name="AIFeatures">AI機能</string>
+    <string name="AIFeaturesEditor">編集</string>
+    <string name="AIFeaturesSummaries">要約</string>
+    <string name="AIFeaturesInstantViewSummaries">インスタントビューの要約</string>
+    <string name="ChannelDiscussNoCaps">ディスカッション</string>
+    <string name="QuickTransitions">クイックスワイプ移行</string>
+    <string name="DisableGreetingSticker">グリーティングスタンプを無効にする</string>
+    <string name="AdminShortcuts">クイック管理者ショートカット</string>
+    <string name="HideKeyboardOnScroll">スクロール時にキーボードを隠す</string>
+    <string name="HideShareButton">サイド「%1$s」ボタンを隠す</string>
+    <string name="ReplaceEditedWithIcon">「%1$s」をアイコンに置き換える</string>
+    <string name="MessageMenu">メッセージメニュー</string>
+    <string name="GroupMessageMenu">グループメッセージメニュー</string>
+    <string name="GroupMessageMenuInfo">グループ化すると、主なアクションがメッセージメニューの下部に移動します。</string>
+    <string name="GlassMessageMenu">ガラスメッセージメニュー</string>
+    <string name="GlassMessageMenuInfo">メッセージメニューとリアクションバーがすりガラスになります。</string>
+    <string name="GlassMessageMenuBlurOff">ガラスメニューにはぼかしが必要ですが、現在はオフです。</string>
+    <string name="AddCommaAfterMention">メンションの後にカンマを追加</string>
+    <string name="HideSendAsPeer">「送信者として…」ボタンを隠す</string>
+    <string name="HideSendAsPeerInfo">絵文字/ステッカー/GIFボタンを長押しすることで、「送信者として…」メニューに引き続きアクセスできます。</string>
+    <string name="ShowPollResultsBeforeVoting">投票前に結果を表示</string>
+    <string name="ShowPollResultsBeforeVotingHint">投票を送信する前に各オプションの結果を表示します。</string>
+    <string name="ShowOnlineStatus">オンラインインジケーターを表示</string>
+    <string name="ShowForwardsCount">転送数を表示</string>
+    <string name="MessagePreviewDialogMessage">私はガラスを食べても痛くありません。</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">認識言語</string>
+    <string name="RecognitionInfo">Vosk APIを使用します。オフラインで動作します。文字起こしされたテキストの品質は低い場合があります。</string>
+    <string name="MissingLanguageModel">言語モデルがありません</string>
+    <string name="DownloadingModel">モデルをダウンロード中…</string>
+    <string name="DownloadingModelInfo">言語モデルのダウンロード中は、このウィンドウを開いたままにしてください。</string>
+    <string name="ModelDownload">ダウンロード (%1$s)</string>
+    <string name="ModelDownloadInfo">続行するには、「**%1$s**」言語モデルをダウンロードする必要があります。</string>
+    <string name="ModelDownloaded">モデルが正常にダウンロードされました。</string>
+    <string name="ModelError">モデルのダウンロード中にエラーが発生しました。</string>
+    <string name="ModelUnzipping">解凍中…</string>
+    <string name="DeleteRecognitionModel">モデルを削除</string>
+    <string name="DeleteRecognitionModelInfo">本当に \"**%1$s**\" 言語モデルを削除しますか？</string>
+    <string name="RecognitionModelDeleted">モデルが正常に削除されました。</string>
+    <string name="RecognitionModelDeleteError">モデル削除中にエラーが発生しました。</string>
+    <string name="PostProcessingWithAi">後処理にAIを使用</string>
+    <string name="PostProcessingWithAiInfo">AIは、エラーを修正し、句読点を追加し、不明瞭な部分を明確にすることで、読みやすさを向上させます。</string>
+    <!-- Camera -->
+    <string name="CameraType">カメラの種類</string>
+    <string name="ExtendedSettings">拡張設定</string>
+    <string name="SeamlessSwitching">シームレスな切り替え</string>
+    <string name="ExtendedFramesPerSecond">拡張FPS範囲</string>
+    <string name="CameraStabilization">手ぶれ補正</string>
+    <string name="CameraMirrorMode">ミラーモード</string>
+    <string name="StartWithWideAngleCamera">広角で開始</string>
+    <string name="ZoomSlider">ズームスライダー</string>
+    <string name="ZoomSliderInfo">ビデオメッセージカメラの下にズームコントロールを表示します。</string>
+    <string name="StaticZoom">静的ズーム</string>
+    <string name="StaticZoomInfo">ビデオメッセージの録画中に指を離しても、ズームレベルはリセットされません。</string>
+    <string name="VideoMessagesCamera">ビデオメッセージのカメラ</string>
+    <string name="VideoMessagesCameraRear">メイン</string>
+    <string name="VideoMessagesCameraFront">前面</string>
+    <string name="VideoMessagesCameraAsk">尋ねる</string>
+    <string name="RearCamera">メインカメラ</string>
+    <string name="FrontCamera">前面カメラ</string>
+    <string name="RememberLastUsedCamera">最後に使用したカメラを記憶</string>
+    <string name="RememberLastUsedCameraInfo">ビデオメッセージを録画する際、最後に使用したカメラが自動的に選択されます。</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">常にHDで送信</string>
+    <string name="HideCameraTile">インスタントカメラタイルを隠す</string>
+    <string name="HideCameraTileInfo">カメラタイルはフローティングボタンに置き換えられます。それを押すとTelegramカメラが起動し、長押しするとシステムカメラが起動します。</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">ダブルタップのスキップ時間</string>
+    <string name="PreferOriginalQuality">元の品質を優先</string>
+    <string name="PauseOnMinimize">自動一時停止</string>
+    <string name="PauseOnMinimizeVideo">ビデオ</string>
+    <string name="PauseOnMinimizeVoice">音声</string>
+    <string name="PauseOnMinimizeRound">ラウンド</string>
+    <string name="PauseOnMinimizeInfo">デバイスがロックされているか、exteraGramが最小化されている場合、メディアの再生を一時停止します。</string>
+    <string name="SwipeToPip">スワイプしてPiP</string>
+    <string name="UnmuteWithVolumeButtons">音量ボタンでビデオのミュートを解除</string>
+    <string name="UnmuteWithVolumeButtonsInfo">音量ボタンを押すと、システム音量を変更する代わりにビデオのミュートが解除されます。</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">これらのオプションが有効になっている場合、デバイスに関するデータが収集され、Google AnalyticsとCrashlyticsに送信されます。これにより、使用状況の統計を維持し、アプリのエラーを追跡できます。
+
+ただし、オプションがオフになっている場合、データ収集は停止し、送信されたデータは即座に削除されます。</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">ファイル名を入力…</string>
+    <string name="ExportSettings">設定をエクスポート</string>
+    <string name="ApplySettings">設定を適用</string>
+    <string name="ImportTitle">これらの設定を適用してもよろしいですか？</string>
+    <string name="ImportConfirm">はい、適用します</string>
+    <string name="CancelConfirm">いいえ、そのままにします</string>
+    <string name="SettingsSaved">設定ファイルが正常に保存されました。</string>
+    <string name="SettingsImported">設定が正常に適用されました。</string>
+    <string name="ImportChanges_one">現在の設定に**1**件の変更が適用されます。</string>
+    <string name="ImportChanges_two">現在の設定に**%1$d**件の変更が適用されます。</string>
+    <string name="ImportChanges_few">現在の設定に**%1$d**件の変更が適用されます。</string>
+    <string name="ImportChanges_many">現在の設定に**%1$d**件の変更が適用されます。</string>
+    <string name="ImportChanges_other">現在の設定に**%1$d**件の変更が適用されます。</string>
+    <string name="SameSettings">設定が現在のものと同じようです。</string>
+    <!-- Export data -->
+    <string name="ExportDelay">セキュリティ上の理由から、%1$s 後にデータのダウンロードを開始できます。エクスポートリクエストが承認されていることを確認し、承認されていない場合に反応する時間を与えるために、すべてのデバイスに通知しました。\n\n%2$s に戻り、同じデバイスを使用してリクエストを繰り返してください。</string>
+    <string name="ExportInvalid">申し訳ありませんが、新しいデータエクスポートを開始したため、このデータエクスポートはキャンセルされました。</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">アカウントを削除</string>
+    <string name="ResetSettings">設定をリセット</string>
+    <string name="ResetPreferences">**exteraGram** の設定がリセットされました。</string>
+    <string name="ResetPreferencesInfo">**すべての** exteraGram の設定をデフォルトにリセットしてもよろしいですか？</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">開発を支援</string>
+    <string name="SupportDevelopmentInfo">プロジェクトを支援することで、開発に貢献するだけでなく、ユニークなバッジも入手できます。</string>
+    <string name="MakeDonation">寄付する</string>
+    <string name="ReceiveBadge">バッジを受け取る</string>
+    <string name="NowPlaying">再生中</string>
+    <string name="ScrobblingService">スクロブリングサービス</string>
+    <string name="SelectService">サービスを選択</string>
+    <string name="SelectServiceInfo">スクロブリングサービスから取得したカードとして、現在のトラックをプロフィールに表示します。</string>
+    <string name="EnterUsername">ユーザー名を入力</string>
+    <string name="EnterUsernameInfo">ユーザー名は**公式サイト**で取得できます。</string>
+    <string name="BoostyPeopleCount_one">%1$d人</string>
+    <string name="BoostyPeopleCount_two">%1$d人</string>
+    <string name="BoostyPeopleCount_few">%1$d人</string>
+    <string name="BoostyPeopleCount_many">%1$d人</string>
+    <string name="BoostyPeopleCount_other">%1$d人</string>
+    <string name="BoostyInfo">**Boosty** で **exteraGram** を積極的にサポートしてください。</string>
+    <string name="BoostyInfo2">ご支援ありがとうございます！</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">プラグインのインストールは **exteraGram** の **Full** バージョンでのみ利用可能です。</string>
+    <string name="Plugins">プラグイン</string>
+    <string name="PluginsEngine">プラグインエンジン</string>
+    <string name="EnablePluginsEngine">プラグインエンジンを有効にする</string>
+    <string name="PluginsInfo">プラグインは @exteraPlugins で見つけることができます。</string>
+    <string name="PluginsNotFound">プラグインが見つかりません。</string>
+    <string name="InstallPlugin">インストール</string>
+    <string name="UpdatePlugin">更新</string>
+    <string name="PluginNotEnabled">**%1$s** をインストールするには、**プラグインエンジン**を有効にしてください。</string>
+    <string name="PluginInstalled">**%1$s** が正常にインストールされました。</string>
+    <string name="PluginUpdated">**%1$s** が正常に更新されました。</string>
+    <string name="PluginEnableError">**%1$s** の有効化に失敗しました。</string>
+    <string name="PluginDisableError">**%1$s** の無効化に失敗しました。</string>
+    <string name="PluginInstallError">**%1$s** のインストールに失敗しました。</string>
+    <string name="PluginSourceTrusted">信頼できるソース</string>
+    <string name="PluginSourceTrustedInfo">このソースのプラグインは**検証済み**で安全に使用できます。</string>
+    <string name="PluginSourceUnknown">不明なソース</string>
+    <string name="PluginSourceUnknownInfo">このソースのプラグインは**未検証**であり、セキュリティリスクをもたらす可能性があります。</string>
+    <string name="PluginVersion">バージョン</string>
+    <string name="PluginNoDescription">説明がありません。</string>
+    <string name="PluginIsNotResponding">プラグインが応答していません。</string>
+    <string name="PluginIsNotRespondingAlert">%1$s が応答していません</string>
+    <string name="PluginNoAuthor">不明な作成者</string>
+    <string name="EnableAfterInstallation">インストール後に有効にする</string>
+    <string name="EnterValue">値を入力</string>
+    <string name="PluginDelete">プラグインを削除</string>
+    <string name="PluginDeleteInfo">**%1$s** を削除してもよろしいですか？</string>
+    <string name="ResetPluginSettings">**%1$s** の設定がリセットされました。</string>
+    <string name="ResetPluginSettingsInfo">**%1$s** の設定をデフォルトにリセットしてもよろしいですか？</string>
+    <string name="PluginsSafeMode">セーフモード</string>
+    <string name="PluginsSafeModeShortcut">セーフモードで起動</string>
+    <string name="PluginsSafeModeInfo">クラッシュのため、プラグインエンジンは無効になっています。セーフモードを無効にすると、予期しない結果につながる可能性があります。</string>
+    <string name="PluginsSafeModeInfo2">セーフモードでは、すべてのプラグインが非アクティブになります。これにより、問題のあるプラグインを安全に見つけて無効にすることができます。</string>
+    <string name="PluginsDevMode">開発者モード</string>
+    <string name="PluginsCompactView">プラグインのコンパクトビュー</string>
+    <string name="PluginsDocumentation">ドキュメント</string>
+    <string name="PluginsTrusted">信頼できるプラグイン</string>
+    <string name="PluginsDevServerLaunched">開発者サーバーが起動しました。</string>
+    <string name="PluginsDevServerStopped">開発者サーバーが停止しました。</string>
+    <string name="PluginEngineNotEnabled">**%1$s** の設定を開くには、**プラグインエンジン**を有効にしてください。</string>
+    <string name="PluginNotFound">**%1$s** が見つかりません。</string>
+    <string name="PluginHasNoSettings">**%1$s** には設定がありません。</string>
+    <string name="PluginsPySdkAutoUpdate">自動更新</string>
+    <string name="PluginsPySdkEnableBetaVersion">ベータ版をインストール</string>
+    <string name="PluginsPySdkCheckUpdates">更新を確認</string>
+    <string name="CheckingForUpdates">更新を確認中…</string>
+    <string name="LatestVersionInstalled">最新バージョンがインストールされています</string>
+    <string name="RestartPluginSystemToApplyUpdate">更新が読み込まれました。適用するにはプラグインエンジンを再起動してください</string>
+    <string name="LoadingUpdate">更新を読み込み中…</string>
+    <string name="RestoreSdkFromApk">APKからSDKを復元</string>
+    <string name="EnableAutoUpdate">自動更新を有効にする</string>
+    <string name="PluginsDisableArt">互換モード</string>
+    <string name="PluginsDisableArtInfo">ART Profile Saverを無効にすることでプラグインフックの失敗を防ぎます。</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">更新中…</string>
+    <string name="UpdateInstallingRelaunch">更新が完了すると、アプリは再起動します。</string>
+    <string name="UpdateInstallingNotification">更新が完了すると通知されます。</string>
+    <string name="UpdateInstalledNotification">更新が完了しました。タップしてアプリを開きます。</string>
+    <string name="UpdateFailedToInstall">更新のインストールに失敗しました。エラーコード: %d</string>
+    <string name="UpdateAvailable">アップデートがあります！</string>
+    <!-- Message Details -->
+    <string name="Details">詳細</string>
+    <string name="Date">日付</string>
+    <string name="EditedDate">編集日</string>
+    <string name="ForwardedDate">転送日</string>
+    <string name="FileSize">ファイルサイズ</string>
+    <string name="FileName">ファイル名</string>
+    <string name="FilePath">ファイルパス</string>
+    <string name="Platform">プラットフォーム</string>
+    <string name="Resolution">解像度</string>
+    <string name="Bitrate">ビットレート</string>
+    <string name="Duration">期間</string>
+    <string name="MimeType">MIMEタイプ</string>
+    <string name="Datacenter">データセンター</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">形式：</string>
+    <string name="DateFormatOptionNone">なし</string>
+    <string name="DateFormatOptionRelative">相対</string>
+    <string name="DateFormatOptionShortTime">短い時刻</string>
+    <string name="DateFormatOptionLongTime">長い時刻</string>
+    <string name="DateFormatOptionShortDate">短い日付</string>
+    <string name="DateFormatOptionLongDate">長い日付</string>
+    <string name="DateFormatOptionDayOfWeek">曜日</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">QRコードログイン</string>
+    <string name="LoginQrSubtitle">別のデバイスでこのQRコードをスキャンしてください。</string>
+    <string name="WifiConnect">接続</string>
+    <string name="WifiDisabled">Wi-Fiが無効です。</string>
+    <string name="WifiFailed">Wi-Fiへの接続に失敗しました。</string>
+    <string name="WifiSuccess">Wi-Fiに正常に接続しました。</string>
+    <string name="AreYouSureToLogin">別のデバイスでこのアカウントにログインしてもよろしいですか？</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">ページがブロックされました</string>
+    <string name="PageBlockedDescription">exteraGramは次のページの読み込みをブロックしました:
+**%1$s**</string>
+    <string name="PageBlockedGoBack">戻る</string>
+    <string name="AdBlockFiltersLoading">フィルターを読み込み中…</string>
+    <!-- Other -->
+    <string name="SetAsBadge">バッジとして設定</string>
+    <string name="AutoLockInstant">即時</string>
+    <string name="TestBackend">テストバックエンド</string>
+    <string name="SearchPhotoInfo">サービスは、プライバシーポリシーと利用規約に従って画像を使用できます。</string>
+    <string name="PhotoUploadFailed">写真のアップロードに失敗しました。</string>
+    <string name="TrackSaved">トラックが**%1$s**に保存されました。</string>
+    <string name="ChannelToSaveChanged">トラックは**%1$s**に保存されます。</string>
+    <string name="DeletedMessage">削除されたメッセージ</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">タイトルをコピー</string>
+    <string name="CopyCallback">コールバックデータをコピー</string>
+    <string name="CopyInlineQuery">インラインクエリをコピー</string>
+    <string name="CopyID">ユーザーIDをコピー</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">バッジステータスを設定しました。</string>
+    <string name="UserNotFound">この**ID**のユーザーが見つかりません。</string>
+    <string name="ChatNotFound">この**ID**のチャットが見つかりません。</string>
+    <string name="PhotoCopied">写真がクリップボードにコピーされました。</string>
+    <string name="FrameCopied">フレームがクリップボードにコピーされました。</string>
+    <string name="TapToCopy">タップしてコピー</string>
+    <string name="ProfileUsesEmojiPack">このプロフィールは背景に %s パックの絵文字を使用しています。</string>
+    <string name="ReplyUsesEmojiPacks">この返信は、背景に%sパックの絵文字を使用しています。</string>
+    <string name="StickerSavedHint">ステッカーがギャラリーに保存されました。</string>
+    <string name="EmojiSavedHint">絵文字がギャラリーに保存されました。</string>
+    <string name="GifGallerySavedHint">GIFをギャラリーに保存しました。</string>
+    <string name="MutualContactInfo">この連絡先は相互です。</string>
+    <string name="LocalPremiumEmojiHint">**Telegram Premium**サブスクリプションをお持ちでないため、この絵文字は**exteraGram**ユーザーのみが表示できます。</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">連絡先タブを非表示</string>
+    <string name="ShowContactsTab">連絡先タブを表示</string>
+    <string name="ContactsTabWasShownTitle">**連絡先** タブが表示されました。</string>
+    <string name="ContactsTabWasHiddenTitle">**連絡先** タブが非表示になりました。</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">この機能は、**Bitwarden** や **KeePassDX** など、特権アプリの信頼設定をユーザーが管理できるパスワードマネージャーでのみ機能します。</string>
+    <string name="PasskeyUnsupportedTitle">サポートされていないパスワードマネージャー</string>
+    <string name="PasskeyUnsupportedMessage">**Bitwarden** や **KeePassDX** などの他のパスワードマネージャーをお試しください。</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s**は、およそ**%2$s**にアカウントを作成しました。</string>
+    <string name="CreationDateUserEarlier">**%1$s**は、**%2$s**より前にアカウントを作成しました。</string>
+    <string name="CreationDateUserLater">**%1$s**は、**%2$s**より後にアカウントを作成しました。</string>
+    <string name="CreationDateChat">**%1$s**は**%2$s**に作成されました。</string>
+    <string name="CreationDateSelfApproximately">あなたのアカウントは、およそ**%1$s**に作成されました。</string>
+    <string name="CreationDateSelfEarlier">あなたのアカウントは、**%1$s**より前に作成されました。</string>
+    <string name="CreationDateSelfLater">あなたのアカウントは、**%1$s**より後に作成されました。</string>
+    <string name="JoinDateChat">あなたは**%1$s**に**%2$s**に参加しました。</string>
+    <string name="GroupMemberJoined">%1$s に参加しました</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">最初へ</string>
+    <string name="MessageHistory">履歴</string>
+    <string name="BoldItalic">太字斜体</string>
+    <string name="CopyPhoto">写真をコピー</string>
+    <string name="CopyFrame">フレームをコピー</string>
+    <string name="Repeat">リピート</string>
+    <string name="Subtitles">字幕</string>
+    <string name="ChooseSubtitles">字幕を選択</string>
+    <string name="DisableSubtitles">字幕を無効にする</string>
+    <string name="SubtitlesAdded">字幕が有効になりました。</string>
+    <string name="SubtitlesRemoved">字幕が無効になりました。</string>
+    <string name="SubtitlesLoadError">字幕を読み込めませんでした。</string>
+    <string name="SubtitlesUnsupportedFormat">サポートされていない字幕形式です。</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">スタンプの角</string>
+    <string name="StickerCornerRadiusInfo">スタンプの角の丸みを選択します。</string>
+    <string name="StickerCornerRadiusLarge">大</string>
+    <string name="StickerCornerRadiusMedium">中</string>
+    <string name="StickerCornerRadiusSmall">小</string>
+    <string name="StickerCornerRadiusNone">なし</string>
+    <!-- Feed -->
+    <string name="Feed">フィード</string>
+    <string name="FeedShownChannels">フィードに表示</string>
+    <string name="FeedHiddenChannels">非表示</string>
+    <string name="FeedChannels">チャンネル</string>
+    <string name="FeedSettings">フィード設定</string>
+    <string name="FeedNoPosts">まだチャンネル投稿はありません。</string>
+    <string name="FeedAllChannelsExcluded">すべてのチャンネルがフィードから除外されています。</string>
+    <string name="FeedMarkAllReadConfirm">フィードチャンネルのすべての投稿を既読にしますか？これにより、元のチャンネルでも既読になります。</string>
+    <string name="FeedMarkAllReadDone">すべての投稿を既読にしました</string>
+    <string name="FeedIncludeArchived">アーカイブからチャットを表示</string>
+    <string name="FeedIncludeArchivedInfo">アーカイブされたチャットのチャンネルもフィードに含めます。</string>
+    <string name="FeedHideChannel">フィードから非表示</string>
+    <string name="FeedChannelHidden">**%1$s** をフィードから非表示にしました</string>
+    <string name="FeedBottomTab">下部タブに表示</string>
+    <string name="FeedBottomTabInfo">連絡先タブの代わりにフィードを下部ナビゲーションタブとして表示します。</string>
+    <string name="FeedUnreadCounter">未読投稿カウンター</string>
+    <string name="HideFeedTab">フィードタブを非表示</string>
+    <string name="DisableMarkdown">Markdownを無効にする</string>
+    <string name="EnableMarkdown">Markdownを有効にする</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

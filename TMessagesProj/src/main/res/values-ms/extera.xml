@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">Keutamaan exteraGram</string>
+    <!-- Main Menu -->
+    <string name="Links">Pautan</string>
+    <string name="Crowdin">Terjemah</string>
+    <string name="Website">Laman Sesawang</string>
+    <string name="Categories">Kategori</string>
+    <string name="Developer">**%1$s** adalah ahli pasukan pembangunan **exteraGram**.</string>
+    <string name="DeveloperCompact">Ahli pasukan pembangun **exteraGram**.</string>
+    <string name="Supporter">**%1$s** menyokong pembangunan **exteraGram** dan menerima lencana unik.</string>
+    <string name="OfficialChannel">**%1$s** adalah sumber rasmi **exteraGram**.</string>
+    <string name="NoSuchSetting">Nampaknya, tetapan sebegitu tidak wujud.</string>
+    <string name="SettingLinkToSavedMessages">Pautan tetapan dihantar ke **Mesej Disimpan**.</string>
+    <string name="SettingLinkToUser">Pautan tetapan dihantar ke **%1$s**.</string>
+    <string name="SettingLinkToChats">Pautan tetapan dihantar ke **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Gunakan Penjimat Bateri sistem</string>
+    <string name="LiteBatteryFollowSystemState">Sistem</string>
+    <string name="LiteBatteryFollowSystemInfo">Dikawal oleh Penjimat Bateri sistem.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Tindanan Pil</string>
+    <string name="PillStackPillsInfo">Papar pil interaktif dalam medan carian</string>
+    <string name="PillStackActivePills">Pil Aktif</string>
+    <string name="PillStackHiddenPills">Pil Tersembunyi</string>
+    <string name="CurrentLocation">Lokasi Semasa</string>
+    <string name="SelectLocation">Pilih pada Peta</string>
+    <string name="WeatherPill">Cuaca</string>
+    <string name="WeatherSettingsInfo">Pilih cara menentukan lokasi untuk paparan cuaca dalam carian.</string>
+    <string name="WeatherLocation">Pengesanan Lokasi</string>
+    <string name="WeatherLocationPermissionNo">exteraGram memerlukan akses ke lokasi anda untuk memaparkan cuaca semasa.</string>
+    <string name="WeatherLocationPermissionGrant">Beri Kebenaran</string>
+    <string name="WeatherLocationServicesEnable">Dayakan Lokasi</string>
+    <string name="WeatherPillTopInfo">Tetapan widget cuaca untuk Tindanan Pil.</string>
+    <string name="PillStackInfiniteScrolling">Tatal Tanpa Had</string>
+    <string name="CryptoPillTargetCurrency">Mata wang sasaran</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Matikan proksi</string>
+    <string name="ProxyDisableNever">Jangan sekali</string>
+    <string name="ProxyDisableAlways">Sentiasa</string>
+    <string name="ProxyDisableOnMobileData">Data mudah alih</string>
+    <string name="ProxyType">Jenis</string>
+    <string name="Unknown">Tidak diketahui</string>
+    <string name="ProxyRename">Nama proksi (pilihan)</string>
+    <string name="ProxyPinLimitReached">Anda boleh pin sehingga %1$d proksi.</string>
+    <string name="CopyIpAddress">Salin alamat IP</string>
+    <string name="IpInfoUnavailable">Tidak dapat memuat maklumat alamat IP.</string>
+    <string name="IpInfoOrganization">Organisasi</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Penyedia Terjemahan</string>
+    <string name="TranslationTarget">Bahasa Sasaran</string>
+    <string name="TranslationTargetApp">Ikut Aplikasi</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Matikan Pembundaran Nombor</string>
+    <string name="FormatTimeWithSeconds">Format Masa dengan Saat</string>
+    <string name="RelativeLastSeen">Kali Terakhir Dilihat Secara Relatif</string>
+    <string name="InAppVibration">Getaran Dalam Aplikasi</string>
+    <string name="FilterZalgo">Tapis \"Zalgo\"</string>
+    <string name="FilterZalgoInfo">Membuang simbol \"%1$s\" dalam nama dan mesej.</string>
+    <string name="RestartRequired">Mulakan semula aplikasi untuk perubahan berkuat kuasa.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Kod</string>
+    <string name="CreateCode">Buat Blok Kod</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Tingkatkan Kelajuan Muat Turun</string>
+    <string name="UploadSpeedBoost">Tingkatkan Kelajuan Muat Naik</string>
+    <string name="SpeedBoostInfo">Ultra Boost boleh menyebabkan masalah memuat turun fail dan menstrim video pada sambungan Internet yang perlahan.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Penyimpanan</string>
+    <string name="CustomSavePath">Folder Simpan Tersuai</string>
+    <string name="CustomSavePathHint">Biarkan kosong untuk simpan terus ke akar</string>
+    <string name="CustomSavePathDefault">Simpan ke akar</string>
+    <string name="CustomSavePathInfo">Fail yang disimpan akan disimpan terus dalam Gambar, Muat Turun, dsb.</string>
+    <string name="CustomSavePathInfoFolder">Fail yang disimpan akan disimpan dalam Gambar/%1$s, Muat Turun/%1$s, dsb.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Sembunyi Nombor Telefon</string>
+    <string name="ShowIdAndDc">Tunjuk ID dan DC</string>
+    <string name="ShowIdAndDcInfo">API Telegram menunjukkan ID sebagaimana adanya, manakala API Bot menambah tanda tolak untuk kumpulan dan -100 untuk superkumpulan dan saluran.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Sembunyi Folder Arkib</string>
+    <string name="ArchiveOnPull">Buka Arkib pada Tarik-turun</string>
+    <string name="DisableUnarchiveSwipe">Matikan Leret \"Nyaharkib\"</string>
+    <string name="DisableUnarchiveSwipeInfo">Leret ke kiri tidak akan mengeluarkan perbualan dari arkib.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Penampilan</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Sudut Avatar</string>
+    <string name="SingleCornerRadius">Jejari Sudut Tunggal</string>
+    <string name="SingleCornerRadiusInfo">Forum akan mempunyai bentuk avatar yang sama seperti perbualan.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Senarai Perbualan</string>
+    <string name="ActionBarTitle">Teks Tajuk</string>
+    <string name="ActionBarTitleName">Nama Pertama</string>
+    <string name="HideStories">Sembunyi Cerita</string>
+    <string name="HideActionBarStatus">Sembunyi Status</string>
+    <string name="CenterTitle">Tajuk Tengah</string>
+    <string name="ChatHeader">Pengepala Perbualan</string>
+    <string name="HideFloatingButton">Sembunyi Butang Terapung</string>
+    <string name="HideDialogsSearchBar">Sembunyi Bar Carian</string>
+    <string name="BottomNavigationBarMode">Bar Navigasi Bawah</string>
+    <string name="BottomNavigationModeShow">Tunjuk</string>
+    <string name="BottomNavigationModeHide">Sembunyi</string>
+    <string name="BottomNavigationModeFloating">Terapung</string>
+    <string name="SenderMiniAvatars">Avatar Mini Penghantar</string>
+    <string name="ListOfChatsInfo">Apabila \"Ikon sahaja\" didayakan untuk folder, tajuk utama akan memaparkan nama folder.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Tajuk Folder</string>
+    <string name="TabTitleStyleTextWithIcons">Nama dengan Ikon</string>
+    <string name="TabTitleStyleIconsOnly">Ikon sahaja</string>
+    <string name="TabTitleStyleTextOnly">Nama sahaja</string>
+    <string name="TabCounter">Pembilang Pemberitahuan</string>
+    <string name="HideAllChats">Sembunyi Tab \"%1$s\"</string>
+    <string name="FoldersInfo">Ikon disegerakkan dengan akaun anda.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Navigasi Aplikasi</string>
+    <string name="AppNavigationInfo">Menu atas kanan dan tetapan laci</string>
+    <string name="NavigationDrawer">Laci Navigasi</string>
+    <string name="NavigationDrawerInfo">Menggantikan menu kanan atas dengan laci buka-leret klasik dan butang hamburger.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Animasi Imersif</string>
+    <string name="MainMenuItems">Item Menu</string>
+    <string name="MainMenuItemsInfo">Ketik untuk tunjuk atau sembunyi item, tahan untuk susun semula. Susun atur dikongsi antara menu dan laci.</string>
+    <string name="MainMenuHiddenItems">Item Menu Tersembunyi</string>
+    <string name="MainMenuAddDivider">Tambah Pembahagi</string>
+    <string name="MainMenuRemoveSettingsInfo">Tetapan tidak boleh disembunyikan semasa bar navigasi bawah dilumpuhkan.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Pek Ikon</string>
+    <string name="IconPacksInfo">Sesuaikan ikon di seluruh aplikasi</string>
+    <string name="IconPickerFilter">Tapis</string>
+    <string name="IconPickerAllIcons">Semua Ikon</string>
+    <string name="IconPickerReplacedIcons">Ikon Diganti</string>
+    <string name="IconPickerNotReplacedIcons">Ikon Tidak Diganti</string>
+    <string name="IconPickerSaveAndExit">Simpan &amp; Keluar</string>
+    <string name="BasePacks">Pek Asas</string>
+    <string name="BaseIconPackInfo">Pek ikon asas digunakan sebagai sandaran untuk ikon yang tidak diganti oleh pek lain.</string>
+    <string name="IconPacksHint">Ketik untuk dayakan atau matikan pek. Tahan untuk edit atau padam.</string>
+    <string name="NewIconPack">Cipta Pek Ikon baharu</string>
+    <string name="EnabledPacks">Pek Didayakan</string>
+    <string name="AllPacks">Semua Pek</string>
+    <string name="PackName">Nama Pek</string>
+    <string name="AuthorNameOptional">Nama Pengarang (pilihan)</string>
+    <string name="NameCannotBeEmpty">Nama tidak boleh kosong.</string>
+    <string name="Version">Versi</string>
+    <string name="InstallPack">Pasang Pek</string>
+    <string name="IconCount_one">%1$d ikon</string>
+    <string name="IconCount_two">%1$d ikon</string>
+    <string name="IconCount_few">%1$d ikon</string>
+    <string name="IconCount_many">%1$d ikon</string>
+    <string name="IconCount_other">%1$d ikon</string>
+    <string name="UpdatePack">Kemas Kini Pek</string>
+    <string name="DeletePack">Padam Pek</string>
+    <string name="DeletePackInfo">Adakah anda pasti mahu memadam **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Arkib pek ikon tidak sah.</string>
+    <string name="IconPackErrorMissingMetadata">Arkib pek ikon kehilangan metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Metadata pek ikon terlalu besar.</string>
+    <string name="IconPackErrorInvalidMetadata">Metadata pek ikon tidak sah.</string>
+    <string name="IconPackErrorTooManyFiles">Pek ikon mengandungi terlalu banyak fail.</string>
+    <string name="IconPackErrorArchiveTooLarge">Pek ikon terlalu besar.</string>
+    <string name="IconPackErrorFileTooLarge">Salah satu fail ikon terlalu besar.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Arkib pek ikon dimampatkan secara agresif.</string>
+    <string name="IconPackErrorStorage">Tidak dapat menyimpan pek ikon.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Pek Ikon</string>
+    <string name="AppIconSunset">Matahari Terbenam</string>
+    <string name="AppIconInvincible">Tidak Terkalahkan</string>
+    <string name="AppIconSpace">Angkasa</string>
+    <string name="AppIconIceAge">Zaman Ais</string>
+    <string name="AppIconSus">Peniru</string>
+    <string name="AppIconWinter">Musim Sejuk</string>
+    <!-- General Appearance -->
+    <string name="Sections">Bahagian</string>
+    <string name="SeparateHeaders">Pengepala Berasingan</string>
+    <string name="DividerStyle">Gaya Pembahagi</string>
+    <string name="DividerStyleHidden">Tersembunyi</string>
+    <string name="DividerStyleLine">Garis</string>
+    <string name="DividerStyleSegments">Segmen</string>
+    <string name="UseSystemFonts">Guna Fon Sistem</string>
+    <string name="UseSystemEmoji">Guna Emoji Sistem</string>
+    <string name="NewLoadingStyle">Gaya Pemuatan</string>
+    <string name="NewSliderStyle">Gaya Peluncur</string>
+    <string name="NewSwitchStyle">Gaya Suis</string>
+    <string name="TabletMode">Mod Tablet</string>
+    <string name="RemoveMessageTail">Buang Ekor Mesej</string>
+    <string name="GooeyAvatarAnimation">Animasi Avatar \"Gooey\"</string>
+    <string name="CustomChatThemes">Tema Tersuai dalam Perbualan</string>
+    <string name="CustomChatThemesInfo">Setiap perbualan akan memaparkan tema yang dipilih khusus untuknya.</string>
+    <string name="PredictiveBackIntensity">Keamatan Kembali Ramalan</string>
+    <string name="PredictiveBackMax">Maks</string>
+    <string name="PredictiveBackInfo">Melaraskan sejauh mana skrin bergerak apabila leret ke belakang.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Pilihan Kabur</string>
+    <string name="GlassOutlineStyle">Garis Kaca</string>
+    <string name="GlassOutlineGlare">Silau</string>
+    <string name="GlassOutlineSolid">Pejal</string>
+    <string name="GlassOutlineHidden">Tersembunyi</string>
+    <string name="ForceSnow">Paksa Bunga Salji</string>
+    <string name="ForceSnowInfo">Bunga salji yang jatuh akan muncul di bar tindakan, menu sisi, dan latar belakang perbualan.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Saiz Stiker</string>
+    <string name="StickerSizeLeft">Kecil</string>
+    <string name="StickerSizeRight">Besar</string>
+    <string name="StickerSizeDialogMessage">woah, sangat comel!</string>
+    <string name="StickerShape">Bentuk Stiker</string>
+    <string name="StickerShapeRounded">Bundar</string>
+    <string name="StickerShapeRoundedMsg">Mesej</string>
+    <string name="ViewEmojiSet">Lihat Set Emoji</string>
+    <string name="UnlimitedRecentStickers">Stiker Terkini Tanpa Had</string>
+    <string name="HideReactions">Sembunyi Reaksi</string>
+    <string name="HideReactionsInfo">Reaksi akan disembunyikan sepenuhnya dari antara muka.</string>
+    <string name="ReplyBackground">Latar Belakang</string>
+    <string name="ChatSettingsInfo">Tetapan Media, Ikon Aplikasi dan lain-lain</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Sediakan Perkhidmatan, Peranan, dan Sejarah</string>
+    <string name="AIChatInfo2">Hasilkan teks daripada mesej atau sebelum menghantar.</string>
+    <!-- AI Services -->
+    <string name="Services">Perkhidmatan</string>
+    <string name="ServicesInfo">Pilih perkhidmatan yang sesuai untuk berinteraksi dengan model bahasa.</string>
+    <string name="NewService">Perkhidmatan Baharu</string>
+    <string name="EditService">Sunting Perkhidmatan</string>
+    <string name="ServiceKey">Kunci API</string>
+    <string name="ServiceInfo">Maklumat Perkhidmatan</string>
+    <string name="ServiceProvider">Penyedia</string>
+    <string name="ServiceProviderCustom">Tersuai</string>
+    <string name="ServiceTestAndSave">Uji dan Simpan</string>
+    <string name="ServicePasteService">Tampal Perkhidmatan</string>
+    <string name="ServicePasteKey">Tampal Kunci API</string>
+    <string name="DeleteServiceInfo">Adakah anda pasti mahu memadam **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Peranan</string>
+    <string name="RolesInfo">Cipta peranan untuk keperluan khusus anda!</string>
+    <string name="Suggestions">Cadangan</string>
+    <string name="RoleName">Nama</string>
+    <string name="RolePrompt">Arahan</string>
+    <string name="PromptInfo">Arahan adalah teks awal yang diberikan kepada model untuk memulakan penjanaan respons atau meneruskan dialog.</string>
+    <string name="NewRole">Peranan Baharu</string>
+    <string name="EditRole">Sunting Peranan</string>
+    <string name="DeleteRoleInfo">Adakah anda pasti mahu memadam **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Sejarah perbualan membolehkan AI memahami permintaan sebelumnya dan mempertimbangkannya ketika menjana respons baharu.</string>
+    <string name="AIGeneration">Penjanaan</string>
+    <string name="AIReasoning">Penaakulan</string>
+    <string name="AIReasoningInfo">Membolehkan model yang disokong pada perkhidmatan ini menggunakan token tambahan untuk berfikir sebelum menjawab.</string>
+    <string name="AITemperature">Suhu</string>
+    <string name="AITemperatureInfo">Suhu mengawal rawak respons: nilai yang lebih tinggi lebih kreatif, nilai yang lebih rendah lebih fokus.</string>
+    <string name="ResponseStreaming">Penstriman Respons</string>
+    <string name="ResponseStreamingInfo">Memastikan paparan respons yang lebih lancar dan cepat.</string>
+    <string name="ShowResponseOnly">Tunjuk Respons Sahaja</string>
+    <string name="InsertResponseAsQuote">Masukkan Respons sebagai Petikan</string>
+    <string name="TapToAddApiKey">Ketik untuk menambah Kunci API untuk memulakan ciri AI.</string>
+    <string name="Generate">Jana</string>
+    <string name="ClearConversationHistoryInfo">Adakah anda pasti mahu mengosongkan **semua** sejarah perbualan AI?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Permintaan Tidak Sah</string>
+    <string name="AIError400Info">Periksa parameter permintaan.</string>
+    <string name="AIError401">Kelayakan Tidak Sah</string>
+    <string name="AIError401Info">Kunci API tidak sah atau dilumpuhkan. Periksa kelayakan anda.</string>
+    <string name="AIError402">Kredit Tidak Mencukupi</string>
+    <string name="AIError402Info">Akaun atau kunci API anda mempunyai kredit yang tidak mencukupi. Tambah lebih kredit dan cuba semula permintaan.</string>
+    <string name="AIError403">Akses Ditolak</string>
+    <string name="AIError403Info">Anda tidak mempunyai kebenaran untuk mengakses model atau sumber ini. Periksa kunci API dan kebenaran akaun anda.</string>
+    <string name="AIError408">Permintaan Tamat Masa</string>
+    <string name="AIError408Info">Permintaan anda tidak diproses dalam masa. Sila cuba lagi nanti.</string>
+    <string name="AIError429">Had Kadar Melebihi</string>
+    <string name="AIError429Info">Anda menghantar permintaan terlalu kerap. Sila tunggu sebentar dan cuba lagi.</string>
+    <string name="AIError502">Kegagalan Model</string>
+    <string name="AIError502Info">Model yang dipilih tidak tersedia atau kami menerima respons yang tidak sah daripadanya.</string>
+    <string name="AIError503">Perkhidmatan Tidak Tersedia</string>
+    <string name="AIError503Info">Perkhidmatan tidak tersedia buat sementara waktu atau terlebih beban. Sila cuba lagi nanti.</string>
+    <string name="AIError">Ralat Pelayan</string>
+    <string name="AIErrorInfo">Sila cuba semula permintaan anda selepas menunggu sebentar.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Mesej Masuk</string>
+    <string name="DoubleTapOutgoing">Mesej Keluar</string>
+    <string name="DoubleTapInfo">Beberapa tindakan memerlukan hak pentadbir dalam perbualan atau saluran.</string>
+    <string name="BottomButton">Butang Bawah</string>
+    <string name="ChannelDiscussNoCaps">Bincang</string>
+    <string name="QuickTransitions">Peralihan Leret Cepat</string>
+    <string name="DisableGreetingSticker">Matikan Stiker Ucapan</string>
+    <string name="AdminShortcuts">Pintasan Pentadbir Cepat</string>
+    <string name="HideKeyboardOnScroll">Sembunyi Papan Kekunci pada Tatal</string>
+    <string name="HideShareButton">Sembunyi Butang Sisi \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">Ganti \"%1$s\" dengan Ikon</string>
+    <string name="MessageMenu">Menu Mesej</string>
+    <string name="GroupMessageMenu">Menu Mesej Berkumpulan</string>
+    <string name="GroupMessageMenuInfo">Pengelompokan mengalihkan tindakan utama ke bahagian bawah menu mesej.</string>
+    <string name="GlassMessageMenu">Menu Mesej Kaca</string>
+    <string name="GlassMessageMenuBlurOff">Menu kaca memerlukan kabur, yang sedang dimatikan.</string>
+    <string name="AddCommaAfterMention">Tambah Koma selepas Sebutan</string>
+    <string name="HideSendAsPeer">Sembunyi Butang \"Hantar sebagai…\"</string>
+    <string name="HideSendAsPeerInfo">Anda masih boleh mengakses menu \"Hantar sebagai…\" dengan menekan lama butang Emoji/Stiker/GIF.</string>
+    <string name="ShowPollResultsBeforeVoting">Tunjuk Keputusan Sebelum Mengundi</string>
+    <string name="ShowPollResultsBeforeVotingHint">Lihat keputusan untuk setiap pilihan sebelum menghantar undian anda.</string>
+    <string name="ShowOnlineStatus">Tunjuk Penunjuk Dalam Talian</string>
+    <string name="MessagePreviewDialogMessage">Saya boleh makan kaca dan ia tidak menyakitkan saya.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Bahasa Pengecaman</string>
+    <string name="RecognitionInfo">Menggunakan API Vosk. Berfungsi secara luar talian. Kualiti teks yang ditranskripsi mungkin rendah.</string>
+    <string name="MissingLanguageModel">Model Bahasa Hilang</string>
+    <string name="DownloadingModel">Memuat turun model…</string>
+    <string name="DownloadingModelInfo">Sila pastikan tetingkap ini terbuka semasa model bahasa dimuat turun.</string>
+    <string name="ModelDownload">Muat Turun (%1$s)</string>
+    <string name="ModelDownloadInfo">Untuk meneruskan, anda perlu memuat turun model bahasa \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Model berjaya dimuat turun.</string>
+    <string name="ModelError">Ralat semasa memuat turun model.</string>
+    <string name="ModelUnzipping">Menyahzip…</string>
+    <string name="DeleteRecognitionModel">Padam Model</string>
+    <string name="DeleteRecognitionModelInfo">Adakah anda pasti mahu memadam model bahasa \"**%1$s**\"?</string>
+    <string name="RecognitionModelDeleted">Model berjaya dipadam.</string>
+    <string name="RecognitionModelDeleteError">Ralat semasa memadam model.</string>
+    <string name="PostProcessingWithAi">Guna AI untuk pasca-pemprosesan</string>
+    <string name="PostProcessingWithAiInfo">AI akan meningkatkan kebolehbacaan dengan membetulkan ralat, menambah tanda baca, dan menjelaskan bahagian yang tidak jelas.</string>
+    <!-- Camera -->
+    <string name="CameraType">Jenis Kamera</string>
+    <string name="ExtendedSettings">Tetapan Lanjutan</string>
+    <string name="SeamlessSwitching">Penukaran Lancar</string>
+    <string name="ExtendedFramesPerSecond">Julat FPS Lanjutan</string>
+    <string name="CameraStabilization">Penstabilan</string>
+    <string name="CameraMirrorMode">Mod Cermin</string>
+    <string name="StartWithWideAngleCamera">Mula dengan Sudut Lebar</string>
+    <string name="ZoomSlider">Peluncur Zum</string>
+    <string name="ZoomSliderInfo">Tunjukkan kawalan zum di bawah kamera mesej video.</string>
+    <string name="StaticZoom">Zum Statik</string>
+    <string name="StaticZoomInfo">Semasa merakam mesej video, tahap zum tidak akan tetapkan semula jika anda melepaskan jari anda.</string>
+    <string name="VideoMessagesCamera">Kamera dalam Mesej Video</string>
+    <string name="VideoMessagesCameraRear">Belakang</string>
+    <string name="VideoMessagesCameraFront">Depan</string>
+    <string name="VideoMessagesCameraAsk">Tanya</string>
+    <string name="RearCamera">Kamera Belakang</string>
+    <string name="FrontCamera">Kamera Depan</string>
+    <string name="RememberLastUsedCamera">Ingat Kamera Terakhir Diguna</string>
+    <string name="RememberLastUsedCameraInfo">Semasa merakam mesej video, kamera terakhir digunakan akan dipilih secara automatik.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Sentiasa Hantar dalam HD</string>
+    <string name="HideCameraTile">Sembunyi Jubin Kamera Segera</string>
+    <string name="HideCameraTileInfo">Jubin kamera akan digantikan dengan butang terapung. Menekannya melancarkan kamera Telegram; menahannya melancarkan kamera sistem.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Masa Lompat Ketik Dua Kali</string>
+    <string name="PreferOriginalQuality">Utamakan Kualiti Asal</string>
+    <string name="PauseOnMinimize">Jeda Automatik</string>
+    <string name="PauseOnMinimizeVoice">Suara</string>
+    <string name="PauseOnMinimizeRound">Bulat</string>
+    <string name="PauseOnMinimizeInfo">Menjeda main balik media apabila peranti dikunci atau exteraGram diminimumkan.</string>
+    <string name="SwipeToPip">Leret ke PiP</string>
+    <string name="UnmuteWithVolumeButtons">Nyahsenyap Video dengan Butang Volume</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Menekan butang volume akan menyahsenyap video dan bukannya menukar volume sistem.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Apabila pilihan ini didayakan, data tentang peranti dikumpul dan dihantar ke Google Analytics dan Crashlytics, membolehkan kami menyimpan statistik penggunaan dan menjejak ralat dalam aplikasi. \n\nWalau bagaimanapun, jika pilihan dimatikan, pengumpulan data berhenti dan sebarang data yang dihantar akan dipadam serta-merta.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Masukkan nama fail…</string>
+    <string name="ExportSettings">Eksport Tetapan</string>
+    <string name="ApplySettings">Guna Tetapan</string>
+    <string name="ImportTitle">Adakah anda pasti mahu menggunakan tetapan ini?</string>
+    <string name="ImportConfirm">Ya, guna</string>
+    <string name="CancelConfirm">Tidak, biarkan seperti sedia ada</string>
+    <string name="SettingsSaved">Fail tetapan berjaya disimpan.</string>
+    <string name="SettingsImported">Tetapan berjaya digunakan.</string>
+    <string name="ImportChanges_one">**1** perubahan akan digunakan pada tetapan semasa.</string>
+    <string name="ImportChanges_two">**%1$d** perubahan akan digunakan pada tetapan semasa.</string>
+    <string name="ImportChanges_few">**%1$d** perubahan akan digunakan pada tetapan semasa.</string>
+    <string name="ImportChanges_many">**%1$d** perubahan akan digunakan pada tetapan semasa.</string>
+    <string name="ImportChanges_other">**%1$d** perubahan akan digunakan pada tetapan semasa.</string>
+    <string name="SameSettings">Nampaknya tetapan adalah sama dengan yang sedia ada.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Atas sebab keselamatan, anda akan dapat memulakan muat turun data anda dalam %1$s. Kami telah memaklumkan semua peranti anda tentang permintaan eksport untuk memastikan ia diberi kuasa dan memberi anda masa untuk bertindak balas jika tidak.\n\nSila kembali pada %2$s dan ulangi permintaan menggunakan peranti yang sama.</string>
+    <string name="ExportInvalid">Maaf, anda memulakan eksport data baharu, jadi eksport data ini telah dibatalkan.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Padam Akaun</string>
+    <string name="ResetSettings">Tetapkan Semula Tetapan</string>
+    <string name="ResetPreferences">Keutamaan **exteraGram** telah ditetapkan semula.</string>
+    <string name="ResetPreferencesInfo">Adakah anda pasti mahu menetapkan semula **semua** keutamaan exteraGram kepada lalai?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Sokong Pembangunan</string>
+    <string name="SupportDevelopmentInfo">Dengan menyokong projek ini, anda bukan sahaja menyumbang kepada pembangunannya tetapi juga mendapat lencana unik.</string>
+    <string name="MakeDonation">Buat Derma</string>
+    <string name="ReceiveBadge">Terima Lencana Anda</string>
+    <string name="NowPlaying">Sedang dimainkan</string>
+    <string name="ScrobblingService">Perkhidmatan Scrobbling</string>
+    <string name="SelectService">Pilih perkhidmatan</string>
+    <string name="SelectServiceInfo">Memaparkan trek semasa dalam profil sebagai kad yang diperoleh daripada perkhidmatan scrobbling.</string>
+    <string name="EnterUsername">Masukkan nama pengguna</string>
+    <string name="EnterUsernameInfo">Anda boleh mendapatkan nama pengguna anda di **laman web rasmi**.</string>
+    <string name="BoostyPeopleCount_one">%1$d orang</string>
+    <string name="BoostyPeopleCount_two">%1$d orang</string>
+    <string name="BoostyPeopleCount_few">%1$d orang</string>
+    <string name="BoostyPeopleCount_many">%1$d orang</string>
+    <string name="BoostyPeopleCount_other">%1$d orang</string>
+    <string name="BoostyInfo">Sokong secara aktif **exteraGram** di **Boosty**.</string>
+    <string name="BoostyInfo2">Terima kasih atas sokongan anda!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Pemasangan plugin hanya tersedia dalam versi **Penuh** **exteraGram**.</string>
+    <string name="Plugins">Plugin</string>
+    <string name="PluginsEngine">Enjin Plugin</string>
+    <string name="EnablePluginsEngine">Dayakan Enjin Plugin</string>
+    <string name="PluginsInfo">Anda boleh mencari plugin di @exteraPlugins.</string>
+    <string name="PluginsNotFound">Tiada plugin ditemui.</string>
+    <string name="InstallPlugin">Pasang</string>
+    <string name="UpdatePlugin">Kemas Kini</string>
+    <string name="PluginNotEnabled">Dayakan **Enjin Plugin** untuk memasang **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** berjaya dipasang.</string>
+    <string name="PluginUpdated">**%1$s** berjaya dikemas kini.</string>
+    <string name="PluginEnableError">Gagal mendayakan **%1$s**.</string>
+    <string name="PluginDisableError">Gagal mematikan **%1$s**.</string>
+    <string name="PluginInstallError">Gagal memasang **%1$s**.</string>
+    <string name="PluginSourceTrusted">Sumber dipercayai</string>
+    <string name="PluginSourceTrustedInfo">Plugin dari sumber ini **disahkan** dan selamat digunakan.</string>
+    <string name="PluginSourceUnknown">Sumber tidak diketahui</string>
+    <string name="PluginSourceUnknownInfo">Plugin dari sumber ini **tidak disahkan** dan mungkin menimbulkan risiko keselamatan.</string>
+    <string name="PluginVersion">Versi</string>
+    <string name="PluginNoDescription">Tiada perihalan diberikan.</string>
+    <string name="PluginIsNotResponding">Plugin tidak bertindak balas.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s tidak bertindak balas</string>
+    <string name="PluginNoAuthor">Pengarang Tidak Diketahui</string>
+    <string name="EnableAfterInstallation">Dayakan Selepas Pemasangan</string>
+    <string name="EnterValue">Masukkan nilai</string>
+    <string name="PluginDelete">Padam Plugin</string>
+    <string name="PluginDeleteInfo">Adakah anda pasti mahu memadam **%1$s**?</string>
+    <string name="ResetPluginSettings">Tetapan **%1$s** telah ditetapkan semula.</string>
+    <string name="ResetPluginSettingsInfo">Adakah anda pasti mahu menetapkan semula tetapan **%1$s** kepada lalai?</string>
+    <string name="PluginsSafeMode">Mod Selamat</string>
+    <string name="PluginsSafeModeShortcut">Mulakan dengan mod selamat</string>
+    <string name="PluginsSafeModeInfo">Enjin Plugin dilumpuhkan disebabkan oleh ranap. Melumpuhkan mod selamat boleh membawa kepada akibat yang tidak dijangka.</string>
+    <string name="PluginsSafeModeInfo2">Dalam Mod Selamat, semua plugin tidak aktif. Ini membolehkan anda mencari dan mematikan plugin yang bermasalah dengan selamat.</string>
+    <string name="PluginsDevMode">Mod Pembangun</string>
+    <string name="PluginsCompactView">Paparan Padat Plugin</string>
+    <string name="PluginsDocumentation">Dokumentasi</string>
+    <string name="PluginsTrusted">Plugin Dipercayai</string>
+    <string name="PluginsDevServerLaunched">Pelayan Pembangun dimulakan.</string>
+    <string name="PluginsDevServerStopped">Pelayan Pembangun dihentikan.</string>
+    <string name="PluginEngineNotEnabled">Dayakan **Enjin Plugin** untuk membuka tetapan **%1$s**.</string>
+    <string name="PluginNotFound">**%1$s** tidak dijumpai.</string>
+    <string name="PluginHasNoSettings">**%1$s** tiada tetapan.</string>
+    <string name="PluginsPySdkAutoUpdate">Kemas Kini Automatik</string>
+    <string name="PluginsPySdkEnableBetaVersion">Pasang Versi Beta</string>
+    <string name="PluginsPySdkCheckUpdates">Periksa Kemas Kini</string>
+    <string name="CheckingForUpdates">Memeriksa Kemas Kini…</string>
+    <string name="LatestVersionInstalled">Versi terkini dipasang</string>
+    <string name="RestartPluginSystemToApplyUpdate">Kemas kini dimuat, mulakan semula Enjin Plugin untuk guna</string>
+    <string name="LoadingUpdate">Memuat Kemas Kini…</string>
+    <string name="RestoreSdkFromApk">Pulihkan SDK daripada APK</string>
+    <string name="EnableAutoUpdate">Dayakan Kemas Kini Automatik</string>
+    <string name="PluginsDisableArt">Mod Keserasian</string>
+    <string name="PluginsDisableArtInfo">Mencegah kegagalan cangkuk plugin dengan melumpuhkan ART Profile Saver.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Kemas kini sedang dijalankan…</string>
+    <string name="UpdateInstallingRelaunch">Aplikasi akan dimulakan semula setelah kemas kini selesai.</string>
+    <string name="UpdateInstallingNotification">Anda akan diberitahu apabila kemas kini selesai.</string>
+    <string name="UpdateInstalledNotification">Kemas kini selesai. Ketik untuk membuka aplikasi.</string>
+    <string name="UpdateFailedToInstall">Pemasangan kemas kini gagal dengan kod ralat: %d</string>
+    <string name="UpdateAvailable">Kemas Kini Tersedia!</string>
+    <!-- Message Details -->
+    <string name="Details">Butiran</string>
+    <string name="Date">Tarikh</string>
+    <string name="EditedDate">Tarikh Suntingan</string>
+    <string name="ForwardedDate">Tarikh Pemajuan</string>
+    <string name="FileSize">Saiz Fail</string>
+    <string name="FileName">Nama Fail</string>
+    <string name="FilePath">Laluan Fail</string>
+    <string name="Resolution">Resolusi</string>
+    <string name="Bitrate">Kadar Bit</string>
+    <string name="Duration">Tempoh</string>
+    <string name="MimeType">Jenis Mime</string>
+    <string name="Datacenter">Pusat Data</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOptionNone">Tiada</string>
+    <string name="DateFormatOptionRelative">Relatif</string>
+    <string name="DateFormatOptionShortTime">Masa Pendek</string>
+    <string name="DateFormatOptionLongTime">Masa Panjang</string>
+    <string name="DateFormatOptionShortDate">Tarikh Pendek</string>
+    <string name="DateFormatOptionLongDate">Tarikh Panjang</string>
+    <string name="DateFormatOptionDayOfWeek">Hari dalam minggu</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">Log masuk kod QR</string>
+    <string name="LoginQrSubtitle">Guna peranti lain untuk mengimbas kod QR ini.</string>
+    <string name="WifiConnect">Sambung</string>
+    <string name="WifiDisabled">Wi-Fi dilumpuhkan.</string>
+    <string name="WifiFailed">Gagal menyambung ke Wi-Fi.</string>
+    <string name="WifiSuccess">Berjaya menyambung ke Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Adakah anda pasti mahu log masuk ke akaun ini pada peranti lain?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Halaman disekat</string>
+    <string name="PageBlockedDescription">exteraGram telah menghalang halaman berikut daripada dimuatkan:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Kembali</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Tetapkan sebagai Lencana</string>
+    <string name="AutoLockInstant">Serta-merta</string>
+    <string name="TestBackend">Uji Backend</string>
+    <string name="SearchPhotoInfo">Perkhidmatan boleh menggunakan imej mengikut dasar privasi dan terma penggunaan mereka.</string>
+    <string name="PhotoUploadFailed">Gagal memuat naik foto.</string>
+    <string name="TrackSaved">Trek disimpan ke **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Trek akan disimpan ke **%1$s**.</string>
+    <string name="DeletedMessage">Mesej Dipadam</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Salin Tajuk</string>
+    <string name="CopyCallback">Salin Data Panggil Balik</string>
+    <string name="CopyInlineQuery">Salin Pertanyaan Sebaris</string>
+    <string name="CopyID">Salin ID Pengguna</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Status lencana ditetapkan.</string>
+    <string name="UserNotFound">Pengguna dengan **ID** ini tidak dijumpai.</string>
+    <string name="ChatNotFound">Perbualan dengan **ID** ini tidak dijumpai.</string>
+    <string name="PhotoCopied">Foto disalin ke papan klip.</string>
+    <string name="FrameCopied">Bingkai disalin ke papan klip.</string>
+    <string name="TapToCopy">Ketik untuk salin</string>
+    <string name="ProfileUsesEmojiPack">Profil ini menggunakan emoji daripada pek %s untuk latar belakangnya.</string>
+    <string name="ProfileUsesEmojiPacks">Profil ini menggunakan emoji daripada **%d pek** untuk latar belakangnya.</string>
+    <string name="ReplyUsesEmojiPacks">Balasan ini menggunakan emoji daripada pek %s untuk latar belakangnya.</string>
+    <string name="StickerSavedHint">Stiker disimpan ke galeri.</string>
+    <string name="EmojiSavedHint">Emoji disimpan ke galeri.</string>
+    <string name="GifGallerySavedHint">GIF disimpan ke galeri.</string>
+    <string name="MutualContactInfo">Hubungan ini adalah bersama.</string>
+    <string name="LocalPremiumEmojiHint">Anda tidak mempunyai langganan **Telegram Premium**, jadi hanya pengguna **exteraGram** yang akan dapat melihat emoji ini.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Sembunyi Tab Kenalan</string>
+    <string name="ShowContactsTab">Tunjuk Tab Kenalan</string>
+    <string name="ContactsTabWasShownTitle">Tab **Kenalan** kini kelihatan.</string>
+    <string name="ContactsTabWasHiddenTitle">Tab **Kenalan** kini tersembunyi.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Ciri ini hanya berfungsi dengan pengurus kata laluan yang membenarkan pengguna mengurus tetapan kepercayaan untuk aplikasi istimewa, seperti **Bitwarden** atau **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Pengurus kata laluan tidak disokong</string>
+    <string name="PasskeyUnsupportedMessage">Cuba pengurus kata laluan lain seperti **Bitwarden** atau **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** mencipta akaun mereka kira-kira pada **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** mencipta akaun mereka lebih awal daripada **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** mencipta akaun mereka lebih lewat daripada **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** dicipta pada **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Anda mencipta akaun anda kira-kira pada **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">Anda mencipta akaun anda lebih awal daripada **%1$s**.</string>
+    <string name="CreationDateSelfLater">Anda mencipta akaun anda lebih lewat daripada **%1$s**.</string>
+    <string name="JoinDateChat">Anda menyertai **%1$s** pada **%2$s**.</string>
+    <string name="GroupMemberJoined">menyertai %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Ke Awal</string>
+    <string name="MessageHistory">Sejarah</string>
+    <string name="BoldItalic">Tebal Italik</string>
+    <string name="CopyPhoto">Salin Foto</string>
+    <string name="CopyFrame">Salin Bingkai</string>
+    <string name="Repeat">Ulang</string>
+    <string name="Subtitles">Sari Kata</string>
+    <string name="ChooseSubtitles">Pilih Sari Kata</string>
+    <string name="DisableSubtitles">Matikan Sari Kata</string>
+    <string name="SubtitlesAdded">Sari kata didayakan.</string>
+    <string name="SubtitlesRemoved">Sari kata dilumpuhkan.</string>
+    <string name="SubtitlesLoadError">Tidak dapat memuat sari kata.</string>
+    <string name="SubtitlesUnsupportedFormat">Format sari kata tidak disokong.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Sudut Stiker</string>
+    <string name="StickerCornerRadiusInfo">Pilih bagaimana bulat sudut stiker sepatutnya kelihatan.</string>
+    <string name="StickerCornerRadiusLarge">Besar</string>
+    <string name="StickerCornerRadiusMedium">Sederhana</string>
+    <string name="StickerCornerRadiusSmall">Kecil</string>
+    <string name="StickerCornerRadiusNone">Tiada</string>
+    <!-- Feed -->
+    <string name="Feed">Suapan</string>
+    <string name="FeedShownChannels">Dipaparkan dalam suapan</string>
+    <string name="FeedHiddenChannels">Tersembunyi</string>
+    <string name="FeedChannels">Saluran</string>
+    <string name="FeedSettings">Tetapan Suapan</string>
+    <string name="FeedNoPosts">Tiada siaran saluran lagi.</string>
+    <string name="FeedAllChannelsExcluded">Semua saluran dikecualikan daripada suapan.</string>
+    <string name="FeedMarkAllReadConfirm">Tanda semua siaran dalam saluran suapan anda sebagai dibaca? Ini juga akan menandakannya sebagai dibaca dalam saluran asal.</string>
+    <string name="FeedMarkAllReadDone">Semua siaran ditanda sebagai dibaca</string>
+    <string name="FeedIncludeArchived">Tunjuk Perbualan daripada Arkib</string>
+    <string name="FeedIncludeArchivedInfo">Sertakan juga saluran daripada perbualan diarkibkan anda dalam suapan.</string>
+    <string name="FeedHideChannel">Sembunyi daripada Suapan</string>
+    <string name="FeedChannelHidden">**%1$s** disembunyikan daripada suapan</string>
+    <string name="FeedBottomTab">Tunjuk dalam Tab Bawah</string>
+    <string name="FeedBottomTabInfo">Tunjuk suapan sebagai tab navigasi bawah menggantikan tab Kenalan.</string>
+    <string name="FeedUnreadCounter">Pembilang Siaran Belum Dibaca</string>
+    <string name="HideFeedTab">Sembunyi Tab Suapan</string>
+    <string name="DisableMarkdown">Matikan Markdown</string>
+    <string name="EnableMarkdown">Dayakan Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

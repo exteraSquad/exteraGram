@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -19,8 +18,8 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import androidx.media3.exoplayer.ExoPlayer;
+import org.telegram.ui.AspectRatioFrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -32,10 +31,10 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.SvgHelper;
 import org.telegram.messenger.Utilities;
+import org.telegram.messenger.video.VideoPlayerHolderBase;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.CombinedDrawable;
-import org.telegram.ui.Components.VideoPlayer;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
 import org.telegram.ui.PremiumPreviewFragment;
 
@@ -97,7 +96,8 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
     boolean firstFrameRendered;
 
     float progress;
-    VideoPlayer videoPlayer;
+//    VideoPlayer videoPlayer;
+    VideoPlayerHolderBase videoPlayerBase;
     AspectRatioFrameLayout aspectRatioFrameLayout;
     TextureView textureView;
 
@@ -112,14 +112,14 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
 
     private TLRPC.Document document;
 
-    public VideoScreenPreview(Context context, SvgHelper.SvgDrawable svgDrawable, int currentAccount, int type) {
+    public VideoScreenPreview(Context context, SvgHelper.SvgDrawable svgDrawable, int currentAccount, int type, Theme.ResourcesProvider resourcesProvider) {
         super(context);
         this.currentAccount = currentAccount;
         this.type = type;
         this.svgIcon = svgDrawable;
 
         phoneFrame1.setColor(Color.BLACK);
-        phoneFrame2.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_premiumGradient2), Color.BLACK, 0.5f));
+        phoneFrame2.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_premiumGradient2, resourcesProvider), Color.BLACK, 0.5f));
         imageReceiver.setLayerNum(Integer.MAX_VALUE);
         setVideo();
 
@@ -131,12 +131,15 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
                 type == PremiumPreviewFragment.PREMIUM_FEATURE_ADS ||
                 type == PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_AVATARS ||
                 type == PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI ||
-                type == PremiumPreviewFragment.PREMIUM_FEATURE_REACTIONS) {
+                type == PremiumPreviewFragment.PREMIUM_FEATURE_REACTIONS ||
+                type == PremiumPreviewFragment.PREMIUM_FEATURE_SAVED_TAGS ||
+                type == PremiumPreviewFragment.PREMIUM_FEATURE_RICH_EDITOR
+        ) {
             starDrawable = new StarParticlesView.Drawable(40);
             starDrawable.speedScale = 3;
             starDrawable.type = type;
 
-            if (type == PremiumPreviewFragment.PREMIUM_FEATURE_ADS) {
+            if (type == PremiumPreviewFragment.PREMIUM_FEATURE_ADS || type == PremiumPreviewFragment.PREMIUM_FEATURE_SAVED_TAGS || type == PremiumPreviewFragment.PREMIUM_FEATURE_RICH_EDITOR) {
                 starDrawable.size1 = 14;
                 starDrawable.size2 = 18;
                 starDrawable.size3 = 18;
@@ -145,8 +148,12 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
                 starDrawable.size2 = 16;
                 starDrawable.size3 = 15;
             }
+            if (type == PremiumPreviewFragment.PREMIUM_FEATURE_RICH_EDITOR) {
+                starDrawable.useRotate = true;
+            }
             starDrawable.k1 = starDrawable.k2 = starDrawable.k3 = 0.98f;
             starDrawable.speedScale = 4;
+            starDrawable.resourcesProvider = resourcesProvider;
             starDrawable.colorKey = Theme.key_premiumStartSmallStarsColor2;
             starDrawable.init();
         } else if (type == PremiumPreviewFragment.PREMIUM_FEATURE_DOWNLOAD_SPEED) {
@@ -163,6 +170,7 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
                 particlesCount = 400;
             }
             starDrawable = new StarParticlesView.Drawable(particlesCount);
+            starDrawable.resourcesProvider = resourcesProvider;
             starDrawable.colorKey = Theme.key_premiumStartSmallStarsColor2;
             starDrawable.size1 = 8;
             starDrawable.size1 = 6;
@@ -184,7 +192,7 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
 
         aspectRatioFrameLayout = new AspectRatioFrameLayout(context) {
 
-            Path clipPath = new Path();
+            private final Path clipPath = new Path();
 
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -273,7 +281,7 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int measuredWidth = MeasureSpec.getSize(widthMeasureSpec);
         int measuredHeight = MeasureSpec.getSize(heightMeasureSpec);
-        int size = (int) (MeasureSpec.getSize(heightMeasureSpec) * 0.9f);
+        int size = (int) (Math.min(measuredHeight, measuredWidth) * 0.9f);
         float h = size;
         float w = size * 0.671f;
 
@@ -291,6 +299,10 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
         ((MarginLayoutParams) aspectRatioFrameLayout.getLayoutParams()).topMargin = (int) AndroidUtilities.rectTmp.top;
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//        super.onMeasure(
+//            MeasureSpec.makeMeasureSpec(measuredWidth, MeasureSpec.EXACTLY),
+//            MeasureSpec.makeMeasureSpec(measuredHeight, MeasureSpec.EXACTLY)
+//        );
     }
 
     @Override
@@ -298,7 +310,7 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
         super.onLayout(changed, left, top, right, bottom);
         int sizeInternal = getMeasuredWidth() << 16 + getMeasuredHeight();
 
-        int size = (int) (getMeasuredHeight() * 0.9f);
+        int size = (int) (Math.min(getMeasuredWidth(), getMeasuredHeight()) * 0.9f);
         float h = size;
         float w = size * 0.671f;
         float horizontalPadding = (getMeasuredWidth() - w) / 2f;
@@ -321,6 +333,8 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
                         type == PremiumPreviewFragment.PREMIUM_FEATURE_ADVANCED_CHAT_MANAGEMENT ||
                         type == PremiumPreviewFragment.PREMIUM_FEATURE_ADS ||
                         type == PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_AVATARS ||
+                        type == PremiumPreviewFragment.PREMIUM_FEATURE_SAVED_TAGS ||
+                        type == PremiumPreviewFragment.PREMIUM_FEATURE_RICH_EDITOR ||
                         type == PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI ||
                         type == PremiumPreviewFragment.PREMIUM_FEATURE_REACTIONS) {
                     starDrawable.rect.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
@@ -368,8 +382,8 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
             } else if (speedLinesDrawable != null) {
                 float videoSpeedScale = 0.2f;
 
-                if (videoPlayer != null) {
-                    float p = videoPlayer.getCurrentPosition() / (float) videoPlayer.getDuration();
+                if (videoPlayerBase != null) {
+                    float p = videoPlayerBase.getCurrentPosition() / (float) videoPlayerBase.getDuration();
                     p = Utilities.clamp(p, 1f, 0);
                     float step = 1f / (speedScaleVideoTimestamps.length - 1);
                     int fromIndex = (int) (p / step);
@@ -390,7 +404,7 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
             canvas.restore();
             invalidate();
         }
-        int size = (int) (getMeasuredHeight() * 0.9f);
+        int size = (int) (Math.min(getMeasuredWidth(), getMeasuredHeight()) * 0.9f);
         float h = size;
         float w = size * 0.671f;
         float horizontalPadding = (getMeasuredWidth() - w) / 2f;
@@ -491,7 +505,7 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
         if (!firstFrameRendered) {
             checkVideo();
         }
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.fileLoaded);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.fileLoaded);
     }
 
     @Override
@@ -504,6 +518,10 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
             helloParticlesDrawable.recycle();
             helloParticlesDrawable = null;
         }
+        stopVideoPlayer();
+    }
+
+    public void onDestroy() {
         stopVideoPlayer();
     }
 
@@ -532,58 +550,38 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
 
     private void runVideoPlayer() {
         if (file != null || SharedConfig.streamMedia) {
-            if (videoPlayer != null) {
+            if (videoPlayerBase != null) {
                 return;
             }
             aspectRatioFrameLayout.setAspectRatio(aspectRatio, 0);
-            videoPlayer = new VideoPlayer();
-            videoPlayer.setTextureView(textureView);
-            videoPlayer.setDelegate(new VideoPlayer.VideoPlayerDelegate() {
+            videoPlayerBase = new VideoPlayerHolderBase() {
                 @Override
                 public void onStateChanged(boolean playWhenReady, int playbackState) {
+                    if (videoPlayerBase == null) return;
                     if (playbackState == ExoPlayer.STATE_ENDED) {
-                        videoPlayer.seekTo(0);
-                        videoPlayer.play();
+                        videoPlayerBase.seekTo(0);
+                        videoPlayerBase.play();
                     } else if (playbackState == ExoPlayer.STATE_IDLE) {
-                        videoPlayer.play();
+                        videoPlayerBase.play();
                     }
                 }
 
                 @Override
-                public void onError(VideoPlayer player, Exception e) {
-
-                }
-
-                @Override
-                public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-
-                }
-
-                @Override
                 public void onRenderedFirstFrame() {
-                    if (!firstFrameRendered) {
+                    if (textureView == null) return;
+                    if (!VideoScreenPreview.this.firstFrameRendered) {
                         textureView.setAlpha(0);
                         textureView.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                firstFrameRendered = true;
+                                VideoScreenPreview.this.firstFrameRendered = true;
                                 invalidate();
                             }
                         }).setDuration(200);
                     }
                 }
-
-                @Override
-                public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-
-                }
-
-                @Override
-                public boolean onSurfaceDestroyed(SurfaceTexture surfaceTexture) {
-                    return false;
-                }
-
-            });
+            };
+            videoPlayerBase.with(textureView);
 
             Uri uri;
             if (file != null && file.exists()) {
@@ -609,25 +607,25 @@ public class VideoScreenPreview extends FrameLayout implements PagerHeaderView, 
                 return;
             }
 
-            videoPlayer.preparePlayer(uri, "other");
-            videoPlayer.setPlayWhenReady(true);
+            videoPlayerBase.preparePlayer(uri, false, 1f);
             if (!firstFrameRendered) {
                 imageReceiver.stopAnimation();
                 textureView.setAlpha(0);
             }
-            videoPlayer.seekTo(lastFrameTime + 60);
-            videoPlayer.play();
+            videoPlayerBase.seekTo(lastFrameTime + 60);
+            videoPlayerBase.play();
         }
     }
 
     long lastFrameTime;
 
     private void stopVideoPlayer() {
-        if (videoPlayer != null) {
-            lastFrameTime = videoPlayer.getCurrentPosition();
-            videoPlayer.setTextureView(null);
-            videoPlayer.releasePlayer(true);
-            videoPlayer = null;
+        if (videoPlayerBase != null) {
+            lastFrameTime = videoPlayerBase.getCurrentPosition();
+            videoPlayerBase.release(() -> {
+
+            });
+            videoPlayerBase = null;
         }
     }
 }

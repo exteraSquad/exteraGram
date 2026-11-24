@@ -23,6 +23,8 @@ public class ExtendedGridLayoutManager extends GridLayoutManager {
 
     private SparseIntArray itemSpans = new SparseIntArray();
     private SparseIntArray itemsToRow = new SparseIntArray();
+    private int lastSpanCount;
+    private int lastItemCount = -1;
     private int firstRowMax;
     private int rowsCount;
     private int calculatedWidth;
@@ -56,6 +58,8 @@ public class ExtendedGridLayoutManager extends GridLayoutManager {
         firstRowMax = 0;
 
         final int itemsCount = getFlowItemCount();
+        lastSpanCount = getSpanCount();
+        lastItemCount = itemsCount;
         if (itemsCount == 0) {
             return;
         }
@@ -85,9 +89,17 @@ public class ExtendedGridLayoutManager extends GridLayoutManager {
             } else {
                 requiredSpan = Math.min(spanCount, (int) Math.floor(spanCount * (size.width / size.height * preferredRowSize / viewPortAvailableSize)));
                 moveToNewRow = spanLeft < requiredSpan || requiredSpan > 33 && spanLeft < requiredSpan - 15;
+                if (size.full) {
+                    itemSpans.put(a, spanLeft);
+                    rowsCount++;
+                    currentItemsSpanAmount = 0;
+                    currentItemsInRow = 0;
+                    spanLeft = spanCount;
+                    continue;
+                }
             }
             if (moveToNewRow) {
-                if (spanLeft != 0) {
+                if (spanLeft != 0 && currentItemsInRow != 0) {
                     int spanPerItem = spanLeft / currentItemsInRow;
                     for (int start = a - currentItemsInRow, b = start; b < start + currentItemsInRow; b++) {
                         if (b == start + currentItemsInRow - 1) {
@@ -152,7 +164,7 @@ public class ExtendedGridLayoutManager extends GridLayoutManager {
     }
 
     private void checkLayout() {
-        if (itemSpans.size() != getFlowItemCount() || calculatedWidth != getWidth()) {
+        if (lastItemCount != getFlowItemCount() || calculatedWidth != getWidth() || lastSpanCount != getSpanCount()) {
             calculatedWidth = getWidth();
             prepareLayout(getWidth());
         }
@@ -182,6 +194,42 @@ public class ExtendedGridLayoutManager extends GridLayoutManager {
 
     protected int getFlowItemCount() {
         return getItemCount();
+    }
+
+    @Override
+    public void onItemsChanged(RecyclerView recyclerView) {
+        super.onItemsChanged(recyclerView);
+        lastItemCount = -1;
+    }
+
+    @Override
+    public void onItemsAdded(RecyclerView recyclerView, int positionStart, int itemCount) {
+        super.onItemsAdded(recyclerView, positionStart, itemCount);
+        lastItemCount = -1;
+    }
+
+    @Override
+    public void onItemsRemoved(RecyclerView recyclerView, int positionStart, int itemCount) {
+        super.onItemsRemoved(recyclerView, positionStart, itemCount);
+        lastItemCount = -1;
+    }
+
+    @Override
+    public void onItemsUpdated(RecyclerView recyclerView, int positionStart, int itemCount, Object payload) {
+        super.onItemsUpdated(recyclerView, positionStart, itemCount, payload);
+        lastItemCount = -1;
+    }
+
+    @Override
+    public void onItemsMoved(RecyclerView recyclerView, int from, int to, int itemCount) {
+        super.onItemsMoved(recyclerView, from, to, itemCount);
+        lastItemCount = -1;
+    }
+
+    @Override
+    public void onAdapterChanged(RecyclerView.Adapter oldAdapter, RecyclerView.Adapter newAdapter) {
+        super.onAdapterChanged(oldAdapter, newAdapter);
+        lastItemCount = -1;
     }
 
     @Override

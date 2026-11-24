@@ -16,10 +16,12 @@ import org.telegram.messenger.BotWebViewVibrationEffect;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.Size;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Input {
     private final static CubicBezierInterpolator PRESSURE_INTERPOLATOR = new CubicBezierInterpolator(0, 0.5, 0, 1);
+    private final static double ARROW_WING_ANGLE = Math.PI / 4 * 3.4;
 
     private RenderView renderView;
 
@@ -31,11 +33,10 @@ public class Input {
 
     private Point lastLocation, lastThickLocation;
     private double lastRemainder;
-    private boolean lastAngleSet;
-    private float lastAngle;
     private float lastScale;
     private boolean canFill;
     private Point[] points = new Point[3];
+    private final ArrayList<Point> arrowTrail = new ArrayList<>();
     private int pointsCount, realPointsCount;
     private double thicknessSum, thicknessCount;
 
@@ -74,7 +75,7 @@ public class Input {
 
     private ValueAnimator fillAnimator;
     private void fill(Brush brush, boolean registerUndo, Runnable onDone) {
-        if (!canFill || lastLocation == null) {
+        if (!canFill || renderView.getPainting().masking || lastLocation == null) {
             return;
         }
 
@@ -88,10 +89,12 @@ public class Input {
         }
 
         canFill = false;
+        if (brush instanceof Brush.Eraser) {
+            renderView.getPainting().hasBlur = false;
+        }
         renderView.getPainting().clearStroke();
         pointsCount = 0;
         realPointsCount = 0;
-        lastAngleSet = false;
         beganDrawing = false;
         if (registerUndo) {
             renderView.onBeganDrawing();
@@ -182,6 +185,9 @@ public class Input {
 
         long dt = System.currentTimeMillis() - lastVelocityUpdate;
         velocity = MathUtils.clamp(velocity - dt / 125f, 0.6f, 1f);
+        if (renderView.getCurrentBrush() != null && renderView.getCurrentBrush() instanceof Brush.Arrow) {
+            velocity = 1 - velocity;
+        }
         lastScale = scale;
         lastVelocityUpdate = System.currentTimeMillis();
 
@@ -192,7 +198,7 @@ public class Input {
             stylusToolPressed = (event.getButtonState() & MotionEvent.BUTTON_STYLUS_PRIMARY) == MotionEvent.BUTTON_STYLUS_PRIMARY;
         }
         if (renderView.getCurrentBrush() != null) {
-            weight = 1 + (weight - 1) * AndroidUtilities.lerp(1, renderView.getCurrentBrush().getSmoothThicknessRate(), MathUtils.clamp(realPointsCount / 16f, 0, 1));
+            weight = 1 + (weight - 1) * AndroidUtilities.lerp(renderView.getCurrentBrush().getSmoothThicknessRate(), 1, MathUtils.clamp(realPointsCount / 16f, 0, 1));
         }
         Point location = new Point(tempPoint[0], tempPoint[1], weight);
 
@@ -213,7 +219,8 @@ public class Input {
                     points[0] = location;
                     pointsCount = 1;
                     realPointsCount = 1;
-                    lastAngleSet = false;
+                    arrowTrail.clear();
+                    arrowTrail.add(location);
 
                     clearBuffer = true;
                     canFill = true;
@@ -239,26 +246,21 @@ public class Input {
                     }
 
                     points[pointsCount] = location;
-                    if ((System.currentTimeMillis() - drawingStart) > 3000) {
-                        detector.clear();
-                        renderView.getPainting().setHelperShape(null);
-                    } else if (renderView.getCurrentBrush() instanceof Brush.Radial || renderView.getCurrentBrush() instanceof Brush.Elliptical) {
-                        detector.append(location.x, location.y, distance > AndroidUtilities.dp(6) / scale);
+                    if (renderView.getPainting() == null || !renderView.getPainting().masking) {
+                        if ((System.currentTimeMillis() - drawingStart) > 3000) {
+                            detector.clear();
+                            renderView.getPainting().setHelperShape(null);
+                        } else if (renderView.getCurrentBrush() instanceof Brush.Radial || renderView.getCurrentBrush() instanceof Brush.Elliptical) {
+                            detector.append(location.x, location.y, distance > AndroidUtilities.dp(6) / scale);
+                        }
                     }
                     pointsCount++;
                     realPointsCount++;
+                    if (renderView.getCurrentBrush() instanceof Brush.Arrow) {
+                        arrowTrail.add(location);
+                    }
 
                     if (pointsCount == 3) {
-                        float angle = (float) Math.atan2(points[2].y - points[1].y, points[2].x - points[1].x);
-                        if (!lastAngleSet) {
-                            lastAngle = angle;
-                            lastAngleSet = true;
-                        } else {
-                            float f = MathUtils.clamp(distance / (AndroidUtilities.dp(16) / scale), 0, 1);
-                            if (f > .4f) {
-                                lastAngle = lerpAngle(lastAngle, angle, f);
-                            }
-                        }
                         smoothenAndPaintPoints(false, renderView.getCurrentBrush().getSmoothThicknessRate());
                     }
 
@@ -293,10 +295,10 @@ public class Input {
 
                         Brush brush = renderView.getCurrentBrush();
                         if (brush instanceof Brush.Arrow) {
-                            float angle = lastAngle;
                             final Point loc = points[pointsCount - 1];
                             double z = lastThickLocation == null ? location.z : lastThickLocation.z;
-                            float arrowLength = renderView.getCurrentWeight() * (float) z * 4.5f;
+                            float arrowLength = renderView.getCurrentWeight() * (float) z * 12f;
+                            float angle = getArrowAngle(loc, arrowLength);
 
                             commit = false;
                             if (arrowAnimator != null) {
@@ -308,13 +310,17 @@ public class Input {
                             arrowAnimator.addUpdateListener(anm -> {
                                 float t = (float) anm.getAnimatedValue();
 
+                                double leftCos = Math.cos(angle - ARROW_WING_ANGLE);
+                                double leftSin = Math.sin(angle - ARROW_WING_ANGLE);
                                 paintPath(new Path(new Point[]{
-                                    new Point(loc.x + Math.cos(angle - Math.PI / 4 * 3) * arrowLength * lastT[0], loc.y + Math.sin(angle - Math.PI / 4 * 3.2) * arrowLength * lastT[0], z),
-                                    new Point(loc.x + Math.cos(angle - Math.PI / 4 * 3) * arrowLength * t, loc.y + Math.sin(angle - Math.PI / 4 * 3.2) * arrowLength * t, z, true)
+                                    new Point(loc.x + leftCos * arrowLength * lastT[0], loc.y + leftSin * arrowLength * lastT[0], z),
+                                    new Point(loc.x + leftCos * arrowLength * t, loc.y + leftSin * arrowLength * t, z, true)
                                 }));
+                                double rightCos = Math.cos(angle + ARROW_WING_ANGLE);
+                                double rightSin = Math.sin(angle + ARROW_WING_ANGLE);
                                 paintPath(new Path(new Point[]{
-                                    new Point(loc.x + Math.cos(angle + Math.PI / 4 * 3) * arrowLength * lastT[0], loc.y + Math.sin(angle + Math.PI / 4 * 3.2) * arrowLength * lastT[0], z),
-                                    new Point(loc.x + Math.cos(angle + Math.PI / 4 * 3) * arrowLength * t, loc.y + Math.sin(angle + Math.PI / 4 * 3.2) * arrowLength * t, z, true)
+                                    new Point(loc.x + rightCos * arrowLength * lastT[0], loc.y + rightSin * arrowLength * lastT[0], z),
+                                    new Point(loc.x + rightCos * arrowLength * t, loc.y + rightSin * arrowLength * t, z, true)
                                 }));
 
                                 if (!vibrated[0] && t > .4f) {
@@ -327,9 +333,7 @@ public class Input {
                             arrowAnimator.addListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
-                                    if (!renderView.getCurrentBrush().isEraser() || renderView.getUndoStore().canUndo()) {
-                                        renderView.getPainting().commitPath(null, renderView.getCurrentColor());
-                                    }
+                                    renderView.getPainting().commitPath(null, renderView.getCurrentColor());
                                     arrowAnimator = null;
                                 }
                             });
@@ -339,7 +343,7 @@ public class Input {
                         }
                     }
 
-                    if (commit && (!renderView.getCurrentBrush().isEraser() || renderView.getUndoStore().canUndo())) {
+                    if (commit) {
                         renderView.getPainting().commitPath(null, renderView.getCurrentColor(), true, () -> {
                             if (switchedBrushByStylusFrom != null) {
                                 renderView.selectBrush(switchedBrushByStylusFrom);
@@ -351,7 +355,6 @@ public class Input {
 
                 pointsCount = 0;
                 realPointsCount = 0;
-                lastAngleSet = false;
                 beganDrawing = false;
                 thicknessCount = thicknessSum = 0;
 
@@ -370,7 +373,6 @@ public class Input {
                 renderView.getPainting().clearStroke();
                 pointsCount = 0;
                 realPointsCount = 0;
-                lastAngleSet = false;
                 beganDrawing = false;
                 thicknessCount = thicknessSum = 0;
 
@@ -383,10 +385,15 @@ public class Input {
         }
     }
 
-    private float lerpAngle(float angleA, float angleB, float t) {
-//        double da = (angleB - angleA) % (Math.PI * 2);
-//        return (float) (angleA + (2 * da % (Math.PI * 2) - da) * t);
-        return (float) Math.atan2((1-t)*Math.sin(angleA) + t*Math.sin(angleB), (1-t)*Math.cos(angleA) + t*Math.cos(angleB));
+    private float getArrowAngle(Point tip, float length) {
+        Point from = tip;
+        float travelled = 0;
+        for (int i = arrowTrail.size() - 1; i >= 0 && travelled < length; i--) {
+            Point point = arrowTrail.get(i);
+            travelled += point.getDistanceTo(from);
+            from = point;
+        }
+        return (float) Math.atan2(tip.y - from.y, tip.x - from.x);
     }
 
     private void reset() {
@@ -464,7 +471,7 @@ public class Input {
         double x = midPoint1.x * minus_t_squard + 2 * prev1.x * t * (1 - t) + midPoint2.x * t_squared;
         double y = midPoint1.y * minus_t_squard + 2 * prev1.y * t * (1 - t) + midPoint2.y * t_squared;
         double z = midPoint1.z * a1 + prev1.z * a2 + midPoint2.z * a3;
-        z = 1 + (z - 1) * AndroidUtilities.lerp(1, smoothThickness, MathUtils.clamp(realPointsCount / 16f, 0, 1));
+        z = 1 + (z - 1) * AndroidUtilities.lerp(smoothThickness, 1, MathUtils.clamp(realPointsCount / 16f, 0, 1));
 
         return new Point(x, y, z);
     }

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
@@ -33,13 +34,13 @@ public class ChatAttachRestrictedLayout extends ChatAttachAlert.AttachAlertLayou
         super(alert, context, resourcesProvider);
         this.id = id;
         progressView = new EmptyTextProgressView(context, null, resourcesProvider);
-        progressView.setText(LocaleController.getString("NoPhotos", R.string.NoPhotos));
+        progressView.setText(LocaleController.getString(R.string.NoPhotos));
         progressView.setOnTouchListener(null);
         progressView.setTextSize(16);
         addView(progressView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         progressView.setLottie(R.raw.media_forbidden, 150, 150);
-        TLRPC.Chat chat = ((ChatActivity) parentAlert.baseFragment).getCurrentChat();
+        TLRPC.Chat chat = parentAlert.getChat();
         if (id == 1) {
             progressView.setText(ChatObject.getRestrictedErrorText(chat, ChatObject.ACTION_SEND_MEDIA));
         } else if (id == 3) {
@@ -92,7 +93,7 @@ public class ChatAttachRestrictedLayout extends ChatAttachAlert.AttachAlertLayou
 
 
     @Override
-    int getCurrentItemTop() {
+    public int getCurrentItemTop() {
         if (listView.getChildCount() <= 0) {
             return Integer.MAX_VALUE;
         }
@@ -118,17 +119,17 @@ public class ChatAttachRestrictedLayout extends ChatAttachAlert.AttachAlertLayou
     }
 
     @Override
-    int getFirstOffset() {
+    public int getFirstOffset() {
         return getListTopPadding() + AndroidUtilities.dp(4);
     }
 
     @Override
-    int getListTopPadding() {
+    public int getListTopPadding() {
         return listView.getPaddingTop();
     }
 
     @Override
-    void onPreMeasure(int availableWidth, int availableHeight) {
+    public void onPreMeasure(int availableWidth, int availableHeight) {
         super.onPreMeasure(availableWidth, availableHeight);
         int newSize = Math.max(0, availableHeight - ActionBar.getCurrentActionBarHeight());
         if (gridExtraSpace != newSize) {

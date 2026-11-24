@@ -8,6 +8,7 @@
 
 package org.telegram.ui.Cells;
 
+import org.telegram.messenger.FileLog;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -27,15 +28,17 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.LinkSpanDrawable;
 
 import java.util.ArrayList;
 
-public class TextInfoPrivacyCell extends FrameLayout {
+public class TextInfoPrivacyCell extends FrameLayout implements Theme.Colorable {
 
-    private TextView textView;
+    private LinkSpanDrawable.LinksTextView textView;
     private LinkSpanDrawable.LinkCollector links;
     private int linkTextColorKey = Theme.key_windowBackgroundWhiteLinkText;
+    private Integer linkTextRippleColor;
     private int topPadding = 10;
     private int bottomPadding = 17;
     private int fixedSize;
@@ -45,11 +48,11 @@ public class TextInfoPrivacyCell extends FrameLayout {
     private final Theme.ResourcesProvider resourcesProvider;
 
     public TextInfoPrivacyCell(Context context) {
-        this(context, 21, null);
+        this(context, 24, null);
     }
 
     public TextInfoPrivacyCell(Context context, Theme.ResourcesProvider resourcesProvider) {
-        this(context, 21, resourcesProvider);
+        this(context, 24, resourcesProvider);
     }
 
     public TextInfoPrivacyCell(Context context, int padding) {
@@ -67,14 +70,23 @@ public class TextInfoPrivacyCell extends FrameLayout {
                 super.onDraw(canvas);
                 afterTextDraw();
             }
+
+            @Override
+            public int overrideColor() {
+                if (linkTextRippleColor != null) {
+                    return linkTextRippleColor;
+                }
+                return super.overrideColor();
+            }
         };
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
+        textView.setTypeface(AndroidUtilities.regular());
         textView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         textView.setPadding(0, AndroidUtilities.dp(10), 0, AndroidUtilities.dp(17));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
-        textView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText4));
-        textView.setLinkTextColor(getThemedColor(linkTextColorKey));
+        ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteGrayText4, resourcesProvider);
+        textView.setEmojiColor(emojiColor = getThemedColor(Theme.key_windowBackgroundWhiteGrayText4));
+        ThemeBind.linkTextColor(textView, linkTextColorKey, resourcesProvider);
         textView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, padding, 0, padding, 0));
 
@@ -122,7 +134,9 @@ public class TextInfoPrivacyCell extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (fixedSize != 0) {
+        if (fixedSize == -1) {
+            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.EXACTLY));
+        } else if (fixedSize != 0) {
             super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(fixedSize), MeasureSpec.EXACTLY));
         } else {
             super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
@@ -139,6 +153,14 @@ public class TextInfoPrivacyCell extends FrameLayout {
 
     public void setFixedSize(int size) {
         fixedSize = size;
+    }
+
+    public int getFixedSize() {
+        return fixedSize;
+    }
+
+    public CharSequence getText() {
+        return textView.getText();
     }
 
     public void setText(CharSequence text) {
@@ -165,16 +187,27 @@ public class TextInfoPrivacyCell extends FrameLayout {
     }
 
     public void setTextColor(int color) {
+        // custom color from the caller: drop the text color binding, keep the link color binding and the current link color
+        final android.content.res.ColorStateList linkColors = textView.getLinkTextColors();
+        ThemeBind.clear(textView);
+        ThemeBind.linkTextColor(textView, linkTextColorKey, resourcesProvider);
+        if (linkColors != null) {
+            textView.setLinkTextColor(linkColors);
+        }
         textView.setTextColor(color);
     }
 
     public void setTextColorByKey(int key) {
-        textView.setTextColor(getThemedColor(key));
+        ThemeBind.textColor(textView, key, resourcesProvider);
         textView.setTag(key);
     }
 
-    public TextView getTextView() {
+    public LinkSpanDrawable.LinksTextView getTextView() {
         return textView;
+    }
+
+    public void setLinkTextRippleColor(Integer color) {
+        linkTextRippleColor = color;
     }
 
     public int length() {
@@ -189,6 +222,10 @@ public class TextInfoPrivacyCell extends FrameLayout {
         }
     }
 
+    public void setTextGravity(int gravity) {
+        textView.setGravity(gravity);
+    }
+
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
@@ -198,5 +235,20 @@ public class TextInfoPrivacyCell extends FrameLayout {
 
     private int getThemedColor(int key) {
         return Theme.getColor(key, resourcesProvider);
+    }
+
+    private int emojiColor;
+
+    @Override
+    public void updateColors() {
+        try {
+            final int color = getThemedColor(Theme.key_windowBackgroundWhiteGrayText4);
+            if (textView != null && color != emojiColor) {
+                emojiColor = color;
+                textView.setEmojiColor(color);
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 }

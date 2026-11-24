@@ -57,8 +57,8 @@ public class SurfaceTextureHelper {
    * closer to actual creation time.
    */
   public static SurfaceTextureHelper create(final String threadName,
-      final EglBase.Context sharedContext, boolean alignTimestamps, final YuvConverter yuvConverter,
-      FrameRefMonitor frameRefMonitor) {
+                                            final EglBase.Context sharedContext, boolean alignTimestamps, final YuvConverter yuvConverter,
+                                            FrameRefMonitor frameRefMonitor) {
     final HandlerThread thread = new HandlerThread(threadName);
     thread.start();
     final Handler handler = new Handler(thread.getLooper());
@@ -110,7 +110,7 @@ public class SurfaceTextureHelper {
    * @see #create(String, EglBase.Context, boolean, YuvConverter, FrameRefMonitor)
    */
   public static SurfaceTextureHelper create(final String threadName,
-      final EglBase.Context sharedContext, boolean alignTimestamps, YuvConverter yuvConverter) {
+                                            final EglBase.Context sharedContext, boolean alignTimestamps, YuvConverter yuvConverter) {
     return create(
         threadName, sharedContext, alignTimestamps, yuvConverter, /*frameRefMonitor=*/null);
   }
@@ -175,7 +175,7 @@ public class SurfaceTextureHelper {
   };
 
   private SurfaceTextureHelper(Context sharedContext, Handler handler, boolean alignTimestamps,
-      YuvConverter yuvConverter, FrameRefMonitor frameRefMonitor) {
+                               YuvConverter yuvConverter, FrameRefMonitor frameRefMonitor) {
     if (handler.getLooper().getThread() != Thread.currentThread()) {
       throw new IllegalStateException("SurfaceTextureHelper must be created on the handler thread");
     }
@@ -209,8 +209,8 @@ public class SurfaceTextureHelper {
   }
 
   private static void setOnFrameAvailableListener(SurfaceTexture surfaceTexture,
-      SurfaceTexture.OnFrameAvailableListener listener, Handler handler) {
-    surfaceTexture.setOnFrameAvailableListener(listener, handler);
+                                                  SurfaceTexture.OnFrameAvailableListener listener, Handler handler) {
+      surfaceTexture.setOnFrameAvailableListener(listener, handler);
   }
 
   /**

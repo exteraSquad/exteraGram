@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuffXfermode;
@@ -66,8 +67,10 @@ public class VideoTimelineView extends View {
     private ArrayList<Bitmap> keyframes = new ArrayList<>();
     private boolean framesLoaded;
     private TimeHintView timeHintView;
+    Path path;
 
     Paint thumbPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    boolean useClip;
 
     public void setKeyframes(ArrayList<Bitmap> keyframes) {
         this.keyframes.clear();
@@ -108,6 +111,13 @@ public class VideoTimelineView extends View {
 
     public float getRightProgress() {
         return progressRight;
+    }
+
+    /** Updates both trim handles without notifying the delegate. */
+    public void setTrimProgress(float left, float right) {
+        progressLeft = Math.max(0f, Math.min(1f, left));
+        progressRight = Math.max(progressLeft, Math.min(1f, right));
+        invalidate();
     }
 
     public void setMinProgressDiff(float value) {
@@ -247,7 +257,7 @@ public class VideoTimelineView extends View {
     }
 
     public void setVideoPath(String path) {
-        destroy();
+        destroy(false);
         mediaMetadataRetriever = new MediaMetadataRetriever();
         progressLeft = 0.0f;
         progressRight = 1.0f;
@@ -344,6 +354,10 @@ public class VideoTimelineView extends View {
     }
 
     public void destroy() {
+        destroy(true);
+    }
+
+    public void destroy(boolean recycle) {
         synchronized (sync) {
             try {
                 if (mediaMetadataRetriever != null) {
@@ -354,18 +368,20 @@ public class VideoTimelineView extends View {
                 FileLog.e(e);
             }
         }
-        if (!keyframes.isEmpty()) {
-            for (int a = 0; a < keyframes.size(); a++) {
-                Bitmap bitmap = keyframes.get(a);
-                if (bitmap != null) {
-                    bitmap.recycle();
+        if (recycle) {
+            if (!keyframes.isEmpty()) {
+                for (int a = 0; a < keyframes.size(); a++) {
+                    Bitmap bitmap = keyframes.get(a);
+                    if (bitmap != null) {
+                        bitmap.recycle();
+                    }
                 }
-            }
-        } else {
-            for (int a = 0; a < frames.size(); a++) {
-                Bitmap bitmap = frames.get(a);
-                if (bitmap != null) {
-                    bitmap.recycle();
+            } else {
+                for (int a = 0; a < frames.size(); a++) {
+                    Bitmap bitmap = frames.get(a);
+                    if (bitmap != null) {
+                        bitmap.recycle();
+                    }
                 }
             }
         }
@@ -396,7 +412,27 @@ public class VideoTimelineView extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (useClip) {
+            if (path == null) {
+                path = new Path();
+            }
+            path.rewind();
+            int topOffset = (getMeasuredHeight() - AndroidUtilities.dp(32)) >> 1;
+            AndroidUtilities.rectTmp.set(0, topOffset, getMeasuredWidth(), getMeasuredHeight() - topOffset);
+            path.addRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(7), AndroidUtilities.dp(7), Path.Direction.CCW);
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
+        if (useClip) {
+            canvas.save();
+            if (path != null) {
+                canvas.clipPath(path);
+            }
+        }
         int width = getMeasuredWidth() - AndroidUtilities.dp(24);
         int startX = (int) (width * progressLeft) + AndroidUtilities.dp(12);
         int endX = (int) (width * progressRight) + AndroidUtilities.dp(12);
@@ -413,7 +449,7 @@ public class VideoTimelineView extends View {
             int offset = 0;
             for (int a = 0; a < frames.size(); a++) {
                 Bitmap bitmap = frames.get(a);
-                if (bitmap != null) {
+                if (bitmap != null && !bitmap.isRecycled()) {
                     int x = offset * (isRoundFrames ? frameWidth / 2 : frameWidth);
                     if (isRoundFrames) {
                         rect2.set(x, topOffset, x + AndroidUtilities.dp(28), topOffset + AndroidUtilities.dp(32));
@@ -425,6 +461,9 @@ public class VideoTimelineView extends View {
                 offset++;
             }
         } else {
+            if (useClip) {
+                canvas.restore();
+            }
             return;
         }
 
@@ -434,7 +473,11 @@ public class VideoTimelineView extends View {
         canvas.drawLine(startX - AndroidUtilities.dp(4), topOffset + AndroidUtilities.dp(10), startX - AndroidUtilities.dp(4), getMeasuredHeight() - AndroidUtilities.dp(10) - topOffset, thumbPaint);
         canvas.drawLine(endX + AndroidUtilities.dp(4), topOffset + AndroidUtilities.dp(10), endX + AndroidUtilities.dp(4), getMeasuredHeight() - AndroidUtilities.dp(10) - topOffset, thumbPaint);
 
-        drawCorners(canvas, getMeasuredHeight() - topOffset * 2, getMeasuredWidth(), 0, topOffset);
+        if (useClip) {
+            canvas.restore();
+        } else {
+            drawCorners(canvas, getMeasuredHeight() - topOffset * 2, getMeasuredWidth(), 0, topOffset);
+        }
     }
 
     private void drawCorners(Canvas canvas, int height, int width, int left, int top) {
@@ -559,9 +602,19 @@ public class VideoTimelineView extends View {
 
         public void updateColors() {
             tooltipPaint.setColor(Theme.getColor(Theme.key_chat_gifSaveHintText));
-            tooltipBackground = Theme.createRoundRectDrawable(AndroidUtilities.dp(5), Theme.getColor(Theme.key_chat_gifSaveHintBackground));
-            tooltipBackgroundArrow.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_gifSaveHintBackground), PorterDuff.Mode.MULTIPLY));
+            if (tooltipBackground != null) {
+                Theme.setDrawableColor(tooltipBackground, Theme.getColor(Theme.key_chat_gifSaveHintBackground));
+            } else {
+                tooltipBackground = Theme.createRoundRectDrawable(AndroidUtilities.dp(5), Theme.getColor(Theme.key_chat_gifSaveHintBackground));
+            }
+            final int arrowColor = Theme.getColor(Theme.key_chat_gifSaveHintBackground);
+            if (arrowColor != tooltipArrowColor || tooltipBackgroundArrow.getColorFilter() == null) {
+                tooltipArrowColor = arrowColor;
+                tooltipBackgroundArrow.setColorFilter(new PorterDuffColorFilter(arrowColor, PorterDuff.Mode.MULTIPLY));
+            }
         }
+
+        private int tooltipArrowColor;
 
         public void setCx(float v) {
             cx = v;

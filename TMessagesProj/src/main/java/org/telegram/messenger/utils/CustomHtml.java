@@ -1,21 +1,101 @@
 package org.telegram.messenger.utils;
 
 import android.text.Spanned;
+import android.text.TextUtils;
 
+import org.telegram.utils.code.highlight.CodeHighlighting;
 import org.telegram.ui.Components.AnimatedEmojiSpan;
+import org.telegram.ui.Components.QuoteSpan;
 import org.telegram.ui.Components.TextStyleSpan;
 import org.telegram.ui.Components.URLSpanMono;
 import org.telegram.ui.Components.URLSpanReplacement;
 
 public class CustomHtml {
 
-
     private CustomHtml() { }
 
     public static String toHtml(Spanned text) {
         StringBuilder out = new StringBuilder();
-        toHTML_1_wrapTextStyle(out, text, 0, text.length());
+        toHTML_0_wrapQuote(out, text, 0, text.length());
         return out.toString();
+    }
+
+    private static void toHTML_0_wrapQuote(StringBuilder out, Spanned text, int start, int end) {
+
+        int next;
+        for (int i = start; i < end; i = next) {
+            next = text.nextSpanTransition(i, end, QuoteSpan.class);
+            if (next < 0) {
+                next = end;
+            }
+            final QuoteSpan[] spans = text.getSpans(i, next, QuoteSpan.class);
+
+            if (spans != null) {
+                for (int j = 0; j < spans.length; ++j) {
+                    out.append(spans[j].isCollapsing ? "<blockquote collapsed>" : "<blockquote>");
+                }
+            }
+
+            toHTML_1_wrapTextStyle(out, text, i, next);
+
+            if (spans != null) {
+                for (int j = spans.length - 1; j >= 0; --j) {
+                    out.append("</blockquote>");
+                }
+            }
+        }
+    }
+
+    private static void textStyleSpanBegin(TextStyleSpan.TextStyleRun run, StringBuilder out) {
+        if (run == null) return;
+        if ((run.flags & (TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_SPOILER_REVEALED)) > 0) {
+            out.append("<spoiler>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_BOLD) > 0) {
+            out.append("<b>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_ITALIC) > 0) {
+            out.append("<i>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_UNDERLINE) > 0) {
+            out.append("<u>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_STRIKE) > 0) {
+            out.append("<s>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_MONO) > 0) {
+            out.append("<code>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_URL) > 0) {
+            if (run.urlEntity != null) {
+                out.append("<a href=\"").append(run.urlEntity.url).append("\">");
+            }
+        }
+    }
+
+    private static void textStyleSpanEnd(TextStyleSpan.TextStyleRun run, StringBuilder out) {
+        if (run == null) return;
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_URL) > 0 && run != null && run.urlEntity != null) {
+            out.append("</a>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_MONO) > 0) {
+            out.append("</code>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_STRIKE) > 0) {
+            out.append("</s>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_UNDERLINE) > 0) {
+            out.append("</u>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_ITALIC) > 0) {
+            out.append("</i>");
+        }
+        if ((run.flags & TextStyleSpan.FLAG_STYLE_BOLD) > 0) {
+            out.append("</b>");
+        }
+        if ((run.flags & (TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_SPOILER_REVEALED)) > 0) {
+            out.append("</spoiler>");
+        }
     }
 
     private static void toHTML_1_wrapTextStyle(StringBuilder out, Spanned text, int start, int end) {
@@ -25,36 +105,13 @@ public class CustomHtml {
             if (next < 0) {
                 next = end;
             }
-            TextStyleSpan[] spans = text.getSpans(i, next, TextStyleSpan.class);
+            final TextStyleSpan[] spans = text.getSpans(i, next, TextStyleSpan.class);
 
             if (spans != null) {
                 for (int j = 0; j < spans.length; ++j) {
-                    Object spanObject = spans[j];
-                    if (spanObject != null) {
-                        TextStyleSpan span = (TextStyleSpan) spanObject;
-                        int flags = span.getStyleFlags();
-                        if ((flags & (TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_SPOILER_REVEALED)) > 0) {
-                            out.append("<spoiler>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_BOLD) > 0) {
-                            out.append("<b>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_ITALIC) > 0) {
-                            out.append("<i>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_UNDERLINE) > 0) {
-                            out.append("<u>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_STRIKE) > 0) {
-                            out.append("<s>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_URL) > 0) {
-                            if (span.getTextStyleRun() != null && span.getTextStyleRun().urlEntity != null) {
-                                out.append("<a href=\"").append(span.getTextStyleRun().urlEntity.url).append("\">");
-                            }
-                        }
-                    } else if (spanObject instanceof URLSpanMono) {
-                        out.append("<pre>");
+                    final TextStyleSpan span = spans[j];
+                    if (span != null) {
+                        textStyleSpanBegin(span.getTextStyleRun(), out);
                     }
                 }
             }
@@ -63,28 +120,9 @@ public class CustomHtml {
 
             if (spans != null) {
                 for (int j = 0; j < spans.length; ++j) {
-                    TextStyleSpan spanObject = spans[j];
-                    if (spanObject != null) {
-                        TextStyleSpan span = (TextStyleSpan) spanObject;
-                        int flags = span.getStyleFlags();
-                        if ((flags & TextStyleSpan.FLAG_STYLE_URL) > 0 && span.getTextStyleRun() != null && span.getTextStyleRun().urlEntity != null) {
-                            out.append("</a>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_STRIKE) > 0) {
-                            out.append("</s>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_UNDERLINE) > 0) {
-                            out.append("</u>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_ITALIC) > 0) {
-                            out.append("</i>");
-                        }
-                        if ((flags & TextStyleSpan.FLAG_STYLE_BOLD) > 0) {
-                            out.append("</b>");
-                        }
-                        if ((flags & (TextStyleSpan.FLAG_STYLE_SPOILER | TextStyleSpan.FLAG_STYLE_SPOILER_REVEALED)) > 0) {
-                            out.append("</spoiler>");
-                        }
+                    final TextStyleSpan span = spans[j];
+                    if (span != null) {
+                        textStyleSpanEnd(span.getTextStyleRun(), out);
                     }
                 }
             }
@@ -98,11 +136,12 @@ public class CustomHtml {
             if (next < 0) {
                 next = end;
             }
-            URLSpanReplacement[] spans = text.getSpans(i, next, URLSpanReplacement.class);
+            final URLSpanReplacement[] spans = text.getSpans(i, next, URLSpanReplacement.class);
 
             if (spans != null) {
                 for (int j = 0; j < spans.length; ++j) {
-                    URLSpanReplacement span = spans[j];
+                    final URLSpanReplacement span = spans[j];
+                    textStyleSpanBegin(span.getTextStyleRun(), out);
                     out.append("<a href=\"").append(span.getURL()).append("\">");
                 }
             }
@@ -111,7 +150,9 @@ public class CustomHtml {
 
             if (spans != null) {
                 for (int j = 0; j < spans.length; ++j) {
+                    final URLSpanReplacement span = spans[j];
                     out.append("</a>");
+                    textStyleSpanEnd(span.getTextStyleRun(), out);
                 }
             }
         }
@@ -131,26 +172,61 @@ public class CustomHtml {
                 for (int j = 0; j < spans.length; ++j) {
                     URLSpanMono span = spans[j];
                     if (span != null) {
-                        out.append("<pre>");
+                        out.append("<code>");
                     }
                 }
             }
 
-            toHTML_4_wrapAnimatedEmoji(out, text, i, next);
+            toHTML_4_wrapMonoscape2(out, text, i, next);
+
             if (spans != null) {
                 for (int j = 0; j < spans.length; ++j) {
                     URLSpanMono span = spans[j];
+                    if (span != null) {
+                        out.append("</code>");
+                    }
+                }
+            }
+        }
+    }
+
+    private static void toHTML_4_wrapMonoscape2(StringBuilder out, Spanned text, int start, int end) {
+
+        int next;
+        for (int i = start; i < end; i = next) {
+            next = text.nextSpanTransition(i, end, CodeHighlighting.Span.class);
+            if (next < 0) {
+                next = end;
+            }
+            CodeHighlighting.Span[] spans = text.getSpans(i, next, CodeHighlighting.Span.class);
+
+            if (spans != null) {
+                for (int j = 0; j < spans.length; ++j) {
+                    CodeHighlighting.Span span = spans[j];
+                    if (span != null) {
+                        if (TextUtils.isEmpty(span.lng)) {
+                            out.append("<pre>");
+                        } else {
+                            out.append("<pre lang=\"").append(span.lng).append("\">");
+                        }
+                    }
+                }
+            }
+
+            toHTML_6_wrapAnimatedEmoji(out, text, i, next);
+
+            if (spans != null) {
+                for (int j = 0; j < spans.length; ++j) {
+                    CodeHighlighting.Span span = spans[j];
                     if (span != null) {
                         out.append("</pre>");
                     }
                 }
             }
         }
-
-
     }
 
-    private static void toHTML_4_wrapAnimatedEmoji(StringBuilder out, Spanned text, int start, int end) {
+    private static void toHTML_6_wrapAnimatedEmoji(StringBuilder out, Spanned text, int start, int end) {
         int next;
         for (int i = start; i < end; i = next) {
             next = text.nextSpanTransition(i, end, AnimatedEmojiSpan.class);
@@ -168,7 +244,7 @@ public class CustomHtml {
                 }
             }
 
-            toHTML_5_withinStyle(out, text, i, next);
+            toHTML_7_withinStyle(out, text, i, next);
 
             if (spans != null) {
                 for (int j = 0; j < spans.length; ++j) {
@@ -181,7 +257,7 @@ public class CustomHtml {
         }
     }
 
-    private static void toHTML_5_withinStyle(StringBuilder out, CharSequence text, int start, int end) {
+    private static void toHTML_7_withinStyle(StringBuilder out, CharSequence text, int start, int end) {
         for (int i = start; i < end; i++) {
             char c = text.charAt(i);
 

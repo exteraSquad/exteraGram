@@ -1,0 +1,117 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.exteragram.hook",
+    "module": "hook-core",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14.3"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "hook-core-1.0.0.aar",
+          "url": "hook-core-1.0.0.aar",
+          "size": 6202970,
+          "sha512": "7ae2050876096a137716deed0427c696e7a89c5a22b80218e563b0629a270877561ae7434ec2dde7498369211c2c7e2858722d149627d8a227219dd23df17086",
+          "sha256": "46694b5ccccab3d4f1dd9ec7cb7e585752fe4fdc8ab5434fae515fa0be7a3b3a",
+          "sha1": "794f35a05023b79d0869f5eaab3e275bc8185713",
+          "md5": "432a67b68c8f21d84c05c8d5d2befda1"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.exteragram.hook.thirdparty",
+          "module": "lsplant",
+          "version": {
+            "requires": "6.4-extera.8"
+          }
+        },
+        {
+          "group": "com.bytedance.android",
+          "module": "shadowhook",
+          "version": {
+            "requires": "2.0.1"
+          }
+        },
+        {
+          "group": "org.lsposed.hiddenapibypass",
+          "module": "hiddenapibypass",
+          "version": {
+            "requires": "6.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "hook-core-1.0.0.aar",
+          "url": "hook-core-1.0.0.aar",
+          "size": 6202970,
+          "sha512": "7ae2050876096a137716deed0427c696e7a89c5a22b80218e563b0629a270877561ae7434ec2dde7498369211c2c7e2858722d149627d8a227219dd23df17086",
+          "sha256": "46694b5ccccab3d4f1dd9ec7cb7e585752fe4fdc8ab5434fae515fa0be7a3b3a",
+          "sha1": "794f35a05023b79d0869f5eaab3e275bc8185713",
+          "md5": "432a67b68c8f21d84c05c8d5d2befda1"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "hook-core-1.0.0-sources.jar",
+          "url": "hook-core-1.0.0-sources.jar",
+          "size": 44906,
+          "sha512": "4e0856f87c6ae4e9c74763434bec840c2443a982243701b4eeb2f2ebcf615c8bb81368bf4f170f765d93d4136bfb691e180d13c6801b6a802bdbb5811c8fde62",
+          "sha256": "0ed9f72dde779023c843a9c3de6ecd03e1a344b4c12b78473d5986ca01680ef6",
+          "sha1": "f42c381fde4a188f0811baad559ae58939c532bf",
+          "md5": "9290aa91afb0ca41d29b03d89de9d091"
+        }
+      ]
+    }
+  ]
+}

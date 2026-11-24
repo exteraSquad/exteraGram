@@ -31,6 +31,7 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.AdjustPanLayoutHelper;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Adapters.StickersSearchAdapter;
 import org.telegram.ui.Cells.EmptyCell;
@@ -186,7 +187,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
         searchAdapter = new StickersSearchAdapter(context, searchAdapterDelegate, primaryInstallingStickerSets, installingStickerSets, removingStickerSets, resourcesProvider);
 
         searchLayout = new FrameLayout(context);
-        searchLayout.setBackgroundColor(getThemedColor(Theme.key_dialogBackground));
+        ThemeBind.backgroundColor(searchLayout, Theme.key_dialogBackground, resourcesProvider);
 
         searchView = new SearchField(context, true, resourcesProvider) {
             @Override
@@ -194,7 +195,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
                 searchAdapter.search(text);
             }
         };
-        searchView.setHint(LocaleController.getString("SearchTrendingStickersHint", R.string.SearchTrendingStickersHint));
+        searchView.setHint(LocaleController.getString(R.string.SearchTrendingStickersHint));
         searchLayout.addView(searchView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP));
 
         listView = new RecyclerListView(context) {
@@ -332,7 +333,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
         addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 0, 0, 0, 0));
 
         shadowView = new View(context);
-        shadowView.setBackgroundColor(getThemedColor(Theme.key_dialogShadowLine));
+        ThemeBind.backgroundColor(shadowView, Theme.key_dialogShadowLine, resourcesProvider);
         shadowView.setAlpha(0.0f);
         final FrameLayout.LayoutParams shadowViewParams = new FrameLayout.LayoutParams(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight());
         shadowViewParams.topMargin = AndroidUtilities.dp(58);
@@ -343,8 +344,8 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
         updateColors();
 
         final NotificationCenter notificationCenter = NotificationCenter.getInstance(currentAccount);
-        notificationCenter.addObserver(this, NotificationCenter.stickersDidLoad);
-        notificationCenter.addObserver(this, NotificationCenter.featuredStickersDidLoad);
+        notificationCenter.addWeakObserver(this, NotificationCenter.stickersDidLoad);
+        notificationCenter.addWeakObserver(this, NotificationCenter.featuredStickersDidLoad);
     }
 
     @Override
@@ -443,7 +444,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
         if (delegate.canSendSticker()) {
             stickersAlertDelegate = new StickersAlert.StickersAlertDelegate() {
                 @Override
-                public void onStickerSelected(TLRPC.Document sticker, String query, Object parent, MessageObject.SendAnimationData sendAnimationData, boolean clearsInputField, boolean notify, int scheduleDate) {
+                public void onStickerSelected(TLRPC.Document sticker, String query, Object parent, MessageObject.SendAnimationData sendAnimationData, boolean clearsInputField, boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
                     delegate.onStickerSelected(sticker, parent, clearsInputField, notify, scheduleDate);
                 }
 
@@ -460,7 +461,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
         } else {
             stickersAlertDelegate = null;
         }
-        final StickersAlert stickersAlert = new StickersAlert(getContext(), parentFragment, inputStickerSet, null, stickersAlertDelegate, resourcesProvider);
+        final StickersAlert stickersAlert = new StickersAlert(getContext(), parentFragment, inputStickerSet, null, stickersAlertDelegate, resourcesProvider, false);
         stickersAlert.setShowTooltipWhenToggle(false);
         stickersAlert.setInstallDelegate(new StickersAlert.StickersAlertInstallDelegate() {
             @Override
@@ -692,7 +693,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
             View view = null;
             switch (viewType) {
                 case 0:
-                    StickerEmojiCell stickerCell = new StickerEmojiCell(context, false) {
+                    StickerEmojiCell stickerCell = new StickerEmojiCell(context, false, resourcesProvider) {
                         public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(82), MeasureSpec.EXACTLY));
                         }
@@ -763,7 +764,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
                     bindStickerSetCell(holder.itemView, position, false);
                     break;
                 case 4:
-                    ((GraySectionCell) holder.itemView).setText(LocaleController.getString("OtherStickers", R.string.OtherStickers));
+                    ((GraySectionCell) holder.itemView).setText(LocaleController.getString(R.string.OtherStickers));
                     break;
             }
         }
@@ -984,14 +985,6 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
         }
 
         public void updateColors(RecyclerListView listView) {
-            for (int i = 0, size = listView.getChildCount(); i < size; i++) {
-                final View child = listView.getChildAt(i);
-                if (child instanceof FeaturedStickerSetInfoCell) {
-                    ((FeaturedStickerSetInfoCell) child).updateColors();
-                } else if (child instanceof FeaturedStickerSetCell2) {
-                    ((FeaturedStickerSetCell2) child).updateColors();
-                }
-            }
         }
 
         public void getThemeDescriptions(List<ThemeDescription> descriptions, RecyclerListView listView, ThemeDescription.ThemeDescriptionDelegate delegate) {

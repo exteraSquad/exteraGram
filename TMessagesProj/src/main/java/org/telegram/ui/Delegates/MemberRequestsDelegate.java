@@ -38,8 +38,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -57,6 +60,7 @@ import org.telegram.ui.ActionBar.ActionBarMenuSubItem;
 import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.AvatarPreviewPagerIndicator;
 import org.telegram.ui.Cells.MemberRequestCell;
 import org.telegram.ui.ChatActivity;
@@ -78,8 +82,6 @@ import org.telegram.ui.ProfileActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener {
 
@@ -111,7 +113,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
     private Runnable searchRunnable;
     private int searchRequestId;
     private boolean isLoading;
-    private boolean hasMore;
+    private boolean hasMore = true;
     private boolean isSearchExpanded;
     private boolean isDataLoaded;
     private boolean isFirstLoading = true;
@@ -130,7 +132,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
     public FrameLayout getRootLayout() {
         if (rootLayout == null) {
             rootLayout = new FrameLayout(fragment.getParentActivity());
-            rootLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray, fragment.getResourceProvider()));
+            ThemeBind.backgroundColor(rootLayout, Theme.key_windowBackgroundGray, fragment.getResourceProvider());
 
             loadingView = getLoadingView();
             rootLayout.addView(loadingView, MATCH_PARENT, MATCH_PARENT);
@@ -144,13 +146,25 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             LinearLayoutManager layoutManager = new LinearLayoutManager(fragment.getParentActivity());
             recyclerView = new RecyclerListView(fragment.getParentActivity());
             recyclerView.setAdapter(adapter);
+            recyclerView.setSections();
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setOnItemClickListener(this::onItemClick);
             recyclerView.setOnScrollListener(listScrollListener);
-            recyclerView.setSelectorDrawableColor(Theme.getColor(Theme.key_listSelector, fragment.getResourceProvider()));
+            ThemeBind.listSelectorColor(recyclerView, Theme.key_listSelector, fragment.getResourceProvider());
             rootLayout.addView(recyclerView, MATCH_PARENT, MATCH_PARENT);
+
+            DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
+            itemAnimator.setDurations(350);
+            itemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
+            itemAnimator.setDelayAnimations(false);
+            itemAnimator.setSupportsChangeAnimations(false);
+            recyclerView.setItemAnimator(itemAnimator);
         }
         return rootLayout;
+    }
+
+    public RecyclerListView getRecyclerView() {
+        return recyclerView;
     }
 
     public void setShowLastItemDivider(boolean showLastItemDivider) {
@@ -166,10 +180,11 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             loadingView = new FlickerLoadingView(fragment.getParentActivity(), fragment.getResourceProvider());
             loadingView.setAlpha(0f);
             if (isShowLastItemDivider) {
-                loadingView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite, fragment.getResourceProvider()));
+                ThemeBind.backgroundColor(loadingView, Theme.key_windowBackgroundWhite, fragment.getResourceProvider());
             }
             loadingView.setColors(Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundGray, -1);
             loadingView.setViewType(FlickerLoadingView.MEMBER_REQUESTS_TYPE);
+            loadingView.setMemberRequestButton(isChannel);
         }
         return loadingView;
     }
@@ -177,8 +192,8 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
     public StickerEmptyView getEmptyView() {
         if (emptyView == null) {
             emptyView = new StickerEmptyView(fragment.getParentActivity(), null, StickerEmptyView.STICKER_TYPE_DONE, fragment.getResourceProvider());
-            emptyView.title.setText(isChannel ? LocaleController.getString("NoSubscribeRequests", R.string.NoSubscribeRequests) : LocaleController.getString("NoMemberRequests", R.string.NoMemberRequests));
-            emptyView.subtitle.setText(isChannel ? LocaleController.getString("NoSubscribeRequestsDescription", R.string.NoSubscribeRequestsDescription) : LocaleController.getString("NoMemberRequestsDescription", R.string.NoMemberRequestsDescription));
+            emptyView.title.setText(isChannel ? LocaleController.getString(R.string.NoSubscribeRequests) : LocaleController.getString(R.string.NoMemberRequests));
+            emptyView.subtitle.setText(isChannel ? LocaleController.getString(R.string.NoSubscribeRequestsDescription) : LocaleController.getString(R.string.NoMemberRequestsDescription));
             emptyView.setAnimateLayoutChange(true);
             emptyView.setVisibility(GONE);
         }
@@ -189,10 +204,10 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
         if (searchEmptyView == null) {
             searchEmptyView = new StickerEmptyView(fragment.getParentActivity(), null, StickerEmptyView.STICKER_TYPE_SEARCH, fragment.getResourceProvider());
             if (isShowLastItemDivider) {
-                searchEmptyView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite, fragment.getResourceProvider()));
+                ThemeBind.backgroundColor(searchEmptyView, Theme.key_windowBackgroundWhite, fragment.getResourceProvider());
             }
-            searchEmptyView.title.setText(LocaleController.getString("NoResult", R.string.NoResult));
-            searchEmptyView.subtitle.setText(LocaleController.getString("SearchEmptyViewFilteredSubtitle2", R.string.SearchEmptyViewFilteredSubtitle2));
+            searchEmptyView.title.setText(LocaleController.getString(R.string.NoResult));
+            searchEmptyView.subtitle.setText(LocaleController.getString(R.string.SearchEmptyViewFilteredSubtitle2));
             searchEmptyView.setAnimateLayoutChange(true);
             searchEmptyView.setVisibility(GONE);
         }
@@ -257,9 +272,9 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
         }
     }
 
-    public boolean onBackPressed() {
+    public boolean onBackPressed(boolean invoked) {
         if (previewDialog != null) {
-            previewDialog.dismiss();
+            if (invoked) previewDialog.dismiss();
             return false;
         } else {
             return true;
@@ -325,20 +340,19 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
         final boolean needShowLoading = isNeedShowLoading;
         AndroidUtilities.runOnUIThread(() -> {
             final boolean isEmptyQuery = TextUtils.isEmpty(query);
-            final boolean isEmptyOffset = currentImporters.isEmpty() || isFirstLoading;
             final String lastQuery = query;
 
             isLoading = true;
             isFirstLoading = false;
 
-            final Runnable showLoadingRunnable = isEmptyQuery && needShowLoading ? () -> setViewVisible(loadingView, true, true) : null;
+            TLRPC.TL_chatInviteImporter lastInvitedUser = isEmptyQuery && !currentImporters.isEmpty()
+                    ? currentImporters.get(currentImporters.size() - 1)
+                    : null;
+            final boolean isEmptyOffset = lastInvitedUser == null;
+            final Runnable showLoadingRunnable = isEmptyQuery && isEmptyOffset && needShowLoading ? () -> setViewVisible(loadingView, true, true) : null;
             if (isEmptyQuery) {
                 AndroidUtilities.runOnUIThread(showLoadingRunnable, 300);
             }
-
-            TLRPC.TL_chatInviteImporter lastInvitedUser = !isEmptyQuery && !currentImporters.isEmpty()
-                    ? currentImporters.get(currentImporters.size() - 1)
-                    : null;
             searchRequestId = controller.getImporters(chatId, lastQuery, lastInvitedUser, users, (response, error) -> {
                 AndroidUtilities.runOnUIThread(() -> {
                     isLoading = false;
@@ -361,6 +375,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
     }
 
     private void onImportersLoaded(TLRPC.TL_messages_chatInviteImporters importers, String lastQuery, boolean isEmptyOffset, boolean fromCache) {
+        boolean hadMore = !currentImporters.isEmpty() && hasMore;
         for (int i = 0; i < importers.users.size(); ++i) {
             TLRPC.User user = importers.users.get(i);
             users.put(user.id, user);
@@ -368,10 +383,19 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
         if (isEmptyOffset) {
             adapter.setItems(importers.importers);
         } else {
+            boolean moveMore = importers.importers.size() > 0 && currentImporters.size() + importers.importers.size() < importers.count; // last loading cell should be reappeared, instead of a move forward
+            if (moveMore) {
+                adapter.notifyItemRemoved((isShowLastItemDivider ? 0 : 1) + currentImporters.size());
+            }
             adapter.appendItems(importers.importers);
+            if (moveMore) {
+                adapter.notifyItemInserted((isShowLastItemDivider ? 0 : 1) + currentImporters.size());
+            }
         }
         if (TextUtils.isEmpty(lastQuery)) {
-            allImporters.clear();
+            if (isEmptyOffset) {
+                allImporters.clear();
+            }
             allImporters.addAll(importers.importers);
             if (showSearchMenu) {
                 fragment.getActionBar().createMenu().getItem(MemberRequestsActivity.searchMenuItem).setVisibility(allImporters.isEmpty() ? GONE : VISIBLE);
@@ -379,6 +403,13 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
         }
         onImportersChanged(lastQuery, fromCache, false);
         hasMore = currentImporters.size() < importers.count;
+        if (hadMore != (!currentImporters.isEmpty() && hasMore)) {
+            if (hasMore) {
+                adapter.notifyItemInserted(adapter.getItemCount() - 1);
+            } else {
+                adapter.notifyItemRemoved(adapter.getItemCount());
+            }
+        }
     }
 
     @Override
@@ -480,7 +511,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
                                 : LocaleController.formatString("HasBeenAddedToGroup", R.string.HasBeenAddedToGroup, userName);
                         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(message);
                         int start = message.indexOf(userName);
-                        stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), start, start + userName.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), start, start + userName.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                         layout.textView.setText(stringBuilder);
                         if (allImporters.isEmpty()) {
                             Bulletin.make(fragment, layout, Bulletin.DURATION_LONG).show();
@@ -527,6 +558,8 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
         }
     }
 
+    private final Runnable loadMembersRunnable = () -> loadMembers();
+
     private final RecyclerView.OnScrollListener listScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -534,7 +567,8 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             if (hasMore && !isLoading && layoutManager != null) {
                 int lastPosition = layoutManager.findLastVisibleItemPosition();
                 if (adapter.getItemCount() - lastPosition < 10) {
-                    loadMembers();
+                    AndroidUtilities.cancelRunOnUIThread(loadMembersRunnable);
+                    AndroidUtilities.runOnUIThread(loadMembersRunnable);
                 }
             }
         }
@@ -551,12 +585,10 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
                 default:
                 case 0:
                     MemberRequestCell cell = new MemberRequestCell(parent.getContext(), MemberRequestsDelegate.this, isChannel);
-                    cell.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite, fragment.getResourceProvider()));
                     view = cell;
                     break;
                 case 1:
                     view = new View(parent.getContext());
-                    view.setBackground(Theme.getThemedDrawableByKey(parent.getContext(), R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 2:
                     view = new View(parent.getContext()) {
@@ -565,9 +597,31 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
                             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(52), MeasureSpec.EXACTLY));
                         }
                     };
+                    view.setTag(RecyclerListView.TAG_NOT_SECTION);
                     break;
                 case 3:
                     view = new View(parent.getContext());
+                    break;
+                case 4:
+                    FlickerLoadingView loadingView = new FlickerLoadingView(fragment.getParentActivity(), fragment.getResourceProvider()) {
+                        @Override
+                        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                            setMeasuredDimension(
+                                    MeasureSpec.getSize(widthMeasureSpec),
+                                    AndroidUtilities.dp(2 * 52)
+                            );
+                        }
+                    };
+                    if (isShowLastItemDivider) {
+                        ThemeBind.backgroundColor(loadingView, Theme.key_windowBackgroundWhite, fragment.getResourceProvider());
+                    }
+                    loadingView.setColors(Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundGray, -1);
+                    loadingView.setViewType(FlickerLoadingView.MEMBER_REQUESTS_TYPE);
+                    loadingView.setMemberRequestButton(isChannel);
+                    loadingView.setIsSingleCell(true);
+                    loadingView.setItemsCount(1);
+                    loadingView.setTag(RecyclerListView.TAG_NOT_SECTION);
+                    view = loadingView;
                     break;
             }
             return new RecyclerListView.Holder(view);
@@ -578,7 +632,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             if (holder.getItemViewType() == 0) {
                 MemberRequestCell cell = (MemberRequestCell) holder.itemView;
                 position -= extraFirstHolders();
-                cell.setData(users, currentImporters.get(position), position != currentImporters.size() - 1);
+                cell.setData(users, currentImporters.get(position), position != currentImporters.size() - 1 || hasMore);
             } else if (holder.getItemViewType() == 2) {
                 holder.itemView.requestLayout();
             }
@@ -596,22 +650,17 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
 
         @Override
         public int getItemViewType(int position) {
-            if (isShowLastItemDivider) {
-                if (position == currentImporters.size() && !currentImporters.isEmpty()) {
-                    return 1;
-                }
-            } else {
-                if (position == 0) {
-                    return 2;
-                } else if (position == getItemCount() - 1) {
-                    return 3;
-                }
+            if (position == 0 && !isShowLastItemDivider) {
+                return 2;
+            } else if (position == getItemCount() - 1 && extraLastHolders() > 0) {
+                return 4;
             }
             return 0;
         }
 
         @SuppressLint("NotifyDataSetChanged")
         public void setItems(List<TLRPC.TL_chatInviteImporter> newItems) {
+            boolean fromEmptyArray = currentImporters.isEmpty();
             for (int i = 0; i < newItems.size(); ++i) {
                 long id = newItems.get(i).user_id;
                 for (int j = i + 1; j < newItems.size(); ++j) {
@@ -625,7 +674,11 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             }
             currentImporters.clear();
             currentImporters.addAll(newItems);
-            notifyDataSetChanged();
+            if (fromEmptyArray) {
+                notifyItemRangeInserted((isShowLastItemDivider ? 0 : 1), currentImporters.size());
+            } else {
+                notifyDataSetChanged();
+            }
         }
 
         public void appendItems(List<TLRPC.TL_chatInviteImporter> newItems) {
@@ -641,10 +694,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
                 }
             }
             currentImporters.addAll(newItems);
-            if (currentImporters.size() > newItems.size()) {
-                notifyItemChanged(currentImporters.size() - newItems.size() - 1);
-            }
-            notifyItemRangeInserted(currentImporters.size() - newItems.size(), newItems.size());
+            notifyItemRangeInserted((isShowLastItemDivider ? 0 : 1) + currentImporters.size() - newItems.size(), newItems.size());
         }
 
         public void removeItem(TLRPC.TL_chatInviteImporter item) {
@@ -669,7 +719,10 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
         }
 
         private int extraLastHolders() {
-            return isShowLastItemDivider && currentImporters.isEmpty() ? 0 : 1;
+            if (!currentImporters.isEmpty() && hasMore) {
+                return 1;
+            }
+            return 0;
         }
     }
 
@@ -697,7 +750,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             contentView.setVisibility(INVISIBLE);
 
             int backgroundColor = Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, fragment.getResourceProvider());
-            pagerShadowDrawable.setColorFilter(new PorterDuffColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY));
+            ThemeBind.drawableColorFilter(contentView, pagerShadowDrawable, Theme.key_actionBarDefaultSubmenuBackground, fragment.getResourceProvider(), PorterDuff.Mode.MULTIPLY);
             pagerShadowDrawable.setCallback(contentView);
             android.graphics.Rect paddingRect = new android.graphics.Rect();
             pagerShadowDrawable.getPadding(paddingRect);
@@ -705,7 +758,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             shadowPaddingLeft = paddingRect.left;
 
             popupLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(context, resourcesProvider);
-            popupLayout.setBackgroundColor(backgroundColor);
+            ThemeBind.backgroundColor(popupLayout, Theme.key_actionBarDefaultSubmenuBackground, fragment.getResourceProvider());
             contentView.addView(popupLayout);
 
             pagerIndicator = new AvatarPreviewPagerIndicator(getContext()) {
@@ -725,19 +778,19 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             contentView.addView(pagerIndicator);
 
             nameText.setMaxLines(1);
-            nameText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, fragment.getResourceProvider()));
+            ThemeBind.textColor(nameText, Theme.key_windowBackgroundWhiteBlackText, fragment.getResourceProvider());
             nameText.setTextSize(16);
-            nameText.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            nameText.setTypeface(AndroidUtilities.bold());
             contentView.addView(nameText);
 
-            bioText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText, fragment.getResourceProvider()));
+            ThemeBind.textColor(bioText, Theme.key_windowBackgroundWhiteGrayText, fragment.getResourceProvider());
             bioText.setTextSize(14);
             contentView.addView(bioText);
 
-            ActionBarMenuSubItem addCell = new ActionBarMenuSubItem(context, true, false);
-            addCell.setColors(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon, resourcesProvider));
-            addCell.setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector, resourcesProvider));
-            addCell.setTextAndIcon(isChannel ? LocaleController.getString("AddToChannel", R.string.AddToChannel) : LocaleController.getString("AddToGroup", R.string.AddToGroup), R.drawable.msg_requests);
+            ActionBarMenuSubItem addCell = new ActionBarMenuSubItem(context, true, false, resourcesProvider);
+            addCell.setColorKeys(Theme.key_actionBarDefaultSubmenuItem, Theme.key_actionBarDefaultSubmenuItemIcon);
+            addCell.setSelectorColorKey(Theme.key_dialogButtonSelector, 1f);
+            addCell.setTextAndIcon(isChannel ? LocaleController.getString(R.string.AddToChannel) : LocaleController.getString(R.string.AddToGroup), R.drawable.msg_requests);
             addCell.setOnClickListener((v) -> {
                 if (importer != null) {
                     onAddClicked(importer);
@@ -746,10 +799,10 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             });
             popupLayout.addView(addCell);
 
-            ActionBarMenuSubItem sendMsgCell = new ActionBarMenuSubItem(context, false, false);
-            sendMsgCell.setColors(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon, resourcesProvider));
-            sendMsgCell.setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector, resourcesProvider));
-            sendMsgCell.setTextAndIcon(LocaleController.getString("SendMessage", R.string.SendMessage), R.drawable.msg_msgbubble3);
+            ActionBarMenuSubItem sendMsgCell = new ActionBarMenuSubItem(context, false, false, resourcesProvider);
+            sendMsgCell.setColorKeys(Theme.key_actionBarDefaultSubmenuItem, Theme.key_actionBarDefaultSubmenuItemIcon);
+            sendMsgCell.setSelectorColorKey(Theme.key_dialogButtonSelector, 1f);
+            sendMsgCell.setTextAndIcon(LocaleController.getString(R.string.SendMessage), R.drawable.msg_msgbubble3);
             sendMsgCell.setOnClickListener((v) -> {
                 if (importer != null) {
                     isNeedRestoreList = true;
@@ -763,10 +816,10 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             });
             popupLayout.addView(sendMsgCell);
 
-            ActionBarMenuSubItem dismissCell = new ActionBarMenuSubItem(context, false, true);
-            dismissCell.setColors(Theme.getColor(Theme.key_text_RedBold, resourcesProvider), Theme.getColor(Theme.key_text_RedRegular, resourcesProvider));
-            dismissCell.setSelectorColor(Theme.getColor(Theme.key_dialogButtonSelector, resourcesProvider));
-            dismissCell.setTextAndIcon(LocaleController.getString("DismissRequest", R.string.DismissRequest), R.drawable.msg_remove);
+            ActionBarMenuSubItem dismissCell = new ActionBarMenuSubItem(context, false, true, resourcesProvider);
+            dismissCell.setColorKeys(Theme.key_text_RedBold, Theme.key_text_RedRegular);
+            dismissCell.setSelectorColorKey(Theme.key_dialogButtonSelector, 1f);
+            dismissCell.setTextAndIcon(LocaleController.getString(R.string.DismissRequest), R.drawable.msg_remove);
             dismissCell.setOnClickListener((v) -> {
                 if (importer != null) {
                     onDismissClicked(importer);
@@ -804,8 +857,8 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
             final ImageLocation imageLocation;
             final ImageLocation thumbLocation;
             TLRPC.User currentUser = MessagesController.getInstance(currentAccount).getUser(importer.user_id);
-            imageLocation = ImageLocation.getForUserOrChat(currentUser, ImageLocation.TYPE_BIG);
-            thumbLocation = ImageLocation.getForUserOrChat(currentUser, ImageLocation.TYPE_SMALL);
+            imageLocation = ImageLocation.getForUserOrChat(currentAccount, currentUser, ImageLocation.TYPE_BIG);
+            thumbLocation = ImageLocation.getForUserOrChat(currentAccount, currentUser, ImageLocation.TYPE_SMALL);
             final TLRPC.UserFull userFull = MessagesController.getInstance(currentAccount).getUserFull(importer.user_id);
             if (userFull == null) {
                 MessagesController.getInstance(currentAccount).loadUserInfo(currentUser, false, 0);

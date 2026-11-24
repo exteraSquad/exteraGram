@@ -56,7 +56,9 @@ class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, N
     }
 
     public void onDestroy() {
-
+        if (accountInstance != null) {
+            AndroidUtilities.runOnUIThread(() -> accountInstance.getNotificationCenter().removeObserver(FeedRemoteViewsFactory.this, NotificationCenter.messagesDidLoad));
+        }
     }
 
     public int getCount() {
@@ -139,7 +141,7 @@ class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory, N
             return;
         }
         AndroidUtilities.runOnUIThread(() -> {
-            accountInstance.getNotificationCenter().addObserver(FeedRemoteViewsFactory.this, NotificationCenter.messagesDidLoad);
+            accountInstance.getNotificationCenter().addWeakObserver(FeedRemoteViewsFactory.this, NotificationCenter.messagesDidLoad);
             if (classGuid == 0) {
                 classGuid = ConnectionsManager.generateClassGuid();
             }

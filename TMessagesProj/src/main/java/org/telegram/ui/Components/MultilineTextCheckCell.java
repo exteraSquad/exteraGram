@@ -13,6 +13,7 @@ import android.widget.TextView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 import java.util.Locale;
 
@@ -35,14 +36,14 @@ public class MultilineTextCheckCell extends FrameLayout {
         addView(textLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 70 : 22, 0, LocaleController.isRTL ? 22 : 70, 0));
 
         titleTextView = new TextView(context);
-        titleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
+        ThemeBind.textColor(titleTextView, Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
         titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         titleTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
         titleTextView.setEllipsize(TextUtils.TruncateAt.END);
         textLayout.addView(titleTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         subtitleTextView = new TextView(context);
-        subtitleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
+        ThemeBind.textColor(subtitleTextView, Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider);
         subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
         subtitleTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
         subtitleTextView.setEllipsize(TextUtils.TruncateAt.END);
@@ -51,6 +52,8 @@ public class MultilineTextCheckCell extends FrameLayout {
         checkBox = new Switch(context, resourcesProvider);
         checkBox.setColors(Theme.key_switchTrack, Theme.key_switchTrackChecked, Theme.key_windowBackgroundWhite, Theme.key_windowBackgroundWhite);
         addView(checkBox, LayoutHelper.createFrame(37, 20, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, 22, 0, 22, 0));
+
+        setClipChildren(false);
     }
 
     @Override

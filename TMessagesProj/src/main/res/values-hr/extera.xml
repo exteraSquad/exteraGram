@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram Postavke</string>
+    <!-- Main Menu -->
+    <string name="Links">Linkovi</string>
+    <string name="Crowdin">Prevedi</string>
+    <string name="Website">Web stranica</string>
+    <string name="Categories">Kategorije</string>
+    <string name="Developer">**%1$s** je član razvojnog tima **exteraGram**-a.</string>
+    <string name="DeveloperCompact">Član razvojnog tima **exteraGram**-a.</string>
+    <string name="Supporter">**%1$s** je podržao razvoj **exteraGram**-a i dobio jedinstvenu značku.</string>
+    <string name="OfficialChannel">**%1$s** je službeni izvor **exteraGram**-a.</string>
+    <string name="NoSuchSetting">Čini se da takva postavka ne postoji.</string>
+    <string name="SettingLinkToSavedMessages">Poveznica postavke poslana u **Spremljene poruke**.</string>
+    <string name="SettingLinkToUser">Poveznica postavke poslana **%1$s**-u.</string>
+    <string name="SettingLinkToChats">Poveznica postavke poslana **%1$s**-u.</string>
+    <string name="LiteBatteryFollowSystem">Koristi sustavski način štednje baterije</string>
+    <string name="LiteBatteryFollowSystemState">Sustav</string>
+    <string name="LiteBatteryFollowSystemInfo">Kontrolira ga sustavski način štednje baterije.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Stog pločica</string>
+    <string name="PillStackPillsInfo">Prikaži interaktivne pločice u polju za pretraživanje</string>
+    <string name="PillStackActivePills">Aktivne pločice</string>
+    <string name="PillStackHiddenPills">Skrivene pločice</string>
+    <string name="CurrentLocation">Trenutna lokacija</string>
+    <string name="SelectLocation">Odaberi na karti</string>
+    <string name="WeatherPill">Vrijeme</string>
+    <string name="WeatherSettingsInfo">Odaberite kako odrediti lokaciju za prikaz vremena u pretrazi.</string>
+    <string name="WeatherLocation">Detekcija lokacije</string>
+    <string name="WeatherLocationPermissionNo">exteraGram treba pristup vašoj lokaciji za prikaz trenutnog vremena.</string>
+    <string name="WeatherLocationPermissionGrant">Dodijeli dozvolu</string>
+    <string name="WeatherLocationServicesEnable">Omogući lokaciju</string>
+    <string name="WeatherPillTopInfo">Postavke widgeta za vrijeme za Stog pločica.</string>
+    <string name="PillStackInfiniteScrolling">Beskonačno pomicanje</string>
+    <string name="CryptoPillTargetCurrency">Ciljana valuta</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Onemogući proxy</string>
+    <string name="ProxyDisableNever">Nikada</string>
+    <string name="ProxyDisableAlways">Uvijek</string>
+    <string name="ProxyDisableOnMobileData">Mobilni podaci</string>
+    <string name="ProxyType">Vrsta</string>
+    <string name="Unknown">Nepoznato</string>
+    <string name="ProxyRename">Naziv proxyja (neobavezno)</string>
+    <string name="ProxyPinLimitReached">Možete pričvrstiti do %1$d proxyja.</string>
+    <string name="CopyIpAddress">Kopiraj IP adresu</string>
+    <string name="IpInfoUnavailable">Nije moguće učitati informacije o IP adresi.</string>
+    <string name="IpInfoOrganization">Organizacija</string>
+    <string name="IpInfoDomain">Domena</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Davatelj prijevoda</string>
+    <string name="TranslationTarget">Ciljni jezik</string>
+    <string name="TranslationTargetApp">Prati aplikaciju</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Onemogući zaokruživanje brojeva</string>
+    <string name="FormatTimeWithSeconds">Formatiraj vrijeme sa sekundama</string>
+    <string name="RelativeLastSeen">Relativno zadnje viđen</string>
+    <string name="InAppVibration">Vibracija u aplikaciji</string>
+    <string name="FilterZalgo">Filtriraj \"Zalgo\"</string>
+    <string name="FilterZalgoInfo">Uklanja \"%1$s\" simbole u imenima i porukama.</string>
+    <string name="RestartRequired">Ponovno pokrenite aplikaciju da bi promjene stupile na snagu.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Kôd</string>
+    <string name="CreateCode">Stvori blok kôda</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Ubrzanje preuzimanja</string>
+    <string name="UploadSpeedBoost">Ubrzanje slanja</string>
+    <string name="SpeedBoostInfo">Ultra ubrzanje može uzrokovati probleme s preuzimanjem datoteka i streamingom videa na sporim internetskim vezama.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Pohrana</string>
+    <string name="CustomSavePath">Prilagođena mapa za spremanje</string>
+    <string name="CustomSavePathHint">Ostavite prazno za spremanje izravno u korijen</string>
+    <string name="CustomSavePathDefault">Spremi u korijen</string>
+    <string name="CustomSavePathInfo">Spremljene datoteke bit će pohranjene izravno u Pictures, Downloads, itd.</string>
+    <string name="CustomSavePathInfoFolder">Spremljene datoteke bit će pohranjene u Pictures/%1$s, Downloads/%1$s, itd.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Sakrij broj telefona</string>
+    <string name="ShowIdAndDc">Prikaži ID i DC</string>
+    <string name="ShowIdAndDcInfo">Telegram API prikazuje ID-eve kakvi jesu, dok Bot API dodaje znak minus za grupe i -100 za supergrupe i kanale.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Sakrij mapu arhive</string>
+    <string name="ArchiveOnPull">Otvori arhivu povlačenjem prema dolje</string>
+    <string name="DisableUnarchiveSwipe">Onemogući potez za \"Dearhiviranje\"</string>
+    <string name="DisableUnarchiveSwipeInfo">Povlačenjem ulijevo neće se ukloniti razgovori iz arhive.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Izgled</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Kutovi avatara</string>
+    <string name="SingleCornerRadius">Polumjer jednog kuta</string>
+    <string name="SingleCornerRadiusInfo">Forumi će imati isti oblik avatara kao razgovori.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Popis razgovora</string>
+    <string name="ActionBarTitle">Tekst naslova</string>
+    <string name="ActionBarTitleName">Ime</string>
+    <string name="HideStories">Sakrij priče</string>
+    <string name="HideActionBarStatus">Sakrij status</string>
+    <string name="CenterTitle">Centriraj naslov</string>
+    <string name="ChatHeader">Zaglavlje razgovora</string>
+    <string name="HideFloatingButton">Sakrij plutajući gumb</string>
+    <string name="HideDialogsSearchBar">Sakrij traku za pretraživanje</string>
+    <string name="BottomNavigationBarMode">Donja navigacijska traka</string>
+    <string name="BottomNavigationModeShow">Prikaži</string>
+    <string name="BottomNavigationModeHide">Sakrij</string>
+    <string name="BottomNavigationModeFloating">Plutajuće</string>
+    <string name="SenderMiniAvatars">Mini avatar pošiljatelja</string>
+    <string name="ListOfChatsInfo">Kada je omogućeno \"Samo ikone\" za mape, glavni naslov će prikazati naziv mape.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Naslov mape</string>
+    <string name="TabTitleStyleTextWithIcons">Imena s ikonama</string>
+    <string name="TabTitleStyleIconsOnly">Samo ikone</string>
+    <string name="TabTitleStyleTextOnly">Samo imena</string>
+    <string name="TabCounter">Brojač obavijesti</string>
+    <string name="HideAllChats">Sakrij karticu \"%1$s\"</string>
+    <string name="FoldersInfo">Ikone su sinkronizirane s vašim računom.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Navigacija aplikacijom</string>
+    <string name="AppNavigationInfo">Izbornik gore desno i postavke ladice</string>
+    <string name="NavigationDrawer">Navigacijska ladica</string>
+    <string name="NavigationDrawerInfo">Zamjenjuje gornji desni izbornik klasičnom ladicom koja se otvara povlačenjem i gumbom za hamburger.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Immerzivna animacija</string>
+    <string name="MainMenuItems">Stavke izbornika</string>
+    <string name="MainMenuItemsInfo">Dodirnite za prikaz ili skrivanje stavki, držite za promjenu redoslijeda. Raspored je zajednički za izbornik i ladicu.</string>
+    <string name="MainMenuHiddenItems">Skrivene stavke izbornika</string>
+    <string name="MainMenuAddDivider">Dodaj razdjelnik</string>
+    <string name="MainMenuRemoveSettingsInfo">Postavke se ne mogu sakriti dok je donja navigacijska traka onemogućena.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Paketi ikona</string>
+    <string name="IconPacksInfo">Prilagodite ikone u cijeloj aplikaciji</string>
+    <string name="IconPickerFilter">Filtar</string>
+    <string name="IconPickerAllIcons">Sve ikone</string>
+    <string name="IconPickerReplacedIcons">Zamijenjene ikone</string>
+    <string name="IconPickerNotReplacedIcons">Nezamijenjene ikone</string>
+    <string name="IconPickerSaveAndExit">Spremi i izađi</string>
+    <string name="BasePacks">Osnovni paketi</string>
+    <string name="BaseIconPackInfo">Osnovni paket ikona koristi se kao rezerva za ikone koje nisu zamijenjene drugim paketima.</string>
+    <string name="IconPacksHint">Dodirnite za omogućavanje ili onemogućavanje paketa. Držite za uređivanje ili brisanje.</string>
+    <string name="NewIconPack">Stvori novi paket ikona</string>
+    <string name="EnabledPacks">Omogućeni paketi</string>
+    <string name="AllPacks">Svi paketi</string>
+    <string name="PackName">Naziv paketa</string>
+    <string name="AuthorNameOptional">Ime autora (neobavezno)</string>
+    <string name="NameCannotBeEmpty">Naziv ne može biti prazan.</string>
+    <string name="Version">Verzija</string>
+    <string name="InstallPack">Instaliraj paket</string>
+    <string name="IconCount_one">%1$d ikona</string>
+    <string name="IconCount_two">%1$d ikone</string>
+    <string name="IconCount_few">%1$d ikone</string>
+    <string name="IconCount_many">%1$d ikona</string>
+    <string name="IconCount_other">%1$d ikona</string>
+    <string name="UpdatePack">Ažuriraj paket</string>
+    <string name="DeletePack">Izbriši paket</string>
+    <string name="DeletePackInfo">Jeste li sigurni da želite izbrisati **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Arhiva paketa ikona je neispravna.</string>
+    <string name="IconPackErrorMissingMetadata">Arhivi paketa ikona nedostaje metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Metapodaci paketa ikona su preveliki.</string>
+    <string name="IconPackErrorInvalidMetadata">Metapodaci paketa ikona su neispravni.</string>
+    <string name="IconPackErrorTooManyFiles">Paket ikona sadrži previše datoteka.</string>
+    <string name="IconPackErrorArchiveTooLarge">Paket ikona je prevelik.</string>
+    <string name="IconPackErrorFileTooLarge">Jedna od datoteka ikona je prevelika.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Arhiva paketa ikona je previše komprimirana.</string>
+    <string name="IconPackErrorStorage">Nije moguće spremiti paket ikona.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Paket ikona</string>
+    <string name="AppIconSunset">Zalazak sunca</string>
+    <string name="AppIconAmethyst">Ametist</string>
+    <string name="AppIconInvincible">Nepobjediv</string>
+    <string name="AppIconSpace">Svemir</string>
+    <string name="AppIconIceAge">Ledeno doba</string>
+    <string name="AppIconEditor">Urednik</string>
+    <string name="AppIconOrbit">Orbita</string>
+    <string name="AppIconWinter">Zima</string>
+    <!-- General Appearance -->
+    <string name="Sections">Odjeljci</string>
+    <string name="SeparateHeaders">Odvojena zaglavlja</string>
+    <string name="DividerStyle">Stil razdjelnika</string>
+    <string name="DividerStyleHidden">Skriveno</string>
+    <string name="DividerStyleLine">Linija</string>
+    <string name="DividerStyleSegments">Segmenti</string>
+    <string name="UseSystemFonts">Koristi sustavske fontove</string>
+    <string name="UseSystemEmoji">Koristi sustavske emojije</string>
+    <string name="NewLoadingStyle">Stil učitavanja</string>
+    <string name="NewSliderStyle">Stil klizača</string>
+    <string name="NewSwitchStyle">Stil prekidača</string>
+    <string name="TabletMode">Način rada za tablet</string>
+    <string name="RemoveMessageTail">Ukloni rep poruke</string>
+    <string name="GooeyAvatarAnimation">Animacija avatara \"Gooey\"</string>
+    <string name="CustomChatThemes">Prilagođene teme u razgovorima</string>
+    <string name="CustomChatThemesInfo">Svaki razgovor će prikazivati temu koja je za njega posebno odabrana.</string>
+    <string name="PredictiveBackIntensity">Intenzitet prediktivnog povratka</string>
+    <string name="PredictiveBackMax">Maks</string>
+    <string name="PredictiveBackInfo">Prilagođava koliko se ekran pomiče pri povlačenju unatrag.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Opcije zamućenja</string>
+    <string name="GlassOutlineStyle">Stakleni obris</string>
+    <string name="GlassOutlineGlare">Odbljesak</string>
+    <string name="GlassOutlineSolid">Puni</string>
+    <string name="GlassOutlineHidden">Skriveno</string>
+    <string name="ForceSnow">Nametni pahulje</string>
+    <string name="ForceSnowInfo">Pahulje će se pojaviti na akcijskoj traci, bočnom izborniku i pozadinama razgovora.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Veličina naljepnice</string>
+    <string name="StickerSizeLeft">Mala</string>
+    <string name="StickerSizeRight">Velika</string>
+    <string name="StickerSizeDialogMessageReplyTo">vau</string>
+    <string name="StickerSizeDialogMessage">vau, tako slatko!</string>
+    <string name="StickerShape">Oblik naljepnice</string>
+    <string name="StickerShapeRounded">Zaobljeno</string>
+    <string name="StickerShapeRoundedMsg">Poruka</string>
+    <string name="ViewEmojiSet">Prikaži set emojija</string>
+    <string name="UnlimitedRecentStickers">Neograničeno nedavnih naljepnica</string>
+    <string name="HideReactions">Sakrij reakcije</string>
+    <string name="HideReactionsInfo">Reakcije će biti potpuno skrivene iz sučelja.</string>
+    <string name="ReplyBackground">Pozadina</string>
+    <string name="ChatSettingsInfo">Postavke medija, ikona aplikacije i ostalo</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Postavite usluge, uloge i povijest</string>
+    <string name="AIChatInfo2">Generirajte tekst iz poruka ili prije slanja.</string>
+    <!-- AI Services -->
+    <string name="Services">Usluge</string>
+    <string name="ServicesInfo">Odaberite odgovarajuću uslugu za interakciju s jezičnim modelima.</string>
+    <string name="NewService">Nova usluga</string>
+    <string name="EditService">Uredi uslugu</string>
+    <string name="ServiceKey">API ključ</string>
+    <string name="ServiceInfo">Informacije o usluzi</string>
+    <string name="ServiceProvider">Pružatelj</string>
+    <string name="ServiceProviderCustom">Prilagođeno</string>
+    <string name="ServiceTestAndSave">Testiraj i spremi</string>
+    <string name="ServicePasteService">Zalijepi uslugu</string>
+    <string name="ServicePasteKey">Zalijepi API ključ</string>
+    <string name="DeleteServiceInfo">Jeste li sigurni da želite izbrisati **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Uloge</string>
+    <string name="RolesInfo">Stvorite uloge za svoje specifične potrebe!</string>
+    <string name="Suggestions">Prijedlozi</string>
+    <string name="RoleName">Ime</string>
+    <string name="RolePrompt">Uputa</string>
+    <string name="PromptInfo">Uputa je početni tekst dan modelu za početak generiranja odgovora ili nastavak dijaloga.</string>
+    <string name="NewRole">Nova uloga</string>
+    <string name="EditRole">Uredi ulogu</string>
+    <string name="DeleteRoleInfo">Jeste li sigurni da želite izbrisati **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Povijest razgovora omogućuje AI-ju da razumije prethodne zahtjeve i uzme ih u obzir pri generiranju novih odgovora.</string>
+    <string name="AIGeneration">Generiranje</string>
+    <string name="AIReasoning">Rasuđivanje</string>
+    <string name="AIReasoningInfo">Omogućuje podržanim modelima na ovoj usluzi da potroše dodatne tokene razmišljajući prije odgovora.</string>
+    <string name="AITemperature">Temperatura</string>
+    <string name="AITemperatureInfo">Temperatura kontrolira nasumičnost odgovora: veće vrijednosti su kreativnije, niže vrijednosti su fokusiranije.</string>
+    <string name="ResponseStreaming">Streaming odgovora</string>
+    <string name="ResponseStreamingInfo">Osigurava glađi i brži prikaz odgovora.</string>
+    <string name="ShowResponseOnly">Prikaži samo odgovor</string>
+    <string name="InsertResponseAsQuote">Umetni odgovor kao citat</string>
+    <string name="TapToAddApiKey">Dodirnite za dodavanje API ključa za početak korištenja AI značajki.</string>
+    <string name="Generate">Generiraj</string>
+    <string name="ClearConversationHistoryInfo">Jeste li sigurni da želite izbrisati **svu** povijest AI razgovora?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Neispravan zahtjev</string>
+    <string name="AIError400Info">Provjerite parametre zahtjeva.</string>
+    <string name="AIError401">Neispravni vjerodajnice</string>
+    <string name="AIError401Info">API ključ je neispravan ili onemogućen. Provjerite svoje vjerodajnice.</string>
+    <string name="AIError402">Nedovoljno kredita</string>
+    <string name="AIError402Info">Vaš račun ili API ključ nema dovoljno kredita. Dodajte više kredita i ponovite zahtjev.</string>
+    <string name="AIError403">Pristup odbijen</string>
+    <string name="AIError403Info">Nemate dozvolu za pristup ovom modelu ili resursu. Provjerite svoj API ključ i dozvole računa.</string>
+    <string name="AIError408">Istek vremena zahtjeva</string>
+    <string name="AIError408Info">Vaš zahtjev nije obrađen na vrijeme. Molimo pokušajte kasnije.</string>
+    <string name="AIError429">Prekoračenje ograničenja učestalosti</string>
+    <string name="AIError429Info">Šaljete zahtjeve prečesto. Pričekajte trenutak i pokušajte ponovno.</string>
+    <string name="AIError502">Neuspjeh modela</string>
+    <string name="AIError502Info">Odabrani model nije dostupan ili smo primili neispravan odgovor od njega.</string>
+    <string name="AIError503">Usluga nedostupna</string>
+    <string name="AIError503Info">Usluga je privremeno nedostupna ili preopterećena. Pokušajte kasnije.</string>
+    <string name="AIError">Pogreška poslužitelja</string>
+    <string name="AIErrorInfo">Ponovite zahtjev nakon kratkog čekanja.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Dolazne poruke</string>
+    <string name="DoubleTapOutgoing">Odlazne poruke</string>
+    <string name="DoubleTapInfo">Neke radnje zahtijevaju administratorska prava u razgovoru ili kanalu.</string>
+    <string name="BottomButton">Donji gumb</string>
+    <string name="ChannelDiscussNoCaps">Rasprava</string>
+    <string name="QuickTransitions">Brzi prijelaz povlačenjem</string>
+    <string name="DisableGreetingSticker">Onemogući naljepnicu pozdrava</string>
+    <string name="AdminShortcuts">Brzi administratorski prečaci</string>
+    <string name="HideKeyboardOnScroll">Sakrij tipkovnicu pri pomicanju</string>
+    <string name="HideShareButton">Sakrij bočni gumb \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">Zamijeni \"%1$s\" ikonom</string>
+    <string name="MessageMenu">Izbornik poruka</string>
+    <string name="GroupMessageMenu">Grupirani izbornik poruka</string>
+    <string name="GroupMessageMenuInfo">Grupiranje premješta glavne radnje na dno izbornika poruka.</string>
+    <string name="GlassMessageMenu">Stakleni izbornik poruka</string>
+    <string name="GlassMessageMenuBlurOff">Stakleni izbornici zahtijevaju zamućenje, koje je trenutno isključeno.</string>
+    <string name="AddCommaAfterMention">Dodaj zarez nakon spominjanja</string>
+    <string name="HideSendAsPeer">Sakrij gumb \"Pošalji kao…\"</string>
+    <string name="HideSendAsPeerInfo">Još uvijek možete pristupiti izborniku \"Pošalji kao…\" dugim pritiskom na gumb Emojis/Stickers/GIFs.</string>
+    <string name="ShowPollResultsBeforeVoting">Prikaži rezultate prije glasanja</string>
+    <string name="ShowPollResultsBeforeVotingHint">Pogledajte rezultate za svaku opciju prije slanja glasa.</string>
+    <string name="ShowOnlineStatus">Prikaži indikator online</string>
+    <string name="MessagePreviewDialogMessage">Mogu jesti staklo i ne boli me.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Jezik prepoznavanja</string>
+    <string name="RecognitionInfo">Koristi Vosk API. Radi izvan mreže. Kvaliteta prepoznatog teksta može biti niska.</string>
+    <string name="MissingLanguageModel">Nedostaje jezični model</string>
+    <string name="DownloadingModel">Preuzimanje modela…</string>
+    <string name="DownloadingModelInfo">Molimo zadržite ovaj prozor otvoren dok se jezični model preuzima.</string>
+    <string name="ModelDownload">Preuzmi (%1$s)</string>
+    <string name="ModelDownloadInfo">Za nastavak, morate preuzeti jezični model \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Model uspješno preuzet.</string>
+    <string name="ModelError">Pogreška pri preuzimanju modela.</string>
+    <string name="ModelUnzipping">Raspakiravanje…</string>
+    <string name="DeleteRecognitionModel">Izbriši model</string>
+    <string name="DeleteRecognitionModelInfo">Jeste li sigurni da želite izbrisati jezični model \"**%1$s**\"?</string>
+    <string name="RecognitionModelDeleted">Model uspješno izbrisan.</string>
+    <string name="RecognitionModelDeleteError">Pogreška pri brisanju modela.</string>
+    <string name="PostProcessingWithAi">Koristi AI za naknadnu obradu</string>
+    <string name="PostProcessingWithAiInfo">AI će poboljšati čitljivost ispravljanjem grešaka, dodavanjem interpunkcije i pojašnjavanjem nejasnih dijelova.</string>
+    <!-- Camera -->
+    <string name="CameraType">Vrsta kamere</string>
+    <string name="ExtendedSettings">Proširene postavke</string>
+    <string name="SeamlessSwitching">Besprijekorno prebacivanje</string>
+    <string name="ExtendedFramesPerSecond">Prošireni raspon FPS</string>
+    <string name="CameraStabilization">Stabilizacija</string>
+    <string name="CameraMirrorMode">Način zrcaljenja</string>
+    <string name="StartWithWideAngleCamera">Započni sa širokokutnom</string>
+    <string name="ZoomSlider">Klizač za zumiranje</string>
+    <string name="ZoomSliderInfo">Prikaži kontrolu zumiranja ispod kamere za video poruke.</string>
+    <string name="StaticZoom">Statički zum</string>
+    <string name="StaticZoomInfo">Prilikom snimanja video poruka, razina zuma neće se resetirati ako otpustite prste.</string>
+    <string name="VideoMessagesCamera">Kamera u video porukama</string>
+    <string name="VideoMessagesCameraRear">Stražnja</string>
+    <string name="VideoMessagesCameraFront">Prednja</string>
+    <string name="VideoMessagesCameraAsk">Pitaj</string>
+    <string name="RearCamera">Stražnja kamera</string>
+    <string name="FrontCamera">Prednja kamera</string>
+    <string name="RememberLastUsedCamera">Zapamti posljednju korištenu kameru</string>
+    <string name="RememberLastUsedCameraInfo">Prilikom snimanja video poruka, posljednja korištena kamera bit će automatski odabrana.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Uvijek šalji u HD</string>
+    <string name="HideCameraTile">Sakrij pločicu za trenutnu kameru</string>
+    <string name="HideCameraTileInfo">Pločica kamere bit će zamijenjena plutajućim gumbom. Pritiskom se pokreće Telegram kamera; držanjem se pokreće sustavska kamera.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Vrijeme preskoka dvostrukim dodirom</string>
+    <string name="PreferOriginalQuality">Preferiraj izvornu kvalitetu</string>
+    <string name="PauseOnMinimize">Automatska pauza</string>
+    <string name="PauseOnMinimizeVoice">Glas</string>
+    <string name="PauseOnMinimizeRound">Kružno</string>
+    <string name="PauseOnMinimizeInfo">Pauzira reprodukciju medija kada je uređaj zaključan ili je exteraGram minimiziran.</string>
+    <string name="SwipeToPip">Povuci za PiP</string>
+    <string name="UnmuteWithVolumeButtons">Uključi zvuk videa gumbima za glasnoću</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Pritiskom na gumb za glasnoću uključit će se zvuk videa umjesto promjene glasnoće sustava.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Kada su ove opcije omogućene, prikupljaju se podaci o uređaju i šalju Google Analytics i Crashlytics, što nam omogućuje praćenje statistike korištenja i grešaka u aplikaciji. \n\nMeđutim, ako su opcije isključene, prikupljanje podataka prestaje i svi poslani podaci se odmah brišu.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Unesite naziv datoteke…</string>
+    <string name="ExportSettings">Izvoz postavki</string>
+    <string name="ApplySettings">Primijeni postavke</string>
+    <string name="ImportTitle">Jeste li sigurni da želite primijeniti ove postavke?</string>
+    <string name="ImportConfirm">Da, primijeni</string>
+    <string name="CancelConfirm">Ne, ostavi kako je</string>
+    <string name="SettingsSaved">Datoteka postavki uspješno spremljena.</string>
+    <string name="SettingsImported">Postavke uspješno primijenjene.</string>
+    <string name="ImportChanges_one">**1** promjena će biti primijenjena na trenutne postavke.</string>
+    <string name="ImportChanges_two">**%1$d** promjene će biti primijenjene na trenutne postavke.</string>
+    <string name="ImportChanges_few">**%1$d** promjene će biti primijenjene na trenutne postavke.</string>
+    <string name="ImportChanges_many">**%1$d** promjena će biti primijenjeno na trenutne postavke.</string>
+    <string name="ImportChanges_other">**%1$d** promjena će biti primijenjeno na trenutne postavke.</string>
+    <string name="SameSettings">Čini se da su postavke iste kao trenutne.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Iz sigurnosnih razloga, moći ćete započeti preuzimanje svojih podataka za %1$s. Obavijestili smo sve vaše uređaje o zahtjevu za izvoz kako bismo bili sigurni da je ovlašten i dali vam vremena za reakciju ako nije.\n\nMolimo vas da se vratite %2$s i ponovite zahtjev koristeći isti uređaj.</string>
+    <string name="ExportInvalid">Nažalost, započeli ste novi izvoz podataka, pa je ovaj izvoz podataka otkazan.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Izbriši račun</string>
+    <string name="ResetSettings">Resetiraj postavke</string>
+    <string name="ResetPreferences">Preferencije **exteraGram**-a su resetirane.</string>
+    <string name="ResetPreferencesInfo">Jeste li sigurni da želite resetirati **sve** preferencije exteraGram-a na zadane vrijednosti?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Podržite razvoj</string>
+    <string name="SupportDevelopmentInfo">Podržavajući projekt, ne samo da doprinosite njegovom razvoju već i dobivate jedinstvenu značku.</string>
+    <string name="MakeDonation">Donirajte</string>
+    <string name="ReceiveBadge">Primite svoju značku</string>
+    <string name="NowPlaying">Trenutno se reproducira</string>
+    <string name="ScrobblingService">Scrobbling usluga</string>
+    <string name="SelectService">Odaberite uslugu</string>
+    <string name="SelectServiceInfo">Prikazuje trenutnu pjesmu u profilu kao karticu dobivenu iz usluge skrobljanja.</string>
+    <string name="EnterUsername">Unesite korisničko ime</string>
+    <string name="EnterUsernameInfo">Svoje korisničko ime možete dobiti na **službenoj web stranici**.</string>
+    <string name="BoostyPeopleCount_one">%1$d osoba</string>
+    <string name="BoostyPeopleCount_two">%1$d osobe</string>
+    <string name="BoostyPeopleCount_few">%1$d osobe</string>
+    <string name="BoostyPeopleCount_many">%1$d osoba</string>
+    <string name="BoostyPeopleCount_other">%1$d osoba</string>
+    <string name="BoostyInfo">Aktivno podržite **exteraGram** na **Boosty**-u.</string>
+    <string name="BoostyInfo2">Hvala na podršci!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Instalacija dodataka dostupna je samo u **Punoj** verziji **exteraGram**-a.</string>
+    <string name="Plugins">Dodaci</string>
+    <string name="PluginsEngine">Pogon dodataka</string>
+    <string name="EnablePluginsEngine">Omogući pogon dodataka</string>
+    <string name="PluginsInfo">Dodatke možete pronaći u @exteraPlugins.</string>
+    <string name="PluginsNotFound">Nema pronađenih dodataka.</string>
+    <string name="InstallPlugin">Instaliraj</string>
+    <string name="UpdatePlugin">Ažuriraj</string>
+    <string name="PluginNotEnabled">Omogućite **Pogon dodataka** za instalaciju **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** uspješno instaliran.</string>
+    <string name="PluginUpdated">**%1$s** uspješno ažuriran.</string>
+    <string name="PluginEnableError">Neuspješno omogućavanje **%1$s**.</string>
+    <string name="PluginDisableError">Neuspješno onemogućavanje **%1$s**.</string>
+    <string name="PluginInstallError">Neuspješna instalacija **%1$s**.</string>
+    <string name="PluginSourceTrusted">Pouzdani izvor</string>
+    <string name="PluginSourceTrustedInfo">Dodaci iz ovog izvora su **provjereni** i sigurni za korištenje.</string>
+    <string name="PluginSourceUnknown">Nepoznati izvor</string>
+    <string name="PluginSourceUnknownInfo">Dodaci iz ovog izvora su **neprovjereni** i mogu predstavljati sigurnosni rizik.</string>
+    <string name="PluginVersion">Verzija</string>
+    <string name="PluginNoDescription">Nema opisa.</string>
+    <string name="PluginIsNotResponding">Dodatak ne odgovara.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s ne odgovara</string>
+    <string name="PluginNoAuthor">Nepoznati autor</string>
+    <string name="EnableAfterInstallation">Omogući nakon instalacije</string>
+    <string name="EnterValue">Unesite vrijednost</string>
+    <string name="PluginDelete">Izbriši dodatak</string>
+    <string name="PluginDeleteInfo">Jeste li sigurni da želite izbrisati **%1$s**?</string>
+    <string name="ResetPluginSettings">Postavke **%1$s** su resetirane.</string>
+    <string name="ResetPluginSettingsInfo">Jeste li sigurni da želite resetirati postavke **%1$s** na zadane?</string>
+    <string name="PluginsSafeMode">Sigurni način rada</string>
+    <string name="PluginsSafeModeShortcut">Pokreni u sigurnom načinu rada</string>
+    <string name="PluginsSafeModeInfo">Pogon dodataka je onemogućen zbog pada. Onemogućavanje sigurnog načina rada može dovesti do nepredvidivih posljedica.</string>
+    <string name="PluginsSafeModeInfo2">U sigurnom načinu rada, svi dodaci su neaktivni. To vam omogućuje da sigurno pronađete i onemogućite problematični dodatak.</string>
+    <string name="PluginsDevMode">Razvojni način rada</string>
+    <string name="PluginsCompactView">Sažeti prikaz dodataka</string>
+    <string name="PluginsDocumentation">Dokumentacija</string>
+    <string name="PluginsTrusted">Pouzdani dodaci</string>
+    <string name="PluginsDevServerLaunched">Razvojni poslužitelj je pokrenut.</string>
+    <string name="PluginsDevServerStopped">Razvojni poslužitelj je zaustavljen.</string>
+    <string name="PluginEngineNotEnabled">Omogućite **Pogon dodataka** za otvaranje postavki **%1$s**.</string>
+    <string name="PluginNotFound">**%1$s** nije pronađen.</string>
+    <string name="PluginHasNoSettings">**%1$s** nema postavke.</string>
+    <string name="PluginsPySdkAutoUpdate">Ažuriraj automatski</string>
+    <string name="PluginsPySdkEnableBetaVersion">Instaliraj beta verzije</string>
+    <string name="PluginsPySdkCheckUpdates">Provjeri ažuriranja</string>
+    <string name="CheckingForUpdates">Provjera ažuriranja…</string>
+    <string name="LatestVersionInstalled">Instalirana je najnovija verzija</string>
+    <string name="RestartPluginSystemToApplyUpdate">Ažuriranje učitano, ponovno pokrenite Pogon dodataka za primjenu</string>
+    <string name="LoadingUpdate">Učitavanje ažuriranja…</string>
+    <string name="RestoreSdkFromApk">Vrati SDK iz APK</string>
+    <string name="EnableAutoUpdate">Omogući automatsko ažuriranje</string>
+    <string name="PluginsDisableArt">Način kompatibilnosti</string>
+    <string name="PluginsDisableArtInfo">Sprječava neuspjehe kuka dodataka onemogućavanjem ART Profile Saver.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Ažuriranje u tijeku…</string>
+    <string name="UpdateInstallingRelaunch">Aplikacija će se ponovno pokrenuti nakon završetka ažuriranja.</string>
+    <string name="UpdateInstallingNotification">Bit ćete obaviješteni kada ažuriranje bude dovršeno.</string>
+    <string name="UpdateInstalledNotification">Ažuriranje dovršeno. Dodirnite za otvaranje aplikacije.</string>
+    <string name="UpdateFailedToInstall">Instalacija ažuriranja nije uspjela s kodom greške: %d</string>
+    <string name="UpdateAvailable">Ažuriranje dostupno!</string>
+    <!-- Message Details -->
+    <string name="Details">Detalji</string>
+    <string name="Date">Datum</string>
+    <string name="EditedDate">Datum uređivanja</string>
+    <string name="ForwardedDate">Datum prosljeđivanja</string>
+    <string name="FileSize">Veličina datoteke</string>
+    <string name="FileName">Naziv datoteke</string>
+    <string name="FilePath">Put datoteke</string>
+    <string name="Platform">Platforma</string>
+    <string name="Resolution">Rezolucija</string>
+    <string name="Duration">Trajanje</string>
+    <string name="MimeType">Mime vrsta</string>
+    <string name="Datacenter">Podatkovni centar</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOptionNone">Nijedan</string>
+    <string name="DateFormatOptionRelative">Relativno</string>
+    <string name="DateFormatOptionShortTime">Kratko vrijeme</string>
+    <string name="DateFormatOptionLongTime">Dugo vrijeme</string>
+    <string name="DateFormatOptionShortDate">Kratki datum</string>
+    <string name="DateFormatOptionLongDate">Dugi datum</string>
+    <string name="DateFormatOptionDayOfWeek">Dan u tjednu</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">Prijava QR kodom</string>
+    <string name="LoginQrSubtitle">Koristite drugi uređaj za skeniranje ovog QR koda.</string>
+    <string name="WifiConnect">Poveži</string>
+    <string name="WifiDisabled">Wi-Fi je onemogućen.</string>
+    <string name="WifiFailed">Neuspješno povezivanje na Wi-Fi.</string>
+    <string name="WifiSuccess">Uspješno povezano na Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Jeste li sigurni da se želite prijaviti na ovaj račun na drugom uređaju?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Stranica blokirana</string>
+    <string name="PageBlockedDescription">exteraGram je spriječio učitavanje sljedeće stranice:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Vrati se</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Postavi kao značku</string>
+    <string name="AutoLockInstant">Trenutačno</string>
+    <string name="TestBackend">Testiraj pozadinu</string>
+    <string name="SearchPhotoInfo">Usluge mogu koristiti slike u skladu sa svojim pravilima o privatnosti i uvjetima korištenja.</string>
+    <string name="PhotoUploadFailed">Neuspješno prijenos fotografije.</string>
+    <string name="TrackSaved">Pjesma spremljena u **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Pjesme će se spremati u **%1$s**.</string>
+    <string name="DeletedMessage">Izbrisana poruka</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Kopiraj naslov</string>
+    <string name="CopyCallback">Kopiraj povratne podatke</string>
+    <string name="CopyInlineQuery">Kopiraj interni upit</string>
+    <string name="CopyID">Kopiraj ID korisnika</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Status značke postavljen.</string>
+    <string name="UserNotFound">Korisnik s ovim **ID**-om nije pronađen.</string>
+    <string name="ChatNotFound">Razgovor s ovim **ID**-om nije pronađen.</string>
+    <string name="PhotoCopied">Fotografija kopirana u međuspremnik.</string>
+    <string name="FrameCopied">Okvir kopiran u međuspremnik.</string>
+    <string name="TapToCopy">Dodirnite za kopiranje</string>
+    <string name="ProfileUsesEmojiPack">Ovaj profil koristi emojije iz paketa %s za pozadinu.</string>
+    <string name="ProfileUsesEmojiPacks">Ovaj profil koristi emojije iz **%d paketa** za pozadinu.</string>
+    <string name="ReplyUsesEmojiPacks">Ovaj odgovor koristi emojije iz paketa %s za pozadinu.</string>
+    <string name="StickerSavedHint">Naljepnica spremljena u galeriju.</string>
+    <string name="EmojiSavedHint">Emoji spremljen u galeriju.</string>
+    <string name="GifGallerySavedHint">GIF spremljen u galeriju.</string>
+    <string name="MutualContactInfo">Ovaj kontakt je uzajaman.</string>
+    <string name="LocalPremiumEmojiHint">Nemate **Telegram Premium** pretplatu, pa će samo **exteraGram** korisnici moći vidjeti ovaj emoji.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Sakrij karticu Kontakti</string>
+    <string name="ShowContactsTab">Prikaži karticu Kontakti</string>
+    <string name="ContactsTabWasShownTitle">Kartica **Kontakti** je sada vidljiva.</string>
+    <string name="ContactsTabWasHiddenTitle">Kartica **Kontakti** je sada skrivena.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Ova značajka radi samo s upraviteljima lozinki koji korisniku omogućuju upravljanje postavkama povjerenja za privilegirane aplikacije, kao što su **Bitwarden** ili **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Nepodržani upravitelj lozinki</string>
+    <string name="PasskeyUnsupportedMessage">Pokušajte s drugim upraviteljima lozinki poput **Bitwarden** ili **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** je otvorio svoj račun otprilike **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** je otvorio svoj račun prije **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** je otvorio svoj račun nakon **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** je stvoren **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Otvorili ste svoj račun otprilike **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">Otvorili ste svoj račun prije **%1$s**.</string>
+    <string name="CreationDateSelfLater">Otvorili ste svoj račun nakon **%1$s**.</string>
+    <string name="JoinDateChat">Pridružili ste se **%1$s** **%2$s**.</string>
+    <string name="GroupMemberJoined">pridružio se %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Na početak</string>
+    <string name="MessageHistory">Povijest</string>
+    <string name="BoldItalic">Podebljano kurziv</string>
+    <string name="CopyPhoto">Kopiraj fotografiju</string>
+    <string name="CopyFrame">Kopiraj okvir</string>
+    <string name="Repeat">Ponovi</string>
+    <string name="Subtitles">Titlovi</string>
+    <string name="ChooseSubtitles">Odaberite titlove</string>
+    <string name="DisableSubtitles">Onemogući titlove</string>
+    <string name="SubtitlesAdded">Titlovi omogućeni.</string>
+    <string name="SubtitlesRemoved">Titlovi onemogućeni.</string>
+    <string name="SubtitlesLoadError">Nije moguće učitati titlove.</string>
+    <string name="SubtitlesUnsupportedFormat">Nepodržani format titlova.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Kutovi naljepnica</string>
+    <string name="StickerCornerRadiusInfo">Odaberite koliko zaobljeni trebaju biti kutovi naljepnica.</string>
+    <string name="StickerCornerRadiusLarge">Veliki</string>
+    <string name="StickerCornerRadiusMedium">Srednji</string>
+    <string name="StickerCornerRadiusSmall">Mali</string>
+    <string name="StickerCornerRadiusNone">Nijedan</string>
+    <!-- Feed -->
+    <string name="FeedShownChannels">Prikazano u feedu</string>
+    <string name="FeedHiddenChannels">Skriveno</string>
+    <string name="FeedChannels">Kanali</string>
+    <string name="FeedSettings">Postavke feeda</string>
+    <string name="FeedNoPosts">Još nema objava kanala.</string>
+    <string name="FeedAllChannelsExcluded">Svi kanali su isključeni iz feeda.</string>
+    <string name="FeedMarkAllReadConfirm">Označiti sve objave u vašim feed kanalima kao pročitane? To će ih također označiti kao pročitane u izvornim kanalima.</string>
+    <string name="FeedMarkAllReadDone">Sve objave označene kao pročitane</string>
+    <string name="FeedIncludeArchived">Prikaži razgovore iz arhive</string>
+    <string name="FeedIncludeArchivedInfo">Također uključi kanale iz arhiviranih razgovora u feed.</string>
+    <string name="FeedHideChannel">Sakrij iz feeda</string>
+    <string name="FeedChannelHidden">**%1$s** skriven iz feeda</string>
+    <string name="FeedBottomTab">Prikaži u donjim karticama</string>
+    <string name="FeedBottomTabInfo">Prikaži feed kao donju navigacijsku karticu umjesto kartice Kontakti.</string>
+    <string name="FeedUnreadCounter">Brojač nepročitanih objava</string>
+    <string name="HideFeedTab">Sakrij karticu Feed</string>
+    <string name="DisableMarkdown">Onemogući Markdown</string>
+    <string name="EnableMarkdown">Omogući Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

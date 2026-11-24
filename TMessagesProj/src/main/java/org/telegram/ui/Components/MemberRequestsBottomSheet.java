@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
+import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
+import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Delegates.MemberRequestsDelegate;
 import org.telegram.ui.LaunchActivity;
@@ -29,6 +31,13 @@ public class MemberRequestsBottomSheet extends UsersAlertBase {
 
     public MemberRequestsBottomSheet(BaseFragment fragment, long chatId) {
         super(fragment.getParentActivity(), false, fragment.getCurrentAccount(), fragment.getResourceProvider());
+        setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+        keyListViewBackground = Theme.key_windowBackgroundGray;
+        keyInviteMembersBackground = Theme.key_windowBackgroundGray;
+        setColorProgress(0);
+        fixNavigationBarKey(Theme.key_windowBackgroundGray);
+
+
         this.needSnapToTop = false;
         this.isEmptyViewVisible = false;
         this.delegate = new MemberRequestsDelegate(fragment, container, chatId, false) {
@@ -38,7 +47,7 @@ public class MemberRequestsBottomSheet extends UsersAlertBase {
                     if (membersEmptyView.getVisibility() != View.INVISIBLE) {
                         membersEmptyView.setVisibility(View.INVISIBLE);
                     }
-                    dismiss();
+//                    dismiss();
                 } else if (fromHide) {
                     searchView.searchEditText.setText("");
                 } else {
@@ -49,10 +58,11 @@ public class MemberRequestsBottomSheet extends UsersAlertBase {
         this.delegate.setShowLastItemDivider(false);
         setDimBehindAlpha(75);
 
-        searchView.searchEditText.setHint(LocaleController.getString("SearchMemberRequests", R.string.SearchMemberRequests));
+        searchView.searchEditText.setHint(LocaleController.getString(R.string.SearchMemberRequests));
 
         searchListViewAdapter = listViewAdapter = delegate.getAdapter();
         listView.setAdapter(listViewAdapter);
+        listView.setSections();
         delegate.setRecyclerView(listView);
 
         int position = ((ViewGroup) listView.getParent()).indexOfChild(listView);
@@ -79,7 +89,7 @@ public class MemberRequestsBottomSheet extends UsersAlertBase {
 
     @Override
     public void onBackPressed() {
-        if (delegate.onBackPressed()) {
+        if (delegate.onBackPressed(true)) {
             super.onBackPressed();
         }
     }
@@ -149,4 +159,15 @@ public class MemberRequestsBottomSheet extends UsersAlertBase {
             delegate.setAdapterItemsEnabled(true);
         }
     }
+
+    @Override
+    public void onThemeColorsChanged() {
+        super.onThemeColorsChanged();
+        final int color = getThemedColor(Theme.key_windowBackgroundGray);
+        if (color != lastThemedBackgroundColor) { // setBackgroundColor allocates a color filter
+            lastThemedBackgroundColor = color;
+            setBackgroundColor(color);
+        }
+    }
+    private int lastThemedBackgroundColor;
 }

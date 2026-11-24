@@ -18,31 +18,34 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
 
-import com.google.android.exoplayer2.util.Log;
+
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
+import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.EmojiThemes;
 import org.telegram.ui.Components.BackgroundGradientDrawable;
 import org.telegram.ui.Components.MotionBackgroundDrawable;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ChatBackgroundDrawable extends Drawable {
 
     private final boolean themeIsDark;
     boolean isPattern;
-    View parent;
+    WeakReference<View> parent;
     int alpha = 255;
     float dimAmount;
     ImageReceiver imageReceiver = new ImageReceiver() {
         @Override
         public void invalidate() {
-            if (parent != null) {
-                parent.invalidate();
+            if (parent != null && parent.get() != null) {
+                parent.get().invalidate();
             }
         }
     };
@@ -78,7 +81,7 @@ public class ChatBackgroundDrawable extends Drawable {
     }
 
     public void setParent(View parent) {
-        this.parent = parent;
+        this.parent = new WeakReference<>(parent);
         if (motionBackgroundDrawable != null) {
             motionBackgroundDrawable.setParentView(parent);
         }
@@ -105,10 +108,10 @@ public class ChatBackgroundDrawable extends Drawable {
                     wallPaper.settings.third_background_color,
                     wallPaper.settings.fourth_background_color
             );
-            EmojiThemes.loadWallpaperImage(wallPaper.id, wallPaper, result -> {
-                motionBackgroundDrawable.setPatternBitmap(wallPaper.settings.intensity, result.second);
-                if (parent != null) {
-                    parent.invalidate();
+            EmojiThemes.loadWallpaperImage(UserConfig.selectedAccount, wallPaper.id, wallPaper, result -> {
+                motionBackgroundDrawable.setPatternBitmap(wallPaper.settings.intensity, result.bitmap);
+                if (parent != null && parent.get() != null) {
+                    parent.get().invalidate();
                 }
             });
         } else {
@@ -136,6 +139,9 @@ public class ChatBackgroundDrawable extends Drawable {
 
     public static Drawable createThumb(TLRPC.WallPaper wallPaper) {
         Drawable thumb = null;
+        if (wallPaper.thumbDrawable != null) {
+            return wallPaper.thumbDrawable;
+        }
         if (wallPaper.stripedThumb != null) {
             return new BitmapDrawable(wallPaper.stripedThumb);
         }
@@ -149,7 +155,7 @@ public class ChatBackgroundDrawable extends Drawable {
                 }
             }
         } else {
-            if (wallPaper.settings.intensity < 0) {
+            if (wallPaper.settings == null || wallPaper.settings.intensity < 0) {
                 thumb = bitmapDrawableOf(new ColorDrawable(Color.BLACK));
             } else {
                 if (wallPaper.settings.second_background_color == 0) { //one color
@@ -169,7 +175,7 @@ public class ChatBackgroundDrawable extends Drawable {
                 }
             }
         }
-        return thumb;
+        return wallPaper.thumbDrawable = thumb;
     }
 
     private static Drawable bitmapDrawableOf(Drawable drawable) {
@@ -203,6 +209,13 @@ public class ChatBackgroundDrawable extends Drawable {
         }
     }
 
+    public float getDimAmount() {
+        if (motionBackgroundDrawable == null) {
+            return dimAmount;
+        }
+        return 0;
+    }
+
     @Override
     public void setAlpha(int alpha) {
         if (this.alpha != alpha) {
@@ -221,34 +234,54 @@ public class ChatBackgroundDrawable extends Drawable {
         return 0;
     }
 
-    boolean attached;
-
-    public void onAttachedToWindow() {
-        if (attached) {
-            return;
-        }
-        attached = true;
-        imageReceiver.onAttachedToWindow();
+    private boolean attached;
+    private final ArrayList<View> attachedViews = new ArrayList<>();
+    private boolean isAttached() {
+        return attachedViews.size() > 0;
     }
 
-    public void onDetachedFromWindow() {
-        if (!attached) {
-            return;
+    public void onAttachedToWindow(View view) {
+        if (!attachedViews.contains(view)) {
+            attachedViews.add(view);
         }
-        attached = false;
-        imageReceiver.onDetachedFromWindow();
+        if (isAttached() && !attached) {
+            attached = true;
+            imageReceiver.onAttachedToWindow();
+        } else if (!isAttached() && attached) {
+            attached = false;
+            imageReceiver.onDetachedFromWindow();
+        }
+        if (motionBackgroundDrawable != null) {
+            motionBackgroundDrawable.onAttachedToWindow();
+        }
     }
 
-    public Drawable getDrawable() {
+    public void onDetachedFromWindow(View view) {
+        attachedViews.remove(view);
+        if (isAttached() && !attached) {
+            attached = true;
+            imageReceiver.onAttachedToWindow();
+        } else if (!isAttached() && attached) {
+            attached = false;
+            imageReceiver.onDetachedFromWindow();
+        }
+        if (motionBackgroundDrawable != null) {
+            motionBackgroundDrawable.onDetachedFromWindow();
+        }
+    }
+
+    public Drawable getDrawable(boolean prioritizeThumb) {
         if (motionBackgroundDrawable != null) {
             return motionBackgroundDrawable;
         }
-        if (imageReceiver.getStaticThumb() != null) {
+        if (prioritizeThumb && imageReceiver.getStaticThumb() != null) {
             return imageReceiver.getStaticThumb();
         } else if (imageReceiver.getThumb() != null) {
             return imageReceiver.getThumb();
-        } else {
+        } else if (imageReceiver.getDrawable() != null) {
             return imageReceiver.getDrawable();
+        } else {
+            return imageReceiver.getStaticThumb();
         }
     }
 

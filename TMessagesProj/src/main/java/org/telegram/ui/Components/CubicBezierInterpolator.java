@@ -2,6 +2,9 @@ package org.telegram.ui.Components;
 
 import android.graphics.PointF;
 import android.view.animation.Interpolator;
+import android.view.animation.PathInterpolator;
+
+import androidx.core.graphics.PathParser;
 
 public class CubicBezierInterpolator implements Interpolator {
 
@@ -11,6 +14,13 @@ public class CubicBezierInterpolator implements Interpolator {
     public static final CubicBezierInterpolator EASE_IN = new CubicBezierInterpolator(.42, 0, 1, 1);
     public static final CubicBezierInterpolator EASE_BOTH = new CubicBezierInterpolator(.42, 0, .58, 1);
     public static final CubicBezierInterpolator EASE_OUT_BACK = new CubicBezierInterpolator(.34, 1.56, .64, 1);
+
+    public static final Interpolator Emphasized = new PathInterpolator(PathParser.createPathFromPathData("M 0,0 C 0.05, 0, 0.133333, 0.06, 0.166666, 0.4 C 0.208333, 0.82, 0.25, 1, 1, 1"));
+    public static final Interpolator EmphasizedDecelerate = new PathInterpolator(0.05f, 0.7f, 0.1f, 1f);
+    public static final Interpolator EmphasizedAccelerate = new PathInterpolator(0.3f, 0f, 0.8f, 0.15f);
+
+    public static final Interpolator Standard = new PathInterpolator(0.2f, 0f, 0f, 1f);
+    public static final Interpolator StandardDecelerate = new PathInterpolator(0f, 0f, 0f, 1f);
 
     protected PointF start;
     protected PointF end;

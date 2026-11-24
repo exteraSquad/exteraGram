@@ -4,26 +4,25 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import androidx.core.content.FileProvider;
+import androidx.annotation.NonNull;
+
+import com.exteragram.messenger.updater.UpdaterUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -34,48 +33,47 @@ import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.browser.Browser;
-import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Components.spoilers.SpoilersTextView;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.voip.CellFlickerDrawable;
 
-import java.io.File;
 import java.util.Locale;
 
-public class BlockingUpdateView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
+@SuppressLint("ViewConstructor")
+public class BlockingUpdateView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, Theme.Colorable {
 
-    private TextView textView;
-    private TextView acceptTextView;
-    private FrameLayout radialProgressView;
-    private FrameLayout acceptButton;
-    private RadialProgress radialProgress;
-    private ScrollView scrollView;
+    private final TextView textView;
+    private final TextView acceptTextView;
+    private final FrameLayout radialProgressView;
+    private final FrameLayout acceptButton;
+    private final RadialProgress radialProgress;
+    private final ScrollView scrollView;
 
     private AnimatorSet progressAnimation;
 
-    private TLRPC.TL_help_appUpdate appUpdate;
+    private final TLRPC.TL_help_appUpdate appUpdate;
     private String fileName;
     private int accountNum;
     private int pressCount;
 
-    public BlockingUpdateView(final Context context) {
+    public BlockingUpdateView(final Context context, TLRPC.TL_help_appUpdate update) {
         super(context);
-        setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+        this.appUpdate = update;
+
+        ThemeBind.backgroundColor(this, Theme.key_windowBackgroundWhite);
 
         int top = (int) (AndroidUtilities.statusBarHeight / AndroidUtilities.density);
 
         FrameLayout view = new FrameLayout(context);
-        addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(176) + AndroidUtilities.statusBarHeight));
+        addView(view, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(236) + AndroidUtilities.statusBarHeight));
 
         RLottieImageView imageView = new RLottieImageView(context);
-        imageView.setAnimation(R.raw.qr_code_logo, 108, 108);
+        imageView.setAutoRepeat(true);
+        imageView.setAnimation(R.raw.giveaway_results, 120, 120);
         imageView.playAnimation();
-        imageView.getAnimatedDrawable().setAutoRepeat(1);
-        imageView.setScaleType(ImageView.ScaleType.CENTER);
-        imageView.setPadding(0, 0, 0, AndroidUtilities.dp(14));
-        view.addView(imageView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 0, top, 0, 0));
         imageView.setOnClickListener(v -> {
             pressCount++;
             if (pressCount >= 10) {
@@ -84,40 +82,48 @@ public class BlockingUpdateView extends FrameLayout implements NotificationCente
                 SharedConfig.saveConfig();
             }
         });
+        view.addView(imageView, LayoutHelper.createFrame(120, 120, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, top + 30, 0, 0));
+
+        TextView titleTextView = new TextView(context);
+        ThemeBind.textColor(titleTextView, Theme.key_windowBackgroundWhiteBlackText);
+        titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        titleTextView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+        titleTextView.setTypeface(AndroidUtilities.bold());
+        titleTextView.setText(LocaleController.getString(R.string.UpdateAvailable));
+        view.addView(titleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, top + 150 + 25, 0, 0));
+
+        TextView messageTextView = new TextView(getContext());
+        messageTextView.setTextColor(Theme.getColor(Theme.key_dialogTextGray3));
+        messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        messageTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
+        messageTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
+        messageTextView.setText(LocaleController.formatString("AppUpdateVersionAndSize", R.string.AppUpdateVersionAndSize, appUpdate.version, AndroidUtilities.formatFileSize(appUpdate.document.size)));
+        messageTextView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+        view.addView(messageTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 23, top + 150 + 25 + 30, 23, 0));
 
         FrameLayout container = new FrameLayout(context);
         scrollView = new ScrollView(context);
         AndroidUtilities.setScrollViewEdgeEffectColor(scrollView, Theme.getColor(Theme.key_actionBarDefault));
         scrollView.setPadding(0, AndroidUtilities.dp(16), 0, AndroidUtilities.dp(16));
         scrollView.setClipToPadding(false);
-        addView(scrollView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 27, 178 + top, 27, 130));
-
+        addView(scrollView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 27, 178 + top + 60, 27, 130));
 
         scrollView.addView(container);
 
-        TextView titleTextView = new TextView(context);
-        titleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleTextView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
-        titleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        titleTextView.setText(LocaleController.getString("UpdateTelegram", R.string.UpdateTelegram));
-        container.addView(titleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP));
-
-        textView = new TextView(context);
-        textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        textView.setLinkTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteLinkText));
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
+        textView = new SpoilersTextView(context);
+        ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteBlackText);
+        ThemeBind.linkTextColor(textView, Theme.key_windowBackgroundWhiteLinkText);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
         textView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
-        textView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+        textView.setGravity(Gravity.LEFT | Gravity.TOP);
         textView.setLineSpacing(AndroidUtilities.dp(2), 1.0f);
-        container.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 44, 0, 0));
-
+        container.addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 0, 0, 0));
 
         acceptButton = new FrameLayout(context) {
             CellFlickerDrawable cellFlickerDrawable;
 
             @Override
-            protected void onDraw(Canvas canvas) {
+            protected void onDraw(@NonNull Canvas canvas) {
                 super.onDraw(canvas);
                 if (cellFlickerDrawable == null) {
                     cellFlickerDrawable = new CellFlickerDrawable();
@@ -126,30 +132,20 @@ public class BlockingUpdateView extends FrameLayout implements NotificationCente
                 }
                 cellFlickerDrawable.setParentWidth(getMeasuredWidth());
                 AndroidUtilities.rectTmp.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
-                cellFlickerDrawable.draw(canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(4), null);
+                cellFlickerDrawable.draw(canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(8), null);
                 invalidate();
             }
-
-            @Override
-            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                int size = MeasureSpec.getSize(widthMeasureSpec);
-                if (size > AndroidUtilities.dp(260)) {
-                    super.onMeasure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(320), MeasureSpec.EXACTLY), heightMeasureSpec);
-                } else {
-                    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-                }
-            }
         };
-        acceptButton.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
-        acceptButton.setBackgroundDrawable(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 4));
-        acceptButton.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
-        addView(acceptButton, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 46, Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 0, 0, 0, 45));
+        ScaleStateListAnimator.apply(acceptButton, .02f, 1.2f);
+        acceptButton.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 8));
+        acceptButton.setPadding(AndroidUtilities.dp(16), 0, AndroidUtilities.dp(16), 0);
+        addView(acceptButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM, 16, 0, 16, 45));
         acceptButton.setOnClickListener(view1 -> {
-            if (!checkApkInstallPermissions(getContext())) {
+            if (!ApplicationLoader.applicationLoaderInstance.checkApkInstallPermissions(getContext())) {
                 return;
             }
             if (appUpdate.document instanceof TLRPC.TL_document) {
-                if (!openApkInstall((Activity) getContext(), appUpdate.document)) {
+                if (!ApplicationLoader.applicationLoaderInstance.openApkInstall((Activity) getContext(), appUpdate.document)) {
                     FileLoader.getInstance(accountNum).loadFile(appUpdate.document, "update", FileLoader.PRIORITY_HIGH, 1);
                     showProgress(true);
                 }
@@ -160,8 +156,9 @@ public class BlockingUpdateView extends FrameLayout implements NotificationCente
 
         acceptTextView = new TextView(context);
         acceptTextView.setGravity(Gravity.CENTER);
-        acceptTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        acceptTextView.setTypeface(AndroidUtilities.bold());
         acceptTextView.setTextColor(0xffffffff);
+        acceptTextView.setText(LocaleController.getString(R.string.Update));
         acceptTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         acceptButton.addView(acceptTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
 
@@ -178,7 +175,7 @@ public class BlockingUpdateView extends FrameLayout implements NotificationCente
             }
 
             @Override
-            protected void onDraw(Canvas canvas) {
+            protected void onDraw(@NonNull Canvas canvas) {
                 radialProgress.draw(canvas);
             }
         };
@@ -209,7 +206,7 @@ public class BlockingUpdateView extends FrameLayout implements NotificationCente
             String location = (String) args[0];
             if (fileName != null && fileName.equals(location)) {
                 showProgress(false);
-                openApkInstall((Activity) getContext(), appUpdate.document);
+                ApplicationLoader.applicationLoaderInstance.openApkInstall((Activity) getContext(), appUpdate.document);
             }
         } else if (id == NotificationCenter.fileLoadFailed) {
             String location = (String) args[0];
@@ -225,40 +222,6 @@ public class BlockingUpdateView extends FrameLayout implements NotificationCente
                 radialProgress.setProgress(progress, true);
             }
         }
-    }
-
-    public static boolean checkApkInstallPermissions(final Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !ApplicationLoader.applicationContext.getPackageManager().canRequestPackageInstalls()) {
-            AlertsCreator.createApkRestrictedDialog(context, null).show();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean openApkInstall(Activity activity, TLRPC.Document document) {
-        boolean exists = false;
-        try {
-            String fileName = FileLoader.getAttachFileName(document);
-            File f = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(document, true);
-            if (exists = f.exists()) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                if (Build.VERSION.SDK_INT >= 24) {
-                    intent.setDataAndType(FileProvider.getUriForFile(activity, ApplicationLoader.getApplicationId() + ".provider", f), "application/vnd.android.package-archive");
-                } else {
-                    intent.setDataAndType(Uri.fromFile(f), "application/vnd.android.package-archive");
-                }
-                try {
-                    activity.startActivityForResult(intent, 500);
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
-            }
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-        return exists;
     }
 
     private void showProgress(final boolean show) {
@@ -311,55 +274,70 @@ public class BlockingUpdateView extends FrameLayout implements NotificationCente
         progressAnimation.start();
     }
 
-    public void show(int account, TLRPC.TL_help_appUpdate update, boolean check) {
+    public void show(int account, boolean check) {
         pressCount = 0;
-        appUpdate = update;
         accountNum = account;
-        if (update.document instanceof TLRPC.TL_document) {
-            fileName = FileLoader.getAttachFileName(update.document);
+        if (appUpdate.document instanceof TLRPC.TL_document) {
+            fileName = FileLoader.getAttachFileName(appUpdate.document);
         }
         if (getVisibility() != VISIBLE) {
             setVisibility(VISIBLE);
         }
-        SpannableStringBuilder builder = new SpannableStringBuilder(update.text);
-        MessageObject.addEntitiesToText(builder, update.entities, false, false, false, false);
+        SpannableStringBuilder builder = new SpannableStringBuilder(appUpdate.text);
+        MessageObject.addEntitiesToText(builder, appUpdate.entities, false, false, false, false);
+        MessageObject.replaceAnimatedEmoji(builder, appUpdate.entities, textView.getPaint().getFontMetricsInt());
         textView.setText(builder);
-        if (update.document instanceof TLRPC.TL_document) {
-            acceptTextView.setText(LocaleController.getString("Update", R.string.Update) + String.format(Locale.US, " (%1$s)", AndroidUtilities.formatFileSize(update.document.size)));
-        } else {
-            acceptTextView.setText(LocaleController.getString("Update", R.string.Update));
-        }
-        NotificationCenter.getInstance(accountNum).addObserver(this, NotificationCenter.fileLoaded);
-        NotificationCenter.getInstance(accountNum).addObserver(this, NotificationCenter.fileLoadFailed);
-        NotificationCenter.getInstance(accountNum).addObserver(this, NotificationCenter.fileLoadProgressChanged);
+        NotificationCenter.getInstance(accountNum).addWeakObserver(this, NotificationCenter.fileLoaded);
+        NotificationCenter.getInstance(accountNum).addWeakObserver(this, NotificationCenter.fileLoadFailed);
+        NotificationCenter.getInstance(accountNum).addWeakObserver(this, NotificationCenter.fileLoadProgressChanged);
         if (check) {
-            TLRPC.TL_help_getAppUpdate req = new TLRPC.TL_help_getAppUpdate();
-            try {
-                req.source = ApplicationLoader.applicationContext.getPackageManager().getInstallerPackageName(ApplicationLoader.applicationContext.getPackageName());
-            } catch (Exception ignore) {
-
-            }
-            if (req.source == null) {
-                req.source = "";
-            }
-            ConnectionsManager.getInstance(accountNum).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
-                if (response instanceof TLRPC.TL_help_appUpdate) {
-                    final TLRPC.TL_help_appUpdate res = (TLRPC.TL_help_appUpdate) response;
-                    if (!res.can_not_skip) {
-                        setVisibility(GONE);
-                        SharedConfig.pendingAppUpdate = null;
-                        SharedConfig.saveConfig();
+            UpdaterUtils.getAppUpdate((response, error) -> {
+                if (response != null) {
+                    if (!response.can_not_skip) {
+                        AndroidUtilities.runOnUIThread(() -> {
+                            setVisibility(GONE);
+                            SharedConfig.pendingAppUpdate = null;
+                            SharedConfig.saveConfig();
+                        });
                     }
                 }
-            }));
+            });
         }
     }
 
-    Drawable gradientDrawableTop = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {Theme.getColor(Theme.key_windowBackgroundWhite), Color.TRANSPARENT });
-    Drawable gradientDrawableBottom = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[] {Theme.getColor(Theme.key_windowBackgroundWhite), Color.TRANSPARENT });
+    Drawable gradientDrawableTop = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{Theme.getColor(Theme.key_windowBackgroundWhite), Color.TRANSPARENT});
+    Drawable gradientDrawableBottom = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Theme.getColor(Theme.key_windowBackgroundWhite), Color.TRANSPARENT});
+
+    private boolean themeColorsApplied;
+    private int lastGradientColor, lastEdgeEffectColor;
 
     @Override
-    protected void dispatchDraw(Canvas canvas) {
+    public void updateColors() {
+        try {
+            final int color = Theme.getColor(Theme.key_windowBackgroundWhite);
+            if (!themeColorsApplied || color != lastGradientColor) {
+                lastGradientColor = color;
+                if (gradientDrawableTop instanceof GradientDrawable) {
+                    ((GradientDrawable) gradientDrawableTop).setColors(new int[] {color, Color.TRANSPARENT });
+                }
+                if (gradientDrawableBottom instanceof GradientDrawable) {
+                    ((GradientDrawable) gradientDrawableBottom).setColors(new int[] {color, Color.TRANSPARENT });
+                }
+            }
+            final int edgeColor = Theme.getColor(Theme.key_actionBarDefault);
+            if (scrollView != null && (!themeColorsApplied || edgeColor != lastEdgeEffectColor)) {
+                lastEdgeEffectColor = edgeColor;
+                AndroidUtilities.setScrollViewEdgeEffectColor(scrollView, edgeColor);
+            }
+            themeColorsApplied = true;
+            invalidate();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    @Override
+    protected void dispatchDraw(@NonNull Canvas canvas) {
         super.dispatchDraw(canvas);
         gradientDrawableTop.setBounds(scrollView.getLeft(), scrollView.getTop(), scrollView.getRight(), scrollView.getTop() + AndroidUtilities.dp(16));
         gradientDrawableTop.draw(canvas);

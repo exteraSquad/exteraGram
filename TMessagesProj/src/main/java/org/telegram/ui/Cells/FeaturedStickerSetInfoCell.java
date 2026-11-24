@@ -18,7 +18,7 @@ import android.graphics.Paint;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
+import android.text.TextPaint;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -33,17 +33,17 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ActionBar.ThemeDescription;
-import org.telegram.ui.Components.ColorSpanUnderline;
+import org.telegram.ui.Components.ForegroundColorSpanThemable;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.ProgressButton;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.List;
+import java.util.HashSet;
 
-import com.exteragram.messenger.ExteraConfig;
-
-public class FeaturedStickerSetInfoCell extends FrameLayout {
+public class FeaturedStickerSetInfoCell extends FrameLayout implements Theme.Colorable {
 
     private boolean canAddRemove;
 
@@ -80,9 +80,9 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
         FrameLayout.LayoutParams lp;
 
         nameTextView = new TextView(context);
-        nameTextView.setTextColor(getThemedColor(Theme.key_chat_emojiPanelTrendingTitle));
+        ThemeBind.textColor(nameTextView, Theme.key_chat_emojiPanelTrendingTitle, resourcesProvider);
         nameTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 17);
-        nameTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        nameTextView.setTypeface(AndroidUtilities.bold());
         nameTextView.setEllipsize(TextUtils.TruncateAt.END);
         nameTextView.setSingleLine(true);
         if (supportRtl) {
@@ -93,7 +93,7 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
         addView(nameTextView, lp);
 
         infoTextView = new TextView(context);
-        infoTextView.setTextColor(getThemedColor(Theme.key_chat_emojiPanelTrendingDescription));
+        ThemeBind.textColor(infoTextView, Theme.key_chat_emojiPanelTrendingDescription, resourcesProvider);
         infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
         infoTextView.setEllipsize(TextUtils.TruncateAt.END);
         infoTextView.setSingleLine(true);
@@ -106,8 +106,8 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
 
         if (canAddRemove) {
             addButton = new ProgressButton(context);
-            addButton.setTextColor(getThemedColor(Theme.key_featuredStickers_buttonText));
-            addButton.setText(LocaleController.getString("Add", R.string.Add));
+            ThemeBind.textColor(addButton, Theme.key_featuredStickers_buttonText, resourcesProvider);
+            addButton.setText(LocaleController.getString(R.string.Add));
             if (supportRtl) {
                 lp = LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 16, 14, 0);
             } else {
@@ -117,10 +117,10 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
 
             delButton = new TextView(context);
             delButton.setGravity(Gravity.CENTER);
-            delButton.setTextColor(getThemedColor(Theme.key_featuredStickers_removeButtonText));
+            ThemeBind.textColor(delButton, Theme.key_featuredStickers_removeButtonText, resourcesProvider);
             delButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            delButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            delButton.setText(LocaleController.getString("StickersRemove", R.string.StickersRemove));
+            delButton.setTypeface(AndroidUtilities.bold());
+            delButton.setText(LocaleController.getString(R.string.StickersRemove));
             if (supportRtl) {
                 lp = LayoutHelper.createFrameRelatively(LayoutHelper.WRAP_CONTENT, 28, Gravity.TOP | Gravity.END, 0, 16, 14, 0);
             } else {
@@ -195,7 +195,11 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
         } else {
             nameTextView.setText(stickerSet.set.title);
         }
-        infoTextView.setText(LocaleController.formatPluralString("Stickers", stickerSet.set.count));
+        if (stickerSet.set.emojis) {
+            infoTextView.setText(LocaleController.formatPluralString("EmojiCount", stickerSet.set.count));
+        } else {
+            infoTextView.setText(LocaleController.formatPluralString("Stickers", stickerSet.set.count));
+        }
         isUnread = unread;
         if (canAddRemove) {
             if (hasOnClick) {
@@ -259,7 +263,7 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
         if (stickerSetNameSearchLength != 0) {
             SpannableStringBuilder builder = new SpannableStringBuilder(set.set.title);
             try {
-                builder.setSpan(new ForegroundColorSpan(getThemedColor(Theme.key_windowBackgroundWhiteBlueText4)), stickerSetNameSearchIndex, stickerSetNameSearchIndex + stickerSetNameSearchLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builder.setSpan(new ForegroundColorSpanThemable(Theme.key_windowBackgroundWhiteBlueText4, resourcesProvider), stickerSetNameSearchIndex, stickerSetNameSearchIndex + stickerSetNameSearchLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception ignore) {
             }
             nameTextView.setText(builder);
@@ -276,8 +280,8 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
         if (url != null) {
             SpannableStringBuilder builder = new SpannableStringBuilder(url);
             try {
-                builder.setSpan(new ColorSpanUnderline(getThemedColor(Theme.key_windowBackgroundWhiteBlueText4)), 0, urlSearchLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                builder.setSpan(new ColorSpanUnderline(getThemedColor(Theme.key_chat_emojiPanelTrendingDescription)), urlSearchLength, url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builder.setSpan(new UnderlineColorSpanThemable(Theme.key_windowBackgroundWhiteBlueText4, resourcesProvider), 0, urlSearchLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                builder.setSpan(new UnderlineColorSpanThemable(Theme.key_chat_emojiPanelTrendingDescription, resourcesProvider), urlSearchLength, url.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             } catch (Exception ignore) {
             }
             infoTextView.setText(builder);
@@ -321,27 +325,50 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
             paint.setColor(getThemedColor(Theme.key_featuredStickers_unread));
             canvas.drawCircle(nameTextView.getRight() + AndroidUtilities.dp(12), AndroidUtilities.dp(20), AndroidUtilities.dp(4) * unreadProgress, paint);
         }
-        if (needDivider && !ExteraConfig.disableDividers) {
-            canvas.drawLine(0, 0, getWidth(), 0, Theme.dividerPaint);
+        if (needDivider) {
+            canvas.drawLine(0, 0, getWidth(), 0, Theme.getThemePaint(Theme.key_paint_divider, resourcesProvider));
         }
     }
 
+    private boolean addButtonColorsSet;
+    private int addButtonColor, addButtonPressedColor;
+
+    /** also called on every theme update (Theme.Colorable); search spans read their colors on draw */
+    @Override
     public void updateColors() {
-        if (canAddRemove) {
+        if (canAddRemove && addButton != null) {
             addButton.setProgressColor(getThemedColor(Theme.key_featuredStickers_buttonProgress));
-            addButton.setBackgroundRoundRect(getThemedColor(Theme.key_featuredStickers_addButton), getThemedColor(Theme.key_featuredStickers_addButtonPressed));
+            final int color = getThemedColor(Theme.key_featuredStickers_addButton);
+            final int pressedColor = getThemedColor(Theme.key_featuredStickers_addButtonPressed);
+            if (!addButtonColorsSet || addButtonColor != color || addButtonPressedColor != pressedColor) {
+                addButtonColorsSet = true;
+                addButtonColor = color;
+                addButtonPressedColor = pressedColor;
+                addButton.setBackgroundRoundRect(color, pressedColor);
+            }
+            addButton.invalidate();
         }
-        updateStickerSetNameSearchSpan();
-        updateUrlSearchSpan();
+        if (nameTextView != null) {
+            nameTextView.invalidate();
+        }
+        if (infoTextView != null) {
+            infoTextView.invalidate();
+        }
+    }
+
+    private static class UnderlineColorSpanThemable extends ForegroundColorSpanThemable {
+        public UnderlineColorSpanThemable(int colorKey, Theme.ResourcesProvider resourcesProvider) {
+            super(colorKey, resourcesProvider);
+        }
+
+        @Override
+        public void updateDrawState(TextPaint textPaint) {
+            super.updateDrawState(textPaint);
+            textPaint.setUnderlineText(true);
+        }
     }
 
     public static void createThemeDescriptions(List<ThemeDescription> descriptions, RecyclerListView listView, ThemeDescription.ThemeDescriptionDelegate delegate) {
-        descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetInfoCell.class}, new String[]{"nameTextView"}, null, null, null, Theme.key_chat_emojiPanelTrendingTitle));
-        descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetInfoCell.class}, new String[]{"infoTextView"}, null, null, null, Theme.key_chat_emojiPanelTrendingDescription));
-        descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetInfoCell.class}, new String[]{"addButton"}, null, null, null, Theme.key_featuredStickers_buttonText));
-        descriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR, new Class[]{FeaturedStickerSetInfoCell.class}, new String[]{"delButton"}, null, null, null, Theme.key_featuredStickers_removeButtonText));
-        descriptions.add(new ThemeDescription(listView, 0, new Class[]{FeaturedStickerSetInfoCell.class}, null, null, null, Theme.key_featuredStickers_unread));
-        descriptions.add(new ThemeDescription(listView, 0, new Class[]{FeaturedStickerSetInfoCell.class}, Theme.dividerPaint, null, null, Theme.key_divider));
         descriptions.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_featuredStickers_buttonProgress));
         descriptions.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_featuredStickers_addButton));
         descriptions.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_featuredStickers_addButtonPressed));
@@ -351,5 +378,12 @@ public class FeaturedStickerSetInfoCell extends FrameLayout {
 
     private int getThemedColor(int key) {
         return Theme.getColor(key, resourcesProvider);
+    }
+
+    /** theme editor: colors this view shows (former ThemeDescription keys) */
+    @Override
+    public void addColorKeys(HashSet<Integer> colors) {
+        colors.add(Theme.key_divider);
+        colors.add(Theme.key_featuredStickers_unread);
     }
 }

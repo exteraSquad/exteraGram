@@ -28,8 +28,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exteragram.messenger.ExteraConfig;
-
+import com.exteragram.messenger.api.dto.BadgeDTO;
+import com.exteragram.messenger.badges.BadgesController;
+import com.exteragram.messenger.utils.system.VibratorUtils;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
@@ -44,17 +45,22 @@ import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.ContentPreviewViewer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
-public class SuggestEmojiView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
+public class SuggestEmojiView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate, Theme.Colorable {
+
+    public final static int DIRECTION_TO_BOTTOM = 0;
+    public final static int DIRECTION_TO_TOP = 1;
 
     private final int currentAccount;
     private final Theme.ResourcesProvider resourcesProvider;
-    private final ChatActivityEnterView enterView;
+    private AnchorViewDelegate enterView;
 
     @Nullable
     private FrameLayout containerView;
@@ -62,6 +68,18 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
     private RecyclerListView listView;
     @Nullable
     private Adapter adapter;
+    private int direction = DIRECTION_TO_BOTTOM;
+    private int horizontalPadding = AndroidUtilities.dp(10);
+
+    public interface AnchorViewDelegate {
+        BaseFragment getParentFragment();
+        void setFieldText(CharSequence text);
+        void addTextChangedListener(TextWatcher watcher);
+        int getVisibility();
+        EditTextBoldCursor getEditField();
+        CharSequence getFieldText();
+        Editable getEditText();
+    }
 
     private ContentPreviewViewer.ContentPreviewViewerDelegate previewDelegate;
     private ContentPreviewViewer.ContentPreviewViewerDelegate getPreviewDelegate() {
@@ -77,8 +95,12 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                     if (enterView == null) {
                         return false;
                     }
-                    ChatActivity fragment = enterView.getParentFragment();
-                    return fragment != null && fragment.canSendMessage() && (UserConfig.getInstance(UserConfig.selectedAccount).isPremium() || fragment.getCurrentUser() != null && UserObject.isUserSelf(fragment.getCurrentUser()));
+                    BaseFragment fragment = enterView.getParentFragment();
+                    if (fragment instanceof ChatActivity) {
+                        ChatActivity chatActivity = (ChatActivity) fragment;
+                        return chatActivity.canSendMessage() && (UserConfig.getInstance(UserConfig.selectedAccount).isPremium() || chatActivity.getCurrentUser() != null && UserObject.isUserSelf(chatActivity.getCurrentUser()));
+                    }
+                    return false;
                 }
 
                 @Override
@@ -86,13 +108,19 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                     if (enterView == null) {
                         return;
                     }
-                    ChatActivity fragment = enterView.getParentFragment();
-                    fragment.sendAnimatedEmoji(emoji, true, 0);
-                    enterView.setFieldText("");
+                    BaseFragment fragment = enterView.getParentFragment();
+                    if (fragment instanceof ChatActivity) {
+                        ChatActivity chatActivity = (ChatActivity) fragment;
+                        chatActivity.sendAnimatedEmoji(emoji, true, 0);
+                        enterView.setFieldText("");
+                    }
                 }
 
                 @Override
-                public boolean needCopy() {
+                public boolean needCopy(TLRPC.Document document) {
+                    if (isCopyForbidden) {
+                        return false;
+                    }
                     return UserConfig.getInstance(UserConfig.selectedAccount).isPremium();
                 }
 
@@ -101,12 +129,15 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                     Spannable spannable = SpannableStringBuilder.valueOf(MessageObject.findAnimatedEmojiEmoticon(document));
                     spannable.setSpan(new AnimatedEmojiSpan(document, null), 0, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     if (AndroidUtilities.addToClipboard(spannable) && enterView != null) {
-                        BulletinFactory.of(enterView.getParentFragment()).createCopyBulletin(LocaleController.getString("EmojiCopied", R.string.EmojiCopied)).show();
+                        BulletinFactory.of(enterView.getParentFragment()).createCopyBulletin(LocaleController.getString(R.string.EmojiCopied)).show();
                     }
                 }
 
                 @Override
                 public Boolean canSetAsStatus(TLRPC.Document document) {
+                    if (isSetAsStatusForbidden) {
+                        return null;
+                    }
                     if (!UserConfig.getInstance(UserConfig.selectedAccount).isPremium()) {
                         return null;
                     }
@@ -120,36 +151,62 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
 
                 @Override
                 public void setAsEmojiStatus(TLRPC.Document document, Integer until) {
-                    TLRPC.EmojiStatus status;
+                    final TLRPC.EmojiStatus emojiStatus;
                     if (document == null) {
-                        status = new TLRPC.TL_emojiStatusEmpty();
-                    } else if (until != null) {
-                        status = new TLRPC.TL_emojiStatusUntil();
-                        ((TLRPC.TL_emojiStatusUntil) status).document_id = document.id;
-                        ((TLRPC.TL_emojiStatusUntil) status).until = until;
+                        emojiStatus = new TLRPC.TL_emojiStatusEmpty();
                     } else {
-                        status = new TLRPC.TL_emojiStatus();
-                        ((TLRPC.TL_emojiStatus) status).document_id = document.id;
+                        final TLRPC.TL_emojiStatus status = new TLRPC.TL_emojiStatus();
+                        status.document_id = document.id;
+                        if (until != null) {
+                            status.flags |= 1;
+                            status.until = until;
+                        }
+                        emojiStatus = status;
                     }
-                    TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
+                    final TLRPC.User user = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser();
                     final TLRPC.EmojiStatus previousEmojiStatus = user == null ? new TLRPC.TL_emojiStatusEmpty() : user.emoji_status;
-                    MessagesController.getInstance(currentAccount).updateEmojiStatus(status);
+                    MessagesController.getInstance(currentAccount).updateEmojiStatus(emojiStatus);
 
-                    Runnable undoAction = () -> MessagesController.getInstance(currentAccount).updateEmojiStatus(previousEmojiStatus);
-                    BaseFragment fragment = enterView == null ? null : enterView.getParentFragment();
+                    final Runnable undoAction = () -> MessagesController.getInstance(currentAccount).updateEmojiStatus(previousEmojiStatus);
+                    final BaseFragment fragment = enterView == null ? null : enterView.getParentFragment();
                     if (fragment != null) {
                         if (document == null) {
                             final Bulletin.SimpleLayout layout = new Bulletin.SimpleLayout(getContext(), resourcesProvider);
-                            layout.textView.setText(LocaleController.getString("RemoveStatusInfo", R.string.RemoveStatusInfo));
+                            layout.textView.setText(LocaleController.getString(R.string.RemoveStatusInfo));
                             layout.imageView.setImageResource(R.drawable.msg_settings_premium);
                             Bulletin.UndoButton undoButton = new Bulletin.UndoButton(getContext(), true, resourcesProvider);
                             undoButton.setUndoAction(undoAction);
                             layout.setButton(undoButton);
                             Bulletin.make(fragment, layout, Bulletin.DURATION_SHORT).show();
                         } else {
-                            BulletinFactory.of(fragment).createEmojiBulletin(document, LocaleController.getString("SetAsEmojiStatusInfo", R.string.SetAsEmojiStatusInfo), LocaleController.getString("Undo", R.string.Undo), undoAction).show();
+                            BulletinFactory.of(fragment).createEmojiBulletin(document, LocaleController.getString(R.string.SetAsEmojiStatusInfo), LocaleController.getString(R.string.UndoNoCaps), undoAction).show();
                         }
                     }
+                }
+
+                @Override
+                public void setAsBadge(TLRPC.Document document) {
+                    if (document == null) return;
+
+                    var oldBadge = BadgesController.INSTANCE.getBadge();
+                    final BaseFragment fragment = enterView == null ? null : enterView.getParentFragment();
+
+                    final Runnable undoAction = () ->
+                            BadgesController.INSTANCE.updateBadge(oldBadge, (res) ->
+                                    AndroidUtilities.runOnUIThread(() -> {
+                                        if (res == null || !res.equals("ok")) {
+                                            BulletinFactory.of(fragment).createErrorBulletin(LocaleController.getString(R.string.UnknownError)).show();
+                                        }
+                                    }));
+
+                    BadgesController.INSTANCE.updateBadge(new BadgeDTO(document.id, oldBadge != null ? oldBadge.getText() : null), (res) ->
+                            AndroidUtilities.runOnUIThread(() -> {
+                                if (res == null || !res.equals("ok")) {
+                                    BulletinFactory.of(fragment).createErrorBulletin(LocaleController.getString(R.string.UnknownError)).show();
+                                } else {
+                                    BulletinFactory.of(fragment).createEmojiBulletin(document, LocaleController.getString(R.string.SetAsBadgeStatusInfo), LocaleController.getString(R.string.UndoNoCaps), undoAction).show();
+                                }
+                            }));
                 }
 
                 @Override
@@ -162,12 +219,43 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                     if (enterView == null) {
                         return false;
                     }
-                    ChatActivity fragment = enterView.getParentFragment();
-                    return fragment.isInScheduleMode();
+                    BaseFragment fragment = enterView.getParentFragment();
+                    if (fragment instanceof ChatActivity) {
+                        ChatActivity chatActivity = (ChatActivity) fragment;
+                        return chatActivity.isInScheduleMode();
+                    } else {
+                        return false;
+                    }
                 }
 
                 @Override
                 public void openSet(TLRPC.InputStickerSet set, boolean clearsInputField) {}
+
+                @Override
+                public boolean needShowEmojiSet(TLRPC.Document document) {
+                    return document != null && MessageObject.getInputStickerSet(document) != null;
+                }
+
+                @Override
+                public void showEmojiSet(TLRPC.Document document) {
+                    TLRPC.InputStickerSet inputStickerSet = MessageObject.getInputStickerSet(document);
+                    if (inputStickerSet == null) {
+                        return;
+                    }
+                    ArrayList<TLRPC.InputStickerSet> inputStickerSets = new ArrayList<>(1);
+                    inputStickerSets.add(inputStickerSet);
+                    final BaseFragment fragment = enterView == null ? null : enterView.getParentFragment();
+                    EmojiPacksAlert alert = new EmojiPacksAlert(fragment, getContext(), resourcesProvider, inputStickerSets);
+                    alert.setPreviewEmoji(document);
+                    if (fragment instanceof ChatActivity) {
+                        alert.setCalcMandatoryInsets(((ChatActivity) fragment).isKeyboardVisible());
+                        ((ChatActivity) fragment).showDialog(alert);
+                    } else if (fragment != null) {
+                        fragment.showDialog(alert);
+                    } else {
+                        alert.show();
+                    }
+                }
 
                 @Override
                 public long getDialogId() {
@@ -182,14 +270,24 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
     @Nullable
     private ArrayList<MediaDataController.KeywordResult> keywordResults;
     private boolean clear;
+    private boolean isCopyForbidden;
+    private boolean isSetAsStatusForbidden;
 
-    public SuggestEmojiView(Context context, int currentAccount, ChatActivityEnterView enterView, Theme.ResourcesProvider resourcesProvider) {
+    public SuggestEmojiView(Context context, int currentAccount, AnchorViewDelegate enterView, Theme.ResourcesProvider resourcesProvider) {
         super(context);
         this.currentAccount = currentAccount;
         this.enterView = enterView;
         this.resourcesProvider = resourcesProvider;
 
         postDelayed(() -> MediaDataController.getInstance(currentAccount).checkStickers(MediaDataController.TYPE_EMOJIPACKS), 260);
+    }
+
+    public void forbidCopy() {
+        isCopyForbidden = true;
+    }
+
+    public void forbidSetAsStatus() {
+        isSetAsStatusForbidden = true;
     }
 
     private void createListView() {
@@ -210,7 +308,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
 
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                this.setPadding(AndroidUtilities.dp(10), AndroidUtilities.dp(8), AndroidUtilities.dp(10), AndroidUtilities.dp(6.66f));
+                this.setPadding(horizontalPadding, direction == DIRECTION_TO_BOTTOM ? AndroidUtilities.dp(8) : AndroidUtilities.dp(6.66f), horizontalPadding, direction == DIRECTION_TO_BOTTOM ? AndroidUtilities.dp(6.66f) : AndroidUtilities.dp(8));
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
 
@@ -272,7 +370,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         itemAnimator.setDurations(45);
         itemAnimator.setTranslationInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
         listView.setItemAnimator(itemAnimator);
-        listView.setSelectorDrawableColor(Theme.getColor(Theme.key_listSelector, resourcesProvider));
+        ThemeBind.listSelectorColor(listView, Theme.key_listSelector, resourcesProvider);
         RecyclerListView.OnItemClickListener onItemClickListener;
         listView.setOnItemClickListener(onItemClickListener = (view, position) -> {
             onClick(((EmojiImageView) view).emoji);
@@ -281,18 +379,36 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
 
         containerView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 44 + 8));
         addView(containerView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 8 + 44 + 8 + 6.66f, Gravity.BOTTOM));
-        enterView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (enterView.getVisibility() == View.VISIBLE) {
-                    fireUpdate();
+        if (enterView != null) {
+            enterView.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 }
-            }
-        });
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    if (enterView != null && enterView.getVisibility() == View.VISIBLE) {
+                        fireUpdate();
+                    }
+                }
+            });
+        }
+    }
+
+    public void setDelegate(AnchorViewDelegate delegate) {
+        this.enterView = delegate;
+    }
+
+    public void setHorizontalPadding(int padding) {
+        this.horizontalPadding = padding;
+    }
+
+    public AnchorViewDelegate getDelegate() {
+        return enterView;
     }
 
     public void onTextSelectionChanged(int start, int end) {
@@ -303,12 +419,39 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         return show;
     }
 
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        if (this.direction != direction) {
+            this.direction = direction;
+            requestLayout();
+        }
+    }
+
+    private PorterDuffColorFilter gradientFilter;
+    private int gradientFilterColor;
+
+    @Override
     public void updateColors() {
         if (backgroundPaint != null) {
             backgroundPaint.setColor(Theme.getColor(Theme.key_chat_stickersHintPanel, resourcesProvider));
         }
-        Theme.chat_gradientLeftDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_stickersHintPanel, resourcesProvider), PorterDuff.Mode.MULTIPLY));
-        Theme.chat_gradientRightDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_stickersHintPanel, resourcesProvider), PorterDuff.Mode.MULTIPLY));
+        final int gradientColor = Theme.getColor(Theme.key_chat_stickersHintPanel, resourcesProvider);
+        if (gradientFilter == null || gradientFilterColor != gradientColor) {
+            gradientFilter = new PorterDuffColorFilter(gradientFilterColor = gradientColor, PorterDuff.Mode.MULTIPLY);
+        }
+        // the gradient drawables are shared: set the filter again only when someone else changed it
+        if (Theme.chat_gradientLeftDrawable != null && Theme.chat_gradientLeftDrawable.getColorFilter() != gradientFilter) {
+            Theme.chat_gradientLeftDrawable.setColorFilter(gradientFilter);
+        }
+        if (Theme.chat_gradientRightDrawable != null && Theme.chat_gradientRightDrawable.getColorFilter() != gradientFilter) {
+            Theme.chat_gradientRightDrawable.setColorFilter(gradientFilter);
+        }
+        if (containerView != null) {
+            containerView.invalidate();
+        }
     }
 
     public void forceClose() {
@@ -417,6 +560,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         return lastLang;
     }
 
+    private MediaDataController.SearchStickersKey loadingKey;
     private void searchKeywords(String query) {
         if (query == null) {
             return;
@@ -430,6 +574,10 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
             return;
         }
         final int id = ++lastQueryId;
+        if (loadingKey != null) {
+            MediaDataController.getInstance(currentAccount).cancelSearchStickers(loadingKey);
+            loadingKey = null;
+        }
 
         String[] lang = detectKeyboardLangThrottleFirstWithDelay();
         if (lastLang == null || !Arrays.equals(lang, lastLang)) {
@@ -442,11 +590,22 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
             searchRunnable = null;
         }
         searchRunnable = () -> {
-            MediaDataController.getInstance(currentAccount).getEmojiSuggestions(lang, query, true, (param, alias) -> {
-                if (id == lastQueryId) {
+            final HashSet<String> addedToResult = new HashSet<>();
+            final ArrayList<MediaDataController.KeywordResult> result = new ArrayList<>();
+//            Runnable localSearch = () -> {
+                MediaDataController.getInstance(currentAccount).getEmojiSuggestions(lang, query, true, (param, alias) -> {
+                    if (id != lastQueryId) return;
                     lastQueryType = 1;
                     lastQuery = query;
-                    if (param != null && !param.isEmpty()) {
+                    if (param != null) {
+                        for (MediaDataController.KeywordResult r : param) {
+                            if (!addedToResult.contains(r.emoji)) {
+                                addedToResult.add(r.emoji);
+                                result.add(r);
+                            }
+                        }
+                    }
+                    if (!result.isEmpty()) {
                         clear = false;
                         forceClose = false;
                         createListView();
@@ -468,8 +627,29 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                         clear = true;
                         forceClose();
                     }
-                }
-            }, true);
+                }, SharedConfig.suggestAnimatedEmoji && UserConfig.getInstance(currentAccount).isPremium());
+//            };
+//            Runnable serverSearch = () -> {
+//                if (ConnectionsManager.getInstance(currentAccount).getConnectionState() != ConnectionsManager.ConnectionStateConnected) {
+//                    localSearch.run();
+//                    return;
+//                }
+//                loadingKey = MediaDataController.getInstance(currentAccount).searchStickers(true, query, lang == null ? "" : lang[0], emojis -> {
+//                    if (id != lastQueryId) return;
+//                    AnimatedEmojiDrawable.getDocumentFetcher(currentAccount).putDocuments(emojis);
+//                    for (TLRPC.Document doc : emojis) {
+//                        final String emoji = "animated_" + doc.id;
+//                        if (!addedToResult.contains(emoji)) {
+//                            MediaDataController.KeywordResult keywordResult = new MediaDataController.KeywordResult();
+//                            keywordResult.emoji = emoji;
+//                            addedToResult.add(emoji);
+//                            result.add(keywordResult);
+//                        }
+//                    }
+//                    localSearch.run();
+//                });
+//            };
+//            serverSearch.run();
         };
         if (keywordResults == null || keywordResults.isEmpty()) {
             AndroidUtilities.runOnUIThread(searchRunnable, 600);
@@ -500,7 +680,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         searchRunnable = () -> {
             ArrayList<MediaDataController.KeywordResult> standard = new ArrayList<>(1);
             standard.add(new MediaDataController.KeywordResult(emoji, null));
-            MediaDataController.getInstance(currentAccount).fillWithAnimatedEmoji(standard, 15, false, () -> {
+            MediaDataController.getInstance(currentAccount).fillWithAnimatedEmoji(standard, 15, false, false, false, () -> {
                 if (id == lastQueryId) {
                     lastQuery = emoji;
                     lastQueryType = 2;
@@ -559,7 +739,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
             }
         } else {
             emoji = emojiSource;
-            emoji = Emoji.replaceEmoji(emoji, fontMetricsInt, AndroidUtilities.dp(20), true);
+            emoji = Emoji.replaceEmoji(emoji, fontMetricsInt, true);
         }
         return emoji;
     }
@@ -606,8 +786,8 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
                             editable.removeSpan(emojiSpan);
                         }
                     }
-                    int pos = i + replacingLength;
-                    editable.replace(i, pos, emoji);
+                    editable.replace(i, i + replacingLength, "");
+                    editable.insert(i, emoji);
                 } else {
                     break;
                 }
@@ -616,7 +796,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
             }
         }
         try {
-            performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
+            performHapticFeedback(VibratorUtils.getType(HapticFeedbackConstants.KEYBOARD_TAP), HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
         } catch (Exception ignore) {}
         Emoji.addRecentEmoji(emojiSource);
         show = false;
@@ -674,7 +854,11 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         float center = listViewCenterAnimated.set((listViewLeft + listViewRight) / 2f, force);
 
         if (enterView != null && enterView.getEditField() != null) {
-            containerView.setTranslationY(-enterView.getEditField().getHeight() - enterView.getEditField().getScrollY() + lastSpanY + AndroidUtilities.dp(5));
+            if (direction == DIRECTION_TO_BOTTOM) {
+                containerView.setTranslationY(-enterView.getEditField().getHeight() - enterView.getEditField().getScrollY() + lastSpanY + AndroidUtilities.dp(5));
+            } else if (direction == DIRECTION_TO_TOP) {
+                containerView.setTranslationY(-getMeasuredHeight() - enterView.getEditField().getScrollY() + lastSpanY + AndroidUtilities.dp(20) + containerView.getHeight());
+            }
         }
         int listViewPaddingLeft = (int) Math.max(this.arrowX - Math.max(width / 4f, Math.min(width / 2f, AndroidUtilities.dp(66))) - listView.getLeft(), 0);
         if (listView.getPaddingLeft() != listViewPaddingLeft) {
@@ -686,28 +870,45 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         listView.setTranslationX(listViewPaddingLeftI - listViewPaddingLeft);
 
         float left = center - width / 2f + listView.getPaddingLeft() + listView.getTranslationX();
-        float top = listView.getTop() + listView.getTranslationY() + listView.getPaddingTop();
+        float top = listView.getTop() + listView.getTranslationY() + listView.getPaddingTop() + (direction == DIRECTION_TO_BOTTOM ? 0: AndroidUtilities.dp(6.66f));
         float right = Math.min(center + width / 2f + listView.getPaddingLeft() + listView.getTranslationX(), getWidth() - containerView.getPaddingRight());
-        float bottom = listView.getBottom() + listView.getTranslationY() - AndroidUtilities.dp(6.66f);
+        float bottom = listView.getBottom() + listView.getTranslationY() - (direction == DIRECTION_TO_BOTTOM ? AndroidUtilities.dp(6.66f) : 0);
 
         float R = Math.min(AndroidUtilities.dp(9), width / 2f), D = R * 2;
 
-        AndroidUtilities.rectTmp.set(left, bottom - D, left + D, bottom);
-        path.arcTo(AndroidUtilities.rectTmp, 90, 90);
+        if (direction == DIRECTION_TO_BOTTOM) {
+            AndroidUtilities.rectTmp.set(left, bottom - D, left + D, bottom);
+            path.arcTo(AndroidUtilities.rectTmp, 90, 90);
 
-        AndroidUtilities.rectTmp.set(left, top, left + D, top + D);
-        path.arcTo(AndroidUtilities.rectTmp, -180, 90);
+            AndroidUtilities.rectTmp.set(left, top, left + D, top + D);
+            path.arcTo(AndroidUtilities.rectTmp, -180, 90);
 
-        AndroidUtilities.rectTmp.set(right - D, top, right, top + D);
-        path.arcTo(AndroidUtilities.rectTmp, -90, 90);
+            AndroidUtilities.rectTmp.set(right - D, top, right, top + D);
+            path.arcTo(AndroidUtilities.rectTmp, -90, 90);
 
-        AndroidUtilities.rectTmp.set(right - D, bottom - D, right, bottom);
-        path.arcTo(AndroidUtilities.rectTmp, 0, 90);
+            AndroidUtilities.rectTmp.set(right - D, bottom - D, right, bottom);
+            path.arcTo(AndroidUtilities.rectTmp, 0, 90);
 
-        path.lineTo(arrowX + AndroidUtilities.dp(8.66f), bottom);
-        path.lineTo(arrowX, bottom + AndroidUtilities.dp(6.66f));
-        path.lineTo(arrowX - AndroidUtilities.dp(8.66f), bottom);
+            path.lineTo(arrowX + AndroidUtilities.dp(8.66f), bottom);
+            path.lineTo(arrowX, bottom + AndroidUtilities.dp(6.66f));
+            path.lineTo(arrowX - AndroidUtilities.dp(8.66f), bottom);
+        } else if (direction == DIRECTION_TO_TOP) {
+            AndroidUtilities.rectTmp.set(right - D, top, right, top + D);
+            path.arcTo(AndroidUtilities.rectTmp, -90, 90);
 
+            AndroidUtilities.rectTmp.set(right - D, bottom - D, right, bottom);
+            path.arcTo(AndroidUtilities.rectTmp, 0, 90);
+
+            AndroidUtilities.rectTmp.set(left, bottom - D, left + D, bottom);
+            path.arcTo(AndroidUtilities.rectTmp, 90, 90);
+
+            AndroidUtilities.rectTmp.set(left, top, left + D, top + D);
+            path.arcTo(AndroidUtilities.rectTmp, -180, 90);
+
+            path.lineTo(arrowX - AndroidUtilities.dp(8.66f), top);
+            path.lineTo(arrowX, top - AndroidUtilities.dp(6.66f));
+            path.lineTo(arrowX + AndroidUtilities.dp(8.66f), top);
+        }
         path.close();
 
         if (backgroundPaint == null) {
@@ -719,7 +920,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
 
         if (showT1 < 1) {
             circlePath.rewind();
-            float cx = arrowX, cy = bottom + AndroidUtilities.dp(6.66f);
+            float cx = arrowX, cy = (direction == DIRECTION_TO_BOTTOM) ? bottom + AndroidUtilities.dp(6.66f) : top - AndroidUtilities.dp(6.66f);
             float toRadius = (float) Math.sqrt(Math.max(
                     Math.max(
                             Math.pow(cx - left, 2) + Math.pow(cy - top, 2),
@@ -805,8 +1006,8 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.newEmojiSuggestionsAvailable);
+        NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.emojiLoaded);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.newEmojiSuggestionsAvailable);
     }
 
     @Override
@@ -831,17 +1032,22 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         }
     }
 
+    protected int emojiCacheType() {
+        return AnimatedEmojiDrawable.CACHE_TYPE_KEYBOARD;
+    }
+
     public void invalidateContent() {
         if (containerView != null) {
             containerView.invalidate();
         }
     }
 
-    public static class EmojiImageView extends View {
+    public class EmojiImageView extends View {
 
         private String emoji;
         public Drawable drawable;
         private boolean attached;
+        private int direction = DIRECTION_TO_BOTTOM;
 
         private AnimatedFloat pressed = new AnimatedFloat(this, 350, new OvershootInterpolator(5.0f));
 
@@ -852,26 +1058,30 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         private final int paddingDp = 3;
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            setPadding(AndroidUtilities.dp(paddingDp), AndroidUtilities.dp(paddingDp), AndroidUtilities.dp(paddingDp), AndroidUtilities.dp(paddingDp + 6.66f));
+            setPadding(AndroidUtilities.dp(paddingDp), AndroidUtilities.dp(paddingDp + (direction == DIRECTION_TO_BOTTOM ? 0 : 6.66f)), AndroidUtilities.dp(paddingDp), AndroidUtilities.dp(paddingDp + (direction == DIRECTION_TO_BOTTOM ? 6.66f : 0)));
             super.onMeasure(
                     MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(44), MeasureSpec.EXACTLY),
                     MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(44 + 8), MeasureSpec.EXACTLY)
             );
         }
 
-        private void setEmoji(String emoji) {
+        private void setEmoji(String emoji, int direction) {
             this.emoji = emoji;
             if (emoji != null && emoji.startsWith("animated_")) {
                 try {
                     long documentId = Long.parseLong(emoji.substring(9));
                     if (!(drawable instanceof AnimatedEmojiDrawable) || ((AnimatedEmojiDrawable) drawable).getDocumentId() != documentId) {
-                        setImageDrawable(AnimatedEmojiDrawable.make(UserConfig.selectedAccount, AnimatedEmojiDrawable.CACHE_TYPE_KEYBOARD, documentId));
+                        setImageDrawable(AnimatedEmojiDrawable.make(UserConfig.selectedAccount, emojiCacheType(), documentId));
                     }
                 } catch (Exception ignore) {
                     setImageDrawable(null);
                 }
             } else {
                 setImageDrawable(Emoji.getEmojiBigDrawable(emoji));
+            }
+            if (this.direction != direction) {
+                this.direction = direction;
+                requestLayout();
             }
         }
 
@@ -883,6 +1093,11 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
             if (drawable instanceof AnimatedEmojiDrawable && attached) {
                 ((AnimatedEmojiDrawable) drawable).addView(this);
             }
+        }
+
+        public void setDirection(int direction) {
+            this.direction = direction;
+            invalidate();
         }
 
         @Override
@@ -932,7 +1147,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
         }
     }
 
-    private static class Adapter extends RecyclerListView.SelectionAdapter {
+    private class Adapter extends RecyclerListView.SelectionAdapter {
 
         SuggestEmojiView suggestEmojiView;
         public Adapter(SuggestEmojiView suggestEmojiView) {
@@ -957,7 +1172,7 @@ public class SuggestEmojiView extends FrameLayout implements NotificationCenter.
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ((EmojiImageView) holder.itemView).setEmoji(suggestEmojiView.keywordResults == null ? null : suggestEmojiView.keywordResults.get(position).emoji);
+            ((EmojiImageView) holder.itemView).setEmoji(suggestEmojiView.keywordResults == null ? null : suggestEmojiView.keywordResults.get(position).emoji, suggestEmojiView.getDirection());
         }
 
         @Override

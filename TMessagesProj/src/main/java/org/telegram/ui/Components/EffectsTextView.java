@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -15,7 +16,7 @@ import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.spoilers.SpoilersTextView;
 
 // TextView with both Spoilers, Links and Emojis (not animated though)
-public class EffectsTextView extends SpoilersTextView {
+public class EffectsTextView extends SpoilersTextView implements RecyclerListView.HitTestable {
     public interface OnLinkPress {
         public void run(ClickableSpan span);
     }
@@ -53,7 +54,7 @@ public class EffectsTextView extends SpoilersTextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        text = Emoji.replaceEmoji(text, getPaint().getFontMetricsInt(), AndroidUtilities.dp(14), false);
+        text = Emoji.replaceEmoji(text, getPaint().getFontMetricsInt(), false);
         super.setText(text, type);
     }
 
@@ -67,14 +68,6 @@ public class EffectsTextView extends SpoilersTextView {
 
     public void setDisablePaddingsOffsetY(boolean disablePaddingsOffsetY) {
         this.disablePaddingsOffsetY = disablePaddingsOffsetY;
-    }
-
-    public void setOnLinkPressListener(LinkSpanDrawable.LinksTextView.OnLinkPress listener) {
-        onPressListener = listener;
-    }
-
-    public void setOnLinkLongPressListener(LinkSpanDrawable.LinksTextView.OnLinkPress listener) {
-        onLongPressListener = listener;
     }
 
     public ClickableSpan hit(int x, int y) {
@@ -157,5 +150,34 @@ public class EffectsTextView extends SpoilersTextView {
             canvas.restore();
         }
         super.onDraw(canvas);
+    }
+
+    @Override
+    public boolean hasClickableNodeAt(float x, float y) {
+        if (!isClickable()) return false;
+
+        if (!(getText() instanceof Spanned buffer)) return false;
+
+        x -= getTotalPaddingLeft();
+        y -= getTotalPaddingTop();
+        x += getScrollX();
+        y += getScrollY();
+
+        android.text.Layout layout = getLayout();
+        if (layout != null) {
+            int line = layout.getLineForVertical((int) y);
+
+            if (line < 0 || line >= layout.getLineCount()) return false;
+
+            float lineWidth = layout.getLineWidth(line);
+            float lineLeft = layout.getLineLeft(line);
+            if (x < lineLeft || x > lineLeft + lineWidth) return false;
+
+            int off = layout.getOffsetForHorizontal(line, x);
+
+            ClickableSpan[] links = buffer.getSpans(off, off, ClickableSpan.class);
+            return links.length > 0;
+        }
+        return false;
     }
 }

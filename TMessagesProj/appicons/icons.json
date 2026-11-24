@@ -1,0 +1,204 @@
+{
+  "defaultMonochrome": "@drawable/ic_monochrome",
+  "icons": [
+    {
+      "id": "default",
+      "resource": "ic_launcher",
+      "component": "DefaultIcon",
+      "titleRes": "AppIconDefault",
+      "descriptionRes": "AppIconDefaultInfo",
+      "background": "@color/ic_background",
+      "round": true,
+      "author": "exteraGram"
+    },
+    {
+      "id": "beta",
+      "resource": "ic_launcher_beta",
+      "monochrome": "@drawable/ic_monochrome_beta",
+      "assetsOnly": true
+    },
+    {
+      "id": "winter",
+      "titleRes": "AppIconWinter",
+      "descriptionRes": "AppIconWinterInfo",
+      "foreground": "@mipmap/ic_launcher_foreground",
+      "availability": "winter",
+      "author": "exteraGram"
+    },
+    {
+      "id": "monet",
+      "titleRes": "AppIconMonet",
+      "descriptionRes": "AppIconMonetInfo",
+      "background": "@color/ic_background_monet",
+      "foreground": "@drawable/ic_foreground_monet",
+      "monochrome": "none",
+      "availability": "monet",
+      "legacy": false,
+      "author": "exteraGram"
+    },
+    {
+      "id": "orbit",
+      "titleRes": "AppIconOrbit",
+      "descriptionRes": "AppIconOrbitInfo",
+      "background": "@color/ic_background",
+      "monochrome": "@drawable/ic_monochrome_orbit",
+      "author": "exteraGram"
+    },
+    {
+      "id": "editor",
+      "titleRes": "AppIconEditor",
+      "descriptionRes": "AppIconEditorInfo",
+      "author": "exteraGram"
+    },
+    {
+      "id": "mole",
+      "title": "Mole",
+      "author": "whatwherewhywhen"
+    },
+    {
+      "id": "echpochmak",
+      "title": "Echpochmak",
+      "author": "whatwherewhywhen"
+    },
+    {
+      "id": "avatar",
+      "title": "Avatar",
+      "author": "cIick_cIack"
+    },
+    {
+      "id": "candy",
+      "title": "Candy",
+      "author": "impulz3"
+    },
+    {
+      "id": "guitar",
+      "title": "Guitar",
+      "author": "nekto_nkt"
+    },
+    {
+      "id": "sus",
+      "titleRes": "AppIconSus",
+      "background": "@color/ic_background_sus",
+      "author": "MilesBlooper"
+    },
+    {
+      "id": "frog",
+      "title": "Frog",
+      "author": "cIick_cIack"
+    },
+    {
+      "id": "hamster",
+      "title": "Hamster",
+      "author": "whatwherewhywhen"
+    },
+    {
+      "id": "sponge",
+      "title": "Sponge",
+      "author": "nneeuurr"
+    },
+    {
+      "id": "invincible",
+      "titleRes": "AppIconInvincible",
+      "descriptionRes": "AppIconInvincibleInfo",
+      "author": "exteraGram"
+    },
+    {
+      "id": "flappy",
+      "title": "Flappy",
+      "author": "nneeuurr"
+    },
+    {
+      "id": "nyan_cat",
+      "title": "Nyan Cat",
+      "author": "n1ksly"
+    },
+    {
+      "id": "ice_age",
+      "titleRes": "AppIconIceAge",
+      "descriptionRes": "AppIconIceAgeInfo",
+      "author": "exteraGram"
+    },
+    {
+      "id": "fish",
+      "title": "Fish",
+      "author": "whatwherewhywhen"
+    },
+    {
+      "id": "psychosis",
+      "title": "Psychosis",
+      "author": "cIick_cIack"
+    },
+    {
+      "id": "xp",
+      "title": "XP",
+      "author": "weizoqq"
+    },
+    {
+      "id": "nasa",
+      "title": "NASA",
+      "author": "cIick_cIack"
+    },
+    {
+      "id": "cyberpunk",
+      "titleRes": "AppIconCyberpunk",
+      "descriptionRes": "AppIconCyberpunkInfo",
+      "background": "@color/ic_background_cyberpunk",
+      "monochrome": "@drawable/ic_monochrome_cyberpunk",
+      "author": "exteraGram"
+    },
+    {
+      "id": "space",
+      "titleRes": "AppIconSpace",
+      "descriptionRes": "AppIconSpaceInfo",
+      "monochrome": "@drawable/ic_monochrome_space",
+      "author": "exteraGram"
+    },
+    {
+      "id": "jellyfish",
+      "title": "Jellyfish",
+      "author": "whatwherewhywhen"
+    },
+    {
+      "id": "human",
+      "title": "Human",
+      "author": "cIick_cIack"
+    },
+    {
+      "id": "sunset",
+      "titleRes": "AppIconSunset",
+      "descriptionRes": "AppIconSunsetInfo",
+      "author": "exteraGram"
+    },
+    {
+      "id": "amethyst",
+      "titleRes": "AppIconAmethyst",
+      "descriptionRes": "AppIconAmethystInfo",
+      "author": "exteraGram"
+    },
+    {
+      "id": "aurora",
+      "titleRes": "AppIconAurora",
+      "descriptionRes": "AppIconAuroraInfo",
+      "author": "exteraGram"
+    },
+    {
+      "id": "osu",
+      "title": "osu!",
+      "author": "ataeshi"
+    },
+    {
+      "id": "google",
+      "titleRes": "AppIconGoogle",
+      "descriptionRes": "AppIconGoogleInfo",
+      "background": "@color/white",
+      "monochrome": "@drawable/ic_monochrome_google",
+      "author": "exteraGram"
+    },
+    {
+      "id": "google26",
+      "title": "Google ’26",
+      "background": "@color/white",
+      "author": "Slucket"
+    }
+  ]
+}

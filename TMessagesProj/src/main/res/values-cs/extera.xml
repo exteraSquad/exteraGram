@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">Předvolby exteraGramu</string>
+    <!-- Main Menu -->
+    <string name="Links">Odkazy</string>
+    <string name="Crowdin">Přeložit</string>
+    <string name="Website">Webové stránky</string>
+    <string name="Categories">Kategorie</string>
+    <string name="Developer">**%1$s** je členem vývojového týmu **exteraGram**.</string>
+    <string name="DeveloperCompact">Člen vývojového týmu **exteraGram**.</string>
+    <string name="Supporter">**%1$s** podpořil vývoj **exteraGramu** a získal exkluzivní odznak.</string>
+    <string name="OfficialChannel">**%1$s** je oficiální zdroj **exteraGram**.</string>
+    <string name="NoSuchSetting">Zdá se, že takové nastavení neexistuje.</string>
+    <string name="SettingLinkToSavedMessages">Odkaz na nastavení odeslán do **Uložených zpráv**.</string>
+    <string name="SettingLinkToUser">Odkaz na nastavení odeslán uživateli **%1$s**.</string>
+    <string name="SettingLinkToChats">Odkaz na nastavení odeslán do **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Používat systémový režim úspory baterie</string>
+    <string name="LiteBatteryFollowSystemState">Systém</string>
+    <string name="LiteBatteryFollowSystemInfo">Řízeno systémovým režimem úspory baterie.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Zásobník pilulek</string>
+    <string name="PillStackPillsInfo">Zobrazit interaktivní pilulky ve vyhledávacím poli</string>
+    <string name="PillStackActivePills">Aktivní pilulky</string>
+    <string name="PillStackHiddenPills">Skryté pilulky</string>
+    <string name="CurrentLocation">Aktuální poloha</string>
+    <string name="SelectLocation">Vybrat na mapě</string>
+    <string name="WeatherPill">Počasí</string>
+    <string name="WeatherSettingsInfo">Zvolte, jak určit polohu pro zobrazení počasí ve vyhledávání.</string>
+    <string name="WeatherLocation">Detekce polohy</string>
+    <string name="WeatherLocationPermissionNo">exteraGram potřebuje přístup k vaší poloze pro zobrazení aktuálního počasí.</string>
+    <string name="WeatherLocationPermissionGrant">Udělit oprávnění</string>
+    <string name="WeatherLocationServicesEnable">Povolit polohu</string>
+    <string name="WeatherPillTopInfo">Nastavení widgetu počasí pro zásobník pilulek.</string>
+    <string name="PillStackInfiniteScrolling">Nekonečné posouvání</string>
+    <string name="CryptoPillTargetCurrency">Cílová měna</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Vypnout proxy</string>
+    <string name="ProxyDisableNever">Nikdy</string>
+    <string name="ProxyDisableAlways">Vždy</string>
+    <string name="ProxyDisableOnMobileData">Mobilní data</string>
+    <string name="ProxyType">Typ</string>
+    <string name="Unknown">Neznámý</string>
+    <string name="ProxyRename">Název proxy (volitelné)</string>
+    <string name="ProxyPinLimitReached">Můžete připnout až %1$d proxy.</string>
+    <string name="CopyIpAddress">Zkopírovat IP adresu</string>
+    <string name="IpInfoUnavailable">Nelze načíst informace o IP adrese.</string>
+    <string name="IpInfoIsp">Poskytovatel internetu</string>
+    <string name="IpInfoOrganization">Organizace</string>
+    <string name="IpInfoDomain">Doména</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Poskytovatel překladu</string>
+    <string name="TranslationTarget">Cílový jazyk</string>
+    <string name="TranslationTargetApp">Podle aplikace</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Vypnout zaokrouhlování čísel</string>
+    <string name="FormatTimeWithSeconds">Formátovat čas s vteřinami</string>
+    <string name="RelativeLastSeen">Relativní čas posledního připojení</string>
+    <string name="InAppVibration">Vibrace v aplikaci</string>
+    <string name="FilterZalgo">Filtrovat \"Zalgo\"</string>
+    <string name="FilterZalgoInfo">Odstraňuje symboly \"%1$s\" ve jménech a zprávách.</string>
+    <string name="RestartRequired">Pro uplatnění změn restartujte aplikaci.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Kód</string>
+    <string name="CreateCode">Vytvořit blok kódu</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Zrychlení stahování</string>
+    <string name="UploadSpeedBoost">Zrychlení nahrávání</string>
+    <string name="SpeedBoostInfo">Ultra zrychlení může způsobovat problémy při stahování souborů a streamování videí na pomalých internetových připojeních.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Úložiště</string>
+    <string name="CustomSavePath">Vlastní složka pro ukládání</string>
+    <string name="CustomSavePathHint">Ponechte prázdné pro ukládání přímo do kořenového adresáře</string>
+    <string name="CustomSavePathDefault">Ukládat do kořene</string>
+    <string name="CustomSavePathInfo">Uložené soubory budou ukládány přímo do složek Obrázky, Stažené soubory atd.</string>
+    <string name="CustomSavePathInfoFolder">Uložené soubory budou ukládány do složek Pictures/%1$s, Downloads/%1$s atd.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Skrýt telefonní číslo</string>
+    <string name="ShowIdAndDc">Zobrazit ID a DC</string>
+    <string name="ShowIdAndDcInfo">Telegram API zobrazuje ID tak, jak jsou, zatímco Bot API přidává znaménko mínus pro skupiny a -100 pro supergroupy a kanály.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Skrýt složku Archivu</string>
+    <string name="ArchiveOnPull">Otevřít archiv při stažení dolů</string>
+    <string name="DisableUnarchiveSwipe">Vypnout přejetí pro \"Odarchivovat\"</string>
+    <string name="DisableUnarchiveSwipeInfo">Přejetím doleva neodeberete konverzace z archivu.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Vzhled</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Zákoutí Avatar</string>
+    <string name="SingleCornerRadius">Poloměr jednoho rohu</string>
+    <string name="SingleCornerRadiusInfo">Fóra budou mít stejnou podobu avatara jako chaty.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Seznam chatu</string>
+    <string name="ActionBarTitle">Text názvu</string>
+    <string name="ActionBarTitleName">Jméno</string>
+    <string name="HideStories">Skrýt příběhy</string>
+    <string name="HideActionBarStatus">Skrýt stav</string>
+    <string name="CenterTitle">Název střediska</string>
+    <string name="ChatHeader">Hlavička konverzace</string>
+    <string name="HideFloatingButton">Skrýt plovoucí tlačítko</string>
+    <string name="HideDialogsSearchBar">Skrýt vyhledávací lištu</string>
+    <string name="BottomNavigationBarMode">Dolní navigační lišta</string>
+    <string name="BottomNavigationModeShow">Zobrazit</string>
+    <string name="BottomNavigationModeHide">Skrýt</string>
+    <string name="BottomNavigationModeFloating">Plovoucí</string>
+    <string name="SenderMiniAvatars">Miniatury avatarů odesílatelů</string>
+    <string name="ListOfChatsInfo">Pokud je pro složky povolena volba \"Pouze ikony\", zobrazí se v hlavním názvu název složky.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Název složky</string>
+    <string name="TabTitleStyleTextWithIcons">Jména s ikonami</string>
+    <string name="TabTitleStyleIconsOnly">Pouze ikony</string>
+    <string name="TabTitleStyleTextOnly">Pouze jména</string>
+    <string name="TabCounter">Počítadlo oznámení</string>
+    <string name="HideAllChats">Skrýt kartu \"%1$s\"</string>
+    <string name="FoldersInfo">Ikony jsou synchronizovány s vaším účtem.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Navigace v aplikaci</string>
+    <string name="AppNavigationInfo">Nastavení nabídky vpravo nahoře a zásuvky</string>
+    <string name="NavigationDrawer">Navigační zásuvka</string>
+    <string name="NavigationDrawerInfo">Nahrazuje nabídku vpravo nahoře klasickou zásuvkou otevíranou přejetím a tlačítkem hamburger.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Imersivní animace</string>
+    <string name="MainMenuItems">Položky nabídky</string>
+    <string name="MainMenuItemsInfo">Klepnutím položky zobrazíte nebo skryjete, podržením změníte pořadí. Rozvržení je sdíleno mezi nabídkou a zásuvkou.</string>
+    <string name="MainMenuHiddenItems">Skryté položky nabídky</string>
+    <string name="MainMenuAddDivider">Přidat oddělovač</string>
+    <string name="MainMenuRemoveSettingsInfo">Nastavení nelze skrýt, když je dolní navigační lišta vypnutá.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Balíčky ikon</string>
+    <string name="IconPacksInfo">Přizpůsobit ikony v celé aplikaci</string>
+    <string name="IconPickerFilter">Filtr</string>
+    <string name="IconPickerAllIcons">Všechny ikony</string>
+    <string name="IconPickerReplacedIcons">Nahrazené ikony</string>
+    <string name="IconPickerNotReplacedIcons">Nenahrazené ikony</string>
+    <string name="IconPickerSaveAndExit">Uložit &amp; ukončit</string>
+    <string name="BasePacks">Základní balíčky</string>
+    <string name="BaseIconPackInfo">Základní balíček ikon se používá jako záložní pro ikony, které nejsou nahrazeny jinými balíčky.</string>
+    <string name="IconPacksHint">Klepnutím balíček aktivujete nebo deaktivujete. Podržením upravíte nebo smažete.</string>
+    <string name="NewIconPack">Vytvořit nový balíček ikon</string>
+    <string name="EnabledPacks">Aktivní balíčky</string>
+    <string name="AllPacks">Všechny balíčky</string>
+    <string name="PackName">Název balíčku</string>
+    <string name="AuthorNameOptional">Jméno autora (volitelné)</string>
+    <string name="NameCannotBeEmpty">Název nesmí být prázdný.</string>
+    <string name="Version">Verze</string>
+    <string name="InstallPack">Nainstalovat balíček</string>
+    <string name="IconCount_one">%1$d ikona</string>
+    <string name="IconCount_two">%1$d ikony</string>
+    <string name="IconCount_few">%1$d ikony</string>
+    <string name="IconCount_many">%1$d ikon</string>
+    <string name="IconCount_other">%1$d ikon</string>
+    <string name="UpdatePack">Aktualizovat balíček</string>
+    <string name="DeletePack">Smazat balíček</string>
+    <string name="DeletePackInfo">Opravdu chcete smazat **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Archiv balíčku ikon je neplatný.</string>
+    <string name="IconPackErrorMissingMetadata">Archiv balíčku ikon postrádá metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Metadata balíčku ikon jsou příliš velká.</string>
+    <string name="IconPackErrorInvalidMetadata">Metadata balíčku ikon jsou neplatná.</string>
+    <string name="IconPackErrorTooManyFiles">Balíček ikon obsahuje příliš mnoho souborů.</string>
+    <string name="IconPackErrorArchiveTooLarge">Balíček ikon je příliš velký.</string>
+    <string name="IconPackErrorFileTooLarge">Jeden ze souborů ikon je příliš velký.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Archiv balíčku ikon je příliš agresivně komprimován.</string>
+    <string name="IconPackErrorStorage">Nepodařilo se uložit balíček ikon.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Balíček ikon</string>
+    <string name="AppIconSunset">Západ slunce</string>
+    <string name="AppIconAmethyst">Ametyst</string>
+    <string name="AppIconInvincible">Neporazitelný</string>
+    <string name="AppIconCyberpunk">Kyberpunk</string>
+    <string name="AppIconSpace">Prostor</string>
+    <string name="AppIconIceAge">Doba ledová</string>
+    <string name="AppIconSus">Podvodník</string>
+    <string name="AppIconWinter">Zimní</string>
+    <!-- General Appearance -->
+    <string name="Sections">Sekce</string>
+    <string name="SeparateHeaders">Samostatné hlavičky</string>
+    <string name="DividerStyle">Styl oddělovače</string>
+    <string name="DividerStyleHidden">Skrytý</string>
+    <string name="DividerStyleLine">Čára</string>
+    <string name="DividerStyleSegments">Segmenty</string>
+    <string name="UseSystemFonts">Použít systémová písma</string>
+    <string name="UseSystemEmoji">Používat systémové emoji</string>
+    <string name="NewLoadingStyle">Styl načítání</string>
+    <string name="NewSliderStyle">Styl posuvníku</string>
+    <string name="NewSwitchStyle">Styl přepínače</string>
+    <string name="TabletMode">Režim tabletu</string>
+    <string name="RemoveMessageTail">Odstranit ocásek zprávy</string>
+    <string name="GooeyAvatarAnimation">Animace avataru \"Gooey\"</string>
+    <string name="CustomChatThemes">Vlastní témata v konverzacích</string>
+    <string name="CustomChatThemesInfo">Každá konverzace zobrazí téma, které bylo pro ni speciálně vybráno.</string>
+    <string name="PredictiveBackIntensity">Intenzita prediktivního zpětného gesta</string>
+    <string name="PredictiveBackMax">Maximum</string>
+    <string name="PredictiveBackInfo">Upravuje, jak daleko se obrazovka posune při přejetí zpět.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Možnosti rozostření</string>
+    <string name="GlassOutlineStyle">Skleněný obrys</string>
+    <string name="GlassOutlineGlare">Odlesk</string>
+    <string name="GlassOutlineSolid">Plný</string>
+    <string name="GlassOutlineHidden">Skrytý</string>
+    <string name="ForceSnow">Vynutit sněhové vločky</string>
+    <string name="ForceSnowInfo">Klesající sněhové vločky se objeví v akčním panelu, postranním menu a chatovém pozadí.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Velikost samolepek</string>
+    <string name="StickerSizeLeft">Malá</string>
+    <string name="StickerSizeRight">Velká</string>
+    <string name="StickerSizeDialogMessage">wow, tak roztomilé!</string>
+    <string name="StickerShape">Tvar samolepek</string>
+    <string name="StickerShapeRounded">Zaoblené</string>
+    <string name="StickerShapeRoundedMsg">Zpráva</string>
+    <string name="ViewEmojiSet">Zobrazit sadu emoji</string>
+    <string name="UnlimitedRecentStickers">Neomezené nedávné samolepky</string>
+    <string name="HideReactions">Skrýt reakce</string>
+    <string name="HideReactionsInfo">Reakce budou zcela skryty z rozhraní.</string>
+    <string name="ReplyBackground">Pozadí</string>
+    <string name="ChatSettingsInfo">Nastavení médií, ikona aplikace a další</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Nastavení služeb, rolí a historie</string>
+    <string name="AIChatInfo2">Generovat text ze zpráv nebo před odesláním.</string>
+    <!-- AI Services -->
+    <string name="Services">Služby</string>
+    <string name="ServicesInfo">Vyberte vhodnou službu pro interakci s jazykovými modely.</string>
+    <string name="NewService">Nová služba</string>
+    <string name="EditService">Upravit službu</string>
+    <string name="ServiceKey">API klíč</string>
+    <string name="ServiceInfo">Informace o službě</string>
+    <string name="ServiceProvider">Poskytovatel</string>
+    <string name="ServiceProviderCustom">Vlastní</string>
+    <string name="ServiceTestAndSave">Otestovat a uložit</string>
+    <string name="ServicePasteService">Vložit službu</string>
+    <string name="ServicePasteKey">Vložit API klíč</string>
+    <string name="DeleteServiceInfo">Opravdu chcete smazat **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Role</string>
+    <string name="RolesInfo">Vytvářejte role pro vaše specifické potřeby!</string>
+    <string name="Suggestions">Návrhy</string>
+    <string name="RoleName">Název</string>
+    <string name="RolePrompt">Výzva</string>
+    <string name="PromptInfo">Výzva je počáteční text poskytnutý modelu pro zahájení generování odpovědi nebo pokračování dialogu.</string>
+    <string name="NewRole">Nová role</string>
+    <string name="EditRole">Upravit roli</string>
+    <string name="DeleteRoleInfo">Opravdu chcete smazat **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Historie konverzace umožňuje AI porozumět předchozím požadavkům a zohlednit je při generování nových odpovědí.</string>
+    <string name="AIGeneration">Generování</string>
+    <string name="AIReasoning">Uvažování</string>
+    <string name="AIReasoningInfo">Umožňuje podporovaným modelům v této službě vynaložit další tokeny na přemýšlení před zodpovězením.</string>
+    <string name="AITemperature">Teplota</string>
+    <string name="AITemperatureInfo">Teplota řídí náhodnost odpovědí: vyšší hodnoty jsou kreativnější, nižší hodnoty jsou soustředěnější.</string>
+    <string name="ResponseStreaming">Streamování odpovědí</string>
+    <string name="ResponseStreamingInfo">Zajišťuje plynulejší a rychlejší zobrazování odpovědí.</string>
+    <string name="ShowResponseOnly">Zobrazit pouze odpověď</string>
+    <string name="InsertResponseAsQuote">Vložit odpověď jako citaci</string>
+    <string name="TapToAddApiKey">Klepnutím přidáte API klíč pro zahájení používání funkcí AI.</string>
+    <string name="Generate">Generovat</string>
+    <string name="ClearConversationHistoryInfo">Opravdu chcete vymazat **veškerou** historii konverzací s AI?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Chybný požadavek</string>
+    <string name="AIError400Info">Zkontrolujte parametry požadavku.</string>
+    <string name="AIError401">Neplatné přihlašovací údaje</string>
+    <string name="AIError401Info">API klíč je neplatný nebo zakázaný. Zkontrolujte své údaje.</string>
+    <string name="AIError402">Nedostatek kreditu</string>
+    <string name="AIError402Info">Váš účet nebo API klíč má nedostatek kreditu. Přidejte kredit a opakujte požadavek.</string>
+    <string name="AIError403">Přístup odepřen</string>
+    <string name="AIError403Info">Nemáte oprávnění k přístupu k tomuto modelu nebo zdroji. Zkontrolujte svůj API klíč a oprávnění účtu.</string>
+    <string name="AIError408">Vypršení časového limitu požadavku</string>
+    <string name="AIError408Info">Váš požadavek nebyl zpracován včas. Zkuste to prosím později.</string>
+    <string name="AIError429">Překročen limit požadavků</string>
+    <string name="AIError429Info">Odesíláte požadavky příliš často. Počkejte chvíli a zkuste to znovu.</string>
+    <string name="AIError502">Selhání modelu</string>
+    <string name="AIError502Info">Vybraný model je nedostupný nebo jsme od něj obdrželi neplatnou odpověď.</string>
+    <string name="AIError503">Služba nedostupná</string>
+    <string name="AIError503Info">Služba je dočasně nedostupná nebo přetížená. Zkuste to prosím později.</string>
+    <string name="AIError">Chyba serveru</string>
+    <string name="AIErrorInfo">Zkuste svůj požadavek zopakovat po krátkém čekání.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Příchozí zprávy</string>
+    <string name="DoubleTapOutgoing">Odchozí zprávy</string>
+    <string name="DoubleTapInfo">Některé akce vyžadují oprávnění správce v konverzaci nebo kanálu.</string>
+    <string name="BottomButton">Spodní tlačítko</string>
+    <string name="ChannelDiscussNoCaps">Diskutovat</string>
+    <string name="QuickTransitions">Rychlý přechod přejetím</string>
+    <string name="DisableGreetingSticker">Vypnout uvítací samolepku</string>
+    <string name="AdminShortcuts">Rychlé zkratky pro správce</string>
+    <string name="HideKeyboardOnScroll">Skrýt klávesnici při posouvání</string>
+    <string name="HideShareButton">Skrýt postranní tlačítko \"%1$s\"</string>
+    <string name="ReplaceEditedWithIcon">Nahradit \"%1$s\" ikonou</string>
+    <string name="MessageMenu">Nabídka zprávy</string>
+    <string name="GroupMessageMenu">Seskupená nabídka zprávy</string>
+    <string name="GroupMessageMenuInfo">Seskupení přesouvá hlavní akce na spodní část nabídky zprávy.</string>
+    <string name="GlassMessageMenu">Skleněná nabídka zprávy</string>
+    <string name="GlassMessageMenuBlurOff">Skleněné nabídky vyžadují rozmazání, které je nyní vypnuto.</string>
+    <string name="AddCommaAfterMention">Přidat čárku po zmínce</string>
+    <string name="HideSendAsPeer">Skrýt tlačítko \"Odeslat jako…\"</string>
+    <string name="HideSendAsPeerInfo">K nabídce \"Odeslat jako…\" se stále dostanete dlouhým stisknutím tlačítka Emoji/Samolepky/GIFy.</string>
+    <string name="ShowPollResultsBeforeVoting">Zobrazit výsledky před hlasováním</string>
+    <string name="ShowPollResultsBeforeVotingHint">Zobrazit výsledky pro každou možnost před odesláním hlasu.</string>
+    <string name="ShowOnlineStatus">Zobrazit indikátor online</string>
+    <string name="MessagePreviewDialogMessage">Můžu jíst sklo a neublíží mi to.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Jazyk rozpoznávání</string>
+    <string name="RecognitionInfo">Používá Vosk API. Funguje offline. Kvalita přepisu může být nízká.</string>
+    <string name="MissingLanguageModel">Chybí jazykový model</string>
+    <string name="DownloadingModel">Stahování modelu…</string>
+    <string name="DownloadingModelInfo">Během stahování jazykového modelu ponechte toto okno otevřené.</string>
+    <string name="ModelDownload">Stáhnout (%1$s)</string>
+    <string name="ModelDownloadInfo">Pro pokračování je nutné stáhnout jazykový model \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Model úspěšně stažen.</string>
+    <string name="ModelError">Chyba při stahování modelu.</string>
+    <string name="ModelUnzipping">Rozbalování…</string>
+    <string name="DeleteRecognitionModel">Smazat model</string>
+    <string name="DeleteRecognitionModelInfo">Opravdu chcete smazat jazykový model \"**%1$s**\"?</string>
+    <string name="RecognitionModelDeleted">Model úspěšně smazán.</string>
+    <string name="RecognitionModelDeleteError">Chyba při mazání modelu.</string>
+    <string name="PostProcessingWithAi">Použít AI pro post-process</string>
+    <string name="PostProcessingWithAiInfo">AI zlepší čitelnost opravou chyb, doplněním interpunkce a objasněním nejasných částí.</string>
+    <!-- Camera -->
+    <string name="CameraType">Typ kamery</string>
+    <string name="ExtendedSettings">Rozšířená nastavení</string>
+    <string name="SeamlessSwitching">Bezproblémové přepínání</string>
+    <string name="ExtendedFramesPerSecond">Rozšířený rozsah FPS</string>
+    <string name="CameraStabilization">Stabilizační stránky</string>
+    <string name="CameraMirrorMode">Režim zrcadla</string>
+    <string name="StartWithWideAngleCamera">Spustit s širokoúhlou kamerou</string>
+    <string name="ZoomSlider">Posuvník zoomu</string>
+    <string name="ZoomSliderInfo">Zobrazit ovládání zoomu pod kamerou pro videozprávy.</string>
+    <string name="StaticZoom">Statické zvětšení</string>
+    <string name="StaticZoomInfo">Při nahrávání videozpráv se úroveň přiblížení po uvolnění prstů neresetuje.</string>
+    <string name="VideoMessagesCamera">Kamera ve videozprávách</string>
+    <string name="VideoMessagesCameraFront">Přední</string>
+    <string name="VideoMessagesCameraAsk">Zeptat se</string>
+    <string name="RearCamera">Zadní kamera</string>
+    <string name="FrontCamera">Přední kamera</string>
+    <string name="RememberLastUsedCamera">Pamatovat si poslední použitou kameru</string>
+    <string name="RememberLastUsedCameraInfo">Při nahrávání videozpráv bude automaticky vybrána poslední použitá kamera.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Vždy odesílat v HD</string>
+    <string name="HideCameraTile">Skrýt dlaždici okamžité kamery</string>
+    <string name="HideCameraTileInfo">Dlaždice kamery bude nahrazena plovoucím tlačítkem. Klepnutím se spustí kamera Telegramu, podržením se spustí systémová kamera.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Doba přeskočení dvojitým klepnutím</string>
+    <string name="PreferOriginalQuality">Preferovat původní kvalitu</string>
+    <string name="PauseOnMinimize">Automatická pauza</string>
+    <string name="PauseOnMinimizeVoice">Hlas</string>
+    <string name="PauseOnMinimizeRound">Kruhová</string>
+    <string name="PauseOnMinimizeInfo">Pozastaví přehrávání médií, když je zařízení uzamčeno nebo je exteraGram minimalizováno.</string>
+    <string name="SwipeToPip">Přejetím do režimu PiP</string>
+    <string name="UnmuteWithVolumeButtons">Zrušit ztlumení videí tlačítky hlasitosti</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Stisknutím tlačítka hlasitosti se video ztlumí, místo změny systémové hlasitosti.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Pokud jsou tyto možnosti povoleny, shromažďují se údaje o zařízení a odesílají se do Google Analytics a Crashlytics, což nám umožňuje sledovat statistiky používání a chyby v aplikaci. \n\nPokud jsou však možnosti vypnuty, sběr dat se zastaví a veškerá odeslaná data jsou okamžitě smazána.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Zadejte název souboru…</string>
+    <string name="ExportSettings">Exportovat nastavení</string>
+    <string name="ApplySettings">Použít nastavení</string>
+    <string name="ImportTitle">Opravdu chcete použít tato nastavení?</string>
+    <string name="ImportConfirm">Ano, použít</string>
+    <string name="CancelConfirm">Ne, ponechat</string>
+    <string name="SettingsSaved">Soubor nastavení úspěšně uložen.</string>
+    <string name="SettingsImported">Nastavení úspěšně aplikována.</string>
+    <string name="ImportChanges_one">**1** změna bude aplikována na aktuální nastavení.</string>
+    <string name="ImportChanges_two">**%1$d** změny budou aplikovány na aktuální nastavení.</string>
+    <string name="ImportChanges_few">**%1$d** změny budou aplikovány na aktuální nastavení.</string>
+    <string name="ImportChanges_many">**%1$d** změn bude aplikováno na aktuální nastavení.</string>
+    <string name="ImportChanges_other">**%1$d** změn bude aplikováno na aktuální nastavení.</string>
+    <string name="SameSettings">Zdá se, že nastavení jsou stejná jako současná.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Z bezpečnostních důvodů budete moci začít stahovat svá data za %1$s. O žádosti o export jsme informovali všechna vaše zařízení, abychom se ujistili, že je autorizována, a dali vám čas na reakci, pokud ne.\n\nVraťte se prosím %2$s a opakujte požadavek pomocí stejného zařízení.</string>
+    <string name="ExportInvalid">Omlouváme se, zahájili jste nový export dat, takže tento export dat byl zrušen.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Smazat účet</string>
+    <string name="ResetSettings">Obnovit nastavení</string>
+    <string name="ResetPreferences">Předvolby **exteraGram** byly obnoveny.</string>
+    <string name="ResetPreferencesInfo">Opravdu chcete obnovit **všechny** předvolby exteraGram na výchozí?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Podpořit vývoj</string>
+    <string name="SupportDevelopmentInfo">Podporou projektu nejen přispíváte k jeho vývoji, ale také získáte unikátní odznak.</string>
+    <string name="MakeDonation">Přispět</string>
+    <string name="ReceiveBadge">Získejte svůj odznak</string>
+    <string name="NowPlaying">Právě hraje</string>
+    <string name="ScrobblingService">Scrobbling služba</string>
+    <string name="SelectService">Vybrat službu</string>
+    <string name="SelectServiceInfo">Zobrazuje aktuální skladbu v profilu jako kartu získanou ze scrobbling služby.</string>
+    <string name="EnterUsername">Zadejte uživatelské jméno</string>
+    <string name="EnterUsernameInfo">Své uživatelské jméno můžete získat na **oficiálních webových stránkách**.</string>
+    <string name="BoostyPeopleCount_one">%1$d osoba</string>
+    <string name="BoostyPeopleCount_two">%1$d lidé</string>
+    <string name="BoostyPeopleCount_few">%1$d lidé</string>
+    <string name="BoostyPeopleCount_many">%1$d lidí</string>
+    <string name="BoostyPeopleCount_other">%1$d lidí</string>
+    <string name="BoostyInfo">Aktivně podporujte **exteraGram** na **Boosty**.</string>
+    <string name="BoostyInfo2">Děkujeme za vaši podporu!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Instalace pluginů je dostupná pouze v **plné** verzi **exteraGram**.</string>
+    <string name="Plugins">Pluginy</string>
+    <string name="PluginsEngine">Engine pluginů</string>
+    <string name="EnablePluginsEngine">Povolit engine pluginů</string>
+    <string name="PluginsInfo">Pluginy najdete na @exteraPlugins.</string>
+    <string name="PluginsNotFound">Nebyly nalezeny žádné pluginy.</string>
+    <string name="InstallPlugin">Nainstalovat</string>
+    <string name="UpdatePlugin">Aktualizovat</string>
+    <string name="PluginNotEnabled">Povolte **Engine pluginů** pro instalaci **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** úspěšně nainstalován.</string>
+    <string name="PluginUpdated">**%1$s** úspěšně aktualizován.</string>
+    <string name="PluginEnableError">Nepodařilo se povolit **%1$s**.</string>
+    <string name="PluginDisableError">Nepodařilo se zakázat **%1$s**.</string>
+    <string name="PluginInstallError">Nepodařilo se nainstalovat **%1$s**.</string>
+    <string name="PluginSourceTrusted">Důvěryhodný zdroj</string>
+    <string name="PluginSourceTrustedInfo">Pluginy z tohoto zdroje jsou **ověřeny** a bezpečné.</string>
+    <string name="PluginSourceUnknown">Neznámý zdroj</string>
+    <string name="PluginSourceUnknownInfo">Pluginy z tohoto zdroje jsou **neověřeny** a mohou představovat bezpečnostní riziko.</string>
+    <string name="PluginVersion">Verze</string>
+    <string name="PluginNoDescription">Nebyl poskytnut žádný popis.</string>
+    <string name="PluginIsNotResponding">Plugin neodpovídá.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s neodpovídá</string>
+    <string name="PluginNoAuthor">Neznámý autor</string>
+    <string name="EnableAfterInstallation">Povolit po instalaci</string>
+    <string name="EnterValue">Zadejte hodnotu</string>
+    <string name="PluginDelete">Smazat plugin</string>
+    <string name="PluginDeleteInfo">Opravdu chcete smazat **%1$s**?</string>
+    <string name="ResetPluginSettings">Nastavení **%1$s** byla obnovena.</string>
+    <string name="ResetPluginSettingsInfo">Opravdu chcete obnovit nastavení **%1$s** na výchozí?</string>
+    <string name="PluginsSafeMode">Nouzový režim</string>
+    <string name="PluginsSafeModeShortcut">Spustit v nouzovém režimu</string>
+    <string name="PluginsSafeModeInfo">Engine pluginů je zakázán kvůli pádu. Vypnutí nouzového režimu může vést k nepředvídatelným následkům.</string>
+    <string name="PluginsSafeModeInfo2">V nouzovém režimu jsou všechny pluginy neaktivní. To vám umožní bezpečně najít a zakázat problematický plugin.</string>
+    <string name="PluginsDevMode">Režim pro vývojáře</string>
+    <string name="PluginsCompactView">Kompaktní zobrazení pluginů</string>
+    <string name="PluginsDocumentation">Dokumentace</string>
+    <string name="PluginsTrusted">Důvěryhodné pluginy</string>
+    <string name="PluginsDevServerLaunched">Vývojářský server je spuštěn.</string>
+    <string name="PluginsDevServerStopped">Vývojářský server je zastaven.</string>
+    <string name="PluginEngineNotEnabled">Povolte **Engine pluginů** pro otevření nastavení **%1$s**.</string>
+    <string name="PluginNotFound">**%1$s** nebyl nalezen.</string>
+    <string name="PluginHasNoSettings">**%1$s** nemá žádné nastavení.</string>
+    <string name="PluginsPySdkAutoUpdate">Automaticky aktualizovat</string>
+    <string name="PluginsPySdkEnableBetaVersion">Instalovat beta verze</string>
+    <string name="PluginsPySdkCheckUpdates">Zkontrolovat aktualizace</string>
+    <string name="CheckingForUpdates">Kontrola aktualizací…</string>
+    <string name="LatestVersionInstalled">Je nainstalována nejnovější verze</string>
+    <string name="RestartPluginSystemToApplyUpdate">Aktualizace načtena, restartujte Engine pluginů pro použití</string>
+    <string name="LoadingUpdate">Načítání aktualizace…</string>
+    <string name="RestoreSdkFromApk">Obnovit SDK z APK</string>
+    <string name="EnableAutoUpdate">Povolit automatickou aktualizaci</string>
+    <string name="PluginsDisableArt">Režim kompatibility</string>
+    <string name="PluginsDisableArtInfo">Zabraňuje selhání háčků pluginů vypnutím ART Profile Saver.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Probíhá aktualizace…</string>
+    <string name="UpdateInstallingRelaunch">Aplikace se restartuje po dokončení aktualizace.</string>
+    <string name="UpdateInstallingNotification">Až bude aktualizace dokončena, dostanete oznámení.</string>
+    <string name="UpdateInstalledNotification">Aktualizace dokončena. Klepnutím otevřete aplikaci.</string>
+    <string name="UpdateFailedToInstall">Instalace aktualizace selhala s chybovým kódem: %d</string>
+    <string name="UpdateAvailable">Aktualizace dostupná!</string>
+    <!-- Message Details -->
+    <string name="Details">Podrobnosti</string>
+    <string name="Date">Datum</string>
+    <string name="EditedDate">Datum úpravy</string>
+    <string name="ForwardedDate">Datum přeposlání</string>
+    <string name="FileSize">Velikost souboru</string>
+    <string name="FileName">Název souboru</string>
+    <string name="FilePath">Cesta k souboru</string>
+    <string name="Platform">Platforma</string>
+    <string name="Resolution">Rozlišení</string>
+    <string name="Duration">Délka</string>
+    <string name="MimeType">MIME typ</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">Formát:</string>
+    <string name="DateFormatOptionNone">Žádný</string>
+    <string name="DateFormatOptionRelative">Relativní</string>
+    <string name="DateFormatOptionShortTime">Krátký čas</string>
+    <string name="DateFormatOptionLongTime">Dlouhý čas</string>
+    <string name="DateFormatOptionShortDate">Krátké datum</string>
+    <string name="DateFormatOptionLongDate">Dlouhé datum</string>
+    <string name="DateFormatOptionDayOfWeek">Den v týdnu</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">Přihlášení pomocí QR kódu</string>
+    <string name="LoginQrSubtitle">K naskenování tohoto QR kódu použijte jiné zařízení.</string>
+    <string name="WifiConnect">Připojit</string>
+    <string name="WifiDisabled">Wi-Fi je vypnuto.</string>
+    <string name="WifiFailed">Nepodařilo se připojit k Wi-Fi.</string>
+    <string name="WifiSuccess">Úspěšně připojeno k Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Opravdu se chcete přihlásit k tomuto účtu na jiném zařízení?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Stránka zablokována</string>
+    <string name="PageBlockedDescription">exteraGram zabránil načtení následující stránky:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Zpět</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Nastavit jako odznak</string>
+    <string name="AutoLockInstant">Okamžitě</string>
+    <string name="TestBackend">Testovat backend</string>
+    <string name="SearchPhotoInfo">Služby mohou používat obrázky podle svých zásad ochrany osobních údajů a podmínek použití.</string>
+    <string name="PhotoUploadFailed">Nepodařilo se nahrát fotografii.</string>
+    <string name="TrackSaved">Skladba uložena do **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Skladby budou ukládány do **%1$s**.</string>
+    <string name="DeletedMessage">Smazaná zpráva</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Zkopírovat název</string>
+    <string name="CopyCallback">Zkopírovat data zpětného volání</string>
+    <string name="CopyInlineQuery">Zkopírovat inline dotaz</string>
+    <string name="CopyID">Zkopírovat ID uživatele</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Stav odznaku nastaven.</string>
+    <string name="UserNotFound">Uživatel s tímto **ID** nebyl nalezen.</string>
+    <string name="ChatNotFound">Konverzace s tímto **ID** nebyla nalezena.</string>
+    <string name="PhotoCopied">Fotografie zkopírována do schránky.</string>
+    <string name="FrameCopied">Snímek zkopírován do schránky.</string>
+    <string name="TapToCopy">Klepnutím zkopírujete</string>
+    <string name="ProfileUsesEmojiPack">Tento profil používá pro své pozadí emoji z balíčku %s.</string>
+    <string name="ProfileUsesEmojiPacks">Tento profil používá pro své pozadí emoji z **%d balíčků**.</string>
+    <string name="ReplyUsesEmojiPacks">Tato odpověď používá pro své pozadí emoji z balíčku %s.</string>
+    <string name="StickerSavedHint">Samolepka uložena do galerie.</string>
+    <string name="EmojiSavedHint">Emoji uloženo do galerie.</string>
+    <string name="GifGallerySavedHint">GIF uložen do galerie.</string>
+    <string name="MutualContactInfo">Tento kontakt je vzájemný.</string>
+    <string name="LocalPremiumEmojiHint">Nemáte předplatné **Telegram Premium**, takže toto emoji uvidí pouze uživatelé **exteraGram**.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Skrýt kartu Kontakty</string>
+    <string name="ShowContactsTab">Zobrazit kartu Kontakty</string>
+    <string name="ContactsTabWasShownTitle">Karta **Kontakty** je nyní viditelná.</string>
+    <string name="ContactsTabWasHiddenTitle">Karta **Kontakty** je nyní skrytá.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Tato funkce funguje pouze se správci hesel, které umožňují uživateli spravovat nastavení důvěry pro privilegované aplikace, jako je **Bitwarden** nebo **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Nepodporovaný správce hesel</string>
+    <string name="PasskeyUnsupportedMessage">Vyzkoušejte jiné správce hesel, například **Bitwarden** nebo **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** si vytvořil(a) účet přibližně **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** si vytvořil(a) účet dříve než **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** si vytvořil(a) účet později než **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** byl(a) vytvořen(a) **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Svůj účet jste si vytvořili přibližně **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">Svůj účet jste si vytvořili dříve než **%1$s**.</string>
+    <string name="CreationDateSelfLater">Svůj účet jste si vytvořili později než **%1$s**.</string>
+    <string name="JoinDateChat">Připojili jste se k **%1$s** dne **%2$s**.</string>
+    <string name="GroupMemberJoined">připojil(a) se %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Na začátek</string>
+    <string name="MessageHistory">Historie</string>
+    <string name="BoldItalic">Tučné kurzíva</string>
+    <string name="CopyPhoto">Zkopírovat fotografii</string>
+    <string name="CopyFrame">Zkopírovat snímek</string>
+    <string name="Repeat">Opakovat</string>
+    <string name="Subtitles">Titulky</string>
+    <string name="ChooseSubtitles">Vybrat titulky</string>
+    <string name="DisableSubtitles">Vypnout titulky</string>
+    <string name="SubtitlesAdded">Titulky povoleny.</string>
+    <string name="SubtitlesRemoved">Titulky zakázány.</string>
+    <string name="SubtitlesLoadError">Nepodařilo se načíst titulky.</string>
+    <string name="SubtitlesUnsupportedFormat">Nepodporovaný formát titulků.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Rohy samolepek</string>
+    <string name="StickerCornerRadiusInfo">Zvolte, jak zaoblené mají být rohy samolepek.</string>
+    <string name="StickerCornerRadiusLarge">Velké</string>
+    <string name="StickerCornerRadiusMedium">Střední</string>
+    <string name="StickerCornerRadiusSmall">Malé</string>
+    <string name="StickerCornerRadiusNone">Žádné</string>
+    <!-- Feed -->
+    <string name="Feed">Přehled</string>
+    <string name="FeedShownChannels">Zobrazeno v přehledu</string>
+    <string name="FeedHiddenChannels">Skryté</string>
+    <string name="FeedChannels">Kanály</string>
+    <string name="FeedSettings">Nastavení přehledu</string>
+    <string name="FeedNoPosts">Zatím žádné příspěvky kanálů.</string>
+    <string name="FeedAllChannelsExcluded">Všechny kanály jsou z přehledu vyloučeny.</string>
+    <string name="FeedMarkAllReadConfirm">Označit všechny příspěvky ve vašich kanálech přehledu jako přečtené? Tím se také označí jako přečtené v původních kanálech.</string>
+    <string name="FeedMarkAllReadDone">Všechny příspěvky označeny jako přečtené</string>
+    <string name="FeedIncludeArchived">Zobrazit konverzace z archivu</string>
+    <string name="FeedIncludeArchivedInfo">Zahrnout do přehledu také kanály z archivovaných konverzací.</string>
+    <string name="FeedHideChannel">Skrýt z přehledu</string>
+    <string name="FeedChannelHidden">**%1$s** skryt z přehledu</string>
+    <string name="FeedBottomTab">Zobrazit v dolních záložkách</string>
+    <string name="FeedBottomTabInfo">Zobrazit přehled jako dolní navigační záložku namísto záložky Kontakty.</string>
+    <string name="FeedUnreadCounter">Počítadlo nepřečtených příspěvků</string>
+    <string name="HideFeedTab">Skrýt záložku Přehled</string>
+    <string name="DisableMarkdown">Vypnout Markdown</string>
+    <string name="EnableMarkdown">Povolit Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

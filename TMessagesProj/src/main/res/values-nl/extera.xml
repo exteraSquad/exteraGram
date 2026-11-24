@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram Voorkeuren</string>
+    <!-- Main Menu -->
+    <string name="Crowdin">Vertalen</string>
+    <string name="Categories">Categorieën</string>
+    <string name="Developer">**%1$s** is lid van het **exteraGram**-ontwikkelingsteam.</string>
+    <string name="DeveloperCompact">Lid van het **exteraGram**-ontwikkelingsteam.</string>
+    <string name="Supporter">**%1$s** ondersteunde de ontwikkeling van **exteraGram** en ontving een unieke badge.</string>
+    <string name="OfficialChannel">**%1$s** is de officiële bron van **exteraGram**.</string>
+    <string name="NoSuchSetting">Het lijkt erop dat zo\'n instelling niet bestaat.</string>
+    <string name="SettingLinkToSavedMessages">Instellingslink verzonden naar **Opgeslagen berichten**.</string>
+    <string name="SettingLinkToUser">Instellingslink verzonden naar **%1$s**.</string>
+    <string name="SettingLinkToChats">Instellingslink verzonden naar **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Systeembatterijbesparing gebruiken</string>
+    <string name="LiteBatteryFollowSystemState">Systeem</string>
+    <string name="LiteBatteryFollowSystemInfo">Wordt beheerd door de systeembatterijbesparing.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Pillenstack</string>
+    <string name="PillStackPillsInfo">Interactieve pillen weergeven in het zoekveld</string>
+    <string name="PillStackActivePills">Actieve pillen</string>
+    <string name="PillStackHiddenPills">Verborgen pillen</string>
+    <string name="CurrentLocation">Huidige locatie</string>
+    <string name="SelectLocation">Selecteer op kaart</string>
+    <string name="WeatherPill">Weer</string>
+    <string name="WeatherSettingsInfo">Kies hoe de locatie voor de weergave van het weer in zoekopdrachten wordt bepaald.</string>
+    <string name="WeatherLocation">Locatiedetectie</string>
+    <string name="WeatherLocationPermissionNo">exteraGram heeft toegang tot je locatie nodig om het huidige weer weer te geven.</string>
+    <string name="WeatherLocationPermissionGrant">Toestemming verlenen</string>
+    <string name="WeatherLocationServicesEnable">Locatie inschakelen</string>
+    <string name="WeatherPillTopInfo">Instellingen voor de weerwidget voor de Pillenstack.</string>
+    <string name="PillStackInfiniteScrolling">Oneindig scrollen</string>
+    <string name="CryptoPillTargetCurrency">Doelvaluta</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Proxy uitschakelen</string>
+    <string name="ProxyDisableNever">Nooit</string>
+    <string name="ProxyDisableAlways">Altijd</string>
+    <string name="ProxyDisableOnMobileData">Mobiele data</string>
+    <string name="Unknown">Onbekend</string>
+    <string name="ProxyRename">Proxynaam (optioneel)</string>
+    <string name="ProxyPinLimitReached">Je kunt maximaal %1$d proxy\'s vastzetten.</string>
+    <string name="CopyIpAddress">IP-adres kopiëren</string>
+    <string name="IpInfoUnavailable">Kon IP-adresinfo niet laden.</string>
+    <string name="IpInfoOrganization">Organisatie</string>
+    <string name="IpInfoDomain">Domein</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Vertalingsprovider</string>
+    <string name="TranslationTarget">Doeltaal</string>
+    <string name="TranslationTargetApp">Volg app</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Getallen afronden uitschakelen</string>
+    <string name="FormatTimeWithSeconds">Tijd opmaken met seconden</string>
+    <string name="RelativeLastSeen">Relatieve laatst gezien</string>
+    <string name="InAppVibration">Trilling in app</string>
+    <string name="FilterZalgo">\"Zalgo\" filteren</string>
+    <string name="FilterZalgoInfo">Verwijdert \"%1$s\"-symbolen in namen en berichten.</string>
+    <string name="RestartRequired">Start de app opnieuw om de wijzigingen door te voeren.</string>
+    <!-- Message Formatting -->
+    <string name="CreateCode">Codeblok maken</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Downloadsnelheid versnellen</string>
+    <string name="UploadSpeedBoost">Uploadsnelheid versnellen</string>
+    <string name="SpeedBoostInfo">Ultra Boost kan problemen veroorzaken bij het downloaden van bestanden en het streamen van video\'s op trage internetverbindingen.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Opslag</string>
+    <string name="CustomSavePath">Aangepaste opslagmap</string>
+    <string name="CustomSavePathHint">Laat leeg om rechtstreeks naar de hoofdmap op te slaan</string>
+    <string name="CustomSavePathDefault">Opslaan in hoofdmap</string>
+    <string name="CustomSavePathInfo">Opgeslagen bestanden worden rechtstreeks opgeslagen in Afbeeldingen, Downloads, enz.</string>
+    <string name="CustomSavePathInfoFolder">Opgeslagen bestanden worden opgeslagen in Afbeeldingen/%1$s, Downloads/%1$s, enz.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Telefoonnummer verbergen</string>
+    <string name="ShowIdAndDc">ID en DC tonen</string>
+    <string name="ShowIdAndDcInfo">Telegram API toont ID\'s zoals ze zijn, terwijl de Bot API een minteken toevoegt voor groepen en -100 voor supergroepen en kanalen.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Archiefmap verbergen</string>
+    <string name="ArchiveOnPull">Archief openen bij omlaag trekken</string>
+    <string name="DisableUnarchiveSwipe">\"Uit archief halen\"-veeg uitschakelen</string>
+    <string name="DisableUnarchiveSwipeInfo">Naar links vegen zal chats niet uit het archief verwijderen.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Uiterlijk</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Avatarhoeken</string>
+    <string name="SingleCornerRadius">Enkele hoekradius</string>
+    <string name="SingleCornerRadiusInfo">Forums hebben dezelfde avatarvorm als chats.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Chatlijst</string>
+    <string name="ActionBarTitle">Titeltekst</string>
+    <string name="ActionBarTitleName">Voornaam</string>
+    <string name="HideStories">Verhalen verbergen</string>
+    <string name="HideActionBarStatus">Status verbergen</string>
+    <string name="CenterTitle">Titel centreren</string>
+    <string name="ChatHeader">Chatkop</string>
+    <string name="HideFloatingButton">Zwevende knop verbergen</string>
+    <string name="HideDialogsSearchBar">Zoekbalk verbergen</string>
+    <string name="BottomNavigationBarMode">Onderste navigatiebalk</string>
+    <string name="BottomNavigationModeShow">Tonen</string>
+    <string name="BottomNavigationModeHide">Verbergen</string>
+    <string name="BottomNavigationModeFloating">Zwevend</string>
+    <string name="SenderMiniAvatars">Mini-avatars van afzender</string>
+    <string name="ListOfChatsInfo">Wanneer \"Alleen pictogrammen\" is ingeschakeld voor mappen, wordt de mapnaam weergegeven in de hoofdtitel.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Mapnaam</string>
+    <string name="TabTitleStyleTextWithIcons">Namen met pictogrammen</string>
+    <string name="TabTitleStyleIconsOnly">Alleen pictogrammen</string>
+    <string name="TabTitleStyleTextOnly">Alleen namen</string>
+    <string name="TabCounter">Meldingsteller</string>
+    <string name="HideAllChats">Tabblad \"%1$s\" verbergen</string>
+    <string name="FoldersInfo">Pictogrammen worden gesynchroniseerd met je account.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">App-navigatie</string>
+    <string name="AppNavigationInfo">Menu rechtsboven en instellingen voor het zijmenu</string>
+    <string name="NavigationDrawer">Navigatielade</string>
+    <string name="NavigationDrawerInfo">Vervangt het menu rechtsboven door een klassieke navigatielade die je opent door te vegen en een hamburgerknop.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Meeslepende animatie</string>
+    <string name="MainMenuItems">Menu-items</string>
+    <string name="MainMenuItemsInfo">Tik om items te tonen of te verbergen, houd vast om de volgorde te wijzigen. De lay-out wordt gedeeld tussen het menu en de navigatielade.</string>
+    <string name="MainMenuHiddenItems">Verborgen menu-items</string>
+    <string name="MainMenuAddDivider">Scheiding toevoegen</string>
+    <string name="MainMenuRemoveSettingsInfo">Instellingen kunnen niet worden verborgen als de onderste navigatiebalk is uitgeschakeld.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Iconenpakketten</string>
+    <string name="IconPacksInfo">Pas iconen in de hele app aan</string>
+    <string name="IconPickerAllIcons">Alle iconen</string>
+    <string name="IconPickerReplacedIcons">Vervangen iconen</string>
+    <string name="IconPickerNotReplacedIcons">Niet vervangen iconen</string>
+    <string name="IconPickerSaveAndExit">Opslaan &amp; Afsluiten</string>
+    <string name="BasePacks">Basispakketten</string>
+    <string name="BaseIconPackInfo">Het basisiconenpakket wordt gebruikt als terugval voor iconen die niet door andere pakketten worden vervangen.</string>
+    <string name="IconPacksHint">Tik om een pakket in of uit te schakelen. Houd vast om te bewerken of te verwijderen.</string>
+    <string name="NewIconPack">Nieuw iconenpakket maken</string>
+    <string name="EnabledPacks">Ingeschakelde pakketten</string>
+    <string name="AllPacks">Alle pakketten</string>
+    <string name="PackName">Pakketnaam</string>
+    <string name="AuthorNameOptional">Auteur (optioneel)</string>
+    <string name="NameCannotBeEmpty">Naam mag niet leeg zijn.</string>
+    <string name="Version">Versie</string>
+    <string name="InstallPack">Pakket installeren</string>
+    <string name="IconCount_one">%1$d icoon</string>
+    <string name="IconCount_two">%1$d iconen</string>
+    <string name="IconCount_few">%1$d iconen</string>
+    <string name="IconCount_many">%1$d iconen</string>
+    <string name="IconCount_other">%1$d iconen</string>
+    <string name="UpdatePack">Pakket bijwerken</string>
+    <string name="DeletePack">Pakket verwijderen</string>
+    <string name="DeletePackInfo">Weet je zeker dat je **%1$s** wilt verwijderen?</string>
+    <string name="IconPackErrorInvalidArchive">Iconenpakketarchief is ongeldig.</string>
+    <string name="IconPackErrorMissingMetadata">Iconenpakketarchief mist metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Metadata van iconenpakket is te groot.</string>
+    <string name="IconPackErrorInvalidMetadata">Metadata van iconenpakket is ongeldig.</string>
+    <string name="IconPackErrorTooManyFiles">Iconenpakket bevat te veel bestanden.</string>
+    <string name="IconPackErrorArchiveTooLarge">Iconenpakket is te groot.</string>
+    <string name="IconPackErrorFileTooLarge">Een van de iconenbestanden is te groot.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Iconenpakketarchief is te sterk gecomprimeerd.</string>
+    <string name="IconPackErrorStorage">Kon iconenpakket niet opslaan.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Iconenpakket</string>
+    <string name="AppIconSunset">Zonsondergang</string>
+    <string name="AppIconAmethyst">Amethist</string>
+    <string name="AppIconInvincible">Onoverwinnelijk</string>
+    <string name="AppIconSpace">Ruimte</string>
+    <string name="AppIconIceAge">IJstijd</string>
+    <string name="AppIconOrbit">Baan</string>
+    <string name="AppIconSus">Bedrieger</string>
+    <!-- General Appearance -->
+    <string name="Sections">Secties</string>
+    <string name="SeparateHeaders">Aparte koppen</string>
+    <string name="DividerStyle">Scheidingsstijl</string>
+    <string name="DividerStyleHidden">Verborgen</string>
+    <string name="DividerStyleLine">Lijn</string>
+    <string name="DividerStyleSegments">Segmenten</string>
+    <string name="UseSystemFonts">Systeemlettertypen gebruiken</string>
+    <string name="UseSystemEmoji">Systeem-emoji gebruiken</string>
+    <string name="NewLoadingStyle">Laadstijl</string>
+    <string name="NewSliderStyle">Schuifregelaarstijl</string>
+    <string name="NewSwitchStyle">Schakelaarstijl</string>
+    <string name="TabletMode">Tabletmodus</string>
+    <string name="RemoveMessageTail">Berichtstaart verwijderen</string>
+    <string name="GooeyAvatarAnimation">\"Gooey\"-avataranimatie</string>
+    <string name="CustomChatThemes">Aangepaste thema\'s in chats</string>
+    <string name="CustomChatThemesInfo">Elke chat toont het thema dat specifiek voor die chat is gekozen.</string>
+    <string name="PredictiveBackIntensity">Intensiteit van voorspellend terug</string>
+    <string name="PredictiveBackInfo">Bepaalt hoe ver het scherm beweegt bij het terugvegen.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Vervagingsopties</string>
+    <string name="GlassOutlineStyle">Glazen omtrek</string>
+    <string name="GlassOutlineGlare">Schittering</string>
+    <string name="GlassOutlineSolid">Effen</string>
+    <string name="GlassOutlineHidden">Verborgen</string>
+    <string name="ForceSnow">Sneeuwvlokken forceren</string>
+    <string name="ForceSnowInfo">Vallende sneeuwvlokken verschijnen in de actiebalk, het zijmenu en chatachtergronden.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Stickergrootte</string>
+    <string name="StickerSizeLeft">Klein</string>
+    <string name="StickerSizeRight">Groot</string>
+    <string name="StickerSizeDialogMessage">woah, zo schattig!</string>
+    <string name="StickerShape">Stickervorm</string>
+    <string name="StickerShapeRounded">Afgerond</string>
+    <string name="StickerShapeRoundedMsg">Bericht</string>
+    <string name="ViewEmojiSet">Emoji-set bekijken</string>
+    <string name="UnlimitedRecentStickers">Onbeperkte recente stickers</string>
+    <string name="HideReactions">Reacties verbergen</string>
+    <string name="HideReactionsInfo">Reacties worden volledig verborgen in de interface.</string>
+    <string name="ReplyBackground">Achtergrond</string>
+    <string name="ChatSettingsInfo">Media-instellingen, app-pictogram en overige</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Services, rollen en geschiedenis instellen</string>
+    <string name="AIChatInfo2">Genereer tekst uit berichten of vóór het verzenden.</string>
+    <!-- AI Services -->
+    <string name="ServicesInfo">Kies de juiste service voor interactie met taalmodel.</string>
+    <string name="NewService">Nieuwe service</string>
+    <string name="EditService">Service bewerken</string>
+    <string name="ServiceKey">API-sleutel</string>
+    <string name="ServiceInfo">Service-info</string>
+    <string name="ServiceProviderCustom">Aangepast</string>
+    <string name="ServiceTestAndSave">Testen en opslaan</string>
+    <string name="ServicePasteService">Service plakken</string>
+    <string name="ServicePasteKey">API-sleutel plakken</string>
+    <string name="DeleteServiceInfo">Weet je zeker dat je **%1$s** wilt verwijderen?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Rollen</string>
+    <string name="RolesInfo">Maak rollen voor jouw specifieke behoeften!</string>
+    <string name="Suggestions">Suggesties</string>
+    <string name="RoleName">Naam</string>
+    <string name="PromptInfo">Een prompt is de initiële tekst die aan het model wordt gegeven om een antwoord te genereren of een dialoog voort te zetten.</string>
+    <string name="NewRole">Nieuwe rol</string>
+    <string name="EditRole">Rol bewerken</string>
+    <string name="DeleteRoleInfo">Weet je zeker dat je **%1$s** wilt verwijderen?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Gespreksgeschiedenis stelt de AI in staat om eerdere verzoeken te begrijpen en er rekening mee te houden bij het genereren van nieuwe antwoorden.</string>
+    <string name="AIGeneration">Generatie</string>
+    <string name="AIReasoning">Redeneren</string>
+    <string name="AIReasoningInfo">Laat ondersteunde modellen op deze service extra tokens besteden aan nadenken voordat ze antwoorden.</string>
+    <string name="AITemperature">Temperatuur</string>
+    <string name="AITemperatureInfo">Temperatuur regelt de willekeur van antwoorden: hogere waarden zijn creatiever, lagere waarden zijn meer gericht.</string>
+    <string name="ResponseStreaming">Responsstreaming</string>
+    <string name="ResponseStreamingInfo">Zorgt voor een vloeiendere en snellere weergave van antwoorden.</string>
+    <string name="ShowResponseOnly">Alleen antwoord tonen</string>
+    <string name="InsertResponseAsQuote">Antwoord als citaat invoegen</string>
+    <string name="TapToAddApiKey">Tik om een API-sleutel toe te voegen om te beginnen met AI-functies.</string>
+    <string name="Generate">Genereren</string>
+    <string name="ClearConversationHistoryInfo">Weet je zeker dat je **alle** AI-gespreksgeschiedenis wilt wissen?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Ongeldig verzoek</string>
+    <string name="AIError400Info">Controleer de verzoekparameters.</string>
+    <string name="AIError401">Ongeldige inloggegevens</string>
+    <string name="AIError401Info">API-sleutel is ongeldig of uitgeschakeld. Controleer je inloggegevens.</string>
+    <string name="AIError402">Onvoldoende tegoed</string>
+    <string name="AIError402Info">Je account of API-sleutel heeft onvoldoende tegoed. Voeg meer tegoed toe en probeer het verzoek opnieuw.</string>
+    <string name="AIError403">Toegang geweigerd</string>
+    <string name="AIError403Info">Je hebt geen toestemming om dit model of deze bron te gebruiken. Controleer je API-sleutel en accountmachtigingen.</string>
+    <string name="AIError408">Time-out bij verzoek</string>
+    <string name="AIError408Info">Je verzoek is niet op tijd verwerkt. Probeer het later opnieuw.</string>
+    <string name="AIError429">Frequentielimiet overschreden</string>
+    <string name="AIError429Info">Je verzendt te vaak verzoeken. Wacht even en probeer het opnieuw.</string>
+    <string name="AIError502">Modelstoring</string>
+    <string name="AIError502Info">Het geselecteerde model is niet beschikbaar of we hebben een ongeldig antwoord ontvangen.</string>
+    <string name="AIError503">Service niet beschikbaar</string>
+    <string name="AIError503Info">De service is tijdelijk niet beschikbaar of overbelast. Probeer het later opnieuw.</string>
+    <string name="AIError">Serverfout</string>
+    <string name="AIErrorInfo">Probeer je verzoek na een korte wachttijd opnieuw.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Inkomende berichten</string>
+    <string name="DoubleTapOutgoing">Uitgaande berichten</string>
+    <string name="DoubleTapInfo">Sommige acties vereisen beheerdersrechten in de chat of het kanaal.</string>
+    <string name="BottomButton">Onderste knop</string>
+    <string name="ChannelDiscussNoCaps">Bespreken</string>
+    <string name="QuickTransitions">Snelle overgang door te vegen</string>
+    <string name="DisableGreetingSticker">Begroetingssticker uitschakelen</string>
+    <string name="AdminShortcuts">Snelle beheerderssnelkoppelingen</string>
+    <string name="HideKeyboardOnScroll">Toetsenbord verbergen bij scrollen</string>
+    <string name="HideShareButton">Zijknop \"%1$s\" verbergen</string>
+    <string name="ReplaceEditedWithIcon">\"%1$s\" vervangen door een icoon</string>
+    <string name="MessageMenu">Berichtenmenu</string>
+    <string name="GroupMessageMenu">Groepsberichtenmenu</string>
+    <string name="GroupMessageMenuInfo">Groepering verplaatst de hoofdacties naar de onderkant van het berichtenmenu.</string>
+    <string name="GlassMessageMenu">Glazen berichtenmenu</string>
+    <string name="GlassMessageMenuBlurOff">Glazen menu\'s hebben vervaging nodig, die momenteel is uitgeschakeld.</string>
+    <string name="AddCommaAfterMention">Komma toevoegen na vermelding</string>
+    <string name="HideSendAsPeer">Knop \"Verzenden als…\" verbergen</string>
+    <string name="HideSendAsPeerInfo">Je kunt nog steeds het menu \"Verzenden als…\" openen door lang op de knop Emoji\'s/Stickers/GIF\'s te drukken.</string>
+    <string name="ShowPollResultsBeforeVoting">Resultaten tonen vóór het stemmen</string>
+    <string name="ShowPollResultsBeforeVotingHint">Bekijk de resultaten voor elke optie voordat je je stem uitbrengt.</string>
+    <string name="ShowOnlineStatus">Online-indicator tonen</string>
+    <string name="MessagePreviewDialogMessage">Ik kan glas eten en het doet me geen pijn.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Herkenningstaal</string>
+    <string name="RecognitionInfo">Gebruikt Vosk API. Werkt offline. De kwaliteit van de getranscribeerde tekst kan laag zijn.</string>
+    <string name="MissingLanguageModel">Taalmodel ontbreekt</string>
+    <string name="DownloadingModel">Model downloaden…</string>
+    <string name="DownloadingModelInfo">Houd dit venster geopend terwijl het taalmodel wordt gedownload.</string>
+    <string name="ModelDownload">Downloaden (%1$s)</string>
+    <string name="ModelDownloadInfo">Om door te gaan, moet je het taalmodel \"**%1$s**\" downloaden.</string>
+    <string name="ModelDownloaded">Model succesvol gedownload.</string>
+    <string name="ModelError">Fout bij het downloaden van het model.</string>
+    <string name="ModelUnzipping">Uitpakken…</string>
+    <string name="DeleteRecognitionModel">Model verwijderen</string>
+    <string name="DeleteRecognitionModelInfo">Weet je zeker dat je het taalmodel \"**%1$s**\" wilt verwijderen?</string>
+    <string name="RecognitionModelDeleted">Model succesvol verwijderd.</string>
+    <string name="RecognitionModelDeleteError">Fout bij het verwijderen van het model.</string>
+    <string name="PostProcessingWithAi">AI gebruiken voor nabewerking</string>
+    <string name="PostProcessingWithAiInfo">AI verbetert de leesbaarheid door fouten te corrigeren, leestekens toe te voegen en onduidelijke delen te verduidelijken.</string>
+    <!-- Camera -->
+    <string name="CameraType">Cameratype</string>
+    <string name="ExtendedSettings">Uitgebreide instellingen</string>
+    <string name="SeamlessSwitching">Naadloos schakelen</string>
+    <string name="ExtendedFramesPerSecond">Uitgebreid FPS-bereik</string>
+    <string name="CameraStabilization">Stabilisatie</string>
+    <string name="CameraMirrorMode">Spiegelmodus</string>
+    <string name="StartWithWideAngleCamera">Starten met groothoek</string>
+    <string name="ZoomSlider">Zoom-schuifregelaar</string>
+    <string name="ZoomSliderInfo">Toon de zoomregeling onder de camera voor videoberichten.</string>
+    <string name="StaticZoom">Statische zoom</string>
+    <string name="StaticZoomInfo">Bij het opnemen van videoberichten wordt het zoomniveau niet gereset als je je vingers loslaat.</string>
+    <string name="VideoMessagesCamera">Camera in videoberichten</string>
+    <string name="VideoMessagesCameraRear">Achter</string>
+    <string name="VideoMessagesCameraFront">Voor</string>
+    <string name="VideoMessagesCameraAsk">Vragen</string>
+    <string name="RearCamera">Achtercamera</string>
+    <string name="FrontCamera">Voorcamera</string>
+    <string name="RememberLastUsedCamera">Laatst gebruikte camera onthouden</string>
+    <string name="RememberLastUsedCameraInfo">Bij het opnemen van videoberichten wordt de laatst gebruikte camera automatisch geselecteerd.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Altijd in HD verzenden</string>
+    <string name="HideCameraTile">Snelcamerategel verbergen</string>
+    <string name="HideCameraTileInfo">De camerategel wordt vervangen door een zwevende knop. Door erop te drukken wordt de Telegram-camera geopend; door lang te drukken wordt de systeemcamera geopend.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Overslaan met dubbeltik</string>
+    <string name="PreferOriginalQuality">Originele kwaliteit prefereren</string>
+    <string name="PauseOnMinimize">Automatisch pauzeren</string>
+    <string name="PauseOnMinimizeVoice">Spraak</string>
+    <string name="PauseOnMinimizeRound">Rond</string>
+    <string name="PauseOnMinimizeInfo">Pauzeert media-afspelen wanneer het apparaat is vergrendeld of exteraGram is geminimaliseerd.</string>
+    <string name="SwipeToPip">Veeg naar PiP</string>
+    <string name="UnmuteWithVolumeButtons">Video\'s dempen opheffen met volumeknoppen</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Door op een volumeknop te drukken wordt de video gedempt in plaats van het systeemvolume te wijzigen.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Wanneer deze opties zijn ingeschakeld, worden gegevens over het apparaat verzameld en verzonden naar Google Analytics en Crashlytics, zodat we gebruiksstatistieken kunnen bijhouden en fouten in de app kunnen volgen. \n\nAls de opties worden uitgeschakeld, stopt het verzamelen van gegevens en worden eventueel verzonden gegevens onmiddellijk verwijderd.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Voer de bestandsnaam in…</string>
+    <string name="ExportSettings">Instellingen exporteren</string>
+    <string name="ApplySettings">Instellingen toepassen</string>
+    <string name="ImportTitle">Weet je zeker dat je deze instellingen wilt toepassen?</string>
+    <string name="ImportConfirm">Ja, toepassen</string>
+    <string name="CancelConfirm">Nee, laten zoals het is</string>
+    <string name="SettingsSaved">Instellingenbestand succesvol opgeslagen.</string>
+    <string name="SettingsImported">Instellingen succesvol toegepast.</string>
+    <string name="ImportChanges_one">**1** wijziging wordt toegepast op de huidige instellingen.</string>
+    <string name="ImportChanges_two">**%1$d** wijzigingen worden toegepast op de huidige instellingen.</string>
+    <string name="ImportChanges_few">**%1$d** wijzigingen worden toegepast op de huidige instellingen.</string>
+    <string name="ImportChanges_many">**%1$d** wijzigingen worden toegepast op de huidige instellingen.</string>
+    <string name="ImportChanges_other">**%1$d** wijzigingen worden toegepast op de huidige instellingen.</string>
+    <string name="SameSettings">Het lijkt erop dat de instellingen hetzelfde zijn als de huidige.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Om veiligheidsredenen kun je over %1$s beginnen met het downloaden van je gegevens. We hebben al je apparaten op de hoogte gesteld van het exportverzoek om er zeker van te zijn dat het geautoriseerd is en je de tijd te geven om te reageren als dat niet het geval is.\n\nKom terug op %2$s en herhaal het verzoek met hetzelfde apparaat.</string>
+    <string name="ExportInvalid">Sorry, je bent een nieuwe gegevensexport gestart, dus deze export is geannuleerd.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Account verwijderen</string>
+    <string name="ResetSettings">Instellingen resetten</string>
+    <string name="ResetPreferences">**exteraGram**-voorkeuren zijn gereset.</string>
+    <string name="ResetPreferencesInfo">Weet je zeker dat je **alle** exteraGram-voorkeuren wilt resetten naar de standaardwaarden?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Ontwikkeling ondersteunen</string>
+    <string name="SupportDevelopmentInfo">Door het project te ondersteunen, draag je niet alleen bij aan de ontwikkeling, maar ontvang je ook een unieke badge.</string>
+    <string name="MakeDonation">Een donatie doen</string>
+    <string name="ReceiveBadge">Je badge ontvangen</string>
+    <string name="NowPlaying">Nu afgespeeld</string>
+    <string name="ScrobblingService">Scrobbling-service</string>
+    <string name="SelectService">Service selecteren</string>
+    <string name="SelectServiceInfo">Geeft het huidige nummer in het profiel weer als een kaart die is verkregen van de scrobbling-service.</string>
+    <string name="EnterUsername">Voer gebruikersnaam in</string>
+    <string name="EnterUsernameInfo">Je kunt je gebruikersnaam verkrijgen op de **officiële website**.</string>
+    <string name="BoostyPeopleCount_one">%1$d persoon</string>
+    <string name="BoostyPeopleCount_two">%1$d personen</string>
+    <string name="BoostyPeopleCount_few">%1$d personen</string>
+    <string name="BoostyPeopleCount_many">%1$d personen</string>
+    <string name="BoostyPeopleCount_other">%1$d personen</string>
+    <string name="BoostyInfo">Ondersteun **exteraGram** actief op **Boosty**.</string>
+    <string name="BoostyInfo2">Bedankt voor je steun!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Plugin-installatie is alleen beschikbaar in de **Volledige** versie van **exteraGram**.</string>
+    <string name="PluginsEngine">Plugin-engine</string>
+    <string name="EnablePluginsEngine">Plugin-engine inschakelen</string>
+    <string name="PluginsInfo">Je kunt plugins vinden op @exteraPlugins.</string>
+    <string name="PluginsNotFound">Geen plugins gevonden.</string>
+    <string name="InstallPlugin">Installeren</string>
+    <string name="UpdatePlugin">Bijwerken</string>
+    <string name="PluginNotEnabled">Schakel de **Plugin-engine** in om **%1$s** te installeren.</string>
+    <string name="PluginInstalled">**%1$s** succesvol geïnstalleerd.</string>
+    <string name="PluginUpdated">**%1$s** succesvol bijgewerkt.</string>
+    <string name="PluginEnableError">Kon **%1$s** niet inschakelen.</string>
+    <string name="PluginDisableError">Kon **%1$s** niet uitschakelen.</string>
+    <string name="PluginInstallError">Kon **%1$s** niet installeren.</string>
+    <string name="PluginSourceTrusted">Vertrouwde bron</string>
+    <string name="PluginSourceTrustedInfo">Plugins uit deze bron zijn **geverifieerd** en veilig te gebruiken.</string>
+    <string name="PluginSourceUnknown">Onbekende bron</string>
+    <string name="PluginSourceUnknownInfo">Plugins uit deze bron zijn **niet geverifieerd** en kunnen een veiligheidsrisico vormen.</string>
+    <string name="PluginVersion">Versie</string>
+    <string name="PluginNoDescription">Geen beschrijving opgegeven.</string>
+    <string name="PluginIsNotResponding">Plugin reageert niet.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s reageert niet</string>
+    <string name="PluginNoAuthor">Onbekende auteur</string>
+    <string name="EnableAfterInstallation">Inschakelen na installatie</string>
+    <string name="EnterValue">Voer een waarde in</string>
+    <string name="PluginDelete">Plugin verwijderen</string>
+    <string name="PluginDeleteInfo">Weet je zeker dat je **%1$s** wilt verwijderen?</string>
+    <string name="ResetPluginSettings">Instellingen van **%1$s** zijn gereset.</string>
+    <string name="ResetPluginSettingsInfo">Weet je zeker dat je de instellingen van **%1$s** wilt resetten naar de standaardwaarden?</string>
+    <string name="PluginsSafeMode">Veilige modus</string>
+    <string name="PluginsSafeModeShortcut">Starten in veilige modus</string>
+    <string name="PluginsSafeModeInfo">De Plugin-engine is uitgeschakeld vanwege een crash. Het uitschakelen van de veilige modus kan onvoorspelbare gevolgen hebben.</string>
+    <string name="PluginsSafeModeInfo2">In de veilige modus zijn alle plugins inactief. Zo kun je veilig een problematische plugin vinden en uitschakelen.</string>
+    <string name="PluginsDevMode">Ontwikkelaarsmodus</string>
+    <string name="PluginsCompactView">Compacte weergave voor plugins</string>
+    <string name="PluginsDocumentation">Documentatie</string>
+    <string name="PluginsTrusted">Vertrouwde plugins</string>
+    <string name="PluginsDevServerLaunched">Ontwikkelaarsserver is gestart.</string>
+    <string name="PluginsDevServerStopped">Ontwikkelaarsserver is gestopt.</string>
+    <string name="PluginEngineNotEnabled">Schakel de **Plugin-engine** in om de instellingen van **%1$s** te openen.</string>
+    <string name="PluginNotFound">**%1$s** niet gevonden.</string>
+    <string name="PluginHasNoSettings">**%1$s** heeft geen instellingen.</string>
+    <string name="PluginsPySdkAutoUpdate">Automatisch bijwerken</string>
+    <string name="PluginsPySdkEnableBetaVersion">Bètaversies installeren</string>
+    <string name="PluginsPySdkCheckUpdates">Controleren op updates</string>
+    <string name="CheckingForUpdates">Controleren op updates…</string>
+    <string name="LatestVersionInstalled">Nieuwste versie is geïnstalleerd</string>
+    <string name="RestartPluginSystemToApplyUpdate">Update geladen, start de Plugin-engine opnieuw om toe te passen</string>
+    <string name="LoadingUpdate">Update laden…</string>
+    <string name="RestoreSdkFromApk">SDK herstellen vanuit APK</string>
+    <string name="EnableAutoUpdate">Automatisch bijwerken inschakelen</string>
+    <string name="PluginsDisableArt">Compatibiliteitsmodus</string>
+    <string name="PluginsDisableArtInfo">Voorkomt plugin-hookfouten door ART Profile Saver uit te schakelen.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Bezig met bijwerken…</string>
+    <string name="UpdateInstallingRelaunch">De app wordt opnieuw gestart zodra de update is voltooid.</string>
+    <string name="UpdateInstallingNotification">Je krijgt een melding wanneer de update is voltooid.</string>
+    <string name="UpdateInstalledNotification">Update voltooid. Tik om de app te openen.</string>
+    <string name="UpdateFailedToInstall">Update-installatie mislukt met foutcode: %d</string>
+    <string name="UpdateAvailable">Update beschikbaar!</string>
+    <!-- Message Details -->
+    <string name="Date">Datum</string>
+    <string name="EditedDate">Bewerkingsdatum</string>
+    <string name="ForwardedDate">Doorstuurdatum</string>
+    <string name="FileSize">Bestandsgrootte</string>
+    <string name="FileName">Bestandsnaam</string>
+    <string name="FilePath">Bestandspad</string>
+    <string name="Resolution">Resolutie</string>
+    <string name="Duration">Duur</string>
+    <string name="MimeType">Mime-type</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">Opmaak:</string>
+    <string name="DateFormatOptionNone">Geen</string>
+    <string name="DateFormatOptionRelative">Relatief</string>
+    <string name="DateFormatOptionShortTime">Korte tijd</string>
+    <string name="DateFormatOptionLongTime">Lange tijd</string>
+    <string name="DateFormatOptionShortDate">Korte datum</string>
+    <string name="DateFormatOptionLongDate">Lange datum</string>
+    <string name="DateFormatOptionDayOfWeek">Dag van de week</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">Inloggen met QR-code</string>
+    <string name="LoginQrSubtitle">Gebruik een ander apparaat om deze QR-code te scannen.</string>
+    <string name="WifiConnect">Verbinden</string>
+    <string name="WifiDisabled">Wi-Fi is uitgeschakeld.</string>
+    <string name="WifiFailed">Verbinding met Wi-Fi mislukt.</string>
+    <string name="WifiSuccess">Succesvol verbonden met Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Weet je zeker dat je op een ander apparaat wilt inloggen op dit account?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Pagina geblokkeerd</string>
+    <string name="PageBlockedDescription">exteraGram heeft het laden van de volgende pagina voorkomen:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Terug</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Instellen als badge</string>
+    <string name="AutoLockInstant">Onmiddellijk</string>
+    <string name="TestBackend">Backend testen</string>
+    <string name="SearchPhotoInfo">Services kunnen afbeeldingen gebruiken volgens hun privacybeleid en gebruiksvoorwaarden.</string>
+    <string name="PhotoUploadFailed">Foto uploaden mislukt.</string>
+    <string name="TrackSaved">Nummer opgeslagen in **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Nummers worden opgeslagen in **%1$s**.</string>
+    <string name="DeletedMessage">Verwijderd bericht</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Titel kopiëren</string>
+    <string name="CopyCallback">Callback-gegevens kopiëren</string>
+    <string name="CopyInlineQuery">Inline-query kopiëren</string>
+    <string name="CopyID">Gebruikers-ID kopiëren</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Badgestatus ingesteld.</string>
+    <string name="UserNotFound">Gebruiker met dit **ID** niet gevonden.</string>
+    <string name="ChatNotFound">Chat met dit **ID** niet gevonden.</string>
+    <string name="PhotoCopied">Foto naar klembord gekopieerd.</string>
+    <string name="FrameCopied">Frame naar klembord gekopieerd.</string>
+    <string name="TapToCopy">Tik om te kopiëren</string>
+    <string name="ProfileUsesEmojiPack">Dit profiel gebruikt emoji uit het pakket %s voor de achtergrond.</string>
+    <string name="ProfileUsesEmojiPacks">Dit profiel gebruikt emoji uit **%d pakketten** voor de achtergrond.</string>
+    <string name="ReplyUsesEmojiPacks">Dit antwoord gebruikt emoji uit het pakket %s voor de achtergrond.</string>
+    <string name="StickerSavedHint">Sticker opgeslagen in galerij.</string>
+    <string name="EmojiSavedHint">Emoji opgeslagen in galerij.</string>
+    <string name="GifGallerySavedHint">GIF opgeslagen in galerij.</string>
+    <string name="MutualContactInfo">Dit contact is wederzijds.</string>
+    <string name="LocalPremiumEmojiHint">Je hebt geen **Telegram Premium**-abonnement, dus alleen **exteraGram**-gebruikers kunnen deze emoji zien.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Tabblad Contacten verbergen</string>
+    <string name="ShowContactsTab">Tabblad Contacten tonen</string>
+    <string name="ContactsTabWasShownTitle">Tabblad **Contacten** is nu zichtbaar.</string>
+    <string name="ContactsTabWasHiddenTitle">Tabblad **Contacten** is nu verborgen.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Deze functie werkt alleen met wachtwoordbeheerders die de gebruiker toestaan vertrouwensinstellingen voor bevoorrechte apps te beheren, zoals **Bitwarden** of **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Niet-ondersteunde wachtwoordbeheerder</string>
+    <string name="PasskeyUnsupportedMessage">Probeer andere wachtwoordbeheerders zoals **Bitwarden** of **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** heeft hun account ongeveer op **%2$s** aangemaakt.</string>
+    <string name="CreationDateUserEarlier">**%1$s** heeft hun account eerder aangemaakt dan **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** heeft hun account later aangemaakt dan **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** is aangemaakt op **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">Je hebt je account ongeveer op **%1$s** aangemaakt.</string>
+    <string name="CreationDateSelfEarlier">Je hebt je account eerder aangemaakt dan **%1$s**.</string>
+    <string name="CreationDateSelfLater">Je hebt je account later aangemaakt dan **%1$s**.</string>
+    <string name="JoinDateChat">Je bent lid geworden van **%1$s** op **%2$s**.</string>
+    <string name="GroupMemberJoined">lid geworden van %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Naar begin</string>
+    <string name="MessageHistory">Geschiedenis</string>
+    <string name="BoldItalic">Vet cursief</string>
+    <string name="CopyPhoto">Foto kopiëren</string>
+    <string name="CopyFrame">Frame kopiëren</string>
+    <string name="Repeat">Herhalen</string>
+    <string name="Subtitles">Ondertitels</string>
+    <string name="ChooseSubtitles">Ondertitels kiezen</string>
+    <string name="DisableSubtitles">Ondertitels uitschakelen</string>
+    <string name="SubtitlesAdded">Ondertitels ingeschakeld.</string>
+    <string name="SubtitlesRemoved">Ondertitels uitgeschakeld.</string>
+    <string name="SubtitlesLoadError">Kon ondertitels niet laden.</string>
+    <string name="SubtitlesUnsupportedFormat">Niet-ondersteund ondertitelformaat.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Stickerhoeken</string>
+    <string name="StickerCornerRadiusInfo">Kies hoe afgerond de stickerhoeken moeten zijn.</string>
+    <string name="StickerCornerRadiusLarge">Groot</string>
+    <string name="StickerCornerRadiusMedium">Middel</string>
+    <string name="StickerCornerRadiusSmall">Klein</string>
+    <string name="StickerCornerRadiusNone">Geen</string>
+    <!-- Feed -->
+    <string name="FeedShownChannels">Getoond in feed</string>
+    <string name="FeedHiddenChannels">Verborgen</string>
+    <string name="FeedChannels">Kanalen</string>
+    <string name="FeedSettings">Feed-instellingen</string>
+    <string name="FeedNoPosts">Nog geen kanaalberichten.</string>
+    <string name="FeedAllChannelsExcluded">Alle kanalen zijn uitgesloten van de feed.</string>
+    <string name="FeedMarkAllReadConfirm">Alle berichten in je feedkanalen als gelezen markeren? Dit markeert ze ook als gelezen in de oorspronkelijke kanalen.</string>
+    <string name="FeedMarkAllReadDone">Alle berichten gemarkeerd als gelezen</string>
+    <string name="FeedIncludeArchived">Chats uit archief tonen</string>
+    <string name="FeedIncludeArchivedInfo">Voeg ook kanalen uit je gearchiveerde chats toe aan de feed.</string>
+    <string name="FeedHideChannel">Verbergen in feed</string>
+    <string name="FeedChannelHidden">**%1$s** verborgen in feed</string>
+    <string name="FeedBottomTab">Tonen in onderste tabbladen</string>
+    <string name="FeedBottomTabInfo">Toon de feed als een onderste navigatietabblad in plaats van het tabblad Contacten.</string>
+    <string name="FeedUnreadCounter">Teller voor ongelezen berichten</string>
+    <string name="HideFeedTab">Feed-tabblad verbergen</string>
+    <string name="DisableMarkdown">Markdown uitschakelen</string>
+    <string name="EnableMarkdown">Markdown inschakelen</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

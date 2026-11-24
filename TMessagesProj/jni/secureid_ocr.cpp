@@ -617,6 +617,7 @@ extern "C" JNIEXPORT jstring Java_org_telegram_messenger_MrzRecognizer_performRe
 		if(row!=numRows-1)
 			res+="\n";
 	}
+	AndroidBitmap_unlockPixels(env, bitmap);
 	genann_free(ann);
 	return env->NewStringUTF(res.c_str());
 }

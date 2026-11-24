@@ -8,6 +8,9 @@
 
 package org.telegram.ui.Cells;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -16,26 +19,35 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ChatObject;
+import org.telegram.messenger.ContactsController;
+import org.telegram.messenger.DialogObject;
+import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
+import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.Forum.ForumBubbleDrawable;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.LetterDrawable;
 
+@SuppressLint("ViewConstructor")
 public class ShareTopicCell extends FrameLayout {
 
-    private BackupImageView imageView;
-    private TextView nameTextView;
+    private final BackupImageView imageView;
+    private final AvatarDrawable avatarDrawable;
+    private final TextView nameTextView;
 
     private long currentDialog;
     private long currentTopic;
 
-    private int currentAccount = UserConfig.selectedAccount;
+    private final int currentAccount = UserConfig.selectedAccount;
     private final Theme.ResourcesProvider resourcesProvider;
 
     public ShareTopicCell(Context context, Theme.ResourcesProvider resourcesProvider) {
@@ -49,7 +61,7 @@ public class ShareTopicCell extends FrameLayout {
         addView(imageView, LayoutHelper.createFrame(56, 56, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 7, 0, 0));
 
         nameTextView = new TextView(context);
-        nameTextView.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
+        ThemeBind.textColor(nameTextView, Theme.key_dialogTextBlack, resourcesProvider);
         nameTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
         nameTextView.setMaxLines(2);
         nameTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
@@ -57,12 +69,33 @@ public class ShareTopicCell extends FrameLayout {
         nameTextView.setEllipsize(TextUtils.TruncateAt.END);
         addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 6, 66, 6, 0));
 
-        setBackground(Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector), AndroidUtilities.dp(2), AndroidUtilities.dp(2)));
+        avatarDrawable = new AvatarDrawable(resourcesProvider) {
+            @Override
+            public void invalidateSelf() {
+                super.invalidateSelf();
+                imageView.invalidate();
+            }
+        };
+
+        ThemeBind.selectorBackground(this, Theme.createRadSelectorDrawable(Theme.getColor(Theme.key_listSelector), AndroidUtilities.dp(2), AndroidUtilities.dp(2)), null, ThemeBind.of(Theme.key_listSelector));
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(103), MeasureSpec.EXACTLY));
+    }
+
+    public void setAsNewBotForumTopic(boolean canCreateNewTopic) {
+        nameTextView.setText(LocaleController.getString(canCreateNewTopic ? R.string.ShareSendToNewTopic : R.string.ShareSendToOffTopic));
+
+        imageView.setAnimatedEmojiDrawable(null);
+        ForumBubbleDrawable forumBubbleDrawable = new ForumBubbleDrawable(ForumBubbleDrawable.serverSupportedColor[0]);
+        LetterDrawable letterDrawable = new LetterDrawable(null, LetterDrawable.STYLE_TOPIC_DRAWABLE);
+        letterDrawable.setTitle("");
+        letterDrawable.scale = 1.8f;
+        CombinedDrawable combinedDrawable = new CombinedDrawable(forumBubbleDrawable, letterDrawable, 0, 0);
+        combinedDrawable.setFullsize(true);
+        imageView.setImageDrawable(combinedDrawable);
     }
 
     public void setTopic(TLRPC.Dialog dialog, TLRPC.TL_forumTopic topic, boolean checked, CharSequence name) {
@@ -72,12 +105,49 @@ public class ShareTopicCell extends FrameLayout {
         TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-dialog.id);
         if (name != null) {
             nameTextView.setText(name);
-        } else if (chat != null) {
+        } else if (dialog.id > 0) {
             nameTextView.setText(topic.title);
+        } else if (chat != null) {
+            if (chat.monoforum) {
+                nameTextView.setText(MessagesController.getInstance(currentAccount).getPeerName(DialogObject.getPeerDialogId(topic.from_id)));
+            } else {
+                nameTextView.setText(topic.title);
+            }
         } else {
             nameTextView.setText("");
         }
-        if (topic.icon_emoji_id != 0) {
+
+        if (ChatObject.isMonoForum(chat)) {
+            imageView.setAnimatedEmojiDrawable(null);
+            imageView.setImageDrawable(null);
+
+            final long topicId = DialogObject.getPeerDialogId(topic.from_id);
+            if (DialogObject.isUserDialog(topicId)) {
+                TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(topicId);
+                ThemeBind.textColor(nameTextView, Theme.key_dialogTextBlack, resourcesProvider);
+                avatarDrawable.setInfo(currentAccount, user);
+                if (name != null) {
+                    nameTextView.setText(name);
+                } else if (user != null) {
+                    nameTextView.setText(ContactsController.formatName(user.first_name, user.last_name));
+                } else {
+                    nameTextView.setText("");
+                }
+                imageView.setForUserOrChat(user, avatarDrawable);
+                imageView.setRoundRadius(dp(28));
+            } else {
+                TLRPC.Chat chat1 = MessagesController.getInstance(currentAccount).getChat(topicId);
+                if (name != null) {
+                    nameTextView.setText(name);
+                } else if (chat1 != null) {
+                    nameTextView.setText(chat1.title);
+                } else {
+                    nameTextView.setText("");
+                }
+                avatarDrawable.setInfo(currentAccount, chat1);
+                imageView.setForUserOrChat(chat, avatarDrawable);
+            }
+        } else if (topic.icon_emoji_id != 0) {
             imageView.setImageDrawable(null);
             imageView.setAnimatedEmojiDrawable(new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW_STATIC, UserConfig.selectedAccount, topic.icon_emoji_id));
         } else {

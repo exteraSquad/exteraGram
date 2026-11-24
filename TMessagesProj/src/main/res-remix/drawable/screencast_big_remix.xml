@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15 15H105C107.761 15 110 17.2386 110 20V100C110 102.761 107.761 105 105 105H75C75 101.6 74.739 98.2595 74.2355 95H100V25H20V40.7645C16.7403 40.2611 13.4007 40 10 40V20C10 17.2386 12.2386 15 15 15ZM65 105H55C55 80.147 34.8528 60 10 60V50C40.3757 50 65 74.6245 65 105ZM45 105H35C35 91.193 23.8071 80 10 80V70C29.33 70 45 85.67 45 105ZM25 105H10V90C18.2843 90 25 96.7155 25 105ZM71.865 85C65.465 65.188 49.812 49.5352 30 43.135V35H90V85H71.865Z" />
+</vector>

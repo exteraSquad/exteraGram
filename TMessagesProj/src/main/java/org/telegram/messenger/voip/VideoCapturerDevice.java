@@ -50,7 +50,7 @@ public class VideoCapturerDevice {
     private CapturerObserver nativeCapturerObserver;
 
     public VideoCapturerDevice(boolean screencast) {
-        Logging.enableLogToDebugOutput(Logging.Severity.LS_INFO);
+        Logging.enableLogToDebugOutput(Logging.Severity.LS_VERBOSE);
         Logging.d("VideoCapturerDevice", "device model = " + Build.MANUFACTURER + Build.MODEL);
         AndroidUtilities.runOnUIThread(() -> {
             if (eglBase == null) {
@@ -81,6 +81,9 @@ public class VideoCapturerDevice {
     }
 
     private static Point getScreenCaptureSize() {
+        return getScreenCaptureSize(/* 4 */ 16);
+    }
+    private static Point getScreenCaptureSize(int roundBy) {
         WindowManager wm = (WindowManager) ApplicationLoader.applicationContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -108,7 +111,7 @@ public class VideoCapturerDevice {
             }
         }
         if (dx != -1 && aspect != 1) {
-            while (size.x > 1000 || size.y > 1000 || size.x % 4 != 0 || size.y % 4 != 0) {
+            while (size.x > 1000 || size.y > 1000 || size.x % roundBy != 0 || size.y % roundBy != 0) {
                 size.x -= dx;
                 size.y -= dy;
                 if (size.x < 800 && size.y < 800) {
@@ -119,8 +122,8 @@ public class VideoCapturerDevice {
         }
         if (dx == -1 || aspect == 1) {
             float scale = Math.max(size.x / 970.0f, size.y / 970.0f);
-            size.x = (int) Math.ceil((size.x / scale) / 4.0f) * 4;
-            size.y = (int) Math.ceil((size.y / scale) / 4.0f) * 4;
+            size.x = (int) Math.ceil((size.x / scale) / (float) roundBy) * roundBy;
+            size.y = (int) Math.ceil((size.y / scale) / (float) roundBy) * roundBy;
         }
         return size;
     }
@@ -155,6 +158,7 @@ public class VideoCapturerDevice {
                         }
                         nativeCapturerObserver = nativeGetJavaVideoCapturerObserver(nativePtr);
                         videoCapturer.initialize(videoCapturerSurfaceTextureHelper, ApplicationLoader.applicationContext, nativeCapturerObserver);
+                        FileLog.d("VideoCapturerDevice init(" + ptr + "): videoCapturer.startCapture SCREEN");
                         videoCapturer.startCapture(size.x, size.y, CAPTURE_FPS);
                         WebRtcAudioRecord audioRecord = WebRtcAudioRecord.Instance;
                         if (audioRecord != null) {
@@ -220,9 +224,11 @@ public class VideoCapturerDevice {
                         }
                         nativeCapturerObserver = nativeGetJavaVideoCapturerObserver(nativePtr);
                         videoCapturer.initialize(videoCapturerSurfaceTextureHelper, ApplicationLoader.applicationContext, nativeCapturerObserver);
+                        FileLog.d("VideoCapturerDevice init(" + ptr + "): videoCapturer.startCapture CAMERA");
                         videoCapturer.startCapture(CAPTURE_WIDTH, CAPTURE_HEIGHT, CAPTURE_FPS);
                     });
                 } else {
+                    FileLog.d("VideoCapturerDevice init(" + ptr + "): videoCapturer.switchCamera CAMERA");
                     handler.post(() -> ((CameraVideoCapturer) videoCapturer).switchCamera(new CameraVideoCapturer.CameraSwitchHandler() {
                         @Override
                         public void onCameraSwitchDone(boolean isFrontCamera) {
@@ -276,6 +282,10 @@ public class VideoCapturerDevice {
     }
 
     private void onStateChanged(long ptr, int state) {
+        FileLog.d("VideoCapturerDevice onStateChanged(" + ptr + ", " + state + ")");
+        if (Build.VERSION.SDK_INT < 18) {
+            return;
+        }
         AndroidUtilities.runOnUIThread(() -> {
             if (nativePtr != ptr) {
                 return;
@@ -285,9 +295,11 @@ public class VideoCapturerDevice {
                     return;
                 }
                 if (state == Instance.VIDEO_STATE_ACTIVE) {
+                    FileLog.d("VideoCapturerDevice onStateChanged(" + ptr + ", " + state + "): videoCapturer.startCapture");
                     videoCapturer.startCapture(CAPTURE_WIDTH, CAPTURE_HEIGHT, CAPTURE_FPS);
                 } else {
                     try {
+                        FileLog.d("VideoCapturerDevice onStateChanged(" + ptr + ", " + state + "): videoCapturer.stopCapture");
                         videoCapturer.stopCapture();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -298,6 +310,10 @@ public class VideoCapturerDevice {
     }
 
     private void onDestroy() {
+        if (Build.VERSION.SDK_INT < 18) {
+            return;
+        }
+        FileLog.d("VideoCapturerDevice onDestroy ptr="+nativePtr);
         nativePtr = 0;
         AndroidUtilities.runOnUIThread(() -> {
 //            if (eglBase != null) {
@@ -318,6 +334,7 @@ public class VideoCapturerDevice {
                     }
                 }
                 if (videoCapturer != null) {
+                    FileLog.d("VideoCapturerDevice onDestroy: videoCapturer.stopCapture");
                     try {
                         videoCapturer.stopCapture();
                     } catch (InterruptedException e) {
@@ -339,7 +356,7 @@ public class VideoCapturerDevice {
         });
     }
 
-    private EglBase.Context getSharedEGLContext() {
+    private static EglBase.Context getSharedEGLContext() {
         if (eglBase == null) {
             eglBase = EglBase.create(null, EglBase.CONFIG_PLAIN);
         }

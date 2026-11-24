@@ -2,6 +2,7 @@ package org.telegram.ui.Components;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.view.View;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -11,8 +12,10 @@ public class BlurredRecyclerView extends RecyclerListView {
 
     public int blurTopPadding;
     public int topPadding;
+    public int bottomPadding;
     boolean globalIgnoreLayout;
     public int additionalClipBottom;
+    public boolean alwaysDrawChild;
 
     public BlurredRecyclerView(Context context) {
         super(context);
@@ -38,12 +41,16 @@ public class BlurredRecyclerView extends RecyclerListView {
             return;
         }
         if (SharedConfig.chatBlurEnabled()) {
-            blurTopPadding = AndroidUtilities.dp(203);
+            blurTopPadding = measureBlurTopPadding();
             ((MarginLayoutParams) getLayoutParams()).topMargin = -blurTopPadding;
         } else {
             blurTopPadding = 0;
             ((MarginLayoutParams) getLayoutParams()).topMargin = 0;
         }
+    }
+
+    protected int measureBlurTopPadding() {
+        return AndroidUtilities.dp(203);
     }
 
     @Override
@@ -56,7 +63,7 @@ public class BlurredRecyclerView extends RecyclerListView {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (blurTopPadding != 0) {
+        if (blurTopPadding != 0 && !hasActiveEdgeEffects()) {
             canvas.clipRect(0, blurTopPadding, getMeasuredWidth(), getMeasuredHeight() + additionalClipBottom);
             super.dispatchDraw(canvas);
         } else {
@@ -65,8 +72,15 @@ public class BlurredRecyclerView extends RecyclerListView {
     }
 
     @Override
+    public void capture(Canvas canvas, RectF position) {
+        alwaysDrawChild = true;
+        super.capture(canvas, position);
+        alwaysDrawChild = false;
+    }
+
+    @Override
     public boolean drawChild(Canvas canvas, View child, long drawingTime) {
-        if (child.getY() + child.getMeasuredHeight() < blurTopPadding) {
+        if ((child.getY() + child.getMeasuredHeight() < blurTopPadding) && !alwaysDrawChild && !hasActiveEdgeEffects()) {
             return true;
         }
         return super.drawChild(canvas, child, drawingTime);
@@ -75,6 +89,7 @@ public class BlurredRecyclerView extends RecyclerListView {
     @Override
     public void setPadding(int left, int top, int right, int bottom) {
         topPadding = top;
-        super.setPadding(left, topPadding + blurTopPadding, right, bottom);
+        bottomPadding = bottom;
+        super.setPadding(left, topPadding + blurTopPadding, right, bottomPadding);
     }
 }

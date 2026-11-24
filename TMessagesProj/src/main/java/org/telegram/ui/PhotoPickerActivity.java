@@ -8,6 +8,8 @@
 
 package org.telegram.ui;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -78,6 +80,7 @@ import org.telegram.ui.ActionBar.ActionBarPopupWindow;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Cells.DividerCell;
 import org.telegram.ui.Cells.PhotoAttachPhotoCell;
@@ -85,9 +88,11 @@ import org.telegram.ui.Cells.SharedDocumentCell;
 import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BackupImageView;
+import org.telegram.ui.Components.ChatAttachAlertPhotoLayout;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.EditTextEmoji;
 import org.telegram.ui.Components.FlickerLoadingView;
+import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RadialProgressView;
 import org.telegram.ui.Components.RecyclerListView;
@@ -96,16 +101,18 @@ import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.StickerEmptyView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 
 import com.exteragram.messenger.ExteraConfig;
-import com.exteragram.messenger.utils.CanvasUtils;
+import com.exteragram.messenger.utils.ui.UIUtil;
+import com.exteragram.messenger.utils.text.LocaleUtils;
 
 public class PhotoPickerActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
     public interface PhotoPickerActivityDelegate {
         void selectedPhotosChanged();
-        void actionButtonPressed(boolean canceled, boolean notify, int scheduleDate);
+        void actionButtonPressed(boolean canceled, boolean notify, int scheduleDate, int scheduleRepeatPeriod);
         void onCaptionChanged(CharSequence caption);
         default void onOpenInPressed() {
 
@@ -161,7 +168,6 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
     private ChatActivity chatActivity;
     private RecyclerViewItemRangeSelector itemRangeSelector;
     private int alertOnlyOnce;
-    private boolean shouldSelect;
 
     private boolean listSort;
 
@@ -207,7 +213,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
         }
 
         @Override
-        public PhotoViewer.PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview) {
+        public PhotoViewer.PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview, boolean closing) {
             PhotoAttachPhotoCell cell = getCellForIndex(index);
             if (cell != null) {
                 BackupImageView imageView = cell.getImageView();
@@ -238,7 +244,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                         imageView.setImage(photoEntry.thumbPath, null, Theme.chat_attachEmptyDrawable);
                     } else if (photoEntry.path != null) {
                         imageView.setOrientation(photoEntry.orientation, photoEntry.invert, true);
-                        if (photoEntry.isVideo) {
+                        if (photoEntry.isVideo && !photoEntry.isLivePhoto()) {
                             imageView.setImage("vthumb://" + photoEntry.imageId + ":" + photoEntry.path, null, Theme.chat_attachEmptyDrawable);
                         } else {
                             imageView.setImage("thumb://" + photoEntry.imageId + ":" + photoEntry.path, null, Theme.chat_attachEmptyDrawable);
@@ -383,7 +389,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
 
         @Override
         public boolean cancelButtonPressed() {
-            delegate.actionButtonPressed(true, true, 0);
+            delegate.actionButtonPressed(true, true, 0, 0);
             finishFragment();
             return true;
         }
@@ -394,7 +400,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
         }
 
         @Override
-        public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, boolean forceDocument) {
+        public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean forceDocument) {
             if (selectedPhotos.isEmpty()) {
                 if (selectedAlbum != null) {
                     if (index < 0 || index >= selectedAlbum.photos.size()) {
@@ -412,7 +418,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                     addToSelectedPhotos(searchImage, -1);
                 }
             }
-            sendSelectedPhotos(notify, scheduleDate);
+            sendSelectedPhotos(notify, scheduleDate, 0);
         }
 
         @Override
@@ -458,7 +464,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
 
     @Override
     public boolean onFragmentCreate() {
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.closeChats);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.closeChats);
         return super.onFragmentCreate();
     }
 
@@ -480,17 +486,17 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
     public View createView(Context context) {
         listSort = false;
 
-        actionBar.setBackgroundColor(Theme.getColor(dialogBackgroundKey));
-        actionBar.setTitleColor(Theme.getColor(textKey));
-        actionBar.setItemsColor(Theme.getColor(textKey), false);
-        actionBar.setItemsBackgroundColor(Theme.getColor(selectorKey), false);
+        ThemeBind.backgroundColor(actionBar, dialogBackgroundKey);
+        ThemeBind.actionBarTitleColor(actionBar, textKey);
+        ThemeBind.actionBarItemsColor(actionBar, textKey, false);
+        ThemeBind.actionBarItemsBackgroundColor(actionBar, selectorKey, false);
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         if (selectedAlbum != null) {
             actionBar.setTitle(selectedAlbum.bucketName);
         } else if (type == 0) {
-            actionBar.setTitle(LocaleController.getString("SearchImagesTitle", R.string.SearchImagesTitle));
+            actionBar.setTitle(LocaleController.getString(R.string.SearchImagesTitle));
         } else if (type == 1) {
-            actionBar.setTitle(LocaleController.getString("SearchGifsTitle", R.string.SearchGifsTitle));
+            actionBar.setTitle(LocaleController.getString(R.string.SearchGifsTitle));
         }
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
@@ -502,7 +508,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                     if (listSort) {
                         listView.setPadding(0, 0, 0, AndroidUtilities.dp(48));
                     } else {
-                        listView.setPadding(AndroidUtilities.dp(6), AndroidUtilities.dp(8), AndroidUtilities.dp(6), AndroidUtilities.dp(50));
+                        listView.setPadding(dp(ChatAttachAlertPhotoLayout.PADDING), AndroidUtilities.dp(ChatAttachAlertPhotoLayout.PADDING), dp(ChatAttachAlertPhotoLayout.PADDING), AndroidUtilities.dp(50));
                     }
                     listView.stopScroll();
                     layoutManager.scrollToPositionWithOffset(0, 0);
@@ -522,7 +528,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
             menuItem.setSubMenuDelegate(new ActionBarMenuItem.ActionBarSubMenuItemDelegate() {
                 @Override
                 public void onShowSubMenu() {
-                    showAsListItem.setText(listSort ? LocaleController.getString("ShowAsGrid", R.string.ShowAsGrid) : LocaleController.getString("ShowAsList", R.string.ShowAsList));
+                    showAsListItem.setText(listSort ? LocaleController.getString(R.string.ShowAsGrid) : LocaleController.getString(R.string.ShowAsList));
                     showAsListItem.setIcon(listSort ? R.drawable.msg_media : R.drawable.msg_list);
                 }
 
@@ -530,13 +536,13 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 public void onHideSubMenu() {
                 }
             });
-            showAsListItem = menuItem.addSubItem(change_sort, R.drawable.msg_list, LocaleController.getString("ShowAsList", R.string.ShowAsList));
-            menuItem.addSubItem(open_in, R.drawable.msg_openin, LocaleController.getString("OpenInExternalApp", R.string.OpenInExternalApp));
+            showAsListItem = menuItem.addSubItem(change_sort, R.drawable.msg_list, LocaleController.getString(R.string.ShowAsList));
+            menuItem.addSubItem(open_in, R.drawable.msg_openin, LocaleController.getString(R.string.OpenInExternalApp));
         }
 
         if (selectedAlbum == null) {
             ActionBarMenu menu = actionBar.createMenu();
-            searchItem = menu.addItem(0, R.drawable.ic_ab_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
+            searchItem = menu.addItem(0, R.drawable.outline_header_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
                 @Override
                 public void onSearchExpand() {
 
@@ -560,7 +566,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                             ConnectionsManager.getInstance(currentAccount).cancelRequest(imageReqId, true);
                             imageReqId = 0;
                         }
-                        emptyView.title.setText(LocaleController.getString("NoRecentSearches", R.string.NoRecentSearches));
+                        emptyView.title.setText(LocaleController.getString(R.string.NoRecentSearches));
                         emptyView.showProgress(false);
                         updateSearchInterface();
                     } else {
@@ -577,16 +583,16 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 }
             });
             EditTextBoldCursor editText = searchItem.getSearchField();
-            editText.setTextColor(Theme.getColor(textKey));
-            editText.setCursorColor(Theme.getColor(textKey));
-            editText.setHintTextColor(Theme.getColor(Theme.key_chat_messagePanelHint));
+            ThemeBind.textColor(editText, textKey);
+            ThemeBind.cursorColor(editText, textKey);
+            ThemeBind.hintTextColor(editText, Theme.key_chat_messagePanelHint);
         }
 
         if (selectedAlbum == null) {
             if (type == 0) {
-                searchItem.setSearchFieldHint(LocaleController.getString("SearchImagesTitle", R.string.SearchImagesTitle));
+                searchItem.setSearchFieldHint(LocaleController.getString(R.string.SearchImagesTitle));
             } else if (type == 1) {
-                searchItem.setSearchFieldHint(LocaleController.getString("SearchGifsTitle", R.string.SearchGifsTitle));
+                searchItem.setSearchFieldHint(LocaleController.getString(R.string.SearchGifsTitle));
             }
         }
 
@@ -610,7 +616,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 }
 
                 ignoreLayout = true;
-                itemSize = (availableWidth - AndroidUtilities.dp(6 * 2) - AndroidUtilities.dp(5 * 2)) / itemsPerRow;
+                itemSize = (availableWidth - dp(ChatAttachAlertPhotoLayout.PADDING * 2) - dp(ChatAttachAlertPhotoLayout.GAP * 2)) / itemsPerRow;
 
                 if (lastItemSize != itemSize) {
                     lastItemSize = itemSize;
@@ -619,7 +625,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 if (listSort) {
                     layoutManager.setSpanCount(1);
                 } else {
-                    layoutManager.setSpanCount(itemSize * itemsPerRow + AndroidUtilities.dp(5) * (itemsPerRow - 1));
+                    layoutManager.setSpanCount(Math.max(1, itemSize * itemsPerRow + dp(ChatAttachAlertPhotoLayout.GAP) * (itemsPerRow - 1)));
                 }
 
                 ignoreLayout = false;
@@ -759,11 +765,11 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 super.requestLayout();
             }
         };
-        sizeNotifierFrameLayout.setBackgroundColor(Theme.getColor(dialogBackgroundKey));
+        ThemeBind.backgroundColor(sizeNotifierFrameLayout, dialogBackgroundKey);
         fragmentView = sizeNotifierFrameLayout;
 
         listView = new RecyclerListView(context);
-        listView.setPadding(AndroidUtilities.dp(6), AndroidUtilities.dp(8), AndroidUtilities.dp(6), AndroidUtilities.dp(50));
+        listView.setPadding(dp(ChatAttachAlertPhotoLayout.PADDING), AndroidUtilities.dp(ChatAttachAlertPhotoLayout.PADDING), dp(ChatAttachAlertPhotoLayout.PADDING), AndroidUtilities.dp(50));
         listView.setClipToPadding(false);
         listView.setHorizontalScrollBarEnabled(false);
         listView.setVerticalScrollBarEnabled(false);
@@ -781,13 +787,13 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 if (listAdapter.getItemViewType(position) == 1 || listSort || selectedAlbum == null && TextUtils.isEmpty(lastSearchString)) {
                     return layoutManager.getSpanCount();
                 } else {
-                    return itemSize + (position % itemsPerRow != itemsPerRow - 1 ? AndroidUtilities.dp(5) : 0);
+                    return itemSize + (position % itemsPerRow != itemsPerRow - 1 ? dp(ChatAttachAlertPhotoLayout.GAP) : 0);
                 }
             }
         });
         sizeNotifierFrameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP));
         listView.setAdapter(listAdapter = new ListAdapter(context));
-        listView.setGlowColor(Theme.getColor(dialogBackgroundKey));
+        ThemeBind.listGlowColor(listView, dialogBackgroundKey);
         listView.setOnItemClickListener((view, position) -> {
             if (selectedAlbum == null && searchResult.isEmpty()) {
                 if (position < recentSearches.size()) {
@@ -801,21 +807,21 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                     }
                 } else if (position == recentSearches.size() + 1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                    builder.setTitle(LocaleController.getString("ClearSearchAlertTitle", R.string.ClearSearchAlertTitle));
-                    builder.setMessage(LocaleController.getString("ClearSearchAlert", R.string.ClearSearchAlert));
-                    builder.setPositiveButton(LocaleController.getString("ClearButton", R.string.ClearButton), (dialogInterface, i) -> {
+                    builder.setTitle(LocaleController.getString(R.string.ClearSearchAlertTitle));
+                    builder.setMessage(LocaleController.getString(R.string.ClearSearchAlert));
+                    builder.setPositiveButton(LocaleController.getString(R.string.ClearButton), (dialogInterface, i) -> {
                         if (searchDelegate != null) {
                             searchDelegate.shouldClearRecentSearch();
                         } else {
                             clearRecentSearch();
                         }
                     });
-                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                    builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
                     AlertDialog dialog = builder.create();
                     showDialog(dialog);
                     TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     if (button != null) {
-                        button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                        ThemeBind.textColor(button, Theme.key_text_RedBold);
                     }
                     return;
                 }
@@ -860,8 +866,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                     return true;
                 } else {
                     if (view instanceof PhotoAttachPhotoCell) {
-                        PhotoAttachPhotoCell cell = (PhotoAttachPhotoCell) view;
-                        itemRangeSelector.setIsActive(view, true, position, shouldSelect = !cell.isChecked());
+                        itemRangeSelector.startSelection(view, position);
                     }
                 }
                 return false;
@@ -875,11 +880,14 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
 
             @Override
             public void setSelected(View view, int index, boolean selected) {
-                if (selected != shouldSelect || !(view instanceof PhotoAttachPhotoCell)) {
+                if (isSelected(index) == selected) {
                     return;
                 }
-                PhotoAttachPhotoCell cell = (PhotoAttachPhotoCell) view;
-                cell.callDelegate();
+                if (view instanceof PhotoAttachPhotoCell) {
+                    ((PhotoAttachPhotoCell) view).callDelegate();
+                } else {
+                    provider.setPhotoChecked(index, null);
+                }
             }
 
             @Override
@@ -931,15 +939,15 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
         emptyView.setAnimateLayoutChange(true);
         emptyView.title.setTypeface(Typeface.DEFAULT);
         emptyView.title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        emptyView.title.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteGrayText));
+        ThemeBind.textColor(emptyView.title, Theme.key_windowBackgroundWhiteGrayText, getResourceProvider());
         emptyView.addView(flickerView, 0);
         if (selectedAlbum != null) {
 //            emptyView.setShowAtCenter(false);
-            emptyView.title.setText(LocaleController.getString("NoPhotos", R.string.NoPhotos));
+            emptyView.title.setText(LocaleController.getString(R.string.NoPhotos));
         } else {
 //            emptyView.setShowAtTop(true);
 //            emptyView.setPadding(0, AndroidUtilities.dp(200), 0, 0);
-            emptyView.title.setText(LocaleController.getString("NoRecentSearches", R.string.NoRecentSearches));
+            emptyView.title.setText(LocaleController.getString(R.string.NoRecentSearches));
         }
         emptyView.showProgress(false, false);
         sizeNotifierFrameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.LEFT | Gravity.TOP, 0, 126, 0, 0));
@@ -980,7 +988,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
             sizeNotifierFrameLayout.addView(shadow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 3, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 48));
 
             frameLayout2 = new FrameLayout(context);
-            frameLayout2.setBackgroundColor(Theme.getColor(dialogBackgroundKey));
+            ThemeBind.backgroundColor(frameLayout2, dialogBackgroundKey);
             frameLayout2.setVisibility(View.INVISIBLE);
             frameLayout2.setTranslationY(AndroidUtilities.dp(48));
             sizeNotifierFrameLayout.addView(frameLayout2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM));
@@ -989,11 +997,12 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
             if (commentTextView != null) {
                 commentTextView.onDestroy();
             }
-            commentTextView = new EditTextEmoji(context, sizeNotifierFrameLayout, null, EditTextEmoji.STYLE_DIALOG, false);
+            commentTextView = new EditTextEmoji(context, sizeNotifierFrameLayout, null, EditTextEmoji.STYLE_DIALOG, UserConfig.getInstance(currentAccount).isPremium() || LocaleUtils.canUseLocalPremiumEmojis(currentAccount));
             InputFilter[] inputFilters = new InputFilter[1];
-            inputFilters[0] = new InputFilter.LengthFilter(MessagesController.getInstance(UserConfig.selectedAccount).maxCaptionLength);
+            inputFilters[0] = new InputFilter.LengthFilter(MessagesController.getInstance(UserConfig.selectedAccount).getCaptionMaxLengthLimit());
             commentTextView.setFilters(inputFilters);
-            commentTextView.setHint(LocaleController.getString("AddCaption", R.string.AddCaption));
+            commentTextView.allowEmojisForNonPremium(LocaleUtils.canUseLocalPremiumEmojis(currentAccount));
+            commentTextView.setHint(LocaleController.getString(R.string.AddCaption));
             commentTextView.onResume();
             EditTextBoldCursor editText = commentTextView.getEditText();
             editText.setMaxLines(1);
@@ -1040,17 +1049,17 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
             sizeNotifierFrameLayout.addView(writeButtonContainer, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 12, 10));
 
             writeButton = new ImageView(context);
-            writeButtonDrawable = CanvasUtils.createFabBackground(true);
+            writeButtonDrawable = UIUtil.createFabBackground(56, getThemedColor(Theme.key_chat_editMediaButton), getThemedColor(Theme.key_dialogFloatingButtonPressed));
             writeButton.setBackgroundDrawable(writeButtonDrawable);
             writeButton.setImageResource(R.drawable.attach_send);
             writeButton.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            writeButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogFloatingIcon), PorterDuff.Mode.MULTIPLY));
+            ThemeBind.colorFilter(writeButton, Theme.key_dialogFloatingIcon, PorterDuff.Mode.MULTIPLY);
             writeButton.setScaleType(ImageView.ScaleType.CENTER);
             writeButton.setOutlineProvider(new ViewOutlineProvider() {
                 @SuppressLint("NewApi")
                 @Override
                 public void getOutline(View view, Outline outline) {
-                    if (ExteraConfig.squareFab) {
+                    if (ExteraConfig.getSquareFab()) {
                         outline.setRoundRect(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56), AndroidUtilities.dp(16));
                     } else {
                         outline.setOval(0, 0, AndroidUtilities.dp(56), AndroidUtilities.dp(56));
@@ -1060,10 +1069,19 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
             writeButtonContainer.addView(writeButton, LayoutHelper.createFrame(56, 56, Gravity.LEFT | Gravity.TOP, 2, 0, 0, 0));
             writeButton.setOnClickListener(v -> {
                 if (chatActivity != null && chatActivity.isInScheduleMode()) {
-                    AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), chatActivity.getDialogId(), this::sendSelectedPhotos);
+                    AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), chatActivity.getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> sendSelectedPhotos(notify, scheduleDate, 0));
                 } else {
-                    sendSelectedPhotos(true, 0);
+                    sendSelectedPhotos(true, 0, 0);
                 }
+            });
+            writeButton.setOnTouchListener((view, event) -> {
+                if (sendPopupWindow != null && sendPopupWindow.isShowing() && sendPopupLayout != null) {
+                    if (view.getParent() != null) {
+                        view.getParent().requestDisallowInterceptTouchEvent(true);
+                    }
+                    ItemOptions.dispatchCapturedTouchEvent(sendPopupLayout, event);
+                }
+                return false;
             });
             writeButton.setOnLongClickListener(view -> {
                 if (chatActivity == null || maxSelectedPhotos == 1) {
@@ -1108,12 +1126,12 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                         itemCells[a] = new ActionBarMenuSubItem(getParentActivity(), a == 0, a == 1);
                         if (num == 0) {
                             if (UserObject.isUserSelf(user)) {
-                                itemCells[a].setTextAndIcon(LocaleController.getString("SetReminder", R.string.SetReminder), R.drawable.msg_calendar2);
+                                itemCells[a].setTextAndIcon(LocaleController.getString(R.string.SetReminder), R.drawable.msg_calendar2);
                             } else {
-                                itemCells[a].setTextAndIcon(LocaleController.getString("ScheduleMessage", R.string.ScheduleMessage), R.drawable.msg_calendar2);
+                                itemCells[a].setTextAndIcon(LocaleController.getString(R.string.ScheduleMessage), R.drawable.msg_calendar2);
                             }
                         } else {
-                            itemCells[a].setTextAndIcon(LocaleController.getString("SendWithoutSound", R.string.SendWithoutSound), R.drawable.input_notify_off);
+                            itemCells[a].setTextAndIcon(LocaleController.getString(R.string.SendWithoutSound), R.drawable.input_notify_off);
                         }
                         itemCells[a].setMinimumWidth(AndroidUtilities.dp(196));
 
@@ -1123,9 +1141,9 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                                 sendPopupWindow.dismiss();
                             }
                             if (num == 0) {
-                                AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), chatActivity.getDialogId(), this::sendSelectedPhotos);
+                                AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), chatActivity.getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> sendSelectedPhotos(notify, scheduleDate, 0));
                             } else {
-                                sendSelectedPhotos(true, 0);
+                                sendSelectedPhotos(true, 0, 0);
                             }
                         });
                     }
@@ -1147,12 +1165,12 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                 view.getLocationInWindow(location);
                 sendPopupWindow.showAtLocation(view, Gravity.LEFT | Gravity.TOP, location[0] + view.getMeasuredWidth() - sendPopupLayout.getMeasuredWidth() + AndroidUtilities.dp(8), location[1] - sendPopupLayout.getMeasuredHeight() - AndroidUtilities.dp(2));
                 sendPopupWindow.dimBehind();
-                view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                try {view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);} catch (Exception ignored) {}
                 return false;
             });
 
             textPaint.setTextSize(AndroidUtilities.dp(12));
-            textPaint.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+            textPaint.setTypeface(AndroidUtilities.bold());
 
             selectedCountView = new View(context) {
                 @Override
@@ -1353,7 +1371,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
         lastSearchString = text;
         if (lastSearchString.length() == 0) {
             lastSearchString = null;
-            emptyView.title.setText(LocaleController.getString("NoRecentSearches", R.string.NoRecentSearches));
+            emptyView.title.setText(LocaleController.getString(R.string.NoRecentSearches));
         } else {
             emptyView.title.setText(LocaleController.formatString("NoResultFoundFor", R.string.NoResultFoundFor, lastSearchString));
         }
@@ -1533,12 +1551,12 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
     }
 
     @Override
-    public boolean onBackPressed() {
+    public boolean onBackPressed(boolean invoked) {
         if (commentTextView != null && commentTextView.isPopupShowing()) {
-            commentTextView.hidePopup(true);
+            if (invoked) commentTextView.hidePopup(true);
             return false;
         }
-        return super.onBackPressed();
+        return super.onBackPressed(invoked);
     }
 
     public void updatePhotosButton(int animated) {
@@ -1748,13 +1766,13 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
         searchDelegate = photoPickerActivitySearchDelegate;
     }
 
-    private void sendSelectedPhotos(boolean notify, int scheduleDate) {
+    private void sendSelectedPhotos(boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
         if (selectedPhotos.isEmpty() || delegate == null || sendPressed) {
             return;
         }
         applyCaption();
         sendPressed = true;
-        delegate.actionButtonPressed(false, notify, scheduleDate);
+        delegate.actionButtonPressed(false, notify, scheduleDate, scheduleRepeatPeriod);
         if (selectPhotoType != PhotoAlbumPickerActivity.SELECT_TYPE_WALLPAPER && (delegate == null || delegate.canFinishFragment())) {
             finishFragment();
         }
@@ -1814,7 +1832,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                                 TLRPC.Chat chat = chatActivity.getCurrentChat();
                                 if (chat != null && !ChatObject.hasAdminRights(chat) && chat.slowmode_enabled) {
                                     if (alertOnlyOnce != 2) {
-                                        AlertsCreator.showSimpleAlert(PhotoPickerActivity.this, LocaleController.getString("Slowmode", R.string.Slowmode), LocaleController.getString("SlowmodeSelectSendError", R.string.SlowmodeSelectSendError));
+                                        AlertsCreator.showSimpleAlert(PhotoPickerActivity.this, LocaleController.getString(R.string.Slowmode), LocaleController.getString(R.string.SlowmodeSelectSendError));
                                         if (alertOnlyOnce == 1) {
                                             alertOnlyOnce = 2;
                                         }
@@ -1873,8 +1891,8 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                     view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     if (forceDarckTheme) {
                         TextCell textCell = (TextCell) view;
-                        textCell.textView.setTextColor(Theme.getColor(textKey));
-                        textCell.imageView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_voipgroup_mutedIcon), PorterDuff.Mode.MULTIPLY));
+                        ThemeBind.textColor(textCell.textView, textKey);
+                        ThemeBind.colorFilter(textCell.imageView, Theme.key_voipgroup_mutedIcon, PorterDuff.Mode.MULTIPLY);
                     }
                     break;
                 }
@@ -1902,7 +1920,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
 
                     if (selectedAlbum != null) {
                         MediaController.PhotoEntry photoEntry = selectedAlbum.photos.get(position);
-                        cell.setPhotoEntry(photoEntry, true, false);
+                        cell.setPhotoEntry(photoEntry, selectedPhotosOrder.size() > 1, true, false, false);
                         cell.setChecked(allowIndices ? selectedPhotosOrder.indexOf(photoEntry.imageId) : -1, selectedPhotos.containsKey(photoEntry.imageId), false);
                         showing = PhotoViewer.isShowingImage(photoEntry.path);
                     } else {
@@ -1938,7 +1956,7 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
                     if (position < recentSearches.size()) {
                         cell.setTextAndIcon(recentSearches.get(position), R.drawable.msg_recent, false);
                     } else {
-                        cell.setTextAndIcon(LocaleController.getString("ClearRecentHistory", R.string.ClearRecentHistory), R.drawable.msg_clear_recent, false);
+                        cell.setTextAndIcon(LocaleController.getString(R.string.ClearRecentHistory), R.drawable.msg_clear_recent, false);
                     }
                     break;
                 }
@@ -1972,12 +1990,10 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, null, null, textKey));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SELECTORCOLOR, null, null, null, null, selectorKey));
         themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SEARCH, null, null, null, null, textKey));
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SEARCHPLACEHOLDER, null, null, null, null, Theme.key_chat_messagePanelHint));
         themeDescriptions.add(new ThemeDescription(searchItem != null ? searchItem.getSearchField() : null, ThemeDescription.FLAG_CURSORCOLOR, null, null, null, null, textKey));
 
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, dialogBackgroundKey));
 
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{View.class}, null, new Drawable[]{Theme.chat_attachEmptyDrawable}, null, Theme.key_chat_attachEmptyImage));
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{View.class}, null, null, null, Theme.key_chat_attachPhotoBackground));
 
         return themeDescriptions;
@@ -1986,5 +2002,12 @@ public class PhotoPickerActivity extends BaseFragment implements NotificationCen
     @Override
     public boolean isLightStatusBar() {
         return AndroidUtilities.computePerceivedBrightness(Theme.getColor(Theme.key_windowBackgroundGray)) > 0.721f;
+    }
+
+    /** theme editor: colors this page shows (former ThemeDescription keys) */
+    @Override
+    public void addThemeColorKeys(HashSet<Integer> keys) {
+        super.addThemeColorKeys(keys);
+        keys.add(Theme.key_chat_attachEmptyImage);
     }
 }

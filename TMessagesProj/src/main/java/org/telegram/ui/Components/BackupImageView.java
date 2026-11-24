@@ -8,17 +8,27 @@
 
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
+import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.SecureDocument;
@@ -32,6 +42,7 @@ public class BackupImageView extends View {
     protected int width = -1;
     protected int height = -1;
     public AnimatedEmojiDrawable animatedEmojiDrawable;
+    public ColorFilter animatedEmojiDrawableColorFilter;
     private AvatarDrawable avatarDrawable;
     boolean attached;
 
@@ -41,13 +52,18 @@ public class BackupImageView extends View {
 
     public BackupImageView(Context context) {
         super(context);
-        imageReceiver = new ImageReceiver(this);
+        imageReceiver = createImageReciever();
+        imageReceiver.setCrossfadeByScale(0);
         imageReceiver.setAllowLoadingOnAttachedOnly(true);
         imageReceiver.setDelegate((imageReceiver1, set, thumb, memCache) -> {
             if (set && !thumb) {
                 checkCreateBlurredImage();
             }
         });
+    }
+
+    protected ImageReceiver createImageReciever() {
+        return new ImageReceiver(this);
     }
 
     public void setBlurAllowed(boolean blurAllowed) {
@@ -119,6 +135,11 @@ public class BackupImageView extends View {
         onNewImageSet();
     }
 
+    public void setImage(ImageLocation mediaLocation, String mediaFilter, ImageLocation imageLocation, String imageFilter, ImageLocation thumbLocation, String thumbFilter, Drawable thumb, Object parentObject) {
+        imageReceiver.setImage(mediaLocation, mediaFilter, imageLocation, imageFilter, thumbLocation, thumbFilter, thumb, 0, null, parentObject, 1);
+        onNewImageSet();
+    }
+
     public void setImage(ImageLocation imageLocation, String imageFilter, Bitmap thumb, Object parentObject) {
         setImage(imageLocation, imageFilter, null, null, null, thumb, null, 0, parentObject);
     }
@@ -134,6 +155,10 @@ public class BackupImageView extends View {
         }
         imageReceiver.setImage(imageLocation, imageFilter, null, null, thumb, size, null, parentObject, cacheType);
         onNewImageSet();
+    }
+
+    public void clearImage() {
+        imageReceiver.clearImage();
     }
 
     public void setForUserOrChat(TLObject object, AvatarDrawable avatarDrawable) {
@@ -172,6 +197,16 @@ public class BackupImageView extends View {
             thumb = new BitmapDrawable(null, thumbBitmap);
         }
         imageReceiver.setImage(imageLocation, imageFilter, thumbLocation, thumbFilter, thumb, size, ext, parentObject, 0);
+        onNewImageSet();
+    }
+
+    public void setImage(ImageLocation imageLocation, String imageFilter, ImageLocation thumbLocation, String thumbFilter, Drawable thumb, String ext, long size, int cacheType, Object parentObject) {
+        imageReceiver.setImage(imageLocation, imageFilter, thumbLocation, thumbFilter, thumb, size, ext, parentObject, cacheType);
+        onNewImageSet();
+    }
+
+    public void setImage(ImageLocation mediaLocation, String mediaFilter, ImageLocation imageLocation, String imageFilter, ImageLocation thumbLocation, String thumbFilter, String ext, long size, int cacheType, Object parentObject) {
+        imageReceiver.setImage(mediaLocation, mediaFilter, imageLocation, imageFilter, thumbLocation, thumbFilter, null, size, ext, parentObject, cacheType);
         onNewImageSet();
     }
 
@@ -265,7 +300,7 @@ public class BackupImageView extends View {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         attached = false;
-        imageReceiver.onDetachedFromWindow();
+        if (applyAttach) imageReceiver.onDetachedFromWindow();
         if (blurAllowed) {
             blurImageReceiver.onDetachedFromWindow();
         }
@@ -274,11 +309,13 @@ public class BackupImageView extends View {
         }
     }
 
+    public boolean applyAttach = true;
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         attached = true;
-        imageReceiver.onAttachedToWindow();
+        if (applyAttach) imageReceiver.onAttachedToWindow();
         if (blurAllowed) {
             blurImageReceiver.onAttachedToWindow();
         }
@@ -292,6 +329,9 @@ public class BackupImageView extends View {
         ImageReceiver imageReceiver = animatedEmojiDrawable != null ? animatedEmojiDrawable.getImageReceiver() : this.imageReceiver;
         if (imageReceiver == null) {
             return;
+        }
+        if (animatedEmojiDrawable != null && animatedEmojiDrawableColorFilter != null) {
+            animatedEmojiDrawable.setColorFilter(animatedEmojiDrawableColorFilter);
         }
         if (width != -1 && height != -1) {
             if (drawFromStart) {
@@ -335,6 +375,15 @@ public class BackupImageView extends View {
         invalidate();
     }
 
+    public void setEmojiColorFilter(ColorFilter colorFilter) {
+        animatedEmojiDrawableColorFilter = colorFilter;
+        invalidate();
+    }
+
+    public AnimatedEmojiDrawable getAnimatedEmojiDrawable() {
+        return animatedEmojiDrawable;
+    }
+
     ValueAnimator roundRadiusAnimator;
     
     public void animateToRoundRadius(int animateToRad) {
@@ -352,5 +401,67 @@ public class BackupImageView extends View {
             roundRadiusAnimator.setDuration(200);
             roundRadiusAnimator.start();
         }
+    }
+
+    public Text blurText;
+    private Path blurTextClipPath;
+    private ColorFilter blurTextBgColorFilter;
+
+    public void setBlurredText(CharSequence str) {
+        if (TextUtils.isEmpty(str)) {
+            blurText = null;
+            return;
+        }
+
+        blurText = new Text(str, 16.5f, AndroidUtilities.bold());
+        if (blurTextBgColorFilter == null) {
+            ColorMatrix colorMatrix = new ColorMatrix();
+            colorMatrix.setSaturation(1.2f);
+            AndroidUtilities.adjustBrightnessColorMatrix(colorMatrix, -.2f);
+            blurTextBgColorFilter = new ColorMatrixColorFilter(colorMatrix);
+        }
+    }
+
+    public void drawBlurredText(Canvas canvas, float alpha) {
+        if (blurText == null) return;
+
+        if (blurTextClipPath == null) {
+            blurTextClipPath = new Path();
+        } else blurTextClipPath.rewind();
+
+        final float W, H;
+        if (width != -1 && height != -1) {
+            W = width;
+            H = height;
+        } else {
+            W = getMeasuredWidth();
+            H = getMeasuredHeight();
+        }
+
+        final float w = blurText.getCurrentWidth() + dp(18);
+        final float h = dp(28);
+        final float l = (W - w) / 2f;
+        final float cy = H / 2f;
+
+        AndroidUtilities.rectTmp.set(l, cy - h / 2f, l + w, cy + h / 2f);
+        blurTextClipPath.addRoundRect(AndroidUtilities.rectTmp, h / 2f, h / 2f, Path.Direction.CW);
+
+        canvas.save();
+        canvas.clipPath(blurTextClipPath);
+        if (blurImageReceiver != null && blurAllowed) {
+            blurImageReceiver.setColorFilter(blurTextBgColorFilter);
+            float wasAlpha = blurImageReceiver.getAlpha();
+            blurImageReceiver.setAlpha(alpha);
+            blurImageReceiver.draw(canvas);
+            blurImageReceiver.setAlpha(wasAlpha);
+            blurImageReceiver.setColorFilter(null);
+        }
+        blurText.draw(canvas, l + dp(9), cy, 0xFFFFFFFF, alpha);
+        canvas.restore();
+    }
+
+    @Override
+    protected boolean verifyDrawable(@NonNull Drawable who) {
+        return who == imageReceiver.getDrawable() || who == imageReceiver.getImageDrawable() || super.verifyDrawable(who);
     }
 }

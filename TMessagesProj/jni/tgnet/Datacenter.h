@@ -81,7 +81,7 @@ private:
     TLObject *getCurrentHandshakeRequest(bool media);
     ByteArray *getAuthKey(ConnectionType connectionType, bool perm, int64_t *authKeyId, int32_t allowPendingKey);
 
-    const int32_t *defaultPorts = new int32_t[4] {-1, 443, 5222, -1};
+    const int32_t defaultPorts[4] = {-1, 443, 5222, -1};
 
     int32_t instanceNum;
     uint32_t datacenterId;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *  Copyright (c) 2023 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -15,14 +15,15 @@
 #include <vector>
 
 #include "common_video/h265/h265_common.h"
-#include "common_video/h265/legacy_bit_buffer.h"
 #include "rtc_base/logging.h"
+#include "common_video/h265/legacy_bit_buffer.h"
 
 namespace {
 
 const int kMaxAbsQpDeltaValue = 51;
 const int kMinQpValue = 0;
 const int kMaxQpValue = 51;
+const uint32_t kMaxLongTermReferencePictures = 32;
 
 }  // namespace
 
@@ -51,7 +52,7 @@ H265BitstreamParser::Result H265BitstreamParser::ParseNonParameterSetNalu(
       H265::ParseRbsp(source, source_length);
   if (slice_rbsp.size() < H265::kNaluTypeSize)
     return kInvalidStream;
-//
+
   rtc::BitBuffer slice_reader(slice_rbsp.data() + H265::kNaluTypeSize,
                               slice_rbsp.size() - H265::kNaluTypeSize);
   // Check to see if this is an IDR slice, which has an extra field to parse
@@ -146,18 +147,30 @@ H265BitstreamParser::Result H265BitstreamParser::ParseNonParameterSetNalu(
         if (sps_->num_long_term_ref_pics_sps > 0) {
           // num_long_term_sps: ue(v)
           RETURN_INV_ON_FAIL(slice_reader.ReadExponentialGolomb(&num_long_term_sps));
+          RETURN_INV_ON_FAIL(
+                  num_long_term_sps <= sps_->num_long_term_ref_pics_sps);
+          RETURN_INV_ON_FAIL(
+                  num_long_term_sps <= kMaxLongTermReferencePictures);
         }
-        // num_long_term_sps: ue(v)
+        // num_long_term_pics: ue(v)
         RETURN_INV_ON_FAIL(slice_reader.ReadExponentialGolomb(&num_long_term_pics));
-        lt_idx_sps.resize(num_long_term_sps + num_long_term_pics, 0);
-        used_by_curr_pic_lt_flag.resize(num_long_term_sps + num_long_term_pics, 0);
-        for (uint32_t i = 0; i < num_long_term_sps + num_long_term_pics; i++) {
+        RETURN_INV_ON_FAIL(
+                num_long_term_pics <=
+                kMaxLongTermReferencePictures - num_long_term_sps);
+        const uint32_t num_long_term =
+                num_long_term_sps + num_long_term_pics;
+        lt_idx_sps.resize(num_long_term, 0);
+        used_by_curr_pic_lt_flag.resize(num_long_term, 0);
+        for (uint32_t i = 0; i < num_long_term; i++) {
           if (i < num_long_term_sps) {
             if (sps_->num_long_term_ref_pics_sps > 1) {
               // lt_idx_sps: u(v)
               uint32_t lt_idx_sps_bits = H265::Log2(sps_->num_long_term_ref_pics_sps);
               RETURN_INV_ON_FAIL(slice_reader.ReadBits(&lt_idx_sps[i], lt_idx_sps_bits));
             }
+            RETURN_INV_ON_FAIL(
+                    lt_idx_sps[i] <
+                    sps_->used_by_curr_pic_lt_sps_flag.size());
           } else {
             // poc_lsb_lt: u(v)
             uint32_t poc_lsb_lt_bits = sps_->log2_max_pic_order_cnt_lsb_minus4 + 4;
@@ -293,14 +306,31 @@ uint32_t H265BitstreamParser::CalcNumPocTotalCurr(
   uint32_t num_poc_total_curr = 0;
   uint32_t curr_sps_idx;
 
-  bool used_by_curr_pic_lt[16];
-  uint32_t num_long_term = num_long_term_sps + num_long_term_pics;
+  if (num_long_term_sps > kMaxLongTermReferencePictures ||
+      num_long_term_pics >
+      kMaxLongTermReferencePictures - num_long_term_sps) {
+    return 0;
+  }
+  const uint32_t num_long_term =
+          num_long_term_sps + num_long_term_pics;
+  if (lt_idx_sps.size() < num_long_term ||
+      used_by_curr_pic_lt_flag.size() < num_long_term) {
+    return 0;
+  }
 
   for (uint32_t i = 0; i < num_long_term; i++) {
+    uint32_t used_by_curr_pic_lt;
     if (i < num_long_term_sps) {
-      used_by_curr_pic_lt[i] = sps_->used_by_curr_pic_lt_sps_flag[lt_idx_sps[i]];
+      if (lt_idx_sps[i] >= sps_->used_by_curr_pic_lt_sps_flag.size()) {
+        return 0;
+      }
+      used_by_curr_pic_lt =
+              sps_->used_by_curr_pic_lt_sps_flag[lt_idx_sps[i]];
     } else {
-      used_by_curr_pic_lt[i] = used_by_curr_pic_lt_flag[i];
+      used_by_curr_pic_lt = used_by_curr_pic_lt_flag[i];
+    }
+    if (used_by_curr_pic_lt) {
+      num_poc_total_curr++;
     }
   }
 
@@ -331,12 +361,6 @@ uint32_t H265BitstreamParser::CalcNumPocTotalCurr(
 
   for (uint32_t i = 0; i < ref_pic_set->num_positive_pics; i++) {
     if (ref_pic_set->used_by_curr_pic_s1_flag[i]) {
-      num_poc_total_curr++;
-    }
-  }
-
-  for (uint32_t i = 0; i < num_long_term_sps + num_long_term_pics; i++) {
-    if (used_by_curr_pic_lt[i]) {
       num_poc_total_curr++;
     }
   }

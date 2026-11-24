@@ -1,0 +1,17 @@
+[package]
+name = "etgadblock"
+version = "0.0.4"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+adblock = {version = "0.12.1", default-features = false, features = ["embedded-domain-resolver", "full-regex-handling"]}
+jni = "0.21.1"
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1
+strip = true

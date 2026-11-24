@@ -6,37 +6,16 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.R;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-
-public class SpeedIconDrawable extends Drawable {
+public class SpeedIconDrawable extends Drawable implements Drawable.Callback {
 
     private final AnimatedTextView.AnimatedTextDrawable textDrawable;
-    private final Drawable.Callback callback = new Callback() {
-        @Override
-        public void invalidateDrawable(@NonNull Drawable who) {
-            SpeedIconDrawable.this.invalidateSelf();
-        }
-        @Override
-        public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
-            SpeedIconDrawable.this.scheduleSelf(what, when);
-        }
-        @Override
-        public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
-            SpeedIconDrawable.this.unscheduleSelf(what);
-        }
-    };
     private final Paint outlinePaint;
 
     public SpeedIconDrawable() {
@@ -45,10 +24,11 @@ public class SpeedIconDrawable extends Drawable {
 
     public SpeedIconDrawable(boolean outline) {
         textDrawable = new AnimatedTextView.AnimatedTextDrawable(false, true, true);
-        textDrawable.setCallback(callback);
+        // setCallback() holds the callback weakly: pass this, not a separate object that can be collected
+        textDrawable.setCallback(this);
         textDrawable.setAnimationProperties(.3f, 0, 165, CubicBezierInterpolator.EASE_OUT_QUINT);
         textDrawable.setGravity(Gravity.CENTER_HORIZONTAL);
-        textDrawable.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        textDrawable.setTypeface(AndroidUtilities.bold());
         textDrawable.setTextSize(AndroidUtilities.dp(10));
         textDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
         textDrawable.getPaint().setStrokeWidth(AndroidUtilities.dpf2(.6f));
@@ -142,5 +122,20 @@ public class SpeedIconDrawable extends Drawable {
     @Override
     public int getOpacity() {
         return PixelFormat.TRANSPARENT;
+    }
+
+    @Override
+    public void invalidateDrawable(@NonNull Drawable who) {
+        invalidateSelf();
+    }
+
+    @Override
+    public void scheduleDrawable(@NonNull Drawable who, @NonNull Runnable what, long when) {
+        scheduleSelf(what, when);
+    }
+
+    @Override
+    public void unscheduleDrawable(@NonNull Drawable who, @NonNull Runnable what) {
+        unscheduleSelf(what);
     }
 }

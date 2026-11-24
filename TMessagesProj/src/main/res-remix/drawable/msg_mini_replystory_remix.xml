@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <group>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M8 0.5h0.27c0.88 0.04 1.77 0.22 2.6 0.57 0.83 0.34 1.6 0.84 2.24 1.44l0.2 0.19 0.18 0.19c1.2 1.28 1.94 2.98 2 4.85L15.5 8v0.26c-0.04 0.94-0.24 1.87-0.62 2.74-0.29 0.65-0.66 1.26-1.11 1.8-0.15 0.17-0.3 0.34-0.47 0.5-0.18 0.18-0.36 0.35-0.55 0.5l-1.07-1.06c0.2-0.15 0.38-0.32 0.56-0.5C13.37 11.12 14 9.6 14 8c0-1.6-0.63-3.12-1.76-4.24C11.12 2.63 9.6 2 8 2 7.75 2 7.5 2.02 7.25 2.05V0.54C7.5 0.5 7.75 0.5 8 0.5Z"/>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M4.02 1.64C4.48 1.35 4.98 1.11 5.5 0.93L6 2.34C5.58 2.5 5.19 2.68 4.82 2.91l-0.8-1.27Z"/>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M1.08 5.1C1.5 4.09 2.16 3.18 2.97 2.45l1 1.11C3.32 4.14 2.8 4.87 2.47 5.7L1.06 5.1Z"/>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M0.5 8c0-0.56 0.06-1.1 0.18-1.64L2.14 6.7C2.05 7.11 2 7.55 2 8c0 0.58 0.08 1.14 0.23 1.66L0.8 10.08C0.6 9.42 0.5 8.72 0.5 8Z"/>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M4.37 14.57c-1.23-0.69-2.25-1.7-2.93-2.94l1.3-0.73c0.55 0.99 1.37 1.8 2.36 2.35l-0.73 1.32Z"/>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M11.44 14.67c-0.38 0.19-0.77 0.35-1.18 0.48l-0.45-1.43c0.33-0.1 0.64-0.23 0.94-0.39l0.69 1.34Z"/>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M8 15.5c-0.72 0-1.42-0.1-2.08-0.3l0.42-1.43C6.86 13.92 7.42 14 8 14c0.35 0 0.69-0.03 1.02-0.09l0.25 1.48C8.86 15.46 8.43 15.5 8 15.5Z"/>
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M7.56 10.75L3.2 7.25l4.37-3.5v2.19c2.42 0 4.38 1.96 4.38 4.37 0 0.12 0 0.24-0.02 0.36-0.66-1.25-1.97-2.1-3.48-2.1H7.56v2.18Z"/>
+    </group>
+</vector>

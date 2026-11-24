@@ -1,5 +1,7 @@
 package org.telegram.ui.Components.Reactions;
 
+import static org.telegram.ui.ChatActivity.MODE_DEFAULT;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -12,6 +14,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.core.math.MathUtils;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.exteragram.messenger.utils.chats.GlassMenuHelper;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
@@ -66,7 +70,9 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
 
     private void checkCreateReactionsLayout() {
         if (reactionsContainerLayout == null) {
-            reactionsContainerLayout = new ReactionsContainerLayout(parentFragment, getContext(), parentFragment.getCurrentAccount(), parentFragment.getResourceProvider()) {
+            final boolean tags = parentFragment.getUserConfig().getClientUserId() == parentFragment.getDialogId();
+
+            reactionsContainerLayout = new ReactionsContainerLayout(tags ? ReactionsContainerLayout.TYPE_TAGS : ReactionsContainerLayout.TYPE_DEFAULT, parentFragment, getContext(), parentFragment.getCurrentAccount(), parentFragment.getResourceProvider()) {
                 float enabledAlpha = 1f;
                 long lastUpdate;
 
@@ -110,7 +116,7 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
             reactionsContainerLayout.setDelegate(new ReactionsContainerLayout.ReactionsContainerDelegate() {
                 @Override
                 public void onReactionClicked(View view, ReactionsLayoutInBubble.VisibleReaction visibleReaction, boolean longpress, boolean addToRecent) {
-                    parentFragment.selectReaction(currentPrimaryObject, reactionsContainerLayout, view, 0, 0, visibleReaction, false, longpress, addToRecent);
+                    parentFragment.selectReaction(null, currentPrimaryObject, reactionsContainerLayout, view, 0, 0, visibleReaction, false, longpress, addToRecent, false);
                     AndroidUtilities.runOnUIThread(() -> {
                         if (reactionsContainerLayout != null) {
                             reactionsContainerLayout.dismissParent(true);
@@ -127,6 +133,10 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
             reactionsContainerLayout.setClipChildren(false);
             reactionsContainerLayout.setClipToPadding(false);
             addView(reactionsContainerLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 70 + mPadding, Gravity.RIGHT));
+
+            if (GlassMenuHelper.isEnabled(parentFragment.getCurrentAccount(), parentFragment.getResourceProvider())) {
+                GlassMenuHelper.applyToReactions(parentFragment.getGlassBackgroundDrawableFactory(), parentFragment.getResourceProvider(), reactionsContainerLayout);
+            }
         }
     }
 
@@ -224,7 +234,7 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
                             reactionsContainerLayout.setVisibility(VISIBLE);
                             if (!messageSet) {
                                 messageSet = true;
-                                reactionsContainerLayout.setMessage(currentPrimaryObject, parentFragment.getCurrentChatInfo());
+                                reactionsContainerLayout.setMessage(currentPrimaryObject, parentFragment.getCurrentChatInfo(), true);
                             }
                         }
                     }
@@ -295,7 +305,14 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
     }
 
     private boolean isMessageTypeAllowed(MessageObject obj) {
-        return MessageObject.isPhoto(obj.messageOwner) && MessageObject.getMedia(obj.messageOwner).webpage == null || obj.getDocument() != null && (MessageObject.isVideoDocument(obj.getDocument()) || MessageObject.isGifDocument(obj.getDocument()));
+        if (obj != null && obj.messageOwner != null && obj.messageOwner.rich_message != null) return true;
+        return obj != null && !obj.needDrawBluredPreview() && (
+            MessageObject.isPhoto(obj.messageOwner) && MessageObject.getMedia(obj.messageOwner) != null && MessageObject.getMedia(obj.messageOwner).webpage == null ||
+            obj.getDocument() != null && (
+                MessageObject.isVideoDocument(obj.getDocument()) ||
+                MessageObject.isGifDocument(obj.getDocument())
+            )
+        );
     }
 
     public void setSelectedMessages(List<MessageObject> messages) {
@@ -303,7 +320,7 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
 
         boolean visible = false;
 
-        if (parentFragment.isSecretChat() || parentFragment.getCurrentChatInfo() != null && parentFragment.getCurrentChatInfo().available_reactions instanceof TLRPC.TL_chatReactionsNone) {
+        if (parentFragment.getChatMode() == ChatActivity.MODE_SCHEDULED || parentFragment.getChatMode() == ChatActivity.MODE_QUICK_REPLIES || parentFragment.getChatMode() == ChatActivity.MODE_EDIT_BUSINESS_LINK || parentFragment.isReport() || parentFragment.isSecretChat() || parentFragment.getCurrentChatInfo() != null && parentFragment.getCurrentChatInfo().available_reactions instanceof TLRPC.TL_chatReactionsNone) {
             visible = false;
         } else if (!messages.isEmpty()) {
             visible = true;
@@ -336,19 +353,21 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
 
     private void animateVisible(boolean visible) {
         if (visible) {
-            currentPrimaryObject = findPrimaryObject();
-            checkCreateReactionsLayout();
-            invalidatePosition(false);
-
             setVisibility(VISIBLE);
-            if (reactionsContainerLayout.isEnabled()) {
-                messageSet = true;
-                reactionsContainerLayout.setMessage(currentPrimaryObject, parentFragment.getCurrentChatInfo());
-                reactionsContainerLayout.startEnterAnimation(false);
-            } else {
-                messageSet = false;
-                reactionsContainerLayout.setTransitionProgress(1f);
-            }
+            post(() -> {
+                currentPrimaryObject = findPrimaryObject();
+                checkCreateReactionsLayout();
+                invalidatePosition(false);
+
+                if (reactionsContainerLayout.isEnabled()) {
+                    messageSet = true;
+                    reactionsContainerLayout.setMessage(currentPrimaryObject, parentFragment.getCurrentChatInfo(), true);
+                    reactionsContainerLayout.startEnterAnimation(false);
+                } else {
+                    messageSet = false;
+                    reactionsContainerLayout.setTransitionProgress(1f);
+                }
+            });
         } else {
             messageSet = false;
             ValueAnimator animator = ValueAnimator.ofFloat(1, 0).setDuration(150);
@@ -373,9 +392,9 @@ public class ChatSelectionReactionMenuOverlay extends FrameLayout {
         }
     }
 
-    public boolean onBackPressed() {
+    public boolean onBackPressed(boolean invoked) {
         if (reactionsContainerLayout != null && reactionsContainerLayout.getReactionsWindow() != null) {
-            reactionsContainerLayout.dismissWindow();
+            if (invoked) reactionsContainerLayout.dismissWindow();
             return false;
         }
         return true;

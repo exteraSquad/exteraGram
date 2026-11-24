@@ -38,7 +38,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import org.telegram.ui.AspectRatioFrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -77,13 +77,19 @@ public class PipRoundVideoView implements NotificationCenter.NotificationCenterD
     @SuppressLint("StaticFieldLeak")
     private static PipRoundVideoView instance;
 
+    public class PipFrameLayout extends FrameLayout {
+        public PipFrameLayout(Context context) {
+            super(context);
+        }
+    }
+
     public void show(Activity activity, Runnable closeRunnable) {
         if (activity == null) {
             return;
         }
         instance = this;
         onCloseRunnable = closeRunnable;
-        windowView = new FrameLayout(activity) {
+        windowView = new PipFrameLayout(activity) {
 
             private float startX;
             private float startY;
@@ -240,6 +246,7 @@ public class PipRoundVideoView implements NotificationCenter.NotificationCenterD
             windowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;
             windowLayoutParams.type = WindowManager.LayoutParams.LAST_APPLICATION_WINDOW;
             windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS;
+            AndroidUtilities.setPreferredMaxRefreshRate(windowManager, windowView, windowLayoutParams);
             windowManager.addView(windowView, windowLayoutParams);
         } catch (Exception e) {
             FileLog.e(e);
@@ -247,7 +254,7 @@ public class PipRoundVideoView implements NotificationCenter.NotificationCenterD
         }
         parentActivity = activity;
         currentAccount = UserConfig.selectedAccount;
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.messagePlayingProgressDidChanged);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.messagePlayingProgressDidChanged);
         runShowHideAnimation(true);
     }
 

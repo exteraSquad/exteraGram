@@ -18,6 +18,7 @@
 #include <openssl/rand.h>
 #include <openssl/hmac.h>
 #include <algorithm>
+#include <utility>
 #include <openssl/bn.h>
 #include "ByteStream.h"
 #include "ConnectionSocket.h"
@@ -29,299 +30,14 @@
 #include "NativeByteBuffer.h"
 #include "BuffersStorage.h"
 #include "Connection.h"
+#include "TLSHello.h"
+#include <random>
 
 #ifndef EPOLLRDHUP
 #define EPOLLRDHUP 0x2000
 #endif
 
 #define MAX_GREASE 8
-
-static BIGNUM *get_y2(BIGNUM *x, const BIGNUM *mod, BN_CTX *big_num_context) {
-    // returns y^2 = x^3 + 486662 * x^2 + x
-    BIGNUM *y = BN_dup(x);
-    assert(y != NULL);
-    BIGNUM *coef = BN_new();
-    BN_set_word(coef, 486662);
-    BN_mod_add(y, y, coef, mod, big_num_context);
-    BN_mod_mul(y, y, x, mod, big_num_context);
-    BN_one(coef);
-    BN_mod_add(y, y, coef, mod, big_num_context);
-    BN_mod_mul(y, y, x, mod, big_num_context);
-    BN_clear_free(coef);
-    return y;
-}
-
-static BIGNUM *get_double_x(BIGNUM *x, const BIGNUM *mod, BN_CTX *big_num_context) {
-    // returns x_2 =(x^2 - 1)^2/(4*y^2)
-    BIGNUM *denominator = get_y2(x, mod, big_num_context);
-    assert(denominator != NULL);
-    BIGNUM *coef = BN_new();
-    BN_set_word(coef, 4);
-    BN_mod_mul(denominator, denominator, coef, mod, big_num_context);
-
-    BIGNUM *numerator = BN_new();
-    assert(numerator != NULL);
-    BN_mod_mul(numerator, x, x, mod, big_num_context);
-    BN_one(coef);
-    BN_mod_sub(numerator, numerator, coef, mod, big_num_context);
-    BN_mod_mul(numerator, numerator, numerator, mod, big_num_context);
-
-    BN_mod_inverse(denominator, denominator, mod, big_num_context);
-    BN_mod_mul(numerator, numerator, denominator, mod, big_num_context);
-
-    BN_clear_free(coef);
-    BN_clear_free(denominator);
-    return numerator;
-}
-
-static void generate_public_key(unsigned char *key) {
-    BIGNUM *mod = NULL;
-    BN_hex2bn(&mod, "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffed");
-    BIGNUM *pow = NULL;
-    BN_hex2bn(&pow, "3ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6");
-    BN_CTX *big_num_context = BN_CTX_new();
-    assert(big_num_context != NULL);
-
-    BIGNUM *x = BN_new();
-    while (1) {
-        RAND_bytes(key, 32);
-        key[31] &= 127;
-        BN_bin2bn(key, 32, x);
-        assert(x != NULL);
-        BN_mod_mul(x, x, x, mod, big_num_context);
-
-        BIGNUM *y = get_y2(x, mod, big_num_context);
-
-        BIGNUM *r = BN_new();
-        BN_mod_exp(r, y, pow, mod, big_num_context);
-        BN_clear_free(y);
-        if (BN_is_one(r)) {
-            BN_clear_free(r);
-            break;
-        }
-        BN_clear_free(r);
-    }
-
-    int i;
-    for (i = 0; i < 3; i++) {
-        BIGNUM *x2 = get_double_x(x, mod, big_num_context);
-        BN_clear_free(x);
-        x = x2;
-    }
-
-    int num_size = BN_num_bytes(x);
-    assert(num_size <= 32);
-    memset(key, '\0', 32 - num_size);
-    BN_bn2bin(x, key + (32 - num_size));
-    for (i = 0; i < 16; i++) {
-        unsigned char t = key[i];
-        key[i] = key[31 - i];
-        key[31 - i] = t;
-    }
-
-    BN_clear_free(x);
-    BN_CTX_free(big_num_context);
-    BN_clear_free(pow);
-    BN_clear_free(mod);
-}
-
-class TlsHello {
-public:
-
-    TlsHello() {
-        RAND_bytes(grease, MAX_GREASE);
-        for (int a = 0; a < MAX_GREASE; a++) {
-            grease[a] = (uint8_t) ((grease[a] & 0xf0) + 0x0A);
-        }
-        for (size_t i = 1; i < MAX_GREASE; i += 2) {
-            if (grease[i] == grease[i - 1]) {
-                grease[i] ^= 0x10;
-            }
-        }
-    }
-
-    struct Op {
-        enum class Type {
-            String, Random, K, Zero, Domain, Grease, BeginScope, EndScope
-        };
-        Type type;
-        size_t length;
-        int seed;
-        std::string data;
-
-        static Op string(const char str[], size_t len) {
-            Op res;
-            res.type = Type::String;
-            res.data = std::string(str, len);
-            return res;
-        }
-
-        static Op random(size_t length) {
-            Op res;
-            res.type = Type::Random;
-            res.length = length;
-            return res;
-        }
-
-        static Op K() {
-            Op res;
-            res.type = Type::K;
-            res.length = 32;
-            return res;
-        }
-
-        static Op zero(size_t length) {
-            Op res;
-            res.type = Type::Zero;
-            res.length = length;
-            return res;
-        }
-
-        static Op domain() {
-            Op res;
-            res.type = Type::Domain;
-            return res;
-        }
-
-        static Op grease(int seed) {
-            Op res;
-            res.type = Type::Grease;
-            res.seed = seed;
-            return res;
-        }
-
-        static Op begin_scope() {
-            Op res;
-            res.type = Type::BeginScope;
-            return res;
-        }
-
-        static Op end_scope() {
-            Op res;
-            res.type = Type::EndScope;
-            return res;
-        }
-    };
-
-    static const TlsHello &getDefault() {
-        static TlsHello result = [] {
-            TlsHello res;
-            res.ops = {
-                    Op::string("\x16\x03\x01\x02\x00\x01\x00\x01\xfc\x03\x03", 11),
-                    Op::zero(32),
-                    Op::string("\x20", 1),
-                    Op::random(32),
-                    Op::string("\x00\x20", 2),
-                    Op::grease(0),
-                    Op::string("\x13\x01\x13\x02\x13\x03\xc0\x2b\xc0\x2f\xc0\x2c\xc0\x30\xcc\xa9\xcc\xa8\xc0\x13\xc0\x14\x00\x9c"
-                               "\x00\x9d\x00\x2f\x00\x35\x01\x00\x01\x93", 34),
-                    Op::grease(2),
-                    Op::string("\x00\x00\x00\x00", 4),
-                    Op::begin_scope(),
-                    Op::begin_scope(),
-                    Op::string("\x00", 1),
-                    Op::begin_scope(),
-                    Op::domain(),
-                    Op::end_scope(),
-                    Op::end_scope(),
-                    Op::end_scope(),
-                    Op::string("\x00\x17\x00\x00\xff\x01\x00\x01\x00\x00\x0a\x00\x0a\x00\x08", 15),
-                    Op::grease(4),
-                    Op::string(
-                            "\x00\x1d\x00\x17\x00\x18\x00\x0b\x00\x02\x01\x00\x00\x23\x00\x00\x00\x10\x00\x0e\x00\x0c\x02\x68\x32\x08"
-                            "\x68\x74\x74\x70\x2f\x31\x2e\x31\x00\x05\x00\x05\x01\x00\x00\x00\x00\x00\x0d\x00\x12\x00\x10\x04\x03\x08"
-                            "\x04\x04\x01\x05\x03\x08\x05\x05\x01\x08\x06\x06\x01\x00\x12\x00\x00\x00\x33\x00\x2b\x00\x29", 75),
-                    Op::grease(4),
-                    Op::string("\x00\x01\x00\x00\x1d\x00\x20", 7),
-                    Op::K(),
-                    Op::string("\x00\x2d\x00\x02\x01\x01\x00\x2b\x00\x0b\x0a", 11),
-                    Op::grease(6),
-                    Op::string("\x03\x04\x03\x03\x03\x02\x03\x01\x00\x1b\x00\x03\x02\x00\x02", 15),
-                    Op::grease(3),
-                    Op::string("\x00\x01\x00\x00\x15", 5)};
-            return res;
-        }();
-        return result;
-    }
-
-    uint32_t writeToBuffer(uint8_t *data) {
-        uint32_t offset = 0;
-        for (auto op : ops) {
-            writeOp(op, data, offset);
-        }
-        return offset;
-    }
-
-    uint32_t writePadding(uint8_t *data, uint32_t length) {
-        if (length > 515) {
-            return 0;
-        }
-        uint32_t size = 515 - length;
-        memset(data + length + 2, 0, size);
-        data[length] = static_cast<uint8_t>((size >> 8) & 0xff);
-        data[length + 1] = static_cast<uint8_t>(size & 0xff);
-        return length + size + 2;
-    }
-
-    void setDomain(std::string value) {
-        domain = std::move(value);
-    }
-
-private:
-    std::vector<Op> ops;
-    uint8_t grease[MAX_GREASE];
-    std::vector<size_t> scopeOffset;
-    std::string domain;
-
-    void writeOp(const TlsHello::Op &op, uint8_t *data, uint32_t &offset) {
-        using Type = TlsHello::Op::Type;
-        switch (op.type) {
-            case Type::String:
-                memcpy(data + offset, op.data.data(), op.data.size());
-                offset += op.data.size();
-                break;
-            case Type::Random:
-                RAND_bytes(data + offset, (size_t) op.length);
-                offset += op.length;
-                break;
-            case Type::K:
-                generate_public_key(data + offset);
-                offset += op.length;
-                break;
-            case Type::Zero:
-                std::memset(data + offset, 0, op.length);
-                offset += op.length;
-                break;
-            case Type::Domain: {
-                size_t size = domain.size();
-                if (size > 253) {
-                    size = 253;
-                }
-                memcpy(data + offset, domain.data(), size);
-                offset += size;
-                break;
-            }
-            case Type::Grease: {
-                data[offset] = grease[op.seed];
-                data[offset + 1] = grease[op.seed];
-                offset += 2;
-                break;
-            }
-            case Type::BeginScope:
-                scopeOffset.push_back(offset);
-                offset += 2;
-                break;
-            case Type::EndScope: {
-                auto begin_offset = scopeOffset.back();
-                scopeOffset.pop_back();
-                size_t size = offset - begin_offset - 2;
-                data[begin_offset] = static_cast<uint8_t>((size >> 8) & 0xff);
-                data[begin_offset + 1] = static_cast<uint8_t>(size & 0xff);
-                break;
-            }
-        }
-    }
-};
 
 ConnectionSocket::ConnectionSocket(int32_t instance) {
     instanceNum = instance;
@@ -576,7 +292,12 @@ void ConnectionSocket::onEvent(uint32_t events) {
             while (true) {
                 buffer->rewind();
                 readCount = recv(socketFd, buffer->bytes(), READ_BUFFER_SIZE, 0);
+                int err = errno;
+//                if (LOGS_ENABLED) DEBUG_D("connection(%p) recv resulted with %d, errno=%d", this, readCount, err);
                 if (readCount < 0) {
+                    if (err == EAGAIN) {
+                        break;
+                    }
                     closeSocket(1, -1);
                     if (LOGS_ENABLED) DEBUG_E("connection(%p) recv failed", this);
                     return;
@@ -771,10 +492,12 @@ void ConnectionSocket::onEvent(uint32_t events) {
                             onReceivedData(buffer);
                         }
                     }
-                }
-                if (readCount != READ_BUFFER_SIZE) {
+                } else if (readCount == 0) {
                     break;
                 }
+//                if (readCount != READ_BUFFER_SIZE) {
+//                    break;
+//                }
             }
         }
     }
@@ -790,14 +513,9 @@ void ConnectionSocket::onEvent(uint32_t events) {
                         lastEventTime = ConnectionsManager::getInstance(instanceNum).getCurrentTimeMonotonicMillis();
                         tlsHashMismatch = false;
                         proxyAuthState = 11;
-                        TlsHello hello = TlsHello::getDefault();
+                        TLSHello hello = TLSHello::getDefault();
                         hello.setDomain(currentSecretDomain);
                         uint32_t size = hello.writeToBuffer(tempBuffer->bytes);
-                        if (!(size = hello.writePadding(tempBuffer->bytes, size))) {
-                            if (LOGS_ENABLED) DEBUG_E("connection(%p) too much data for padding", this);
-                            closeSocket(1, -1);
-                            return;
-                        }
                         uint32_t outLength;
                         HMAC(EVP_sha256(), currentSecret.data(), currentSecret.size(), tempBuffer->bytes, size, tempBuffer->bytes + 64 * 1024, &outLength);
 

@@ -1,5 +1,8 @@
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import android.graphics.PorterDuff;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -19,34 +22,36 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.view.GestureDetectorCompat;
-
-import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 public class CustomPhoneKeyboardView extends ViewGroup {
     public final static int KEYBOARD_HEIGHT_DP = 230;
 
     private final static int SIDE_PADDING = 10, BUTTON_PADDING = 6;
 
-    private ImageView backButton;
+    private final ImageView backButton;
     private EditText editText;
-    private View[] views = new View[12];
+    private final View[] views = new View[12];
 
     private View viewToFindFocus;
 
     private boolean dispatchBackWhenEmpty;
     private boolean runningLongClick;
-    private Runnable onBackButton = () -> {
+    private final Runnable onBackButton = () -> {
         checkFindEditText();
         if (editText == null || editText.length() == 0 && !dispatchBackWhenEmpty) return;
 
-        performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
-        playSoundEffect(SoundEffectConstants.CLICK);
+        try {
+            performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            playSoundEffect(SoundEffectConstants.CLICK);
+        } catch (Exception ignore) {}
         editText.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
         editText.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
 
@@ -56,7 +61,7 @@ public class CustomPhoneKeyboardView extends ViewGroup {
     };
 
     private boolean postedLongClick;
-    private Runnable detectLongClick = () -> {
+    private final Runnable detectLongClick = () -> {
         postedLongClick = false;
         runningLongClick = true;
         onBackButton.run();
@@ -108,7 +113,9 @@ public class CustomPhoneKeyboardView extends ViewGroup {
                 checkFindEditText();
                 if (editText == null) return;
 
-                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                try {
+                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                } catch (Exception ignore) {}
                 if (editText instanceof EditTextBoldCursor) {
                     ((EditTextBoldCursor) editText).setTextWatchersSuppressed(true, false);
                 }
@@ -148,12 +155,18 @@ public class CustomPhoneKeyboardView extends ViewGroup {
             }
         };
         backButton.setImageResource(R.drawable.msg_clear_input);
-        backButton.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        backButton.setBackground(getButtonDrawable());
-        int pad = AndroidUtilities.dp(11);
+        ThemeBind.colorFilter(backButton, Theme.key_windowBackgroundWhiteBlackText, PorterDuff.Mode.SRC_ATOP);
+        int pad = dp(11);
         backButton.setPadding(pad, pad, pad, pad);
         backButton.setOnClickListener(v -> {});
         addView(views[11] = backButton);
+
+        for (int a = 0; a < views.length; a++) {
+            final View v = views[a];
+            if (v == null) continue;
+            ScaleStateListAnimator.apply(v, 0.02f, 1.2f);
+            setButtonBackground(v, a);
+        }
     }
 
     @Override
@@ -169,7 +182,7 @@ public class CustomPhoneKeyboardView extends ViewGroup {
         int touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         return new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onDown(MotionEvent e) {
+            public boolean onDown(@NonNull MotionEvent e) {
                 if (postedLongClick) {
                     removeCallbacks(detectLongClick);
                 }
@@ -180,7 +193,7 @@ public class CustomPhoneKeyboardView extends ViewGroup {
             }
 
             @Override
-            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
                 if ((postedLongClick || runningLongClick) && (Math.abs(distanceX) >= touchSlop || Math.abs(distanceY) >= touchSlop)) {
                     postedLongClick = false;
                     runningLongClick = false;
@@ -212,13 +225,13 @@ public class CustomPhoneKeyboardView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int btnWidth = (getWidth() - AndroidUtilities.dp(SIDE_PADDING * 2 + BUTTON_PADDING * 2)) / 3;
-        int btnHeight = (getHeight() - AndroidUtilities.dp(SIDE_PADDING * 3 + BUTTON_PADDING * 2)) / 4;
+        int btnWidth = (getWidth() - dp(SIDE_PADDING * 2 + BUTTON_PADDING * 2)) / 3;
+        int btnHeight = (getHeight() - dp(SIDE_PADDING * 3 + BUTTON_PADDING * 2)) / 4;
 
         for (int i = 0; i < views.length; i++) {
             int rowX = i % 3, rowY = i / 3;
-            int left = rowX * (btnWidth + AndroidUtilities.dp(BUTTON_PADDING)) + AndroidUtilities.dp(SIDE_PADDING);
-            int top = rowY * (btnHeight + AndroidUtilities.dp(BUTTON_PADDING)) + AndroidUtilities.dp(SIDE_PADDING);
+            int left = rowX * (btnWidth + dp(BUTTON_PADDING)) + dp(SIDE_PADDING);
+            int top = rowY * (btnHeight + dp(BUTTON_PADDING)) + dp(SIDE_PADDING);
             if (views[i] != null) {
                 views[i].layout(left, top, left + btnWidth, top + btnHeight);
             }
@@ -229,8 +242,8 @@ public class CustomPhoneKeyboardView extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
 
-        int btnWidth = (getWidth() - AndroidUtilities.dp(SIDE_PADDING * 2 + BUTTON_PADDING * 2)) / 3;
-        int btnHeight = (getHeight() - AndroidUtilities.dp(SIDE_PADDING * 3 + BUTTON_PADDING * 2)) / 4;
+        int btnWidth = (getWidth() - dp(SIDE_PADDING * 2 + BUTTON_PADDING * 2)) / 3;
+        int btnHeight = (getHeight() - dp(SIDE_PADDING * 3 + BUTTON_PADDING * 2)) / 4;
 
         for (View v : views) {
             if (v != null) {
@@ -239,15 +252,52 @@ public class CustomPhoneKeyboardView extends ViewGroup {
         }
     }
 
-    private static Drawable getButtonDrawable() {
-        return Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_listSelector), ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_listSelector), 60));
+    private static Drawable getButtonDrawable(int index) {
+        final boolean isTop = index < 3;        // 0 1 2
+        final boolean isLeft = index % 3 == 0;  // 0 3 6 9
+        final boolean isRight = index % 3 == 2; // 2 5 8 11
+        final boolean isBottom = index > 8;     // 9 10 11
+
+        final int defaultColor = Theme.getColor(Theme.key_listSelector);
+        final int pressedColor = ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_listSelector), 30);
+
+        return Theme.createSimpleSelectorRoundRectDrawable(
+            dp(isLeft && isTop ? 24 : 12),
+            dp(isRight && isTop ? 24 : 12),
+            dp(isRight && isBottom ? 24 : 12),
+            dp(/*index == 10 || index == 6 ||*/ isLeft && isBottom ? 24 : 12),
+            defaultColor, pressedColor, pressedColor);
     }
 
+    // background recolored in place on theme changes (content: listSelector, ripple: listSelector with alpha 30)
+    private static void setButtonBackground(View v, int index) {
+        ThemeBind.selectorBackground(v, getButtonDrawable(index), ThemeBind.of(Theme.key_listSelector), ThemeBind.alpha(Theme.key_listSelector, 30));
+    }
+
+    private int lastBackButtonColor, lastButtonsSelectorColor;
+
+    // called from LoginActivity.updateColors (every theme frame): recolor in place, no allocations
     public void updateColors() {
-        backButton.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        for (View v : views) {
+        final int backColor = Theme.getColor(Theme.key_windowBackgroundWhiteBlackText);
+        if (backColor != lastBackButtonColor || backButton.getColorFilter() == null) {
+            lastBackButtonColor = backColor;
+            backButton.setColorFilter(backColor, PorterDuff.Mode.SRC_ATOP);
+        }
+        final int defaultColor = Theme.getColor(Theme.key_listSelector);
+        final int pressedColor = ColorUtils.setAlphaComponent(defaultColor, 30);
+        final boolean selectorChanged = defaultColor != lastButtonsSelectorColor;
+        lastButtonsSelectorColor = defaultColor;
+        for (int a = 0; a < views.length; a++) {
+            View v = views[a];
             if (v != null) {
-                v.setBackground(getButtonDrawable());
+                if (v.getBackground() != null) {
+                    if (selectorChanged) {
+                        Theme.setSelectorDrawableColor(v.getBackground(), defaultColor, false);
+                        Theme.setSelectorDrawableColor(v.getBackground(), pressedColor, true);
+                    }
+                } else {
+                    setButtonBackground(v, a);
+                }
 
                 if (v instanceof NumberButtonView) {
                     ((NumberButtonView) v).updateColors();
@@ -256,27 +306,33 @@ public class CustomPhoneKeyboardView extends ViewGroup {
         }
     }
 
-    private final static class NumberButtonView extends View {
-        private TextPaint numberTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        private TextPaint symbolsTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        private String mNumber, mSymbols;
-        private Rect rect = new Rect();
+    private final static class NumberButtonView extends View implements Theme.Colorable {
+        private final TextPaint numberTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private final TextPaint symbolsTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private final String mNumber;
+        private final String mSymbols;
+        private final Rect rect = new Rect();
 
         public NumberButtonView(Context context, String number, String symbols) {
             super(context);
             mNumber = number;
             mSymbols = symbols;
 
-            numberTextPaint.setTextSize(AndroidUtilities.dp(24));
-            symbolsTextPaint.setTextSize(AndroidUtilities.dp(14));
+            numberTextPaint.setTextSize(dp(24));
+            symbolsTextPaint.setTextSize(dp(14));
 
-            setBackground(getButtonDrawable());
-            updateColors();
+            applyColors();
         }
 
-        private void updateColors() {
+        private void applyColors() {
             numberTextPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             symbolsTextPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
+        }
+
+        @Override
+        public void updateColors() {
+            applyColors();
+            invalidate();
         }
 
         @Override

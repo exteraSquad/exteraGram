@@ -95,6 +95,7 @@ void BuffersStorage::reuseFreeBuffer(NativeByteBuffer *buffer) {
         maxCount = 80;
     } else if (capacity == 1024 + 200) {
         arrayToReuse = &freeBuffers1024;
+        maxCount = 80;
     } else if (capacity == 4096 + 200) {
         arrayToReuse = &freeBuffers4096;
     } else if (capacity == 16384 + 200) {

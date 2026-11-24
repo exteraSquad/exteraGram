@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">Preferințe exteraGram</string>
+    <!-- Main Menu -->
+    <string name="Links">Link-uri</string>
+    <string name="Crowdin">Traduceți</string>
+    <string name="Website">Site web</string>
+    <string name="Categories">Categorii</string>
+    <string name="Developer">**%1$s** este membru al **exteraGram** echipă de dezvoltare.</string>
+    <string name="DeveloperCompact">Membru al echipei de dezvoltare **exteraGram**.</string>
+    <string name="Supporter">**%1$s** a susținut dezvoltarea **exteraGram** și a primit o insignă exclusivă.</string>
+    <string name="OfficialChannel">**%1$s** este resursa oficială a **exteraGram**.</string>
+    <string name="NoSuchSetting">Se pare că o astfel de configurație nu există.</string>
+    <string name="SettingLinkToSavedMessages">Link de setare trimis la **Mesaje salvate**.</string>
+    <string name="SettingLinkToUser">Link de setare trimis la **%1$s**.</string>
+    <string name="SettingLinkToChats">Link de setare trimis la **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Utilizează economizorul de baterie al sistemului</string>
+    <string name="LiteBatteryFollowSystemState">Sistem</string>
+    <string name="LiteBatteryFollowSystemInfo">Controlat de economizorul de baterie al sistemului.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Stivă de pilule</string>
+    <string name="PillStackPillsInfo">Afișează pilule interactive în câmpul de căutare</string>
+    <string name="PillStackActivePills">Pilule active</string>
+    <string name="PillStackHiddenPills">Pilule ascunse</string>
+    <string name="CurrentLocation">Locația curentă</string>
+    <string name="SelectLocation">Selectează pe hartă</string>
+    <string name="WeatherPill">Vreme</string>
+    <string name="WeatherSettingsInfo">Alegeți cum să determinați locația pentru afișarea vremii în căutare.</string>
+    <string name="WeatherLocation">Detectarea locației</string>
+    <string name="WeatherLocationPermissionNo">exteraGram are nevoie de acces la locația dvs. pentru a afișa vremea curentă.</string>
+    <string name="WeatherLocationPermissionGrant">Acordă permisiune</string>
+    <string name="WeatherLocationServicesEnable">Activează locația</string>
+    <string name="WeatherPillTopInfo">Setări widget vreme pentru Stiva de pilule.</string>
+    <string name="PillStackInfiniteScrolling">Derulare infinită</string>
+    <string name="CryptoPillTargetCurrency">Moneda țintă</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Dezactivează proxy</string>
+    <string name="ProxyDisableNever">Niciodată</string>
+    <string name="ProxyDisableAlways">Întotdeauna</string>
+    <string name="ProxyDisableOnMobileData">Date mobile</string>
+    <string name="ProxyType">Tip</string>
+    <string name="Unknown">Necunoscut</string>
+    <string name="ProxyRename">Nume proxy (opțional)</string>
+    <string name="ProxyPinLimitReached">Puteți fixa până la %1$d proxy-uri.</string>
+    <string name="CopyIpAddress">Copiază adresa IP</string>
+    <string name="IpInfoUnavailable">Nu s-a putut încărca informația despre adresa IP.</string>
+    <string name="IpInfoOrganization">Organizație</string>
+    <string name="IpInfoDomain">Domeniu</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Furnizor de traduceri</string>
+    <string name="TranslationTarget">Limba țintă</string>
+    <string name="TranslationTargetApp">Urmează aplicația</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Dezactivare rotunjire număr</string>
+    <string name="FormatTimeWithSeconds">Formatează timpul cu secunde</string>
+    <string name="RelativeLastSeen">Ultima vizită relativă</string>
+    <string name="InAppVibration">Vibrație în aplicație</string>
+    <string name="FilterZalgo">Filtrează ”Zalgo”</string>
+    <string name="FilterZalgoInfo">Elimină simbolurile \"%1$s\" în nume și mesaje.</string>
+    <string name="RestartRequired">Reporniți aplicația pentru ca modificările să aibă efect.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Cod</string>
+    <string name="CreateCode">Creează bloc de cod</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Accelerare vitezei de descărcare</string>
+    <string name="UploadSpeedBoost">Accelerarea vitezei de încărcare</string>
+    <string name="SpeedBoostInfo">Ultra Boost poate cauza probleme la descărcarea fișierelor și la redarea în flux a videoclipurilor pe conexiuni lente la internet.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Stocare</string>
+    <string name="CustomSavePath">Folder personalizat de salvare</string>
+    <string name="CustomSavePathHint">Lăsați gol pentru a salva direct în rădăcină</string>
+    <string name="CustomSavePathDefault">Salvează în rădăcină</string>
+    <string name="CustomSavePathInfo">Fișierele salvate vor fi stocate direct în Imagini, Descărcări, etc.</string>
+    <string name="CustomSavePathInfoFolder">Fișierele salvate vor fi stocate în Imagini/%1$s, Descărcări/%1$s, etc.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Ascunde numărul de telefon</string>
+    <string name="ShowIdAndDc">Arată ID-ul și DC</string>
+    <string name="ShowIdAndDcInfo">API-ul Telegram afișează ID-urile așa cum sunt, în timp ce API-ul Bot adaugă un semn minus pentru grupuri și -100 pentru supergrupuri și canale.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Ascunde folderul Arhivă</string>
+    <string name="ArchiveOnPull">Deschideți arhiva în meniul derulant</string>
+    <string name="DisableUnarchiveSwipe">Dezactivați glisarea „Dezarhivare”</string>
+    <string name="DisableUnarchiveSwipeInfo">Glisarea spre stânga nu va elimina chat-urile din arhivă.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Aspect</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Colțurile avatarul</string>
+    <string name="SingleCornerRadius">Raza colţului unic</string>
+    <string name="SingleCornerRadiusInfo">Forumurile vor avea aceeași formă de avatar ca și conversațiile.</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Listă chat</string>
+    <string name="ActionBarTitle">Textul titlului</string>
+    <string name="ActionBarTitleName">Prenume</string>
+    <string name="HideStories">Ascunde Poveștile</string>
+    <string name="HideActionBarStatus">Ascunde starea</string>
+    <string name="CenterTitle">Titlu centru</string>
+    <string name="ChatHeader">Antet chat</string>
+    <string name="HideFloatingButton">Ascunde butonul plutitor</string>
+    <string name="HideDialogsSearchBar">Ascunde bara de căutare</string>
+    <string name="BottomNavigationBarMode">Bară de navigare de jos</string>
+    <string name="BottomNavigationModeShow">Afișează</string>
+    <string name="BottomNavigationModeHide">Ascunde</string>
+    <string name="BottomNavigationModeFloating">Plutitor</string>
+    <string name="SenderMiniAvatars">Avataruri mini ale expeditorului</string>
+    <string name="ListOfChatsInfo">Când opțiunea „Numai pictograme” este activată pentru foldere, titlul principal va afișa numele folderului.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Titlul folderului</string>
+    <string name="TabTitleStyleTextWithIcons">Nume cu pictograme</string>
+    <string name="TabTitleStyleIconsOnly">Numai icon-uri</string>
+    <string name="TabTitleStyleTextOnly">Numai numele</string>
+    <string name="TabCounter">Contor de notificări</string>
+    <string name="HideAllChats">Ascunde \"%1$s\" Tab</string>
+    <string name="FoldersInfo">Pictogramele sunt sincronizate cu contul tău.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Navigare în aplicație</string>
+    <string name="AppNavigationInfo">Setări meniu din dreapta sus și sertar</string>
+    <string name="NavigationDrawer">Sertar de navigare</string>
+    <string name="NavigationDrawerInfo">Înlocuiește meniul din dreapta sus cu un sertar clasic care se deschide prin glisare și un buton hamburger.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Animație imersivă</string>
+    <string name="MainMenuItems">Elemente de meniu</string>
+    <string name="MainMenuItemsInfo">Atingeți pentru a afișa sau ascunde elementele, țineți apăsat pentru a reordona. Aspectul este partajat între meniu și sertar.</string>
+    <string name="MainMenuHiddenItems">Elemente de meniu ascunse</string>
+    <string name="MainMenuAddDivider">Adaugă separator</string>
+    <string name="MainMenuRemoveSettingsInfo">Setările nu pot fi ascunse când bara de navigare de jos este dezactivată.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Pachete de pictograme</string>
+    <string name="IconPacksInfo">Personalizați pictogramele din întreaga aplicație</string>
+    <string name="IconPickerFilter">Filtru</string>
+    <string name="IconPickerAllIcons">Toate pictogramele</string>
+    <string name="IconPickerReplacedIcons">Pictograme înlocuite</string>
+    <string name="IconPickerNotReplacedIcons">Pictograme neînlocuite</string>
+    <string name="IconPickerSaveAndExit">Salvează și ieși</string>
+    <string name="BasePacks">Pachete de bază</string>
+    <string name="BaseIconPackInfo">Pachetul de pictograme de bază este utilizat ca rezervă pentru pictogramele care nu sunt înlocuite de alte pachete.</string>
+    <string name="IconPacksHint">Atingeți pentru a activa sau dezactiva un pachet. Țineți apăsat pentru a edita sau șterge.</string>
+    <string name="NewIconPack">Creează un pachet de pictograme nou</string>
+    <string name="EnabledPacks">Pachete activate</string>
+    <string name="AllPacks">Toate pachetele</string>
+    <string name="PackName">Numele pachetului</string>
+    <string name="AuthorNameOptional">Numele autorului (opțional)</string>
+    <string name="NameCannotBeEmpty">Numele nu poate fi gol.</string>
+    <string name="Version">Versiune</string>
+    <string name="InstallPack">Instalează pachet</string>
+    <string name="IconCount_one">%1$d iconiță</string>
+    <string name="IconCount_two">%1$d iconițe</string>
+    <string name="IconCount_few">%1$d iconițe</string>
+    <string name="IconCount_many">%1$d iconițe</string>
+    <string name="IconCount_other">%1$d iconițe</string>
+    <string name="UpdatePack">Actualizează pachet</string>
+    <string name="DeletePack">Șterge pachet</string>
+    <string name="DeletePackInfo">Sunteți sigur că doriți să ștergeți **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Arhiva pachetului de pictograme este invalidă.</string>
+    <string name="IconPackErrorMissingMetadata">Arhiva pachetului de pictograme lipsește metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Metadatele pachetului de pictograme sunt prea mari.</string>
+    <string name="IconPackErrorInvalidMetadata">Metadatele pachetului de pictograme sunt invalide.</string>
+    <string name="IconPackErrorTooManyFiles">Pachetul de pictograme conține prea multe fișiere.</string>
+    <string name="IconPackErrorArchiveTooLarge">Pachetul de pictograme este prea mare.</string>
+    <string name="IconPackErrorFileTooLarge">Unul dintre fișierele iconițelor este prea mare.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Arhiva pachetului de pictograme este comprimată prea agresiv.</string>
+    <string name="IconPackErrorStorage">Nu s-a putut salva pachetul de pictograme.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Pachet de pictograme</string>
+    <string name="AppIconSunset">Apus de soare</string>
+    <string name="AppIconAmethyst">Ametist</string>
+    <string name="AppIconInvincible">Invincibil</string>
+    <string name="AppIconSpace">Spațiu</string>
+    <string name="AppIconIceAge">Epoca de gheață</string>
+    <string name="AppIconOrbit">Orbită</string>
+    <string name="AppIconWinter">Iarnă</string>
+    <!-- General Appearance -->
+    <string name="Sections">Secțiuni</string>
+    <string name="SeparateHeaders">Anteturi separate</string>
+    <string name="DividerStyle">Stil separator</string>
+    <string name="DividerStyleHidden">Ascuns</string>
+    <string name="DividerStyleLine">Linie</string>
+    <string name="DividerStyleSegments">Segmente</string>
+    <string name="UseSystemFonts">Utilizează fonturile sistemului</string>
+    <string name="UseSystemEmoji">Utilizează emoji de sistem</string>
+    <string name="NewLoadingStyle">Stil de încărcare</string>
+    <string name="NewSliderStyle">Stil cursor</string>
+    <string name="NewSwitchStyle">Stil comutator</string>
+    <string name="TabletMode">Modul tabletă</string>
+    <string name="RemoveMessageTail">Eliminați coada mesajului</string>
+    <string name="GooeyAvatarAnimation">Animație avatar „Gooey”</string>
+    <string name="CustomChatThemes">Teme personalizate în chat-uri</string>
+    <string name="CustomChatThemesInfo">Fiecare chat va afișa tema aleasă special pentru acesta.</string>
+    <string name="PredictiveBackIntensity">Intensitatea revenirii predictive</string>
+    <string name="PredictiveBackMax">Maxim</string>
+    <string name="PredictiveBackInfo">Ajustează cât de mult se mișcă ecranul la glisarea înapoi.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Opțiuni blurare</string>
+    <string name="GlassOutlineStyle">Contur sticlă</string>
+    <string name="GlassOutlineGlare">Strălucire</string>
+    <string name="GlassOutlineHidden">Ascuns</string>
+    <string name="ForceSnow">Forțează fulgi de zăpadă</string>
+    <string name="ForceSnowInfo">Fulgi de zăpadă vor apărea în bara de acțiune, în meniul lateral și în fundalurile chatului.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Dimensiunea autocolantului</string>
+    <string name="StickerSizeLeft">Mic</string>
+    <string name="StickerSizeRight">Mare</string>
+    <string name="StickerSizeDialogMessage">hai, așa drăguț!</string>
+    <string name="StickerShape">Formă Sticker</string>
+    <string name="StickerShapeRounded">Rotunjit</string>
+    <string name="StickerShapeRoundedMsg">Mesaj</string>
+    <string name="ViewEmojiSet">Vizualizează setul de emoji</string>
+    <string name="UnlimitedRecentStickers">Stickere recente nelimitate</string>
+    <string name="HideReactions">Ascunde Reacțiile</string>
+    <string name="HideReactionsInfo">Reacţiile vor fi complet ascunse de interfaţă.</string>
+    <string name="ReplyBackground">Fundal</string>
+    <string name="ChatSettingsInfo">Setări media, Iconiță Aplicație și altele</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Configurează servicii, roluri și istoric</string>
+    <string name="AIChatInfo2">Generează text din mesaje sau înainte de trimitere.</string>
+    <!-- AI Services -->
+    <string name="Services">Servicii</string>
+    <string name="ServicesInfo">Alegeți serviciul potrivit pentru interacțiunea cu modelele lingvistice.</string>
+    <string name="NewService">Serviciu nou</string>
+    <string name="EditService">Editare Servicii</string>
+    <string name="ServiceModel">Marca și model</string>
+    <string name="ServiceKey">Cheie API</string>
+    <string name="ServiceInfo">Informații serviciu</string>
+    <string name="ServiceProvider">Furnizor</string>
+    <string name="ServiceProviderCustom">Personalizat</string>
+    <string name="ServiceTestAndSave">Testează și salvează</string>
+    <string name="ServicePasteService">Lipește serviciu</string>
+    <string name="ServicePasteKey">Lipește cheia API</string>
+    <string name="DeleteServiceInfo">Sunteți sigur că doriți să ștergeți **%1$s**?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Roluri</string>
+    <string name="RolesInfo">Creează roluri pentru nevoile tale specifice!</string>
+    <string name="Suggestions">Sugestii</string>
+    <string name="RoleName">Numele torrentului</string>
+    <string name="RolePrompt">Solicitare</string>
+    <string name="PromptInfo">Un prompt este textul inițial dat modelului pentru a începe să genereze un răspuns sau pentru a continua dialogul.</string>
+    <string name="NewRole">Rol nou</string>
+    <string name="EditRole">Schimbarea Rolului</string>
+    <string name="DeleteRoleInfo">Sunteți sigur că doriți să ștergeți **%1$s**?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Istoricul conversațiilor permite AI să înțeleagă cererile anterioare și să le ia în considerare atunci când generează răspunsuri noi.</string>
+    <string name="AIGeneration">Generare</string>
+    <string name="AIReasoning">Raționament</string>
+    <string name="AIReasoningInfo">Permite modelelor acceptate pe acest serviciu să cheltuiască tokeni suplimentari pentru a gândi înainte de a răspunde.</string>
+    <string name="AITemperature">Temperatură</string>
+    <string name="AITemperatureInfo">Temperatura controlează aleatorietatea răspunsurilor: valorile mai mari sunt mai creative, valorile mai mici sunt mai concentrate.</string>
+    <string name="ResponseStreaming">Răspuns Streaming</string>
+    <string name="ResponseStreamingInfo">Asigură afișarea mai ușoară și mai rapidă a răspunsurilor.</string>
+    <string name="ShowResponseOnly">Arată doar Răspuns</string>
+    <string name="InsertResponseAsQuote">Inserare răspuns ca ofertă</string>
+    <string name="TapToAddApiKey">Atingeți pentru a adăuga o cheie API pentru a începe cu funcțiile AI.</string>
+    <string name="Generate">Generați</string>
+    <string name="ClearConversationHistoryInfo">Ești sigur că vrei să ștergi **toate** istoricul conversațiilor AI?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Cerere greşită</string>
+    <string name="AIError400Info">Verifică parametrii solicitării.</string>
+    <string name="AIError401">Datele de autentificare sunt invalide</string>
+    <string name="AIError401Info">Cheia API este nevalidă sau dezactivată. Verificați acreditările.</string>
+    <string name="AIError402">Credite Insuficiente</string>
+    <string name="AIError402Info">Contul dvs. sau cheia API are credite insuficiente. Adăugați mai multe credite și reîncercați solicitarea.</string>
+    <string name="AIError403">Acces interzis</string>
+    <string name="AIError403Info">Nu aveți permisiunea de a accesa acest model sau resursă. Verificați cheia API și permisiunile contului.</string>
+    <string name="AIError408">Durată cerere</string>
+    <string name="AIError408Info">Cererea ta nu a fost procesată la timp. Te rugăm să încerci din nou mai târziu.</string>
+    <string name="AIError429">Rată limită depășită</string>
+    <string name="AIError429Info">Trimiți cererile prea frecvent. Te rugăm să aștepți un moment și să încerci din nou.</string>
+    <string name="AIError502">Eșec model</string>
+    <string name="AIError502Info">Modelul selectat nu este disponibil sau am primit un răspuns nevalid de la el.</string>
+    <string name="AIError503">Serviciu indisponibil</string>
+    <string name="AIError503Info">Serviciul este temporar indisponibil sau suprasolicitat. Încercați din nou mai târziu.</string>
+    <string name="AIError">Eroare Server</string>
+    <string name="AIErrorInfo">Te rugăm să reîncerci cererea după o scurtă așteptare.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Mesaje primite</string>
+    <string name="DoubleTapOutgoing">Mesaje trimise</string>
+    <string name="DoubleTapInfo">Unele acțiuni necesită drepturi de administrator în chat sau canal.</string>
+    <string name="BottomButton">Butonul de jos</string>
+    <string name="ChannelDiscussNoCaps">Discuție</string>
+    <string name="QuickTransitions">Tranziție glisare rapidă</string>
+    <string name="DisableGreetingSticker">Dezactivează stickerul de salut</string>
+    <string name="AdminShortcuts">Comenzi rapide de administrare</string>
+    <string name="HideKeyboardOnScroll">Ascunde tastatura când derulezi</string>
+    <string name="HideShareButton">Ascunde butonul “%1$s\" lateral</string>
+    <string name="ReplaceEditedWithIcon">Înlocuiește \"%1$s\" cu o pictogramă</string>
+    <string name="MessageMenu">Meniul de mesaje</string>
+    <string name="GroupMessageMenu">Meniu mesaj grup</string>
+    <string name="GroupMessageMenuInfo">Gruparea mută acțiunile principale în partea de jos a meniului de mesaje.</string>
+    <string name="GlassMessageMenu">Meniu mesaj din sticlă</string>
+    <string name="GlassMessageMenuBlurOff">Meniurile din sticlă necesită estompare, care este în prezent dezactivată.</string>
+    <string name="AddCommaAfterMention">Adaugă virgulă după mențiune</string>
+    <string name="HideSendAsPeer">Ascunde butonul \"Trimite ca…\"</string>
+    <string name="HideSendAsPeerInfo">Încă puteți accesa meniul \"Trimite ca…\" apăsând lung butonul Emojis/Stickers/GIF-uri.</string>
+    <string name="ShowPollResultsBeforeVoting">Afișează rezultatele înainte de vot</string>
+    <string name="ShowPollResultsBeforeVotingHint">Vizualizați rezultatele pentru fiecare opțiune înainte de a trimite votul.</string>
+    <string name="ShowOnlineStatus">Afișează indicatorul online</string>
+    <string name="MessagePreviewDialogMessage">Pot mânca sticlă și nu mă doare.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Limbă de recunoaștere</string>
+    <string name="RecognitionInfo">Folosește Vosk API. Funcționează offline. Calitatea textului transcris poate fi scăzută.</string>
+    <string name="MissingLanguageModel">Modelul de limbă lipsă</string>
+    <string name="DownloadingModel">Descărcare model…</string>
+    <string name="DownloadingModelInfo">Vă rugăm să păstraţi această fereastră deschisă în timp ce modelul de limbă se descarce.</string>
+    <string name="ModelDownload">Descărcați (%1$s)</string>
+    <string name="ModelDownloadInfo">Pentru a continua, trebuie descărcat modelul lingvistic \"**%1$s**\".</string>
+    <string name="ModelDownloaded">Model descărcat cu succes.</string>
+    <string name="ModelError">Eroare la descărcarea modelului.</string>
+    <string name="ModelUnzipping">Dezarhivare…</string>
+    <string name="DeleteRecognitionModel">Șterge model</string>
+    <string name="DeleteRecognitionModelInfo">Sunteți sigur că doriți să ștergeți modelul „**%1$s**”?</string>
+    <string name="RecognitionModelDeleted">Model șters cu succes.</string>
+    <string name="RecognitionModelDeleteError">Eroare la ștergerea modelului.</string>
+    <string name="PostProcessingWithAi">Utilizați AI pentru post-procesare</string>
+    <string name="PostProcessingWithAiInfo">AI va îmbunătăți lizibilitatea prin corectarea erorilor, adăugarea de punctuații și clarificarea părților neclare.</string>
+    <!-- Camera -->
+    <string name="CameraType">Tipul camerei foto</string>
+    <string name="ExtendedSettings">Setări extinse</string>
+    <string name="SeamlessSwitching">Comutare fără întreruperi</string>
+    <string name="ExtendedFramesPerSecond">Interval FPS extins</string>
+    <string name="CameraStabilization">Stabilizare video</string>
+    <string name="CameraMirrorMode">Mod oglindă</string>
+    <string name="StartWithWideAngleCamera">Pornește cu unghi larg</string>
+    <string name="ZoomSlider">Glisor zoom</string>
+    <string name="ZoomSliderInfo">Afișează controlul zoom sub camera pentru mesaje video.</string>
+    <string name="StaticZoom">Zoom static</string>
+    <string name="StaticZoomInfo">La înregistrarea mesajelor video, nivelul de zoom nu se va reseta dacă eliberați degetele.</string>
+    <string name="VideoMessagesCamera">Camera foto în mesaje video</string>
+    <string name="VideoMessagesCameraRear">Spate</string>
+    <string name="VideoMessagesCameraFront">Față</string>
+    <string name="VideoMessagesCameraAsk">Cere</string>
+    <string name="RearCamera">Camera din spate</string>
+    <string name="FrontCamera">Camera frontală</string>
+    <string name="RememberLastUsedCamera">Memorează ultima cameră folosită</string>
+    <string name="RememberLastUsedCameraInfo">Atunci când se înregistrează mesaje video, ultima cameră video utilizată va fi selectată automat.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Trimite întotdeauna în HD</string>
+    <string name="HideCameraTile">Ascunde tabla de cameră instantă</string>
+    <string name="HideCameraTileInfo">Iconița camerei foto va fi înlocuită cu un buton plutitor. Apăsând pornește camera Telegram; ținând apăsat camera de sistem.</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Dublă apăsare Omitere timp</string>
+    <string name="PreferOriginalQuality">Preferă calitatea originală</string>
+    <string name="PauseOnMinimize">Auto Pauză</string>
+    <string name="PauseOnMinimizeVoice">Voce</string>
+    <string name="PauseOnMinimizeRound">Rotunjit</string>
+    <string name="PauseOnMinimizeInfo">Întrerupe redarea media atunci când dispozitivul este blocat sau exteraGram este minimizat.</string>
+    <string name="SwipeToPip">Glisați către PiP</string>
+    <string name="UnmuteWithVolumeButtons">Dezmută videoclipurile cu butoanele de volum</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Apăsarea unui buton de volum va dezmuți videoclipul în loc să schimbe volumul sistemului.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Când aceste opțiuni sunt activate, datele despre dispozitiv sunt colectate și trimise către Google Analytics și Crashlytics, permițându-ne să păstrăm statistici de utilizare și să urmărim erorile din aplicație. \n\nTotuși, dacă opțiunile sunt dezactivate, colectarea datelor se oprește și orice date trimise sunt șterse instantaneu.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Introduceți numele fișierului…</string>
+    <string name="ExportSettings">Exportă setări</string>
+    <string name="ApplySettings">Aplică setări</string>
+    <string name="ImportTitle">Sunteți sigur că doriți să aplicați aceste setări?</string>
+    <string name="ImportConfirm">Da, aplică</string>
+    <string name="CancelConfirm">Nu, lasă așa</string>
+    <string name="SettingsSaved">Fișierul de setări a fost salvat cu succes.</string>
+    <string name="SettingsImported">Setările au fost aplicate cu succes.</string>
+    <string name="ImportChanges_one">**1** modificare va fi aplicată setărilor curente.</string>
+    <string name="ImportChanges_two">**%1$d** modificări vor fi aplicate setărilor curente.</string>
+    <string name="ImportChanges_few">**%1$d** modificări vor fi aplicate setărilor curente.</string>
+    <string name="ImportChanges_many">**%1$d** modificări vor fi aplicate setărilor curente.</string>
+    <string name="ImportChanges_other">**%1$d** modificări vor fi aplicate setărilor curente.</string>
+    <string name="SameSettings">Se pare că setările sunt aceleași cu cele curente.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Din motive de securitate, veți putea începe descărcarea datelor în %1$s. Am notificat toate dispozitivele despre cererea de export pentru a ne asigura că este autorizată și pentru a vă oferi timp să reacționați dacă nu este.\n\nVă rugăm să reveniți pe %2$s și să repetați cererea folosind același dispozitiv.</string>
+    <string name="ExportInvalid">Ne pare rău, ați început un nou export de date, așa că acest export de date a fost anulat.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Șterge contul</string>
+    <string name="ResetSettings">Resetează setări</string>
+    <string name="ResetPreferences">Preferințele **exteraGram** au fost resetate.</string>
+    <string name="ResetPreferencesInfo">Sunteți sigur că doriți să resetați **toate** preferințele exteraGram la valorile implicite?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Suportă Dezvoltarea</string>
+    <string name="SupportDevelopmentInfo">Sprijinind proiectul, nu doar contribuiți la dezvoltarea acestuia, ci primiți și o insignă unică.</string>
+    <string name="MakeDonation">Fă o donație</string>
+    <string name="ReceiveBadge">Primește insigna ta</string>
+    <string name="NowPlaying">Acum se joacă</string>
+    <string name="ScrobblingService">Serviciu Scrobbling</string>
+    <string name="SelectService">Alege serviciul</string>
+    <string name="SelectServiceInfo">Afișează melodia curentă în profil sub forma unui card obținut de la serviciul de scrobbling.</string>
+    <string name="EnterUsername">Introduce loghin</string>
+    <string name="EnterUsernameInfo">Poți obține numele tău de utilizator pe **site-ul oficial**.</string>
+    <string name="BoostyPeopleCount_one">%1$d persoană</string>
+    <string name="BoostyPeopleCount_two">%1$d persoane</string>
+    <string name="BoostyPeopleCount_few">%1$d persoane</string>
+    <string name="BoostyPeopleCount_many">%1$d persoane</string>
+    <string name="BoostyPeopleCount_other">%1$d persoane</string>
+    <string name="BoostyInfo">Susțineți activ **exteraGram** pe **Boosty**.</string>
+    <string name="BoostyInfo2">Vă mulțumim pentru susținere!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Instalarea pluginurilor este disponibilă doar în versiunea **Full** a **exteraGram**.</string>
+    <string name="Plugins">Plugin-uri</string>
+    <string name="PluginsEngine">Motor Plugin-uri</string>
+    <string name="EnablePluginsEngine">Activează motorul pentru plugin-uri</string>
+    <string name="PluginsInfo">Puteți găsi plugin-uri în @exteraPlugins.</string>
+    <string name="PluginsNotFound">Nici-un plugin găsit.</string>
+    <string name="InstallPlugin">Instalează</string>
+    <string name="UpdatePlugin">Actualizare</string>
+    <string name="PluginNotEnabled">Activează **Motorul Plugin** pentru a instala **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** instalat cu succes.</string>
+    <string name="PluginUpdated">**%1$s** actualizat cu succes.</string>
+    <string name="PluginEnableError">Activarea **%1$s **, a eșuat.</string>
+    <string name="PluginDisableError">Esuare dezactivare **%1$s**.</string>
+    <string name="PluginInstallError">Nu s-a reușit instalarea **%1$s**.</string>
+    <string name="PluginSourceTrusted">Sursă de încredere</string>
+    <string name="PluginSourceTrustedInfo">Plugin-urile de la această sursă sunt **verificate** și în siguranță de utilizat.</string>
+    <string name="PluginSourceUnknown">Sursă necunoscută</string>
+    <string name="PluginSourceUnknownInfo">Plugin-urile de la această sursă sunt **neverificate** și pot reprezenta un risc de securitate.</string>
+    <string name="PluginVersion">Versiune</string>
+    <string name="PluginNoDescription">Nu a fost furnizată o descriere.</string>
+    <string name="PluginIsNotResponding">Pluginul nu răspunde.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s nu răspunde</string>
+    <string name="PluginNoAuthor">Autor Necunoscut</string>
+    <string name="EnableAfterInstallation">Activează după instalare</string>
+    <string name="EnterValue">Introduceti o valoare</string>
+    <string name="PluginDelete">Şterge Plugin</string>
+    <string name="PluginDeleteInfo">Sunteţi sigur că doriţi să ştergeţi **%1$s**?</string>
+    <string name="ResetPluginSettings">**%1$s** setările au fost resetate.</string>
+    <string name="ResetPluginSettingsInfo">Sunteţi sigur că doriţi să resetaţi **%1$s** setările la valorile implicite?</string>
+    <string name="PluginsSafeMode">Mod de siguranță</string>
+    <string name="PluginsSafeModeShortcut">Pornește în modul sigur</string>
+    <string name="PluginsSafeModeInfo">Motorul Plugin-ului este dezactivat din cauza unui accident. Dezactivarea modului sigur poate duce la consecințe imprevizibile.</string>
+    <string name="PluginsSafeModeInfo2">În modul Sigur, toate plugin-urile sunt inactive. Acest lucru vă permite să găsiți și să dezactivați un plugin problematic.</string>
+    <string name="PluginsDevMode">Modul dezvoltator</string>
+    <string name="PluginsCompactView">Vizualizare compactă plugin-uri</string>
+    <string name="PluginsDocumentation">Documentaţie</string>
+    <string name="PluginsTrusted">Plugin-uri de încredere</string>
+    <string name="PluginsDevServerLaunched">Serverul Dezvoltatorului este pornit.</string>
+    <string name="PluginsDevServerStopped">Serverul Dezvoltatorului este oprit.</string>
+    <string name="PluginEngineNotEnabled">Activați **Plugin Engine** pentru a deschide setările lui **%1$s**.</string>
+    <string name="PluginNotFound">**%1$s** nu a fost găsit.</string>
+    <string name="PluginHasNoSettings">**%1$s** nu are setări.</string>
+    <string name="PluginsPySdkAutoUpdate">Actualizează automat</string>
+    <string name="PluginsPySdkEnableBetaVersion">Instalează versiuni beta</string>
+    <string name="PluginsPySdkCheckUpdates">Verifică actualizări</string>
+    <string name="CheckingForUpdates">Se verifică actualizări…</string>
+    <string name="LatestVersionInstalled">Cea mai recentă versiune este instalată</string>
+    <string name="RestartPluginSystemToApplyUpdate">Actualizarea a fost încărcată, reporniți Plugin Engine pentru a aplica</string>
+    <string name="LoadingUpdate">Se încarcă actualizarea…</string>
+    <string name="RestoreSdkFromApk">Restaurează SDK din APK</string>
+    <string name="EnableAutoUpdate">Activează actualizarea automată</string>
+    <string name="PluginsDisableArt">Mod compatibilitate</string>
+    <string name="PluginsDisableArtInfo">Previne eșecurile de hook ale pluginurilor prin dezactivarea ART Profile Saver.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Actualizare în progres…</string>
+    <string name="UpdateInstallingRelaunch">Aplicația se va reporni după ce actualizarea s-a terminat.</string>
+    <string name="UpdateInstallingNotification">Vei fi notificat când actualizarea este completă.</string>
+    <string name="UpdateInstalledNotification">Actualizare completă. Atingeți pentru a deschide aplicația.</string>
+    <string name="UpdateFailedToInstall">Actualizarea instalării a eșuat cu codul de eroare: %d</string>
+    <string name="UpdateAvailable">Actualizare disponibilă!</string>
+    <!-- Message Details -->
+    <string name="Details">Detalii</string>
+    <string name="Date">Data</string>
+    <string name="EditedDate">Data editării</string>
+    <string name="ForwardedDate">Data înaintării</string>
+    <string name="FileSize">Dimensiunea fișierului</string>
+    <string name="FileName">Numele fișierului</string>
+    <string name="FilePath">Calea fișierului</string>
+    <string name="Platform">Platformă</string>
+    <string name="Resolution">Rezoluție</string>
+    <string name="Duration">Durată</string>
+    <string name="MimeType">Tip MIME</string>
+    <string name="Datacenter">Centru de date</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOptionNone">Niciunul</string>
+    <string name="DateFormatOptionRelative">Relativ</string>
+    <string name="DateFormatOptionShortTime">Timp scurt</string>
+    <string name="DateFormatOptionLongTime">Timp lung</string>
+    <string name="DateFormatOptionShortDate">Dată scurtă</string>
+    <string name="DateFormatOptionLongDate">Dată lungă</string>
+    <string name="DateFormatOptionDayOfWeek">Ziua săptămânii</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">Autentificare prin cod QR</string>
+    <string name="LoginQrSubtitle">Utilizați un alt dispozitiv pentru a scana acest cod QR.</string>
+    <string name="WifiConnect">Conectează</string>
+    <string name="WifiDisabled">Wi-Fi este dezactivat.</string>
+    <string name="WifiFailed">Conectarea la Wi-Fi a eșuat.</string>
+    <string name="WifiSuccess">Conectare reușită la Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Sunteți sigur că doriți să vă conectați la acest cont pe un alt dispozitiv?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Pagină blocată</string>
+    <string name="PageBlockedDescription">exteraGram a împiedicat încărcarea următoarei pagini:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Înapoi</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Setează ca insignă</string>
+    <string name="TestBackend">Testează backend-ul</string>
+    <string name="SearchPhotoInfo">Serviciile pot folosi imagini conform politicilor lor de confidențialitate și termenilor de utilizare.</string>
+    <string name="PhotoUploadFailed">Încărcarea fotografiei a eșuat.</string>
+    <string name="TrackSaved">Piesa salvată în **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Piesele vor fi salvate în **%1$s**.</string>
+    <string name="DeletedMessage">Mesaj șters</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Copiază titlul</string>
+    <string name="CopyCallback">Copiați datele de apel invers</string>
+    <string name="CopyInlineQuery">Copiază interogarea în linie</string>
+    <string name="CopyID">Copiază ID Utilizator</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Insigna de statut setată.</string>
+    <string name="UserNotFound">Utilizatorul cu acest **ID** nu a fost găsit.</string>
+    <string name="ChatNotFound">Chat cu acest **ID** nu a fost găsit.</string>
+    <string name="PhotoCopied">Fotografie copiată în clipboard.</string>
+    <string name="FrameCopied">Cadru copiat în clipboard.</string>
+    <string name="TapToCopy">Atingeți pentru a copia</string>
+    <string name="ProfileUsesEmojiPack">Acest profil folosește emoji din pachetul %s pentru fundalul său.</string>
+    <string name="ReplyUsesEmojiPacks">Acest răspuns folosește emoji din pachetul %s pentru fundal.</string>
+    <string name="StickerSavedHint">Sticker salvat în galerie.</string>
+    <string name="EmojiSavedHint">Emoji salvat în galerie.</string>
+    <string name="GifGallerySavedHint">GIF salvat în galerie.</string>
+    <string name="MutualContactInfo">Acest contact este reciproc.</string>
+    <string name="LocalPremiumEmojiHint">Nu aveți un abonament **Telegram Premium**, așa că doar utilizatorii **exteraGram** vor putea vedea acest emoji.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Ascunde fila Contacte</string>
+    <string name="ShowContactsTab">Afișează fila Contacte</string>
+    <string name="ContactsTabWasShownTitle">Fila **Contacte** este acum vizibilă.</string>
+    <string name="ContactsTabWasHiddenTitle">Fila **Contacte** este acum ascunsă.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Această funcție funcționează doar cu manageri de parole care permit utilizatorului să gestioneze setările de încredere pentru aplicații privilegiate, cum ar fi **Bitwarden** sau **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Manager de parole nesuportat</string>
+    <string name="PasskeyUnsupportedMessage">Încercați alți manageri de parole precum **Bitwarden** sau **KeePassDX**.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** și-a creat contul aproximativ pe **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** și-a creat contul mai devreme de **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** și-a creat contul mai târziu de **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** a fost creat pe **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">V-ați creat contul aproximativ pe **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">V-ați creat contul mai devreme de **%1$s**.</string>
+    <string name="CreationDateSelfLater">V-ați creat contul mai târziu de **%1$s**.</string>
+    <string name="JoinDateChat">V-ați alăturat **%1$s** pe **%2$s**.</string>
+    <string name="GroupMemberJoined">s-a alăturat %1$s</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">La început</string>
+    <string name="MessageHistory">Istoric</string>
+    <string name="BoldItalic">Aldin cursiv</string>
+    <string name="CopyPhoto">Copiază fotografia</string>
+    <string name="CopyFrame">Copiază cadrul</string>
+    <string name="Repeat">Repetă</string>
+    <string name="Subtitles">Subtitrări</string>
+    <string name="ChooseSubtitles">Alege subtitrări</string>
+    <string name="DisableSubtitles">Dezactivează subtitrări</string>
+    <string name="SubtitlesAdded">Subtitrări activate.</string>
+    <string name="SubtitlesRemoved">Subtitrări dezactivate.</string>
+    <string name="SubtitlesLoadError">Nu s-au putut încărca subtitrările.</string>
+    <string name="SubtitlesUnsupportedFormat">Format de subtitrări nesuportat.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Colțuri sticker</string>
+    <string name="StickerCornerRadiusInfo">Alegeți cât de rotunjite să fie colțurile stickerului.</string>
+    <string name="StickerCornerRadiusLarge">Mare</string>
+    <string name="StickerCornerRadiusMedium">Mediu</string>
+    <string name="StickerCornerRadiusSmall">Mic</string>
+    <string name="StickerCornerRadiusNone">Niciunul</string>
+    <!-- Feed -->
+    <string name="Feed">Flux</string>
+    <string name="FeedShownChannels">Afișate în flux</string>
+    <string name="FeedHiddenChannels">Ascunse</string>
+    <string name="FeedChannels">Canale</string>
+    <string name="FeedSettings">Setări flux</string>
+    <string name="FeedNoPosts">Încă nu există postări în canale.</string>
+    <string name="FeedAllChannelsExcluded">Toate canalele sunt excluse din flux.</string>
+    <string name="FeedMarkAllReadConfirm">Doriți să marcați toate postările din canalele fluxului ca citite? Acest lucru le va marca și ca citite în canalele originale.</string>
+    <string name="FeedMarkAllReadDone">Toate postările au fost marcate ca citite</string>
+    <string name="FeedIncludeArchived">Afișează chat-urile din arhivă</string>
+    <string name="FeedIncludeArchivedInfo">Includeți și canalele din chat-urile arhivate în flux.</string>
+    <string name="FeedHideChannel">Ascunde din flux</string>
+    <string name="FeedChannelHidden">**%1$s** ascuns din flux</string>
+    <string name="FeedBottomTab">Afișează în filele de jos</string>
+    <string name="FeedBottomTabInfo">Afișează fluxul ca o filă de navigare de jos în locul filei Contacte.</string>
+    <string name="FeedUnreadCounter">Contor de postări necitite</string>
+    <string name="HideFeedTab">Ascunde fila Flux</string>
+    <string name="DisableMarkdown">Dezactivează Markdown</string>
+    <string name="EnableMarkdown">Activează Markdown</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

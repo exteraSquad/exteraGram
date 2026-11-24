@@ -17,7 +17,7 @@
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.h"
-#include <libvpx/vp8cx.h>
+#include <vpx/vp8cx.h>
 
 namespace webrtc {
 
@@ -29,7 +29,6 @@ class LibvpxVp9Decoder : public VP9Decoder {
   bool Configure(const Settings& settings) override;
 
   int Decode(const EncodedImage& input_image,
-             bool missing_frames,
              int64_t /*render_time_ms*/) override;
 
   int RegisterDecodeCompleteCallback(DecodedImageCallback* callback) override;

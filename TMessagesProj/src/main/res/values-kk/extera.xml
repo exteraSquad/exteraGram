@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram Параметрлері</string>
+    <!-- Main Menu -->
+    <string name="Links">Сілтемелер</string>
+    <string name="Crowdin">Аударма</string>
+    <string name="Website">Веб-сайт</string>
+    <string name="Categories">Санаттар</string>
+    <string name="Developer">**%1$s** exteraGram әзірлеу тобының мүшесі.</string>
+    <string name="DeveloperCompact">**exteraGram** әзірлеу тобының мүшесі.</string>
+    <string name="Supporter">**%1$s** exteraGram әзірлеуін қолдады және эксклюзивті белгіше алды.</string>
+    <string name="OfficialChannel">**%1$s** exteraGram-ның ресми ресурсы.</string>
+    <string name="NoSuchSetting">Мұндай параметр жоқ сияқты.</string>
+    <string name="SettingLinkToSavedMessages">**Сақталған хабарламаларға** сілтеме жіберілді.</string>
+    <string name="SettingLinkToUser">**%1$s** пайдаланушысына сілтеме жіберілді.</string>
+    <string name="SettingLinkToChats">**%1$s** чаттарына сілтеме жіберілді.</string>
+    <string name="LiteBatteryFollowSystem">Жүйелік батарея үнемдегішін пайдалану</string>
+    <string name="LiteBatteryFollowSystemState">Жүйелік</string>
+    <string name="LiteBatteryFollowSystemInfo">Жүйелік батарея үнемдегішімен басқарылады.</string>
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Пилдер жинағы</string>
+    <string name="PillStackPillsInfo">Іздеу өрісінде интерактивті пилдерді көрсету</string>
+    <string name="PillStackActivePills">Белсенді пилдер</string>
+    <string name="PillStackHiddenPills">Жасырылған пилдер</string>
+    <string name="CurrentLocation">Ағымдағы орналасу</string>
+    <string name="SelectLocation">Картадан таңдау</string>
+    <string name="WeatherPill">Ауа райы</string>
+    <string name="WeatherSettingsInfo">Іздеуде ауа райын көрсету үшін орналасуды анықтау тәсілін таңдаңыз.</string>
+    <string name="WeatherLocation">Орналасуды анықтау</string>
+    <string name="WeatherLocationPermissionNo">Ағымдағы ауа райын көрсету үшін exteraGram сіздің орналасуыңызға рұқсат қажет.</string>
+    <string name="WeatherLocationPermissionGrant">Рұқсат беру</string>
+    <string name="WeatherLocationServicesEnable">Орналасуды қосу</string>
+    <string name="WeatherPillTopInfo">Pill Stack үшін ауа райы виджетінің параметрлері.</string>
+    <string name="PillStackInfiniteScrolling">Шексіз айналдыру</string>
+    <string name="CryptoPillTargetCurrency">Мақсатты валюта</string>
+    <!-- Custom Pills -->
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Проксиді өшіру</string>
+    <string name="ProxyDisableNever">Ешқашан</string>
+    <string name="ProxyDisableAlways">Әрқашан</string>
+    <string name="ProxyDisableOnMobileData">Мобильді интернет</string>
+    <string name="ProxyType">Түрі</string>
+    <string name="Unknown">Белгісіз</string>
+    <string name="ProxyRename">Прокси атауы (міндетті емес)</string>
+    <string name="ProxyPinLimitReached">Сіз %1$d проксиге дейін бекіте аласыз.</string>
+    <string name="CopyIpAddress">IP мекенжайын көшіру</string>
+    <string name="IpInfoUnavailable">IP мекенжайы туралы ақпаратты жүктеу мүмкін болмады.</string>
+    <string name="IpInfoIsp">Интернет провайдері</string>
+    <string name="IpInfoOrganization">Ұйым</string>
+    <string name="IpInfoDomain">Домен</string>
+    <!-- Translator -->
+    <string name="TranslationProvider">Аударма провайдері</string>
+    <string name="TranslationTarget">Мақсатты тіл</string>
+    <string name="TranslationTargetApp">Қолданбаның тіліне сәйкес</string>
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Сандарды дөңгелектеуді өшіру</string>
+    <string name="FormatTimeWithSeconds">Уақытты секундтармен көрсету</string>
+    <string name="RelativeLastSeen">Соңғы көрілген салыстырмалы</string>
+    <string name="InAppVibration">Қолданба ішіндегі діріл</string>
+    <string name="FilterZalgo">\"Zalgo\" сүзгісі</string>
+    <string name="FilterZalgoInfo">Атаулар мен хабарламалардағы «%1$s» таңбаларын жояды.</string>
+    <string name="RestartRequired">Өзгерістерді қолдану үшін қолданбаны қайта іске қосыңыз.</string>
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Код</string>
+    <string name="CreateCode">Код блогын жасау</string>
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Жүктеу жылдамдығын арттыру</string>
+    <string name="UploadSpeedBoost">Жүктеу (жіберу) жылдамдығын арттыру</string>
+    <string name="Ultra">Ультра</string>
+    <string name="SpeedBoostInfo">Ультра арттыру баяу интернет қосылымдарында файлдарды жүктеу және бейнелерді көру кезінде проблемалар туғызуы мүмкін.</string>
+    <!-- Storage -->
+    <string name="StorageSettings">Қойма</string>
+    <string name="CustomSavePath">Арнайы сақтау қалтасы</string>
+    <string name="CustomSavePathHint">Тікелей түбірлік қалтаға сақтау үшін бос қалдырыңыз</string>
+    <string name="CustomSavePathDefault">Түбірлік қалтаға сақтау</string>
+    <string name="CustomSavePathInfo">Сақталған файлдар тікелей Pictures, Downloads және т.б. қалталарда сақталады.</string>
+    <string name="CustomSavePathInfoFolder">Сақталған файлдар Pictures/%1$s, Downloads/%1$s және т.б. қалталарда сақталады.</string>
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Телефон нөмірін жасыру</string>
+    <string name="ShowIdAndDc">ID және DC көрсету</string>
+    <string name="ShowIdAndDcInfo">Telegram API идентификаторларды өз қалпында көрсетеді, ал Bot API топтар үшін минус таңбасын, супертоптар мен арналар үшін -100 қосады.</string>
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Мұрағат қалтасын жасыру</string>
+    <string name="ArchiveOnPull">Төмен тартқанда мұрағатты ашу</string>
+    <string name="DisableUnarchiveSwipe">\"Мұрағаттан шығару\" сырғанауын өшіру</string>
+    <string name="DisableUnarchiveSwipeInfo">Солға сырғанау чаттарды мұрағаттан алып тастамайды.</string>
+    <!-- Appearance -->
+    <string name="Appearance">Көрініс</string>
+    <!-- Avatars -->
+    <string name="AvatarCorners">Аватар бұрыштары</string>
+    <string name="SingleCornerRadius">Бір бұрыш радиусы</string>
+    <!-- Chat List -->
+    <string name="ListOfChats">Чаттар тізімі</string>
+    <string name="ActionBarTitle">Тақырып мәтіні</string>
+    <string name="ActionBarTitleName">Аты</string>
+    <string name="HideStories">Сторилерді жасыру</string>
+    <string name="HideActionBarStatus">Статусты жасыру</string>
+    <string name="CenterTitle">Тақырыпты ортаға қою</string>
+    <string name="ChatHeader">Чат тақырыбы</string>
+    <string name="HideFloatingButton">Қалқымалы түймені жасыру</string>
+    <string name="HideDialogsSearchBar">Іздеу жолағын жасыру</string>
+    <string name="BottomNavigationBarMode">Төменгі навигациялық жолақ</string>
+    <string name="BottomNavigationModeShow">Көрсету</string>
+    <string name="BottomNavigationModeHide">Жасыру</string>
+    <string name="BottomNavigationModeFloating">Қалқымалы</string>
+    <string name="SenderMiniAvatars">Жіберушінің шағын аватарлары</string>
+    <string name="ListOfChatsInfo">Қалталар үшін «Тек белгішелер» қосылғанда, басты тақырыпта қалта атауы көрсетіледі.</string>
+    <!-- Folders (Tabs) -->
+    <string name="TabTitleStyle">Қалта тақырыбы</string>
+    <string name="TabTitleStyleTextWithIcons">Белгішелері бар атаулар</string>
+    <string name="TabTitleStyleIconsOnly">Тек белгішелер</string>
+    <string name="TabTitleStyleTextOnly">Тек атаулар</string>
+    <string name="TabCounter">Хабарландыру санауышы</string>
+    <string name="HideAllChats">\"%1$s\" қойындысын жасыру</string>
+    <string name="FoldersInfo">Белгішелер сіздің аккаунтыңызбен синхрондалады.</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">Қолданба навигациясы</string>
+    <string name="AppNavigationInfo">Жоғарғы оң жақ мәзір және бүйірлік мәзір параметрлері</string>
+    <string name="NavigationDrawer">Навигациялық бүйірлік мәзір</string>
+    <string name="NavigationDrawerInfo">Жоғарғы оң жақ мәзірді классикалық сырғанау арқылы ашылатын бүйірлік мәзірге және гамбургер түймесіне ауыстырады.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Иммерсивті анимация</string>
+    <string name="NavigationDrawerProxyPingShort">%1$d мс</string>
+    <string name="MainMenuItems">Мәзір элементтері</string>
+    <string name="MainMenuItemsInfo">Элементтерді көрсету немесе жасыру үшін түртіңіз, ретін өзгерту үшін басып тұрыңыз. Орналасу мәзір мен бүйірлік мәзір арасында ортақ.</string>
+    <string name="MainMenuHiddenItems">Жасырылған мәзір элементтері</string>
+    <string name="MainMenuAddDivider">Бөлгіш қосу</string>
+    <string name="MainMenuRemoveSettingsInfo">Төменгі навигациялық жолақ өшірілгенде параметрлерді жасыру мүмкін емес.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Белгішелер жинақтары</string>
+    <string name="IconPacksInfo">Қолданба бойынша белгішелерді теңшеу</string>
+    <string name="IconPickerFilter">Сүзгі</string>
+    <string name="IconPickerAllIcons">Барлық белгішелер</string>
+    <string name="IconPickerReplacedIcons">Ауыстырылған белгішелер</string>
+    <string name="IconPickerNotReplacedIcons">Ауыстырылмаған белгішелер</string>
+    <string name="IconPickerSaveAndExit">Сақтау және шығу</string>
+    <string name="BasePacks">Негізгі жинақтар</string>
+    <string name="BaseIconPackInfo">Негізгі белгіше жинағы басқа жинақтар алмастырмаған белгішелер үшін резервтік ретінде пайдаланылады.</string>
+    <string name="IconPacksHint">Қосу немесе өшіру үшін түртіңіз. Өңдеу немесе жою үшін басып тұрыңыз.</string>
+    <string name="NewIconPack">Жаңа белгіше жинағын жасау</string>
+    <string name="EnabledPacks">Қосылған жинақтар</string>
+    <string name="AllPacks">Барлық жинақтар</string>
+    <string name="PackName">Жинақ атауы</string>
+    <string name="AuthorNameOptional">Автор аты (міндетті емес)</string>
+    <string name="NameCannotBeEmpty">Атау бос болмауы керек.</string>
+    <string name="Version">Нұсқа</string>
+    <string name="InstallPack">Жинақты орнату</string>
+    <string name="IconCount_one">%1$d белгіше</string>
+    <string name="IconCount_two">%1$d белгіше</string>
+    <string name="IconCount_few">%1$d белгіше</string>
+    <string name="IconCount_many">%1$d белгіше</string>
+    <string name="IconCount_other">%1$d белгіше</string>
+    <string name="UpdatePack">Жинақты жаңарту</string>
+    <string name="DeletePack">Жинақты жою</string>
+    <string name="DeletePackInfo">**%1$s** жинағын жоюға сенімдісіз бе?</string>
+    <string name="IconPackErrorInvalidArchive">Белгіше жинағының мұрағаты жарамсыз.</string>
+    <string name="IconPackErrorMissingMetadata">Белгіше жинағының мұрағатында metadata.json жоқ.</string>
+    <string name="IconPackErrorMetadataTooLarge">Белгіше жинағының метадеректері тым үлкен.</string>
+    <string name="IconPackErrorInvalidMetadata">Белгіше жинағының метадеректері жарамсыз.</string>
+    <string name="IconPackErrorTooManyFiles">Белгіше жинағында файлдар тым көп.</string>
+    <string name="IconPackErrorArchiveTooLarge">Белгіше жинағы тым үлкен.</string>
+    <string name="IconPackErrorFileTooLarge">Белгіше файлдарының бірі тым үлкен.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Белгіше жинағының мұрағаты тым қатты сығылған.</string>
+    <string name="IconPackErrorStorage">Белгіше жинағын сақтау мүмкін болмады.</string>
+    <!-- App Icons -->
+    <string name="IconPack">Белгіше жинағы</string>
+    <string name="AppIconSunset">Күн батқанда</string>
+    <string name="AppIconAurora">Аврора</string>
+    <string name="AppIconAmethyst">Аметист</string>
+    <string name="AppIconInvincible">Құдіретті</string>
+    <string name="AppIconCyberpunk">Киберпанк</string>
+    <string name="AppIconSpace">Ғарыш</string>
+    <string name="AppIconIceAge">Мұз дәуірі</string>
+    <string name="AppIconEditor">Редактор</string>
+    <string name="AppIconOrbit">Орбита</string>
+    <string name="AppIconSus">Алаяқ</string>
+    <string name="AppIconWinter">Қыс</string>
+    <!-- General Appearance -->
+    <string name="Sections">Бөлімдер</string>
+    <string name="SeparateHeaders">Бөлек тақырыптар</string>
+    <string name="DividerStyle">Бөлгіш стилі</string>
+    <string name="DividerStyleHidden">Жасырылған</string>
+    <string name="DividerStyleLine">Сызық</string>
+    <string name="DividerStyleSegments">Сегменттер</string>
+    <string name="UseSystemFonts">Жүйе қаріптерін пайдалану</string>
+    <string name="UseSystemEmoji">Жүйе эмодзиін пайдалану</string>
+    <string name="NewLoadingStyle">Жүктеу стилі</string>
+    <string name="NewSliderStyle">Слайдер стилі</string>
+    <string name="NewSwitchStyle">Қосқыш стилі</string>
+    <string name="TabletMode">Планшет режимі</string>
+    <string name="RemoveMessageTail">Хабарлама құйрығын алып тастау</string>
+    <string name="GooeyAvatarAnimation">\"Gooey\" аватар анимациясы</string>
+    <string name="CustomChatThemes">Чаттардағы теңшелген тақырыптар</string>
+    <string name="CustomChatThemesInfo">Әр чатта өзіне арнайы таңдалған тақырып көрсетіледі.</string>
+    <string name="PredictiveBackIntensity">Болжамды артқа қайту қарқындылығы</string>
+    <string name="PredictiveBackMax">Макс</string>
+    <string name="PredictiveBackInfo">Артқа сырғытқанда экранның қаншалықты жылжитынын реттейді.</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Бұлыңғырлық параметрлері</string>
+    <string name="GlassOutlineStyle">Шыны жиегі</string>
+    <string name="GlassOutlineGlare">Жылтыр</string>
+    <string name="GlassOutlineSolid">Тұтас</string>
+    <string name="GlassOutlineHidden">Жасырылған</string>
+    <string name="ForceSnow">Мәжбүрлі қар жауы</string>
+    <string name="ForceSnowInfo">Қар түйіршіктері әрекет жолағында, бүйірлік мәзірде және чат фонында пайда болады.</string>
+    <!-- Chats -->
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Стикер өлшемі</string>
+    <string name="StickerSizeLeft">Кішкентай</string>
+    <string name="StickerSizeRight">Үлкен</string>
+    <string name="StickerSizeDialogMessageReplyTo">әу</string>
+    <string name="StickerSizeDialogMessage">ой, қандай сүйкімді!</string>
+    <string name="StickerShape">Стикер пішіні</string>
+    <string name="StickerShapeRounded">Бұрыштары жұмыр</string>
+    <string name="StickerShapeRoundedMsg">Хабарлама</string>
+    <string name="ViewEmojiSet">Эмодзи жинағын көру</string>
+    <string name="UnlimitedRecentStickers">Шексіз соңғы стикерлер</string>
+    <string name="HideReactions">Реакцияларды жасыру</string>
+    <string name="HideReactionsInfo">Реакциялар интерфейстен толық жасырылады.</string>
+    <string name="ReplyBackground">Фон</string>
+    <string name="ChatSettingsInfo">Медиа параметрлері, қолданба белгішесі және басқалар</string>
+    <!-- AI -->
+    <string name="AIChatInfo">Қызметтерді, рөлдерді және тарихты орнату</string>
+    <string name="AIChatInfo2">Хабарламалардан немесе жіберу алдында мәтін генерациялау.</string>
+    <!-- AI Services -->
+    <string name="Services">Қызметтер</string>
+    <string name="ServicesInfo">Тілдік модельдермен жұмыс істеу үшін қолайлы қызметті таңдаңыз.</string>
+    <string name="NewService">Жаңа қызмет</string>
+    <string name="EditService">Қызметті өңдеу</string>
+    <string name="ServiceModel">Модель</string>
+    <string name="ServiceKey">API кілті</string>
+    <string name="ServiceInfo">Қызмет туралы ақпарат</string>
+    <string name="ServiceProvider">Провайдер</string>
+    <string name="ServiceProviderCustom">Арнайы</string>
+    <string name="ServiceTestAndSave">Тексеру және сақтау</string>
+    <string name="ServicePasteService">Қызметті қою</string>
+    <string name="ServicePasteKey">API кілтін қою</string>
+    <string name="DeleteServiceInfo">**%1$s** жоюға сенімдісіз бе?</string>
+    <!-- AI Roles -->
+    <string name="Roles">Рөлдер</string>
+    <string name="RolesInfo">Өз қажеттіліктеріңіз үшін рөлдер жасаңыз!</string>
+    <string name="Suggestions">Ұсыныстар</string>
+    <string name="RoleName">Атау</string>
+    <string name="RolePrompt">Сұраныс</string>
+    <string name="PromptInfo">Сұраныс — модельге жауап генерациялауды немесе диалогты жалғастыруды бастау үшін берілген бастапқы мәтін.</string>
+    <string name="NewRole">Жаңа рөл</string>
+    <string name="EditRole">Рөлді өңдеу</string>
+    <string name="DeleteRoleInfo">**%1$s** жоюға сенімдісіз бе?</string>
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Әңгіме тарихы AI-ға алдыңғы сұраныстарды түсінуге және жаңа жауаптарды генерациялауда ескеруге мүмкіндік береді.</string>
+    <string name="AIGeneration">Генерация</string>
+    <string name="AIReasoning">Ойлау</string>
+    <string name="AIReasoningInfo">Осы қызметтегі қолдау көрсетілетін модельдерге жауап бермес бұрын ойлануға қосымша токендер жұмсауға мүмкіндік береді.</string>
+    <string name="AITemperature">Температура</string>
+    <string name="AITemperatureInfo">Температура жауаптың кездейсоқтығын бақылайды: жоғары мәндер шығармашылықты, төмен мәндер фокусты арттырады.</string>
+    <string name="ResponseStreaming">Жауап ағыны</string>
+    <string name="ResponseStreamingInfo">Жауаптардың тегістірек және жылдамырақ көрсетілуін қамтамасыз етеді.</string>
+    <string name="ShowResponseOnly">Тек жауапты көрсету</string>
+    <string name="InsertResponseAsQuote">Жауапты дәйексөз ретінде қосу</string>
+    <string name="TapToAddApiKey">AI мүмкіндіктерін бастау үшін API кілтін қосу үшін түртіңіз.</string>
+    <string name="Generate">Генерациялау</string>
+    <string name="ClearConversationHistoryInfo">**Барлық** AI әңгіме тарихын тазалауға сенімдісіз бе?</string>
+    <!-- AI Errors -->
+    <string name="AIError400">Сұраныс қателігі</string>
+    <string name="AIError400Info">Сұраныс параметрлерін тексеріңіз.</string>
+    <string name="AIError401">Жарамсыз тіркелгі деректері</string>
+    <string name="AIError401Info">API кілті жарамсыз немесе өшірілген. Тіркелгі деректерін тексеріңіз.</string>
+    <string name="AIError402">Кредиттер жеткіліксіз</string>
+    <string name="AIError402Info">Сіздің тіркелгіңізде немесе API кілтіңізде кредиттер жеткіліксіз. Кредит қосып, сұранысты қайталаңыз.</string>
+    <string name="AIError403">Кіруге тыйым салынған</string>
+    <string name="AIError403Info">Бұл модельге немесе ресурсқа кіруге рұқсатыңыз жоқ. API кілтіңізді және аккаунт рұқсаттарын тексеріңіз.</string>
+    <string name="AIError408">Сұраныс уақыты асып кетті</string>
+    <string name="AIError408Info">Сіздің сұранысыңыз уақытында өңделмеді. Кейінірек қайталап көріңіз.</string>
+    <string name="AIError429">Жиілік шегі асып кетті</string>
+    <string name="AIError429Info">Сіз тым жиі сұраныс жіберіп жатырсыз. Бірнеше секунд күтіп, қайталаңыз.</string>
+    <string name="AIError502">Модель қателігі</string>
+    <string name="AIError502Info">Таңдалған модель қолжетімсіз немесе одан жарамсыз жауап алынды.</string>
+    <string name="AIError503">Қызмет қолжетімсіз</string>
+    <string name="AIError503Info">Қызмет уақытша қолжетімсіз немесе шамадан тыс жүктелген. Кейінірек қайталап көріңіз.</string>
+    <string name="AIError">Сервер қателігі</string>
+    <string name="AIErrorInfo">Қысқа үзілістен кейін сұранысты қайталаңыз.</string>
+    <!-- Chat Actions -->
+    <string name="DoubleTapIncoming">Кіріс хабарламалар</string>
+    <string name="DoubleTapOutgoing">Шығыс хабарламалар</string>
+    <string name="DoubleTapInfo">Кейбір әрекеттер чат немесе арнада әкімші құқықтарын талап етеді.</string>
+    <string name="BottomButton">Төменгі түйме</string>
+    <string name="ChannelDiscussNoCaps">Талқылау</string>
+    <string name="QuickTransitions">Жылдам сырғанау ауысуы</string>
+    <string name="DisableGreetingSticker">Сәлемдесу стикерін өшіру</string>
+    <string name="AdminShortcuts">Жылдам әкімші жарлықтары</string>
+    <string name="HideKeyboardOnScroll">Айналдыру кезінде пернетақтаны жасыру</string>
+    <string name="HideShareButton">\"%1$s\" бүйірлік түймені жасыру</string>
+    <string name="ReplaceEditedWithIcon">\"%1$s\" белгішемен ауыстыру</string>
+    <string name="MessageMenu">Хабарлама мәзірі</string>
+    <string name="GroupMessageMenu">Топтық хабарлама мәзірі</string>
+    <string name="GroupMessageMenuInfo">Топтау негізгі әрекеттерді хабарлама мәзірдің төменгі жағына жылжытады.</string>
+    <string name="GlassMessageMenu">Шыны хабарлама мәзірі</string>
+    <string name="GlassMessageMenuBlurOff">Шыны мәзірлерге бұлыңғырлық қажет, ол қазір өшірулі.</string>
+    <string name="AddCommaAfterMention">Атаудан кейін үтір қосу</string>
+    <string name="HideSendAsPeer">\"…ретінде жіберу\" түймесін жасыру</string>
+    <string name="HideSendAsPeerInfo">Эмодзи/Стикер/GIF түймесін ұзақ басып тұрып \"…ретінде жіберу\" мәзірін әлі де ашуға болады.</string>
+    <string name="ShowPollResultsBeforeVoting">Дауыс бергенге дейін нәтижелерді көрсету</string>
+    <string name="ShowPollResultsBeforeVotingHint">Дауыс жібергенге дейін әр нұсқаның нәтижесін көріңіз.</string>
+    <string name="ShowOnlineStatus">Онлайн индикаторын көрсету</string>
+    <string name="MessagePreviewDialogMessage">Мен шыны жей аламын және ол маған зиян келтірмейді.</string>
+    <!-- Chat Search -->
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Тану тілі</string>
+    <string name="RecognitionInfo">Vosk API-ін пайдаланады. Офлайн жұмыс істейді. Транскрипцияланған мәтіннің сапасы төмен болуы мүмкін.</string>
+    <string name="MissingLanguageModel">Тіл моделі жоқ</string>
+    <string name="DownloadingModel">Модель жүктелуде…</string>
+    <string name="DownloadingModelInfo">Тіл моделі жүктеліп жатқанда осы терезені жабмаңыз.</string>
+    <string name="ModelDownload">Жүктеу (%1$s)</string>
+    <string name="ModelDownloadInfo">\"**%1$s**\" тіл моделін жүктеп алу керек.</string>
+    <string name="ModelDownloaded">Модель сәтті жүктелді.</string>
+    <string name="ModelError">Модельді жүктеу кезінде қате.</string>
+    <string name="ModelUnzipping">Тізімнен шығару…</string>
+    <string name="DeleteRecognitionModel">Модельді жою</string>
+    <string name="DeleteRecognitionModelInfo">\"**%1$s**\" тіл моделін жоюға сенімдісіз бе?</string>
+    <string name="RecognitionModelDeleted">Модель сәтті жойылды.</string>
+    <string name="RecognitionModelDeleteError">Модельді жою кезінде қате орын алды.</string>
+    <string name="PostProcessingWithAi">Постөңдеу үшін AI пайдалану</string>
+    <string name="PostProcessingWithAiInfo">AI қателерді түзету, тыныс белгілерін қосу және түсініксіз бөліктерді анықтау арқылы оқуға ыңғайлы етеді.</string>
+    <!-- Camera -->
+    <string name="CameraType">Камера түрі</string>
+    <string name="ExtendedSettings">Кеңейтілген параметрлер</string>
+    <string name="SeamlessSwitching">Кедергісіз ауысу</string>
+    <string name="ExtendedFramesPerSecond">Кеңейтілген FPS диапазоны</string>
+    <string name="CameraStabilization">Тұрақтандыру</string>
+    <string name="CameraMirrorMode">Айна режимі</string>
+    <string name="StartWithWideAngleCamera">Кең бұрышпен бастау</string>
+    <string name="ZoomSlider">Масштаб слайдері</string>
+    <string name="ZoomSliderInfo">Бейне хабарлама камерасының астында масштабты басқару элементін көрсету.</string>
+    <string name="StaticZoom">Тұрақты масштаб</string>
+    <string name="StaticZoomInfo">Бейне хабарламаларды жазу кезінде саусақтарыңызды босатсаңыз да масштаб деңгейі қалпына келмейді.</string>
+    <string name="VideoMessagesCamera">Бейне хабарламалардағы камера</string>
+    <string name="VideoMessagesCameraRear">Артқы</string>
+    <string name="VideoMessagesCameraFront">Алдыңғы</string>
+    <string name="VideoMessagesCameraAsk">Сұрау</string>
+    <string name="RearCamera">Артқы камера</string>
+    <string name="FrontCamera">Алдыңғы камера</string>
+    <string name="RememberLastUsedCamera">Соңғы пайдаланылған камераны есте сақтау</string>
+    <string name="RememberLastUsedCameraInfo">Бейне хабарламаларды жазу кезінде соңғы пайдаланылған камера автоматты түрде таңдалады.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Әрқашан HD сапада жіберу</string>
+    <string name="HideCameraTile">Лезде камера тайлын жасыру</string>
+    <string name="HideCameraTileInfo">Камера тайлы қалқымалы түймеге ауыстырылады. Оны басқан Telegram камерасын, ұзақ басқан жүйе камерасын іске қосады.</string>
+    <string name="ShortStandardQuality">SD сапасы</string>
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Екі рет түртумен өткізу уақыты</string>
+    <string name="PreferOriginalQuality">Түпнұсқа сапаны артық көру</string>
+    <string name="PauseOnMinimize">Автоматты пауза</string>
+    <string name="PauseOnMinimizeVideo">Бейне</string>
+    <string name="PauseOnMinimizeVoice">Дауыс</string>
+    <string name="PauseOnMinimizeRound">Дөңгелек</string>
+    <string name="PauseOnMinimizeInfo">Құрылғы құлыпталғанда немесе exteraGram азайтылғанда медиа ойнатуды тоқтатады.</string>
+    <string name="SwipeToPip">PiP-ке сырғанау</string>
+    <string name="UnmuteWithVolumeButtons">Бейнені дыбыс түймелерімен дыбыстап қосу</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Дыбыс түймесін басқан жүйе дыбысын өзгертпей, бейнені дыбыстап қояды.</string>
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">Бұл параметрлер қосылғанда құрылғы туралы деректер Google Analytics және Crashlytics-ке жіберіледі. Бұл бізге пайдалану статистикасын сақтауға және қателерді бақылауға мүмкіндік береді. \n\nБірақ параметрлер өшірілсе, деректер жинау тоқтайды және жіберілген деректер бірден жойылады.</string>
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Файл атауын енгізіңіз…</string>
+    <string name="ExportSettings">Параметрлерді экспорттау</string>
+    <string name="ApplySettings">Параметрлерді қолдану</string>
+    <string name="ImportTitle">Осы параметрлерді қолдануға сенімдісіз бе?</string>
+    <string name="ImportConfirm">Иә, қолдану</string>
+    <string name="CancelConfirm">Жоқ, сол күйінде қалдыру</string>
+    <string name="SettingsSaved">Параметрлер файлы сәтті сақталды.</string>
+    <string name="SettingsImported">Параметрлер сәтті қолданылды.</string>
+    <string name="ImportChanges_one">**1** өзгеріс ағымдағы параметрлерге қолданылады.</string>
+    <string name="ImportChanges_two">**%1$d** өзгеріс ағымдағы параметрлерге қолданылады.</string>
+    <string name="ImportChanges_few">**%1$d** өзгеріс ағымдағы параметрлерге қолданылады.</string>
+    <string name="ImportChanges_many">**%1$d** өзгеріс ағымдағы параметрлерге қолданылады.</string>
+    <string name="ImportChanges_other">**%1$d** өзгеріс ағымдағы параметрлерге қолданылады.</string>
+    <string name="SameSettings">Параметрлер ағымдағылармен бірдей сияқты.</string>
+    <!-- Export data -->
+    <string name="ExportDelay">Қауіпсіздік мақсатында деректеріңізді жүктеуді %1$s кейін бастай аласыз. Сұраудың расталғанына көз жеткізу және рұқсат етілмеген жағдайда әрекет етуге уақыт беру үшін барлық құрылғыларыңызға экспорттау сұрауы туралы хабарлама жіберілді.\n\nӨтінеміз, %2$s қайта кіріп, сол құрылғы арқылы сұрауды қайталаңыз.</string>
+    <string name="ExportInvalid">Кешіріңіз, сіз жаңа деректер экспортын бастадыңыз, сондықтан бұл экспорт тоқтатылды.</string>
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Аккаунтты жою</string>
+    <string name="ResetSettings">Параметрлерді қалпына келтіру</string>
+    <string name="ResetPreferences">**exteraGram** параметрлері қалпына келтірілді.</string>
+    <string name="ResetPreferencesInfo">**Барлық** exteraGram параметрлерін әдепкі күйге қалпына келтіруге сенімдісіз бе?</string>
+    <!-- Donates -->
+    <string name="SupportDevelopment">Әзірлеуді қолдау</string>
+    <string name="SupportDevelopmentInfo">Жобаны қолдау арқылы оның дамуына үлес қосасыз және бірегей белгіше аласыз.</string>
+    <string name="MakeDonation">Қайырымдылық жасау</string>
+    <string name="ReceiveBadge">Белгішеңізді алыңыз</string>
+    <string name="NowPlaying">Қазір ойнатылуда</string>
+    <string name="ScrobblingService">Скробблинг қызметі</string>
+    <string name="SelectService">Қызметті таңдаңыз</string>
+    <string name="SelectServiceInfo">Профильде ағымдағы тректі скробблинг қызметінен алынған карта ретінде көрсетеді.</string>
+    <string name="EnterUsername">Пайдаланушы атын енгізіңіз</string>
+    <string name="EnterUsernameInfo">Пайдаланушы атыңызды **ресми веб-сайттан** алуға болады.</string>
+    <string name="BoostyPeopleCount_one">%1$d адам</string>
+    <string name="BoostyPeopleCount_two">%1$d адам</string>
+    <string name="BoostyPeopleCount_few">%1$d адам</string>
+    <string name="BoostyPeopleCount_many">%1$d адам</string>
+    <string name="BoostyPeopleCount_other">%1$d адам</string>
+    <string name="BoostyInfo">**exteraGram**-ды **Boosty**-де белсенді қолдаңыз.</string>
+    <string name="BoostyInfo2">Қолдауыңыз үшін рахмет!</string>
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Плагиндерді орнату **exteraGram** **Толық** нұсқасында ғана қолжетімді.</string>
+    <string name="Plugins">Плагиндер</string>
+    <string name="PluginsEngine">Плагиндер қозғалтқышы</string>
+    <string name="EnablePluginsEngine">Плагиндер қозғалтқышын қосу</string>
+    <string name="PluginsInfo">Плагиндерді @exteraPlugins-тен табуға болады.</string>
+    <string name="PluginsNotFound">Плагиндер табылмады.</string>
+    <string name="InstallPlugin">Орнату</string>
+    <string name="UpdatePlugin">Жаңарту</string>
+    <string name="PluginNotEnabled">**%1$s** орнату үшін **Плагиндер қозғалтқышын** қосыңыз.</string>
+    <string name="PluginInstalled">**%1$s** сәтті орнатылды.</string>
+    <string name="PluginUpdated">**%1$s** сәтті жаңартылды.</string>
+    <string name="PluginEnableError">**%1$s** қосу сәтсіз аяқталды.</string>
+    <string name="PluginDisableError">**%1$s** өшіру сәтсіз аяқталды.</string>
+    <string name="PluginInstallError">**%1$s** орнату сәтсіз аяқталды.</string>
+    <string name="PluginSourceTrusted">Сенімді көз</string>
+    <string name="PluginSourceTrustedInfo">Бұл көзден алынған плагиндер **тексерілген** және қауіпсіз.</string>
+    <string name="PluginSourceUnknown">Белгісіз көз</string>
+    <string name="PluginSourceUnknownInfo">Бұл көзден алынған плагиндер **тексерілмеген** және қауіпсіздік тәуекелі болуы мүмкін.</string>
+    <string name="PluginVersion">Нұсқа</string>
+    <string name="PluginNoDescription">Сипаттама берілмеген.</string>
+    <string name="PluginIsNotResponding">Плагин жауап бермейді.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s жауап бермейді</string>
+    <string name="PluginNoAuthor">Белгісіз автор</string>
+    <string name="EnableAfterInstallation">Орнатқаннан кейін қосу</string>
+    <string name="EnterValue">Мән енгізіңіз</string>
+    <string name="PluginDelete">Плагинді жою</string>
+    <string name="PluginDeleteInfo">**%1$s** жоюға сенімдісіз бе?</string>
+    <string name="ResetPluginSettings">**%1$s** параметрлері қалпына келтірілді.</string>
+    <string name="ResetPluginSettingsInfo">**%1$s** параметрлерін әдепкі күйге қалпына келтіруге сенімдісіз бе?</string>
+    <string name="PluginsSafeMode">Қауіпсіз режим</string>
+    <string name="PluginsSafeModeShortcut">Қауіпсіз режимде іске қосу</string>
+    <string name="PluginsSafeModeInfo">Плагиндер қозғалтқышы құлау себебінен өшірілді. Қауіпсіз режимді өшіру күтпеген салдарға әкелуі мүмкін.</string>
+    <string name="PluginsSafeModeInfo2">Қауіпсіз режимде барлық плагиндер белсенді емес. Бұл проблемалық плагинді қауіпсіз табуға және өшіруге мүмкіндік береді.</string>
+    <string name="PluginsDevMode">Әзірлеуші режимі</string>
+    <string name="PluginsCompactView">Плагиндерді ықшам көрініс</string>
+    <string name="PluginsDocumentation">Құжаттама</string>
+    <string name="PluginsTrusted">Сенімді плагиндер</string>
+    <string name="PluginsDevServerLaunched">Әзірлеуші сервер іске қосылды.</string>
+    <string name="PluginsDevServerStopped">Әзірлеуші сервер тоқтатылды.</string>
+    <string name="PluginEngineNotEnabled">**%1$s** параметрлерін ашу үшін **Плагиндер қозғалтқышын** қосыңыз.</string>
+    <string name="PluginNotFound">**%1$s** табылмады.</string>
+    <string name="PluginHasNoSettings">**%1$s** параметрлері жоқ.</string>
+    <string name="PluginsPySdkAutoUpdate">Автоматты жаңарту</string>
+    <string name="PluginsPySdkEnableBetaVersion">Бета-нұсқаларды орнату</string>
+    <string name="PluginsPySdkCheckUpdates">Жаңартуларды тексеру</string>
+    <string name="CheckingForUpdates">Жаңартулар тексерілуде…</string>
+    <string name="LatestVersionInstalled">Соңғы нұсқа орнатылған</string>
+    <string name="RestartPluginSystemToApplyUpdate">Жаңарту жүктелді, қолдану үшін Плагиндер қозғалтқышын қайта іске қосыңыз</string>
+    <string name="LoadingUpdate">Жаңартуды жүктеу…</string>
+    <string name="RestoreSdkFromApk">APK-дан SDK-ны қалпына келтіру</string>
+    <string name="EnableAutoUpdate">Автожаңартуды қосу</string>
+    <string name="PluginsDisableArt">Үйлесімділік режимі</string>
+    <string name="PluginsDisableArtInfo">ART Profile Saver өшірілуі арқылы плагин хуктарының сәтсіздіктерін болдырмайды.</string>
+    <!-- Updates -->
+    <string name="UpdateInstalling">Жаңарту жүріп жатыр…</string>
+    <string name="UpdateInstallingRelaunch">Жаңарту аяқталғаннан кейін қолданба қайта іске қосылады.</string>
+    <string name="UpdateInstallingNotification">Жаңарту аяқталғанда сізге хабарланады.</string>
+    <string name="UpdateInstalledNotification">Жаңарту аяқталды. Ашу үшін түртіңіз.</string>
+    <string name="UpdateFailedToInstall">Жаңартуды орнату қатесі: %d</string>
+    <string name="UpdateAvailable">Жаңарту бар!</string>
+    <!-- Message Details -->
+    <string name="Details">Егжей-тегжейі</string>
+    <string name="Date">Күні</string>
+    <string name="EditedDate">Өңдеу күні</string>
+    <string name="ForwardedDate">Бағыттау күні</string>
+    <string name="FileSize">Файл өлшемі</string>
+    <string name="FileName">Файл атауы</string>
+    <string name="FilePath">Файл жолы</string>
+    <string name="Platform">Платформа</string>
+    <string name="Resolution">Айқындылық</string>
+    <string name="Bitrate">Битрейт</string>
+    <string name="Duration">Ұзақтығы</string>
+    <string name="MimeType">MIME түрі</string>
+    <string name="Datacenter">Датacenter</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">Формат:</string>
+    <string name="DateFormatOptionNone">Ешқандай</string>
+    <string name="DateFormatOptionRelative">Салыстырмалы</string>
+    <string name="DateFormatOptionShortTime">Қысқа уақыт</string>
+    <string name="DateFormatOptionLongTime">Ұзақ уақыт</string>
+    <string name="DateFormatOptionShortDate">Қысқа күн</string>
+    <string name="DateFormatOptionLongDate">Ұзақ күн</string>
+    <string name="DateFormatOptionDayOfWeek">Апта күні</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">QR код арқылы кіру</string>
+    <string name="LoginQrSubtitle">Басқа құрылғымен осы QR кодты сканерлеңіз.</string>
+    <string name="WifiConnect">Қосу</string>
+    <string name="WifiDisabled">Wi-Fi өшірулі.</string>
+    <string name="WifiFailed">Wi-Fi-ға қосылу сәтсіз.</string>
+    <string name="WifiSuccess">Wi-Fi-ға сәтті қосылды.</string>
+    <string name="AreYouSureToLogin">Бұл аккаунтқа басқа құрылғыда кіруге сенімдісіз бе?</string>
+    <!-- AdBlock -->
+    <string name="PageBlocked">Бет бұғатталды</string>
+    <string name="PageBlockedDescription">exteraGram келесі бетті жүктеуді болдырмады:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Артқа оралу</string>
+    <!-- Other -->
+    <string name="SetAsBadge">Белгіше ретінде орнату</string>
+    <string name="AutoLockInstant">Лезде</string>
+    <string name="TestBackend">Тест бэкенд</string>
+    <string name="SearchPhotoInfo">Қызметтер суреттерді өзінің құпиялылық саясаты мен пайдалану шарттарына сәйкес пайдалануы мүмкін.</string>
+    <string name="PhotoUploadFailed">Фото жүктеу сәтсіз аяқталды.</string>
+    <string name="TrackSaved">Трек **%1$s**-ке сақталды.</string>
+    <string name="ChannelToSaveChanged">Тректер **%1$s**-ке сақталады.</string>
+    <string name="DeletedMessage">Жойылған хабарлама</string>
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Тақырыпты көшіру</string>
+    <string name="CopyCallback">Callback деректерін көшіру</string>
+    <string name="CopyInlineQuery">Inline сұрауын көшіру</string>
+    <string name="CopyID">Пайдаланушы ID-ін көшіру</string>
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Белгіше мәртебесі орнатылды.</string>
+    <string name="UserNotFound">Бұл **ID**-мен пайдаланушы табылмады.</string>
+    <string name="ChatNotFound">Бұл **ID**-мен чат табылмады.</string>
+    <string name="PhotoCopied">Фото алмасу буферіне көшірілді.</string>
+    <string name="FrameCopied">Кадр алмасу буферіне көшірілді.</string>
+    <string name="TapToCopy">Көшіру үшін түртіңіз</string>
+    <string name="ProfileUsesEmojiPack">Бұл профильдің фоны %s жинағынан эмодзи пайдаланады.</string>
+    <string name="ProfileUsesEmojiPacks">Бұл профильдің фоны **%d жинақтан** эмодзи пайдаланады.</string>
+    <string name="ReplyUsesEmojiPacks">Бұл жауап фоны %s жинағынан эмодзи пайдаланады.</string>
+    <string name="StickerSavedHint">Стикер галереяға сақталды.</string>
+    <string name="EmojiSavedHint">Эмодзи галереяға сақталды.</string>
+    <string name="GifGallerySavedHint">GIF галереяға сақталды.</string>
+    <string name="MutualContactInfo">Бұл контакт өзара.</string>
+    <string name="LocalPremiumEmojiHint">Сізде **Telegram Premium** жазылымы жоқ, сондықтан бұл эмодзиді тек **exteraGram** пайдаланушылары көре алады.</string>
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Контакттар қойындысын жасыру</string>
+    <string name="ShowContactsTab">Контакттар қойындысын көрсету</string>
+    <string name="ContactsTabWasShownTitle">**Контакттар** қойындысы енді көрінеді.</string>
+    <string name="ContactsTabWasHiddenTitle">**Контакттар** қойындысы енді жасырылған.</string>
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">Бұл мүмкіндік тек **Bitwarden** немесе **KeePassDX** сияқты сенім параметрлерін басқаруға мүмкіндік беретін пароль менеджерлерімен жұмыс істейді.</string>
+    <string name="PasskeyUnsupportedTitle">Қолдаусыз пароль менеджері</string>
+    <string name="PasskeyUnsupportedMessage">**Bitwarden** немесе **KeePassDX** сияқты басқа пароль менеджерлерін қолданып көріңіз.</string>
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** аккаунтын шамамен **%2$s** күні құрды.</string>
+    <string name="CreationDateUserEarlier">**%1$s** аккаунтын **%2$s**-дан ертерек құрды.</string>
+    <string name="CreationDateUserLater">**%1$s** аккаунтын **%2$s**-дан кейін құрды.</string>
+    <string name="CreationDateChat">**%1$s** **%2$s** күні құрылды.</string>
+    <string name="CreationDateSelfApproximately">Сіз аккаунтыңызды шамамен **%1$s** күні құрдыңыз.</string>
+    <string name="CreationDateSelfEarlier">Сіз аккаунтыңызды **%1$s**-дан ертерек құрдыңыз.</string>
+    <string name="CreationDateSelfLater">Сіз аккаунтыңызды **%1$s**-дан кейін құрдыңыз.</string>
+    <string name="JoinDateChat">Сіз **%1$s**-ға **%2$s** күні қосылдыңыз.</string>
+    <string name="GroupMemberJoined">%1$s қосылды</string>
+    <!-- Menu Items -->
+    <string name="ToBeginning">Басына</string>
+    <string name="MessageHistory">Тарих</string>
+    <string name="BoldItalic">Қалың курсив</string>
+    <string name="CopyPhoto">Фотоны көшіру</string>
+    <string name="CopyFrame">Кадрды көшіру</string>
+    <string name="Repeat">Қайталау</string>
+    <string name="Subtitles">Субтитрлер</string>
+    <string name="ChooseSubtitles">Субтитрлерді таңдау</string>
+    <string name="DisableSubtitles">Субтитрлерді өшіру</string>
+    <string name="SubtitlesAdded">Субтитрлер қосылды.</string>
+    <string name="SubtitlesRemoved">Субтитрлер өшірілді.</string>
+    <string name="SubtitlesLoadError">Субтитрлерді жүктеу мүмкін болмады.</string>
+    <string name="SubtitlesUnsupportedFormat">Субтитр пішіміне қолдау көрсетілмейді.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Стикер бұрыштары</string>
+    <string name="StickerCornerRadiusInfo">Стикер бұрыштарының қаншалықты дөңгеленгенін таңдаңыз.</string>
+    <string name="StickerCornerRadiusLarge">Үлкен</string>
+    <string name="StickerCornerRadiusMedium">Орташа</string>
+    <string name="StickerCornerRadiusSmall">Кіші</string>
+    <string name="StickerCornerRadiusNone">Жоқ</string>
+    <!-- Feed -->
+    <string name="Feed">Лента</string>
+    <string name="FeedShownChannels">Лентада көрсетіледі</string>
+    <string name="FeedHiddenChannels">Жасырылған</string>
+    <string name="FeedChannels">Арналар</string>
+    <string name="FeedSettings">Лента баптаулары</string>
+    <string name="FeedNoPosts">Арналарда әзірге жазбалар жоқ.</string>
+    <string name="FeedAllChannelsExcluded">Барлық арналар лентадан шығарылған.</string>
+    <string name="FeedMarkAllReadConfirm">Лентадағы барлық жазбаларды оқылған деп белгілейсіз бе? Бұл оларды бастапқы арналарда да оқылған деп белгілейді.</string>
+    <string name="FeedMarkAllReadDone">Барлық жазбалар оқылған деп белгіленді</string>
+    <string name="FeedIncludeArchived">Мұрағаттағы чаттарды көрсету</string>
+    <string name="FeedIncludeArchivedInfo">Лентаға мұрағатталған чаттардағы арналарды да қосу.</string>
+    <string name="FeedHideChannel">Лентадан жасыру</string>
+    <string name="FeedChannelHidden">**%1$s** лентадан жасырылды</string>
+    <string name="FeedBottomTab">Төменгі қойындыларда көрсету</string>
+    <string name="FeedBottomTabInfo">Контактілер қойындысының орнына лентаны төменгі навигация қойындысы ретінде көрсету.</string>
+    <string name="FeedUnreadCounter">Оқылмаған жазбалар санағышы</string>
+    <string name="HideFeedTab">Лента қойындысын жасыру</string>
+    <string name="DisableMarkdown">Markdown-ды өшіру</string>
+    <string name="EnableMarkdown">Markdown-ды қосу</string>
+    <!-- Player -->
+    <!-- Reactions -->
+    <!-- Non-translatable -->
+</resources>

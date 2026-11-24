@@ -1,5 +1,8 @@
 package org.telegram.ui.Components.Premium;
 
+import static org.telegram.messenger.LocaleController.formatPluralStringComma;
+import static org.telegram.messenger.LocaleController.getString;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -12,7 +15,6 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -33,16 +35,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ContactsController;
+import org.telegram.messenger.DialogObject;
+import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
+import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
+import org.telegram.messenger.browser.Browser;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.tgnet.tl.TL_stars;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
+import org.telegram.ui.Cells.ChatMessageCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AnimatedEmojiSpan;
@@ -55,30 +64,36 @@ import org.telegram.ui.Components.LinkSpanDrawable;
 import org.telegram.ui.Components.LoadingSpan;
 import org.telegram.ui.Components.Premium.GLIcon.GLIconRenderer;
 import org.telegram.ui.Components.Premium.GLIcon.GLIconTextureView;
+import org.telegram.ui.Components.Premium.boosts.cells.TextInfoCell;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.PremiumFeatureCell;
 import org.telegram.ui.PremiumPreviewFragment;
+import org.telegram.ui.Stories.recorder.HintView2;
 
 import java.util.ArrayList;
 
 public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView implements NotificationCenter.NotificationCenterDelegate {
 
-    ArrayList<PremiumPreviewFragment.PremiumFeatureData> premiumFeatures = new ArrayList<>();
+    protected ArrayList<PremiumPreviewFragment.PremiumFeatureData> premiumFeatures = new ArrayList<>();
     int currentAccount;
-    TLRPC.User user;
-    GiftPremiumBottomSheet.GiftTier giftTier;
+    protected TLRPC.User user;
+    protected GiftPremiumBottomSheet.GiftTier giftTier;
+    protected TL_stars.StarGift gift;
     boolean isOutboundGift;
 
     PremiumFeatureCell dummyCell;
     int totalGradientHeight;
 
-    int rowCount;
-    int paddingRow;
-    int featuresStartRow;
-    int featuresEndRow;
-    int sectionRow;
-    int helpUsRow;
-    int buttonRow;
+    protected int rowCount;
+    protected int paddingRow;
+    protected int additionStartRow;
+    protected int additionEndRow;
+    protected int featuresStartRow;
+    protected int featuresEndRow;
+    protected int sectionRow;
+    protected int helpUsRow;
+    protected int buttonRow;
+    protected int termsRow;
 
     FireworksOverlay fireworksOverlay;
     PremiumGradient.PremiumGradientTools gradientTools;
@@ -87,14 +102,16 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
     ViewGroup iconContainer;
     BaseFragment fragment;
 
+    public Integer accentColor;
     public float startEnterFromX;
     public float startEnterFromY;
     public float startEnterFromX1;
     public float startEnterFromY1;
     public float startEnterFromScale;
-    public SimpleTextView startEnterFromView;
+    public View startEnterFromView;
     public View overrideTitleIcon;
     public TLRPC.InputStickerSet statusStickerSet;
+    public TLRPC.TL_emojiStatusCollectible emojiStatusCollectible;
     public boolean isEmojiStatus;
 
     int[] coords = new int[2];
@@ -103,14 +120,15 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
     ValueAnimator enterAnimator;
 
     boolean animateConfetti;
+    boolean animateConfettiWithStars;
     FrameLayout buttonContainer;
     FrameLayout bulletinContainer;
 
     public PremiumPreviewBottomSheet(BaseFragment fragment, int currentAccount, TLRPC.User user, Theme.ResourcesProvider resourcesProvider) {
-        this(fragment, currentAccount, user, null, resourcesProvider);
+        this(fragment, currentAccount, user, null, null, resourcesProvider);
     }
 
-    public PremiumPreviewBottomSheet(BaseFragment fragment, int currentAccount, TLRPC.User user, GiftPremiumBottomSheet.GiftTier gift, Theme.ResourcesProvider resourcesProvider) {
+    public PremiumPreviewBottomSheet(BaseFragment fragment, int currentAccount, TLRPC.User user, GiftPremiumBottomSheet.GiftTier gift, TL_stars.StarGift stargift, Theme.ResourcesProvider resourcesProvider) {
         super(fragment, false, false, false, resourcesProvider);
         fixNavigationBar();
         this.fragment = fragment;
@@ -118,8 +136,9 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         this.user = user;
         this.currentAccount = currentAccount;
         this.giftTier = gift;
+        this.gift = stargift;
         dummyCell = new PremiumFeatureCell(getContext());
-        PremiumPreviewFragment.fillPremiumFeaturesList(premiumFeatures, currentAccount);
+        PremiumPreviewFragment.fillPremiumFeaturesList(premiumFeatures, currentAccount, false);
 
         if (giftTier != null || UserConfig.getInstance(currentAccount).isPremium()) {
             buttonContainer.setVisibility(View.GONE);
@@ -134,26 +153,16 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         gradientTools.cx = 0;
         gradientTools.cy = 0;
 
-        paddingRow = rowCount++;
-        featuresStartRow = rowCount;
-        rowCount += premiumFeatures.size();
-        featuresEndRow = rowCount;
-        sectionRow = rowCount++;
-        if (!UserConfig.getInstance(currentAccount).isPremium() && gift == null) {
-            buttonRow = rowCount++;
-        }
+        updateRows();
+
         recyclerListView.setPadding(AndroidUtilities.dp(6), 0, AndroidUtilities.dp(6), 0);
         recyclerListView.setOnItemClickListener((view, position) -> {
             if (view instanceof PremiumFeatureCell) {
                 PremiumFeatureCell cell = (PremiumFeatureCell) view;
                 PremiumPreviewFragment.sentShowFeaturePreview(currentAccount, cell.data.type);
-//                if (cell.data.type == PremiumPreviewFragment.PREMIUM_FEATURE_LIMITS) {
-//                    DoubledLimitsBottomSheet bottomSheet = new DoubledLimitsBottomSheet(fragment, currentAccount);
-//                    showDialog(bottomSheet);
-//                } else {
-                    showDialog(new PremiumFeatureBottomSheet(fragment, cell.data.type, false));
-              //  }
+                showDialog(new PremiumFeatureBottomSheet(fragment, cell.data.type, false));
             }
+            onAdditionItemClicked(view);
         });
 
         MediaDataController.getInstance(currentAccount).preloadPremiumPreviewStickers();
@@ -166,6 +175,21 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         containerView.addView(bulletinContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 140, Gravity.BOTTOM | Gravity.FILL_HORIZONTAL));
     }
 
+    protected void onAdditionItemClicked(View view) {
+
+    }
+
+    protected void updateRows() {
+        paddingRow = rowCount++;
+        featuresStartRow = rowCount;
+        rowCount += premiumFeatures.size();
+        featuresEndRow = rowCount;
+        sectionRow = rowCount++;
+        if (!UserConfig.getInstance(currentAccount).isPremium() && giftTier == null) {
+            buttonRow = rowCount++;
+        }
+    }
+
     public PremiumPreviewBottomSheet setOutboundGift(boolean outboundGift) {
         isOutboundGift = outboundGift;
         return this;
@@ -176,7 +200,13 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         return this;
     }
 
-    private void showDialog(Dialog dialog) {
+    public PremiumPreviewBottomSheet setAnimateConfettiWithStars(boolean animateConfettiWithStars) {
+        this.animateConfettiWithStars = animateConfettiWithStars;
+        return this;
+    }
+
+    @Override
+    public boolean showDialog(Dialog dialog) {
         if (iconTextureView != null) {
             iconTextureView.setDialogVisible(true);
         }
@@ -188,6 +218,7 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
             starParticlesView.setPaused(false);
         });
         dialog.show();
+        return true;
     }
 
     @Override
@@ -195,7 +226,7 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         super.onViewCreated(containerView);
         currentAccount = UserConfig.selectedAccount;
 
-        PremiumButtonView premiumButtonView = new PremiumButtonView(getContext(), false);
+        PremiumButtonView premiumButtonView = new PremiumButtonView(getContext(), false, resourcesProvider);
         premiumButtonView.setButton(PremiumPreviewFragment.getPremiumButtonText(currentAccount, null), v -> {
             PremiumPreviewFragment.sentPremiumButtonClick();
             PremiumPreviewFragment.buyPremium(fragment, "profile");
@@ -204,16 +235,20 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         buttonContainer = new FrameLayout(getContext());
 
         View buttonDivider = new View(getContext());
-        buttonDivider.setBackgroundColor(getThemedColor(Theme.key_divider));
+        ThemeBind.backgroundColor(buttonDivider, Theme.key_divider, resourcesProvider);
         buttonContainer.addView(buttonDivider, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 1));
         buttonDivider.getLayoutParams().height = 1;
         AndroidUtilities.updateViewVisibilityAnimated(buttonDivider, true, 1f, false);
 
-        if (!UserConfig.getInstance(currentAccount).isPremium()) {
+        if (!UserConfig.getInstance(currentAccount).isPremium() && needDefaultPremiumBtn()) {
             buttonContainer.addView(premiumButtonView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.CENTER_VERTICAL, 16, 0, 16, 0));
-            buttonContainer.setBackgroundColor(getThemedColor(Theme.key_dialogBackground));
+            ThemeBind.backgroundColor(buttonContainer, Theme.key_dialogBackground, resourcesProvider);
             containerView.addView(buttonContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 68, Gravity.BOTTOM));
         }
+    }
+
+    protected boolean needDefaultPremiumBtn() {
+        return true;
     }
 
     @Override
@@ -224,7 +259,8 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
     }
 
     private FrameLayout titleViewContainer;
-    private LinkSpanDrawable.LinksTextView titleView[];
+    protected LinkSpanDrawable.LinksTextView titleView[];
+
     private void titleLoaded(CharSequence newText, boolean animated) {
         if (titleView == null) {
             return;
@@ -257,15 +293,34 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         }
     }
 
-    private TextView subtitleView;
+    protected LinkSpanDrawable.LinksTextView subtitleView;
+
+    // the default link color is read on draw (follows theme changes); a custom accentColor is kept as is
+    private SpannableStringBuilder replaceAccentLink(String str) {
+        return accentColor == null ? AndroidUtilities.replaceSingleLinkKey(str, Theme.key_windowBackgroundWhiteBlueButton, resourcesProvider, null) : AndroidUtilities.replaceSingleLink(str, accentColor);
+    }
+
     public void setTitle(boolean animated) {
         if (titleView == null || subtitleView == null) {
             return;
         }
-        if (statusStickerSet != null) {
+        if (emojiStatusCollectible != null) {
+            String collectionName = emojiStatusCollectible.title;
+            int spaceIndex;
+            if ((spaceIndex = collectionName.lastIndexOf(' ')) >= 0) {
+                collectionName = collectionName.substring(0, spaceIndex);
+            }
+            titleView[0].setText(AndroidUtilities.replaceSingleTag(LocaleController.formatString(R.string.TelegramPremiumUserStatusCollectibleDialogTitle, DialogObject.getShortName(user), collectionName), () -> {
+                Browser.openUrl(getContext(), "https://" + MessagesController.getInstance(currentAccount).linkPrefix + "/nft/" + emojiStatusCollectible.slug);
+            }));
+            subtitleView.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.TelegramPremiumUserStatusDialogSubtitle)));
+        } else if (statusStickerSet != null) {
             final String stickerSetPlaceholder = "<STICKERSET>";
             String string = LocaleController.formatString(R.string.TelegramPremiumUserStatusDialogTitle, ContactsController.formatName(user.first_name, user.last_name), stickerSetPlaceholder);
-            CharSequence charSequence = AndroidUtilities.replaceSingleTag(string, Theme.key_windowBackgroundWhiteBlueButton, AndroidUtilities.REPLACING_TAG_TYPE_LINK, null);
+            CharSequence charSequence = replaceAccentLink(string);
+            try {
+                charSequence = Emoji.replaceEmoji(charSequence, titleView[0].getPaint().getFontMetricsInt(), false);
+            } catch (Exception ignore) {}
             SpannableStringBuilder title = charSequence instanceof SpannableStringBuilder ? ((SpannableStringBuilder) charSequence) : new SpannableStringBuilder(charSequence);
             int index = charSequence.toString().indexOf(stickerSetPlaceholder);
             if (index >= 0) {
@@ -301,6 +356,9 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                     public void updateDrawState(@NonNull TextPaint ds) {
                         super.updateDrawState(ds);
                         ds.setUnderlineText(false);
+                        if (accentColor != null) {
+                            ds.setColor(accentColor);
+                        }
                     }
                     @Override
                     public void onClick(@NonNull View view) {}
@@ -356,29 +414,54 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
             subtitleView.setText(AndroidUtilities.replaceTags(LocaleController.formatString(R.string.TelegramPremiumUserStatusDialogSubtitle, ContactsController.formatName(user.first_name, user.last_name))));
         } else if (giftTier != null) {
             if (isOutboundGift) {
-                titleView[0].setText(AndroidUtilities.replaceSingleTag(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural, user != null ? user.first_name : "", LocaleController.formatPluralString("GiftMonths", giftTier.getMonths())), Theme.key_windowBackgroundWhiteBlueButton,  AndroidUtilities.REPLACING_TAG_TYPE_LINK, null));
-                subtitleView.setText(AndroidUtilities.replaceSingleTag(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle, user != null ? user.first_name : ""), Theme.key_windowBackgroundWhiteBlueButton,  AndroidUtilities.REPLACING_TAG_TYPE_LINK, null));
+                titleView[0].setText(replaceAccentLink(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumOutboundDialogTitleWithPlural, user != null ? user.first_name : "", LocaleController.formatPluralString("GiftMonths", giftTier.getMonths()))));
+                subtitleView.setText(replaceAccentLink(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumOutboundDialogSubtitle, user != null ? user.first_name : "")));
             } else if (user == null || TextUtils.isEmpty(user.first_name) || user.id == 777000) {
-                titleView[0].setText(AndroidUtilities.replaceSingleTag(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumDialogTitleWithPluralSomeone, LocaleController.formatPluralString("GiftMonths", giftTier.getMonths())), Theme.key_windowBackgroundWhiteBlueButton,  AndroidUtilities.REPLACING_TAG_TYPE_LINK, null));
+                titleView[0].setText(replaceAccentLink(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumDialogTitleWithPluralSomeone, LocaleController.formatPluralString("GiftMonths", giftTier.getMonths()))));
                 subtitleView.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.TelegramPremiumUserGiftedPremiumDialogSubtitle)));
             } else {
-                titleView[0].setText(AndroidUtilities.replaceSingleTag(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumDialogTitleWithPlural, user.first_name, LocaleController.formatPluralString("GiftMonths", giftTier.getMonths())), Theme.key_windowBackgroundWhiteBlueButton,  AndroidUtilities.REPLACING_TAG_TYPE_LINK, null));
+                titleView[0].setText(replaceAccentLink(LocaleController.formatString(R.string.TelegramPremiumUserGiftedPremiumDialogTitleWithPlural, user.first_name, LocaleController.formatPluralString("GiftMonths", giftTier.getMonths()))));
                 subtitleView.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.TelegramPremiumUserGiftedPremiumDialogSubtitle)));
             }
+        } else if (gift != null) {
+            titleView[0].setText(getString(R.string.Gift2PremiumTitle));
+            titleView[0].setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+            if (gift.limited_per_user) {
+                subtitleView.setText(AndroidUtilities.replaceTags(formatPluralStringComma("Gift2PremiumSubtitleMany", gift.per_user_total)));
+            } else {
+                subtitleView.setText(AndroidUtilities.replaceTags(getString(R.string.Gift2PremiumSubtitle)));
+            }
+            subtitleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         } else {
-            titleView[0].setText(AndroidUtilities.replaceSingleTag(LocaleController.formatString(R.string.TelegramPremiumUserDialogTitle, ContactsController.formatName(user.first_name, user.last_name)), Theme.key_windowBackgroundWhiteBlueButton, AndroidUtilities.REPLACING_TAG_TYPE_LINK, null));
-            subtitleView.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.TelegramPremiumUserDialogSubtitle)));
+            if (user == null) {
+                titleView[0].setText(LocaleController.getString(R.string.TelegramPremium));
+                subtitleView.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.TelegramPremiumSubscribedSubtitle)));
+            } else {
+                titleView[0].setText(replaceAccentLink(LocaleController.formatString(R.string.TelegramPremiumUserDialogTitle, ContactsController.formatName(user.first_name, user.last_name))));
+                subtitleView.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.TelegramPremiumUserDialogSubtitle)));
+            }
         }
+        try {
+            titleView[0].setText(Emoji.replaceEmoji(titleView[0].getText(), titleView[0].getPaint().getFontMetricsInt(), false));
+        } catch (Exception ignore) {}
     }
 
     @Override
     protected CharSequence getTitle() {
-        return LocaleController.getString("TelegramPremium", R.string.TelegramPremium);
+        return LocaleController.getString(R.string.TelegramPremium);
     }
 
     @Override
-    protected RecyclerListView.SelectionAdapter createAdapter() {
+    protected RecyclerListView.SelectionAdapter createAdapter(RecyclerListView listView) {
         return new Adapter();
+    }
+
+    protected void attachIconContainer(LinearLayout container) {
+        container.addView(overrideTitleIcon, LayoutHelper.createLinear(140, 140, Gravity.CENTER_HORIZONTAL, Gravity.CENTER, 10, 10, 10, 10));
+    }
+
+    protected void afterCellCreated(int viewType, View view) {
+
     }
 
     private class Adapter extends RecyclerListView.SelectionAdapter {
@@ -388,6 +471,11 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
             Context context = parent.getContext();
+            view = onCreateAdditionCell(viewType, context);
+            if (view != null) {
+                view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                return new RecyclerListView.Holder(view);
+            }
             switch (viewType) {
                 case 0:
                     LinearLayout linearLayout = new LinearLayout(context) {
@@ -427,47 +515,28 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                         if (overrideTitleIcon.getParent() != null) {
                             ((ViewGroup) overrideTitleIcon.getParent()).removeView(overrideTitleIcon);
                         }
-                        linearLayout.addView(overrideTitleIcon, LayoutHelper.createLinear(140, 140, Gravity.CENTER_HORIZONTAL, Gravity.CENTER, 10, 10, 10, 10));
+                        attachIconContainer(linearLayout);
                     }
 
                     if (titleViewContainer == null) {
                         titleViewContainer = new FrameLayout(context);
                         titleViewContainer.setClipChildren(false);
 
-                        final ColorFilter colorFilter = new PorterDuffColorFilter(ColorUtils.setAlphaComponent(getThemedColor(Theme.key_windowBackgroundWhiteLinkText), 178), PorterDuff.Mode.MULTIPLY);
+                        final ColorFilter colorFilter = new PorterDuffColorFilter(accentColor == null ? getThemedColor(Theme.key_windowBackgroundWhiteBlueIcon) : accentColor, PorterDuff.Mode.SRC_IN);
                         titleView = new LinkSpanDrawable.LinksTextView[2];
                         for (int a = 0; a < 2; ++a) {
                             titleView[a] = new LinkSpanDrawable.LinksTextView(context, resourcesProvider) {
-                                private Layout lastLayout;
-                                AnimatedEmojiSpan.EmojiGroupedSpans stack;
-
                                 @Override
-                                protected void onDetachedFromWindow() {
-                                    super.onDetachedFromWindow();
-                                    AnimatedEmojiSpan.release(this, stack);
-                                    lastLayout = null;
-                                }
-
-                                @Override
-                                protected void dispatchDraw(Canvas canvas) {
-                                    super.dispatchDraw(canvas);
-                                    if (lastLayout != getLayout()) {
-                                        stack = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW, this, stack, lastLayout = getLayout());
-                                    }
-                                    AnimatedEmojiSpan.drawAnimatedEmojis(canvas, getLayout(), stack, 0, null, 0, 0, 0, 1f, colorFilter);
-                                }
-
-                                @Override
-                                protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                                    super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(99999999, MeasureSpec.AT_MOST));
+                                protected int emojiCacheType() {
+                                    return AnimatedEmojiDrawable.CACHE_TYPE_ALERT_PREVIEW;
                                 }
                             };
                             titleView[a].setVisibility(a == 0 ? View.VISIBLE : View.GONE);
                             titleView[a].setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-                            titleView[a].setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                            titleView[a].setTypeface(AndroidUtilities.bold());
                             titleView[a].setGravity(Gravity.CENTER_HORIZONTAL);
-                            titleView[a].setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
-                            titleView[a].setLinkTextColor(getThemedColor(Theme.key_windowBackgroundWhiteLinkText));
+                            ThemeBind.textColor(titleView[a], Theme.key_windowBackgroundWhiteBlackText, PremiumPreviewBottomSheet.this.resourcesProvider);
+                            ThemeBind.linkTextColor(titleView[a], Theme.key_windowBackgroundWhiteLinkText, PremiumPreviewBottomSheet.this.resourcesProvider);
                             titleViewContainer.addView(titleView[a], LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
                         }
                     }
@@ -477,16 +546,16 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                     linearLayout.addView(titleViewContainer, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, Gravity.CENTER_HORIZONTAL, 40, 0, 40, 0));
 
                     if (subtitleView == null) {
-                        subtitleView = new TextView(context);
+                        subtitleView = new LinkSpanDrawable.LinksTextView(getContext(), resourcesProvider);
                         subtitleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
                         subtitleView.setGravity(Gravity.CENTER_HORIZONTAL);
-                        subtitleView.setTextColor(getThemedColor(Theme.key_windowBackgroundWhiteBlackText));
-                        subtitleView.setLinkTextColor(getThemedColor(Theme.key_windowBackgroundWhiteLinkText));
+                        ThemeBind.textColor(subtitleView, Theme.key_windowBackgroundWhiteBlackText, PremiumPreviewBottomSheet.this.resourcesProvider);
+                        ThemeBind.linkTextColor(subtitleView, Theme.key_windowBackgroundWhiteLinkText, PremiumPreviewBottomSheet.this.resourcesProvider);
                     }
                     if (subtitleView.getParent() != null) {
                         ((ViewGroup) subtitleView.getParent()).removeView(subtitleView);
                     }
-                    linearLayout.addView(subtitleView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 16, 9, 16, 20));
+                    linearLayout.addView(subtitleView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 24, 9, 24, 20));
 
                     setTitle(false);
 
@@ -494,8 +563,17 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                         @Override
                         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
                             drawable.rect2.set(0, 0, getMeasuredWidth(), getMeasuredHeight() - AndroidUtilities.dp(52));
+                        }
+
+                        @Override
+                        protected void configure() {
+                            super.configure();
+                            drawable.useGradient = true;
+                            drawable.useBlur = false;
+                            drawable.forceMaxAlpha = true;
+                            drawable.checkBounds = true;
+                            drawable.init();
                         }
                     };
                     FrameLayout frameLayout = new FrameLayout(context) {
@@ -515,11 +593,6 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                     frameLayout.addView(starParticlesView);
                     frameLayout.addView(linearLayout);
 
-                    starParticlesView.drawable.useGradient = true;
-                    starParticlesView.drawable.useBlur = false;
-                    starParticlesView.drawable.forceMaxAlpha = true;
-                    starParticlesView.drawable.checkBounds = true;
-                    starParticlesView.drawable.init();
                     if (iconTextureView != null) {
                         iconTextureView.setStarParticlesView(starParticlesView);
                     }
@@ -528,7 +601,7 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                     break;
                 default:
                 case 1:
-                    view = new PremiumFeatureCell(context) {
+                    view = new PremiumFeatureCell(context, resourcesProvider) {
                         @Override
                         protected void dispatchDraw(Canvas canvas) {
                             AndroidUtilities.rectTmp.set(imageView.getLeft(), imageView.getTop(), imageView.getRight(), imageView.getBottom());
@@ -540,6 +613,7 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                     break;
                 case 2:
                     view = new ShadowSectionCell(context, 12, getThemedColor(Theme.key_windowBackgroundGray));
+                    ThemeBind.backgroundColor(view, Theme.key_windowBackgroundGray, resourcesProvider);
                     break;
                 case 3:
                     view = new View(context) {
@@ -552,8 +626,25 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                 case 4:
                     view = new AboutPremiumView(context);
                     break;
+                case 5:
+                    TextInfoCell cell = new TextInfoCell(context, resourcesProvider);
+                    cell.setBackground(true);
+                    String terms1 = getString("GiftPremiumPrivacyPolicyAndTerms", R.string.GiftPremiumPrivacyPolicyAndTerms);
+                    SpannableStringBuilder stringBuilder1 = AndroidUtilities.replaceSingleTag(
+                            terms1,
+                            Theme.key_chat_messageLinkIn, 0,
+                            () -> Browser.openUrl(fragment.getParentActivity(), LocaleController.getString(R.string.TermsOfServiceUrl)));
+                    String terms2 = getString("GiftPremiumPrivacyPolicy", R.string.GiftPremiumPrivacyPolicy);
+                    SpannableStringBuilder stringBuilder2 = AndroidUtilities.replaceSingleTag(
+                            terms2,
+                            Theme.key_chat_messageLinkIn, 0,
+                            () -> Browser.openUrl(fragment.getParentActivity(), LocaleController.getString(R.string.PrivacyPolicyUrl)));
+                    cell.setText(AndroidUtilities.replaceCharSequence("%1$s", stringBuilder1, stringBuilder2));
+                    view = cell;
+                    break;
             }
             view.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            afterCellCreated(viewType, view);
             return new RecyclerListView.Holder(view);
         }
 
@@ -561,6 +652,8 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             if (position >= featuresStartRow && position < featuresEndRow) {
                 ((PremiumFeatureCell) holder.itemView).setData(premiumFeatures.get(position - featuresStartRow), position != featuresEndRow - 1);
+            } else if (position >= additionStartRow && position < additionEndRow) {
+                onBindAdditionCell(holder.itemView, position);
             }
         }
 
@@ -573,6 +666,8 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         public int getItemViewType(int position) {
             if (position == paddingRow) {
                 return 0;
+            } else if (position >= additionStartRow && position < additionEndRow) {
+                return getAdditionItemViewType(position);
             } else if (position >= featuresStartRow && position < featuresEndRow) {
                 return 1;
             } else if (position == sectionRow) {
@@ -581,14 +676,32 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                 return 3;
             } else if (position == helpUsRow) {
                 return 4;
+            } else if (position == termsRow) {
+                return 5;
             }
             return super.getItemViewType(position);
         }
 
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
-            return holder.getItemViewType() == 1;
+            return holder.getItemViewType() == 1 || isAdditionViewClickable(holder.getItemViewType());
         }
+    }
+
+    protected boolean isAdditionViewClickable(int viewType) {
+        return false;
+    }
+
+    protected int getAdditionItemViewType(int position) {
+        return 0;
+    }
+
+    protected View onCreateAdditionCell(int viewType, Context context) {
+        return null;
+    }
+
+    protected void onBindAdditionCell(View view, int pos) {
+
     }
 
     private void measureGradient(int w, int h) {
@@ -612,7 +725,7 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                 try {
                     container.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
                 } catch (Exception ignored) {}
-                fireworksOverlay.start();
+                fireworksOverlay.start(animateConfettiWithStars);
             }, 200);
         }
     }
@@ -646,7 +759,16 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
 
             float[] points = new float[]{startEnterFromX, startEnterFromY};
             startEnterFromView.getMatrix().mapPoints(points);
-            Drawable startEnterFromDrawable = startEnterFromView.getRightDrawable();
+            Drawable startEnterFromDrawable = null;
+            if (startEnterFromView instanceof SimpleTextView) {
+                startEnterFromDrawable = ((SimpleTextView) startEnterFromView).getRightDrawable();
+            } else if (startEnterFromView instanceof ChatMessageCell) {
+                startEnterFromDrawable = ((ChatMessageCell) startEnterFromView).currentNameStatusDrawable;
+            }
+            if (startEnterFromDrawable == null) {
+                canvas.restore();
+                return;
+            }
             float cxFrom = -coords[0] + startEnterFromX1 + points[0];
             float cyFrom = -coords[1] + startEnterFromY1 + points[1];
 
@@ -710,8 +832,23 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
         enterTransitionProgress = 0f;
         enterTransitionInProgress = true;
         iconContainer.invalidate();
-        startEnterFromView.getRightDrawable().setAlpha(0);
-        startEnterFromView.invalidate();
+        final Drawable startEnterFromDrawable;
+        if (startEnterFromView instanceof SimpleTextView) {
+            startEnterFromDrawable = ((SimpleTextView) startEnterFromView).getRightDrawable();
+        } else if (startEnterFromView instanceof ChatMessageCell) {
+            startEnterFromDrawable = ((ChatMessageCell) startEnterFromView).currentNameStatusDrawable;
+            ((ChatMessageCell) startEnterFromView).invalidateOutbounds();
+        } else {
+            startEnterFromDrawable = null;
+        }
+        if (startEnterFromDrawable != null) {
+            startEnterFromDrawable.setAlpha(0);
+        }
+        if (startEnterFromView instanceof ChatMessageCell) {
+            ((ChatMessageCell) startEnterFromView).invalidateOutbounds();
+        } else {
+            startEnterFromView.invalidate();
+        }
         if (iconTextureView != null) {
             iconTextureView.startEnterAnimation(-360, 100);
         }
@@ -725,13 +862,18 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
                 enterTransitionInProgress = false;
                 enterTransitionProgress = 1f;
                 iconContainer.invalidate();
-                ValueAnimator iconAlphaBack = ValueAnimator.ofInt(0, 255);
-                Drawable drawable = startEnterFromView.getRightDrawable();
-                iconAlphaBack.addUpdateListener(animation1 -> {
-                    drawable.setAlpha((Integer) animation1.getAnimatedValue());
-                    startEnterFromView.invalidate();
-                });
-                iconAlphaBack.start();
+                if (startEnterFromDrawable != null) {
+                    ValueAnimator iconAlphaBack = ValueAnimator.ofInt(0, 255);
+                    iconAlphaBack.addUpdateListener(animation1 -> {
+                        startEnterFromDrawable.setAlpha((Integer) animation1.getAnimatedValue());
+                        if (startEnterFromView instanceof ChatMessageCell) {
+                            ((ChatMessageCell) startEnterFromView).invalidateOutbounds();
+                        } else {
+                            startEnterFromView.invalidate();
+                        }
+                    });
+                    iconAlphaBack.start();
+                }
                 super.onAnimationEnd(animation);
             }
         });
@@ -744,7 +886,7 @@ public class PremiumPreviewBottomSheet extends BottomSheetWithRecyclerListView i
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        NotificationCenter.getInstance(UserConfig.selectedAccount).addObserver(this, NotificationCenter.groupStickersDidLoad);
+        NotificationCenter.getInstance(UserConfig.selectedAccount).addWeakObserver(this, NotificationCenter.groupStickersDidLoad);
     }
 
     @Override

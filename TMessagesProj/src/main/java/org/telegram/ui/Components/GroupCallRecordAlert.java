@@ -18,7 +18,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +35,7 @@ import org.telegram.messenger.SvgHelper;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 public class GroupCallRecordAlert extends BottomSheet {
 
@@ -51,7 +51,7 @@ public class GroupCallRecordAlert extends BottomSheet {
         super(context, false);
 
         int color = Theme.getColor(Theme.key_voipgroup_inviteMembersBackground);
-        shadowDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
+        ThemeBind.drawableColorFilter(containerView, shadowDrawable, Theme.key_voipgroup_inviteMembersBackground, PorterDuff.Mode.MULTIPLY);
 
         containerView = new FrameLayout(context) {
 
@@ -94,18 +94,18 @@ public class GroupCallRecordAlert extends BottomSheet {
 
         TextView titleTextView = new TextView(getContext());
         if (ChatObject.isChannelOrGiga(chat)) {
-            titleTextView.setText(LocaleController.getString("VoipChannelRecordVoiceChat", R.string.VoipChannelRecordVoiceChat));
+            titleTextView.setText(LocaleController.getString(R.string.VoipChannelRecordVoiceChat));
         } else {
-            titleTextView.setText(LocaleController.getString("VoipRecordVoiceChat", R.string.VoipRecordVoiceChat));
+            titleTextView.setText(LocaleController.getString(R.string.VoipRecordVoiceChat));
         }
         titleTextView.setTextColor(0xffffffff);
         titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleTextView.setTypeface(AndroidUtilities.bold());
         titleTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
         containerView.addView(titleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 24, 29, 24, 0));
 
         TextView infoTextView = new TextView(getContext());
-        infoTextView.setText(LocaleController.getString("VoipRecordVoiceChatInfo", R.string.VoipRecordVoiceChatInfo));
+        infoTextView.setText(LocaleController.getString(R.string.VoipRecordVoiceChatInfo));
         infoTextView.setTextColor(0xffffffff);
         infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         infoTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
@@ -204,10 +204,10 @@ public class GroupCallRecordAlert extends BottomSheet {
         positiveButton.setMinWidth(AndroidUtilities.dp(64));
         positiveButton.setTag(Dialog.BUTTON_POSITIVE);
         positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        positiveButton.setTextColor(Theme.getColor(Theme.key_voipgroup_nameText));
+        ThemeBind.textColor(positiveButton, Theme.key_voipgroup_nameText);
         positiveButton.setGravity(Gravity.CENTER);
-        positiveButton.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        positiveButton.setText(LocaleController.getString("VoipRecordStart", R.string.VoipRecordStart));
+        positiveButton.setTypeface(AndroidUtilities.bold());
+        positiveButton.setText(LocaleController.getString(R.string.VoipRecordStart));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             positiveButton.setForeground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_voipgroup_nameText), (int) (255 * 0.3f))));
         }
@@ -226,17 +226,17 @@ public class GroupCallRecordAlert extends BottomSheet {
             titles[a] = new TextView(context);
             titles[a].setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
             titles[a].setTextColor(0xffffffff);
-            titles[a].setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            titles[a].setTypeface(AndroidUtilities.bold());
             titles[a].setPadding(AndroidUtilities.dp(10), 0, AndroidUtilities.dp(10), 0);
             titles[a].setGravity(Gravity.CENTER_VERTICAL);
             titles[a].setSingleLine(true);
             titlesLayout.addView(titles[a], LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT));
             if (a == 0) {
-                titles[a].setText(LocaleController.getString("VoipRecordAudio", R.string.VoipRecordAudio));
+                titles[a].setText(LocaleController.getString(R.string.VoipRecordAudio));
             } else if (a == 1) {
-                titles[a].setText(LocaleController.getString("VoipRecordPortrait", R.string.VoipRecordPortrait));
+                titles[a].setText(LocaleController.getString(R.string.VoipRecordPortrait));
             } else {
-                titles[a].setText(LocaleController.getString("VoipRecordLandscape", R.string.VoipRecordLandscape));
+                titles[a].setText(LocaleController.getString(R.string.VoipRecordLandscape));
             }
             int num = a;
             titles[a].setOnClickListener(view -> viewPager.setCurrentItem(num, true));
@@ -310,11 +310,11 @@ public class GroupCallRecordAlert extends BottomSheet {
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setLayoutParams(new ViewGroup.LayoutParams(AndroidUtilities.dp(200), ViewGroup.LayoutParams.MATCH_PARENT));
             if (position == 0) {
-                imageView.setContentDescription(LocaleController.getString("VoipRecordAudio", R.string.VoipRecordAudio));
+                imageView.setContentDescription(LocaleController.getString(R.string.VoipRecordAudio));
             } else if (position == 1) {
-                imageView.setContentDescription(LocaleController.getString("VoipRecordPortrait", R.string.VoipRecordPortrait));
+                imageView.setContentDescription(LocaleController.getString(R.string.VoipRecordPortrait));
             } else {
-                imageView.setContentDescription(LocaleController.getString("VoipRecordLandscape", R.string.VoipRecordLandscape));
+                imageView.setContentDescription(LocaleController.getString(R.string.VoipRecordLandscape));
             }
             view = imageView;
             int res;
@@ -325,7 +325,7 @@ public class GroupCallRecordAlert extends BottomSheet {
             } else {
                 res =  R.raw.record_video_l;
             }
-            String svg = RLottieDrawable.readRes(null, res);
+            String svg = AndroidUtilities.readRes(res);
             SvgHelper.SvgDrawable drawable = SvgHelper.getDrawable(svg);
             drawable.setAspectFill(false);
             imageView.setImageDrawable(drawable);

@@ -35,7 +35,7 @@ public class OverlayActionBarLayoutDialog extends Dialog implements INavigationL
         super(context, R.style.TransparentDialog);
         this.resourcesProvider = resourcesProvider;
 
-        actionBarLayout = INavigationLayout.newLayout(context);
+        actionBarLayout = INavigationLayout.newLayout(context, false);
         actionBarLayout.setFragmentStack(new ArrayList<>());
         actionBarLayout.presentFragment(new INavigationLayout.NavigationParams(new EmptyFragment()).setNoAnimation(true));
         actionBarLayout.setDelegate(this);
@@ -125,7 +125,7 @@ public class OverlayActionBarLayoutDialog extends Dialog implements INavigationL
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int color = Theme.getColor(Theme.key_windowBackgroundWhite, null, true);
-            AndroidUtilities.setLightNavigationBar(window, ColorUtils.calculateLuminance(color) >= 0.9);
+            AndroidUtilities.setLightNavigationBar(this, ColorUtils.calculateLuminance(color) >= 0.9);
         }
     }
 

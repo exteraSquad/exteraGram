@@ -8,6 +8,10 @@
 
 package org.telegram.ui;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+import static org.telegram.messenger.LocaleController.getString;
+
+import org.telegram.messenger.FileLog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -21,8 +25,11 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
@@ -37,11 +44,12 @@ import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.ActionBar;
-import org.telegram.ui.ActionBar.ActionBarMenu;
+import org.telegram.ui.ActionBar.SimpleActionBarMenu;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Cells.ManageChatTextCell;
 import org.telegram.ui.Cells.ManageChatUserCell;
@@ -55,8 +63,8 @@ import org.telegram.ui.Components.LoadingStickerDrawable;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
-
-import com.exteragram.messenger.ExteraConfig;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class ChatLinkActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -88,6 +96,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
     private int removeChatRow;
     private int detailRow;
     private int joinToSendRow;
+    private int joinToSendInfoRow;
     private int rowCount;
 
     private boolean searchWas;
@@ -107,7 +116,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
         public EmptyView(Context context) {
             super(context);
 
-            setPadding(0, AndroidUtilities.dp(12), 0, AndroidUtilities.dp(12));
+            setPadding(0, dp(12), 0, dp(12));
             setOrientation(LinearLayout.VERTICAL);
 
             stickerView = new BackupImageView(context);
@@ -120,7 +129,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     "c-2.4-10.6-21.1-10.6-28.6-1c-1.3,0.3-2.9,0.8-4.5,1.9c-5.2-0.9-10.9,0.1-14.1,4.4c-6.9,3-9.5,10.4-7.8,17c-0.9,1.8-1.1,4-0.8,6.3" +
                     "c-1.6,1.2-2.3,3.1-2,4.9c0.1,0.6,10.4,56.6,11.2,62c0.3,1.8,1.5,3.2,3.1,3.9c8.7,3.4,12,3.8,30.1,9.4c2.7,0.8,2.4,0.8,6.7-0.1" +
                     "c16.4-3.5,30.2-8.9,30.8-9.2c1.6-0.6,2.7-2,3.1-3.7c0.1-0.4,6.8-36.5,10-53.2c0.9,4.2,3.3,7.3,7.4,7.5c1.2,7.8,4.4,14.5,9.5,19.9" +
-                    "c16.4,17.3,44.9,15.7,64.9,16.1c38.3,0.8,74.5,1.5,84.4-24.4C488.9,453.5,491.3,421.3,476.1,397.4z", AndroidUtilities.dp(104), AndroidUtilities.dp(104));
+                    "c16.4,17.3,44.9,15.7,64.9,16.1c38.3,0.8,74.5,1.5,84.4-24.4C488.9,453.5,491.3,421.3,476.1,397.4z", dp(104), dp(104));
             stickerView.setImageDrawable(drawable);
             addView(stickerView, LayoutHelper.createLinear(104, 104, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 2, 0, 0));
         }
@@ -144,7 +153,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
         protected void onAttachedToWindow() {
             super.onAttachedToWindow();
             setSticker();
-            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.diceStickersDidLoad);
+            NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.diceStickersDidLoad);
         }
 
         @Override
@@ -186,6 +195,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
         removeChatRow = -1;
         detailRow = -1;
         joinToSendRow = -1;
+        joinToSendInfoRow = -1;
 
         helpRow = rowCount++;
         if (isChannel) {
@@ -223,8 +233,9 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
     @Override
     public boolean onFragmentCreate() {
         super.onFragmentCreate();
-        getNotificationCenter().addObserver(this, NotificationCenter.chatInfoDidLoad);
-        getNotificationCenter().addObserver(this, NotificationCenter.updateInterfaces);
+        getNotificationCenter().addWeakObserver(this, NotificationCenter.chatInfoDidLoad);
+        getNotificationCenter().addWeakObserver(this, NotificationCenter.updateInterfaces);
+        getNotificationCenter().addWeakObserver(this, NotificationCenter.dialogDeleted);
         loadChats();
         return true;
     }
@@ -234,6 +245,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
         super.onFragmentDestroy();
         getNotificationCenter().removeObserver(this, NotificationCenter.chatInfoDidLoad);
         getNotificationCenter().removeObserver(this, NotificationCenter.updateInterfaces);
+        getNotificationCenter().removeObserver(this, NotificationCenter.dialogDeleted);
     }
 
     private boolean joinToSendProgress = false;
@@ -280,18 +292,32 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     }
                 }
             }
+        } else if (id == NotificationCenter.dialogDeleted) {
+            long dialogId = (long) args[0];
+            if (-this.currentChatId == dialogId) {
+                if (parentLayout != null && parentLayout.getLastFragment() == this) {
+                    finishFragment();
+                } else {
+                    removeSelfFromStack();
+                }
+            }
         }
     }
 
     @Override
+    protected boolean useSimpleActionBar() {
+        return true;
+    }
+
+    @Override
     public View createView(Context context) {
+        setHasOwnBackground(true);
         searching = false;
         searchWas = false;
 
-        actionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        actionBar.setAllowOverlayTitle(true);
-        actionBar.setTitle(LocaleController.getString("Discussion", R.string.Discussion));
-        actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+        simpleActionBar.setBackButtonImage(R.drawable.ic_ab_back);
+        simpleActionBar.setTitle(getString(R.string.Discussion));
+        simpleActionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
                 if (id == -1) {
@@ -300,8 +326,8 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
             }
         });
 
-        ActionBarMenu menu = actionBar.createMenu();
-        searchItem = menu.addItem(search_button, R.drawable.ic_ab_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
+        SimpleActionBarMenu menu = simpleActionBar.createMenu();
+        searchItem = menu.addItem(search_button, R.drawable.outline_header_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
             @Override
             public void onSearchExpand() {
                 searching = true;
@@ -318,8 +344,6 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                 listView.setFastScrollVisible(true);
                 listView.setVerticalScrollBarEnabled(false);
                 emptyView.setShowAtCenter(false);
-                fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
-                fragmentView.setTag(Theme.key_windowBackgroundGray);
                 emptyView.showProgress();
             }
 
@@ -333,8 +357,6 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     searchWas = true;
                     if (listView != null && listView.getAdapter() != searchAdapter) {
                         listView.setAdapter(searchAdapter);
-                        fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-                        fragmentView.setTag(Theme.key_windowBackgroundWhite);
                         searchAdapter.notifyDataSetChanged();
                         listView.setFastScrollVisible(false);
                         listView.setVerticalScrollBarEnabled(true);
@@ -344,25 +366,25 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                 searchAdapter.searchDialogs(text);
             }
         });
-        searchItem.setSearchFieldHint(LocaleController.getString("Search", R.string.Search));
+        searchItem.setSearchFieldHint(getString(R.string.Search));
         searchAdapter = new SearchAdapter(context);
 
         fragmentView = new FrameLayout(context);
-        fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
-        fragmentView.setTag(Theme.key_windowBackgroundGray);
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
         emptyView = new EmptyTextProgressView(context);
         emptyView.showProgress();
-        emptyView.setText(LocaleController.getString("NoResult", R.string.NoResult));
-        frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        emptyView.setText(getString(R.string.NoResult));
 
         listView = new RecyclerListView(context);
+        listView.setSections();
+        listView.setSectionsDrawBackground(true);
         listView.setEmptyView(emptyView);
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setAdapter(listViewAdapter = new ListAdapter(context));
         listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        frameLayout.addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
         listView.setOnItemClickListener((view, position) -> {
             if (getParentActivity() == null) {
@@ -392,6 +414,10 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     long[] array = new long[]{getUserConfig().getClientUserId()};
                     args.putLongArray("result", array);
                     args.putInt("chatType", ChatObject.CHAT_TYPE_MEGAGROUP);
+                    if (currentChat != null) {
+                        String title = LocaleController.formatString("GroupCreateDiscussionDefaultName", R.string.GroupCreateDiscussionDefaultName, currentChat.title);
+                        args.putString("title", title);
+                    }
                     GroupCreateFinalActivity activity = new GroupCreateFinalActivity(args);
                     activity.setDelegate(new GroupCreateFinalActivity.GroupCreateFinalActivityDelegate() {
                         @Override
@@ -420,15 +446,15 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     String title;
                     String message;
                     if (isChannel) {
-                        title = LocaleController.getString("DiscussionUnlinkGroup", R.string.DiscussionUnlinkGroup);
+                        title = getString(R.string.DiscussionUnlinkGroup);
                         message = LocaleController.formatString("DiscussionUnlinkChannelAlert", R.string.DiscussionUnlinkChannelAlert, c.title);
                     } else {
-                        title = LocaleController.getString("DiscussionUnlink", R.string.DiscussionUnlinkChannel);
+                        title = getString(R.string.DiscussionUnlinkChannel);
                         message = LocaleController.formatString("DiscussionUnlinkGroupAlert", R.string.DiscussionUnlinkGroupAlert, c.title);
                     }
                     builder.setTitle(title);
                     builder.setMessage(AndroidUtilities.replaceTags(message));
-                    builder.setPositiveButton(LocaleController.getString("DiscussionUnlink", R.string.DiscussionUnlink), (dialogInterface, i) -> {
+                    builder.setPositiveButton(getString(R.string.DiscussionUnlink), (dialogInterface, i) -> {
                         if (!isChannel || info.linked_chat_id != 0) {
                             final AlertDialog[] progressDialog = new AlertDialog[]{new AlertDialog(getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER)};
                             TLRPC.TL_channels_setDiscussionGroup req = new TLRPC.TL_channels_setDiscussionGroup();
@@ -462,12 +488,12 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                             }, 500);
                         }
                     });
-                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                    builder.setNegativeButton(getString(R.string.Cancel), null);
                     AlertDialog dialog = builder.create();
                     showDialog(dialog);
                     TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     if (button != null) {
-                        button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                        ThemeBind.textColor(button, Theme.key_text_RedBold);
                     }
                 }
             }
@@ -497,7 +523,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
 
         TextView messageTextView = new TextView(getParentActivity());
-        messageTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+        ThemeBind.textColor(messageTextView, Theme.key_dialogTextBlack);
         messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         messageTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
         String message;
@@ -511,7 +537,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
             }
         }
         if (chatFull.hidden_prehistory) {
-            message += "\n\n" + LocaleController.getString("DiscussionLinkGroupAlertHistory", R.string.DiscussionLinkGroupAlertHistory);
+            message += "\n\n" + getString(R.string.DiscussionLinkGroupAlertHistory);
         }
         messageTextView.setText(AndroidUtilities.replaceTags(message));
 
@@ -519,16 +545,16 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
         builder.setView(frameLayout2);
 
         AvatarDrawable avatarDrawable = new AvatarDrawable();
-        avatarDrawable.setTextSize(AndroidUtilities.dp(12));
+        avatarDrawable.setTextSize(dp(12));
 
         BackupImageView imageView = new BackupImageView(getParentActivity());
         imageView.setRoundRadius(ExteraConfig.getAvatarCorners(40));
         frameLayout2.addView(imageView, LayoutHelper.createFrame(40, 40, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 22, 5, 22, 0));
 
         TextView textView = new TextView(getParentActivity());
-        textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
+        ThemeBind.textColor(textView, Theme.key_actionBarDefaultSubmenuItem);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        textView.setTypeface(AndroidUtilities.bold());
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -538,15 +564,15 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
 
         frameLayout2.addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? 21 : 76), 11, (LocaleController.isRTL ? 76 : 21), 0));
         frameLayout2.addView(messageTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 24, 57, 24, 9));
-        avatarDrawable.setInfo(chat);
+        avatarDrawable.setInfo(currentAccount, chat);
         imageView.setForUserOrChat(chat, avatarDrawable);
-        builder.setPositiveButton(LocaleController.getString("DiscussionLinkGroup", R.string.DiscussionLinkGroup), (dialogInterface, i) -> {
+        builder.setPositiveButton(getString(R.string.DiscussionLinkGroup), (dialogInterface, i) -> {
             if (chatFull.hidden_prehistory) {
                 getMessagesController().toggleChannelInvitesHistory(chat.id, false);
             }
             linkChat(chat, null);
         });
-        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+        builder.setNegativeButton(getString(R.string.Cancel), null);
         showDialog(builder.create());
     }
 
@@ -620,11 +646,28 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                 TLRPC.messages_Chats res = (TLRPC.messages_Chats) response;
                 getMessagesController().putChats(res.chats, false);
                 chats = res.chats;
+                Iterator<TLRPC.Chat> i = chats.iterator();
+                while (i.hasNext()) {
+                    TLRPC.Chat chat = i.next();
+                    if (ChatObject.isForum(chat) || ChatObject.isMonoForum(chat))
+                        i.remove();
+                }
             }
             loadingChats = false;
             chatsLoaded = true;
             updateRows();
         }));
+    }
+
+    @Override
+    public boolean isSupportEdgeToEdge() {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    protected RecyclerListView getListViewForSimpleGlass() {
+        return listView;
     }
 
     @Override
@@ -648,7 +691,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
             addView(emptyView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 10, 0, 0));
 
             messageTextView = new TextView(context);
-            messageTextView.setTextColor(Theme.getColor(Theme.key_chats_message));
+            ThemeBind.textColor(messageTextView, Theme.key_chats_message);
             messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             messageTextView.setGravity(Gravity.CENTER);
             if (isChannel) {
@@ -658,7 +701,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                         messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("DiscussionChannelGroupSetHelp2", R.string.DiscussionChannelGroupSetHelp2, chat.title)));
                     }
                 } else {
-                    messageTextView.setText(LocaleController.getString("DiscussionChannelHelp3", R.string.DiscussionChannelHelp3));
+                    messageTextView.setText(getString(R.string.DiscussionChannelHelp3));
                 }
             } else {
                 TLRPC.Chat chat = getMessagesController().getChat(info.linked_chat_id);
@@ -806,7 +849,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = new ManageChatUserCell(mContext, 6, 2, false);
-            view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            ThemeBind.backgroundColor(view, Theme.key_windowBackgroundWhite);
             return new RecyclerListView.Holder(view);
         }
 
@@ -869,15 +912,12 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
             switch (viewType) {
                 case 0:
                     view = new ManageChatUserCell(mContext, 6, 2, false);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 1:
                     view = new TextInfoPrivacyCell(mContext);
-                    view.setBackgroundDrawable(Theme.getThemedDrawableByKey(mContext, R.drawable.greydivider_bottom, Theme.key_windowBackgroundGrayShadow));
                     break;
                 case 2:
                     view = new ManageChatTextCell(mContext);
-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case 4:
                     final TLRPC.Chat chat = isChannel ? chats.get(0) : currentChat;
@@ -959,6 +999,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                 case 3:
                 default:
                     view = new HintInnerCell(mContext);
+                    view.setTag(RecyclerListView.TAG_NOT_SECTION);
                     break;
             }
             return new RecyclerListView.Holder(view);
@@ -976,11 +1017,13 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     break;
                 case 1:
                     TextInfoPrivacyCell privacyCell = (TextInfoPrivacyCell) holder.itemView;
-                    if (position == detailRow) {
+                    if (position == joinToSendInfoRow) {
+                        privacyCell.setText(getString(R.string.ChannelSettingsJoinRequestInfo));
+                    } else if (position == detailRow) {
                         if (isChannel) {
-                            privacyCell.setText(LocaleController.getString("DiscussionChannelHelp2", R.string.DiscussionChannelHelp2));
+                            privacyCell.setText(getString(R.string.DiscussionChannelHelp2));
                         } else {
-                            privacyCell.setText(LocaleController.getString("DiscussionGroupHelp2", R.string.DiscussionGroupHelp2));
+                            privacyCell.setText(getString(R.string.DiscussionGroupHelp2));
                         }
                     }
                     break;
@@ -989,14 +1032,14 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     if (isChannel) {
                         if (info.linked_chat_id != 0) {
                             actionCell.setColors(Theme.key_text_RedRegular, Theme.key_text_RedRegular);
-                            actionCell.setText(LocaleController.getString("DiscussionUnlinkGroup", R.string.DiscussionUnlinkGroup), null, R.drawable.msg_remove, false);
+                            actionCell.setText(getString(R.string.DiscussionUnlinkGroup), null, R.drawable.msg_remove, false);
                         } else {
                             actionCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
-                            actionCell.setText(LocaleController.getString("DiscussionCreateGroup", R.string.DiscussionCreateGroup), null, R.drawable.msg_groups, true);
+                            actionCell.setText(getString(R.string.DiscussionCreateGroup), null, R.drawable.msg_groups, true);
                         }
                     } else {
                         actionCell.setColors(Theme.key_text_RedRegular, Theme.key_text_RedRegular);
-                        actionCell.setText(LocaleController.getString("DiscussionUnlinkChannel", R.string.DiscussionUnlinkChannel), null, R.drawable.msg_remove, false);
+                        actionCell.setText(getString(R.string.DiscussionUnlinkChannel), null, R.drawable.msg_remove, false);
                     }
                     break;
             }
@@ -1028,54 +1071,94 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
     public ArrayList<ThemeDescription> getThemeDescriptions() {
         ArrayList<ThemeDescription> themeDescriptions = new ArrayList<>();
 
-        ThemeDescription.ThemeDescriptionDelegate cellDelegate = () -> {
-            if (listView != null) {
-                int count = listView.getChildCount();
+        ThemeDescription.ThemeDescriptionDelegate cellDelegate = this::cellDelegateThemeColors;
+
+
+//        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
+
+
+
+
+        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ManageChatUserCell.class}, new String[]{"statusColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteGrayText));
+        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ManageChatUserCell.class}, new String[]{"statusOnlineColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteBlueText));
+
+
+
+        return themeDescriptions;
+    }
+
+    @Override
+    public void onThemeColorsChanged() {
+        try {
+            super.onThemeColorsChanged();
+            updateUserCellStatusColors();
+            cellDelegateThemeColors();
+
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    private void cellDelegateThemeColors() {
+    }
+
+    private boolean statusColorsApplied;
+    private int lastStatusColor, lastStatusOnlineColor;
+
+    private void updateUserCellStatusColors() {
+        try {
+            if (listView == null) {
+                return;
+            }
+            final int statusColor = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText);
+            final int statusOnlineColor = Theme.getColor(Theme.key_windowBackgroundWhiteBlueText);
+            if (statusColorsApplied && statusColor == lastStatusColor && statusOnlineColor == lastStatusOnlineColor) {
+                return;
+            }
+            statusColorsApplied = true;
+            lastStatusColor = statusColor;
+            lastStatusOnlineColor = statusOnlineColor;
+            for (int list = 0; list < 4; list++) {
+                final int count = list == 0 ? listView.getChildCount() : list == 1 ? listView.getHiddenChildCount() : list == 2 ? listView.getCachedChildCount() : listView.getAttachedScrapChildCount();
                 for (int a = 0; a < count; a++) {
-                    View child = listView.getChildAt(a);
+                    final View child = list == 0 ? listView.getChildAt(a) : list == 1 ? listView.getHiddenChildAt(a) : list == 2 ? listView.getCachedChildAt(a) : listView.getAttachedScrapChildAt(a);
                     if (child instanceof ManageChatUserCell) {
-                        ((ManageChatUserCell) child).update(0);
+                        ((ManageChatUserCell) child).setStatusColors(statusColor, statusOnlineColor);
+                        if (list != 0) {
+                            ((ManageChatUserCell) child).update(0);
+                        }
                     }
                 }
             }
-        };
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
 
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CELLBACKGROUNDCOLOR, new Class[]{ManageChatUserCell.class, ManageChatTextCell.class}, null, null, null, Theme.key_windowBackgroundWhite));
-        themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND | ThemeDescription.FLAG_CHECKTAG, null, null, null, null, Theme.key_windowBackgroundGray));
-        themeDescriptions.add(new ThemeDescription(fragmentView, ThemeDescription.FLAG_BACKGROUND | ThemeDescription.FLAG_CHECKTAG, null, null, null, null, Theme.key_windowBackgroundWhite));
-
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_actionBarDefault));
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_actionBarDefault));
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_ITEMSCOLOR, null, null, null, null, Theme.key_actionBarDefaultIcon));
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_TITLECOLOR, null, null, null, null, Theme.key_actionBarDefaultTitle));
-        themeDescriptions.add(new ThemeDescription(actionBar, ThemeDescription.FLAG_AB_SELECTORCOLOR, null, null, null, null, Theme.key_actionBarDefaultSelector));
-
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_SELECTOR, null, null, null, null, Theme.key_listSelector));
-
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{View.class}, Theme.dividerPaint, null, null, Theme.key_divider));
-
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_BACKGROUNDFILTER, new Class[]{TextInfoPrivacyCell.class}, null, null, null, Theme.key_windowBackgroundGrayShadow));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{TextInfoPrivacyCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText4));
-
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ManageChatUserCell.class}, new String[]{"nameTextView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ManageChatUserCell.class}, new String[]{"statusColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteGrayText));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ManageChatUserCell.class}, new String[]{"statusOnlineColor"}, null, null, cellDelegate, Theme.key_windowBackgroundWhiteBlueText));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{ManageChatUserCell.class}, null, Theme.avatarDrawables, null, Theme.key_avatar_text));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundRed));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundOrange));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundViolet));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundGreen));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundCyan));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundBlue));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundPink));
-
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{HintInnerCell.class}, new String[]{"messageTextView"}, null, null, null, Theme.key_chats_message));
-
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CHECKTAG, new Class[]{ManageChatTextCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CHECKTAG, new Class[]{ManageChatTextCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayIcon));
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CHECKTAG, new Class[]{ManageChatTextCell.class}, new String[]{"imageView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueButton));
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_CHECKTAG, new Class[]{ManageChatTextCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueIcon));
-
-        return themeDescriptions;
+    /** theme editor: colors this page shows (former ThemeDescription keys) */
+    @Override
+    public void addThemeColorKeys(HashSet<Integer> keys) {
+        super.addThemeColorKeys(keys);
+        keys.add(Theme.key_windowBackgroundWhiteBlueIcon);
+        keys.add(Theme.key_windowBackgroundWhiteBlueButton);
+        keys.add(Theme.key_windowBackgroundWhiteGrayIcon);
+        keys.add(Theme.key_windowBackgroundWhiteBlackText);
+        keys.add(Theme.key_chats_message);
+        keys.add(Theme.key_avatar_backgroundPink);
+        keys.add(Theme.key_avatar_backgroundBlue);
+        keys.add(Theme.key_avatar_backgroundCyan);
+        keys.add(Theme.key_avatar_backgroundGreen);
+        keys.add(Theme.key_avatar_backgroundViolet);
+        keys.add(Theme.key_avatar_backgroundOrange);
+        keys.add(Theme.key_avatar_backgroundRed);
+        keys.add(Theme.key_avatar_text);
+        keys.add(Theme.key_windowBackgroundWhiteGrayText4);
+        keys.add(Theme.key_windowBackgroundGrayShadow);
+        keys.add(Theme.key_divider);
+        keys.add(Theme.key_listSelector);
+        keys.add(Theme.key_actionBarDefaultSelector);
+        keys.add(Theme.key_actionBarDefaultTitle);
+        keys.add(Theme.key_actionBarDefaultIcon);
+        keys.add(Theme.key_actionBarDefault);
     }
 }

@@ -1,0 +1,5 @@
+def upstreamScript = file('build.gradle').getText('UTF-8')
+        .replace("apply plugin: 'kotlin-android'", '')
+        .replaceAll(/(?s)\s*kotlinOptions\s*\{\s*jvmTarget = '1\.8'\s*\}/, '')
+
+apply from: resources.text.fromString(upstreamScript)

@@ -8,15 +8,19 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.dynamicanimation.animation.FloatValueHolder;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
+
+import com.exteragram.messenger.utils.AppUtils;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.AnimationNotificationsLocker;
@@ -60,7 +64,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
         if (fragment.onFragmentCreate()) {
             fragment.setInPreviewMode(true);
             fragment.setParentLayout(navigationLayout);
-            View view = fragment.createView(getContext());
+            View view = fragment.performCreateView(getContext());
 
             fragment.onResume();
             addView(currentFragmentView = view);
@@ -91,7 +95,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
                     fragment.onTransitionAnimationEnd(true, false);
                     openedProgress = 1f;
                     updateOpenAnimationProgress();
-                    openAnimationFinished();
+                    openAnimationFinished(false);
                     return;
                 }
                 notificationsLocker.lock();
@@ -115,7 +119,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
                         fragment.onTransitionAnimationEnd(true, false);
                         openedProgress = 1f;
                         updateOpenAnimationProgress();
-                        openAnimationFinished();
+                        openAnimationFinished(false);
                     }
                 });
                 openAnimator.setDuration(250);
@@ -125,6 +129,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
             }
 
             fragment.setPreviewDelegate(() -> finishPreview());
+            ViewCompat.requestApplyInsets(this);
         }
     }
 
@@ -270,15 +275,9 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
         if (!SharedConfig.animationsEnabled()) {
             openedProgress = 0;
             updateOpenAnimationProgress();
-            if (currentFragment != null) {
-                currentFragment.onPause();
-                currentFragment.onFragmentDestroy();
-                removeAllViews();
-                currentFragment = null;
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
-            }
+            destroyCurrentFragment();
 
-            openAnimationFinished();
+            openAnimationFinished(false);
 
             return;
         }
@@ -298,21 +297,34 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
                 openedProgress = 0;
                 updateOpenAnimationProgress();
                 notificationsLocker.unlock();
-                if (currentFragment != null) {
-                    currentFragment.onPause();
-                    currentFragment.onFragmentDestroy();
-                    removeAllViews();
-                    currentFragment = null;
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
-                }
+                destroyCurrentFragment();
 
-                openAnimationFinished();
+                openAnimationFinished(false);
 
             }
         });
         openAnimator.setDuration(250);
         openAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
         openAnimator.start();
+    }
+
+    private void destroyCurrentFragment() {
+        if (currentFragment == null) {
+            return;
+        }
+        currentFragment.onPause();
+        currentFragment.onFragmentDestroy();
+        currentFragment.setPreviewDelegate(null);
+        if (currentActionBarView != null) {
+            currentActionBarView.listenToBackgroundUpdate(null);
+        }
+        removeAllViews();
+        currentFragment = null;
+        currentFragmentView = null;
+        currentFragmentFullscreenView = null;
+        currentActionBarView = null;
+        fragmentDialogId = 0;
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors);
     }
 
     public interface BaseFragmentWithFullscreen {
@@ -354,7 +366,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
                 int dx = Math.max(0, (int) (ev.getX() - startedTrackingX));
                 int dy = Math.abs((int) ev.getY() - startedTrackingY);
                 velocityTracker.addMovement(ev);
-                if (maybeStartTracking && !startedTracking && dx >= AndroidUtilities.getPixelsInCM(0.4f, true) && Math.abs(dx) / 3 > dy) {
+                if (maybeStartTracking && !startedTracking && dx >= AndroidUtilities.getPixelsInCM(.15f, true) && Math.abs(dx) / 3 > dy) {
 //                    BaseFragment currentFragment = fragmentsStack.get(fragmentsStack.size() - 1);
                     if (findScrollingChild(this, ev.getX(), ev.getY()) == null) {
                         prepareForMoving(ev);
@@ -386,7 +398,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
                     float x = swipeBackX;
                     float velX = velocityTracker.getXVelocity();
                     float velY = velocityTracker.getYVelocity();
-                    final boolean backAnimation = x < getMeasuredWidth() / 3.0f && (velX < 3500 || velX < velY);
+                    final boolean backAnimation = x < getMeasuredWidth() / 3.0f && (velX < AppUtils.getSwipeVelocity() || velX < velY);
 
                     if (!backAnimation) {
                         finishPreviewInernal();
@@ -403,7 +415,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
                                     return;
                                 }
                                 openAnimator = null;
-                                openAnimationFinished();
+                                openAnimationFinished(true);
                             }
                         });
                         openAnimator.setDuration(250);
@@ -449,7 +461,7 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
         }
     }
 
-    public void openAnimationFinished() {
+    public void openAnimationFinished(boolean backward) {
 
     }
 
@@ -483,6 +495,28 @@ public abstract class RightSlidingDialogContainer extends FrameLayout {
         if (currentFragment != null) {
             currentFragment.onResume();
         }
+    }
+
+    public void onDestroy() {
+        if (openAnimator != null) {
+            ValueAnimator animator = openAnimator;
+            openAnimator = null;
+            animator.cancel();
+        }
+        if (replaceAnimation != null) {
+            SpringAnimation animation = replaceAnimation;
+            replaceAnimation = null;
+            animation.cancel();
+        }
+        if (replacingFragment != null) {
+            replacingFragment.onPause();
+            replacingFragment.onFragmentDestroy();
+            replacingFragment = null;
+        }
+        replaceAnimationInProgress = false;
+        isOpenned = false;
+        destroyCurrentFragment();
+        notificationsLocker.unlock();
     }
 
     public BaseFragment getFragment() {

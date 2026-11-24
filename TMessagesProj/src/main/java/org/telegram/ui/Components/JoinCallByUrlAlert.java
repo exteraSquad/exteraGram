@@ -17,17 +17,17 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
-import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
-
-import com.exteragram.messenger.ExteraConfig;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 public class JoinCallByUrlAlert extends BottomSheet {
 
@@ -52,9 +52,9 @@ public class JoinCallByUrlAlert extends BottomSheet {
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setGravity(Gravity.CENTER);
-            textView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+            ThemeBind.textColor(textView, Theme.key_featuredStickers_buttonText);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textView.setTypeface(AndroidUtilities.bold());
             addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
         }
 
@@ -85,15 +85,15 @@ public class JoinCallByUrlAlert extends BottomSheet {
         avatarImageView.setForUserOrChat(chat, avatarDrawable);
 
         TextView percentTextView = new TextView(context);
-        percentTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        percentTextView.setTypeface(AndroidUtilities.bold());
         percentTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        percentTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+        ThemeBind.textColor(percentTextView, Theme.key_dialogTextBlack);
         percentTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         linearLayout.addView(percentTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 17, 24, 17, 0));
 
         TextView infoTextView = new TextView(context);
         infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        infoTextView.setTextColor(Theme.getColor(Theme.key_dialogTextGray3));
+        ThemeBind.textColor(infoTextView, Theme.key_dialogTextGray3);
         infoTextView.setGravity(Gravity.CENTER_HORIZONTAL);
 
         linearLayout.addView(infoTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 30, 8, 30, 0));
@@ -105,21 +105,21 @@ public class JoinCallByUrlAlert extends BottomSheet {
                 percentTextView.setText(call.call.title);
             }
             if (call.call.participants_count == 0) {
-                infoTextView.setText(LocaleController.getString("NoOneJoinedYet", R.string.NoOneJoinedYet));
+                infoTextView.setText(LocaleController.getString(R.string.NoOneJoinedYet));
             } else {
                 infoTextView.setText(LocaleController.formatPluralString("Participants", call.call.participants_count));
             }
         } else {
             percentTextView.setText(chat.title);
-            infoTextView.setText(LocaleController.getString("NoOneJoinedYet", R.string.NoOneJoinedYet));
+            infoTextView.setText(LocaleController.getString(R.string.NoOneJoinedYet));
         }
 
         BottomSheetCell clearButton = new BottomSheetCell(context);
         clearButton.setBackground(null);
         if (ChatObject.isChannelOrGiga(chat)) {
-            clearButton.setText(LocaleController.getString("VoipChannelJoinVoiceChatUrl", R.string.VoipChannelJoinVoiceChatUrl));
+            clearButton.setText(LocaleController.getString(R.string.VoipChannelJoinVoiceChatUrl));
         } else {
-            clearButton.setText(LocaleController.getString("VoipGroupJoinVoiceChatUrl", R.string.VoipGroupJoinVoiceChatUrl));
+            clearButton.setText(LocaleController.getString(R.string.VoipGroupJoinVoiceChatUrl));
         }
         clearButton.background.setOnClickListener(v -> {
             joinAfterDismiss = true;

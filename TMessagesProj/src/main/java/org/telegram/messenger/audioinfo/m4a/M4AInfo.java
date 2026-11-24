@@ -16,7 +16,8 @@
 package org.telegram.messenger.audioinfo.m4a;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
+import com.exteragram.messenger.player.CoverDecoder;
 
 import org.telegram.messenger.audioinfo.AudioInfo;
 import org.telegram.messenger.audioinfo.mp3.ID3v1Genre;
@@ -212,19 +213,7 @@ public class M4AInfo extends AudioInfo {
 			case "covr":
                 try {
                     byte[] bytes = atom.readBytes();
-                    BitmapFactory.Options opts = new BitmapFactory.Options();
-                    opts.inJustDecodeBounds = true;
-                    opts.inSampleSize = 1;
-                    BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-                    if (opts.outWidth > 800 || opts.outHeight > 800) {
-                        int size = Math.max(opts.outWidth, opts.outHeight);
-                        while (size > 800) {
-                            opts.inSampleSize *= 2;
-                            size /= 2;
-                        }
-                    }
-                    opts.inJustDecodeBounds = false;
-                    cover = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
+                    cover = CoverDecoder.decode(bytes);
                     if (cover != null) {
                         float scale = Math.max(cover.getWidth(), cover.getHeight()) / 120.0f;
                         if (scale > 0) {

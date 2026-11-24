@@ -1,0 +1,98 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.exteragram.hook.thirdparty",
+    "module": "lsplant",
+    "version": "6.4-extera.8",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "lsplant-6.4-extera.8.aar",
+          "url": "lsplant-6.4-extera.8.aar",
+          "size": 11595950,
+          "sha512": "dc32c1fd13f362aa52d59a1d4550e7bb7b6e6d57b028564c47b7bcdd03bae8dd1e8f11dcf335cea766a78bb8e9598f7560e8d4c43c9892555beaaaa5f1d0f008",
+          "sha256": "b0504d776171abf9c414d27a36cddbd6af8e7e8db5c2bec45569d55238910f7b",
+          "sha1": "2b19e6091794eefc072c51db6b38fd122f89d719",
+          "md5": "a5a678e5307d9d401f00b92a456b155a"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "lsplant-6.4-extera.8.aar",
+          "url": "lsplant-6.4-extera.8.aar",
+          "size": 11595950,
+          "sha512": "dc32c1fd13f362aa52d59a1d4550e7bb7b6e6d57b028564c47b7bcdd03bae8dd1e8f11dcf335cea766a78bb8e9598f7560e8d4c43c9892555beaaaa5f1d0f008",
+          "sha256": "b0504d776171abf9c414d27a36cddbd6af8e7e8db5c2bec45569d55238910f7b",
+          "sha1": "2b19e6091794eefc072c51db6b38fd122f89d719",
+          "md5": "a5a678e5307d9d401f00b92a456b155a"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "lsplant-6.4-extera.8-sources.jar",
+          "url": "lsplant-6.4-extera.8-sources.jar",
+          "size": 261,
+          "sha512": "1487e5a20c9e4d74f298e07c42e96a61be11b7a768c3fbc199ee138cd68e1fc2267d1cfe3f11f288acc05df755315344d052cc5f6f751f126ab4fe1caa5125ea",
+          "sha256": "c6deada2fac53b8ea6523dbda77597b128006674616f140f04df23264c6d1aa3",
+          "sha1": "2ad14aed781c4a73ed4dbb421966d408a0a06686",
+          "md5": "f43436d6bec321290f6af228ad602604"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseJavaDocPublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "lsplant-6.4-extera.8-javadoc.jar",
+          "url": "lsplant-6.4-extera.8-javadoc.jar",
+          "size": 261,
+          "sha512": "1487e5a20c9e4d74f298e07c42e96a61be11b7a768c3fbc199ee138cd68e1fc2267d1cfe3f11f288acc05df755315344d052cc5f6f751f126ab4fe1caa5125ea",
+          "sha256": "c6deada2fac53b8ea6523dbda77597b128006674616f140f04df23264c6d1aa3",
+          "sha1": "2ad14aed781c4a73ed4dbb421966d408a0a06686",
+          "md5": "f43436d6bec321290f6af228ad602604"
+        }
+      ]
+    }
+  ]
+}

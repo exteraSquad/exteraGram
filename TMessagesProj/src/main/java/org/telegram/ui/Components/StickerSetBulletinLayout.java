@@ -66,7 +66,7 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
             if (documents != null && !documents.isEmpty()) {
                 sticker = documents.get(0);
             } else {
-                sticker = null;
+                // sticker = null;
             }
         } else if (setObject instanceof TLRPC.StickerSetCovered) {
             final TLRPC.StickerSetCovered obj = (TLRPC.StickerSetCovered) setObject;
@@ -75,8 +75,15 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
                 sticker = obj.cover;
             } else if (!obj.covers.isEmpty()) {
                 sticker = obj.covers.get(0);
+            } else if (obj instanceof TLRPC.TL_stickerSetFullCovered) {
+                TLRPC.TL_stickerSetFullCovered covered = (TLRPC.TL_stickerSetFullCovered) obj;
+                if (covered.documents != null && !covered.documents.isEmpty()) {
+                    sticker = covered.documents.get(0);
+                } else {
+                    // sticker = null;
+                }
             } else {
-                sticker = null;
+                // sticker = null;
             }
         } else {
             if (sticker == null && setObject != null && BuildVars.DEBUG_VERSION) {
@@ -114,7 +121,7 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
                 imageLocation = ImageLocation.getForSticker(thumb, sticker, thumbVersion);
             }
 
-            if (object instanceof TLRPC.Document && MessageObject.isAnimatedStickerDocument(sticker, true) || MessageObject.isVideoSticker(sticker) || MessageObject.isGifDocument(sticker)) {
+            if (object instanceof TLRPC.Document && (MessageObject.isAnimatedStickerDocument(sticker, true) || MessageObject.isVideoSticker(sticker) || MessageObject.isGifDocument(sticker))) {
                 imageView.setImage(ImageLocation.getForDocument(sticker), "50_50", imageLocation, null, 0, setObject);
             } else if (imageLocation != null && imageLocation.imageType == FileLoader.IMAGE_TYPE_LOTTIE) {
                 imageView.setImage(imageLocation, "50_50", "tgs", null, setObject);
@@ -133,17 +140,17 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
             case TYPE_ADDED:
                 if (stickerSet != null) {
                     if (stickerSet.masks) {
-                        titleTextView.setText(LocaleController.getString("AddMasksInstalled", R.string.AddMasksInstalled));
+                        titleTextView.setText(LocaleController.getString(R.string.AddMasksInstalled));
                         subtitleTextView.setText(LocaleController.formatString("AddMasksInstalledInfo", R.string.AddMasksInstalledInfo, stickerSet.title));
                     } else if (stickerSet.emojis) {
-                        titleTextView.setText(LocaleController.getString("AddEmojiInstalled", R.string.AddEmojiInstalled));
+                        titleTextView.setText(LocaleController.getString(R.string.AddEmojiInstalled));
                         if (count > 1) {
                             subtitleTextView.setText(LocaleController.formatPluralString("AddEmojiMultipleInstalledInfo", count));
                         } else {
                             subtitleTextView.setText(LocaleController.formatString("AddEmojiInstalledInfo", R.string.AddEmojiInstalledInfo, stickerSet.title));
                         }
                     } else {
-                        titleTextView.setText(LocaleController.getString("AddStickersInstalled", R.string.AddStickersInstalled));
+                        titleTextView.setText(LocaleController.getString(R.string.AddStickersInstalled));
                         subtitleTextView.setText(LocaleController.formatString("AddStickersInstalledInfo", R.string.AddStickersInstalledInfo, stickerSet.title));
                     }
                 }
@@ -151,17 +158,17 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
             case TYPE_REMOVED:
                 if (stickerSet != null) {
                     if (stickerSet.masks) {
-                        titleTextView.setText(LocaleController.getString("MasksRemoved", R.string.MasksRemoved));
+                        titleTextView.setText(LocaleController.getString(R.string.MasksRemoved));
                         subtitleTextView.setText(LocaleController.formatString("MasksRemovedInfo", R.string.MasksRemovedInfo, stickerSet.title));
                     } else if (stickerSet.emojis) {
-                        titleTextView.setText(LocaleController.getString("EmojiRemoved", R.string.EmojiRemoved));
+                        titleTextView.setText(LocaleController.getString(R.string.EmojiRemoved));
                         if (count > 1) {
                             subtitleTextView.setText(LocaleController.formatPluralString("EmojiRemovedMultipleInfo", count));
                         } else {
                             subtitleTextView.setText(LocaleController.formatString("EmojiRemovedInfo", R.string.EmojiRemovedInfo, stickerSet.title));
                         }
                     } else {
-                        titleTextView.setText(LocaleController.getString("StickersRemoved", R.string.StickersRemoved));
+                        titleTextView.setText(LocaleController.getString(R.string.StickersRemoved));
                         subtitleTextView.setText(LocaleController.formatString("StickersRemovedInfo", R.string.StickersRemovedInfo, stickerSet.title));
                     }
                 }
@@ -169,29 +176,29 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
             case TYPE_ARCHIVED:
                 if (stickerSet != null) {
                     if (stickerSet.masks) {
-                        titleTextView.setText(LocaleController.getString("MasksArchived", R.string.MasksArchived));
+                        titleTextView.setText(LocaleController.getString(R.string.MasksArchived));
                         subtitleTextView.setText(LocaleController.formatString("MasksArchivedInfo", R.string.MasksArchivedInfo, stickerSet.title));
                     } else if (stickerSet.emojis) {
-                        titleTextView.setText(LocaleController.getString("EmojiArchived", R.string.EmojiArchived));
+                        titleTextView.setText(LocaleController.getString(R.string.EmojiArchived));
                         subtitleTextView.setText(LocaleController.formatString("EmojiArchivedInfo", R.string.EmojiArchivedInfo, stickerSet.title));
                     } else {
-                        titleTextView.setText(LocaleController.getString("StickersArchived", R.string.StickersArchived));
+                        titleTextView.setText(LocaleController.getString(R.string.StickersArchived));
                         subtitleTextView.setText(LocaleController.formatString("StickersArchivedInfo", R.string.StickersArchivedInfo, stickerSet.title));
                     }
                 }
                 break;
             case TYPE_REMOVED_FROM_FAVORITES:
-                titleTextView.setText(LocaleController.getString("RemovedFromFavorites", R.string.RemovedFromFavorites));
+                titleTextView.setText(LocaleController.getString(R.string.RemovedFromFavorites));
                 subtitleTextView.setVisibility(ViewPagerFixed.GONE);
                 break;
             case TYPE_ADDED_TO_FAVORITES:
-                titleTextView.setText(LocaleController.getString("AddedToFavorites", R.string.AddedToFavorites));
+                titleTextView.setText(LocaleController.getString(R.string.AddedToFavorites));
                 subtitleTextView.setVisibility(ViewPagerFixed.GONE);
                 break;
             case TYPE_REPLACED_TO_FAVORITES:
-                if (!UserConfig.getInstance(UserConfig.selectedAccount).isPremium() && !MessagesController.getInstance(UserConfig.selectedAccount).premiumLocked) {
+                if (!UserConfig.getInstance(UserConfig.selectedAccount).isPremium() && !MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked()) {
                     titleTextView.setText(LocaleController.formatString("LimitReachedFavoriteStickers", R.string.LimitReachedFavoriteStickers, MessagesController.getInstance(UserConfig.selectedAccount).stickersFavedLimitDefault));
-                    CharSequence str = AndroidUtilities.replaceSingleTag(LocaleController.formatString("LimitReachedFavoriteStickersSubtitle", R.string.LimitReachedFavoriteStickersSubtitle, MessagesController.getInstance(UserConfig.selectedAccount).stickersFavedLimitPremium), () -> {
+                    CharSequence str = AndroidUtilities.premiumText(LocaleController.formatString("LimitReachedFavoriteStickersSubtitle", R.string.LimitReachedFavoriteStickersSubtitle, MessagesController.getInstance(UserConfig.selectedAccount).stickersFavedLimitPremium), () -> {
                         Activity activity = AndroidUtilities.findActivity(context);
                         if (activity instanceof LaunchActivity) {
                             ((LaunchActivity) activity).presentFragment(new PremiumPreviewFragment(LimitReachedBottomSheet.limitTypeToServerString(LimitReachedBottomSheet.TYPE_STICKERS)));
@@ -204,9 +211,10 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
                 }
                 break;
             case TYPE_REPLACED_TO_FAVORITES_GIFS:
-                if (!UserConfig.getInstance(UserConfig.selectedAccount).isPremium() && !MessagesController.getInstance(UserConfig.selectedAccount).premiumLocked) {
-                    titleTextView.setText(LocaleController.formatString("LimitReachedFavoriteGifs", R.string.LimitReachedFavoriteGifs, MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitDefault));
-                    CharSequence str = AndroidUtilities.replaceSingleTag(LocaleController.formatString("LimitReachedFavoriteGifsSubtitle", R.string.LimitReachedFavoriteGifsSubtitle, MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitPremium), () -> {
+                final boolean isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium();
+                if (!MessagesController.getInstance(UserConfig.selectedAccount).premiumFeaturesBlocked() && !isPremium) {
+                    titleTextView.setText(LocaleController.formatString(R.string.LimitReachedFavoriteGifs, MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitDefault));
+                    CharSequence str = AndroidUtilities.premiumText(LocaleController.formatString(R.string.LimitReachedFavoriteGifsSubtitle, MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitPremium), () -> {
                         Activity activity = AndroidUtilities.findActivity(context);
                         if (activity instanceof LaunchActivity) {
                             ((LaunchActivity) activity).presentFragment(new PremiumPreviewFragment(LimitReachedBottomSheet.limitTypeToServerString(LimitReachedBottomSheet.TYPE_GIFS)));
@@ -214,12 +222,12 @@ public class StickerSetBulletinLayout extends Bulletin.TwoLineLayout {
                     });
                     subtitleTextView.setText(str);
                 } else {
-                    titleTextView.setText(LocaleController.formatString("LimitReachedFavoriteGifs", R.string.LimitReachedFavoriteGifs, MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitPremium));
-                    subtitleTextView.setText(LocaleController.formatString("LimitReachedFavoriteGifsSubtitlePremium", R.string.LimitReachedFavoriteGifsSubtitlePremium));
+                    titleTextView.setText(LocaleController.formatString(R.string.LimitReachedFavoriteGifs, isPremium ? MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitPremium : MessagesController.getInstance(UserConfig.selectedAccount).savedGifsLimitDefault));
+                    subtitleTextView.setText(LocaleController.getString(R.string.LimitReachedFavoriteGifsSubtitlePremium));
                 }
                 break;
             case TYPE_REMOVED_FROM_RECENT:
-                titleTextView.setText(LocaleController.getString("RemovedFromRecent", R.string.RemovedFromRecent));
+                titleTextView.setText(LocaleController.getString(R.string.RemovedFromRecent));
                 subtitleTextView.setVisibility(ViewPagerFixed.GONE);
                 break;
         }

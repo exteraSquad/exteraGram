@@ -2,9 +2,6 @@ package org.telegram.ui.Components;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -33,9 +30,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+import androidx.media3.exoplayer.ExoPlayer;
 
-import com.google.android.exoplayer2.ExoPlayer;
+import com.exteragram.messenger.ExteraConfig;
 
 import org.json.JSONObject;
 import org.telegram.messenger.AndroidUtilities;
@@ -49,8 +46,12 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.browser.Browser;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.PhotoViewer;
+import org.telegram.utils.pip.PipCoordinator;
+import org.telegram.utils.pip.PipSession;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -104,6 +105,8 @@ public class PhotoViewerWebView extends FrameLayout {
 
     private boolean isTouchDisabled;
 
+    private ActionBarMenuItem menuItem;
+
     private Runnable progressRunnable = () -> {
         if (isYouTube) {
             runJsCode("pollPosition();");
@@ -123,9 +126,7 @@ public class PhotoViewerWebView extends FrameLayout {
                     setPlaybackSpeed = false;
                     setPlaybackSpeed(playbackSpeed);
                 }
-                pipItem.setEnabled(true);
-                pipItem.setAlpha(1.0f);
-
+                setPipVisibility(true);
                 if (photoViewer != null) {
                     photoViewer.checkFullscreenButton();
                 }
@@ -262,10 +263,22 @@ public class PhotoViewerWebView extends FrameLayout {
             @Override
             public void draw(Canvas canvas) {
                 super.draw(canvas);
-                if (PipVideoOverlay.getInnerView() == this && progressBarBlackBackground.getVisibility() == VISIBLE) {
+                if (getParent() != PhotoViewerWebView.this && progressBarBlackBackground.getVisibility() == VISIBLE) {
                     canvas.drawColor(Color.BLACK);
                     drawBlackBackground(canvas, getWidth(), getHeight());
                 }
+            }
+
+            @Override
+            protected void onAttachedToWindow() {
+                AndroidUtilities.checkAndroidTheme(context, true);
+                super.onAttachedToWindow();
+            }
+
+            @Override
+            protected void onDetachedFromWindow() {
+                AndroidUtilities.checkAndroidTheme(context, false);
+                super.onDetachedFromWindow();
             }
         };
         webView.getSettings().setJavaScriptEnabled(true);
@@ -291,8 +304,7 @@ public class PhotoViewerWebView extends FrameLayout {
                 if (!isYouTube) {
                     progressBar.setVisibility(View.INVISIBLE);
                     progressBarBlackBackground.setVisibility(View.INVISIBLE);
-                    pipItem.setEnabled(true);
-                    pipItem.setAlpha(1.0f);
+                    setPipVisibility(true);
                 }
             }
 
@@ -380,13 +392,13 @@ public class PhotoViewerWebView extends FrameLayout {
 
         errorMessage = new TextView(context);
         errorMessage.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        errorMessage.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+        ThemeBind.textColor(errorMessage, Theme.key_windowBackgroundWhiteGrayText);
         errorMessage.setGravity(Gravity.CENTER);
         errorLayout.addView(errorMessage, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL));
 
         errorButton = new TextView(context);
         errorButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        errorButton.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText));
+        ThemeBind.textColor(errorButton, Theme.key_windowBackgroundWhiteBlueText);
         errorButton.setPadding(AndroidUtilities.dp(12), AndroidUtilities.dp(8), AndroidUtilities.dp(12), AndroidUtilities.dp(8));
         errorButton.setBackground(Theme.AdaptiveRipple.rectByKey(Theme.key_windowBackgroundWhiteBlueText, 12));
         errorButton.setVisibility(GONE);
@@ -613,24 +625,26 @@ public class PhotoViewerWebView extends FrameLayout {
     }
 
     public boolean openInPip() {
-        boolean inAppOnly = isInAppOnly();
-        if (!inAppOnly && !checkInlinePermissions()) {
-            return false;
-        }
         if (progressBar.getVisibility() == View.VISIBLE) {
             return false;
         }
-        if (PipVideoOverlay.isVisible()) {
-            PipVideoOverlay.dismiss();
+        final PipSession floating = PipCoordinator.getInstance().findFloating();
+        if (floating != null) {
+            floating.dismiss();
             AndroidUtilities.runOnUIThread(this::openInPip, 300);
             return true;
         }
 
         progressBarBlackBackground.setVisibility(VISIBLE);
-        if (PipVideoOverlay.show(inAppOnly, (Activity) getContext(), this, webView, currentWebpage.embed_width, currentWebpage.embed_height, false)) {
-            PipVideoOverlay.setPhotoViewer(PhotoViewer.getInstance());
-        }
-        return true;
+        return photoViewer.startEmbedPip();
+    }
+
+    public int getEmbedWidth() {
+        return currentWebpage != null ? currentWebpage.embed_width : 0;
+    }
+
+    public int getEmbedHeight() {
+        return currentWebpage != null ? currentWebpage.embed_height : 0;
     }
 
     public boolean isYouTube() {
@@ -740,8 +754,7 @@ public class PhotoViewerWebView extends FrameLayout {
             FileLog.e(e);
         }
 
-        pipItem.setEnabled(false);
-        pipItem.setAlpha(0.5f);
+        setPipVisibility(false);
 
         progressBar.setVisibility(View.VISIBLE);
         if (currentYoutubeId != null) {
@@ -750,6 +763,7 @@ public class PhotoViewerWebView extends FrameLayout {
         webView.setVisibility(View.VISIBLE);
         webView.setKeepScreenOn(true);
         if (currentYoutubeId != null && "disabled".equals(MessagesController.getInstance(currentAccount).youtubePipType)) {
+            setPipVisibility(false);
             pipItem.setVisibility(View.GONE);
         }
     }
@@ -780,7 +794,7 @@ public class PhotoViewerWebView extends FrameLayout {
             parent.removeView(webView);
         }
         addView(webView, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
-        PipVideoOverlay.dismiss();
+        photoViewer.completeEmbedPipExpand();
     }
 
     public void release() {
@@ -790,5 +804,21 @@ public class PhotoViewerWebView extends FrameLayout {
         videoDuration = 0;
         currentPosition = 0;
         AndroidUtilities.cancelRunOnUIThread(progressRunnable);
+    }
+
+    public void setMenuItem(ActionBarMenuItem menuItem) {
+        this.menuItem = menuItem;
+    }
+
+    private void setPipVisibility(boolean show) {
+        pipItem.setEnabled(show);
+        pipItem.setAlpha(show ? 1.0f : 0.5f);
+        if (menuItem != null && ExteraConfig.getCenterTitle()) {
+            if (show) {
+                menuItem.showSubItem(21);
+            } else {
+                menuItem.hideSubItem(21);
+            }
+        }
     }
 }

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram tənzimləmələri</string>
+    <!-- Main Menu -->
+    <string name="Links">Bağlantılar</string>
+    <string name="Crowdin">Tərcümə</string>
+    <string name="Categories">Kateqoriyalar</string>
+    <!-- Appearance -->
+    <string name="AvatarCorners">Avatar küncləri</string>
+    <string name="SingleCornerRadius">Tək künc radiusu</string>
+    <string name="SingleCornerRadiusInfo">Forumlar söhbətlərlə eyni avatar formasına malik olacaq.</string>
+    <string name="ListOfChats">Çat siyahısı</string>
+    <string name="ActionBarTitle">Başlıq mətni</string>
+    <string name="ActionBarTitleName">Ad</string>
+    <string name="HideStories">Hekayələri gizlət</string>
+    <string name="HideActionBarStatus">Statusu gizlət</string>
+    <string name="CenterTitle">Mərkəzi Başlıq</string>
+    <string name="ListOfChatsInfo">Yalnız nişanlar aktiv olduqda başlıq mətni qovluğun adından asılı olaraq dəyişəcək.</string>
+    <string name="TabTitleStyle">Qovluq Başlığı</string>
+    <string name="TabTitleStyleTextWithIcons">İkonları olan adlar</string>
+    <string name="TabTitleStyleIconsOnly">Yalnız ikonlar</string>
+    <string name="TabTitleStyleTextOnly">Yalnız adlar</string>
+    <string name="TabCounter">Bildiriş sayğacı</string>
+    <string name="HideAllChats">\"%1$s\" nişanını gizlədin</string>
+    <string name="FoldersInfo">Nişanlar Telegram ilə sinxronlaşdırılır.</string>
+    <string name="IconPack">İkonlar</string>
+    <string name="BlurOptions">Bulanıqlıq Seçimləri</string>
+    <string name="ForceSnow">Məcburi qar yağışı</string>
+    <string name="ForceSnowInfo">Qar yağışı paneli, çəkməcə və söhbətlərin fonunda görünəcək.</string>
+    <string name="UseSystemFonts">Sistem şriftini istifadə et</string>
+    <string name="UseSystemEmoji">Sistem emojisini istifadə et</string>
+    <string name="NewSwitchStyle">keçid üslubu</string>
+    <!-- General -->
+    <string name="DisableNumberRounding">Nömrələrin yuvarlaqlaşdırılmasını bağla</string>
+    <string name="FormatTimeWithSeconds">Vaxtı Saniyələrlə Formatlaşdırın</string>
+    <string name="InAppVibration">Tətbiqdaxili Vibrasiya</string>
+    <string name="FilterZalgo">\"Zalgo\" filtri</string>
+    <string name="FilterZalgoInfo">Adlar və mesajlardakı \"%1$s\" simvollarını silir.</string>
+    <string name="TabletMode">Planşet rejimi</string>
+    <string name="DownloadSpeedBoost">Endirmə sürətini artırmaq</string>
+    <string name="UploadSpeedBoost">Yükləmə sürətini artırmaq</string>
+    <string name="Ultra">Ultra</string>
+    <string name="SpeedBoostInfo">Ultra artırma yavaş internet bağlantısında faylların endirilməsi və videoların yayımlanması ilə bağlı problemlər yarada bilər.</string>
+    <string name="HidePhoneNumber">Telefon nömrəsini gizlət</string>
+    <string name="ShowIdAndDc">ID və DC-ni göstər</string>
+    <string name="ShowIdAndDcInfo">Telegram API identifikatorları olduğu kimi göstərir, Bot API isə qruplar üçün mənfi işarə, superqruplar, yayım qrupları və kanallar üçün -100 işarəsi əlavə edir.</string>
+    <string name="ArchiveOnPull">Arxivi aşağı açılan menyuda açın</string>
+    <string name="DisableUnarchiveSwipe">\"Arxivdən çıxarmaq\" jestini söndür</string>
+    <string name="DisableUnarchiveSwipeInfo">Sola sürüşdürmək söhbətləri arxivdən silməyəcək.</string>
+    <!-- Other -->
+    <string name="AnalyticsInfo">Bu seçimlər aktivləşdirildikdə, cihaz haqqında məlumatlar toplanaraq Google Analytics və Crashlytics-ə göndərilir ki, bu da bizə istifadə statistikasını saxlamağa və tətbiqdə xətaları izləməyə imkan verir. \n\nLakin seçimlər söndürülürsə, məlumatların toplanması dayandırılır və göndərilən məlumatlar dərhal silinir.</string>
+    <string name="DeleteAccount">Hesabı sil</string>
+    <string name="ResetSettings">Tənzimləmələri sıfırla</string>
+    <!-- Chats -->
+    <string name="StickerSize">Stiker həcmi</string>
+    <string name="StickerSizeLeft">Kiçik</string>
+    <string name="StickerSizeRight">Böyük</string>
+    <string name="StickerSizeDialogMessageReplyTo">wow</string>
+    <string name="StickerSizeDialogMessage">vay, o çox şirindir!</string>
+    <string name="ChatSettingsInfo">Media Parametrləri, Tətbiq İkonu və sairə</string>
+    <string name="StickerShape">Stiker Forması</string>
+    <string name="StickerShapeRounded">Dairəvi</string>
+    <string name="StickerShapeRoundedMsg">Mesaj</string>
+    <string name="UnlimitedRecentStickers">Limitsiz Son Stikerlər</string>
+    <string name="HideReactions">Reaksiyaları gizlət</string>
+    <string name="HideReactionsInfo">Reaksiyalar interfeysdən tamamilə yox olacaq.</string>
+    <string name="DoubleTapIncoming">Gələn mesajlar</string>
+    <string name="DoubleTapOutgoing">Gedən mesajlar</string>
+    <string name="DoubleTapInfo">Bəzi hərəkətlər söhbət və ya kanalda administrator hüquqları tələb edir.</string>
+    <string name="BottomButton">Aşağı düymə</string>
+    <string name="AdminShortcuts">Sürətli Admin Qısayolları</string>
+    <string name="HideKeyboardOnScroll">Sürüşdürərkən klaviaturanı gizlət</string>
+    <string name="HideShareButton">Yan \"%1$s\" Düyməsini Gizlət</string>
+    <string name="MessageMenu">Mesaj menyusu</string>
+    <string name="AddCommaAfterMention">Qeyddən sonra vergül əlavə et</string>
+    <string name="HideSendAsPeer">\"Kimi göndər...\" düyməsini gizlət</string>
+    <string name="HideSendAsPeerInfo">Siz hələ də Emojilər/Stikerlər/GIF-lər düyməsini uzun basmaqla \"Kimi göndər...\" menyusuna daxil ola bilərsiniz.</string>
+    <string name="HideCameraTile">Ani Kamera plitəsini gizlət</string>
+    <string name="HideCameraTileInfo">Kamera plitəsi üzən düymə ilə əvəz olunacaq. Düyməni basmaq Telegram kamerasını işə salacaq, onu basıb saxlamaq sistem kamerasını işə salacaq.</string>
+    <string name="StaticZoom">Statik yaxınlaşdırma</string>
+    <string name="StaticZoomInfo">Video mesajları yazarkən, barmaqlarınızı buraxsanız, yaxınlaşdırma sıfırlanmayacaq.</string>
+    <string name="VideoMessagesCamera">Video Mesajlarda Kamera</string>
+    <string name="VideoMessagesCameraRear">Arxa</string>
+    <string name="VideoMessagesCameraFront">Ön</string>
+    <string name="VideoMessagesCameraAsk">Soruş</string>
+    <string name="RearCamera">Arxa kamera</string>
+    <string name="FrontCamera">Ön kamera</string>
+    <string name="DoubleTapSeekDuration">İki dəfə toxunma vaxtını keçin</string>
+    <string name="RememberLastUsedCamera">Sonuncu istifadə edilmiş kameranı yadda saxla</string>
+    <string name="RememberLastUsedCameraInfo">Video mesajları yazarkən son istifadə olunan kamera seçiləcək.</string>
+    <string name="PauseOnMinimize">Avtomatik-Fasilə</string>
+    <!-- Updates -->
+    <string name="UpdateAvailable">Yeniləmə mövcuddur!</string>
+    <!-- Message Details -->
+    <string name="Details">Detallar</string>
+    <string name="Date">Tarix</string>
+    <string name="EditedDate">Tarixə düzəliş et</string>
+    <string name="ForwardedDate">İrəli tarix</string>
+    <string name="FileSize">Faylın həcmi</string>
+    <string name="FileName">Fayl adı</string>
+    <string name="FilePath">Fayl yolu</string>
+    <string name="Resolution">Görüntü imkanı</string>
+    <string name="Bitrate">Bit sürəti</string>
+    <string name="MimeType">Mime növü</string>
+    <string name="Datacenter">Məlumat mərkəzi</string>
+    <!-- GPT -->
+    <string name="AIChatInfo">API Açarını, Rolları və Tarixçəni qurun</string>
+    <string name="ServiceKey">API açarı</string>
+    <string name="Roles">Rollar</string>
+    <string name="RolesInfo">Ehtiyaclarınız üçün rollar yaradın!</string>
+    <string name="Suggestions">Təkliflər</string>
+    <string name="RoleName">Ad</string>
+    <string name="RolePrompt">Soruş</string>
+    <string name="PromptInfo">Prompt cavab yaratmaq və ya dialoqu davam etdirmək üçün başlanğıc nöqtəsi kimi modelə təqdim edilən mətndir.</string>
+    <string name="NewRole">Yeni rol</string>
+    <string name="EditRole">Rollara düzəliş et</string>
+    <string name="HistoryInfo">Söhbət tarixçəsi süni intellektə əvvəlki sorğuları və cavabları başa düşməyə və sonrakı cavablar yaradan zaman onları nəzərə almağa imkan verir.</string>
+    <string name="ResponseStreaming">Cavab axını</string>
+    <string name="ResponseStreamingInfo">Cavabların daha hamar və daha sürətli göstərilməsini təmin edir.</string>
+    <string name="ShowResponseOnly">Yalnız Cavabları göstərin</string>
+    <string name="TapToAddApiKey">Süni intellekt funksiyalarından istifadə etməyə başlamaq üçün API Açarını əlavə etmək üçün toxunun.</string>
+    <string name="Generate">Yarat</string>
+    <string name="ClearConversationHistoryInfo">**Bütün** süni intellekt söhbət tarixçəsini silmək istədiyinizə əminsiniz?</string>
+    <!-- Bot Button information -->
+    <string name="CopyTitle">Başlığı kopyalayın</string>
+    <string name="CopyCallback">Geri Zəng Məlumatını Kopyalayın</string>
+    <string name="CopyInlineQuery">Daxili Sorğunu Kopyala</string>
+    <string name="CopyID">İstifadəçi ID-sini kopyala</string>
+    <!-- Other -->
+    <string name="RestartRequired">Effektiv olmaq üçün Tətbiqi yenidən başladın.</string>
+    <string name="ResetPreferences">**exteraGram** tənzimləmələri sıfırlandı.</string>
+    <string name="ResetPreferencesInfo">**bütün** exteraGram tənzimləmələrini defolt olaraq sıfırlamaq istədiyinizə əminsiniz?</string>
+    <string name="UserNotFound">Bu **ID** ilə istifadəçi tapılmadı.</string>
+    <string name="PhotoCopied">Foto buferə kopyalandı.</string>
+    <string name="MutualContactInfo">Bu əlaqə qarşılıqlıdır.</string>
+    <string name="ToBeginning">Başlanğıca get</string>
+    <string name="MessageHistory">Tarix</string>
+    <string name="BoldItalic">Qalın İtalik</string>
+    <string name="CopyPhoto">Şəkilləri kopyala</string>
+    <string name="StickerSavedHint">Stiker qalereyada saxlanıldı</string>
+    <string name="TrackSaved">Trek **%1$s** ünvanında yadda saxlanıldı.</string>
+    <string name="ChannelToSaveChanged">Treklər **%1$s** ünvanında yadda saxlanılacaq.</string>
+    <string name="AppIconAurora">Avrora</string>
+    <string name="AppIconAmethyst">Ametist</string>
+    <string name="AppIconSpace">Kosmos</string>
+    <string name="AppIconOrbit">Orbit</string>
+    <string name="AppIconSus">Fırıldaqçı</string>
+    <string name="AppIconWinter">Qış</string>
+</resources>

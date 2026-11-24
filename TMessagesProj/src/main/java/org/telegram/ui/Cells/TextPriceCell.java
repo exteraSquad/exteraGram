@@ -19,18 +19,16 @@ import android.widget.TextView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.LayoutHelper;
 
 public class TextPriceCell extends FrameLayout {
 
-    private Theme.ResourcesProvider resourcesProvider;
     private TextView textView;
     private TextView valueTextView;
 
-    public TextPriceCell(Context context, Theme.ResourcesProvider resourcesProvider) {
+    public TextPriceCell(Context context) {
         super(context);
-
-        this.resourcesProvider = resourcesProvider;
 
         setWillNotDraw(false);
 
@@ -45,7 +43,7 @@ public class TextPriceCell extends FrameLayout {
 
         valueTextView = new TextView(context);
         valueTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        valueTextView.setTypeface(AndroidUtilities.bold());
         valueTextView.setLines(1);
         valueTextView.setMaxLines(1);
         valueTextView.setSingleLine(true);
@@ -85,14 +83,14 @@ public class TextPriceCell extends FrameLayout {
         }
         if (bold) {
             setTag(Theme.key_windowBackgroundWhiteBlackText);
-            textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-            valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            valueTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteBlackText);
+            ThemeBind.textColor(valueTextView, Theme.key_windowBackgroundWhiteBlackText);
+            textView.setTypeface(AndroidUtilities.bold());
+            valueTextView.setTypeface(AndroidUtilities.bold());
         } else {
             setTag(Theme.key_windowBackgroundWhiteGrayText2);
-            textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
-            valueTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, resourcesProvider));
+            ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteGrayText2);
+            ThemeBind.textColor(valueTextView, Theme.key_windowBackgroundWhiteGrayText2);
             textView.setTypeface(Typeface.DEFAULT);
             valueTextView.setTypeface(Typeface.DEFAULT);
         }

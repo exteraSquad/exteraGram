@@ -49,43 +49,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:153744097257:android:075a50b5ec07ddfe589578",
-        "android_client_info": {
-          "package_name": "moe.kirao.mgx"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "153744097257-3v7q4mlric15bf6laq8n551bm42583hb.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "moe.kirao.mgx",
-            "certificate_hash": "0f9fd63cd0965ce224005a1812cc43c4614d4bf4"
-          }
-        },
-        {
-          "client_id": "153744097257-ql35jfprr95tp6gv203fegtte392iqto.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD-lq0HSqvWIkp9-gisI_NiZhF80UpB9m0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "153744097257-ql35jfprr95tp6gv203fegtte392iqto.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

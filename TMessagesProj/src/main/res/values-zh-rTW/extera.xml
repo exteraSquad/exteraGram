@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ This is the source code of exteraGram for Android.
+
+ We do not and cannot prevent the use of our code,
+ but be respectful and credit the original author.
+
+ Copyright @exteraGram, 2022-2026
+
+-->
+<resources>
+    <string name="Preferences">exteraGram 偏好設定</string>
+    <!-- Main Menu -->
+    <string name="Links">連結</string>
+    <string name="Crowdin">翻譯</string>
+    <string name="Categories">類別</string>
+    <!-- Appearance -->
+    <string name="AvatarCorners">圓角大頭貼</string>
+    <string name="SingleCornerRadius">統一形狀</string>
+    <string name="SingleCornerRadiusInfo">話題群組將會和一般聊天室使用相同的大頭貼形狀</string>
+    <string name="ListOfChats">對話列表</string>
+    <string name="ActionBarTitle">標題文字</string>
+    <string name="ActionBarTitleName">名字</string>
+    <string name="HideStories">隱藏限時動態</string>
+    <string name="HideActionBarStatus">隱藏狀態</string>
+    <string name="CenterTitle">在動作列中置中標題</string>
+    <string name="ListOfChatsInfo">當聊天室分類欄被設為僅顯示圖示時，對應的分類名稱將會顯示於頂端</string>
+    <string name="TabTitleStyle">分類名稱</string>
+    <string name="TabTitleStyleTextWithIcons">名稱與圖示</string>
+    <string name="TabTitleStyleIconsOnly">僅圖示</string>
+    <string name="TabTitleStyleTextOnly">僅名稱</string>
+    <string name="TabCounter">通知計數</string>
+    <string name="HideAllChats">隱藏「%1$s」分頁</string>
+    <string name="FoldersInfo">圖示與 Telegram 官方同步。</string>
+    <string name="IconPack">圖示</string>
+    <string name="BlurOptions">模糊選項</string>
+    <string name="ForceSnow">強制「雪花」</string>
+    <string name="ForceSnowInfo">「雪花」也會出現在動作列和聊天背景中。</string>
+    <string name="UseSystemFonts">使用系統字型</string>
+    <string name="UseSystemEmoji">使用系統表情符號</string>
+    <string name="NewSwitchStyle">開關樣式</string>
+    <!-- General -->
+    <string name="DisableNumberRounding">停用四捨五入</string>
+    <string name="FormatTimeWithSeconds">格式化為帶秒數的時間</string>
+    <string name="InAppVibration">應用程式內震動</string>
+    <string name="FilterZalgo">隱藏亂碼文字</string>
+    <string name="FilterZalgoInfo">將他人名字及訊息中的「%1$s」符號移除。</string>
+    <string name="TabletMode">平板模式</string>
+    <string name="DownloadSpeedBoost">下載速度加速</string>
+    <string name="UploadSpeedBoost">上傳速度加速</string>
+    <string name="Ultra">超級</string>
+    <string name="SpeedBoostInfo">超級加速會在網際網路連線速度緩慢時出現下載檔案或串流視訊相關問題</string>
+    <string name="HidePhoneNumber">隱藏手機號碼</string>
+    <string name="ShowIdAndDc">顯示 ID 和 DC</string>
+    <string name="ShowIdAndDcInfo">Telegram API 顯示的是 ID，而 Bot API 為群組新增了一個負號，為超級群組、廣播群組和頻道前新增了 -100。</string>
+    <string name="ArchiveOnPull">下拉開啟已封存的內容</string>
+    <string name="DisableUnarchiveSwipe">停用「取消封存」滑動</string>
+    <string name="DisableUnarchiveSwipeInfo">向左滑動不會從封存中移除聊天。</string>
+    <!-- Other -->
+    <string name="AnalyticsInfo">當這些選項被開啟時，將會收集相關資料並上傳至 Google Analytics 以及 Crashlytics，我們能藉此了解使用情況並改善我們的應用程式。\n\n如果這些選項被關閉了，將會停止收集及上傳的動作，並會立刻刪除相關資料。</string>
+    <string name="DeleteAccount">刪除帳號</string>
+    <string name="ResetSettings">重置設定</string>
+    <!-- Chats -->
+    <string name="StickerSize">貼圖大小</string>
+    <string name="StickerSizeLeft">小</string>
+    <string name="StickerSizeRight">大</string>
+    <string name="StickerSizeDialogMessageReplyTo">哇</string>
+    <string name="StickerSizeDialogMessage">嘿，牠真可愛！</string>
+    <string name="ChatSettingsInfo">媒體、應用程式圖示及其他選項</string>
+    <string name="StickerShape">貼圖形狀</string>
+    <string name="StickerShapeRounded">圓角</string>
+    <string name="StickerShapeRoundedMsg">訊息</string>
+    <string name="UnlimitedRecentStickers">無限制最近貼圖</string>
+    <string name="HideReactions">隱藏心情回應</string>
+    <string name="HideReactionsInfo">心情回應將會被完全移除。</string>
+    <string name="DoubleTapIncoming">傳入訊息</string>
+    <string name="DoubleTapOutgoing">傳出訊息</string>
+    <string name="DoubleTapInfo">部分聊天或頻道的部分動作需要管理員權限</string>
+    <string name="BottomButton">底部按鈕</string>
+    <string name="AdminShortcuts">管理員捷徑</string>
+    <string name="HideKeyboardOnScroll">捲動時隱藏鍵盤</string>
+    <string name="HideShareButton">隱藏側邊「%1$s」按鈕</string>
+    <string name="MessageMenu">訊息選單</string>
+    <string name="AddCommaAfterMention">在提及後新增逗號</string>
+    <string name="HideSendAsPeer">隱藏「以頻道傳送」按鈕</string>
+    <string name="HideSendAsPeerInfo">您仍可以藉由按住表情符號/貼圖/GIFs按鈕來使用這個功能。</string>
+    <string name="HideCameraTile">隱藏即時相機圖塊</string>
+    <string name="HideCameraTileInfo">您將仍然能夠透過長按訊息面板中的附加按鈕以開啟系統相機。</string>
+    <string name="StaticZoom">靜態縮放</string>
+    <string name="StaticZoomInfo">錄製視訊訊息時，如果您抬起手指，縮放將不會重設。</string>
+    <string name="VideoMessagesCamera">視訊訊息鏡頭</string>
+    <string name="VideoMessagesCameraRear">後鏡頭</string>
+    <string name="VideoMessagesCameraFront">前鏡頭</string>
+    <string name="VideoMessagesCameraAsk">先詢問</string>
+    <string name="RearCamera">後鏡頭</string>
+    <string name="FrontCamera">前鏡頭</string>
+    <string name="DoubleTapSeekDuration">輕觸快轉秒數</string>
+    <string name="RememberLastUsedCamera">記住上次使用的相機</string>
+    <string name="RememberLastUsedCameraInfo">錄製視訊訊息時，將會選取上次使用的相機。</string>
+    <string name="PauseOnMinimize">自動暫停</string>
+    <!-- Updates -->
+    <string name="UpdateAvailable">有可用的更新！</string>
+    <!-- Message Details -->
+    <string name="Details">詳細資料</string>
+    <string name="Date">日期</string>
+    <string name="EditedDate">編輯日期</string>
+    <string name="ForwardedDate">轉傳日期</string>
+    <string name="FileSize">檔案大小</string>
+    <string name="FileName">檔案名稱</string>
+    <string name="FilePath">檔案位置</string>
+    <string name="Resolution">解析度</string>
+    <string name="Bitrate">位元速率</string>
+    <string name="MimeType">Mime 類型</string>
+    <string name="Datacenter">資料中心</string>
+    <!-- GPT -->
+    <string name="AIChatInfo">設定 API 密鑰、身份及歷史紀錄</string>
+    <string name="ServiceKey">API 密鑰</string>
+    <string name="Roles">角色</string>
+    <string name="RolesInfo">針對您的需求建立角色！</string>
+    <string name="Suggestions">建議</string>
+    <string name="RoleName">名稱</string>
+    <string name="RolePrompt">提示</string>
+    <string name="PromptInfo">提示將被用作生成文字開頭或後續內容的方針。</string>
+    <string name="NewRole">新角色</string>
+    <string name="EditRole">編輯角色</string>
+    <string name="HistoryInfo">對話紀錄能夠幫助 AI 藉由先前的對話及回應來產生後續的答覆內容。</string>
+    <string name="ResponseStreaming">持續回應</string>
+    <string name="ResponseStreamingInfo">使後續的回應能夠更快、更順暢。</string>
+    <string name="ShowResponseOnly">只顯示回應</string>
+    <string name="TapToAddApiKey">輕觸此處新增 API 密鑰來使用 AI及相關功能。</string>
+    <string name="Generate">生成</string>
+    <string name="ClearConversationHistoryInfo">您確定要刪除**所有的** AI 對話紀錄嗎？</string>
+    <!-- Bot Button information -->
+    <string name="CopyTitle">複製標題</string>
+    <string name="CopyCallback">複製回傳資料</string>
+    <string name="CopyInlineQuery">複製內嵌查詢</string>
+    <string name="CopyID">複製使用者 ID</string>
+    <!-- Other -->
+    <string name="RestartRequired">重新啟動應用程式以生效。</string>
+    <string name="ResetPreferences">已重置 **exteraGram** 設定</string>
+    <string name="ResetPreferencesInfo">您確定要重置**所有**的 exteraGram 設定？</string>
+    <string name="UserNotFound">找不到該 **ID** 所對應的使用者。</string>
+    <string name="PhotoCopied">圖片已複製到剪貼簿</string>
+    <string name="MutualContactInfo">你們彼此有將對方加為聯絡人。</string>
+    <string name="ToBeginning">至開頭</string>
+    <string name="MessageHistory">訊息歷史記錄</string>
+    <string name="BoldItalic">粗體斜體</string>
+    <string name="CopyPhoto">複製圖片</string>
+    <string name="StickerSavedHint">貼圖已儲存到您的手機相簿</string>
+    <string name="TrackSaved">追蹤已儲存至 **%1$s**。</string>
+    <string name="ChannelToSaveChanged">曲目將會儲存至 **%1$s**</string>
+    <string name="AppIconAurora">極光</string>
+    <string name="AppIconAmethyst">紫晶</string>
+    <string name="AppIconSpace">太空</string>
+    <string name="AppIconOrbit">星軌</string>
+    <string name="AppIconSus">內鬼</string>
+    <string name="AppIconWinter">冬至</string>
+</resources>

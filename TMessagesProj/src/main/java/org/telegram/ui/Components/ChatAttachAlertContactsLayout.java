@@ -8,16 +8,17 @@
 
 package org.telegram.ui.Components;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+import static org.telegram.messenger.AndroidUtilities.dp;
+
+import org.telegram.messenger.FileLog;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.os.Build;
+import android.net.Uri;
+import android.provider.ContactsContract;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -25,6 +26,8 @@ import android.widget.FrameLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.exteragram.messenger.ExteraConfig;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
@@ -38,34 +41,53 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.support.LongSparseIntArray;
+import org.telegram.messenger.utils.TextWatcherImpl;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.ActionBar.ThemeDescription;
+import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
+import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Objects;
 
-import com.exteragram.messenger.ExteraConfig;
+import me.vkryl.android.animator.BoolAnimator;
+import me.vkryl.android.animator.FactorAnimator;
 
-public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLayout implements NotificationCenter.NotificationCenterDelegate {
+@SuppressLint("ViewConstructor")
+public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLayout implements Theme.Colorable, NotificationCenter.NotificationCenterDelegate, FactorAnimator.Target {
+    private static final int ANIMATOR_ID_FADE_VISIBLE = 0;
 
-    private FrameLayout frameLayout;
-    private RecyclerListView listView;
-    private FillLastLinearLayoutManager layoutManager;
-    private ShareAdapter listAdapter;
-    private ShareSearchAdapter searchAdapter;
-    private EmptyTextProgressView emptyView;
-    private View shadow;
-    private AnimatorSet shadowAnimation;
-    private SearchField searchField;
+    private final BoolAnimator animatorFadeVisible = new BoolAnimator(ANIMATOR_ID_FADE_VISIBLE, this, CubicBezierInterpolator.EASE_OUT_QUINT, 380);
 
-    private boolean ignoreLayout;
+    private final FrameLayout frameLayout;
+    private final RecyclerListView listView;
+    private final FillLastLinearLayoutManager layoutManager;
+    private final HashMap<ListItemID, Object> selectedContacts = new HashMap<>();
+    private final ArrayList<ListItemID> selectedContactsOrder = new ArrayList<>();
+    private boolean sendPressed = false;
+    private final ShareAdapter listAdapter;
+    private final ShareSearchAdapter searchAdapter;
+    private final EmptyTextProgressView emptyView;
+    private final View fadeView;
+    private final FragmentSearchField searchField;
 
     private PhonebookShareAlertDelegate delegate;
 
+    private boolean multipleSelectionAllowed;
+
     public interface PhonebookShareAlertDelegate {
-        void didSelectContact(TLRPC.User user, boolean notify, int scheduleDate);
+        void didSelectContact(TLRPC.User user, boolean notify, int scheduleDate, long effectId, boolean invertMedia, long payStars);
+
+        default void didSelectContacts(ArrayList<TLRPC.User> users, String caption, boolean notify, int scheduleDate, long effectId, boolean invertMedia, long payStars) {
+
+        }
     }
 
     public static class UserCell extends FrameLayout {
@@ -74,6 +96,7 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
         private BackupImageView avatarImageView;
         private SimpleTextView nameTextView;
         private SimpleTextView statusTextView;
+        private CheckBox2 checkBox;
 
         private AvatarDrawable avatarDrawable;
         private TLRPC.User currentUser;
@@ -105,22 +128,28 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
             nameTextView = new SimpleTextView(context) {
                 @Override
                 public boolean setText(CharSequence value, boolean force) {
-                    value = Emoji.replaceEmoji(value, getPaint().getFontMetricsInt(), AndroidUtilities.dp(14), false);
+                    value = Emoji.replaceEmoji(value, getPaint().getFontMetricsInt(), false);
                     return super.setText(value, force);
                 }
             };
             NotificationCenter.listenEmojiLoading(nameTextView);
-            nameTextView.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
-            nameTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            ThemeBind.textColor(nameTextView, Theme.key_dialogTextBlack, resourcesProvider);
+            nameTextView.setTypeface(AndroidUtilities.bold());
             nameTextView.setTextSize(16);
             nameTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
             addView(nameTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 28 : 72, 12, LocaleController.isRTL ? 72 : 28, 0));
 
             statusTextView = new SimpleTextView(context);
             statusTextView.setTextSize(13);
-            statusTextView.setTextColor(getThemedColor(Theme.key_dialogTextGray2));
+            ThemeBind.textColor(statusTextView, Theme.key_dialogTextGray2, resourcesProvider);
             statusTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
             addView(statusTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 20, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 28 : 72, 36, LocaleController.isRTL ? 72 : 28, 0));
+
+            checkBox = new CheckBox2(context, 21, resourcesProvider);
+            checkBox.setColor(-1, Theme.key_windowBackgroundWhite, Theme.key_checkboxCheck);
+            checkBox.setDrawUnchecked(false);
+            checkBox.setDrawBackgroundAsArc(3);
+            addView(checkBox, LayoutHelper.createFrame(24, 24, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 44, 37, LocaleController.isRTL ? 44 : 0, 0));
         }
 
         public void setCurrentId(int id) {
@@ -158,13 +187,20 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
             });
         }
 
+        public void setChecked(boolean checked, boolean animated) {
+            if (checkBox.getVisibility() != VISIBLE) {
+                checkBox.setVisibility(VISIBLE);
+            }
+            checkBox.setChecked(checked, animated);
+        }
+
         public void setStatus(CharSequence status) {
             currentStatus = status;
             if (currentStatus != null) {
                 statusTextView.setText(currentStatus);
             } else if (currentUser != null) {
                 if (TextUtils.isEmpty(currentUser.phone)) {
-                    statusTextView.setText(LocaleController.getString("NumberUnknown", R.string.NumberUnknown));
+                    statusTextView.setText(LocaleController.getString(R.string.NumberUnknown));
                 } else {
                     if (formattedPhoneNumberUser != currentUser && formattedPhoneNumber != null) {
                         statusTextView.setText(formattedPhoneNumber);
@@ -227,7 +263,7 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
             }
 
             if (currentUser != null) {
-                avatarDrawable.setInfo(currentUser);
+                avatarDrawable.setInfo(currentAccount, currentUser);
                 if (currentUser.status != null) {
                     lastStatus = currentUser.status.expires;
                 } else {
@@ -268,7 +304,7 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
 
         @Override
         protected void onDraw(Canvas canvas) {
-            if (needDivider && !ExteraConfig.disableDividers) {
+            if (needDivider) {
                 canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(70), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(70) : 0), getMeasuredHeight() - 1, Theme.dividerPaint);
             }
         }
@@ -278,25 +314,75 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
         }
     }
 
+    private static class ListItemID {
+        public enum Type {
+            USER,
+            CONTACT
+        }
+
+        private final Type type;
+        private final long id;
+
+        public static ListItemID of(Object object) {
+            if (object instanceof ContactsController.Contact) {
+                return new ListItemID(Type.CONTACT, ((ContactsController.Contact) object).contact_id);
+            } else if (object instanceof TLRPC.User) {
+                return new ListItemID(Type.USER, ((TLRPC.User) object).id);
+            }
+            return null;
+        }
+
+        public ListItemID(Type type, long id) {
+            this.type = type;
+            this.id = id;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ListItemID listItemID = (ListItemID) o;
+            return id == listItemID.id && type == listItemID.type;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type, id);
+        }
+    }
+
     public ChatAttachAlertContactsLayout(ChatAttachAlert alert, Context context, Theme.ResourcesProvider resourcesProvider) {
         super(alert, context, resourcesProvider);
 
         searchAdapter = new ShareSearchAdapter(context);
 
-        frameLayout = new FrameLayout(context);
-        frameLayout.setBackgroundColor(getThemedColor(Theme.key_dialogBackground));
+        fadeView = new ChatAttachAlert.SearchFadeView(context, Theme.key_windowBackgroundWhite, resourcesProvider);
+        fadeView.setVisibility(INVISIBLE);
 
-        searchField = new SearchField(context, false, resourcesProvider) {
+        frameLayout = new FrameLayout(context);
+        searchField = new ChatAttachAlert.AttachSearchField(context, parentAlert, resourcesProvider);
+        searchField.setPadding(dp(4), dp(4), dp(4), dp(4));
+        searchField.editText.setHint(LocaleController.getString(R.string.SearchFriends));
+        searchField.editText.addTextChangedListener(new TextWatcherImpl() {
             @Override
-            public void onTextChange(String text) {
-                if (text.length() != 0) {
+            public void afterTextChanged(Editable s) {
+                String text = s.toString();
+                if (!text.isEmpty()) {
                     if (emptyView != null) {
-                        emptyView.setText(LocaleController.getString("NoResult", R.string.NoResult));
+                        emptyView.setText(LocaleController.getString(R.string.NoResult));
                     }
                 } else {
                     if (listView.getAdapter() != listAdapter) {
                         int top = getCurrentTop();
-                        emptyView.setText(LocaleController.getString("NoContacts", R.string.NoContacts));
+                        emptyView.setText(LocaleController.getString(R.string.NoContacts));
                         emptyView.showTextView();
                         listView.setAdapter(listAdapter);
                         listAdapter.notifyDataSetChanged();
@@ -309,32 +395,16 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                     searchAdapter.search(text);
                 }
             }
+        });
+        frameLayout.addView(fadeView, LayoutHelper.createFrameMatchParent());
 
-            @Override
-            public boolean onInterceptTouchEvent(MotionEvent ev) {
-                parentAlert.makeFocusable(getSearchEditText(), true);
-                return super.onInterceptTouchEvent(ev);
-            }
-
-            @Override
-            public void processTouchEvent(MotionEvent event) {
-                MotionEvent e = MotionEvent.obtain(event);
-                e.setLocation(e.getRawX(), e.getRawY() - parentAlert.getSheetContainer().getTranslationY() - AndroidUtilities.dp(58));
-                listView.dispatchTouchEvent(e);
-                e.recycle();
-            }
-
-            @Override
-            protected void onFieldTouchUp(EditTextBoldCursor editText) {
-                parentAlert.makeFocusable(editText, true);
-            }
-        };
-        searchField.setHint(LocaleController.getString("SearchFriends", R.string.SearchFriends));
-        frameLayout.addView(searchField, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
+        MarginLayoutParams lp = LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 7, 8, 7, 4);
+        lp.topMargin += AndroidUtilities.statusBarHeight;
+        frameLayout.addView(searchField, lp);
 
         emptyView = new EmptyTextProgressView(context, null, resourcesProvider);
         emptyView.showTextView();
-        emptyView.setText(LocaleController.getString("NoContacts", R.string.NoContacts));
+        emptyView.setText(LocaleController.getString(R.string.NoContacts));
         addView(emptyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 0, 52, 0, 0));
 
         listView = new RecyclerListView(context, resourcesProvider) {
@@ -343,6 +413,12 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                 return y >= parentAlert.scrollOffsetY[0] + AndroidUtilities.dp(30) + (!parentAlert.inBubbleMode ? AndroidUtilities.statusBarHeight : 0);
             }
         };
+        setBlur3Capture(listView);
+        iBlur3CaptureView = listView;
+        occupyStatusBar = true;
+        occupyNavigationBar = true;
+
+        listView.setSections();
         listView.setClipToPadding(false);
         listView.setLayoutManager(layoutManager = new FillLastLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false, AndroidUtilities.dp(9), listView) {
             @Override
@@ -351,7 +427,7 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                     @Override
                     public int calculateDyToMakeVisible(View view, int snapPreference) {
                         int dy = super.calculateDyToMakeVisible(view, snapPreference);
-                        dy -= (listView.getPaddingTop() - AndroidUtilities.dp(8));
+                        dy -= (listView.getPaddingTop() - AndroidUtilities.statusBarHeight - AndroidUtilities.dp(8));
                         return dy;
                     }
 
@@ -367,9 +443,10 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
         layoutManager.setBind(false);
         listView.setHorizontalScrollBarEnabled(false);
         listView.setVerticalScrollBarEnabled(false);
+        listView.setClipToPadding(false);
         addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         listView.setAdapter(listAdapter = new ShareAdapter(context));
-        listView.setGlowColor(getThemedColor(Theme.key_dialogScrollGlow));
+        ThemeBind.listGlowColor(listView, Theme.key_dialogScrollGlow, resourcesProvider);
         listView.setOnItemClickListener((view, position) -> {
             Object object;
             if (listView.getAdapter() == searchAdapter) {
@@ -384,6 +461,11 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
 
             }
             if (object != null) {
+                if (!selectedContacts.isEmpty()) {
+                    addOrRemoveSelectedContact((UserCell) view, object);
+                    return;
+                }
+
                 ContactsController.Contact contact;
                 String firstName;
                 String lastName;
@@ -406,9 +488,9 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                 }
 
                 PhonebookShareAlert phonebookShareAlert = new PhonebookShareAlert(parentAlert.baseFragment, contact, null, null, null, firstName, lastName, resourcesProvider);
-                phonebookShareAlert.setDelegate((user, notify, scheduleDate) -> {
+                phonebookShareAlert.setDelegate((user, notify, scheduleDate, effectId, invertMedia, payStars) -> {
                     parentAlert.dismiss(true);
-                    delegate.didSelectContact(user, notify, scheduleDate);
+                    delegate.didSelectContact(user, notify, scheduleDate, effectId, invertMedia, payStars);
                 });
                 phonebookShareAlert.show();
             }
@@ -421,46 +503,250 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
             }
         });
 
-        FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LayoutHelper.MATCH_PARENT, AndroidUtilities.getShadowHeight(), Gravity.TOP | Gravity.LEFT);
-        frameLayoutParams.topMargin = AndroidUtilities.dp(58);
-        shadow = new View(context);
-        shadow.setBackgroundColor(getThemedColor(Theme.key_dialogShadowLine));
-        shadow.setAlpha(0.0f);
-        shadow.setTag(1);
-        addView(shadow, frameLayoutParams);
+        listView.setOnItemLongClickListener((view, position) -> {
+            Object object;
+            if (listView.getAdapter() == searchAdapter) {
+                object = searchAdapter.getItem(position);
+            } else {
+                object = listAdapter.getItem(position);
+            }
 
-        addView(frameLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 58, Gravity.LEFT | Gravity.TOP));
+            if (object != null) {
+                addOrRemoveSelectedContact((UserCell) view, object);
+                return true;
+            }
 
-        NotificationCenter.getInstance(parentAlert.currentAccount).addObserver(this, NotificationCenter.contactsDidLoad);
+            return false;
+        });
+
+        lp = LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 60, Gravity.LEFT | Gravity.TOP);
+        lp.height += AndroidUtilities.statusBarHeight;
+        addView(frameLayout, lp);
+
+        NotificationCenter.getInstance(parentAlert.currentAccount).addWeakObserver(this, NotificationCenter.contactsDidLoad);
         updateEmptyView();
     }
 
+    public void addOrRemoveSelectedContact(UserCell cell, Object object) {
+        if (selectedContacts.isEmpty() && !multipleSelectionAllowed) {
+            showErrorBox(LocaleController.formatString("AttachContactsSlowMode", R.string.AttachContactsSlowMode));
+            return;
+        }
+
+        boolean checked;
+        ListItemID id = ListItemID.of(object);
+        if (selectedContacts.containsKey(id)) {
+            selectedContacts.remove(id);
+            selectedContactsOrder.remove(id);
+            checked = false;
+        } else {
+            selectedContacts.put(id, object);
+            selectedContactsOrder.add(id);
+            checked = true;
+        }
+        cell.setChecked(checked, true);
+        parentAlert.updateCountButton(checked ? 1 : 2);
+    }
+
+    public void setupBlurredSearchField(BlurredBackgroundDrawableViewFactory factory) {
+        if (searchField != null) {
+            searchField.setupBlurredBackground(factory.create(searchField, BlurredBackgroundProviderImpl.attachMenuSearch(resourcesProvider)));
+        }
+    }
+
+    public void setMultipleSelectionAllowed(boolean multipleSelectionAllowed) {
+        this.multipleSelectionAllowed = multipleSelectionAllowed;
+    }
+
     @Override
-    void scrollToTop() {
+    public int getSelectedItemsCount() {
+        return selectedContacts.size();
+    }
+
+    private void showErrorBox(String error) {
+        new AlertDialog.Builder(getContext(), resourcesProvider).setTitle(LocaleController.getString(R.string.AppName)).setMessage(error).setPositiveButton(LocaleController.getString(R.string.OK), null).show();
+    }
+
+    private TLRPC.User prepareContact(Object object) {
+        ContactsController.Contact contact;
+        String firstName;
+        String lastName;
+        if (object instanceof ContactsController.Contact) {
+            contact = (ContactsController.Contact) object;
+            if (contact.user != null) {
+                firstName = contact.user.first_name;
+                lastName = contact.user.last_name;
+            } else {
+                firstName = contact.first_name;
+                lastName = contact.last_name;
+            }
+        } else {
+            TLRPC.User user = (TLRPC.User) object;
+            contact = new ContactsController.Contact();
+            firstName = contact.first_name = user.first_name;
+            lastName = contact.last_name = user.last_name;
+            contact.phones.add(user.phone);
+            contact.user = user;
+        }
+
+        String name = ContactsController.formatName(firstName, lastName);
+        ArrayList<TLRPC.User> result = null;
+        ArrayList<AndroidUtilities.VcardItem> items = new ArrayList<>();
+        ArrayList<AndroidUtilities.VcardItem> phones = new ArrayList<>();
+        ArrayList<AndroidUtilities.VcardItem> other = new ArrayList<>();
+        ArrayList<TLRPC.RestrictionReason> vcard = null;
+        if (contact.key != null) {
+            Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_VCARD_URI, contact.key);
+            result = AndroidUtilities.loadVCardFromStream(uri, parentAlert.currentAccount, true, items, name);
+        } else {
+            AndroidUtilities.VcardItem item = new AndroidUtilities.VcardItem();
+            item.type = 0;
+            item.vcardData.add(item.fullData = "TEL;MOBILE:+" + contact.user.phone);
+            phones.add(item);
+        }
+        TLRPC.User user = contact.user;
+        if (result != null) {
+            for (int a = 0; a < items.size(); a++) {
+                AndroidUtilities.VcardItem item = items.get(a);
+                if (item.type == 0) {
+                    boolean exists = false;
+                    for (int b = 0; b < phones.size(); b++) {
+                        if (phones.get(b).getValue(false).equals(item.getValue(false))) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (exists) {
+                        item.checked = false;
+                        continue;
+                    }
+                    phones.add(item);
+                } else {
+                    other.add(item);
+                }
+            }
+            if (!result.isEmpty()) {
+                TLRPC.User u = result.get(0);
+                vcard = u.restriction_reason;
+                if (TextUtils.isEmpty(firstName)) {
+                    firstName = u.first_name;
+                    lastName = u.last_name;
+                }
+            }
+        }
+
+        TLRPC.User currentUser = new TLRPC.TL_userContact_old2();
+
+        if (user != null) {
+            currentUser.id = user.id;
+            currentUser.access_hash = user.access_hash;
+            currentUser.photo = user.photo;
+            currentUser.status = user.status;
+            currentUser.first_name = user.first_name;
+            currentUser.last_name = user.last_name;
+            currentUser.phone = user.phone;
+            if (vcard != null) {
+                currentUser.restriction_reason = vcard;
+            }
+        } else {
+            currentUser.first_name = firstName;
+            currentUser.last_name = lastName;
+        }
+
+        StringBuilder builder;
+        if (!currentUser.restriction_reason.isEmpty()) {
+            builder = new StringBuilder(currentUser.restriction_reason.get(0).text);
+        } else {
+            builder = new StringBuilder(String.format(Locale.US, "BEGIN:VCARD\nVERSION:3.0\nFN:%1$s\nEND:VCARD", ContactsController.formatName(currentUser.first_name, currentUser.last_name)));
+        }
+        int idx = builder.lastIndexOf("END:VCARD");
+        if (idx >= 0) {
+            currentUser.phone = null;
+            for (int a = phones.size() - 1; a >= 0; a--) {
+                AndroidUtilities.VcardItem item = phones.get(a);
+                if (!item.checked) {
+                    continue;
+                }
+                if (currentUser.phone == null) {
+                    currentUser.phone = item.getValue(false);
+                }
+                for (int b = 0; b < item.vcardData.size(); b++) {
+                    builder.insert(idx, item.vcardData.get(b) + "\n");
+                }
+            }
+            for (int a = other.size() - 1; a >= 0; a--) {
+                AndroidUtilities.VcardItem item = other.get(a);
+                if (!item.checked) {
+                    continue;
+                }
+                for (int b = item.vcardData.size() - 1; b >= 0; b--) {
+                    builder.insert(idx, item.vcardData.get(b) + "\n");
+                }
+            }
+            currentUser.restriction_reason.clear();
+            TLRPC.RestrictionReason reason = new TLRPC.RestrictionReason();
+            reason.text = builder.toString();
+            reason.reason = "";
+            reason.platform = "";
+            currentUser.restriction_reason.add(reason);
+        }
+
+        return currentUser;
+    }
+
+    @Override
+    public boolean sendSelectedItems(boolean notify, int scheduleDate, int scheduleRepeatPeriod, long effectId, boolean invertMedia) {
+        if (selectedContacts.size() == 0 && delegate == null || sendPressed) {
+            return false;
+        }
+        sendPressed = true;
+
+        ArrayList<TLRPC.User> users = new ArrayList<>(selectedContacts.size());
+        for (ListItemID id : selectedContactsOrder) {
+            Object object = selectedContacts.get(id);
+            users.add(prepareContact(object));
+        }
+        return AlertsCreator.ensurePaidMessageConfirmation(parentAlert.currentAccount, parentAlert.getDialogId(), users.size() + parentAlert.getAdditionalMessagesCount(), payStars -> {
+            delegate.didSelectContacts(users, parentAlert.getCommentView().getText().toString(), notify, scheduleDate, effectId, invertMedia, payStars);
+            parentAlert.dismiss();
+        });
+    }
+
+    public ArrayList<TLRPC.User> getSelected() {
+        ArrayList<TLRPC.User> users = new ArrayList<>(selectedContacts.size());
+        for (ListItemID id : selectedContactsOrder) {
+            Object object = selectedContacts.get(id);
+            users.add(prepareContact(object));
+        }
+        return users;
+    }
+
+    @Override
+    public void scrollToTop() {
         listView.smoothScrollToPosition(0);
     }
 
     @Override
-    int getCurrentItemTop() {
+    public int getCurrentItemTop() {
         if (listView.getChildCount() <= 0) {
             return Integer.MAX_VALUE;
         }
         View child = listView.getChildAt(0);
         RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findContainingViewHolder(child);
-        int top = child.getTop() - AndroidUtilities.dp(8);
+        int top = child.getTop() - AndroidUtilities.statusBarHeight - AndroidUtilities.dp(8);
         int newOffset = top > 0 && holder != null && holder.getAdapterPosition() == 0 ? top : 0;
         if (top >= 0 && holder != null && holder.getAdapterPosition() == 0) {
             newOffset = top;
-            runShadowAnimation(false);
+            animatorFadeVisible.setValue(false, true);
         } else {
-            runShadowAnimation(true);
+            animatorFadeVisible.setValue(true, true);
         }
         frameLayout.setTranslationY(newOffset);
         return newOffset + AndroidUtilities.dp(12);
     }
 
     @Override
-    int getFirstOffset() {
+    public int getFirstOffset() {
         return getListTopPadding() + AndroidUtilities.dp(4);
     }
 
@@ -471,12 +757,12 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    int getListTopPadding() {
+    public int getListTopPadding() {
         return listView.getPaddingTop();
     }
 
     @Override
-    void onPreMeasure(int availableWidth, int availableHeight) {
+    public void onPreMeasure(int availableWidth, int availableHeight) {
         int padding;
         if (parentAlert.sizeNotifierFrameLayout.measureKeyboardHeight() > AndroidUtilities.dp(20)) {
             padding = AndroidUtilities.dp(8);
@@ -489,53 +775,8 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
             }
             parentAlert.setAllowNestedScroll(true);
         }
-        if (listView.getPaddingTop() != padding) {
-            ignoreLayout = true;
-            listView.setPadding(0, padding, 0, 0);
-            ignoreLayout = false;
-        }
-    }
-
-    @Override
-    public void requestLayout() {
-        if (ignoreLayout) {
-            return;
-        }
-        super.requestLayout();
-    }
-
-    private void runShadowAnimation(final boolean show) {
-        if (show && shadow.getTag() != null || !show && shadow.getTag() == null) {
-            shadow.setTag(show ? null : 1);
-            if (show) {
-                shadow.setVisibility(View.VISIBLE);
-            }
-            if (shadowAnimation != null) {
-                shadowAnimation.cancel();
-            }
-            shadowAnimation = new AnimatorSet();
-            shadowAnimation.playTogether(ObjectAnimator.ofFloat(shadow, View.ALPHA, show ? 1.0f : 0.0f));
-            shadowAnimation.setDuration(150);
-            shadowAnimation.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (shadowAnimation != null && shadowAnimation.equals(animation)) {
-                        if (!show) {
-                            shadow.setVisibility(View.INVISIBLE);
-                        }
-                        shadowAnimation = null;
-                    }
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    if (shadowAnimation != null && shadowAnimation.equals(animation)) {
-                        shadowAnimation = null;
-                    }
-                }
-            });
-            shadowAnimation.start();
-        }
+        padding += AndroidUtilities.statusBarHeight;
+        listView.setPaddingWithoutRequestLayout(0, padding, 0, listPaddingBottom);
     }
 
     private int getCurrentTop() {
@@ -563,12 +804,12 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    void onDestroy() {
+    public void onDestroy() {
         NotificationCenter.getInstance(parentAlert.currentAccount).removeObserver(this, NotificationCenter.contactsDidLoad);
     }
 
     @Override
-    void onShow(ChatAttachAlert.AttachAlertLayout previousLayout) {
+    public void onShow(ChatAttachAlert.AttachAlertLayout previousLayout) {
         layoutManager.scrollToPositionWithOffset(0, 0);
     }
 
@@ -667,11 +908,13 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                 case 1: {
                     view = new View(mContext);
                     view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(56)));
+                    view.setTag(RecyclerListView.TAG_NOT_SECTION);
                     break;
                 }
                 case 2:
                 default: {
                     view = new View(mContext);
+                    view.setTag(RecyclerListView.TAG_NOT_SECTION);
                     break;
                 }
             }
@@ -700,6 +943,8 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                     final TLRPC.User finalUser = user;
                     userCell.setData(user, null, () -> PhoneFormat.getInstance().format("+" + finalUser.phone), divider);
                 }
+
+                userCell.setChecked(selectedContacts.containsKey(ListItemID.of(object)), false);
             }
         }
 
@@ -903,10 +1148,12 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                 case 1:
                     view = new View(mContext);
                     view.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(56)));
+                    view.setTag(RecyclerListView.TAG_NOT_SECTION);
                     break;
                 case 2:
                 default:
                     view = new View(mContext);
+                    view.setTag(RecyclerListView.TAG_NOT_SECTION);
                     break;
             }
             return new RecyclerListView.Holder(view);
@@ -935,6 +1182,8 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
                     final TLRPC.User finalUser = user;
                     userCell.setData(user, searchResultNames.get(position - 1), () -> PhoneFormat.getInstance().format("+" + finalUser.phone), divider);
                 }
+
+                userCell.setChecked(selectedContacts.containsKey(ListItemID.of(object)), false);
             }
         }
 
@@ -961,52 +1210,59 @@ public class ChatAttachAlertContactsLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
+    public void onFactorChanged(int id, float factor, float fraction, FactorAnimator callee) {
+        if (id == ANIMATOR_ID_FADE_VISIBLE) {
+            fadeView.setAlpha(factor);
+            fadeView.setVisibility(factor > 0 ? VISIBLE : INVISIBLE);
+        }
+    }
+
+    @Override
     public ArrayList<ThemeDescription> getThemeDescriptions() {
 
-        ThemeDescription.ThemeDescriptionDelegate cellDelegate = () -> {
-            if (listView != null) {
-                int count = listView.getChildCount();
-                for (int a = 0; a < count; a++) {
-                    View child = listView.getChildAt(a);
-                    if (child instanceof UserCell) {
-                        ((UserCell) child).update(0);
-                    }
-                }
-            }
-        };
+        ThemeDescription.ThemeDescriptionDelegate cellDelegate = this::cellDelegateThemeColors;
 
         ArrayList<ThemeDescription> themeDescriptions = new ArrayList<>();
-
-        themeDescriptions.add(new ThemeDescription(frameLayout, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_dialogBackground));
-
-        themeDescriptions.add(new ThemeDescription(shadow, ThemeDescription.FLAG_BACKGROUND, null, null, null, null, Theme.key_dialogShadowLine));
-
-        themeDescriptions.add(new ThemeDescription(searchField.getSearchBackground(), ThemeDescription.FLAG_BACKGROUNDFILTER, null, null, null, null, Theme.key_dialogSearchBackground));
-        themeDescriptions.add(new ThemeDescription(searchField, ThemeDescription.FLAG_IMAGECOLOR, new Class[]{SearchField.class}, new String[]{"searchIconImageView"}, null, null, null, Theme.key_dialogSearchIcon));
-        themeDescriptions.add(new ThemeDescription(searchField, ThemeDescription.FLAG_IMAGECOLOR, new Class[]{SearchField.class}, new String[]{"clearSearchImageView"}, null, null, null, Theme.key_dialogSearchIcon));
-        themeDescriptions.add(new ThemeDescription(searchField.getSearchEditText(), ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_dialogSearchText));
-        themeDescriptions.add(new ThemeDescription(searchField.getSearchEditText(), ThemeDescription.FLAG_HINTTEXTCOLOR, null, null, null, null, Theme.key_dialogSearchHint));
-        themeDescriptions.add(new ThemeDescription(searchField.getSearchEditText(), ThemeDescription.FLAG_CURSORCOLOR, null, null, null, null, Theme.key_featuredStickers_addedIcon));
 
         themeDescriptions.add(new ThemeDescription(emptyView, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_emptyListPlaceholder));
         themeDescriptions.add(new ThemeDescription(emptyView, ThemeDescription.FLAG_PROGRESSBAR, null, null, null, null, Theme.key_progressCircle));
 
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_LISTGLOWCOLOR, null, null, null, null, Theme.key_dialogScrollGlow));
 
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_SELECTOR, null, null, null, null, Theme.key_listSelector));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{View.class}, Theme.dividerPaint, null, null, Theme.key_divider));
 
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{UserCell.class}, new String[]{"nameTextView"}, null, null, null, Theme.key_dialogTextGray2));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{UserCell.class}, new String[]{"statusTextView"}, null, null, cellDelegate, Theme.key_dialogTextGray2));
-        themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{UserCell.class}, null, Theme.avatarDrawables, null, Theme.key_avatar_text));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundRed));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundOrange));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundViolet));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundGreen));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundCyan));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundBlue));
-        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_avatar_backgroundPink));
 
         return themeDescriptions;
+    }
+
+    @Override
+    public void updateColors() {
+        try {
+            cellDelegateThemeColors();
+    
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    private void cellDelegateThemeColors() {
+        if (searchField != null) {
+            searchField.updateColors();
+        }
+    }
+
+    /** theme editor: colors this view shows (former ThemeDescription keys) */
+    @Override
+    public void addColorKeys(HashSet<Integer> colors) {
+        colors.add(Theme.key_avatar_backgroundPink);
+        colors.add(Theme.key_avatar_backgroundBlue);
+        colors.add(Theme.key_avatar_backgroundCyan);
+        colors.add(Theme.key_avatar_backgroundGreen);
+        colors.add(Theme.key_avatar_backgroundViolet);
+        colors.add(Theme.key_avatar_backgroundOrange);
+        colors.add(Theme.key_avatar_backgroundRed);
+        colors.add(Theme.key_avatar_text);
+        colors.add(Theme.key_dialogTextGray2);
+        colors.add(Theme.key_divider);
+        colors.add(Theme.key_listSelector);
     }
 }

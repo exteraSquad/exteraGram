@@ -33,26 +33,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.core.math.MathUtils;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
+import org.telegram.ui.recyclerview.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.DocumentObject;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
-import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
-import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.SvgHelper;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
 import org.telegram.tgnet.ConnectionsManager;
@@ -60,6 +55,7 @@ import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Cells.EmptyCell;
 import org.telegram.ui.Cells.StickerEmojiCell;
 import org.telegram.ui.Cells.StickerSetNameCell;
@@ -138,7 +134,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
 
     private ContentPreviewViewer.ContentPreviewViewerDelegate contentPreviewViewerDelegate = new ContentPreviewViewer.ContentPreviewViewerDelegate() {
         @Override
-        public void sendSticker(TLRPC.Document sticker, String query, Object parent, boolean notify, int scheduleDate) {
+        public void sendSticker(TLRPC.Document sticker, String query, Object parent, boolean notify, int scheduleDate, int scheduleRepeatPeriod) {
             delegate.onStickerSelected(parent, sticker);
         }
 
@@ -242,11 +238,11 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
             searchEditText.setSingleLine(true);
             searchEditText.setImeOptions(EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
             if (type == 0) {
-                searchEditText.setHint(LocaleController.getString("SearchStickersHint", R.string.SearchStickersHint));
+                searchEditText.setHint(LocaleController.getString(R.string.SearchStickersHint));
             } else if (type == 1) {
-                searchEditText.setHint(LocaleController.getString("SearchEmojiHint", R.string.SearchEmojiHint));
+                searchEditText.setHint(LocaleController.getString(R.string.SearchEmojiHint));
             } else if (type == 2) {
-                searchEditText.setHint(LocaleController.getString("SearchGifsTitle", R.string.SearchGifsTitle));
+                searchEditText.setHint(LocaleController.getString(R.string.SearchGifsTitle));
             }
             searchEditText.setCursorColor(0xffffffff);
             searchEditText.setCursorSize(AndroidUtilities.dp(20));
@@ -320,9 +316,9 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
 
         currentType = MediaDataController.TYPE_IMAGE;
 
-        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.stickersDidLoad);
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.recentDocumentsDidLoad);
+        NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.emojiLoaded);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.stickersDidLoad);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.recentDocumentsDidLoad);
         MediaDataController.getInstance(currentAccount).loadRecents(MediaDataController.TYPE_IMAGE, false, true, false);
         MediaDataController.getInstance(currentAccount).loadRecents(MediaDataController.TYPE_MASK, false, true, false);
         MediaDataController.getInstance(currentAccount).loadRecents(MediaDataController.TYPE_FAVE, false, true, false);
@@ -666,7 +662,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
         gridView.setOnItemClickListener(stickersOnItemClickListener);
         containerView.addView(gridView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
 
-        stickersTab = new ScrollSlidingTabStrip(context, resourcesProvider) {
+        stickersTab = new ScrollSlidingTabStrip(context, resourcesProvider, false) {
             @Override
             public boolean onInterceptTouchEvent(MotionEvent ev) {
                 if (getParent() != null) {
@@ -1126,13 +1122,13 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
         if (currentType == MediaDataController.TYPE_IMAGE && !favouriteStickers.isEmpty()) {
             favTabBum = stickersTabOffset;
             stickersTabOffset++;
-            stickersTab.addIconTab(1, stickerIcons[1]).setContentDescription(LocaleController.getString("FavoriteStickers", R.string.FavoriteStickers));
+            stickersTab.addIconTab(1, stickerIcons[1]).setContentDescription(LocaleController.getString(R.string.FavoriteStickers));
         }
 
         if (!recentStickers[typeIndex(currentType)].isEmpty()) {
             recentTabBum = stickersTabOffset;
             stickersTabOffset++;
-            stickersTab.addIconTab(0, stickerIcons[0]).setContentDescription(LocaleController.getString("RecentStickers", R.string.RecentStickers));
+            stickersTab.addIconTab(0, stickerIcons[0]).setContentDescription(LocaleController.getString(R.string.RecentStickers));
         }
 
         stickerSets[typeIndex(currentType)].clear();
@@ -1151,7 +1147,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
             if (thumb == null) {
                 thumb = document;
             }
-            stickersTab.addStickerTab(thumb, document, stickerSet).setContentDescription(stickerSet.set.title + ", " + LocaleController.getString("AccDescrStickerSet", R.string.AccDescrStickerSet));
+            stickersTab.addStickerTab(thumb, document, stickerSet).setContentDescription(stickerSet.set.title + ", " + LocaleController.getString(R.string.AccDescrStickerSet));
         }
         stickersTab.commitUpdate();
         stickersTab.updateTabStyles();
@@ -1380,7 +1376,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
                     view = imageViewEmoji;
                     break;
                 case 0:
-                    StickerEmojiCell stickerEmojiCell = new StickerEmojiCell(context, false) {
+                    StickerEmojiCell stickerEmojiCell = new StickerEmojiCell(context, false, resourcesProvider) {
                         public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                             if (currentType == MediaDataController.TYPE_EMOJIPACKS) {
                                 super.onMeasure(widthMeasureSpec, widthMeasureSpec);
@@ -1396,7 +1392,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
                     view = new EmptyCell(context);
                     break;
                 case 2:
-                    StickerSetNameCell cell = new StickerSetNameCell(context, false, resourcesProvider);
+                    StickerSetNameCell cell = new StickerSetNameCell(context, false, resourcesProvider, false);
                     cell.setTitleColor(0xff888888);
                     view = cell;
                     break;
@@ -1472,9 +1468,9 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
                             cell.setText(set.set.title, 0);
                         }
                     } else if (object == recentStickers[typeIndex(currentType)]) {
-                        cell.setText(LocaleController.getString("RecentStickers", R.string.RecentStickers), 0);
+                        cell.setText(LocaleController.getString(R.string.RecentStickers), 0);
                     } else if (object == favouriteStickers) {
-                        cell.setText(LocaleController.getString("FavoriteStickers", R.string.FavoriteStickers), 0);
+                        cell.setText(LocaleController.getString(R.string.FavoriteStickers), 0);
                     }
                     break;
                 }
@@ -1570,7 +1566,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
         public ImageViewEmoji(Context context) {
             super(context);
             setPadding(AndroidUtilities.dp(3), AndroidUtilities.dp(3), AndroidUtilities.dp(3), AndroidUtilities.dp(3));
-            setBackground(Theme.createRadSelectorDrawable(getThemedColor(Theme.key_listSelector), AndroidUtilities.dp(2), AndroidUtilities.dp(2)));
+            ThemeBind.selectorBackground(this, Theme.createRadSelectorDrawable(getThemedColor(Theme.key_listSelector), AndroidUtilities.dp(2), AndroidUtilities.dp(2)), null, ThemeBind.of(Theme.key_listSelector), StickerMasksAlert.this.resourcesProvider);
         }
 
         private void setDrawable(AnimatedEmojiDrawable drawable) {
@@ -1910,7 +1906,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
                     view = imageViewEmoji;
                     break;
                 case 0:
-                    StickerEmojiCell cell = new StickerEmojiCell(context, false) {
+                    StickerEmojiCell cell = new StickerEmojiCell(context, false, resourcesProvider) {
                         public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
                             if (currentType == MediaDataController.TYPE_EMOJIPACKS) {
                                 super.onMeasure(widthMeasureSpec, widthMeasureSpec);
@@ -1926,7 +1922,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
                     view = new EmptyCell(context);
                     break;
                 case 2:
-                    view = new StickerSetNameCell(context, false, resourcesProvider);
+                    view = new StickerSetNameCell(context, false, resourcesProvider, false);
                     break;
                 case 4:
                     view = new View(context);
@@ -1948,7 +1944,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
                     frameLayout.addView(imageView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 0, 0, 0, 50));
 
                     TextView textView = new TextView(context);
-                    textView.setText(LocaleController.getString("NoStickersFound", R.string.NoStickersFound));
+                    textView.setText(LocaleController.getString(R.string.NoStickersFound));
                     textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
                     textView.setTextColor(0xff949ba1);
                     frameLayout.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 0, 0, 0, 0));

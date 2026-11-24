@@ -1,0 +1,26 @@
+ext.generatedExteraLocaleAssets = layout.buildDirectory.dir("generated/extera_locales/main")
+
+android {
+    sourceSets {
+        main {
+            assets.srcDir(generatedExteraLocaleAssets.get().asFile)
+        }
+    }
+}
+
+def syncExteraLocaleAssets = tasks.register("syncExteraLocaleAssets", Sync) {
+    from("src/main/res") {
+        include("**/extera.xml")
+        includeEmptyDirs = false
+        eachFile { details ->
+            details.path = "extera_locales/${details.relativePath.parent}/${details.name}"
+        }
+    }
+    into(generatedExteraLocaleAssets)
+}
+
+tasks.configureEach { task ->
+    if (task.name.startsWith("merge") && task.name.endsWith("Assets")) {
+        task.dependsOn(syncExteraLocaleAssets)
+    }
+}

@@ -9,6 +9,7 @@ import org.telegram.messenger.LiteMode;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.Theme;
 
+import java.lang.ref.WeakReference;
 import java.util.Random;
 
 public class AudioVisualizerDrawable {
@@ -25,7 +26,7 @@ public class AudioVisualizerDrawable {
 
     private final Paint p1;
 
-    private View parentView;
+    private WeakReference<View> parentView;
     private final Random random = new Random();
 
     public float IDLE_RADIUS = AndroidUtilities.dp(6) * 0.33f;
@@ -99,7 +100,7 @@ public class AudioVisualizerDrawable {
             } else {
                 animateTo[i] = waveform[i];
             }
-            if (parentView == null) {
+            if (parentView == null || parentView.get() == null) {
                 current[i] = animateTo[i];
             } else if (i == 6) {
                 dt[i] = (animateTo[i] - current[i]) / (ANIMATION_DURATION + 80);
@@ -113,6 +114,15 @@ public class AudioVisualizerDrawable {
     }
 
     float rotation;
+
+    public void draw(Canvas canvas, float cx, float cy, int color, float alpha, Theme.ResourcesProvider resourcesProvider) {
+        if (!LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
+            return;
+        }
+        p1.setColor(color);
+        p1.setAlpha((int) (ALPHA * alpha));
+        this.draw(canvas, cx, cy);
+    }
 
     public void draw(Canvas canvas, float cx, float cy, boolean outOwner, float alpha, Theme.ResourcesProvider resourcesProvider) {
         if (!LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
@@ -152,7 +162,9 @@ public class AudioVisualizerDrawable {
                 if ((dt[i] > 0 && current[i] > animateTo[i]) || (dt[i] < 0 && current[i] < animateTo[i])) {
                     current[i] = animateTo[i];
                 }
-                parentView.invalidate();
+                if (parentView != null && parentView.get() != null) {
+                    parentView.get().invalidate();
+                }
             }
         }
 
@@ -212,11 +224,11 @@ public class AudioVisualizerDrawable {
     }
 
     public void setParentView(View parentView) {
-        this.parentView = parentView;
+        this.parentView = new WeakReference<>(parentView);
     }
 
     public View getParentView() {
-        return parentView;
+        return parentView == null ? null : parentView.get();
     }
 
     public void setColor(int color) {

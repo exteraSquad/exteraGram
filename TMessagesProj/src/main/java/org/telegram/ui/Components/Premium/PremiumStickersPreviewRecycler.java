@@ -205,7 +205,9 @@ public class PremiumStickersPreviewRecycler extends RecyclerListView implements 
         } else if (oldSelectedView != sortedView.get(sortedView.size() - 1)) {
             oldSelectedView = sortedView.get(sortedView.size() - 1);
             if (haptic) {
-                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                try {
+                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                } catch (Exception ignored) {}
             }
         }
         for (int i = 0; i < sortedView.size(); i++) {
@@ -269,7 +271,7 @@ public class PremiumStickersPreviewRecycler extends RecyclerListView implements 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.premiumStickersPreviewLoaded);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.premiumStickersPreviewLoaded);
         scheduleAutoScroll();
     }
 

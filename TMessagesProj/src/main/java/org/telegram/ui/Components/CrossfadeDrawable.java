@@ -1,5 +1,6 @@
 package org.telegram.ui.Components;
 
+import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
@@ -9,10 +10,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.telegram.messenger.AndroidUtilities;
+
 public class CrossfadeDrawable extends Drawable {
 
     private final Drawable topDrawable;
     private final Drawable bottomDrawable;
+    private Callback topCallback, bottomCallback;
 
     private float progress;
     float globalAlpha = 255f;
@@ -22,7 +26,7 @@ public class CrossfadeDrawable extends Drawable {
         this.bottomDrawable = bottomDrawable;
 
         if (topDrawable != null) {
-            topDrawable.setCallback(new Callback() {
+            topDrawable.setCallback(topCallback = new Callback() {
                 @Override
                 public void invalidateDrawable(@NonNull Drawable drawable) {
                     if (progress < 1.0f) {
@@ -44,7 +48,7 @@ public class CrossfadeDrawable extends Drawable {
             });
         }
         if (bottomDrawable != null) {
-            bottomDrawable.setCallback(new Callback() {
+            bottomDrawable.setCallback(bottomCallback = new Callback() {
                 @Override
                 public void invalidateDrawable(@NonNull Drawable drawable) {
                     if (progress > 0.0f) {
@@ -75,6 +79,7 @@ public class CrossfadeDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
+        updateChildVisibility(false);
         int topAlpha, bottomAlpha;
         topDrawable.setAlpha(topAlpha = (int) (globalAlpha * (1.0f - progress)));
         bottomDrawable.setAlpha(bottomAlpha = (int) (globalAlpha * progress));
@@ -117,6 +122,34 @@ public class CrossfadeDrawable extends Drawable {
 
     public void setProgress(float value) {
         progress = value;
+        updateChildVisibility(false);
         invalidateSelf();
+    }
+
+    @Override
+    public boolean setVisible(boolean visible, boolean restart) {
+        boolean changed = super.setVisible(visible, restart);
+        updateChildVisibility(restart);
+        return changed;
+    }
+
+    private ValueAnimator animator;
+    public void animateToProgress(float value) {
+        if (animator != null) {
+            animator.cancel();
+        }
+        animator = ValueAnimator.ofFloat(getProgress(), value);
+        animator.addUpdateListener(a -> {
+            setProgress((float) a.getAnimatedValue());
+            invalidateSelf();
+        });
+        animator.setDuration((long) (200 * Math.abs(getProgress() - value)));
+        animator.setInterpolator(CubicBezierInterpolator.DEFAULT);
+        animator.start();
+    }
+
+    private void updateChildVisibility(boolean restart) {
+        topDrawable.setVisible(isVisible() && progress < 1.0f, restart);
+        bottomDrawable.setVisible(isVisible() && progress > 0.0f, restart);
     }
 }

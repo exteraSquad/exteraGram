@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- This module was also published with a richer model, Gradle metadata,  -->
+  <!-- which should be used instead. Do not delete the following line which  -->
+  <!-- is to indicate to Gradle or any Gradle module metadata file consumer  -->
+  <!-- that they should prefer consuming it instead. -->
+  <!-- do_not_remove: published-with-gradle-metadata -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.chaquo.python.runtime</groupId>
+  <artifactId>chaquopy_java</artifactId>
+  <version>17.0.2</version>
+  <name>Chaquopy</name>
+  <description>The Python SDK for Android</description>
+  <url>https://chaquo.com/chaquopy/</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Malcolm Smith</name>
+      <email>smith@chaquo.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/chaquo/chaquopy.git</connection>
+    <url>https://github.com/chaquo/chaquopy</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations-java5</artifactId>
+      <version>15.0</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+</project>

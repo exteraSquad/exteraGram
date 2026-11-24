@@ -11,25 +11,27 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 public class CreationTextCell extends FrameLayout {
 
     private SimpleTextView textView;
     private ImageView imageView;
     boolean divider;
-    public int startPadding = 70;
+    public int startPadding;
 
     public CreationTextCell(Context context) {
-        this(context, null);
+        this(context, 70, null);
     }
 
-    public CreationTextCell(Context context, Theme.ResourcesProvider resourcesProvider) {
+    public CreationTextCell(Context context, int padding, Theme.ResourcesProvider resourcesProvider) {
         super(context);
+        this.startPadding = padding;
 
         textView = new SimpleTextView(context);
         textView.setTextSize(16);
         textView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
-        textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText2, resourcesProvider));
+        ThemeBind.textColor(textView, Theme.key_windowBackgroundWhiteBlueText2, resourcesProvider);
         textView.setTag(Theme.key_windowBackgroundWhiteBlueText2);
         addView(textView);
 

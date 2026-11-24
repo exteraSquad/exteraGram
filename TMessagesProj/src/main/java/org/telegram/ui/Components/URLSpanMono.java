@@ -16,6 +16,10 @@ import android.text.style.MetricAffectingSpan;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ChatActivity;
+import org.telegram.ui.LaunchActivity;
+
+import java.lang.ref.WeakReference;
 
 public class URLSpanMono extends MetricAffectingSpan {
 
@@ -24,6 +28,7 @@ public class URLSpanMono extends MetricAffectingSpan {
     private int currentEnd;
     private byte currentType;
     private TextStyleSpan.TextStyleRun style;
+    private WeakReference<Theme.ResourcesProvider> resourcesProvider;
 
     public URLSpanMono(CharSequence message, int start, int end, byte type) {
         this(message, start, end, type, null);
@@ -55,12 +60,13 @@ public class URLSpanMono extends MetricAffectingSpan {
     @Override
     public void updateDrawState(TextPaint p) {
         p.setTextSize(AndroidUtilities.dp(SharedConfig.fontSize - 1));
+        var resourcesProvider = this.resourcesProvider != null ? this.resourcesProvider.get() : null;
         if (currentType == 2) {
-            p.setColor(Theme.getColor(Theme.key_chats_message));
+            p.setColor(Theme.getColor(Theme.key_chats_message, resourcesProvider));
         } else if (currentType == 1) {
-            p.setColor(Theme.getColor(Theme.key_chat_messageTextOut));
+            p.setColor(Theme.getColor(Theme.key_chat_messageTextOut, resourcesProvider));
         } else {
-            p.setColor(Theme.getColor(Theme.key_chat_messageTextIn));
+            p.setColor(Theme.getColor(Theme.key_chat_messageTextIn, resourcesProvider));
         }
         if (style != null) {
             style.applyStyle(p);
@@ -68,5 +74,13 @@ public class URLSpanMono extends MetricAffectingSpan {
             p.setTypeface(Typeface.MONOSPACE);
             p.setUnderlineText(false);
         }
+    }
+
+    public void setCurrentType(byte currentType) {
+        this.currentType = currentType;
+    }
+
+    public void setResourcesProvider(Theme.ResourcesProvider resourcesProvider) {
+        this.resourcesProvider = resourcesProvider == null ? null : new WeakReference<>(resourcesProvider);
     }
 }

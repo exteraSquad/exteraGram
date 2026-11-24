@@ -12,12 +12,12 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.tgnet.TLObject;
 import org.telegram.ui.ActionBar.Theme;
-
-import com.exteragram.messenger.ExteraConfig;
 
 public class SimpleAvatarView extends View {
     public final static int SELECT_ANIMATION_DURATION = 250;
@@ -72,7 +72,7 @@ public class SimpleAvatarView extends View {
         selectPaint.setAlpha((int) (Color.alpha(selectPaint.getColor()) * selectProgress));
         float stroke = selectPaint.getStrokeWidth();
         AndroidUtilities.rectTmp.set(stroke, stroke, getWidth() - stroke, getHeight() - stroke);
-        if (ExteraConfig.avatarCorners != 30) {
+        if (ExteraConfig.getAvatarCorners() < 28) {
             canvas.drawRoundRect(AndroidUtilities.rectTmp, ExteraConfig.getAvatarCorners(getWidth() - stroke * 2, true), ExteraConfig.getAvatarCorners(getWidth() - stroke * 2, true), selectPaint);
         } else {
             canvas.drawArc(AndroidUtilities.rectTmp, -90, selectProgress * 360, false, selectPaint);

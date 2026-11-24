@@ -7,7 +7,7 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2023
+ Copyright @exteraGram, 2022-2026
 
 -->
 
@@ -17,174 +17,1136 @@
 
     <!-- Main Menu -->
     <string name="Links">Links</string>
-    <string name="AboutExteraDescription">Experimental Telegram client based on Official Sources!</string>
-    <string name="Channel">Channel</string>
     <string name="Crowdin">Translate</string>
+    <string name="Website">Website</string>
     <string name="SourceCode">Source Code</string>
     <string name="Categories">Categories</string>
+    <string name="Developer">**%1$s** is a member of the **exteraGram** development team.</string>
+    <string name="DeveloperCompact">Member of the **exteraGram** development team.</string>
+    <string name="Supporter">**%1$s** supported the development of **exteraGram** and received an unique badge.</string>
+    <string name="OfficialChannel">**%1$s** is the official resource of **exteraGram**.</string>
+    <string name="NoSuchSetting">It seems that such a setting does not exist.</string>
+    <string name="SettingLinkToSavedMessages">Setting link sent to **Saved Messages**.</string>
+    <string name="SettingLinkToUser">Setting link sent to **%1$s**.</string>
+    <string name="SettingLinkToChats">Setting link sent to **%1$s**.</string>
+    <string name="LiteBatteryFollowSystem">Use system Battery Saver</string>
+    <string name="LiteBatteryFollowSystemState">System</string>
+    <string name="LiteBatteryFollowSystemInfo">Controlled by system Battery Saver.</string>
+
+    <!-- Pill Stack -->
+    <string name="PillStackPills">Pill Stack</string>
+    <string name="PillStackPillsInfo">Display interactive pills in the search field</string>
+    <string name="PillStackPillsSettingsInfo">Configure which pills will be visible. Tap a pill to open its menu, drag the handle to change the display order.</string>
+    <string name="PillStackActivePills">Active Pills</string>
+    <string name="PillStackHiddenPills">Hidden Pills</string>
+    <string name="PillStackFromPlugin">From a plugin</string>
+    <string name="CurrentLocation">Current Location</string>
+    <string name="SelectLocation">Select on Map</string>
+    <string name="WeatherPill">Weather</string>
+    <string name="WeatherSettingsInfo">Choose how to determine the location for the weather display in search.</string>
+    <string name="WeatherLocation">Location Detection</string>
+    <string name="WeatherLocationPermissionNo">exteraGram needs access to your location to display the current weather.</string>
+    <string name="WeatherLocationPermissionGrant">Grant Permission</string>
+    <string name="WeatherLocationServicesEnable">Enable Location</string>
+    <string name="WeatherPillTopInfo">Weather widget settings for Pill Stack.</string>
+    <string name="PillStackInfiniteScrolling">Infinite Scrolling</string>
+    <string name="CryptoPillTargetCurrency">Target currency</string>
+
+    <!-- Custom Pills -->
+    <string name="CustomPillCreate">Create Pill</string>
+    <string name="CustomPillNew">New Pill</string>
+    <string name="CustomPillEditTitle">Edit Pill</string>
+    <string name="CustomPillEdit">Edit Pill</string>
+    <string name="CustomPillTemplates">Templates</string>
+    <string name="CustomPillTemplatesInfo">Every template is a regular pill: you can change anything after creating it.</string>
+    <string name="CustomPillPasteFound">Your clipboard has the pill **%1$s**.</string>
+    <string name="CustomPillTemplateBlank">Blank</string>
+    <string name="CustomPillTemplateBlankInfo">Start from scratch</string>
+    <string name="CustomPillTemplateCrypto">Crypto Price</string>
+    <string name="CustomPillTemplateCurrency">Exchange Rate</string>
+    <string name="CustomPillTemplateCurrencyName">US Dollar</string>
+    <string name="CustomPillTemplateGitHub">GitHub Stars</string>
+    <string name="CustomPillTemplateStatus">Server Status</string>
+    <string name="CustomPillTemplateStatusInfo">Response code and latency</string>
+    <string name="CustomPillTemplateStatusName">My Server</string>
+    <string name="CustomPillTemplateStatusText">{$ms} ms</string>
+    <string name="CustomPillTemplateStatusDown">Down</string>
+    <string name="CustomPillTemplateWeather">Weather</string>
+    <string name="CustomPillTemplateWeatherText">{current.temperature_2m|round}° · {current.wind_speed_10m|round} km/h</string>
+    <string name="CustomPillTemplateWallet">Wallet Balance</string>
+    <string name="CustomPillTemplateCountdown">Countdown</string>
+    <string name="CustomPillTemplateCountdownInfo">No requests</string>
+    <string name="CustomPillTemplateCountdownName">New Year</string>
+    <string name="CustomPillTemplateCountdownText">%1$s days</string>
+    <string name="CustomPillAppearance">Appearance</string>
+    <string name="CustomPillAppearanceInfo">The name is only shown in pill settings. The search field shows the pill text set below.</string>
+    <string name="CustomPillNameHint">Name</string>
+    <string name="CustomPillIcon">Icon</string>
+    <string name="CustomPillSource">Data Source</string>
+    <string name="CustomPillSourceNone">No Request</string>
+    <string name="CustomPillSourceHttp">Web Request</string>
+    <string name="CustomPillSourceInfo">You can use {lang}, {currency}, {lat}, {lon} and {secret.name} in the address, headers and body. Over plain HTTP, secrets are sent only to local addresses.</string>
+    <string name="CustomPillSourceNoneInfo">A pill without a request is computed on your device: a clock, a countdown or a shortcut to a link.</string>
+    <string name="CustomPillUrlHint">https://api.example.com/data</string>
+    <string name="CustomPillMethod">Method</string>
+    <string name="CustomPillBodyHint">Request body</string>
+    <string name="CustomPillHeaders">Headers</string>
+    <string name="CustomPillSecrets">Secrets</string>
+    <string name="CustomPillSecretsMissing">Required</string>
+    <string name="CustomPillNone">None</string>
+    <string name="CustomPillRefresh">Refresh Interval</string>
+    <string name="CustomPillRefreshManual">Manually</string>
+    <string name="CustomPillRefreshMinutes">%1$d min</string>
+    <string name="CustomPillRefreshHours">%1$d h</string>
+    <string name="CustomPillResponse">Response</string>
+    <string name="CustomPillRun">Send Request</string>
+    <string name="CustomPillRunAgain">Send Again</string>
+    <string name="CustomPillRunning">Sending…</string>
+    <string name="CustomPillResponseInfo">Tap a value to add it to the pill text.</string>
+    <string name="CustomPillResponseBrowse">Add Value from Response</string>
+    <string name="CustomPillResponseMore">and %1$d more</string>
+    <string name="CustomPillMs">%1$d ms</string>
+    <string name="CustomPillText">Pill Text</string>
+    <string name="CustomPillTextHint">Text and {values}</string>
+    <string name="CustomPillTextInfo">Values in braces update with every refresh. Tap a value below to change how it is formatted.</string>
+    <string name="CustomPillMetaStatus">Response Code</string>
+    <string name="CustomPillMetaLatency">Latency</string>
+    <string name="CustomPillMetaUpdated">Update Time</string>
+    <string name="CustomPillMetaNow">Current Time</string>
+    <string name="CustomPillMetaBody">Response Text</string>
+    <string name="CustomPillSummaryAsIs">As is</string>
+    <string name="CustomPillSummaryDigits">%1$s decimals</string>
+    <string name="CustomPillSummaryCompact">shortened</string>
+    <string name="CustomPillSummarySign">+ sign</string>
+    <string name="CustomPillSummaryPercent">percent</string>
+    <string name="CustomPillSummaryAgo">time ago</string>
+    <string name="CustomPillSummaryTime">time</string>
+    <string name="CustomPillSummaryUntil">days until %1$s</string>
+    <string name="CustomPillSummaryDefault">or “%1$s”</string>
+    <string name="CustomPillFormat">Value Format</string>
+    <string name="CustomPillFormatDigits">Decimal Places</string>
+    <string name="CustomPillFormatAuto">Auto</string>
+    <string name="CustomPillFormatCompact">Shorten Large Numbers</string>
+    <string name="CustomPillFormatCompactInfo">64210 -&gt; 64.2K</string>
+    <string name="CustomPillFormatSign">Show Plus Sign</string>
+    <string name="CustomPillFormatPercent">Fraction to Percent</string>
+    <string name="CustomPillFormatPercentInfo" formatted="false">0.25 -&gt; 25%</string>
+    <string name="CustomPillFormatDivide">Divide By</string>
+    <string name="CustomPillFormatDivideInfo">Useful for units: cents to dollars, bytes to megabytes.</string>
+    <string name="CustomPillFormatDefault">When There Is No Value</string>
+    <string name="CustomPillFormatDefaultHint">—</string>
+    <string name="CustomPillFormatNoValue">no value</string>
+    <string name="CustomPillFormatRemove">Remove from Text</string>
+    <string name="CustomPillRules">Conditions</string>
+    <string name="CustomPillRulesInfo">The first matching condition changes the color, icon or text. For example, turn the pill red when the price drops.</string>
+    <string name="CustomPillRuleAdd">Add Condition</string>
+    <string name="CustomPillRule">Condition</string>
+    <string name="CustomPillRuleNew">New Condition</string>
+    <string name="CustomPillRuleTitle">If %1$s %2$s</string>
+    <string name="CustomPillRuleIf">If</string>
+    <string name="CustomPillRuleValue">Value</string>
+    <string name="CustomPillRuleNoValues">Add a value to the pill text or send the request first.</string>
+    <string name="CustomPillRuleCondition">Comparison</string>
+    <string name="CustomPillRuleLess">Less Than</string>
+    <string name="CustomPillRuleGreater">Greater Than</string>
+    <string name="CustomPillRuleEquals">Equals</string>
+    <string name="CustomPillRuleNotEquals">Not Equal To</string>
+    <string name="CustomPillRuleEmpty">Has No Value</string>
+    <string name="CustomPillRuleValueHint">Value to compare with</string>
+    <string name="CustomPillRuleThen">Then</string>
+    <string name="CustomPillRuleThenInfo">Leave the text empty to keep the pill text.</string>
+    <string name="CustomPillRuleTextHint">Replace text (optional)</string>
+    <string name="CustomPillRuleDelete">Delete Condition</string>
+    <string name="CustomPillRuleEffectColor">color</string>
+    <string name="CustomPillRuleEffectIcon">icon</string>
+    <string name="CustomPillRuleEffectText">text “%1$s”</string>
+    <string name="CustomPillRuleEffectNone">no changes</string>
+    <string name="CustomPillTap">On Tap</string>
+    <string name="CustomPillTapAction">Action</string>
+    <string name="CustomPillTapCopy">Copy Text</string>
+    <string name="CustomPillTapDetails">Show Details</string>
+    <string name="CustomPillTapNone">Do Nothing</string>
+    <string name="CustomPillTapInfo">Holding the pill always opens a menu to refresh, copy or edit it.</string>
+    <string name="CustomPillTapLinkInfo">HTTP, HTTPS or tg:// links. Values from the response work here too, like {id}.</string>
+    <string name="CustomPillLinkHint">https://… or tg://…</string>
+    <string name="CustomPillDelete">Delete Pill</string>
+    <string name="CustomPillShared">Pill sent.</string>
+    <string name="CustomPillCopied">Pill copied to clipboard.</string>
+    <string name="CustomPillDuplicate">Duplicate</string>
+    <string name="CustomPillCopySuffix">(copy)</string>
+    <string name="CustomPillDeleteTitle">Delete Pill</string>
+    <string name="CustomPillDeleteText">Are you sure you want to delete **%1$s**?</string>
+    <string name="CustomPillDiscardText">Save the changes to this pill?</string>
+    <string name="CustomPillDiscardNewTitle">New Pill</string>
+    <string name="CustomPillDiscardNewText">Save this pill before leaving?</string>
+    <string name="CustomPillRequestChanged">Request changed</string>
+    <string name="CustomPillErrorNetwork">Couldn\'t reach the server.</string>
+    <string name="CustomPillErrorTooLarge">Response too large</string>
+    <string name="CustomPillErrorBadUrl">Invalid address</string>
+    <string name="CustomPillErrorLocation">No access to location</string>
+    <string name="CustomPillErrorUrl">Enter an address that starts with http:// or https://</string>
+    <string name="CustomPillErrorInsecureSecrets">Secrets are sent only over HTTPS or to local addresses</string>
+    <string name="CustomPillSecretRequired">Key required</string>
+    <string name="CustomPillLimitReached">You can create up to %1$d pills.</string>
+    <string name="CustomPillUpdatedAt">Updated at %1$s</string>
+    <string name="CustomPillUpdatedDate">Updated %1$s</string>
+    <string name="CustomPillKeyValueNew">New Entry</string>
+    <string name="CustomPillKeyValueEditing">Editing</string>
+    <string name="CustomPillKeyValueEditInfo">Tap an entry to edit or delete it.</string>
+    <string name="CustomPillHeaderNameHint">Name, e.g. Authorization</string>
+    <string name="CustomPillHeaderValueHint">Value</string>
+    <string name="CustomPillHeadersInfo">Headers are sent with every request. Keep keys in secrets and use {secret.name} here.</string>
+    <string name="CustomPillSecretNameHint">Name, e.g. api_key</string>
+    <string name="CustomPillSecretValueHint">Value</string>
+    <string name="CustomPillSecretNotSet">Not set</string>
+    <string name="CustomPillSecretsInfo">Secrets stay on this device and never get into shared pills or backups. Use them as {secret.name}.</string>
+    <string name="CustomPillIconSearch">Search icons</string>
+    <string name="CustomPillIconTabIcons">Icons</string>
+    <string name="CustomPillEmojiNothingFound">No emoji found.</string>
+    <string name="CustomPillIconKeep">Keep the Pill Icon</string>
+    <string name="CustomPillIconFilled">Filled</string>
+    <string name="CustomPillIconResults">Results</string>
+    <string name="CustomPillIconNothingFound">No icons found.</string>
+    <string name="CustomPillImportTitle">Add Pill</string>
+    <string name="CustomPillImportAdd">Add Pill</string>
+    <string name="CustomPillImportPreviewInfo">Live data appears after you add the pill.</string>
+    <string name="CustomPillImportHost">Sends Requests To</string>
+    <string name="CustomPillImportNoRequests">Nowhere</string>
+    <string name="CustomPillImportShares">Shares About You</string>
+    <string name="CustomPillImportSharesLanguage">language</string>
+    <string name="CustomPillImportSharesCurrency">currency</string>
+    <string name="CustomPillImportSharesLocation">location</string>
+    <string name="CustomPillImportSharesNothing">Nothing</string>
+    <string name="CustomPillImportSecrets">Needs Secrets</string>
+    <string name="CustomPillImportOpens">Opens on Tap</string>
+    <string name="CustomPillImportWarning">The pill will send requests to this address on its own. Add pills only from people you trust.</string>
+    <string name="CustomPillImportWarningLocal">This pill does not send any requests.</string>
+    <string name="CustomPillImportInvalid">This file is not a valid pill.</string>
+
+    <!-- Proxy -->
+    <string name="ProxyDisableOn">Disable proxy</string>
+    <string name="ProxyDisableNever">Never</string>
+    <string name="ProxyDisableAlways">Always</string>
+    <string name="ProxyDisableOnVpn" translatable="false">VPN</string>
+    <string name="ProxyDisableOnMobileData">Mobile data</string>
+    <string name="ProxyDisableOnWiFi" translatable="false">Wi-Fi</string>
+    <string name="ProxyType">Type</string>
+    <string name="Unknown">Unknown</string>
+    <string name="ProxyRename">Proxy name (optional)</string>
+    <string name="ProxyPinLimitReached">You can pin up to %1$d proxies.</string>
+    <string name="CopyIpAddress">Copy IP address</string>
+    <string name="IpInfoUnavailable">Could not load IP address info.</string>
+    <string name="IpInfoIsp">ISP</string>
+    <string name="IpInfoOrganization">Organization</string>
+    <string name="IpInfoDomain">Domain</string>
+
+    <!-- Translator -->
+    <string name="TranslationProvider">Translation Provider</string>
+    <string name="TranslationTarget">Target Language</string>
+    <string name="TranslationTargetApp">Follow App</string>
+    <string name="ShowTranslateChatButtonLocked">Choose another translation provider or subscribe to **Telegram Premium**.</string>
+
+    <!-- Formatting & Behavior -->
+    <string name="DisableNumberRounding">Disable Number Rounding</string>
+    <string name="FormatTimeWithSeconds">Format Time with Seconds</string>
+    <string name="RelativeLastSeen">Relative Last Seen</string>
+    <string name="InAppVibration">In-App Vibration</string>
+    <string name="DisableNotificationDelay">Disable Notification Delay</string>
+    <string name="AccountNotificationsInfo">Unchecked accounts don\'t show notifications while you\'re using another account.</string>
+    <string name="AccountNotificationsCurrent">Notifications from the current account are always shown.</string>
+    <string name="FilterZalgo">Filter \"Zalgo\"</string>
+    <string name="FilterZalgoInfo">Removes \"%1$s\" symbols in names and messages.</string>
+    <string name="RestartRequired">Restart the app for changes to take effect.</string>
+
+    <!-- Message Formatting -->
+    <string name="CodeBlock">Code</string>
+    <string name="CreateCode">Create Code Block</string>
+
+    <!-- Speed -->
+    <string name="DownloadSpeedBoost">Download Speed Boost</string>
+    <string name="UploadSpeedBoost">Upload Speed Boost</string>
+    <string name="Ultra">Ultra</string>
+    <string name="SpeedBoostInfo">Ultra Boost can cause problems with downloading files and streaming videos on slow Internet connections.</string>
+
+    <!-- Storage -->
+    <string name="StorageSettings">Storage</string>
+    <string name="CustomSavePath">Custom Save Folder</string>
+    <string name="CustomSavePathHint">Leave blank to save directly to root</string>
+    <string name="CustomSavePathDefault">Save to root</string>
+    <string name="CustomSavePathInfo">Saved files will be stored directly in Pictures, Downloads, etc.</string>
+    <string name="CustomSavePathInfoFolder">Saved files will be stored in Pictures/%1$s, Downloads/%1$s, etc.</string>
+
+    <!-- Profile -->
+    <string name="HidePhoneNumber">Hide Phone Number</string>
+    <string name="DefaultProfileTab">Default Tab</string>
+    <string name="ShowIdAndDc">Show ID and DC</string>
+    <string name="ShowIdAndDcInfo">Telegram API shows IDs as they are, while the Bot API adds a minus sign for groups and -100 for supergroups and channels.</string>
+
+    <!-- Archive -->
+    <string name="HideArchiveFolder">Hide Archive Folder</string>
+    <string name="ArchiveOnPull">Open Archive on Pull-down</string>
+    <string name="DisableUnarchiveSwipe">Disable \"Unarchive\" Swipe</string>
+    <string name="DisableUnarchiveSwipeInfo">Swiping left will not remove chats from the archive.</string>
 
     <!-- Appearance -->
-    <string name="AvatarCorners">Avatar Corners</string>
-    <string name="AvatarCornersLeft">Square</string>
-    <string name="AvatarCornersRight">Circle</string>
+    <string name="Appearance">Appearance</string>
 
+    <!-- Avatars -->
+    <string name="AvatarCorners">Avatar Corners</string>
+    <string name="SingleCornerRadius">Single Corner Radius</string>
+    <string name="SingleCornerRadiusInfo">Forums will have the same avatar shape as chats.</string>
+
+    <!-- Chat List -->
     <string name="ListOfChats">Chat List</string>
     <string name="ActionBarTitle">Title Text</string>
-    <string name="ActionBarTitleUsername">Username</string>
     <string name="ActionBarTitleName">First Name</string>
+    <string name="HideStories">Hide Stories</string>
     <string name="HideActionBarStatus">Hide Status</string>
     <string name="CenterTitle">Center Title</string>
-    <string name="ListOfChatsInfo">The title text will change depending on the folder name when only icons are enabled.</string>
+    <string name="ChatHeader">Chat Header</string>
+    <string name="HideFloatingButton">Hide Floating Button</string>
+    <string name="HideDialogsSearchBar">Hide Search Bar</string>
+    <string name="BottomNavigationBarMode">Bottom Navigation Bar</string>
+    <string name="BottomNavigationModeShow">Show</string>
+    <string name="BottomNavigationModeHide">Hide</string>
+    <string name="BottomNavigationModeFloating">Floating</string>
+    <string name="HideNavigationBarLabels">Hide Labels</string>
+    <string name="SenderMiniAvatars">Sender Mini Avatars</string>
+    <string name="ListOfChatsInfo">When \"Icons only\" is enabled for folders, the main title will display the folder name.</string>
 
+    <!-- Folders (Tabs) -->
     <string name="TabTitleStyle">Folder Title</string>
     <string name="TabTitleStyleTextWithIcons">Names with Icons</string>
     <string name="TabTitleStyleIconsOnly">Icons only</string>
     <string name="TabTitleStyleTextOnly">Names only</string>
-    <string name="TabStyle">Folder Style</string>
-    <string name="TabStyleTextOnly">Text</string>
-    <string name="TabStyleRounded">Rounded</string>
-    <string name="TabStyleChips">Chips</string>
-    <string name="TabStylePills">Pills</string>
     <string name="TabCounter">Notification Counter</string>
+    <string name="TabCounterUnmuted">Unmuted</string>
     <string name="HideAllChats">Hide \"%1$s\" Tab</string>
-    <string name="FoldersInfo">Icons are synchronized with Telegram.</string>
+    <string name="FoldersInfo">Icons are synchronized with your account.</string>
 
-    <string name="IconPack">Icons</string>
-    <string name="SolarIcons">Use \"Solar\" Icons</string>
-    <string name="SolarIconsInfo" translatable="false">Powered by @Design480 × @TierOhneNation</string>
+    <!-- App Navigation -->
+    <string name="AppNavigation">App Navigation</string>
+    <string name="AppNavigationInfo">Top-right menu and drawer settings</string>
+    <string name="NavigationDrawer">Navigation Drawer</string>
+    <string name="NavigationDrawerInfo">Replaces the top-right menu with a classic swipe-to-open drawer and a hamburger button.</string>
+    <string name="NavigationDrawerImmersiveAnimation">Immersive Animation</string>
+    <string name="NavigationDrawerProxyPingShort">%1$d ms</string>
+    <string name="MainMenuItems">Menu Items</string>
+    <string name="MainMenuItemsInfo">Tap to show or hide items, hold to reorder. Layout is shared between the menu and the drawer.</string>
+    <string name="MainMenuHiddenItems">Hidden Menu Items</string>
+    <string name="MainMenuAddDivider">Add Divider</string>
+    <string name="MainMenuRemoveSettingsInfo">Settings cannot be hidden while the bottom navigation bar is disabled.</string>
 
-    <string name="ForceBlur">Force Blur</string>
-    <string name="ForceBlurInfo">Blur will be applied to absolutely all themes.</string>
-    <string name="ForceSnow">Force Snow</string>
-    <string name="ForceSnowInfo">Snow will appear in the action bar, drawer and background of chats.</string>
+    <!-- Icon Packs -->
+    <string name="IconPacks">Icon Packs</string>
+    <string name="IconPacksInfo">Customize icons across the app</string>
+    <string name="IconPickerFilter">Filter</string>
+    <string name="IconPickerAllIcons">All Icons</string>
+    <string name="IconPickerReplacedIcons">Replaced Icons</string>
+    <string name="IconPickerNotReplacedIcons">Not Replaced Icons</string>
+    <string name="IconPickerSaveAndExit">Save &amp; Exit</string>
+    <string name="BasePacks">Base Packs</string>
+    <string name="BaseIconPackInfo">The base icon pack is used as a fallback for icons not replaced by other packs.</string>
+    <string name="IconPacksHint">Tap to enable or disable a pack. Hold to edit or delete.</string>
+    <string name="NewIconPack">Create a new Icon Pack</string>
+    <string name="EnabledPacks">Enabled Packs</string>
+    <string name="AllPacks">All Packs</string>
+    <string name="PackName">Pack Name</string>
+    <string name="AuthorNameOptional">Author Name (optional)</string>
+    <string name="NameCannotBeEmpty">Name cannot be empty.</string>
+    <string name="Version">Version</string>
+    <string name="InstallPack">Install Pack</string>
+    <string name="IconCount_one">%1$d icon</string>
+    <string name="IconCount_two">%1$d icons</string>
+    <string name="IconCount_few">%1$d icons</string>
+    <string name="IconCount_many">%1$d icons</string>
+    <string name="IconCount_other">%1$d icons</string>
+    <string name="UpdatePack">Update Pack</string>
+    <string name="DeletePack">Delete Pack</string>
+    <string name="DeletePackInfo">Are you sure you want to delete **%1$s**?</string>
+    <string name="IconPackErrorInvalidArchive">Icon pack archive is invalid.</string>
+    <string name="IconPackErrorMissingMetadata">Icon pack archive is missing metadata.json.</string>
+    <string name="IconPackErrorMetadataTooLarge">Icon pack metadata is too large.</string>
+    <string name="IconPackErrorInvalidMetadata">Icon pack metadata is invalid.</string>
+    <string name="IconPackErrorTooManyFiles">Icon pack contains too many files.</string>
+    <string name="IconPackErrorArchiveTooLarge">Icon pack is too large.</string>
+    <string name="IconPackErrorFileTooLarge">One of the icon files is too large.</string>
+    <string name="IconPackErrorCompressionRatioTooHigh">Icon pack archive is compressed too aggressively.</string>
+    <string name="IconPackErrorStorage">Couldn\'t save icon pack.</string>
+
+    <!-- App Icons -->
+    <string name="IconPack">Icon Pack</string>
+    <string name="AppIconMonet" translatable="false">Monet</string>
+    <string name="AppIconSunset">Sunset</string>
+    <string name="AppIconAurora">Aurora</string>
+    <string name="AppIconGoogle" translatable="false">Google</string>
+    <string name="AppIconAmethyst">Amethyst</string>
+    <string name="AppIconInvincible">Invincible</string>
+    <string name="AppIconCyberpunk">Cyberpunk</string>
+    <string name="AppIconSpace">Space</string>
+    <string name="AppIconIceAge">Ice Age</string>
+    <string name="AppIconEditor">Editor</string>
+    <string name="AppIconOrbit">Orbit</string>
+    <string name="AppIconSus">Impostor</string>
+    <string name="AppIconWinter">Winter</string>
+    <string name="AppIconsKeep">Keep this one</string>
+    <string name="AppIconDefaultInfo" translatable="false">It just works</string>
+    <string name="AppIconWinterInfo" translatable="false">Winter is coming</string>
+    <string name="AppIconMonetInfo" translatable="false">Any color you like</string>
+    <string name="AppIconOrbitInfo" translatable="false">To infinity and beyond</string>
+    <string name="AppIconAuroraInfo" translatable="false">Localized entirely in your phone</string>
+    <string name="AppIconSunsetInfo" translatable="false">Here comes the sun</string>
+    <string name="AppIconIceAgeInfo" translatable="false">Where\'s my acorn?</string>
+    <string name="AppIconEditorInfo" translatable="false">final_v2_FINAL.fig</string>
+    <string name="AppIconSpaceInfo" translatable="false">The Final Frontier</string>
+    <string name="AppIconAmethystInfo" translatable="false">Perfectly balanced</string>
+    <string name="AppIconCyberpunkInfo" translatable="false">Wake up, samurai</string>
+    <string name="AppIconGoogleInfo" translatable="false">Don\'t be evil</string>
+    <string name="AppIconInvincibleInfo" translatable="false">Think, Mark!</string>
+
+    <!-- General Appearance -->
+    <string name="MaterialDesign3" translatable="false">Material Design 3</string>
+    <string name="Sections">Sections</string>
+    <string name="SeparateHeaders">Separate Headers</string>
+    <string name="DividerStyle">Divider Style</string>
+    <string name="DividerStyleHidden">Hidden</string>
+    <string name="DividerStyleLine">Line</string>
+    <string name="DividerStyleSegments">Segments</string>
     <string name="UseSystemFonts">Use System Fonts</string>
     <string name="UseSystemEmoji">Use System Emoji</string>
-    <string name="NewSwitchStyle">MD3 Switch Style</string>
-    <string name="DisableDividers">Disable Dividers</string>
-    <string name="AlternativeNavigation">Alternative Navigation</string>
-    <string name="AlternativeNavigationInfo">An experimental option that includes new, smoother transition animations between screens.</string>
-
-    <string name="DrawerOptions">Drawer Options</string>
-    <string name="DrawerIconSet">Icon Set</string>
-    <string name="DrawerAlternativeOpeningAnimation">Alternative Opening Animation</string>
-
-    <string name="DependsOnTheDate">Depends on the Date</string>
-    <string name="NewYear">New Year</string>
-    <string name="ValentinesDay">Valentine\'s Day</string>
-    <string name="Halloween">Halloween</string>
-
-    <string name="DrawerElements">Drawer Elements</string>
-
-    <!-- General -->
-    <string name="CameraType">Camera Type</string>
-    <string name="CameraTypeSystem">System</string>
-    <string name="DefaultCameraInfo">Use the Telegram\'s built-in Camera.</string>
-    <string name="CameraXInfo">CameraX is only supported on <![CDATA[<a href="https://developer.android.com/training/camerax/devices">selected devices</a>]]>, effects and lenses support depends on your manufacturer.</string>
-    <string name="SystemCameraInfo">Access directly the system camera (not applicable for video messages).</string>
-    <string name="PerformanceMode">Performance Mode</string>
-    <string name="PerformanceModeInfo">CameraX\'s Quality will be reduced in favor of performance.</string>
-    <string name="CameraQuality">Camera Quality</string>
-
-    <string name="DisableNumberRounding">Disable Number Rounding</string>
-    <string name="FormatTimeWithSeconds">Format Time with Seconds</string>
+    <string name="NewLoadingStyle">Loading Style</string>
+    <string name="NewSliderStyle">Slider Style</string>
+    <string name="NewSwitchStyle">Switch Style</string>
+    <string name="NewFabStyle">Floating Button</string>
+    <string name="NewProfileActionsStyle">Profile Buttons</string>
+    <string name="NewPlayerStyle">Player</string>
     <string name="TabletMode">Tablet Mode</string>
+    <string name="RemoveMessageTail">Remove Message Tail</string>
+    <string name="GooeyAvatarAnimation">\"Gooey\" Avatar Animation</string>
+    <string name="CustomChatThemes">Custom Themes in Chats</string>
+    <string name="CustomChatThemesInfo">Each chat will display the theme that was specifically chosen for it.</string>
+    <string name="PredictiveBackIntensity">Predictive Back Intensity</string>
+    <string name="PredictiveBackMax">Max</string>
+    <string name="PredictiveBackInfo">Adjusts how far the screen moves when swiping back.</string>
+    <string name="TransitionAnimation">Transition Animation</string>
+    <string name="TransitionAnimationAosp">AOSP</string>
+    <string name="TransitionAnimationSpring">Spring</string>
+    <string name="TransitionAnimationInfo">AOSP uses the stock Android window transition, Spring a smoother one.</string>
 
-    <string name="DownloadSpeedBoost">Download Speed Boost</string>
-    <string name="UploadSpeedBoost">Upload Speed Boost</string>
-    <string name="Ultra">Ultra</string>
-    <string name="SpeedBoostInfo">Ultra Boost can cause problems with downloading files and streaming videos on a slow internet connection.</string>
-
-    <string name="Profile">Profile</string>
-    <string name="HidePhoneNumber">Hide Phone Number</string>
-    <string name="ShowIdAndDc">Show ID and DC</string>
-    <string name="ShowIdAndDcInfo">Telegram APl shows IDs as they are, while the Bot API adds a minus sign for groups and -100 for supergroups, broadcast groups and channels.</string>
-
-    <string name="ArchiveOnPull">Open Archive on Pull-down</string>
-    <string name="DisableUnarchiveSwipe">Disable \"Unarchive\" swipe</string>
-    <string name="DisableUnarchiveSwipeInfo">Swiping to the left will not remove chats from the archive.</string>
-
-    <!-- Other -->
-    <string name="AnalyticsInfo">When these options are enabled, data about the device is collected and sent to Google Analytics and Crashlytics, allowing us to keep usage statistics and track errors in the app. \n\nHowever, if the options are switched off, the data collection stops and the sent data is instantly deleted.</string>
-    <string name="DeleteAccount">Delete Account</string>
-    <string name="ResetSettings">Reset Settings</string>
+    <!-- Blur & Effects -->
+    <string name="BlurOptions">Blur Options</string>
+    <string name="GlassOutlineStyle">Glass Outline</string>
+    <string name="GlassOutlineGlare">Glare</string>
+    <string name="GlassOutlineSolid">Solid</string>
+    <string name="GlassOutlineHidden">Hidden</string>
+    <string name="HeaderBlurStyle">Header Blur</string>
+    <string name="HeaderBlurDefault">Default</string>
+    <string name="HeaderBlurProgressive">Progressive</string>
+    <string name="HeaderBlurFade">Fade</string>
+    <string name="ForceSnow">Force Snowflakes</string>
+    <string name="ForceSnowInfo">Falling snowflakes will appear in the action bar, side menu, and chat backgrounds.</string>
 
     <!-- Chats -->
-    <string name="StickerSize">Stickers Size</string>
+    <!-- Chat Media & Appearance -->
+    <string name="StickerSize">Sticker Size</string>
     <string name="StickerSizeLeft">Small</string>
-    <string name="StickerSizeRight">Big</string>
+    <string name="StickerSizeRight">Large</string>
     <string name="StickerSizeDialogMessageReplyTo">wow</string>
-    <string name="StickerSizeDialogMessage">woah, he is so cute!</string>
-
-    <string name="StickerShape">Stickers Shape</string>
+    <string name="StickerSizeDialogMessage">woah, so cute!</string>
+    <string name="StickerShape">Sticker Shape</string>
     <string name="StickerShapeRounded">Rounded</string>
     <string name="StickerShapeRoundedMsg">Message</string>
-
-    <string name="StickerTime">Hide Time on Stickers</string>
+    <string name="StickerTimeMode">Time on Stickers</string>
+    <string name="StickerTimeSide">On the Side</string>
+    <string name="StickerTimeHidden">Hidden</string>
+    <string name="ViewEmojiSet">View Emoji Set</string>
     <string name="UnlimitedRecentStickers">Unlimited Recent Stickers</string>
-    <string name="HideCategories">Hide Categories</string>
-    <string name="HideCategoriesInfo">The categories will disappear from the search bar in the reactions selection dialog and emoji panel.</string>
+    <string name="HideReactions">Hide Reactions</string>
+    <string name="HideReactionsInfo">Reactions will be completely hidden from the interface.</string>
+    <string name="ReplyBackground">Background</string>
+    <string name="ChatSettingsInfo">Media Settings, App Icon and other</string>
 
-    <string name="DoubleTap">Double Tap</string>
+    <!-- AI -->
+    <string name="AIChat" translatable="false">AI Chat</string>
+    <string name="AIChatInfo">Setup Services, Roles, and History</string>
+    <string name="AIChatInfo2">Generate text from messages or before sending.</string>
+
+    <!-- AI Services -->
+    <string name="Services">Services</string>
+    <string name="ServicesInfo">Choose the appropriate service for interacting with language models.</string>
+    <string name="NewService">New Service</string>
+    <string name="EditService">Edit Service</string>
+    <string name="ServiceURL" translatable="false">URL</string>
+    <string name="ServiceModel">Model</string>
+    <string name="ServiceKey">API Key</string>
+    <string name="ServiceInfo">Service Info</string>
+    <string name="ServiceProvider">Provider</string>
+    <string name="ServiceProviderCustom">Custom</string>
+    <string name="ServiceTestAndSave">Test and Save</string>
+    <string name="ServicePasteService">Paste Service</string>
+    <string name="ServicePasteKey">Paste API Key</string>
+    <string name="DeleteServiceInfo">Are you sure you want to delete **%1$s**?</string>
+    <string name="ServiceAlreadyExists">Service Already Exists</string>
+    <string name="ServiceAlreadyExistsInfo">Switched to the existing service.</string>
+    <string name="ServiceDuplicate">Another service already uses this URL, model and key.</string>
+
+    <!-- AI Roles -->
+    <string name="Roles">Roles</string>
+    <string name="RolesInfo">Create roles for your specific needs!</string>
+    <string name="Suggestions">Suggestions</string>
+    <string name="RoleName">Name</string>
+    <string name="RolePrompt">Prompt</string>
+    <string name="PromptInfo">A prompt is the initial text given to the model to start generating a response or continue a dialogue.</string>
+    <string name="NewRole">New Role</string>
+    <string name="EditRole">Edit Role</string>
+    <string name="DeleteRoleInfo">Are you sure you want to delete **%1$s**?</string>
+
+    <!-- AI History & Behavior -->
+    <string name="HistoryInfo">Conversation history allows the AI to understand previous requests and consider them when generating new responses.</string>
+    <string name="AIGeneration">Generation</string>
+    <string name="AIReasoning">Reasoning</string>
+    <string name="AIReasoningInfo">Lets supported models on this service spend extra tokens thinking before answering.</string>
+    <string name="AITemperature">Temperature</string>
+    <string name="AITemperatureInfo">Temperature controls response randomness: higher values are more creative, lower values are more focused.</string>
+    <string name="ResponseStreaming">Response Streaming</string>
+    <string name="ResponseStreamingInfo">Ensures smoother and faster display of responses.</string>
+    <string name="ShowResponseOnly">Show Response Only</string>
+    <string name="InsertResponseAsQuote">Insert Response as Quote</string>
+    <string name="TapToAddApiKey">Tap to add an API Key to get started with AI features.</string>
+    <string name="Generate">Generate</string>
+    <string name="GenerateWithHistory">With History</string>
+    <string name="GenerateWithPhoto">With Photo</string>
+    <string name="ClearConversationHistoryInfo">Are you sure you want to clear **all** AI conversation history?</string>
+
+    <!-- AI Errors -->
+    <string name="AIError400">Bad Request</string>
+    <string name="AIError400Info">Check the request parameters.</string>
+    <string name="AIError401">Invalid Credentials</string>
+    <string name="AIError401Info">API key is invalid or disabled. Check your credentials.</string>
+    <string name="AIError402">Insufficient Credits</string>
+    <string name="AIError402Info">Your account or API key has insufficient credits. Add more credits and retry the request.</string>
+    <string name="AIError403">Access Denied</string>
+    <string name="AIError403Info">You don\'t have permission to access this model or resource. Check your API key and account permissions.</string>
+    <string name="AIError408">Request Timeout</string>
+    <string name="AIError408Info">Your request was not processed in time. Please try again later.</string>
+    <string name="AIError429">Rate Limit Exceeded</string>
+    <string name="AIError429Info">You are sending requests too frequently. Please wait a moment and try again.</string>
+    <string name="AIError502">Model Failure</string>
+    <string name="AIError502Info">The selected model is unavailable or we received an invalid response from it.</string>
+    <string name="AIError503">Service Unavailable</string>
+    <string name="AIError503Info">The service is temporarily unavailable or overloaded. Please try again later.</string>
+    <string name="AIError">Server Error</string>
+    <string name="AIErrorInfo">Please retry your request after a short wait.</string>
+    <string name="AIErrorEmpty">Empty Response</string>
+    <string name="AIErrorEmptyInfo">The model returned nothing. Try again or choose another model.</string>
+    <string name="AIOnDevice">On-device</string>
+    <string name="AIErrorOnDevice">On-Device Model Unavailable</string>
+    <string name="AIErrorOnDeviceInfo">This device cannot run the on-device model. Pick another service.</string>
+    <string name="AIErrorOnDeviceDownload">Model Not Downloaded</string>
+    <string name="AIErrorOnDeviceDownloadInfo">The on-device model has not been downloaded yet.</string>
+    <string name="AIErrorOnDeviceDownloading">Model Downloading</string>
+    <string name="AIErrorOnDeviceDownloadingInfo">The on-device model is still downloading. Please try again later.</string>
+    <string name="AIErrorOnDeviceTooLong">Message Too Long</string>
+    <string name="AIErrorOnDeviceTooLongInfo">The on-device model cannot fit this request. Shorten it or pick another service.</string>
+    <string name="AIErrorOnDeviceStopped">Model Stopped</string>
+    <string name="AIErrorOnDeviceStoppedInfo">The on-device model stopped while answering, often because the device ran low on memory. Try again or pick a lighter model.</string>
+    <string name="AIOnDeviceDownloadTitle">Download On-Device Model</string>
+    <string name="AIOnDeviceDownloadInfo">The model is downloaded once and then runs entirely on this device, without sending anything to a server. The download is large and is handled by the system, so it cannot be stopped once started. Wi-Fi is recommended.</string>
+    <string name="AIOnDeviceDownloadButton">Download</string>
+    <string name="AIOnDeviceBadgeReady">READY</string>
+    <string name="AIOnDeviceBadgeUnavailable">UNAVAILABLE</string>
+    <string name="AIOnDeviceNotificationChannel">On-device AI model</string>
+    <string name="AIOnDeviceNotificationReady">Model ready</string>
+    <string name="AIOnDeviceNotificationReadyInfo">Gemini Nano is downloaded and now runs on your device.</string>
+    <string name="AIOnDeviceDownloadStarted">Download started. It continues in the background.</string>
+    <string name="AIOnDeviceBadgeDownload">DOWNLOAD</string>
+    <string name="AIOnDeviceBadgeDownloading">LOADING</string>
+    <string name="AIOnDeviceRefresh">Refresh status</string>
+    <string name="AIOnDevicePreviewModel">Preview model</string>
+    <string name="AIOnDeviceFastModel">Fast model</string>
+    <string name="AIReplaceTelegram">Telegram AI</string>
+    <string name="AIReplaceTelegramEditorInfo">Translate, restyle and proofread drafts</string>
+    <string name="AIReplaceTelegramSummariesInfo">Summarize long messages and posts</string>
+    <string name="AIReplaceTelegramInfo">Selected features use your AI service instead of Telegram servers, without Premium limits.</string>
+    <string name="AIOnDeviceManage">AICore settings</string>
+    <string name="AIOnDeviceManageUnavailable">System settings for AICore are not available on this device.</string>
+    <string name="AIChangeModel">Change</string>
+    <string name="AIAskMore">Ask More</string>
+    <string name="AIAssistant">Assistant</string>
+
+    <!-- Chat Actions -->
     <string name="DoubleTapIncoming">Incoming Messages</string>
     <string name="DoubleTapOutgoing">Outgoing Messages</string>
     <string name="DoubleTapInfo">Some actions require administrator rights in the chat or channel.</string>
-
+    <string name="Gestures">Gestures</string>
+    <string name="SwipeActions">Swipe Actions</string>
+    <string name="SwipeActionsInfo">Swipe a message to the left and, without lifting your finger, move up or down to pick an action.</string>
+    <string name="SwipeActionsBehavior">Behavior</string>
+    <string name="SwipeActionsLoop">Loop Actions</string>
+    <string name="SwipeActionsReversed">Reverse Scrolling</string>
+    <string name="SwipeActionsBehaviorInfo">With looping, the first action comes right after the last one. Reverse scrolling makes the list move with your finger.</string>
+    <string name="SwipeActionsEnabled">Actions</string>
+    <string name="SwipeActionsDisabled">Disabled</string>
+    <string name="SwipeActionsOrderInfo">Tap an action to turn it on or off, drag to reorder. The topmost action runs on a plain swipe.</string>
+    <string name="SwipeActionsPreviewReply">what if i slip and delete it?</string>
+    <string name="SwipeActionsPreviewMessage">fear is the mind-killer. drag slower</string>
     <string name="BottomButton">Bottom Button</string>
+    <string name="WidePosts">Wide Posts</string>
+    <string name="AIFeatures">AI Features</string>
+    <string name="AIFeaturesEditor">Editor</string>
+    <string name="AIFeaturesSummaries">Summaries</string>
+    <string name="AIFeaturesInstantViewSummaries">Instant View Summaries</string>
+    <string name="ChannelDiscussNoCaps">Discuss</string>
+    <string name="QuickTransitions">Quick Swipe Transition</string>
+    <string name="DisableGreetingSticker">Disable Greeting Sticker</string>
+    <string name="AutoRunWidgets">Run Widgets Automatically</string>
+    <string name="AutoRunWidgetsInfo">Otherwise, a widget in a message runs only after you tap it.</string>
+    <string name="WidgetRun">Run Widget</string>
+    <string name="WidgetNotRunning">Widget</string>
     <string name="AdminShortcuts">Quick Admin Shortcuts</string>
     <string name="HideKeyboardOnScroll">Hide Keyboard on Scroll</string>
-    <string name="DisableJumpToNextChannel">Disable \"Jump to the Next Channel\"</string>
-    <string name="ShowActionTimestamps">Show Timestamps for Actions</string>
     <string name="HideShareButton">Hide Side \"%1$s\" Button</string>
+    <string name="ReplaceEditedWithIcon">Replace \"%1$s\" with an Icon</string>
     <string name="MessageMenu">Message Menu</string>
+    <string name="GroupMessageMenu">Group Message Menu</string>
+    <string name="GroupMessageMenuInfo">Grouping moves the main actions to the bottom of the message menu.</string>
+    <string name="GlassMessageMenu">Glass Message Menu</string>
+    <string name="GlassMessageMenuInfo">The message menu, the header menu and the reactions bar become frosted glass.</string>
+    <string name="GlassMessageMenuBlurOff">Glass menus need blur, which is currently off.</string>
     <string name="AddCommaAfterMention">Add Comma after Mention</string>
-    <string name="AddCommaAfterMentionInfo">A comma will be placed automatically after tapping on the user you want to mention.</string>
+    <string name="InlineMathResult">Inline Results</string>
+    <string name="InlineMathResultInfo">Calculator, Currencies, Units, and Time Zones</string>
+    <string name="InlineMathResultHint">The result appears in gray after \"=\". Space inserts it, and Backspace right after the insertion undoes it.</string>
+    <string name="InlineMathResultAnnouncement">Result: %1$s</string>
+    <string name="InlineShowResults">Show Results</string>
+    <string name="InlineFeatures">Features</string>
+    <string name="InlineCalculator">Calculator</string>
+    <string name="InlineCurrencies">Currencies</string>
+    <string name="InlineUnits">Units of Measure</string>
+    <string name="InlineTimeZones">Time Zones</string>
+    <string name="InlineDefaultCurrency">Default Currency</string>
+    <string name="InlineAngleUnit">Angles in sin, cos, tan</string>
+    <string name="InlineAngleDegrees">Degrees</string>
+    <string name="InlineAngleRadians">Radians</string>
+    <string name="InlineMeasureSystem">Measurement System</string>
+    <string name="InlineMeasureMetric">Metric</string>
+    <string name="InlineMeasureImperial">Imperial</string>
+    <string name="InlineDigitGrouping">Group Digits</string>
+    <string name="InlineAutoCurrencyInfo">Auto picks the default currency by your phone number.</string>
+    <string name="InlineRatesUpdated">Exchange rates updated %1$s.</string>
+    <string name="InlineCapabilities">Capabilities</string>
+    <string name="InlineFeatureOff">off</string>
+    <string name="InlineTapToCopy">Tap an example to copy it.</string>
+    <string name="InlineDocArithmetic">Arithmetic and Functions</string>
+    <string name="InlineDocArithmeticInfo">Parentheses, powers, functions, number bases</string>
+    <string name="InlineDocFunctionsText">Functions and constants. Separate arguments with \";\" or a comma followed by a space.</string>
+    <string name="InlineDocBasesText">bin, oct and hex show a number in another base, and dec(x, n) reads x in base n.</string>
+    <string name="InlineDocPercent">Percentages and Shorthands</string>
+    <string name="InlineDocPercentInfo">Discounts, markups, thousands and millions</string>
+    <string name="InlineDocPercentText">A percentage after + or − is taken from the number on its left.</string>
+    <string name="InlineDocShorthandsText">\"k\" means a thousand and \"kk\" a million. \"thousand\" and \"million\" work too.</string>
+    <string name="InlineDocCurrenciesInfo">Money, crypto and Telegram Stars</string>
+    <string name="InlineDocCurrencyText">Without \"to\" or \"in\", an amount converts to the default currency.</string>
+    <string name="InlineDocUnitsInfo">Length, weight, temperature, speed, time</string>
+    <string name="InlineDocUnitsText">Without \"to\" or \"in\", foreign units convert to your measurement system, and your own ones to a handier unit.</string>
+    <string name="InlineDocDurationsText">Durations are split into days, hours and minutes.</string>
+    <string name="InlineDocTimeInfo">Cities, abbreviations and UTC offsets</string>
+    <string name="InlineDocTimeText">A time in another zone converts to yours.</string>
+    <string name="InlineDocCurrentTimeText">Add \"in\" and a city to convert there. \"now\" shows the current time.</string>
+    <string name="HideSendAsPeer">Hide \"Send as…\" Button</string>
+    <string name="HideSendAsPeerInfo">You can still access the \"Send as…\" menu by long pressing the Emojis/Stickers/GIFs button.</string>
+    <string name="ShowPollResultsBeforeVoting">Show Results Before Voting</string>
+    <string name="ShowPollResultsBeforeVotingHint">View results for each option before sending your vote.</string>
+    <string name="ShowOnlineStatus">Show Online Indicator</string>
+    <string name="ShowForwardsCount">Show Forward Count</string>
+    <string name="MessagePreviewDialogMessage">I can eat glass and it doesn\'t hurt me.</string>
 
-    <string name="HidePhotoCounter">Hide Photo Counter</string>
-    <string name="HidePhotoCounterInfo">The annoying photo counter at the top of the screen will disappear from your view.</string>
-    <string name="HideCameraTile">Hide Instant Camera Tile</string>
-    <string name="HideCameraTileInfo">The camera tile will be replaced by a floating button. Pressing the button will launch the Telegram camera, holding it down will launch the system camera.</string>
+    <!-- Chat Search -->
+    <string name="SearchFilterByType">Filter by type</string>
+    <string name="SearchFilterPhotos">Photos</string>
+    <string name="SearchFilterVideos">Videos</string>
+    <string name="SearchFilterVoice">Voice Messages</string>
+    <string name="SearchFilterRound">Video Messages</string>
+    <string name="SearchFilterLocations">Locations</string>
+    <string name="SearchFilterPinned">Pinned</string>
+    <string name="SearchFilterMentions">Mentions</string>
+    <string name="SearchOfApproximate">%1$d of ≈%2$d</string>
 
+    <!-- Voice & Video Recognition -->
+    <string name="RecognitionLanguage">Recognition Language</string>
+    <string name="RecognitionInfo">Uses Vosk API. Works offline. The quality of the transcribed text can be low.</string>
+    <string name="MissingLanguageModel">Missing Language Model</string>
+    <string name="DownloadingModel">Downloading model…</string>
+    <string name="DownloadingModelInfo">Please keep this window open while the language model is downloading.</string>
+    <string name="ModelDownload">Download (%1$s)</string>
+    <string name="ModelDownloadInfo">To continue, you need to download the \"**%1$s**\" language model.</string>
+    <string name="ModelDownloaded">Model downloaded successfully.</string>
+    <string name="ModelError">Error while downloading the model.</string>
+    <string name="ModelUnzipping">Unzipping…</string>
+    <string name="DeleteRecognitionModel">Delete Model</string>
+    <string name="DeleteRecognitionModelInfo">Are you sure you want to delete the \"**%1$s**\" language model?</string>
+    <string name="RecognitionModelDeleted">Model deleted successfully.</string>
+    <string name="RecognitionModelDeleteError">Error while deleting the model.</string>
+    <string name="PostProcessingWithAi">Use AI for post-processing</string>
+    <string name="PostProcessingWithAiInfo">AI will improve readability by correcting errors, adding punctuation, and clarifying unclear parts.</string>
+
+    <!-- Camera -->
+    <string name="CameraType">Camera Type</string>
+    <string name="ExtendedSettings">Extended Settings</string>
+    <string name="SeamlessSwitching">Seamless Switching</string>
+    <string name="ExtendedFramesPerSecond">Extended FPS Range</string>
+    <string name="CameraStabilization">Stabilization</string>
+    <string name="CameraMirrorMode">Mirror Mode</string>
+    <string name="StartWithWideAngleCamera">Start with Wide Angle</string>
+    <string name="ZoomSlider">Zoom Slider</string>
+    <string name="ZoomSliderInfo">Show the zoom control under the video message camera.</string>
     <string name="StaticZoom">Static Zoom</string>
-    <string name="StaticZoomInfo">When recording video messages, the zoom will not reset if you release your fingers.</string>
+    <string name="StaticZoomInfo">When recording video messages, the zoom level will not reset if you release your fingers.</string>
     <string name="VideoMessagesCamera">Camera in Video Messages</string>
     <string name="VideoMessagesCameraRear">Rear</string>
     <string name="VideoMessagesCameraFront">Front</string>
     <string name="VideoMessagesCameraAsk">Ask</string>
     <string name="RearCamera">Rear Camera</string>
     <string name="FrontCamera">Front Camera</string>
-    <string name="DoubleTapSeekDuration">Double Tap Skip Time</string>
-    <string name="RememberLastUsedCamera">Remember last used Camera</string>
-    <string name="RememberLastUsedCameraInfo">When recording video messages, the last used camera will be selected.</string>
-    <string name="PauseOnMinimize">Auto-Pause</string>
-    <string name="PauseOnMinimizeInfo">Pauses a video playback when device is locked or exteraGram is minimized.</string>
-    <string name="DisablePlayback">Disable Playback</string>
-    <string name="DisablePlaybackInfo">Disables playback when volume button is pressed.</string>
+    <string name="RememberLastUsedCamera">Remember Last Used Camera</string>
+    <string name="RememberLastUsedCameraInfo">When recording video messages, the last used camera will be selected automatically.</string>
 
-    <!-- Boost -->
-    <string name="Encryptors">Encryptors</string>
-    <string name="Encrypt">Encrypt</string>
-    <string name="Decrypt">Decrypt</string>
-    <string name="EncryptionKeyInfo">This key will be used to encrypt and decrypt messages in this chat room.</string>
+    <!-- Photo -->
+    <string name="AlwaysSendInHD">Always Send in HD</string>
+    <string name="HideCameraTile">Hide Instant Camera Tile</string>
+    <string name="HideCameraTileInfo">The camera tile will be replaced by a floating button. Pressing it launches the Telegram camera; holding it launches the system camera.</string>
+    <string name="ShortStandardQuality">SD</string>
+
+    <!-- Playback -->
+    <string name="DoubleTapSeekDuration">Double Tap Skip Time</string>
+    <string name="PreferOriginalQuality">Prefer Original Quality</string>
+    <string name="PauseOnMinimize">Auto-Pause</string>
+    <string name="PauseOnMinimizeVideo">Video</string>
+    <string name="PauseOnMinimizeVoice">Voice</string>
+    <string name="PauseOnMinimizeRound">Round</string>
+    <string name="PauseOnMinimizeInfo">Pauses media playback when the device is locked or exteraGram is minimized.</string>
+    <string name="SwipeToPip">Swipe to PiP</string>
+    <string name="UnmuteWithVolumeButtons">Unmute Videos with Volume Buttons</string>
+    <string name="UnmuteWithVolumeButtonsInfo">Pressing a volume button will unmute the video instead of changing the system volume.</string>
+
+    <!-- Other -->
+    <!-- Google -->
+    <string name="AnalyticsInfo">When these options are enabled, data about the device is collected and sent to Google Analytics and Crashlytics, allowing us to keep usage statistics and track errors in the app. \n\nHowever, if the options are switched off, data collection stops and any sent data is instantly deleted.</string>
+
+    <!-- Backup & Restore -->
+    <string name="WriteFileName">Enter the file name…</string>
+    <string name="ExportSettings">Export Settings</string>
+    <string name="ApplySettings">Apply Settings</string>
+    <string name="ImportTitle">Are you sure you want to apply these settings?</string>
+    <string name="ImportConfirm">Yes, apply</string>
+    <string name="CancelConfirm">No, leave as is</string>
+    <string name="SettingsSaved">Settings file saved successfully.</string>
+    <string name="SettingsImported">Settings applied successfully.</string>
+    <string name="ImportChanges_one">**1** change will be applied to the current settings.</string>
+    <string name="ImportChanges_two">**%1$d** changes will be applied to the current settings.</string>
+    <string name="ImportChanges_few">**%1$d** changes will be applied to the current settings.</string>
+    <string name="ImportChanges_many">**%1$d** changes will be applied to the current settings.</string>
+    <string name="ImportChanges_other">**%1$d** changes will be applied to the current settings.</string>
+    <string name="SameSettings">It looks like the settings are the same as the current ones.</string>
+
+    <!-- Export data -->
+    <string name="ExportData">Export Data</string>
+    <string name="ExportChatHistory">Export Chat History</string>
+    <string name="ExportTopicHistory">Export Topic History</string>
+    <string name="ExportOptionProfileMusic">Profile Music</string>
+    <string name="ExportSectionPeriod">Period</string>
+    <string name="ExportDateFrom">Start</string>
+    <string name="ExportDateTill">End</string>
+    <string name="ExportDateBeginning">First Message</string>
+    <string name="ExportDatePresent">Now</string>
+    <string name="ExportDateReset">Reset</string>
+    <string name="ExportFolderChoose">Choose Folder</string>
+    <string name="ExportFolderDefault">Use Default Folder</string>
+    <string name="ExportFolderUnavailable">This folder can\'t be used. Choose a folder in internal storage, for example in Downloads or Documents.</string>
+    <string name="ExportOpenFolder">Open Folder</string>
+    <string name="ExportDelay">For security reasons, you will be able to begin downloading your data in %1$s. We have notified all your devices about the export request to make sure it\'s authorized and give you time to react if it\'s not.\n\nPlease come back on %2$s and repeat the request using the same device.</string>
+    <string name="ExportDelayLessThanHour">less than an hour</string>
+    <string name="ExportInvalid">Sorry, you started a new data export, so this data export has been canceled.</string>
+    <string name="ExportSectionAccount">Account</string>
+    <string name="ExportSectionData">What to export</string>
+    <string name="ExportSectionSaving">Saving</string>
+    <string name="ExportSectionChats">Chats</string>
+    <string name="ExportSectionMedia">Media</string>
+    <string name="ExportSectionOther">Other</string>
+    <string name="ExportOptionInfo">Account Information</string>
+    <string name="ExportOptionUserpics">Profile Pictures</string>
+    <string name="ExportOptionStories">Stories Archive</string>
+    <string name="ExportOptionContacts">Contacts List</string>
+    <string name="ExportOptionSessions">Active Sessions</string>
+    <string name="ExportOptionOther">Miscellaneous Data</string>
+    <string name="ExportOptionPersonalChats">Personal Chats</string>
+    <string name="ExportOptionBotChats">Bot Chats</string>
+    <string name="ExportOptionPrivateGroups">Private Groups</string>
+    <string name="ExportOptionPrivateChannels">Private Channels</string>
+    <string name="ExportOptionPublicGroups">Public Groups</string>
+    <string name="ExportOptionPublicChannels">Public Channels</string>
+    <string name="ExportOptionOnlyMy">Only My Messages</string>
+    <string name="ExportOptionPhotos">Photos</string>
+    <string name="ExportOptionVideos">Video Files</string>
+    <string name="ExportOptionVoiceMessages">Voice Messages</string>
+    <string name="ExportOptionVideoMessages">Video Messages</string>
+    <string name="ExportOptionStickers">Stickers</string>
+    <string name="ExportOptionGifs">GIFs</string>
+    <string name="ExportOptionFiles">Files</string>
+    <string name="ExportSizeLimit">Size Limit</string>
+    <string name="ExportSizeLimitValue">Up to %1$s</string>
+    <string name="ExportFormat">Format</string>
+    <string name="ExportFormatHtml">HTML</string>
+    <string name="ExportFormatJson">JSON</string>
+    <string name="ExportFormatBoth">HTML and JSON</string>
+    <string name="ExportStart">Export</string>
+    <string name="ExportInfo">HTML is easy to read in a browser, JSON is compatible with Telegram Desktop exports.</string>
+    <string name="ExportStoragePermission">Storage access is required to save the export.</string>
+    <string name="ExportProgressTitle">Exporting Data</string>
+    <string name="ExportStateInitializing">Initializing</string>
+    <string name="ExportStateChatsList">Loading Chats List</string>
+    <string name="ExportVerifyCodes">Verification Codes</string>
+    <string name="ExportStop">Stop Export</string>
+    <string name="ExportStopConfirm">Stop exporting your data? The files exported so far will stay in the folder.</string>
+    <string name="ExportStopAction">Stop</string>
+    <string name="ExportFinished">Export Completed</string>
+    <string name="ExportFinishedIn">Finished in %1$s</string>
+    <string name="ExportStepCounter">Step %1$d of %2$d</string>
+    <string name="ExportFilesCount_one">%1$d file</string>
+    <string name="ExportFilesCount_two">%1$d files</string>
+    <string name="ExportFilesCount_few">%1$d files</string>
+    <string name="ExportFilesCount_many">%1$d files</string>
+    <string name="ExportFilesCount_other">%1$d files</string>
+    <string name="ExportFolder">Folder</string>
+    <string name="ExportPathCopied">Path copied to clipboard.</string>
+    <string name="ExportFailed">Export Failed</string>
+    <string name="ExportFailedPanelInfo">Tap to see details</string>
+    <string name="ExportFailedNotification">Something went wrong while exporting your data.</string>
+    <string name="ExportErrorApi">Telegram returned an error: %1$s</string>
+    <string name="ExportErrorIo">Couldn\'t write the file:\n%1$s</string>
+    <string name="ExportIntro">Save a copy of your Telegram data to this device: account information, chats and media.</string>
+    <string name="ExportIntroChat">Save a copy of this chat\'s history and media to this device.</string>
+    <string name="ExportDataInfo">Secret chats are stored only on your devices and can\'t be exported.</string>
+    <string name="ExportSizeLimitInfo">Larger files are skipped. The export keeps a note about them in place of the file.</string>
+    <string name="ExportDelayTitle">Export is not available yet</string>
+    <string name="ExportDelayUntil">For security reasons Telegram will allow this export on %1$s. Repeat the request from this device then.</string>
+    <string name="ExportAvailableFrom">Available on %1$s</string>
+    <string name="ExportShowProgress">Show Progress</string>
+    <string name="ExportContinueInBackground">Continue in Background</string>
+    <string name="ExportSummaryMessages">Messages</string>
+    <string name="ExportSummaryFiles">Files</string>
+    <string name="ExportSummarySize">Size</string>
+    <string name="ExportFolderLowSpace">Only %1$s free</string>
+    <string name="ExportNoSpace">Not enough storage: only %1$s free. Free up some space or choose another folder.</string>
+    <string name="ExportListTitle">Exports</string>
+    <string name="ExportShowInFolder">Show in Folder</string>
+    <string name="ExportDeleteTitle">Delete Export</string>
+    <string name="ExportDeleteConfirm">The folder %1$s and all files in it will be deleted from this device.</string>
+    <string name="ExportDeleted">Export deleted.</string>
+    <string name="ExportDeleteFailed">Couldn\'t delete the export.</string>
+
+    <!-- Settings Management -->
+    <string name="DeleteAccount">Delete Account</string>
+    <string name="ResetSettings">Reset Settings</string>
+    <string name="ResetPreferences">**exteraGram** preferences have been reset.</string>
+    <string name="ResetPreferencesInfo">Are you sure you want to reset **all** exteraGram preferences to their defaults?</string>
+
+    <!-- Donates -->
+    <string name="SupportDevelopment">Support Development</string>
+    <string name="SupportDevelopmentInfo">By supporting the project, you not only contribute to its development but also get a unique badge.</string>
+    <string name="MakeDonation">Make a Donation</string>
+    <string name="DonateApp">Card, SBP or Crypto</string>
+    <string name="DonateAppInfo">Pay %1$s by card, SBP or crypto.</string>
+    <string name="SupportBannerTitle">Support exteraGram</string>
+    <string name="SupportBannerInfo">Get a numbered badge and a few more perks.</string>
+    <string name="SupportBannerButton">Support</string>
+    <string name="SupportBannerBadge">Your badge is %1$s.</string>
+    <string name="SupportBannerPerksInfo">All supporter perks are yours.</string>
+    <string name="ReceiveBadge">Receive Your Badge</string>
+    <string name="ReceiveBadgeInstantInfo">A numbered badge appears on your profile right after payment.</string>
+    <string name="SupporterCustomBadgeChoose">Choose Your Badge</string>
+    <string name="SupporterCustomBadgeChooseInstantInfo">Right after payment, tap the badge in your profile to set any emoji and an optional caption.</string>
+    <string name="DonationIssues">Payment Issues</string>
+    <string name="DonationIssuesInfo">If the badge didn\'t appear, message **@exteraOwner**.</string>
+    <string name="SupporterBadgeEditTitle">Your Badge</string>
+    <string name="SupporterBadgeEditInfo">Tap the badge to choose any emoji.</string>
+    <string name="SupporterBadgeCaptionInfo">Everyone sees the caption when they tap your badge. {name} becomes your name; **bold**, [links](url) and @usernames are supported.</string>
+    <string name="SupporterBadgeReset">Reset to Default</string>
+    <string name="SupporterBadgeName">Arrow Badge %1$s</string>
+    <string name="SupporterBadgeNameCustom">Badge %1$s</string>
+    <string name="SupporterOtherTitle">**%1$s** supports exteraGram</string>
+    <string name="SupporterOtherSubtitle">Supporters get these perks:</string>
+    <string name="SupporterHowToGet">How to Get</string>
+    <string name="SupporterPerkBadge">Numbered Badge</string>
+    <string name="SupporterPerkBadgeInfo">A badge with your number next to your name, visible to everyone on exteraGram.</string>
+    <string name="SupporterPerkNowPlaying">Now Playing</string>
+    <string name="SupporterPerkNowPlayingInfo">Show the track you\'re playing on Last.fm or stats.fm in your profile.</string>
+    <string name="SupporterPerkRegDate">Registration Dates</string>
+    <string name="SupporterPerkRegDateInfo">More accurate account creation dates in profiles.</string>
+    <string name="SupporterPerkEarlyBuilds">Early Builds</string>
+    <string name="SupporterPerkEarlyBuildsInfo">A private channel with test versions before they\'re released.</string>
+    <string name="SupporterWelcomeTitle">Thank You for Your Support!</string>
+    <string name="DeveloperPerksTitle">Your Perks</string>
+    <string name="SupporterWelcomeInfo">Badge **%1$s** — here\'s what you get:</string>
+    <string name="SupporterWelcomeInfoNoNumber">Here\'s what you have now:</string>
+    <string name="SupporterJoinChannel">Early Builds Channel</string>
+    <string name="SupporterTransfer">Transfer to Another Account</string>
+    <string name="SupporterTransferTitle">Transfer Badge</string>
+    <string name="SupporterTransferOtherAccount">Another Account…</string>
+    <string name="SupporterTransferConfirm">Move badge **%1$s** to **%2$s**? This account will lose it, and the next transfer will be available in 30 days.</string>
+    <string name="SupporterTransferDone">Badge transferred to **%1$s**</string>
+    <string name="SupporterTransferCooldown">Next transfer will be available on **%1$s**</string>
+    <string name="SupporterTransferTargetHasBadge">This account already has a badge</string>
+    <string name="SupporterTransferFailed">Couldn\'t transfer the badge. Try again later.</string>
+    <string name="NowPlaying">Now playing</string>
+    <string name="ScrobblingService">Scrobbling Service</string>
+    <string name="SelectService">Select service</string>
+    <string name="SelectServiceInfo">Displays the current track in the profile as a card obtained from the scrobbling service.</string>
+    <string name="EnterUsername">Enter username</string>
+    <string name="EnterUsernameInfo">You can obtain your username on the **official website**.</string>
+    <string name="BoostyPeopleCount_one">%1$d person</string>
+    <string name="BoostyPeopleCount_two">%1$d people</string>
+    <string name="BoostyPeopleCount_few">%1$d people</string>
+    <string name="BoostyPeopleCount_many">%1$d people</string>
+    <string name="BoostyPeopleCount_other">%1$d people</string>
+    <string name="BoostyInfo">Actively support the **exteraGram** on **Boosty**.</string>
+    <string name="BoostyInfo2">Thank you for your support!</string>
+
+    <!-- Plugins -->
+    <string name="PluginsNotSupported">Plugin installation is available only in the **Full** version of the **exteraGram**.</string>
+    <string name="Plugins">Plugins</string>
+    <string name="PluginsEngine">Plugins Engine</string>
+    <string name="EnablePluginsEngine">Enable Plugins Engine</string>
+    <string name="PluginsInfo">You can find plugins in @exteraPlugins.</string>
+    <string name="PluginsNotFound">No plugins found.</string>
+    <string name="PluginsEmptyTitle">No Plugins Yet</string>
+    <string name="PluginsEmptyInfo">Pick plugins in the catalog or find more in @exteraPlugins.</string>
+    <string name="PluginCatalogOpen">Open Catalog</string>
+    <string name="PluginCatalog">Plugin Catalog</string>
+    <string name="PluginCatalogInfo">Browse plugins published in Telegram channels and Git repositories and install them in a tap.</string>
+    <string name="PluginCatalogVerified">Verified</string>
+    <string name="PluginCatalogYourRepositories">Your Repositories</string>
+    <string name="PluginCatalogAddRepository">Add Repository</string>
+    <string name="PluginCatalogRemoveRepository">Remove Repository</string>
+    <string name="PluginCatalogRepositoriesInfo">Repositories are channels and Git repositories that publish plugins. Plugins from unverified repositories can be installed only with **Unknown Sources** enabled.</string>
+    <string name="PluginCatalogEnterLink">Enter Link</string>
+    <string name="PluginCatalogLinkHint">t.me/channel or @channel</string>
+    <string name="PluginCatalogChannelNotFound">Channel not found.</string>
+    <string name="PluginCatalogGitRepository">Git Repository</string>
+    <string name="PluginCatalogGitLinkHint">github.com/user/repo</string>
+    <string name="PluginCatalogGitLoadFailed">Couldn\'t load the repository. Check the link and try again.</string>
+    <string name="PluginCatalogGitUnsupported">This repository needs a newer version of exteraGram.</string>
+    <string name="PluginCatalogOpenRepository">Open Repository</string>
+    <string name="PluginCatalogRepositoryAdded">**%1$s** added to repositories.</string>
+    <string name="PluginCatalogRepositoryRemoved">**%1$s** removed from repositories.</string>
+    <string name="PluginCatalogRepositoryExists">This repository is already in the list.</string>
+    <string name="PluginCatalogAddRepositoryConfirm">Add **%1$s** to your plugin repositories?</string>
+    <string name="PluginRepositoryLinkToSavedMessages">Repository link sent to **Saved Messages**.</string>
+    <string name="PluginRepositoryLinkToUser">Repository link sent to **%1$s**.</string>
+    <string name="PluginRepositoryLinkToChats">Repository link sent to **%1$s**.</string>
+    <string name="PluginCatalogPlugins_one">%1$d plugin</string>
+    <string name="PluginCatalogPlugins_two">%1$d plugins</string>
+    <string name="PluginCatalogPlugins_few">%1$d plugins</string>
+    <string name="PluginCatalogPlugins_many">%1$d plugins</string>
+    <string name="PluginCatalogPlugins_other">%1$d plugins</string>
+    <string name="PluginCatalogUpdating">Updating…</string>
+    <string name="PluginCatalogNotLoaded">Not loaded yet</string>
+    <string name="PluginCatalogUpdates">Updates</string>
+    <string name="PluginCatalogInstalled">Installed</string>
+    <string name="PluginCatalogSortUpdated">Recently Updated</string>
+    <string name="PluginCatalogSortPopular">Most Viewed</string>
+    <string name="PluginCatalogSortNewest">Newest</string>
+    <string name="PluginCatalogSortName">By Name</string>
+    <string name="PluginCatalogNew">NEW</string>
+    <string name="PluginCatalogRefreshFailed">Couldn\'t refresh the catalog.</string>
+    <string name="PluginCatalogUpToDate">No new plugins or versions.</string>
+    <string name="PluginCatalogNewVersions_one">**%1$d** new version found.</string>
+    <string name="PluginCatalogNewVersions_two">**%1$d** new versions found.</string>
+    <string name="PluginCatalogNewVersions_few">**%1$d** new versions found.</string>
+    <string name="PluginCatalogNewVersions_many">**%1$d** new versions found.</string>
+    <string name="PluginCatalogNewVersions_other">**%1$d** new versions found.</string>
+    <string name="PluginCatalogAllPlugins">All Plugins</string>
+    <string name="PluginCatalogEmpty">No plugins in this repository yet.</string>
+    <string name="PluginCatalogInfoLoading">Loading details…</string>
+    <string name="PluginCatalogInfoFailed">Couldn\'t read plugin details</string>
+    <string name="PluginCatalogInfoUnavailable">Details unavailable</string>
+    <string name="PluginCatalogEngineUnavailable">The plugin engine isn\'t running, so plugin details can\'t be shown.</string>
+    <string name="PluginCategoryAppearance">Appearance</string>
+    <string name="PluginCategoryChats">Chats</string>
+    <string name="PluginCategoryMedia">Media</string>
+    <string name="PluginCategoryPrivacy">Privacy</string>
+    <string name="PluginCategoryTools">Tools</string>
+    <string name="PluginCategoryIntegrations">Integrations</string>
+    <string name="PluginCategoryFun">Fun</string>
+    <string name="PluginCategoryLibraries">Libraries</string>
+    <string name="PluginCatalogDownloadFailed">Couldn\'t download **%1$s**.</string>
+    <string name="InstallPlugin">Install</string>
+    <string name="UpdatePlugin">Update</string>
+    <string name="PluginNotEnabled">Enable the **Plugin Engine** to install **%1$s**.</string>
+    <string name="PluginInstalled">**%1$s** installed successfully.</string>
+    <string name="PluginUpdated">**%1$s** updated successfully.</string>
+    <string name="PluginEnableError">Failed to enable **%1$s**.</string>
+    <string name="PluginDisableError">Failed to disable **%1$s**.</string>
+    <string name="PluginInstallError">Failed to install **%1$s**.</string>
+    <string name="PluginSourceTrusted">Trusted source</string>
+    <string name="PluginSourceTrustedInfo">Plugins from this source are **verified** and safe to use.</string>
+    <string name="PluginSourceUnknown">Unknown source</string>
+    <string name="PluginSourceUnknownInfo">Plugins from this source are **unverified** and may pose a security risk.</string>
+    <string name="PluginInstallBlocked">Installation Blocked</string>
+    <string name="PluginInstallBlockedInfo">Allow unknown sources in plugin settings</string>
+    <string name="PluginInstallFromStranger">Reply to this chat to install plugins from it.</string>
+    <string name="PluginVersion">Version</string>
+    <string name="PluginVersionValue">Version %1$s</string>
+    <string name="PluginRequired">Required Plugins</string>
+    <string name="PluginRequiredMissing">Not installed</string>
+    <string name="PluginRequiredVersion">Requires version %1$s</string>
+    <string name="PluginRequiredDisabled">Installed, but disabled</string>
+    <string name="PluginRequiredOutdated">Version %1$s, requires %2$s</string>
+    <string name="PluginRequiredUpdate">Update</string>
+    <string name="PluginRequiredInstalled">Installed</string>
+    <string name="PluginBundledPackages">Bundled Packages</string>
+    <string name="PluginRequirements">Requirements</string>
+    <string name="PluginNoDescription">No description provided.</string>
+    <string name="PluginIsNotResponding">Plugin isn\'t responding.</string>
+    <string name="PluginIsNotRespondingAlert">%1$s isn\'t responding</string>
+    <string name="PluginNoAuthor">Unknown Author</string>
+    <string name="EnableAfterInstallation">Enable After Installation</string>
+    <string name="EnterValue">Enter a value</string>
+    <string name="PluginDelete">Delete Plugin</string>
+    <string name="PluginDeleteInfo">Are you sure you want to delete **%1$s**?</string>
+    <string name="ResetPluginSettings">**%1$s** settings have been reset.</string>
+    <string name="ResetPluginSettingsInfo">Are you sure you want to reset **%1$s** settings to default?</string>
+    <string name="PluginsUnknownSources">Unknown Sources</string>
+    <string name="PluginsUnknownSourcesInfo">You are agreeing to install plugins from unknown sources. Every plugin has:</string>
+    <string name="PluginsUnknownSourcesInfo2">Allow installing plugins from unverified sources.</string>
+    <string name="PluginsUnknownSourcesAccount">Full access to your account</string>
+    <string name="PluginsUnknownSourcesAccountInfo">Act on your behalf: read, send and delete messages.</string>
+    <string name="PluginsUnknownSourcesFiles">App files and data</string>
+    <string name="PluginsUnknownSourcesFilesInfo">Read cached chats, media, settings and authorization data.</string>
+    <string name="PluginsUnknownSourcesCode">Unrestricted code</string>
+    <string name="PluginsUnknownSourcesCodeInfo">Run any code and send anything to any server.</string>
+    <string name="PluginsUnknownSourcesWarning">A malicious plugin can take over your account.</string>
+    <string name="PluginsStaticAnalysis">Static Analysis</string>
+    <string name="PluginsStaticAnalysisInfo">Check plugin code before installation and show what it can do.</string>
+    <string name="PluginAnalyzing">Analyzing…</string>
+    <string name="PluginAnalysisRunning">Checking code…</string>
+    <string name="PluginAnalysisRunningInfo">Usually takes a few seconds</string>
+    <string name="PluginAnalysisCaution">Warnings found</string>
+    <string name="PluginAnalysisClean">No threats found</string>
+    <string name="PluginAnalysisNewInVersion">New in this version</string>
+    <string name="PluginAnalysisLimitations">Static analysis can\'t see code that a plugin downloads or decrypts while running.</string>
+    <string name="PluginAnalysisFailed">Analysis didn\'t finish</string>
+    <string name="PluginAnalysisFailedTimeout">The analyzer took too long and was stopped.</string>
+    <string name="PluginAnalysisFailedCrash">The analyzer stopped unexpectedly.</string>
+    <string name="PluginAnalysisFailedTooLarge">The file is too large to analyze.</string>
+    <string name="PluginAnalysisFailedMemory">The analyzer used too much memory and was stopped.</string>
+    <string name="PluginAnalysisFailedError">The analyzer reported an error.</string>
+    <string name="PluginAnalysisCautionInfo">No critical or dangerous issues</string>
+    <string name="PluginAnalysisThreats">Threats found</string>
+    <string name="PluginAnalysisCleanInfo">Nothing suspicious found</string>
+    <string name="PluginAnalysisCriticalCount_one">%1$d critical</string>
+    <string name="PluginAnalysisCriticalCount_two">%1$d critical</string>
+    <string name="PluginAnalysisCriticalCount_few">%1$d critical</string>
+    <string name="PluginAnalysisCriticalCount_many">%1$d critical</string>
+    <string name="PluginAnalysisCriticalCount_other">%1$d critical</string>
+    <string name="PluginAnalysisDangerCount_one">%1$d dangerous</string>
+    <string name="PluginAnalysisDangerCount_two">%1$d dangerous</string>
+    <string name="PluginAnalysisDangerCount_few">%1$d dangerous</string>
+    <string name="PluginAnalysisDangerCount_many">%1$d dangerous</string>
+    <string name="PluginAnalysisDangerCount_other">%1$d dangerous</string>
+    <string name="PluginAnalysisViewReport">View Report</string>
+    <string name="PluginAnalysisConfirmInstall">I Understand the Risks, Install</string>
+    <string name="PluginAnalysisConfirmUpdate">I Understand the Risks, Update</string>
+    <string name="PluginAnalysisIncompleteConfirmInfo">This plugin wasn\'t fully checked and may contain code the analyzer didn\'t see. Continue only if you trust its source.</string>
+    <string name="PluginAnalysisReport">Analysis Report</string>
+    <string name="PluginAnalysisGroupCritical">Critical</string>
+    <string name="PluginAnalysisGroupDanger">Dangerous</string>
+    <string name="PluginAnalysisGroupCaution">Needs attention</string>
+    <string name="PluginAnalysisGroupInfo">Other</string>
+    <string name="PluginAnalysisGroupLimits">Analysis limits</string>
+    <string name="PluginAnalysisMorePlaces">More places: %d</string>
+    <string name="PluginAnalysisMoreValues">More: %d</string>
+    <string name="PluginAnalysisDecodedCode">Unpacked code</string>
+    <string name="PluginAnalysisCompiledCode">Compiled code</string>
+    <string name="PluginAnalysisNativeLibrary">Native library</string>
+    <string name="PluginAnalysisHiddenInComment">Hidden in a comment, lines %1$d–%2$d</string>
+    <string name="PluginAnalysisEncodedData">Encoded data · %1$s</string>
+    <string name="PluginAnalysisLimitTime">Time limit reached</string>
+    <string name="PluginAnalysisLimitTimeInfo">Analysis stopped before checking all of the code</string>
+    <string name="PluginAnalysisLimitIncomplete">Incomplete analysis</string>
+    <string name="PluginAnalysisLimitIncompleteInfo">Part of the plugin is too complex to analyze completely</string>
+    <string name="PluginAnalysisLimitPackages">Unverified packages</string>
+    <string name="PluginAnalysisLimitPackagesInfo">The plugin installs Python packages that weren\'t checked</string>
+    <string name="PluginAnalysisLimitNative">Native code not checked</string>
+    <string name="PluginAnalysisLimitNativeInfo">Only the names used by compiled libraries were checked</string>
+    <string name="PluginAnalysisLimitCompare">Comparison unavailable</string>
+    <string name="PluginAnalysisLimitCompareInfo">Couldn\'t compare with the installed version</string>
+    <string name="PluginAnalysisUnresolvedRequests">The type of some requests could not be determined</string>
+    <string name="PluginAnalysisUnresolvedHooks">The target of some hooks could not be determined</string>
+    <string name="PluginAnalysisNewBadge_one">%1$d new</string>
+    <string name="PluginAnalysisNewBadge_two">%1$d new</string>
+    <string name="PluginAnalysisNewBadge_few">%1$d new</string>
+    <string name="PluginAnalysisNewBadge_many">%1$d new</string>
+    <string name="PluginAnalysisNewBadge_other">%1$d new</string>
+    <string name="PluginAnalysisCategoryCode">Code</string>
+    <string name="PluginAnalysisCategoryStealth">Stealth</string>
+    <string name="PluginAnalysisCategoryAccount">Account</string>
+    <string name="PluginAnalysisCategoryMessages">Messages</string>
+    <string name="PluginAnalysisCategoryNetwork">Network</string>
+    <string name="PluginAnalysisCategoryFiles">Files</string>
+    <string name="PluginAnalysisCategoryDevice">Device</string>
+    <string name="PluginAnalysisCategoryApp">App</string>
+    <string name="PluginAnalysisCategoryPackages">Packages</string>
+    <string name="PluginAnalysisCategoryOther">Other</string>
+    <string name="PluginsSafeMode">Safe Mode</string>
+    <string name="PluginsSafeModeShortcut">Start with safe mode</string>
+    <string name="PluginsSafeModeInfo">The Plugin Engine is disabled due to a crash. Disabling safe mode may lead to unpredictable consequences.</string>
+    <string name="PluginsSafeModeInfo2">In Safe Mode, all plugins are inactive. This allows you to safely find and disable a problematic plugin.</string>
+    <string name="PluginsDevMode">Developer Mode</string>
+    <string name="PluginsCompactView">Plugins Compact View</string>
+    <string name="PluginsDocumentation">Documentation</string>
+    <string name="PluginsTrusted">Trusted Plugins</string>
+    <string name="PluginsDevServerLaunched">Developer Server is started.</string>
+    <string name="PluginsDevServerStopped">Developer Server is stopped.</string>
+    <string name="PluginsPoweredBy" translatable="false">Powered by <![CDATA[<a href="https://chaquo.com/chaquopy/">Chaquopy</a>]]>.</string>
+    <string name="PluginEngineNotEnabled">Enable the **Plugin Engine** to open settings of **%1$s**.</string>
+    <string name="PluginNotFound">**%1$s** not found.</string>
+    <string name="PluginHasNoSettings">**%1$s** has no settings.</string>
+    <string name="PluginSdkComponents">SDK Components</string>
+    <string name="PluginAnalyzerComponent">Plugin Analyzer</string>
+    <string name="PluginAnalyzerUpdatePending">Applies on the next plugin check</string>
+    <string name="PluginAnalyzerBundled">Bundled version</string>
+    <string name="PluginComponentUpdateFailed">Update failed. Try again.</string>
+    <string name="PluginAnalyzerUpdateTitle">Analyzer Update</string>
+    <string name="PluginAnalyzerUpdateInfo">A new version of the plugin analyzer is available.</string>
+    <string name="PluginAnalyzerUpdateReady">Update downloaded. It will apply on the next plugin check.</string>
+    <string name="PluginAnalyzerUpdateFailed">Couldn\'t prepare the plugin analyzer update.</string>
+    <string name="PluginsPySdkUpdate">PySDK Update</string>
+    <string name="PluginsPySdkAutoUpdate">Update Automatically</string>
+    <string name="PluginsPySdkEnableBetaVersion">Install Beta Versions</string>
+    <string name="PluginsPySdkCheckUpdates">Check for Updates</string>
+    <string name="CheckingForUpdates">Checking for Updates…</string>
+    <string name="LatestVersionInstalled">Latest version is installed</string>
+    <string name="RestartPluginSystemToApplyUpdate">Update loaded, restart Plugin Engine to apply</string>
+    <string name="LoadingUpdate">Loading Update…</string>
+    <string name="RestoreSdkFromApk">Restore SDK from APK</string>
+    <string name="PluginsPySdkEngineDisabled">Plugin Engine is disabled</string>
+    <string name="PluginsPySdkNotInstalled">SDK is not installed</string>
+    <string name="PluginsPySdkStarting">Starting…</string>
+    <string name="PluginsPySdkPythonFailed">Python failed to start</string>
+    <string name="PluginsPySdkInstallFailed">SDK installation failed, restart the app</string>
+    <string name="PluginsPySdkStartFailed">SDK failed to start, restart the app</string>
+    <string name="EnableAutoUpdate">Enable Auto Update</string>
+    <string name="PluginsDisableArt">Compatibility Mode</string>
+    <string name="PluginsDisableArtInfo">Prevents plugin hook failures by disabling ART Profile Saver.</string>
 
     <!-- Updates -->
-    <string name="LastCheck">Last Check</string>
-    <string name="CurrentVersion">Current Version</string>
-    <string name="BuildType">Build Type</string>
-    <string name="BTRelease">Release</string>
-    <string name="BTBeta">Beta</string>
-    <string name="CheckOnLaunch">Check on Launch</string>
-    <string name="ClearUpdatesCache">Clear Updates Cache</string>
-    <string name="ClearedUpdatesCache">Cleared **%1$s** of Cache.</string>
-    <string name="NothingToClear">Nothing to Clear.</string>
-
-    <string name="CheckForUpdates">Check for Updates</string>
-    <string name="CheckingForUpdates">Checking for Updates…</string>
-    <string name="NoUpdates">Updates not found.</string>
-
+    <string name="UpdateInstalling">Updating in progress…</string>
+    <string name="UpdateInstallingRelaunch">The app will restart once the update is finished.</string>
+    <string name="UpdateInstallingNotification">You will be notified when the update is complete.</string>
+    <string name="UpdateInstalledNotification">Update complete. Tap to open the app.</string>
+    <string name="UpdateFailedToInstall">Update installation failed with error code: %d</string>
     <string name="UpdateAvailable">Update Available!</string>
-    <string name="Version">Version</string>
-    <string name="UpdateSize">Update Size</string>
-    <string name="Changelog">Changelog:</string>
 
     <!-- Message Details -->
     <string name="Details">Details</string>
@@ -194,44 +1156,308 @@
     <string name="FileSize">File Size</string>
     <string name="FileName">File Name</string>
     <string name="FilePath">File Path</string>
+    <string name="Platform">Platform</string>
+    <string name="SentFrom">Sent from %1$s</string>
     <string name="Resolution">Resolution</string>
     <string name="Bitrate">Bitrate</string>
+    <string name="Duration">Duration</string>
     <string name="MimeType">Mime Type</string>
     <string name="Datacenter">Datacenter</string>
 
-    <!-- Other -->
-    <string name="RestartRequired">Restart the App to take effect.</string>
-    <string name="ResetSettingsBulletin">**exteraGram** Preferences have been reset.</string>
-    <string name="UserNotFound">User with this **ID** not found.</string>
-    <string name="PhotoCopied">Photo copied to clipboard.</string>
+    <!-- Date Formatting -->
+    <string name="DateFormatOption">Format:</string>
+    <string name="DateFormatOptionNone">None</string>
+    <string name="DateFormatOptionRelative">Relative</string>
+    <string name="DateFormatOptionShortTime">Short Time</string>
+    <string name="DateFormatOptionLongTime">Long Time</string>
+    <string name="DateFormatOptionShortDate">Short Date</string>
+    <string name="DateFormatOptionLongDate">Long Date</string>
+    <string name="DateFormatOptionDayOfWeek">Day of week</string>
 
-    <string name="MutualContact">mutual contact</string>
+    <!-- Login & QR -->
+    <string name="LoginQrTitle">QR code login</string>
+    <string name="LoginQrSubtitle">Use another device to scan this QR code.</string>
+    <string name="WifiConnect">Connect</string>
+    <string name="WifiDisabled">Wi-Fi is disabled.</string>
+    <string name="WifiFailed">Failed to connect to Wi-Fi.</string>
+    <string name="WifiSuccess">Successfully connected to Wi-Fi.</string>
+    <string name="AreYouSureToLogin">Are you sure you want to log in to this account on another device?</string>
+
+    <!-- AdBlock -->
+    <string name="PageBlocked">Page blocked</string>
+    <string name="PageBlockedDescription">exteraGram has prevented the following page from loading:\n**%1$s**</string>
+    <string name="PageBlockedGoBack">Go back</string>
+    <string name="BlockAds">Block Ads</string>
+    <string name="BlockedRequests_one">%1$d blocked</string>
+    <string name="BlockedRequests_two">%1$d blocked</string>
+    <string name="BlockedRequests_few">%1$d blocked</string>
+    <string name="BlockedRequests_many">%1$d blocked</string>
+    <string name="BlockedRequests_other">%1$d blocked</string>
+    <string name="AdBlockFiltersLoading">Loading Filters…</string>
+
+    <!-- Other -->
+    <string name="SetAsBadge">Set as Badge</string>
+    <string name="AutoLockInstant">Instant</string>
+    <string name="TestBackend">Test Backend</string>
+    <string name="SearchPhotoInfo">Services can use images following their privacy policies and terms of use.</string>
+    <string name="PhotoUploadFailed">Failed to upload photo.</string>
+    <string name="TrackSaved">Track saved to **%1$s**.</string>
+    <string name="ChannelToSaveChanged">Tracks will be saved to **%1$s**.</string>
+    <string name="DeletedMessage">Deleted Message</string>
+
+    <!-- Bot Button Context Menu -->
+    <string name="CopyTitle">Copy Title</string>
+    <string name="CopyCallback">Copy Callback Data</string>
+    <string name="CopyInlineQuery">Copy Inline Query</string>
+    <string name="CopyID">Copy User ID</string>
+
+    <!-- Information Toasts & Dialogs -->
+    <string name="SetAsBadgeStatusInfo">Badge status set.</string>
+    <string name="UserNotFound">User with this **ID** not found.</string>
+    <string name="ChatNotFound">Chat with this **ID** not found.</string>
+    <string name="PhotoCopied">Photo copied to clipboard.</string>
+    <string name="FrameCopied">Frame copied to clipboard.</string>
+    <string name="TapToCopy">Tap to copy</string>
+    <string name="ProfileUsesEmojiPack">This profile uses emoji from the %s pack for its background.</string>
+    <string name="ProfileUsesEmojiPacks">This profile uses emoji from the **%d packs** for its background.</string>
+    <string name="ReplyUsesEmojiPacks">This reply uses emoji from the %s pack for its background.</string>
+    <string name="StickerSavedHint">Sticker saved to gallery.</string>
+    <string name="EmojiSavedHint">Emoji saved to gallery.</string>
+    <string name="GifGallerySavedHint">GIF saved to gallery.</string>
+    <string name="MutualContactInfo">This contact is mutual.</string>
+    <string name="LocalPremiumEmojiHint">You do not have a **Telegram Premium** subscription, so only **exteraGram** users will be able to see this emoji.</string>
+
+    <!-- Main Tabs -->
+    <string name="HideContactsTab">Hide Contacts Tab</string>
+    <string name="ShowContactsTab">Show Contacts Tab</string>
+    <string name="ContactsTabWasShownTitle">**Contacts** Tab is now visible.</string>
+    <string name="ContactsTabWasHiddenTitle">**Contacts** Tab is now hidden.</string>
+
+    <!-- Passkeys -->
+    <string name="PasskeyInfo2">This feature only works with password managers that allow the user to manage trust settings for privileged apps, such as **Bitwarden** or **KeePassDX**.</string>
+    <string name="PasskeyUnsupportedTitle">Unsupported password manager</string>
+    <string name="PasskeyUnsupportedMessage">Try other password managers like **Bitwarden** or **KeePassDX**.</string>
+
+    <!-- Date Information -->
+    <string name="CreationDateUserApproximately">**%1$s** created their account approximately on **%2$s**.</string>
+    <string name="CreationDateUserEarlier">**%1$s** created their account earlier than **%2$s**.</string>
+    <string name="CreationDateUserLater">**%1$s** created their account later than **%2$s**.</string>
+    <string name="CreationDateChat">**%1$s** was created on **%2$s**.</string>
+    <string name="CreationDateSelfApproximately">You created your account approximately on **%1$s**.</string>
+    <string name="CreationDateSelfEarlier">You created your account earlier than **%1$s**.</string>
+    <string name="CreationDateSelfLater">You created your account later than **%1$s**.</string>
+    <string name="JoinDateChat">You joined **%1$s** on **%2$s**.</string>
+    <string name="GroupMemberJoined">joined %1$s</string>
+
+    <!-- Menu Items -->
     <string name="ToBeginning">To Beginning</string>
     <string name="MessageHistory">History</string>
     <string name="BoldItalic">Bold Italic</string>
-    <string name="OpenPremiumBot">Open Official Bot</string>
     <string name="CopyPhoto">Copy Photo</string>
-    <string name="CopySticker">Copy Sticker</string>
-    <string name="SaveMessage">Save Message</string>
+    <string name="CopyFrame">Copy Frame</string>
+    <string name="Repeat">Repeat</string>
+    <string name="Subtitles">Subtitles</string>
+    <string name="ChooseSubtitles">Choose Subtitles</string>
+    <string name="DisableSubtitles">Disable Subtitles</string>
+    <string name="SubtitlesAdded">Subtitles enabled.</string>
+    <string name="SubtitlesRemoved">Subtitles disabled.</string>
+    <string name="SubtitlesLoadError">Couldn\'t load subtitles.</string>
+    <string name="SubtitlesUnsupportedFormat">Unsupported subtitle format.</string>
 
-    <string name="TrackSaved">Track saved to **%1$s**.</string>
-    <string name="ChannelToSaveChanged">Tracks will be saved to **%1$s**.</string>
+    <!-- Sticker Maker -->
+    <string name="StickerCornerRadius">Sticker Corners</string>
+    <string name="StickerCornerRadiusInfo">Choose how rounded the sticker corners should look.</string>
+    <string name="StickerCornerRadiusLarge">Large</string>
+    <string name="StickerCornerRadiusMedium">Medium</string>
+    <string name="StickerCornerRadiusSmall">Small</string>
+    <string name="StickerCornerRadiusNone">None</string>
 
-    <string name="ConfirmCall">Confirm Call</string>
-    <string name="CallTo">Call to **%1$s**?</string>
+    <!-- Feed -->
+    <string name="Feed">Feed</string>
+    <string name="FeedShownChannels">Shown in feed</string>
+    <string name="FeedHiddenChannels">Hidden</string>
+    <string name="FeedChannels">Channels</string>
+    <string name="FeedChannelsInfo">Uncheck a channel to hide its posts from All. Categories still show it. New channels are shown automatically.</string>
+    <string name="FeedSettings">Feed Settings</string>
+    <string name="FeedNoPosts">No channel posts yet.</string>
+    <string name="FeedAllChannelsExcluded">All channels are excluded from the feed.</string>
+    <string name="FeedMarkAllReadConfirm">Mark all posts in your feed channels as read? This will also mark them as read in the original channels.</string>
+    <string name="FeedMarkAllReadDone">All posts marked as read</string>
+    <string name="FeedIncludeArchived">Show Chats From Archive</string>
+    <string name="FeedIncludeArchivedInfo">Also include channels from your archived chats in the feed.</string>
+    <string name="FeedHideChannel">Hide from Feed</string>
+    <string name="FeedChannelHidden">**%1$s** hidden from feed</string>
+    <string name="FeedBottomTab">Show in Bottom Tabs</string>
+    <string name="FeedBottomTabInfo">Show the feed as a bottom navigation tab in place of the Contacts tab.</string>
+    <string name="WidePostsInFeed">Wide Posts in Feed</string>
+    <string name="FeedUnreadCounter">Unread Post Counter</string>
+    <string name="FeedCategories">Categories</string>
+    <string name="FeedCategoriesInfo">Categories appear as tabs at the top of the feed. Drag to reorder, tap the eye to hide a tab.</string>
+    <string name="FeedCategoryCreate">Create Category</string>
+    <string name="FeedCategoryNew">New Category</string>
+    <string name="FeedCategoryEdit">Edit Category</string>
+    <string name="FeedCategoryName">Category name</string>
+    <string name="FeedCategoryChannelsInfo">Posts from the selected channels appear when this category is open, even if a channel is hidden from All. A channel can be in several categories.</string>
+    <string name="FeedCategoryDelete">Delete Category</string>
+    <string name="FeedCategoryDeleteConfirm">Delete the category **%1$s**? Its channels will stay in the feed.</string>
+    <string name="FeedCategoryHide">Hide Category</string>
+    <string name="FeedCategoryShow">Show Category</string>
+    <string name="FeedCategoryHiddenInfo">**%1$s** is hidden. You can show it again in feed settings.</string>
+    <string name="FeedCategoryUnsavedChanges">You have edited this category. Save changes?</string>
+    <string name="FeedCategoryEmpty">No channels in this category.</string>
+    <string name="FeedHiddenFromAll">Hidden from All</string>
+    <string name="FeedCategoryEmptyInfo">Add channels to it, and their posts will appear here.</string>
+    <string name="FeedCategoryAddChannels">Add Channels</string>
+    <string name="FeedAllChannelsExcludedInfo">Hidden channels still appear in their categories.</string>
+    <string name="HideFeedTab">Hide Feed Tab</string>
+    <string name="DisableMarkdown">Disable Markdown</string>
+    <string name="EnableMarkdown">Enable Markdown</string>
 
-    <string name="formatterDay24HSec" translatable="false">HH:mm:ss</string>
-    <string name="formatterDay12HSec" translatable="false">h:mm:ss a</string>
+    <!-- Player -->
+    <string name="PlayerCollapse">Collapse player</string>
+    <string name="PlayerShowRemaining">Show remaining time</string>
+    <string name="PlayerShowDuration">Show duration</string>
+    <string name="PlayerTimeRemaining">−%1$s</string>
+    <string name="PlayerLyrics">Lyrics</string>
+    <string name="PlayerQueue">Queue</string>
+    <string name="PlayerQueueSearch">Search in queue</string>
+    <string name="PlayerQueueAdd">Add music</string>
+    <string name="PlayerCoverColors">Cover Colors</string>
+    <string name="PlayerLyricsOnline">Online Lyrics</string>
+    <string name="PlayerMotionCovers">Animated Covers</string>
+    <string name="PlayerMotionCoversEnabled">Covers will be loaded from Apple Music by track title and artist.</string>
+    <string name="PlayerSpotifyCanvas">Spotify Canvas</string>
+    <string name="PlayerSpotifyCanvasInfo">Looping videos from Spotify behind the player. Requires a Spotify account.</string>
+    <string name="PlayerSpotifyLoginDone">Logged in to Spotify. You can return to the app.</string>
+    <string name="PlayerSpotifyLoginFailed">Couldn\'t log in to Spotify.</string>
+    <string name="PlayerSpotifyLoginBack">Return to App</string>
+    <string name="PlayerSpotifyLogout">Log Out of Spotify</string>
+    <string name="PlayerSpotifyLogoutInfo">Spotify Canvas will stop showing until you log in again.</string>
+    <string name="PlayerYandexCanvas">Yandex Music Videoshots</string>
+    <string name="PlayerYandexCanvasInfo">Looping videos from Yandex Music behind the player, used when a track has no Spotify Canvas. Requires a Yandex account.</string>
+    <string name="PlayerYandexLogin">Log In to Yandex Music</string>
+    <string name="PlayerYandexLoginInfo">Open %1$s and enter the code below. It will be copied to the clipboard when the site opens.</string>
+    <string name="PlayerYandexLoginOpen">Open Site</string>
+    <string name="PlayerYandexLoginFailed">Couldn\'t log in to Yandex Music.</string>
+    <string name="PlayerYandexLogout">Log Out of Yandex Music</string>
+    <string name="PlayerYandexLogoutInfo">Videoshots will stop showing until you log in again.</string>
+    <string name="PlayerRhythmBackground">Rhythm Background</string>
+    <string name="PlayerRhythmBackgroundInfo">The background pulses to the beat of the music.</string>
+    <string name="PlayerParticles">Particles</string>
+    <string name="PlayerParticlesInfo">Sparks fly off the cover to the beat of the music.</string>
+    <string name="PlayerSettings">Player Settings</string>
+    <string name="PlayerQualityKbps">%1$d kbps</string>
+    <string name="PlayerQualityKhz">%1$s kHz</string>
+    <string name="PlayerQualityBits">%1$d-bit</string>
+    <string name="PlayerInfoFormat">Format</string>
+    <string name="PlayerInfoSampleRate">Sample Rate</string>
+    <string name="PlayerInfoBitDepth">Bit Depth</string>
+    <string name="PlayerSpeedPitch">Change Pitch</string>
+    <string name="PlayerCoverColorsFull">Full Player</string>
+    <string name="PlayerCoverColorsMini">Mini Player</string>
+    <string name="PlayerLyricsOnlineInfo">Look up lyrics online when the track has none. Sources higher in the list take priority.</string>
+    <string name="PlayerLyricsProgress">Line Progress</string>
+    <string name="PlayerLyricsProgressHorizontal">Left to Right</string>
+    <string name="PlayerLyricsProgressVertical">Top to Bottom</string>
+    <string name="PlayerLyricsProgressInfo">How the current line fills as it is sung.</string>
+    <string name="PlayerLyricsSubtitle">Under Each Line</string>
+    <string name="PlayerLyricsSubtitleTranslation">Translation</string>
+    <string name="PlayerLyricsSubtitleRomanization">Romanization</string>
+    <string name="PlayerLyricsSubtitleInfo">Shown when the source provides it. Translations appear only in the app language.</string>
+    <string name="PlayerTrackOf">Track %1$d of %2$d</string>
+    <string name="PlayerSpeedDescription">Playback speed %1$s. Hold for more options</string>
+    <string name="LyricsCredit">Lyrics: %1$s</string>
+    <string name="LyricsOfferTitle">Find the Lyrics?</string>
+    <string name="LyricsOfferText">The track title and artist will be sent directly to LRCLIB (lrclib.net) and lrcmux, not through Telegram. You can turn this off in the player menu.</string>
+    <string name="LyricsOfferButton">Search Lyrics</string>
+    <string name="LyricsNotFoundTitle">No Lyrics Found</string>
+    <string name="LyricsNotFoundText">There are no lyrics for this track in the file tags or online.</string>
+    <string name="LyricsNotFoundTextOffline">There are no lyrics for this track in the file tags. Online search is turned off in the player menu.</string>
+    <string name="LyricsInstrumentalTitle">Instrumental</string>
+    <string name="LyricsInstrumentalText">This track is marked as having no lyrics.</string>
+    <string name="LyricsErrorTitle">Couldn\'t Load Lyrics</string>
+    <string name="LyricsErrorText">The server didn\'t respond. Check your connection and try again.</string>
 
-    <string name="AppIconMonet" translatable="false">Monet</string>
-    <string name="AppIconGradient">Gradient</string>
-    <string name="AppIconAurora">Aurora</string>
-    <string name="AppIconNeo">Neo</string>
-    <string name="AppIconGoogle" translatable="false">Google</string>
-    <string name="AppIconAmethyst">Amethyst</string>
-    <string name="AppIcon480DSGN" translatable="false">480 DSGN</string>
-    <string name="AppIconSpace">Space</string>
-    <string name="AppIconOrbit">Orbit</string>
-    <string name="AppIconSus">Impostor</string>
-    <string name="AppIconWinter">Winter</string>
+    <!-- Reactions -->
+    <string name="CustomReactionsChannelsOnly">Custom emoji reactions are available only in channels.</string>
+    <string name="MaximumReactionsGroupValue_one">%d reaction per message</string>
+    <string name="MaximumReactionsGroupValue_two">%d reactions per message</string>
+    <string name="MaximumReactionsGroupValue_few">%d reactions per message</string>
+    <string name="MaximumReactionsGroupValue_many">%d reactions per message</string>
+    <string name="MaximumReactionsGroupValue_other">%d reactions per message</string>
+    <string name="MaximumReactionsGroupInfo">Limit the number of different reactions that can be added to a message, including already sent ones.</string>
+
+    <!-- Non-translatable -->
+    <string name="PhotoEditorTypefaceImpact" translatable="false">Impact</string>
+
+    <string name="SensitiveRequestTitle">Confirm action</string>
+    <string name="SensitiveRequestWarning">If you didn\'t start this yourself, tap Decline: it may have been started by a plugin.</string>
+    <string name="SensitiveRequestCategoryPayments">Payments</string>
+    <string name="SensitiveRequestCategoryChatManagement">Chat management</string>
+    <string name="SensitiveRequestMethod">Request</string>
+    <string name="SensitiveRequestChat">Chat</string>
+    <string name="SensitiveRequestUser">User</string>
+    <string name="SensitiveRequestAmount">Amount</string>
+
+    <string name="SensitiveRequestDebit">To be deducted</string>
+    <string name="SensitiveRequestUnknownAmount">Could not determine the amount. This does not mean the operation is free.</string>
+    <string name="SensitiveRequestAnonymous">Hide sender name</string>
+    <string name="SensitiveRequestUpgradeIncluded">Prepay gift upgrade</string>
+    <string name="SensitiveRequestGiftMessage">Gift message ID</string>
+    <string name="SensitiveRequestSavedGift">Saved gift ID</string>
+    <string name="SensitiveRequestsConfirm">Confirm sensitive actions</string>
+    <string name="SensitiveRequestsConfirmInfo">Plugins can\'t spend Stars, transfer gifts or change account security without your confirmation.</string>
+    <string name="SensitiveRequestsConfirmPending">Turns off %1$s. Tap to cancel.</string>
+    <string name="SensitiveRequestsConfirmDisabled">Plugins can perform sensitive actions without asking.</string>
+    <string name="SensitiveRequestsDisableTitle">Turn off confirmations?</string>
+    <string name="SensitiveRequestsDisableText">Plugins will be able to spend Stars, transfer gifts and change account security settings without asking you.\n\nFor your safety, this takes effect in 6 hours. Until then you\'ll see a notification and can cancel at any time.</string>
+    <string name="SensitiveRequestsDisableAction">Turn off</string>
+    <string name="SensitiveRequestsAuthTitle">Confirm it\'s you</string>
+    <string name="SensitiveRequestsScreenLockRequired">Set up a screen lock on your device first.</string>
+    <string name="SensitiveRequestsNotificationChannel">Action confirmations</string>
+    <string name="SensitiveRequestsPendingNotificationTitle">Confirmations will turn off</string>
+    <string name="SensitiveRequestsPendingNotificationText">Plugins will be able to perform sensitive actions without asking. If it wasn\'t you, turn confirmations back on in the plugins engine settings.</string>
+    <string name="SensitiveRequestsDisabledNotificationTitle">Confirmations are off</string>
+    <string name="SensitiveRequestsDisabledNotificationText">Plugins can now perform sensitive actions without asking. You can turn confirmations back on in the plugins engine settings.</string>
+    <string name="FolderRolesHeader">My role</string>
+    <string name="FolderRolesAdmin">Admin</string>
+    <string name="FolderRolesOwnerOnly">Only where I\'m the owner</string>
+    <string name="FolderRolesAdminOnly">Only where I\'m an admin</string>
+    <string name="MessageExport">Export as Image</string>
+    <string name="MessageExportTitle">Share it beautifully</string>
+    <string name="MessageExportFailed">Couldn\'t create the image.</string>
+    <string name="MessageExportUnavailable">These messages cannot be exported.</string>
+    <string name="MessageExportNoSpace">Not enough storage.</string>
+    <string name="MessageExportChatTheme">As in chat</string>
+    <string name="MessageExportDarkMode">Dark image</string>
+    <string name="MessageExportLightMode">Light image</string>
+    <string name="MessageExportHideText">Hide Text</string>
+    <string name="MessageExportMessageHidden">Message hidden from the image.</string>
+    <string name="MessageExportTextHidden">Text hidden.</string>
+    <string name="MessageExportToSavedMessages">Image sent to **Saved Messages**.</string>
+    <string name="MessageExportToUser">Image sent to **%1$s**.</string>
+    <string name="MessageExportToChats">Image sent to **%1$s**.</string>
+    <string name="MessageExportScreenshotTaken">Screenshot taken</string>
+    <string name="MessageExportScreenshotHint">Hide messages or text.</string>
+    <string name="MessageExportCustomize">Customize</string>
+    <string name="MessageExportShowText">Show Text</string>
+    <string name="MessageExportCopied">Image copied to clipboard.</string>
+    <string name="MessageExportWatermark">Watermark</string>
+    <string name="MessageExportSource">Show Source</string>
+    <string name="MessageExportHideDate">Hide Date</string>
+    <string name="MessageExportHideMessage">Hide Message</string>
+    <string name="MessageExportDateHidden">Date hidden.</string>
+    <string name="MessageExportStandardTheme">Standard</string>
+    <string name="MessageExportSendAs">Send As…</string>
+    <string name="MessageExportAsPhoto">Photo</string>
+    <string name="MessageExportAsDocument">Document</string>
+    <string name="MessageExportAsSticker">Sticker</string>
+    <string name="MessageExportHideWatermark">Hide Watermark</string>
+    <string name="MessageExportWatermarkHidden">Watermark hidden.</string>
+    <string name="MessageExportAuthors">Show Authors</string>
+    <string name="MessageExportTime">Show Time</string>
+    <string name="MessageExportLimit">You can export up to %1$d messages at a time.</string>
+    <string name="MessageExportStickerToSavedMessages">Sticker sent to **Saved Messages**.</string>
+    <string name="MessageExportStickerToUser">Sticker sent to **%1$s**.</string>
+    <string name="MessageExportStickerToChats">Sticker sent to **%1$s**.</string>
 </resources>

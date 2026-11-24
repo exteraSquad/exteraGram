@@ -62,7 +62,7 @@ public class DrawingInBackgroundThreadDrawable implements NotificationCenter.Not
                 backgroundCanvas.translate(0, padding);
                 drawInBackground(backgroundCanvas);
                 backgroundCanvas.restore();
-
+                backgroundBitmap.prepareToDraw();
             } catch (Exception e) {
                 FileLog.e(e);
                 error = true;
@@ -197,8 +197,8 @@ public class DrawingInBackgroundThreadDrawable implements NotificationCenter.Not
             }
         }
 
-        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.stopAllHeavyOperations);
-        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.startAllHeavyOperations);
+        NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.stopAllHeavyOperations);
+        NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.startAllHeavyOperations);
     }
 
     public void onDetachFromWindow() {

@@ -18,11 +18,29 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+
+import com.exteragram.messenger.ExteraConfig;
+import com.google.android.material.loadingindicator.LoadingIndicator;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.ui.ActionBar.Theme;
 
-public class RadialProgressView extends View {
+import java.util.HashSet;
+
+public class RadialProgressView extends View implements Theme.Colorable {
+
+    public static final int STYLE_LEGACY = 0;
+    public static final int STYLE_MATERIAL3_LOADING = 1;
+    public static final int STYLE_MATERIAL3_PROGRESS_INDETERMINATE_FLAT = 2;
+    public static final int STYLE_MATERIAL3_PROGRESS_INDETERMINATE_WAVY = 3;
+
+    private int currentStyle = STYLE_LEGACY;
+    private LoadingIndicator m3IndicatorView;
+    private CircularProgressIndicator m3CircularProgressIndicator;
+    private Drawable m3Drawable;
 
     private long lastUpdateTime;
     private float radOffset;
@@ -70,6 +88,45 @@ public class RadialProgressView extends View {
         progressPaint.setStrokeCap(Paint.Cap.ROUND);
         progressPaint.setStrokeWidth(AndroidUtilities.dp(3));
         progressPaint.setColor(progressColor);
+        themedProgressColor = progressColor;
+    }
+
+    // the key progressColor came from (Theme.key_progressCircle by default, see setProgressColorKey), and the color it gave
+    private int progressColorKey = Theme.key_progressCircle;
+    private int themedProgressColor;
+
+    /** same as setProgressColor(getThemedColor(key)), but follows theme changes */
+    public void setProgressColorKey(int key) {
+        progressColorKey = key;
+        setProgressColor(getThemedColor(key));
+        themedProgressColor = progressColor;
+    }
+
+    @Override
+    public void updateColors() {
+        try {
+            if (progressPaint == null || progressColor != themedProgressColor) {
+                return; // custom color set by the caller
+            }
+            final int color = getThemedColor(progressColorKey);
+            themedProgressColor = color;
+            if (color != progressColor) {
+                final int alpha = progressPaint.getAlpha();
+                setProgressColor(color);
+                themedProgressColor = color;
+                if (useSelfAlpha) {
+                    progressPaint.setAlpha(alpha);
+                }
+                invalidate();
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    @Override
+    public void addColorKeys(HashSet<Integer> colors) {
+        colors.add(progressColorKey);
     }
 
     public void setUseSelfAlpha(boolean value) {
@@ -87,11 +144,96 @@ public class RadialProgressView extends View {
                 background.setAlpha(a);
             }
             progressPaint.setAlpha(a);
+            if (m3Drawable != null) {
+                m3Drawable.setAlpha(a);
+            }
         }
     }
 
     public void setNoProgress(boolean value) {
         noProgress = value;
+    }
+
+    public void setStyle(int style) {
+        if (!ExteraConfig.getNewLoadingStyle() && style != STYLE_LEGACY) {
+            style = STYLE_LEGACY;
+        }
+        if (currentStyle != style) {
+            var oldM3Drawable = m3Drawable;
+            currentStyle = style;
+            if (currentStyle == STYLE_MATERIAL3_LOADING) {
+                if (m3IndicatorView == null) {
+                    m3IndicatorView = new LoadingIndicator(getContext());
+                }
+                m3IndicatorView.setIndicatorColor(progressColor);
+                m3Drawable = m3IndicatorView.getDrawable();
+            } else if (currentStyle == STYLE_MATERIAL3_PROGRESS_INDETERMINATE_FLAT ||
+                    currentStyle == STYLE_MATERIAL3_PROGRESS_INDETERMINATE_WAVY) {
+                if (m3CircularProgressIndicator == null) {
+                    m3CircularProgressIndicator = new CircularProgressIndicator(getContext());
+                    m3CircularProgressIndicator.setIndeterminate(true);
+                }
+
+                m3CircularProgressIndicator.setIndicatorColor(progressColor);
+                m3CircularProgressIndicator.setIndicatorSize(size);
+                m3CircularProgressIndicator.setTrackThickness((int) progressPaint.getStrokeWidth());
+                m3CircularProgressIndicator.setTrackCornerRadius(AndroidUtilities.dp(2));
+                m3CircularProgressIndicator.setIndicatorTrackGapSize(AndroidUtilities.dp(2));
+
+                setWavy(currentStyle == STYLE_MATERIAL3_PROGRESS_INDETERMINATE_WAVY);
+
+                m3Drawable = m3CircularProgressIndicator.getIndeterminateDrawable();
+            } else {
+                m3Drawable = null;
+            }
+
+            if (oldM3Drawable != null && oldM3Drawable != m3Drawable) {
+                oldM3Drawable.setVisible(false, false);
+                oldM3Drawable.setCallback(null);
+            }
+            if (m3Drawable != null) {
+                m3Drawable.setCallback(this);
+                setM3Visible(isShown(), true);
+            }
+            invalidate();
+        }
+    }
+
+
+    public boolean isMaterial3ProgressStyle() {
+        return currentStyle == STYLE_MATERIAL3_PROGRESS_INDETERMINATE_FLAT || currentStyle == STYLE_MATERIAL3_PROGRESS_INDETERMINATE_WAVY;
+    }
+
+    @Keep
+    public void setSpecValues(int indicatorSize, int trackThickness, int trackCornerRadius, int indicatorTrackGapSize, int indicatorColor, int trackColor) {
+        if (!isMaterial3ProgressStyle()) return;
+
+        m3CircularProgressIndicator.setIndicatorSize(indicatorSize);
+        m3CircularProgressIndicator.setTrackThickness(trackThickness);
+        m3CircularProgressIndicator.setTrackCornerRadius(trackCornerRadius);
+        m3CircularProgressIndicator.setIndicatorTrackGapSize(indicatorTrackGapSize);
+        m3CircularProgressIndicator.setIndicatorColor(indicatorColor);
+        m3CircularProgressIndicator.setTrackColor(trackColor);
+    }
+
+    @Keep
+    public void setWavy(boolean isWavy) {
+        if (isWavy) {
+            m3CircularProgressIndicator.setIndicatorInset(0);
+            setWavyValues(AndroidUtilities.dp(15), AndroidUtilities.dp(1.6f), AndroidUtilities.dp(5), 0.05f);
+        } else {
+            m3CircularProgressIndicator.setIndicatorInset(0);
+            setWavyValues(0, 0, 0, 1f);
+        }
+    }
+
+    public void setWavyValues(int wavelengthIndeterminate, int waveAmplitude, int waveSpeed, float waveAmplitudeRampProgressMin) {
+        if (currentStyle != STYLE_MATERIAL3_PROGRESS_INDETERMINATE_WAVY) return;
+
+        m3CircularProgressIndicator.setWavelengthIndeterminate(wavelengthIndeterminate);
+        m3CircularProgressIndicator.setWaveAmplitude(waveAmplitude);
+        m3CircularProgressIndicator.setWaveSpeed(waveSpeed);
+        m3CircularProgressIndicator.setWaveAmplitudeRampProgressMin(waveAmplitudeRampProgressMin);
     }
 
     public void setProgress(float value) {
@@ -204,16 +346,34 @@ public class RadialProgressView extends View {
 
     public void setSize(int value) {
         size = value;
+        if (m3CircularProgressIndicator != null) {
+            m3CircularProgressIndicator.setIndicatorSize(size);
+        }
         invalidate();
     }
 
     public void setStrokeWidth(float value) {
         progressPaint.setStrokeWidth(AndroidUtilities.dp(value));
+        if (m3CircularProgressIndicator != null) {
+            m3CircularProgressIndicator.setTrackThickness(AndroidUtilities.dp(value));
+        }
     }
 
     public void setProgressColor(int color) {
         progressColor = color;
         progressPaint.setColor(progressColor);
+        if (m3IndicatorView != null) {
+            m3IndicatorView.setIndicatorColor(progressColor);
+        }
+        if (m3CircularProgressIndicator != null) {
+            m3CircularProgressIndicator.setIndicatorColor(progressColor);
+        }
+    }
+
+    public void setTrackColor(int color) {
+        if (m3CircularProgressIndicator != null) {
+            m3CircularProgressIndicator.setTrackColor(color);
+        }
     }
 
     public void toCircle(boolean toCircle, boolean animated) {
@@ -225,6 +385,13 @@ public class RadialProgressView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (currentStyle != STYLE_LEGACY && m3Drawable != null) {
+            int x = (getMeasuredWidth() - size) / 2;
+            int y = (getMeasuredHeight() - size) / 2;
+            m3Drawable.setBounds(x, y, x + size, y + size);
+            m3Drawable.draw(canvas);
+            return;
+        }
         int x = (getMeasuredWidth() - size) / 2;
         int y = (getMeasuredHeight() - size) / 2;
         cicleRect.set(x, y, x + size, y + size);
@@ -233,6 +400,13 @@ public class RadialProgressView extends View {
     }
 
     public void draw(Canvas canvas, float cx, float cy) {
+        if (currentStyle != STYLE_LEGACY && m3Drawable != null) {
+            int left = (int) (cx - size / 2f);
+            int top = (int) (cy - size / 2f);
+            m3Drawable.setBounds(left, top, left + size, top + size);
+            m3Drawable.draw(canvas);
+            return;
+        }
         cicleRect.set(cx - size / 2f, cy - size / 2f, cx + size / 2f, cy +  size / 2f);
         canvas.drawArc(cicleRect, radOffset, drawingCircleLenght = currentCircleLength, false, progressPaint);
         updateAnimation();
@@ -244,5 +418,32 @@ public class RadialProgressView extends View {
 
     private int getThemedColor(int key) {
         return Theme.getColor(key, resourcesProvider);
+    }
+
+    @Override
+    protected boolean verifyDrawable(@NonNull Drawable who) {
+        if (who == m3Drawable) {
+            return true;
+        }
+        return super.verifyDrawable(who);
+    }
+
+    @Override
+    public void onVisibilityAggregated(boolean isVisible) {
+        super.onVisibilityAggregated(isVisible);
+        setM3Visible(isVisible, false);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        setM3Visible(false, false);
+        super.onDetachedFromWindow();
+    }
+
+    private void setM3Visible(boolean visible, boolean restart) {
+        if (m3Drawable == null) {
+            return;
+        }
+        m3Drawable.setVisible(visible, restart && visible);
     }
 }

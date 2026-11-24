@@ -1,23 +1,18 @@
 package org.telegram.ui.Components;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.os.Build;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.ColorUtils;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -28,6 +23,7 @@ import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.DownloadController;
 import org.telegram.messenger.FileLoader;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaController;
 import org.telegram.messenger.MessageObject;
@@ -36,24 +32,26 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.Utilities;
+import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.CacheControlActivity;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Cells.GraySectionCell;
 import org.telegram.ui.Cells.SharedAudioCell;
 import org.telegram.ui.Cells.SharedDocumentCell;
 import org.telegram.ui.FilteredSearchView;
 import org.telegram.ui.PhotoViewer;
+import org.telegram.ui.PremiumPreviewFragment;
 
 import java.util.ArrayList;
 
+@SuppressLint("ViewConstructor")
 public class SearchDownloadsContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private final FlickerLoadingView loadingView;
     StickerEmptyView emptyView;
-    public RecyclerListView recyclerListView;
+    public final @NonNull RecyclerListView recyclerListView;
     DownloadsAdapter adapter = new DownloadsAdapter();
     private final int currentAccount;
 
@@ -89,7 +87,13 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
         this.parentFragment = fragment;
         this.parentActivity = fragment.getParentActivity();
         this.currentAccount = currentAccount;
-        recyclerListView = new BlurredRecyclerView(getContext());
+        recyclerListView = new RecyclerListView(getContext()) {
+            @Override
+            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+                super.onLayout(changed, l, t, r, b);
+                checkItemsFloodWait();
+            }
+        };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelperCallback());
         itemTouchHelper.attachToRecyclerView(recyclerListView);
         addView(recyclerListView);
@@ -106,6 +110,7 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     AndroidUtilities.hideKeyboard(parentActivity.getCurrentFocus());
                 }
+                checkItemsFloodWait();
             }
         });
         DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
@@ -208,6 +213,35 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
         FileLoader.getInstance(currentAccount).getCurrentLoadingFiles(currentLoadingFiles);
     }
 
+    public void setPagesPaddings(int top, int bottom) {
+        setPagesPaddings(top, bottom, false);
+    }
+
+    public void setPagesPaddings(int top, int bottom, boolean doNotRequestLayout) {
+        setClipToPadding(false);
+        ignoreRequestLayout = doNotRequestLayout;
+
+        setPadding(0, top, 0, bottom);
+        recyclerListView.setPadding(0, top, 0, bottom, doNotRequestLayout);
+
+        MarginLayoutParams lp = null;
+        lp = (MarginLayoutParams) recyclerListView.getLayoutParams();
+        lp.topMargin = -top;
+        lp.bottomMargin = -bottom;
+
+        ignoreRequestLayout = false;
+    }
+
+    private boolean ignoreRequestLayout;
+
+    @Override
+    public void requestLayout() {
+        if (ignoreRequestLayout) {
+            return;
+        }
+        super.requestLayout();
+    }
+
     private void checkFilesExist() {
         if (checkingFilesExist) {
             return;
@@ -272,7 +306,7 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
             updateListInternal(animated, currentLoadingFilesTmp, recentLoadingFilesTmp);
             if (rowCount == 0) {
                 emptyView.showProgress(false, false);
-                emptyView.title.setText(LocaleController.getString("SearchEmptyViewDownloads", R.string.SearchEmptyViewDownloads));
+                emptyView.title.setText(LocaleController.getString(R.string.SearchEmptyViewDownloads));
                 emptyView.subtitle.setVisibility(View.GONE);
             }
             emptyView.setStickerType(9);
@@ -285,7 +319,7 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
             FileLoader.getInstance(currentAccount).getRecentLoadingFiles(recentLoadingFilesTmp);
 
             String q = searchQuery.toLowerCase();
-            boolean sameQuery = q.equals(lastQueryString);
+            final boolean sameQuery = q.equals(lastQueryString);
 
             lastQueryString = q;
             Utilities.searchQueue.cancelRunnable(lastSearchRunnable);
@@ -293,8 +327,9 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
                 ArrayList<MessageObject> currentLoadingFilesRes = new ArrayList<>();
                 ArrayList<MessageObject> recentLoadingFilesRes = new ArrayList<>();
                 for (int i = 0; i < currentLoadingFilesTmp.size(); i++) {
-                    if (FileLoader.getDocumentFileName(currentLoadingFilesTmp.get(i).getDocument()).toLowerCase().contains(q)) {
-                        MessageObject messageObject = new MessageObject(currentAccount, currentLoadingFilesTmp.get(i).messageOwner, false, false);
+                    final String filename = FileLoader.getDocumentFileName(currentLoadingFilesTmp.get(i).getDocument());
+                    if (filename != null && filename.toLowerCase().contains(q)) {
+                        final MessageObject messageObject = new MessageObject(currentAccount, currentLoadingFilesTmp.get(i).messageOwner, false, false);
                         messageObject.mediaExists = currentLoadingFilesTmp.get(i).mediaExists;
                         messageObject.setQuery(searchQuery);
                         currentLoadingFilesRes.add(messageObject);
@@ -302,9 +337,9 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
                 }
 
                 for (int i = 0; i < recentLoadingFilesTmp.size(); i++) {
-                    String documentName = FileLoader.getDocumentFileName(recentLoadingFilesTmp.get(i).getDocument());
+                    final String documentName = FileLoader.getDocumentFileName(recentLoadingFilesTmp.get(i).getDocument());
                     if (documentName != null && documentName.toLowerCase().contains(q)) {
-                        MessageObject messageObject = new MessageObject(currentAccount, recentLoadingFilesTmp.get(i).messageOwner, false, false);
+                        final MessageObject messageObject = new MessageObject(currentAccount, recentLoadingFilesTmp.get(i).messageOwner, false, false);
                         messageObject.mediaExists = recentLoadingFilesTmp.get(i).mediaExists;
                         messageObject.setQuery(searchQuery);
                         recentLoadingFilesRes.add(messageObject);
@@ -319,9 +354,9 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
                         if (rowCount == 0) {
                             emptyView.showProgress(false, true);
 
-                            emptyView.title.setText(LocaleController.getString("SearchEmptyViewTitle2", R.string.SearchEmptyViewTitle2));
+                            emptyView.title.setText(LocaleController.getString(R.string.SearchEmptyViewTitle2));
                             emptyView.subtitle.setVisibility(View.VISIBLE);
-                            emptyView.subtitle.setText(LocaleController.getString("SearchEmptyViewFilteredSubtitle2", R.string.SearchEmptyViewFilteredSubtitle2));
+                            emptyView.subtitle.setText(LocaleController.getString(R.string.SearchEmptyViewFilteredSubtitle2));
                         }
                     }
                 });
@@ -509,11 +544,11 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
             if (type == 0) {
                 GraySectionCell graySectionCell = (GraySectionCell) holder.itemView;
                 if (position == downloadingFilesHeader) {
-                    String header = LocaleController.getString("Downloading", R.string.Downloading);
+                    String header = LocaleController.getString(R.string.Downloading);
                     if (graySectionCell.getText().equals(header)) {
-                        graySectionCell.setRightText(hasCurrentDownload ? LocaleController.getString("PauseAll", R.string.PauseAll) : LocaleController.getString("ResumeAll", R.string.ResumeAll), hasCurrentDownload);
+                        graySectionCell.setRightText(hasCurrentDownload ? LocaleController.getString(R.string.PauseAll) : LocaleController.getString(R.string.ResumeAll), hasCurrentDownload);
                     } else {
-                        graySectionCell.setText(header, hasCurrentDownload ? LocaleController.getString("PauseAll", R.string.PauseAll) : LocaleController.getString("ResumeAll", R.string.ResumeAll), new OnClickListener() {
+                        graySectionCell.setText(header, hasCurrentDownload ? LocaleController.getString(R.string.PauseAll) : LocaleController.getString(R.string.ResumeAll), new OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 for (int i = 0; i < currentLoadingFiles.size(); i++) {
@@ -530,12 +565,9 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
                         });
                     }
                 } else if (position == recentFilesHeader) {
-                    graySectionCell.setText(LocaleController.getString("RecentlyDownloaded", R.string.RecentlyDownloaded), LocaleController.getString("Settings", R.string.Settings), new OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            showSettingsDialog();
-                        }
-                    });
+                    graySectionCell.setText(LocaleController.getString(R.string.RecentlyDownloaded), LocaleController.getString(R.string.Settings),
+                            view -> DownloadsInfoBottomSheet.show(parentActivity, parentFragment)
+                    );
                 }
             } else {
                 MessageObject messageObject = getMessage(position);
@@ -543,7 +575,7 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
                     boolean showReorder = uiCallback.actionModeShowing() && position >= downloadingFilesStartRow && position < downloadingFilesEndRow;
                     if (type == 1) {
                         Cell view = (Cell) holder.itemView;
-                        view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                        ThemeBind.backgroundColor(view, Theme.key_windowBackgroundWhite);
                         int oldId = view.sharedDocumentCell.getMessage() == null ? 0 : view.sharedDocumentCell.getMessage().getId();
                         view.sharedDocumentCell.setDocument(messageObject, true);
                         messageHashIdTmp.set(view.sharedDocumentCell.getMessage().getId(), view.sharedDocumentCell.getMessage().getDialogId());
@@ -596,86 +628,11 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
         }
     }
 
-    private void showSettingsDialog() {
-        if (parentFragment == null || parentActivity == null) {
-            return;
-        }
-        BottomSheet bottomSheet = new BottomSheet(parentActivity, false);
-        Context context = parentFragment.getParentActivity();
-        LinearLayout linearLayout = new LinearLayout(context);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-
-        StickerImageView imageView = new StickerImageView(context, currentAccount);
-        imageView.setStickerNum(9);
-        imageView.getImageReceiver().setAutoRepeat(1);
-        linearLayout.addView(imageView, LayoutHelper.createLinear(144, 144, Gravity.CENTER_HORIZONTAL, 0, 16, 0, 0));
-
-        TextView title = new TextView(context);
-        title.setGravity(Gravity.CENTER_HORIZONTAL);
-        title.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
-        title.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
-        title.setText(LocaleController.getString("DownloadedFiles", R.string.DownloadedFiles));
-        linearLayout.addView(title, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 21, 30, 21, 0));
-
-        TextView description = new TextView(context);
-        description.setGravity(Gravity.CENTER_HORIZONTAL);
-        description.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        description.setTextColor(Theme.getColor(Theme.key_dialogTextHint));
-        description.setText(LocaleController.formatString("DownloadedFilesMessage", R.string.DownloadedFilesMessage));
-        linearLayout.addView(description, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 21, 15, 21, 16));
-
-
-        TextView buttonTextView = new TextView(context);
-        buttonTextView.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
-        buttonTextView.setGravity(Gravity.CENTER);
-        buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        buttonTextView.setText(LocaleController.getString("ManageDeviceStorage", R.string.ManageDeviceStorage));
-
-        buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
-        buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Theme.getColor(Theme.key_featuredStickers_addButton), ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhite), 120)));
-
-        linearLayout.addView(buttonTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 15, 16, 16));
-
-
-        TextView buttonTextView2 = new TextView(context);
-        buttonTextView2.setPadding(AndroidUtilities.dp(34), 0, AndroidUtilities.dp(34), 0);
-        buttonTextView2.setGravity(Gravity.CENTER);
-        buttonTextView2.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView2.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        buttonTextView2.setText(LocaleController.getString("ClearDownloadsList", R.string.ClearDownloadsList));
-
-        buttonTextView2.setTextColor(Theme.getColor(Theme.key_featuredStickers_addButton));
-        buttonTextView2.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), Color.TRANSPARENT, ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_featuredStickers_addButton), 120)));
-
-        linearLayout.addView(buttonTextView2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, 0, 16, 0, 16, 16));
-
-        NestedScrollView scrollView = new NestedScrollView(context);
-        scrollView.addView(linearLayout);
-        bottomSheet.setCustomView(scrollView);
-        bottomSheet.show();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            AndroidUtilities.setLightStatusBar(bottomSheet.getWindow(), !Theme.isCurrentThemeDark());
-            AndroidUtilities.setLightNavigationBar(bottomSheet.getWindow(), !Theme.isCurrentThemeDark());
-        }
-
-        buttonTextView.setOnClickListener(view -> {
-            bottomSheet.dismiss();
-            if (parentFragment != null) {
-                parentFragment.presentFragment(new CacheControlActivity());
-            }
-        });
-        buttonTextView2.setOnClickListener(view -> {
-            bottomSheet.dismiss();
-            DownloadController.getInstance(currentAccount).clearRecentDownloadedFiles();
-        });
-        //parentFragment.showDialog(bottomSheet);
-    }
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.onDownloadingFilesChanged);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.onDownloadingFilesChanged);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.premiumFloodWaitReceived);
         if (getVisibility() == View.VISIBLE) {
             DownloadController.getInstance(currentAccount).clearUnviewedDownloads();
         }
@@ -687,6 +644,7 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.onDownloadingFilesChanged);
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.premiumFloodWaitReceived);
     }
 
 
@@ -697,6 +655,8 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
                 DownloadController.getInstance(currentAccount).clearUnviewedDownloads();
             }
             update(true);
+        } else if (id == NotificationCenter.premiumFloodWaitReceived) {
+            checkItemsFloodWait();
         }
     }
 
@@ -796,5 +756,58 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
             super.clearView(recyclerView, viewHolder);
             viewHolder.itemView.setPressed(false);
         }
+    }
+
+    public void checkItemsFloodWait() {
+        if (UserConfig.getInstance(currentAccount).isPremium()) return;
+        if (recyclerListView == null) return;
+        for (int i = 0; i < recyclerListView.getChildCount(); ++i) {
+            try {
+                View child = recyclerListView.getChildAt(i);
+                if (!(child instanceof Cell)) continue;
+                MessageObject messageObject = ((Cell) child).sharedDocumentCell.getMessage();
+                if (messageObject == null) continue;
+                if (FileLoader.getInstance(currentAccount).checkLoadCaughtPremiumFloodWait(messageObject.getFileName())) {
+                    showPremiumFloodWaitBulletin(false);
+                    return;
+                } else if (FileLoader.getInstance(currentAccount).checkLoadCaughtPremiumFloodWait(messageObject.getFileName())) {
+                    showPremiumFloodWaitBulletin(true);
+                    return;
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        }
+    }
+
+    public void showPremiumFloodWaitBulletin(final boolean isUpload) {
+        if (parentFragment == null || !recyclerListView.isAttachedToWindow()) return;
+
+        final long now = System.currentTimeMillis();
+        if (now - ConnectionsManager.lastPremiumFloodWaitShown < 1000L * MessagesController.getInstance(currentAccount).uploadPremiumSpeedupNotifyPeriod) {
+            return;
+        }
+        ConnectionsManager.lastPremiumFloodWaitShown = now;
+        if (UserConfig.getInstance(currentAccount).isPremium() || MessagesController.getInstance(currentAccount).premiumFeaturesBlocked()) {
+            return;
+        }
+
+        final float n;
+        if (isUpload) {
+            n = MessagesController.getInstance(currentAccount).uploadPremiumSpeedupUpload;
+        } else {
+            n = MessagesController.getInstance(currentAccount).uploadPremiumSpeedupDownload;
+        }
+        SpannableString boldN = new SpannableString(Double.toString(Math.round(n * 10) / 10.0).replaceAll("\\.0$", ""));
+        boldN.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, boldN.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        if (parentFragment.hasStoryViewer()) return;
+        BulletinFactory.of(parentFragment).createSimpleBulletin(
+                R.raw.speed_limit,
+                LocaleController.getString(isUpload ? R.string.UploadSpeedLimited : R.string.DownloadSpeedLimited),
+                AndroidUtilities.replaceCharSequence("%d", AndroidUtilities.premiumText(LocaleController.getString(isUpload ? R.string.UploadSpeedLimitedMessage : R.string.DownloadSpeedLimitedMessage), () -> {
+                    parentFragment.presentFragment(new PremiumPreviewFragment(isUpload ? "upload_speed" : "download_speed"));
+                }), boldN)
+        ).setDuration(8000).show(false);
     }
 }

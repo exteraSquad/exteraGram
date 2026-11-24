@@ -1,5 +1,7 @@
 package org.telegram.ui.Components.voip;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -29,12 +31,13 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.RLottieImageView;
 
+@SuppressLint("ViewConstructor")
 public class VoIPToggleButton extends FrameLayout {
 
     Paint circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private boolean drawBackground = true;
+    private boolean drawRipple = true;
     private boolean animateBackground;
     Drawable[] icon = new Drawable[2];
 
@@ -56,8 +59,8 @@ public class VoIPToggleButton extends FrameLayout {
     private boolean iconChangeColor;
     private int replaceColorFrom;
 
-    private Paint crossPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint xRefPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint crossPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint xRefPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private float crossProgress;
     private boolean drawCross;
 
@@ -66,26 +69,20 @@ public class VoIPToggleButton extends FrameLayout {
 
     Drawable rippleDrawable;
 
-    private Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-    private boolean checkableForAccessibility;
     private boolean checkable;
     private boolean checked;
     private float checkedProgress;
     private int backgroundCheck1;
     private int backgroundCheck2;
 
-    private float radius;
+    private final float diameter;
     private ValueAnimator checkAnimator;
+    private ValueAnimator pressedScaleAnimator;
+    private float pressedScale = 1.0f;
 
-    private RLottieImageView lottieImageView;
-
-    public VoIPToggleButton(@NonNull Context context) {
-        this(context, 52f);
-    }
-    public VoIPToggleButton(@NonNull Context context, float radius) {
+    public VoIPToggleButton(@NonNull Context context, float diameter) {
         super(context);
-        this.radius = radius;
+        this.diameter = diameter;
         setWillNotDraw(false);
 
         textLayoutContainer = new FrameLayout(context);
@@ -97,7 +94,7 @@ public class VoIPToggleButton extends FrameLayout {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
             textView.setTextColor(Color.WHITE);
             textView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-            textLayoutContainer.addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, radius + 4, 0, 0));
+            textLayoutContainer.addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, diameter + 6, 0, 0));
             this.textView[i] = textView;
         }
         textView[1].setVisibility(View.GONE);
@@ -105,12 +102,10 @@ public class VoIPToggleButton extends FrameLayout {
 
         xRefPaint.setColor(0xff000000);
         xRefPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        xRefPaint.setStrokeWidth(AndroidUtilities.dp(3));
+        xRefPaint.setStrokeWidth(dp(3));
 
-        crossPaint.setStrokeWidth(AndroidUtilities.dp(2));
+        crossPaint.setStrokeWidth(dp(2));
         crossPaint.setStrokeCap(Paint.Cap.ROUND);
-
-        bitmapPaint.setFilterBitmap(true);
     }
 
     public void setTextSize(int size) {
@@ -123,9 +118,29 @@ public class VoIPToggleButton extends FrameLayout {
         drawBackground = value;
     }
 
+    public void setDrawRipple(boolean value) {
+        drawRipple = value;
+    }
+
+    public void setPressedBtn(boolean pressed) {
+        if (pressedScaleAnimator != null) {
+            pressedScaleAnimator.cancel();
+        }
+        pressedScaleAnimator = ValueAnimator.ofFloat(pressedScale, pressed ? 0.8f : 1f);
+        pressedScaleAnimator.addUpdateListener(animation -> {
+            pressedScale = (float) animation.getAnimatedValue();
+            invalidate();
+        });
+        pressedScaleAnimator.setDuration(150);
+        pressedScaleAnimator.start();
+    }
+
     @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
+        canvas.save();
+        canvas.scale(pressedScale, pressedScale, getMeasuredWidth() / 2f, getMeasuredHeight() / 2f);
+
         if (animateBackground && replaceProgress != 0) {
             circlePaint.setColor(ColorUtils.blendARGB(backgroundColor, animateToBackgroundColor, replaceProgress));
         } else {
@@ -133,17 +148,19 @@ public class VoIPToggleButton extends FrameLayout {
         }
 
         float cx = getWidth() / 2f;
-        float cy = AndroidUtilities.dp(radius) / 2f;
-        float radius = AndroidUtilities.dp(this.radius) / 2f;
+        float cy = dp(diameter) / 2f;
+        float radius = dp(diameter) / 2f;
         if (drawBackground) {
-            canvas.drawCircle(cx, cy, AndroidUtilities.dp(this.radius) / 2f, circlePaint);
+            canvas.drawCircle(cx, cy, radius, circlePaint);
         }
         if (rippleDrawable == null) {
-            rippleDrawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(this.radius), 0, Color.BLACK);
+            rippleDrawable = Theme.createSimpleSelectorCircleDrawable(dp(diameter), 0, Color.BLACK);
             rippleDrawable.setCallback(this);
         }
-        rippleDrawable.setBounds((int) (cx - radius), (int) (cy - radius), (int) (cx + radius), (int) (cy + radius));
-        rippleDrawable.draw(canvas);
+        if (drawRipple) {
+            rippleDrawable.setBounds((int) (cx - radius), (int) (cy - radius), (int) (cx + radius), (int) (cy + radius));
+            rippleDrawable.draw(canvas);
+        }
 
         if (currentIconRes != 0) {
             if (drawCross || crossProgress != 0) {
@@ -178,28 +195,28 @@ public class VoIPToggleButton extends FrameLayout {
                 }
                 if (crossProgress > 0) {
                     int left = (int) (cx - icon[0].getIntrinsicWidth() / 2f);
-                    int top = (int) (cy - icon[0].getIntrinsicHeight() / 2);
+                    int top = (int) (cy - icon[0].getIntrinsicHeight() / 2f);
 
                     float startX = left + AndroidUtilities.dpf2(8) + crossOffset;
                     float startY = top + AndroidUtilities.dpf2(8) + crossOffsetY;
 
-                    float endX = startX - AndroidUtilities.dp(1) + AndroidUtilities.dp(17) * CubicBezierInterpolator.DEFAULT.getInterpolation(crossProgress);
-                    float endY = startY + AndroidUtilities.dp(17) * CubicBezierInterpolator.DEFAULT.getInterpolation(crossProgress);
+                    float endX = startX - dp(1) + dp(17) * CubicBezierInterpolator.DEFAULT.getInterpolation(crossProgress);
+                    float endY = startY + dp(17) * CubicBezierInterpolator.DEFAULT.getInterpolation(crossProgress);
 
                     canvas.saveLayerAlpha(0, 0, getMeasuredWidth(), getMeasuredHeight(), 255, Canvas.ALL_SAVE_FLAG);
                     icon[0].setBounds(
-                            (int) (cx - icon[0].getIntrinsicWidth() / 2f), (int) (cy - icon[0].getIntrinsicHeight() / 2),
-                            (int) (cx + icon[0].getIntrinsicWidth() / 2), (int) (cy + icon[0].getIntrinsicHeight() / 2)
+                            (int) (cx - icon[0].getIntrinsicWidth() / 2f), (int) (cy - icon[0].getIntrinsicHeight() / 2f),
+                            (int) (cx + icon[0].getIntrinsicWidth() / 2f), (int) (cy + icon[0].getIntrinsicHeight() / 2f)
                     );
                     icon[0].draw(canvas);
 
-                    canvas.drawLine(startX, startY - AndroidUtilities.dp(2f), endX, endY - AndroidUtilities.dp(2f), xRefPaint);
+                    canvas.drawLine(startX, startY - dp(2f), endX, endY - dp(2f), xRefPaint);
                     canvas.drawLine(startX, startY, endX, endY, crossPaint);
                     canvas.restore();
                 } else {
                     icon[0].setBounds(
-                            (int) (cx - icon[0].getIntrinsicWidth() / 2f), (int) (cy - icon[0].getIntrinsicHeight() / 2),
-                            (int) (cx + icon[0].getIntrinsicWidth() / 2), (int) (cy + icon[0].getIntrinsicHeight() / 2)
+                            (int) (cx - icon[0].getIntrinsicWidth() / 2f), (int) (cy - icon[0].getIntrinsicHeight() / 2f),
+                            (int) (cx + icon[0].getIntrinsicWidth() / 2f), (int) (cy + icon[0].getIntrinsicHeight() / 2f)
                     );
                     icon[0].draw(canvas);
                 }
@@ -220,8 +237,8 @@ public class VoIPToggleButton extends FrameLayout {
                             icon[i].setAlpha(255);
                         }
                         icon[i].setBounds(
-                                (int) (cx - icon[i].getIntrinsicWidth() / 2f), (int) (cy - icon[i].getIntrinsicHeight() / 2),
-                                (int) (cx + icon[i].getIntrinsicWidth() / 2), (int) (cy + icon[i].getIntrinsicHeight() / 2)
+                                (int) (cx - icon[i].getIntrinsicWidth() / 2f), (int) (cy - icon[i].getIntrinsicHeight() / 2f),
+                                (int) (cx + icon[i].getIntrinsicWidth() / 2f), (int) (cy + icon[i].getIntrinsicHeight() / 2f)
                         );
                         icon[i].draw(canvas);
 
@@ -230,6 +247,7 @@ public class VoIPToggleButton extends FrameLayout {
                 }
             }
         }
+        canvas.restore();
     }
 
     public void setBackgroundColor(int backgroundColor, int backgroundColorChecked) {
@@ -241,16 +259,6 @@ public class VoIPToggleButton extends FrameLayout {
 
     public void setData(int iconRes, int iconColor, int backgroundColor, String text, boolean cross, boolean animated) {
         setData(iconRes, iconColor, backgroundColor, 1.0f, true, text, cross, animated);
-    }
-
-    public void setEnabled(boolean enabled, boolean animated) {
-        super.setEnabled(enabled);
-        if (animated) {
-            animate().alpha(enabled ? 1.0f : 0.5f).setDuration(180).start();
-        } else {
-            clearAnimation();
-            setAlpha(enabled ? 1.0f : 0.5f);
-        }
     }
 
     public void setData(int iconRes, int iconColor, int backgroundColor, float selectorAlpha, boolean recreateRipple, String text, boolean cross, boolean animated) {
@@ -265,10 +273,10 @@ public class VoIPToggleButton extends FrameLayout {
 
         if (rippleDrawable == null || recreateRipple) {
             if (Color.alpha(backgroundColor) == 255 && AndroidUtilities.computePerceivedBrightness(backgroundColor) > 0.5) {
-                rippleDrawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(radius), 0, ColorUtils.setAlphaComponent(Color.BLACK, (int) (255 * 0.1f * selectorAlpha)));
+                rippleDrawable = Theme.createSimpleSelectorCircleDrawable(dp(diameter), 0, ColorUtils.setAlphaComponent(Color.BLACK, (int) (255 * 0.1f * selectorAlpha)));
                 rippleDrawable.setCallback(this);
             } else {
-                rippleDrawable = Theme.createSimpleSelectorCircleDrawable(AndroidUtilities.dp(radius), 0, ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * 0.3f * selectorAlpha)));
+                rippleDrawable = Theme.createSimpleSelectorCircleDrawable(dp(diameter), 0, ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * 0.3f * selectorAlpha)));
                 rippleDrawable.setCallback(this);
             }
         }
@@ -369,6 +377,10 @@ public class VoIPToggleButton extends FrameLayout {
         this.crossOffset = crossOffset;
     }
 
+    public View getTextView() {
+        return textView[0];
+    }
+
     public void setCrossOffsetY(float crossOffset) {
         this.crossOffsetY = crossOffset;
     }
@@ -382,7 +394,7 @@ public class VoIPToggleButton extends FrameLayout {
     }
 
     @Override
-    public boolean verifyDrawable(Drawable drawable) {
+    public boolean verifyDrawable(@NonNull Drawable drawable) {
         return rippleDrawable == drawable || super.verifyDrawable(drawable);
     }
 
@@ -392,10 +404,6 @@ public class VoIPToggleButton extends FrameLayout {
         if (rippleDrawable != null) {
             rippleDrawable.jumpToCurrentState();
         }
-    }
-
-    public void setCheckableForAccessibility(boolean checkableForAccessibility) {
-        this.checkableForAccessibility = checkableForAccessibility;
     }
 
     //animate background if true
@@ -443,7 +451,7 @@ public class VoIPToggleButton extends FrameLayout {
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
         info.setText(currentText);
-        if (checkable || checkableForAccessibility) {
+        if (checkable) {
             info.setClassName(ToggleButton.class.getName());
             info.setCheckable(true);
             info.setChecked(checked);

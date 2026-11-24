@@ -8,6 +8,7 @@
 
 package org.telegram.ui.Components;
 
+import org.telegram.messenger.FileLog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff;
@@ -33,6 +34,7 @@ import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Cells.CheckBoxCell;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
@@ -43,6 +45,7 @@ import androidx.core.widget.NestedScrollView;
 public class ClearHistoryAlert extends BottomSheet {
 
     private Drawable shadowDrawable;
+    private final java.util.ArrayList<CombinedDrawable> themedSectionBackgrounds = new java.util.ArrayList<>();
     private LinearLayout linearLayout;
     private BottomSheetCell setTimerButton;
     private CheckBoxCell cell;
@@ -82,7 +85,7 @@ public class ClearHistoryAlert extends BottomSheet {
             this.resourcesProvider = resourcesProvider;
 
             background = new View(context);
-            background.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), getThemedColor(Theme.key_featuredStickers_addButton), getThemedColor(Theme.key_featuredStickers_addButtonPressed)));
+            ThemeBind.selectorBackground(background, Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(4), getThemedColor(Theme.key_featuredStickers_addButton), getThemedColor(Theme.key_featuredStickers_addButtonPressed)), ThemeBind.of(Theme.key_featuredStickers_addButton), ThemeBind.of(Theme.key_featuredStickers_addButtonPressed), resourcesProvider);
             addView(background, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, 0, 16, 16, 16, 16));
 
             textView = new TextView(context);
@@ -91,9 +94,9 @@ public class ClearHistoryAlert extends BottomSheet {
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setGravity(Gravity.CENTER);
-            textView.setTextColor(getThemedColor(Theme.key_featuredStickers_buttonText));
+            ThemeBind.textColor(textView, Theme.key_featuredStickers_buttonText, resourcesProvider);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textView.setTypeface(AndroidUtilities.bold());
             addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
         }
 
@@ -243,19 +246,19 @@ public class ClearHistoryAlert extends BottomSheet {
 
         if (!autoDeleteOnly) {
             TextView textView = new TextView(context);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textView.setTypeface(AndroidUtilities.bold());
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-            textView.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
-            textView.setText(LocaleController.getString("ClearHistory", R.string.ClearHistory));
+            ThemeBind.textColor(textView, Theme.key_dialogTextBlack, resourcesProvider);
+            textView.setText(LocaleController.getString(R.string.ClearHistory));
             textView.setSingleLine(true);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             linearLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT, 23, 20, 23, 0));
 
             TextView messageTextView = new TextView(getContext());
-            messageTextView.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
+            ThemeBind.textColor(messageTextView, Theme.key_dialogTextBlack, resourcesProvider);
             messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
             messageTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
-            messageTextView.setLinkTextColor(getThemedColor(Theme.key_dialogTextLink));
+            ThemeBind.linkTextColor(messageTextView, Theme.key_dialogTextLink, resourcesProvider);
             messageTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
             linearLayout.addView(messageTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT, 23, 16, 23, 5));
             if (user != null) {
@@ -264,9 +267,9 @@ public class ClearHistoryAlert extends BottomSheet {
                 if (!ChatObject.isChannel(chat) || chat.megagroup && !ChatObject.isPublic(chat)) {
                     messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString("AreYouSureClearHistoryWithChat", R.string.AreYouSureClearHistoryWithChat, chat.title)));
                 } else if (chat.megagroup) {
-                    messageTextView.setText(LocaleController.getString("AreYouSureClearHistoryGroup", R.string.AreYouSureClearHistoryGroup));
+                    messageTextView.setText(LocaleController.getString(R.string.AreYouSureClearHistoryGroup));
                 } else {
-                    messageTextView.setText(LocaleController.getString("AreYouSureClearHistoryChannel", R.string.AreYouSureClearHistoryChannel));
+                    messageTextView.setText(LocaleController.getString(R.string.AreYouSureClearHistoryChannel));
                 }
             }
 
@@ -285,7 +288,7 @@ public class ClearHistoryAlert extends BottomSheet {
 
             BottomSheetCell clearButton = new BottomSheetCell(context, resourcesProvider);
             clearButton.setBackground(null);
-            clearButton.setText(LocaleController.getString("AlertClearHistory", R.string.AlertClearHistory));
+            clearButton.setText(LocaleController.getString(R.string.AlertClearHistory));
             clearButton.background.setOnClickListener(v -> {
                 if (dismissedDelayed) {
                     return;
@@ -300,10 +303,11 @@ public class ClearHistoryAlert extends BottomSheet {
             CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(getThemedColor(Theme.key_windowBackgroundGray)), drawable);
             combinedDrawable.setFullsize(true);
             shadowSectionCell.setBackgroundDrawable(combinedDrawable);
+            themedSectionBackgrounds.add(combinedDrawable);
             linearLayout.addView(shadowSectionCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
             HeaderCell headerCell = new HeaderCell(context, resourcesProvider);
-            headerCell.setText(LocaleController.getString("AutoDeleteHeader", R.string.AutoDeleteHeader));
+            headerCell.setText(LocaleController.getString(R.string.AutoDeleteHeader));
             linearLayout.addView(headerCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 1, autoDeleteOnly ? 20 : 0, 1, 0));
         } else {
             RLottieImageView lottieImageView = new RLottieImageView(context);
@@ -314,23 +318,23 @@ public class ClearHistoryAlert extends BottomSheet {
             linearLayout.addView(lottieImageView, LayoutHelper.createLinear(160, 160, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 17, 0, 17, 0));
 
             TextView percentTextView = new TextView(context);
-            percentTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            percentTextView.setTypeface(AndroidUtilities.bold());
             percentTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
-            percentTextView.setTextColor(getThemedColor(Theme.key_dialogTextBlack));
-            percentTextView.setText(LocaleController.getString("AutoDeleteAlertTitle", R.string.AutoDeleteAlertTitle));
+            ThemeBind.textColor(percentTextView, Theme.key_dialogTextBlack, resourcesProvider);
+            percentTextView.setText(LocaleController.getString(R.string.AutoDeleteAlertTitle));
             linearLayout.addView(percentTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 17, 18, 17, 0));
 
             TextView infoTextView = new TextView(context);
             infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            infoTextView.setTextColor(getThemedColor(Theme.key_dialogTextGray3));
+            ThemeBind.textColor(infoTextView, Theme.key_dialogTextGray3, resourcesProvider);
             infoTextView.setGravity(Gravity.CENTER_HORIZONTAL);
             if (user != null) {
                 infoTextView.setText(LocaleController.formatString("AutoDeleteAlertUserInfo", R.string.AutoDeleteAlertUserInfo, UserObject.getFirstName(user)));
             } else {
                 if (ChatObject.isChannel(chat) && !chat.megagroup) {
-                    infoTextView.setText(LocaleController.getString("AutoDeleteAlertChannelInfo", R.string.AutoDeleteAlertChannelInfo));
+                    infoTextView.setText(LocaleController.getString(R.string.AutoDeleteAlertChannelInfo));
                 } else {
-                    infoTextView.setText(LocaleController.getString("AutoDeleteAlertGroupInfo", R.string.AutoDeleteAlertGroupInfo));
+                    infoTextView.setText(LocaleController.getString(R.string.AutoDeleteAlertGroupInfo));
                 }
             }
             linearLayout.addView(infoTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 30, 22, 30, 20));
@@ -350,10 +354,10 @@ public class ClearHistoryAlert extends BottomSheet {
             }
         });
         String[] strings = new String[]{
-                LocaleController.getString("AutoDeleteNever", R.string.AutoDeleteNever),
-                LocaleController.getString("AutoDelete24Hours", R.string.AutoDelete24Hours),
-                LocaleController.getString("AutoDelete7Days", R.string.AutoDelete7Days),
-                LocaleController.getString("AutoDelete1Month", R.string.AutoDelete1Month)
+                LocaleController.getString(R.string.AutoDeleteNever),
+                LocaleController.getString(R.string.AutoDelete24Hours),
+                LocaleController.getString(R.string.AutoDelete7Days),
+                LocaleController.getString(R.string.AutoDelete1Month)
         };
         slideChooseView.setOptions(currentTimer, strings);
         linearLayout.addView(slideChooseView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 8, 0, 0));
@@ -363,20 +367,21 @@ public class ClearHistoryAlert extends BottomSheet {
         CombinedDrawable combinedDrawable = new CombinedDrawable(new ColorDrawable(getThemedColor(Theme.key_windowBackgroundGray)), drawable);
         combinedDrawable.setFullsize(true);
         buttonContainer.setBackgroundDrawable(combinedDrawable);
+        themedSectionBackgrounds.add(combinedDrawable);
         linearLayout.addView(buttonContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         TextInfoPrivacyCell infoCell = new TextInfoPrivacyCell(context, resourcesProvider);
-        infoCell.setText(LocaleController.getString("AutoDeleteInfo", R.string.AutoDeleteInfo));
+        infoCell.setText(LocaleController.getString(R.string.AutoDeleteInfo));
         buttonContainer.addView(infoCell);
 
         setTimerButton = new BottomSheetCell(context, resourcesProvider);
-        setTimerButton.setBackgroundColor(getThemedColor(Theme.key_dialogBackground));
+        ThemeBind.backgroundColor(setTimerButton, Theme.key_dialogBackground, resourcesProvider);
         if (autoDeleteOnly) {
-            setTimerButton.setText(LocaleController.getString("AutoDeleteSet", R.string.AutoDeleteSet));
+            setTimerButton.setText(LocaleController.getString(R.string.AutoDeleteSet));
         } else if (full && currentTimer == 0) {
-            setTimerButton.setText(LocaleController.getString("EnableAutoDelete", R.string.EnableAutoDelete));
+            setTimerButton.setText(LocaleController.getString(R.string.EnableAutoDelete));
         } else {
-            setTimerButton.setText(LocaleController.getString("AutoDeleteConfirm", R.string.AutoDeleteConfirm));
+            setTimerButton.setText(LocaleController.getString(R.string.AutoDeleteConfirm));
         }
         setTimerButton.background.setOnClickListener(v -> {
             if (dismissedDelayed) {
@@ -448,5 +453,36 @@ public class ClearHistoryAlert extends BottomSheet {
 
     public void setDelegate(ClearHistoryAlertDelegate clearHistoryAlertDelegate) {
         delegate = clearHistoryAlertDelegate;
+    }
+
+    private int lastShadowColor, lastSectionColor, lastSectionShadowColor;
+
+    @Override
+    public void onThemeColorsChanged() {
+        try {
+            super.onThemeColorsChanged();
+            final int sectionColor = getThemedColor(Theme.key_windowBackgroundGray);
+            final int sectionShadowColor = getThemedColor(Theme.key_windowBackgroundGrayShadow);
+            if (sectionColor != lastSectionColor || sectionShadowColor != lastSectionShadowColor) {
+                lastSectionColor = sectionColor;
+                lastSectionShadowColor = sectionShadowColor;
+                for (int i = 0; i < themedSectionBackgrounds.size(); ++i) {
+                    final CombinedDrawable d = themedSectionBackgrounds.get(i);
+                    Theme.setCombinedDrawableColor(d, sectionColor, false);
+                    if (d.getIcon() != null) {
+                        Theme.setCombinedDrawableColor(d, sectionShadowColor, true);
+                    }
+                    d.invalidateSelf();
+                }
+            }
+            final int shadowColor = getThemedColor(Theme.key_dialogBackground);
+            if (shadowDrawable != null && shadowColor != lastShadowColor) {
+                lastShadowColor = shadowColor;
+                shadowDrawable.setColorFilter(new PorterDuffColorFilter(shadowColor, PorterDuff.Mode.MULTIPLY));
+            }
+    
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 }

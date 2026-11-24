@@ -8,6 +8,8 @@
 
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.AndroidUtilities.dp;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -50,14 +52,17 @@ public class LetterDrawable extends Drawable {
         this(null, 0);
     }
 
+    private final Theme.ResourcesProvider resourcesProvider;
+
     public LetterDrawable(Theme.ResourcesProvider resourcesProvider, int style) {
         super();
         this.style = style;
+        this.resourcesProvider = resourcesProvider;
         if (style == STYLE_DEFAULT) {
             if (namePaint == null) {
                 namePaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             }
-            namePaint.setTextSize(AndroidUtilities.dp(28));
+            namePaint.setTextSize(dp(28));
             paint.setColor(Theme.getColor(Theme.key_sharedMedia_linkPlaceholder, resourcesProvider));
             namePaint.setColor(Theme.getColor(Theme.key_sharedMedia_linkPlaceholderText, resourcesProvider));
             textPaint = namePaint;
@@ -66,7 +71,7 @@ public class LetterDrawable extends Drawable {
                 namePaintTopic = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             }
             namePaintTopic.setColor(Color.WHITE);
-            namePaintTopic.setTextSize(AndroidUtilities.dp(13));
+            namePaintTopic.setTextSize(dp(13));
             namePaintTopic.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
             textPaint = namePaintTopic;
         } else {
@@ -91,13 +96,13 @@ public class LetterDrawable extends Drawable {
     public void setTitle(String title) {
         stringBuilder.setLength(0);
         if (title != null && title.length() > 0) {
-            stringBuilder.append(title.substring(0, 1));
+            stringBuilder.append(title, 0, Character.charCount(title.codePointAt(0)));
         }
 
         if (stringBuilder.length() > 0) {
             String text = stringBuilder.toString().toUpperCase();
             try {
-                textLayout = new StaticLayout(text, textPaint, AndroidUtilities.dp(100), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+                textLayout = new StaticLayout(text, textPaint, dp(100), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
                 if (textLayout.getLineCount() > 0) {
                     textLeft = textLayout.getLineLeft(0);
                     textWidth = textLayout.getLineWidth(0);
@@ -118,8 +123,11 @@ public class LetterDrawable extends Drawable {
             return;
         }
         if (style == STYLE_DEFAULT) {
+            // the paints are shared: re-read the theme colors, so they follow theme changes
+            paint.setColor(Theme.getColor(Theme.key_sharedMedia_linkPlaceholder, resourcesProvider));
+            textPaint.setColor(Theme.getColor(Theme.key_sharedMedia_linkPlaceholderText, resourcesProvider));
             rect.set(bounds.left, bounds.top, bounds.right, bounds.bottom);
-            canvas.drawRoundRect(rect, AndroidUtilities.dp(4), AndroidUtilities.dp(4), paint);
+            canvas.drawRoundRect(rect, dp(8), dp(8), paint);
         }
         canvas.save();
         if (scale != 1) {

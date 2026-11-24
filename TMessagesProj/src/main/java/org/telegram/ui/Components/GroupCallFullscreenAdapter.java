@@ -1,5 +1,6 @@
 package org.telegram.ui.Components;
 
+import org.telegram.messenger.FileLog;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -33,6 +34,7 @@ import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.voip.GroupCallMiniTextureView;
 import org.telegram.ui.Components.voip.GroupCallRenderersContainer;
 import org.telegram.ui.Components.voip.GroupCallStatusIcon;
@@ -46,7 +48,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
     private final int currentAccount;
 
     private final ArrayList<ChatObject.VideoParticipant> videoParticipants = new ArrayList<>();
-    private final ArrayList<TLRPC.TL_groupCallParticipant> participants = new ArrayList<>();
+    private final ArrayList<TLRPC.GroupCallParticipant> participants = new ArrayList<>();
 
     private ArrayList<GroupCallMiniTextureView> attachedRenderers;
     private GroupCallRenderersContainer renderersContainer;
@@ -85,7 +87,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
         ChatObject.VideoParticipant oldVideoParticipant = view.videoParticipant;
 
         ChatObject.VideoParticipant videoParticipant;
-        TLRPC.TL_groupCallParticipant participant;
+        TLRPC.GroupCallParticipant participant;
         if (position < videoParticipants.size()) {
             videoParticipant = videoParticipants.get(position);
             participant = videoParticipants.get(position).participant;
@@ -144,7 +146,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
         }
     }
 
-    public class GroupCallUserCell extends FrameLayout implements GroupCallStatusIcon.Callback {
+    public class GroupCallUserCell extends FrameLayout implements Theme.Colorable, GroupCallStatusIcon.Callback {
 
         AvatarDrawable avatarDrawable = new AvatarDrawable();
 
@@ -156,7 +158,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
         long peerId;
 
         ChatObject.VideoParticipant videoParticipant;
-        TLRPC.TL_groupCallParticipant participant;
+        TLRPC.GroupCallParticipant participant;
 
         Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         Paint selectionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -220,7 +222,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
             super.onMeasure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(80), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(80), MeasureSpec.EXACTLY));
         }
 
-        public void setParticipant(ChatObject.VideoParticipant videoParticipant, TLRPC.TL_groupCallParticipant participant) {
+        public void setParticipant(ChatObject.VideoParticipant videoParticipant, TLRPC.GroupCallParticipant participant) {
             this.videoParticipant = videoParticipant;
             this.participant = participant;
             long lastPeerId = peerId;
@@ -228,7 +230,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
             if (peerId > 0) {
                 currentUser = AccountInstance.getInstance(currentAccount).getMessagesController().getUser(peerId);
                 currentChat = null;
-                avatarDrawable.setInfo(currentUser);
+                avatarDrawable.setInfo(currentAccount, currentUser);
 
                 name = UserObject.getFirstName(currentUser);
                 avatarImageView.getImageReceiver().setCurrentAccount(currentAccount);
@@ -239,7 +241,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
             } else {
                 currentChat = AccountInstance.getInstance(currentAccount).getMessagesController().getChat(-peerId);
                 currentUser = null;
-                avatarDrawable.setInfo(currentChat);
+                avatarDrawable.setInfo(currentAccount, currentChat);
 
                 if (currentChat != null) {
                     name = currentChat.title;
@@ -375,7 +377,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
             return avatarImageView;
         }
 
-        public TLRPC.TL_groupCallParticipant getParticipant() {
+        public TLRPC.GroupCallParticipant getParticipant() {
             return participant;
         }
 
@@ -571,14 +573,25 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
         public boolean isRemoving(RecyclerListView listView) {
             return listView.getChildAdapterPosition(this) == RecyclerView.NO_POSITION;
         }
-    }
+    
+        @Override
+        public void updateColors() {
+            try {
+                backgroundPaint.setColor(Theme.getColor(Theme.key_voipgroup_listViewBackground));
+                invalidate();
+        
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        }
+}
 
     public void update(boolean animated, RecyclerListView listView) {
         if (groupCall == null) {
             return;
         }
         if (animated) {
-            ArrayList<TLRPC.TL_groupCallParticipant> oldParticipants = new ArrayList<>(participants);
+            ArrayList<TLRPC.GroupCallParticipant> oldParticipants = new ArrayList<>(participants);
             ArrayList<ChatObject.VideoParticipant> oldVideoParticipants = new ArrayList<>(videoParticipants);
 
             participants.clear();
@@ -613,8 +626,8 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
                         return MessageObject.getPeerId(oldParticipants.get(oldItemPosition2).peer) == MessageObject.getPeerId(participants.get(newItemPosition2).peer);
                     }
 
-                    TLRPC.TL_groupCallParticipant oldParticipant;
-                    TLRPC.TL_groupCallParticipant newParticipant;
+                    TLRPC.GroupCallParticipant oldParticipant;
+                    TLRPC.GroupCallParticipant newParticipant;
                     if (oldItemPosition < oldVideoParticipants.size()) {
                         oldParticipant = oldVideoParticipants.get(oldItemPosition).participant;
                     } else {

@@ -1,5 +1,7 @@
 package org.telegram.ui.Components;
 
+import static org.telegram.messenger.LocaleController.getString;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.os.Build;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -22,15 +23,16 @@ import android.widget.TextView;
 import androidx.core.graphics.ColorUtils;
 
 import com.exteragram.messenger.ExteraConfig;
-
+import com.exteragram.messenger.utils.system.VibratorUtils;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ChatObject;
-import org.telegram.messenger.FileLog;
+import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.voip.VoIPService;
+import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.voip.VoIPButtonsLayout;
 import org.telegram.ui.Components.voip.VoIPToggleButton;
@@ -79,9 +81,9 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
                 super.onInitializeAccessibilityNodeInfo(info);
                 VoIPService service = VoIPService.getSharedInstance();
                 if (service != null && ChatObject.isChannelOrGiga(service.getChat())) {
-                    info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, LocaleController.getString("VoipChannelOpenVoiceChat", R.string.VoipChannelOpenVoiceChat)));
+                    info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, getString(R.string.VoipChannelOpenVoiceChat)));
                 } else {
-                    info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, LocaleController.getString("VoipGroupOpenVoiceChat", R.string.VoipGroupOpenVoiceChat)));
+                    info.addAction(new AccessibilityNodeInfo.AccessibilityAction(AccessibilityNodeInfo.ACTION_CLICK, getString(R.string.VoipGroupOpenVoiceChat)));
                 }
             }
         };
@@ -107,7 +109,7 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
         titleView.setTextSize(15);
         titleView.setMaxLines(2);
         titleView.setEllipsize(TextUtils.TruncateAt.END);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         linearLayout.addView(titleView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         subtitleView = new TextView(context);
@@ -137,14 +139,7 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
             if (VoIPService.getSharedInstance() != null) {
                 if (VoIPService.getSharedInstance().mutedByAdmin()) {
                     muteButton.shakeView();
-                    try {
-                        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                        if (vibrator != null) {
-                            vibrator.vibrate(200);
-                        }
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
+                    VibratorUtils.vibrate();
                 } else {
                     VoIPService.getSharedInstance().setMicMute(!VoIPService.getSharedInstance().isMicMute(), false, true);
                 }
@@ -153,7 +148,7 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
 
         leaveButton = new VoIPToggleButton(context, 44f);
         leaveButton.setTextSize(12);
-        leaveButton.setData(R.drawable.calls_decline, 0xffffffff, 0xFFCE4A4A, 0.3f, false, LocaleController.getString("VoipGroupLeave", R.string.VoipGroupLeave), false, false);
+        leaveButton.setData(R.drawable.calls_decline, 0xffffffff, 0xFFCE4A4A, 0.3f, false, getString(R.string.VoipGroupLeave), false, false);
         leaveButton.setOnClickListener(v -> GroupCallActivity.onLeaveClick(getContext(), () -> GroupCallPip.updateVisibility(context), Build.VERSION.SDK_INT < 23 || Settings.canDrawOverlays(context)));
 
         VoIPButtonsLayout buttonsContainer = new VoIPButtonsLayout(context);
@@ -281,18 +276,41 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
         VoIPService service = VoIPService.getSharedInstance();
         if (service != null && service.groupCall != null) {
             AvatarDrawable avatarDrawable = new AvatarDrawable();
+            final TLRPC.Chat chat = service.getChat();
             avatarDrawable.setColor(
-                Theme.getColor(Theme.keys_avatar_background[AvatarDrawable.getColorIndex(service.getChat().id)]),
-                Theme.getColor(Theme.keys_avatar_background2[AvatarDrawable.getColorIndex(service.getChat().id)])
+                Theme.getColor(Theme.keys_avatar_background[AvatarDrawable.getColorIndex(chat != null ? chat.id : 0)]),
+                Theme.getColor(Theme.keys_avatar_background2[AvatarDrawable.getColorIndex(chat != null ? chat.id : 0)])
             );
-            avatarDrawable.setInfo(service.getChat());
-            avatarImageView.setImage(ImageLocation.getForLocal(service.getChat().photo.photo_small), "50_50", avatarDrawable, null);
+            avatarDrawable.setInfo(currentAccount, chat);
+            if (chat != null) {
+                avatarImageView.setImage(ImageLocation.getForLocal(chat.photo.photo_small), "50_50", avatarDrawable, null);
+            }
 
             String titleStr;
-            if (!TextUtils.isEmpty(service.groupCall.call.title)) {
+            if (service.isConference() && service.groupCall != null) {
+                if (service.groupCall.sortedParticipants.size() == 1) {
+                    titleStr = getString(R.string.ConferenceChat);
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < Math.min(3, service.groupCall.sortedParticipants.size()); i++) {
+                        if (i > 0) {
+                            sb.append(", ");
+                        }
+                        final long did = DialogObject.getPeerDialogId(service.groupCall.sortedParticipants.get(i).peer);
+                        sb.append(DialogObject.getShortName(did));
+                    }
+                    if (service.groupCall.sortedParticipants.size() > 3) {
+                        sb.append(" ");
+                        sb.append(LocaleController.formatPluralString("AndOther", service.groupCall.sortedParticipants.size() - 3));
+                    }
+                    titleStr = sb.toString();
+                }
+            } else if (!TextUtils.isEmpty(service.groupCall.call.title)) {
                 titleStr = service.groupCall.call.title;
+            } else if (chat != null) {
+                titleStr = chat.title;
             } else {
-                titleStr = service.getChat().title;
+                titleStr = "";
             }
             if (titleStr != null) {
                 titleStr = titleStr.replace("\n", " ").replaceAll(" +", " ").trim();
@@ -309,7 +327,7 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
             boolean isMute = VoIPService.getSharedInstance() == null || VoIPService.getSharedInstance().isMicMute() || mutedByAdmin;
             muteProgress = isMute ? 1f : 0f;
         }
-        NotificationCenter.getInstance(currentAccount).addObserver(this,NotificationCenter.groupCallUpdated);
+        NotificationCenter.getInstance(currentAccount).addWeakObserver(this,NotificationCenter.groupCallUpdated);
         updateButtons(false);
     }
 
@@ -329,7 +347,7 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
         if (service != null && service.groupCall != null) {
             int currentCallState = service.getCallState();
             if (!service.isSwitchingStream() && (currentCallState == VoIPService.STATE_WAIT_INIT || currentCallState == VoIPService.STATE_WAIT_INIT_ACK || currentCallState == VoIPService.STATE_CREATING || currentCallState == VoIPService.STATE_RECONNECTING)) {
-                subtitleView.setText(LocaleController.getString("VoipGroupConnecting", R.string. VoipGroupConnecting));
+                subtitleView.setText(getString(R.string. VoipGroupConnecting));
             } else {
                 subtitleView.setText(LocaleController.formatPluralString(service.groupCall.call.rtmp_stream ? "ViewersWatching" : "Participants", service.groupCall.call.participants_count));
             }
@@ -350,21 +368,21 @@ public class GroupCallPipAlertView extends LinearLayout implements VoIPService.S
         soundButton.setChecked(checked, animated);
 
         if (bluetooth) {
-            soundButton.setData(R.drawable.calls_bluetooth, Color.WHITE, 0, 0.1f, true, LocaleController.getString("VoipAudioRoutingBluetooth", R.string.VoipAudioRoutingBluetooth), false, animated);
+            soundButton.setData(R.drawable.calls_bluetooth, Color.WHITE, 0, 0.1f, true, getString(R.string.VoipAudioRoutingBluetooth), false, animated);
         } else if (checked) {
-            soundButton.setData(R.drawable.calls_speaker, Color.WHITE, 0, 0.3f, true, LocaleController.getString("VoipSpeaker", R.string.VoipSpeaker), false, animated);
+            soundButton.setData(R.drawable.calls_speaker, Color.WHITE, 0, 0.3f, true, getString(R.string.VoipSpeaker), false, animated);
         } else {
             if (service.isHeadsetPlugged()) {
-                soundButton.setData(R.drawable.calls_headphones, Color.WHITE, 0, 0.1f, true, LocaleController.getString("VoipAudioRoutingHeadset", R.string.VoipAudioRoutingHeadset), false, animated);
+                soundButton.setData(R.drawable.calls_headphones, Color.WHITE, 0, 0.1f, true, getString(R.string.VoipAudioRoutingHeadset), false, animated);
             } else {
-                soundButton.setData(R.drawable.calls_speaker, Color.WHITE, 0, 0.1f, true, LocaleController.getString("VoipSpeaker", R.string.VoipSpeaker), false, animated);
+                soundButton.setData(R.drawable.calls_speaker, Color.WHITE, 0, 0.1f, true, getString(R.string.VoipSpeaker), false, animated);
             }
         }
 
         if (service.mutedByAdmin()) {
-            muteButton.setData(R.drawable.calls_unmute, Color.WHITE, ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * 0.3f)), 0.1f, true, LocaleController.getString("VoipMutedByAdminShort", R.string.VoipMutedByAdminShort), true, animated);
+            muteButton.setData(R.drawable.calls_unmute, Color.WHITE, ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * 0.3f)), 0.1f, true, getString(R.string.VoipMutedByAdminShort), true, animated);
         } else {
-            muteButton.setData(R.drawable.calls_unmute, Color.WHITE, ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * (service.isMicMute() ? 0.3f : 0.15f))), 0.1f, true, service.isMicMute() ? LocaleController.getString("VoipUnmute", R.string.VoipUnmute) : LocaleController.getString("VoipMute", R.string.VoipMute), service.isMicMute(), animated);
+            muteButton.setData(R.drawable.calls_unmute, Color.WHITE, ColorUtils.setAlphaComponent(Color.WHITE, (int) (255 * (service.isMicMute() ? 0.3f : 0.15f))), 0.1f, true, service.isMicMute() ? getString(R.string.VoipUnmute) : getString(R.string.VoipMute), service.isMicMute(), animated);
         }
         invalidate();
     }

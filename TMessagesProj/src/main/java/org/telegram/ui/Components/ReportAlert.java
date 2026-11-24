@@ -25,6 +25,7 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.ActionBar.ThemeBind;
 
 public class ReportAlert extends BottomSheet {
 
@@ -37,11 +38,11 @@ public class ReportAlert extends BottomSheet {
         private TextView textView;
         private LinearLayout linearLayout;
 
-        public BottomSheetCell(Context context) {
+        public BottomSheetCell(Context context, Theme.ResourcesProvider resourcesProvider) {
             super(context);
 
             background = new View(context);
-            background.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 4));
+            background.setBackground(Theme.AdaptiveRipple.filledRectByKey(Theme.key_featuredStickers_addButton, 8));
             addView(background, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, 0, 16, 16, 16, 16));
 
             textView = new TextView(context);
@@ -50,9 +51,9 @@ public class ReportAlert extends BottomSheet {
             textView.setGravity(Gravity.CENTER_HORIZONTAL);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setGravity(Gravity.CENTER);
-            textView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+            ThemeBind.textColor(textView, Theme.key_featuredStickers_buttonText, resourcesProvider);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            textView.setTypeface(AndroidUtilities.bold());
             addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
         }
 
@@ -66,8 +67,8 @@ public class ReportAlert extends BottomSheet {
         }
     }
 
-    public ReportAlert(final Context context, int type) {
-        super(context, true);
+    public ReportAlert(final Context context, int type, Theme.ResourcesProvider resourcesProvider) {
+        super(context, true, resourcesProvider);
         setApplyBottomPadding(false);
         setApplyTopPadding(false);
 
@@ -84,37 +85,37 @@ public class ReportAlert extends BottomSheet {
         frameLayout.addView(imageView, LayoutHelper.createFrame(160, 160, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 17, 14, 17, 0));
 
         TextView percentTextView = new TextView(context);
-        percentTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        percentTextView.setTypeface(AndroidUtilities.bold());
         percentTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
-        percentTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+        ThemeBind.textColor(percentTextView, Theme.key_dialogTextBlack, resourcesProvider);
         if (type == AlertsCreator.REPORT_TYPE_SPAM) {
-            percentTextView.setText(LocaleController.getString("ReportTitleSpam", R.string.ReportTitleSpam));
+            percentTextView.setText(LocaleController.getString(R.string.ReportTitleSpam));
         } else if (type == AlertsCreator.REPORT_TYPE_FAKE_ACCOUNT) {
-            percentTextView.setText(LocaleController.getString("ReportTitleFake", R.string.ReportTitleFake));
+            percentTextView.setText(LocaleController.getString(R.string.ReportTitleFake));
         } else if (type == AlertsCreator.REPORT_TYPE_VIOLENCE) {
-            percentTextView.setText(LocaleController.getString("ReportTitleViolence", R.string.ReportTitleViolence));
+            percentTextView.setText(LocaleController.getString(R.string.ReportTitleViolence));
         } else if (type == AlertsCreator.REPORT_TYPE_CHILD_ABUSE) {
-            percentTextView.setText(LocaleController.getString("ReportTitleChild", R.string.ReportTitleChild));
+            percentTextView.setText(LocaleController.getString(R.string.ReportTitleChild));
         } else if (type == AlertsCreator.REPORT_TYPE_PORNOGRAPHY) {
-            percentTextView.setText(LocaleController.getString("ReportTitlePornography", R.string.ReportTitlePornography));
+            percentTextView.setText(LocaleController.getString(R.string.ReportTitlePornography));
         } else if (type == AlertsCreator.REPORT_TYPE_OTHER) {
-            percentTextView.setText(LocaleController.getString("ReportChat", R.string.ReportChat));
+            percentTextView.setText(LocaleController.getString(R.string.ReportChat));
         }
         frameLayout.addView(percentTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 17, 197, 17, 0));
 
         TextView infoTextView = new TextView(context);
         infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        infoTextView.setTextColor(Theme.getColor(Theme.key_dialogTextGray3));
+        ThemeBind.textColor(infoTextView, Theme.key_dialogTextGray3, resourcesProvider);
         infoTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-        infoTextView.setText(LocaleController.getString("ReportInfo", R.string.ReportInfo));
+        infoTextView.setText(LocaleController.getString(R.string.ReportInfo));
         frameLayout.addView(infoTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 30, 235, 30, 44));
 
         editText = new EditTextBoldCursor(context);
         editText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        editText.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
-        editText.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        ThemeBind.hintTextColor(editText, Theme.key_windowBackgroundWhiteHintText, resourcesProvider);
+        ThemeBind.textColor(editText, Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
         editText.setBackgroundDrawable(null);
-        editText.setLineColors(getThemedColor(Theme.key_windowBackgroundWhiteInputField), getThemedColor(Theme.key_windowBackgroundWhiteInputFieldActivated), getThemedColor(Theme.key_text_RedRegular));
+        ThemeBind.lineColors(editText, Theme.key_windowBackgroundWhiteInputField, Theme.key_windowBackgroundWhiteInputFieldActivated, Theme.key_text_RedRegular, resourcesProvider);
         editText.setMaxLines(1);
         editText.setLines(1);
         editText.setPadding(0, 0, 0, 0);
@@ -122,8 +123,8 @@ public class ReportAlert extends BottomSheet {
         editText.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        editText.setHint(LocaleController.getString("ReportHint", R.string.ReportHint));
-        editText.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+        editText.setHint(LocaleController.getString(R.string.ReportHint));
+        ThemeBind.cursorColor(editText, Theme.key_windowBackgroundWhiteBlackText, resourcesProvider);
         editText.setCursorSize(AndroidUtilities.dp(20));
         editText.setCursorWidth(1.5f);
         editText.setOnEditorActionListener((textView, i, keyEvent) -> {
@@ -135,9 +136,10 @@ public class ReportAlert extends BottomSheet {
         });
         frameLayout.addView(editText, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.LEFT | Gravity.TOP, 17, 305, 17, 0));
 
-        clearButton = new BottomSheetCell(context);
+        clearButton = new BottomSheetCell(context, resourcesProvider);
         clearButton.setBackground(null);
-        clearButton.setText(LocaleController.getString("ReportSend", R.string.ReportSend));
+        clearButton.setText(LocaleController.getString(R.string.ReportSend));
+        ScaleStateListAnimator.apply(clearButton);
         clearButton.background.setOnClickListener(v -> {
             AndroidUtilities.hideKeyboard(editText);
             onSend(type, editText.getText().toString());

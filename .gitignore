@@ -1,5 +1,5 @@
 TMessagesProj/.externalNativeBuild/
-TMessagesProj/src/main/java/com/exteragram/messenger/boost/
+Tools/temp/
 .gradle/
 .idea/
 build/
@@ -11,6 +11,36 @@ local.properties
 API_KEYS
 
 *.hprof
+*.jks
 *.iml
 *.apk
-*.so
+TMessagesProj/.cxx/
+TMessagesProj/jniRes/
+**/.DS_Store
+TMessagesProj/afat/
+TMessagesProj/jni/ffmpeg/build_android
+
+# Tools stuff
+__pycache__/
+Tools/registration_dates.bin
+Tools/invisible.txt
+invisible.txt
+*.dm
+
+# All API key files
+API_KEYS*
+
+# Kotlin compiler temp files
+.kotlin/
+
+# Debug / share artifacts
+**.patch
+**.sqlite
+*.db
+*-shm
+*-wal
+
+# OpenCode files
+**.project
+**/.settings
+**.classpath

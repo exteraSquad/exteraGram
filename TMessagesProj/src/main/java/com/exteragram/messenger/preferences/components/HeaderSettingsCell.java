@@ -5,84 +5,142 @@
  We do not and cannot prevent the use of our code,
  but be respectful and credit the original author.
 
- Copyright @immat0x1, 2023
+ Copyright @exteraGram, 2022-2026
+
+ Licensed under the GNU GPL v. 3 or later, with the additional terms
+ in ADDITIONAL_TERMS.md at the root of the repository.
 
 */
 
 package com.exteragram.messenger.preferences.components;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.pm.PackageInfoCompat;
 
-import com.exteragram.messenger.utils.MonetUtils;
+import com.exteragram.messenger.preferences.utils.IconShapeHelper;
+import com.exteragram.messenger.utils.ui.MonetUtils;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.RLottieImageView;
 
-public class HeaderSettingsCell extends FrameLayout {
+public class HeaderSettingsCell extends LinearLayout implements CustomPreferenceCell {
 
+    public final RLottieImageView imageView;
     public final TextView titleTextView;
+    public final TextView subtitleTextView;
+
+    private Path shapePath;
 
     public HeaderSettingsCell(Context context) {
         super(context);
 
-        Drawable arrow = ContextCompat.getDrawable(context, R.drawable.ic_logo_foreground).mutate();
+        setOrientation(VERTICAL);
+        setGravity(Gravity.CENTER);
+
+        Drawable arrow = ContextCompat.getDrawable(context, R.drawable.ic_foreground).mutate();
         Theme.ThemeInfo theme = Theme.getActiveTheme();
         int color = ContextCompat.getColor(context, R.color.ic_background);
 
         if (theme.isMonet() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            color = MonetUtils.getColor(theme.isDark() ? "n1_800" : "a1_100");
-            arrow.setColorFilter(new PorterDuffColorFilter(MonetUtils.getColor(theme.isDark() ? "a1_100" : "n2_700"), PorterDuff.Mode.MULTIPLY));
-        } else {
-            arrow.setAlpha((int) (70 * 2.55f));
+            color = MonetUtils.getColor(theme.isDark() ? "a2_800" : "a1_100");
+            arrow = ContextCompat.getDrawable(context, R.drawable.ic_foreground_solid).mutate();
+            arrow.setColorFilter(new PorterDuffColorFilter(MonetUtils.getColor(theme.isDark() ? "a1_200" : "a1_700"), PorterDuff.Mode.MULTIPLY));
         }
 
-        ImageView logo = new ImageView(context);
-        logo.setScaleType(ImageView.ScaleType.CENTER);
-        logo.setBackground(Theme.createCircleDrawable(AndroidUtilities.dp(108), color));
-        //TODO: logo.setBackground(new GradientArrowBackground(context, color));
-        logo.setImageDrawable(arrow);
-        addView(logo, LayoutHelper.createFrame(108, 108, Gravity.CENTER | Gravity.TOP, 0, 20, 0, 0));
+        imageView = new RLottieImageView(context) {
+            @Override
+            public void draw(@NonNull Canvas canvas) {
+                canvas.save();
+                canvas.clipPath(getPath());
+                super.draw(canvas);
+                canvas.restore();
+            }
+        };
+        imageView.setBackgroundColor(color);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageDrawable(arrow);
+        addView(imageView, LayoutHelper.createLinear(72, 72, Gravity.CENTER | Gravity.TOP, 0, 28, 0, 0));
 
         titleTextView = new TextView(context);
         titleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
-        titleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
-        titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22);
-        titleTextView.setText(String.format("%s %s", LocaleController.getString(R.string.exteraAppName), BuildVars.BUILD_VERSION_STRING));
+        titleTextView.setTypeface(AndroidUtilities.bold());
+        titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        titleTextView.setText(LocaleController.getString(R.string.exteraAppName));
         titleTextView.setLines(1);
         titleTextView.setMaxLines(1);
         titleTextView.setSingleLine(true);
         titleTextView.setPadding(0, 0, 0, 0);
         titleTextView.setGravity(Gravity.CENTER);
-        addView(titleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 50, 145, 50, 0));
+        addView(titleTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 50, 16, 50, 0));
 
-        TextView subtitleTextView = new TextView(context);
+        subtitleTextView = new TextView(context);
         subtitleTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
-        subtitleTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_REGULAR));
-        subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+        subtitleTextView.setTypeface(AndroidUtilities.bold());
+        subtitleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
         subtitleTextView.setLineSpacing(AndroidUtilities.dp(2), 1f);
-        subtitleTextView.setText(LocaleController.getString("AboutExteraDescription", R.string.AboutExteraDescription));
+        PackageInfo info;
+        try {
+            info = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        var sb = new StringBuilder(BuildVars.BUILD_VERSION_STRING);
+        if (info != null) {
+            sb.append(" (").append(PackageInfoCompat.getLongVersionCode(info)).append(")");
+        }
+        subtitleTextView.setText(sb);
         subtitleTextView.setGravity(Gravity.CENTER);
         subtitleTextView.setLines(0);
         subtitleTextView.setMaxLines(0);
         subtitleTextView.setSingleLine(false);
         subtitleTextView.setPadding(0, 0, 0, 0);
-        addView(subtitleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 60, 180, 60, 27));
+        addView(subtitleTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER | Gravity.TOP, 60, 2, 60, 28));
+    }
 
+    private Path getPath() {
+        if (shapePath == null) {
+            shapePath = IconShapeHelper.INSTANCE.getFinalIconShapePath(72, 72, 18);
+        }
+        return shapePath;
+    }
+
+    @Override
+    public void invalidate() {
+        shapePath = null;
+        imageView.invalidate();
+        super.invalidate();
+    }
+
+    @Override
+    public boolean isSameCell(@Nullable Object object) {
+        if (this == object) return true;
+        if (!(object instanceof HeaderSettingsCell other)) return false;
+        return imageView.equals(other.imageView) &&
+                titleTextView.equals(other.titleTextView) &&
+                subtitleTextView.equals(other.subtitleTextView);
     }
 
     @Override
