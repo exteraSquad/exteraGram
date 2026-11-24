@@ -355,6 +355,7 @@
     <string name="NewFabStyle">Плавающая кнопка</string>
     <string name="NewProfileActionsStyle">Кнопки профиля</string>
     <string name="NewPlayerStyle">Плеер</string>
+    <string name="NewQrScannerStyle">QR-код и сканер</string>
     <string name="TabletMode">Планшетный режим</string>
     <string name="RemoveMessageTail">Убрать хвост у сообщений</string>
     <string name="GooeyAvatarAnimation">\"Липкая\" анимация аватарок</string>

@@ -1,5 +1,7 @@
 package org.telegram.ui.QrShare;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.lerp;
 
@@ -807,6 +809,12 @@ public final class QrScanOverlay extends FrameLayout {
      */
     private void drawGlassBody(Canvas canvas, RectF rect, float radius, float alpha, boolean blurred) {
         if (alpha <= 0f) {
+            return;
+        }
+        if (ExteraConfig.getNewQrScannerStyle()) {
+            fill.setColor(0x33FFFFFF);
+            fill.setAlpha((int) (0x33 * alpha));
+            canvas.drawRoundRect(rect, radius, radius, fill);
             return;
         }
         final int white = (int) (255 * Utilities.clamp01(RimTune.v[RimTune.FILL] / 100f));

@@ -4501,6 +4501,12 @@ public class QrShareView extends View {
     /** Glass in any outline (the menu droplet): same blur, tint, sheen and rim as the rounded-rect glass. */
     private void drawGlassPath(Canvas c, Path p, RectF bounds, boolean light, float alpha) {
         if (alpha <= 0) return;
+        if (ExteraConfig.getNewQrScannerStyle()) {
+            fill.setColor(light ? 0x1F000000 : 0x33FFFFFF);
+            fill.setAlpha((int) (Color.alpha(fill.getColor()) * alpha));
+            c.drawPath(p, fill);
+            return;
+        }
         c.save();
         c.clipPath(p);
         if (QrRender.hasEffects() && hasBlur(c)) {
@@ -4524,6 +4530,12 @@ public class QrShareView extends View {
 
     private void drawGlass(Canvas c, RectF r, float radius, boolean light, float alpha) {
         if (alpha <= 0) return;
+        if (ExteraConfig.getNewQrScannerStyle()) {
+            fill.setColor(light ? 0x1F000000 : 0x33FFFFFF);
+            fill.setAlpha((int) (Color.alpha(fill.getColor()) * alpha));
+            c.drawRoundRect(r, radius, radius, fill);
+            return;
+        }
         // sheets: the glass body covers the rim's grown 1dp band too (else raw backdrop shows between the glass edge
         // and the outer dark ring: a second dark band along the sides)
         RectF gb = r;

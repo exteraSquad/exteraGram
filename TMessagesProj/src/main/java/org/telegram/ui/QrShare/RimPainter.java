@@ -1,5 +1,7 @@
 package org.telegram.ui.QrShare;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import static org.telegram.messenger.AndroidUtilities.dpf2;
 
 import android.graphics.Canvas;
@@ -61,6 +63,7 @@ final class RimPainter {
     /** layered = drawn into an offscreen layer without the real pixels beneath: no Plus (it would turn grey). */
     void draw(Canvas c, RectF rect, float radius, int grp, float alpha, boolean layered) {
         if (alpha <= 0.004f) return;
+        if (ExteraConfig.getNewQrScannerStyle()) return;
         if (GlassUiHelper.drawOutline(c, null, rect, radius, alpha)) return;
         if (QrGlass.drawRim(c, rect, radius, grp, alpha)) return; // baked: the same outline as the QR screen's
         ensure();

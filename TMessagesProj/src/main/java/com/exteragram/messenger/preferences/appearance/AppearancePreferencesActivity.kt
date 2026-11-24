@@ -94,7 +94,8 @@ class AppearancePreferencesActivity : BasePreferencesActivity() {
         NEW_NAVIGATION_BAR_STYLE,
         NEW_FAB_STYLE,
         NEW_PROFILE_ACTIONS_STYLE,
-        NEW_PLAYER_STYLE;
+        NEW_PLAYER_STYLE,
+        NEW_QR_SCANNER_STYLE;
 
         val id: Int = ordinal + 1
     }
@@ -131,6 +132,8 @@ class AppearancePreferencesActivity : BasePreferencesActivity() {
             markNew("Appearance-M3Styles-ProfileButtons")
             add(AppearanceItem.NEW_PLAYER_STYLE, R.string.NewPlayerStyle, ::newPlayerStyle)
             markNew("Appearance-M3Styles-Player")
+            add(AppearanceItem.NEW_QR_SCANNER_STYLE, R.string.NewQrScannerStyle, ::newQrScannerStyle)
+            markNew("Appearance-M3Styles-QrScanner")
         }
 
     override fun initializeOptionStrings() {
@@ -312,7 +315,7 @@ class AppearancePreferencesActivity : BasePreferencesActivity() {
             AppearanceItem.USE_SYSTEM_EMOJI -> handleUseSystemEmojiClick(item)
             AppearanceItem.MD3_STYLES, AppearanceItem.NEW_LOADING_STYLE, AppearanceItem.NEW_SLIDER_STYLE, AppearanceItem.NEW_SWITCH_STYLE,
             AppearanceItem.NEW_CHAT_HEADER_STYLE, AppearanceItem.NEW_NAVIGATION_BAR_STYLE, AppearanceItem.NEW_FAB_STYLE,
-            AppearanceItem.NEW_PROFILE_ACTIONS_STYLE, AppearanceItem.NEW_PLAYER_STYLE -> md3Styles.onClick(item)
+            AppearanceItem.NEW_PROFILE_ACTIONS_STYLE, AppearanceItem.NEW_PLAYER_STYLE, AppearanceItem.NEW_QR_SCANNER_STYLE -> md3Styles.onClick(item)
             AppearanceItem.GOOEY_AVATAR_ANIMATION -> toggleBooleanSettingAndRefresh(item) { gooeyAvatarAnimation = it }
             AppearanceItem.CUSTOM_THEMES -> toggleBooleanSettingAndRefresh(item) { customThemes = it }
             AppearanceItem.FORCE_SNOW -> {

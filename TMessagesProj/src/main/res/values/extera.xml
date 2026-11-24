@@ -420,6 +420,7 @@
     <string name="NewFabStyle">Floating Button</string>
     <string name="NewProfileActionsStyle">Profile Buttons</string>
     <string name="NewPlayerStyle">Player</string>
+    <string name="NewQrScannerStyle">QR Code &amp; Scanner</string>
     <string name="TabletMode">Tablet Mode</string>
     <string name="RemoveMessageTail">Remove Message Tail</string>
     <string name="GooeyAvatarAnimation">\"Gooey\" Avatar Animation</string>

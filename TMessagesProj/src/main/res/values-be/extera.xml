@@ -363,6 +363,7 @@
     <string name="NewFabStyle">Плаваючая кнопка</string>
     <string name="NewProfileActionsStyle">Кнопкі ў профілі</string>
     <string name="NewPlayerStyle">Плэер</string>
+    <string name="NewQrScannerStyle">QR-код і сканэр</string>
     <string name="TabletMode">Рэжым планшэту</string>
     <string name="RemoveMessageTail">Выдаліць хвост паведамлення</string>
     <string name="GooeyAvatarAnimation">Анімацыя аватара \"Gooey\"</string>

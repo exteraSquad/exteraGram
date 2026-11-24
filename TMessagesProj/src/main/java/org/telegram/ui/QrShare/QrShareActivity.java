@@ -1,5 +1,7 @@
 package org.telegram.ui.QrShare;
 
+import com.exteragram.messenger.ExteraConfig;
+
 import static org.telegram.messenger.LocaleController.getString;
 
 import android.Manifest;
@@ -998,6 +1000,7 @@ public class QrShareActivity extends BaseFragment {
         strip.underDraw = (cv, l, t, r, b2) -> stripUnder(cv, strip, l, t, r, b2);
         // the picks island's rim (Dark out, Big group), so both islands read as one family
         strip.overDraw = (cv, l, t, r, b2) -> {
+            if (ExteraConfig.getNewQrScannerStyle()) return;
             stripRect.set(l + stripRimOut, t + stripInsetTop, r - stripRimOut, b2 - stripInsetBottom);
             stripRim.draw(cv, stripRect, stripRect.height() / 2f, RimTune.BIG, 1f);
         };

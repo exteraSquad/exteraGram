@@ -345,6 +345,7 @@
     <string name="NewFabStyle">Плаваюча кнопка</string>
     <string name="NewProfileActionsStyle">Кнопки профілю</string>
     <string name="NewPlayerStyle">Плеєр</string>
+    <string name="NewQrScannerStyle">QR-код та сканер</string>
     <string name="TabletMode">Планшетний режим</string>
     <string name="RemoveMessageTail">Прибрати хвіст повідомлення</string>
     <string name="GooeyAvatarAnimation">\"Липка\" анімація аватарок</string>
