@@ -1,4 +1,4 @@
-License situation.
+1. License situation.
 
 <p align="center">
   <img src="TMessagesProj/src/main/res-appicons/mipmap-xxxhdpi/ic_launcher.webp" width="96" alt="exteraGram">
