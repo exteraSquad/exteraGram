@@ -404,6 +404,7 @@
     <!-- Скорость -->
     <string name="DownloadSpeedBoost">Ускорение загрузки</string>
     <string name="UploadSpeedBoost">Ускорение отправки</string>
+    <string name="KeepChatDownloadsAlive">Не прерывать загрузку при выходе из чата</string>
     <string name="Ultra">Ультра</string>
     <string name="SpeedBoostInfo">Ультра-ускорение может вызывать проблемы с загрузкой файлов и просмотром видео на медленном интернет-соединении.</string>
 

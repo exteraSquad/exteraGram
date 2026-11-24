@@ -60,6 +60,7 @@ class GeneralPreferencesActivity : BasePreferencesActivity() {
         FILTER_ZALGO,
         DOWNLOAD_SPEED_BOOST,
         UPLOAD_SPEED_BOOST,
+        KEEP_CHAT_DOWNLOADS_ALIVE,
         CUSTOM_SAVE_PATH,
         HIDE_PHONE_NUMBER,
         SHOW_ID_AND_DC,
@@ -125,6 +126,7 @@ class GeneralPreferencesActivity : BasePreferencesActivity() {
             downloadSpeedBoost
         ) { downloadSpeedBoost = it }.setLinkAlias("downloadSpeedBoost", this))
         items.add(uCheck(GeneralItem.UPLOAD_SPEED_BOOST, getString(R.string.UploadSpeedBoost), uploadSpeedBoost, linkAlias = "uploadSpeedBoost"))
+        items.add(uCheck(GeneralItem.KEEP_CHAT_DOWNLOADS_ALIVE, getString(R.string.KeepChatDownloadsAlive), keepChatDownloadsAlive, linkAlias = "keepChatDownloadsAlive"))
         items.add(UItem.asShadow(getString(R.string.SpeedBoostInfo)))
 
         items.add(UItem.asHeader(getString(R.string.StorageSettings)))
@@ -175,6 +177,7 @@ class GeneralPreferencesActivity : BasePreferencesActivity() {
             GeneralItem.DISABLE_NOTIFICATION_DELAY -> toggleBooleanSettingAndRefresh(item) { disableNotificationDelay = it }
             GeneralItem.FILTER_ZALGO -> toggleBooleanSettingAndRefresh(item) { filterZalgo = it }
             GeneralItem.UPLOAD_SPEED_BOOST -> toggleBooleanSettingAndRefresh(item) { uploadSpeedBoost = it }
+            GeneralItem.KEEP_CHAT_DOWNLOADS_ALIVE -> toggleBooleanSettingAndRefresh(item) { keepChatDownloadsAlive = it }
             GeneralItem.CUSTOM_SAVE_PATH -> showCustomSavePathDialog()
             GeneralItem.HIDE_PHONE_NUMBER -> {
                 toggleBooleanSettingAndRefresh(item) { hidePhoneNumber = it }
