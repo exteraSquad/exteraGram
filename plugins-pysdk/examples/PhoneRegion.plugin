@@ -1,0 +1,980 @@
+import json
+import os
+import re
+import threading
+import time
+import weakref
+
+from base_plugin import BasePlugin, HookResult, MethodHook
+from android_utils import OnClickListener, copy_to_clipboard, run_on_ui_thread
+from client_utils import get_last_fragment, run_on_queue, send_request
+from file_utils import get_cache_dir, read_file, write_file
+from hook_utils import find_class, get_private_field
+from ui.bulletin import BulletinHelper
+from ui.settings import Divider, Header, Switch, Text
+
+from android.graphics import Typeface
+from android.text import Spanned
+from android.util import TypedValue
+from android.view import View
+from android.widget import TextView
+from java.io import BufferedReader, InputStreamReader
+from java.lang import Long as JLong, System as JSystem
+
+from org.telegram.messenger import (
+    AndroidUtilities,
+    ApplicationLoader,
+    MessagesController,
+    UserConfig,
+)
+from org.telegram.ui.ActionBar import Theme
+from org.telegram.ui.Components import LayoutHelper
+
+__id__ = "phone_region"
+__name__ = "Phone Region"
+__author__ = "@tiptop_super7"
+__version__ = "1.0"
+__description__ = "Показывает страну, ISO-код и флаг номера телефона в меню при зажатии или нажатии на номер в профиле и чатах. Использует официальную базу кодов Telegram."
+__min_version__ = "12.10.6"
+__icon__ = "UtyaDuckFull/13"
+
+CACHE_FILENAME = "phone_region_countries_v1.json"
+CACHE_TTL = 7 * 86400
+FOOTER_TAG = "phone_region_footer_v1"
+
+PHONE_PLUS_RE = re.compile(r"(?<!\d)(\+\d[\d\s\-\(\)\u00A0]{5,22}\d)(?!\d)")
+
+FALLBACK_EXTRA_PREFIXES = [
+    ("888", "888", "FT", "Anonymous Numbers", "Анонимные номера", True),
+    ("76", "7", "KZ", "Kazakhstan", "Казахстан", True),
+    ("77", "7", "KZ", "Kazakhstan", "Казахстан", True),
+]
+
+DEFAULT_SHARED_PRIORITY = {
+    "1": "US",
+    "7": "RU",
+    "44": "GB",
+    "61": "AU",
+    "39": "IT",
+    "47": "NO",
+    "212": "MA",
+    "358": "FI",
+}
+
+
+def _iso_to_flag(iso: str) -> str:
+    if not iso:
+        return "🌐"
+    code = str(iso).strip().upper()
+    if code == "FT":
+        return "🕶"
+    if len(code) == 2 and code.isalpha() and code.isascii():
+        return chr(0x1F1E6 + ord(code[0]) - ord("A")) + chr(0x1F1E6 + ord(code[1]) - ord("A"))
+    return "🌐"
+
+
+def _digits_only(text: str) -> str:
+    return "".join(ch for ch in str(text or "") if ch.isdigit())
+
+
+def _is_java_instance(obj, cls) -> bool:
+    if obj is None or cls is None:
+        return False
+    try:
+        if isinstance(obj, cls):
+            return True
+    except Exception:
+        pass
+    try:
+        if hasattr(cls, "isInstance") and cls.isInstance(obj):
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _get_theme_color(key, resources_provider=None):
+    try:
+        if resources_provider is not None:
+            return Theme.getColor(key, resources_provider)
+    except Exception:
+        pass
+    try:
+        return Theme.getColor(key)
+    except Exception:
+        return -1
+
+
+def _collect_view_texts(view, out, depth=0):
+    if view is None or depth > 14:
+        return
+
+    try:
+        if hasattr(view, "getText"):
+            t = view.getText()
+            if t is not None:
+                s = str(t).strip()
+                if s:
+                    out.append(s)
+    except Exception:
+        pass
+
+    has_children = False
+    try:
+        if hasattr(view, "getChildCount") and hasattr(view, "getChildAt"):
+            count = view.getChildCount()
+            if count > 0:
+                has_children = True
+                for i in range(count):
+                    _collect_view_texts(view.getChildAt(i), out, depth + 1)
+    except Exception:
+        pass
+
+    if not has_children:
+        for getter in ("getTextView", "getValueTextView", "getSubTextView"):
+            try:
+                if hasattr(view, getter):
+                    child = getattr(view, getter)()
+                    if child is not None and child is not view:
+                        _collect_view_texts(child, out, depth + 1)
+            except Exception:
+                pass
+
+
+def _unique_lower_texts(texts):
+    result = []
+    seen = set()
+    for t in texts:
+        s = " ".join(str(t or "").strip().lower().split())
+        if s and s not in seen:
+            seen.add(s)
+            result.append(s)
+    return result
+
+
+def _has_footer_tag(view, depth=0) -> bool:
+    if view is None or depth > 14:
+        return False
+    try:
+        if view.getTag() == FOOTER_TAG:
+            return True
+    except Exception:
+        pass
+    try:
+        if hasattr(view, "getChildCount") and hasattr(view, "getChildAt"):
+            for i in range(view.getChildCount()):
+                if _has_footer_tag(view.getChildAt(i), depth + 1):
+                    return True
+    except Exception:
+        pass
+    return False
+
+
+def _find_instance_in_tree(view, java_cls, depth=0):
+    if view is None or java_cls is None or depth > 12:
+        return None
+    if _is_java_instance(view, java_cls):
+        return view
+    try:
+        if hasattr(view, "getChildCount") and hasattr(view, "getChildAt"):
+            for i in range(view.getChildCount()):
+                found = _find_instance_in_tree(view.getChildAt(i), java_cls, depth + 1)
+                if found is not None:
+                    return found
+    except Exception:
+        pass
+    return None
+
+
+def _get_primary_popup_layout(view, ab_layout_cls):
+    if view is None:
+        return None
+    try:
+        cls_name = str(view.getClass().getSimpleName() or "")
+        if "PopupSwipeBackLayout" in cls_name and hasattr(view, "getChildCount") and view.getChildCount() > 0:
+            first = view.getChildAt(0)
+            if first is not None:
+                found = _find_instance_in_tree(first, ab_layout_cls)
+                return found or first
+    except Exception:
+        pass
+    return _find_instance_in_tree(view, ab_layout_cls) or view
+
+
+def _extract_phone_from_texts(texts):
+    for raw in texts:
+        m = PHONE_PLUS_RE.search(str(raw or ""))
+        if m:
+            digits = _digits_only(m.group(1))
+            if 7 <= len(digits) <= 15:
+                return digits
+    return None
+
+
+def _extract_phone_from_cell(cell):
+    if cell is None:
+        return None
+
+    try:
+        pressed = get_private_field(cell, "pressedLink")
+        if pressed is not None:
+            span = pressed.getSpan() if hasattr(pressed, "getSpan") else pressed
+            if span is not None:
+                if hasattr(span, "getURL"):
+                    url = str(span.getURL() or "").strip()
+                    if url.lower().startswith("tel:"):
+                        digits = _digits_only(url[4:])
+                        if 7 <= len(digits) <= 15:
+                            return digits
+                    m = PHONE_PLUS_RE.search(url)
+                    if m:
+                        digits = _digits_only(m.group(1))
+                        if 7 <= len(digits) <= 15:
+                            return digits
+
+                msg_obj = cell.getMessageObject() if hasattr(cell, "getMessageObject") else get_private_field(cell, "currentMessageObject")
+                if msg_obj is not None:
+                    for attr in ("messageText", "caption"):
+                        seq = getattr(msg_obj, attr, None)
+                        if seq is not None and _is_java_instance(seq, Spanned):
+                            start = seq.getSpanStart(span)
+                            end = seq.getSpanEnd(span)
+                            if start >= 0 and end > start:
+                                snippet = str(seq.subSequence(start, end))
+                                digits = _digits_only(snippet)
+                                if 7 <= len(digits) <= 15:
+                                    return digits
+    except Exception:
+        pass
+
+    try:
+        msg_obj = cell.getMessageObject() if hasattr(cell, "getMessageObject") else get_private_field(cell, "currentMessageObject")
+        if msg_obj is not None:
+            candidates = []
+            for attr in ("messageText", "caption"):
+                val = getattr(msg_obj, attr, None)
+                if val is not None:
+                    candidates.append(str(val))
+            mo = getattr(msg_obj, "messageOwner", None)
+            if mo is not None:
+                raw_msg = getattr(mo, "message", None)
+                if raw_msg:
+                    candidates.append(str(raw_msg))
+            found = _extract_phone_from_texts(candidates)
+            if found:
+                return found
+    except Exception:
+        pass
+
+    return None
+
+
+class ResetPressedLinkHook(MethodHook):
+    def __init__(self, plugin):
+        self._plugin_ref = weakref.ref(plugin)
+
+    def before_hooked_method(self, param):
+        plugin = self._plugin_ref()
+        if plugin is None or plugin._unloaded:
+            return
+        try:
+            digits = _extract_phone_from_cell(param.thisObject)
+            if digits:
+                plugin.remember_phone(digits)
+        except Exception:
+            pass
+
+
+class ItemOptionsShowHook(MethodHook):
+    def __init__(self, plugin):
+        self._plugin_ref = weakref.ref(plugin)
+
+    def before_hooked_method(self, param):
+        plugin = self._plugin_ref()
+        if plugin is None or plugin._unloaded:
+            return
+        try:
+            plugin.handle_item_options(param.thisObject)
+        except Exception:
+            pass
+
+
+class PopupLayoutMeasureHook(MethodHook):
+    def __init__(self, plugin):
+        self._plugin_ref = weakref.ref(plugin)
+
+    def before_hooked_method(self, param):
+        plugin = self._plugin_ref()
+        if plugin is None or plugin._unloaded:
+            return
+        try:
+            plugin.handle_popup_layout_measure(param.thisObject)
+        except Exception:
+            pass
+
+
+class DialogShowHook(MethodHook):
+    def __init__(self, plugin):
+        self._plugin_ref = weakref.ref(plugin)
+
+    def before_hooked_method(self, param):
+        plugin = self._plugin_ref()
+        if plugin is None or plugin._unloaded:
+            return
+        try:
+            plugin.handle_dialog_show(param.thisObject)
+        except Exception:
+            pass
+
+
+class PhoneRegionPlugin(BasePlugin):
+    def __init__(self):
+        super().__init__()
+        self._lock = threading.Lock()
+        self._prefixes = []
+        self._db_source = "Загрузка..."
+        self._cache_fresh = False
+        self._last_phone = None
+        self._last_phone_ts = 0.0
+        self._ab_popup_layout_cls = None
+        self._gap_view_cls = None
+        self._checked_layouts = {}
+        self._xposed_hooks = []
+        self._unloaded = False
+
+    def on_plugin_load(self):
+        self._unloaded = False
+        self._checked_layouts.clear()
+        self._ab_popup_layout_cls = find_class("org.telegram.ui.ActionBar.ActionBarPopupWindow$ActionBarPopupWindowLayout")
+        self._gap_view_cls = find_class("org.telegram.ui.ActionBar.ActionBarPopupWindow$GapView")
+
+        self._load_local_db()
+        self.add_hook("resolvePhone", match_substring=True)
+        self._install_java_hooks()
+
+        if not self._cache_fresh:
+            run_on_queue(lambda: self._fetch_from_telegram_api(notify=False))
+
+    def on_plugin_unload(self):
+        self._unloaded = True
+        for handle in self._xposed_hooks:
+            try:
+                if hasattr(self, "unhook_method"):
+                    self.unhook_method(handle)
+                elif hasattr(handle, "unhook"):
+                    handle.unhook()
+            except Exception:
+                pass
+        self._xposed_hooks.clear()
+
+        try:
+            if hasattr(self, "remove_hook"):
+                self.remove_hook("resolvePhone")
+        except Exception:
+            pass
+
+        self._checked_layouts.clear()
+        self._last_phone = None
+        self._last_phone_ts = 0.0
+        self._ab_popup_layout_cls = None
+        self._gap_view_cls = None
+
+    def _register_hooks(self, handles):
+        if not handles:
+            return
+        try:
+            self._xposed_hooks.extend(handles)
+        except TypeError:
+            self._xposed_hooks.append(handles)
+
+    def _install_java_hooks(self):
+        self._xposed_hooks.clear()
+
+        cell_cls = find_class("org.telegram.ui.Cells.ChatMessageCell")
+        if cell_cls is not None:
+            try:
+                self._register_hooks(self.hook_all_methods(cell_cls, "resetPressedLink", ResetPressedLinkHook(self)))
+            except Exception:
+                pass
+
+        item_options_cls = find_class("org.telegram.ui.Components.ItemOptions")
+        if item_options_cls is not None:
+            try:
+                self._register_hooks(self.hook_all_methods(item_options_cls, "show", ItemOptionsShowHook(self)))
+            except Exception:
+                pass
+
+        if self._ab_popup_layout_cls is not None:
+            try:
+                self._register_hooks(self.hook_all_methods(self._ab_popup_layout_cls, "onMeasure", PopupLayoutMeasureHook(self)))
+            except Exception:
+                pass
+
+        dialog_cls = find_class("android.app.Dialog")
+        if dialog_cls is not None:
+            try:
+                self._register_hooks(self.hook_all_methods(dialog_cls, "show", DialogShowHook(self)))
+            except Exception:
+                pass
+
+    def pre_request_hook(self, account, request_name, request):
+        if self._unloaded:
+            return HookResult()
+        try:
+            phone = getattr(request, "phone", None)
+            if phone:
+                digits = _digits_only(phone)
+                if 7 <= len(digits) <= 15:
+                    self.remember_phone(digits)
+        except Exception:
+            pass
+        return HookResult()
+
+    def remember_phone(self, digits: str):
+        self._last_phone = digits
+        self._last_phone_ts = time.time()
+
+    def _get_recent_phone(self, max_age=15.0):
+        if self._last_phone and (time.time() - self._last_phone_ts) <= max_age:
+            return self._last_phone
+        return None
+
+    def _cache_path(self) -> str:
+        return os.path.join(get_cache_dir(), CACHE_FILENAME)
+
+    def _sort_entries(self, entries):
+        def sort_key(item):
+            full_prefix, dial_code, iso, _en, _ru, is_specific = item
+            is_default_owner = 1 if (not is_specific and DEFAULT_SHARED_PRIORITY.get(dial_code) == iso) else 0
+            return (len(full_prefix), 1 if is_specific else 0, is_default_owner)
+
+        entries.sort(key=sort_key, reverse=True)
+        return entries
+
+    def _load_local_db(self):
+        loaded_from_cache = False
+        self._cache_fresh = False
+
+        try:
+            raw = read_file(self._cache_path())
+            if raw:
+                payload = json.loads(raw)
+                items = payload.get("entries", [])
+                ts = float(payload.get("ts", 0))
+                if items:
+                    parsed = [tuple(x) for x in items]
+                    with self._lock:
+                        self._prefixes = self._sort_entries(parsed)
+                        self._db_source = "Telegram API (кэш)"
+                    loaded_from_cache = True
+                    self._cache_fresh = (time.time() - ts) < CACHE_TTL
+        except Exception:
+            pass
+
+        if not loaded_from_cache:
+            self._load_from_apk_assets()
+
+    def _load_from_apk_assets(self):
+        entries = list(FALLBACK_EXTRA_PREFIXES)
+        stream = None
+        isr = None
+        reader = None
+        try:
+            ctx = ApplicationLoader.applicationContext
+            stream = ctx.getAssets().open("countries.txt")
+            isr = InputStreamReader(stream, "UTF-8")
+            reader = BufferedReader(isr)
+            while True:
+                line = reader.readLine()
+                if line is None:
+                    break
+                line = str(line).strip()
+                if not line or ";" not in line:
+                    continue
+                parts = line.split(";")
+                if len(parts) < 3:
+                    continue
+                code = _digits_only(parts[0])
+                iso = parts[1].strip().upper()
+                name = parts[2].strip()
+                if not code or not name:
+                    continue
+                entries.append((code, code, iso, name, name, False))
+        except Exception:
+            pass
+        finally:
+            for res in (reader, isr, stream):
+                if res is not None:
+                    try:
+                        res.close()
+                    except Exception:
+                        pass
+
+        with self._lock:
+            self._prefixes = self._sort_entries(entries)
+            self._db_source = "countries.txt (APK)"
+
+    def _fetch_from_telegram_api(self, notify=False):
+        if self._unloaded:
+            return
+        req_cls = find_class("org.telegram.tgnet.TLRPC$TL_help_getCountriesList")
+        if req_cls is None:
+            req_cls = find_class("org.telegram.tgnet.tl.TL_help$getCountriesList")
+        if req_cls is None:
+            if notify:
+                BulletinHelper.show_error("Не найден класс TL_help_getCountriesList")
+            return
+
+        try:
+            req = req_cls()
+            req.lang_code = "ru"
+            req.hash = 0
+
+            def on_response(response, error):
+                if self._unloaded:
+                    return
+                if error is not None or response is None:
+                    if notify:
+                        BulletinHelper.show_error("Не удалось загрузить базу стран из Telegram")
+                    return
+
+                countries = getattr(response, "countries", None)
+                if countries is None:
+                    return
+
+                entries = []
+                seen = set()
+                try:
+                    total = countries.size()
+                    for i in range(total):
+                        country = countries.get(i)
+                        if country is None:
+                            continue
+                        iso = str(getattr(country, "iso2", "") or "").strip().upper()
+                        en_name = str(getattr(country, "default_name", "") or "").strip()
+                        ru_name = str(getattr(country, "name", "") or "").strip() or en_name
+                        if not en_name:
+                            en_name = ru_name
+                        codes = getattr(country, "country_codes", None)
+                        if codes is None:
+                            continue
+                        for j in range(codes.size()):
+                            cc = codes.get(j)
+                            if cc is None:
+                                continue
+                            dial = _digits_only(getattr(cc, "country_code", ""))
+                            if not dial:
+                                continue
+                            prefixes = getattr(cc, "prefixes", None)
+                            has_prefixes = prefixes is not None and prefixes.size() > 0
+                            if has_prefixes:
+                                for k in range(prefixes.size()):
+                                    pref = _digits_only(prefixes.get(k))
+                                    full_pref = dial + pref
+                                    key = (full_pref, iso, True)
+                                    if key not in seen:
+                                        seen.add(key)
+                                        entries.append((full_pref, dial, iso, en_name, ru_name, True))
+                            else:
+                                key = (dial, iso, False)
+                                if key not in seen:
+                                    seen.add(key)
+                                    entries.append((dial, dial, iso, en_name, ru_name, False))
+                except Exception:
+                    return
+
+                if not any(e[1] == "888" for e in entries):
+                    entries.append(("888", "888", "FT", "Anonymous Numbers", "Анонимные номера", True))
+
+                if entries:
+                    sorted_entries = self._sort_entries(entries)
+                    with self._lock:
+                        self._prefixes = sorted_entries
+                        self._db_source = "Telegram API"
+                        self._cache_fresh = True
+                    try:
+                        payload = {"ts": time.time(), "entries": [list(x) for x in sorted_entries]}
+                        write_file(self._cache_path(), json.dumps(payload, ensure_ascii=False))
+                    except Exception:
+                        pass
+
+                    def _refresh_ui():
+                        if self._unloaded:
+                            return
+                        try:
+                            self.set_setting("_db_rev", int(time.time()), reload_settings=True)
+                        except Exception:
+                            pass
+                        if notify:
+                            BulletinHelper.show_success(f"База обновлена: {len(sorted_entries)} префиксов")
+
+                    run_on_ui_thread(_refresh_ui)
+
+            send_request(req, on_response)
+        except Exception:
+            if notify:
+                BulletinHelper.show_error("Ошибка запроса базы стран")
+
+    def resolve_country(self, digits: str):
+        clean = _digits_only(digits)
+        if not clean:
+            return None
+        with self._lock:
+            prefixes = self._prefixes
+        if not prefixes:
+            self._load_local_db()
+            with self._lock:
+                prefixes = self._prefixes
+        for full_pref, dial_code, iso, en_name, ru_name, _is_spec in prefixes:
+            if clean.startswith(full_pref):
+                use_ru = bool(self.get_setting("use_ru_name", False))
+                name = ru_name if (use_ru and ru_name) else en_name
+                flag = _iso_to_flag(iso)
+                if iso:
+                    return f"+{dial_code}, {iso}, {name}, {flag}"
+                return f"+{dial_code}, {name}, {flag}"
+        return None
+
+    def _is_phone_menu(self, menu_texts, in_profile: bool, scrim_has_phone: bool = False) -> bool:
+        lowered = _unique_lower_texts(menu_texts)
+        if not lowered:
+            return False
+
+        blocklist = (
+            "копировать карту",
+            "copy card",
+            "скопіювати карту",
+            "ответить",
+            "reply",
+            "відповісти",
+            "переслать",
+            "forward",
+            "переслати",
+            "видеозвонок",
+            "video call",
+            "відеодзвінок",
+            "заблокировать",
+            "block user",
+            "заблокувати",
+            "удалить чат",
+            "delete chat",
+            "видалити чат",
+            "удалить контакт",
+            "delete contact",
+        )
+        for text in lowered:
+            for bad in blocklist:
+                if bad == text or bad in text:
+                    return False
+
+        strong = (
+            "копировать номер",
+            "позвонить по телефону",
+            "пригласить в telegram",
+            "номер не зарегистрирован",
+            "добавить в контакты",
+            "скопіювати номер",
+            "копіювати номер",
+            "зателефонувати за номером",
+            "запросити в telegram",
+            "номер не зареєстрований",
+            "додати до контактів",
+            "додати в контакти",
+            "copy phone number",
+            "copy number",
+            "invite to telegram",
+            "not registered in telegram",
+            "call via phone",
+            "add to contacts",
+        )
+        for text in lowered:
+            for s in strong:
+                if s in text:
+                    return True
+
+        profile_call = ("позвонить", "call", "зателефонувати", "подзвонити")
+        profile_copy = ("копировать", "copy", "скопіювати", "копіювати")
+
+        has_call = any(any(c == text or text.startswith(c) for c in profile_call) for text in lowered)
+        has_copy = any(any(c == text or text.startswith(c) for c in profile_copy) for text in lowered)
+        if has_call and has_copy:
+            return True
+
+        if in_profile and scrim_has_phone and has_copy:
+            return True
+
+        return False
+
+    def _get_profile_phone(self, fragment):
+        if fragment is None:
+            return None
+        try:
+            full_name = str(fragment.getClass().getName() or "")
+            if "ProfileActivity" not in full_name:
+                return None
+
+            account = get_private_field(fragment, "currentAccount")
+            if account is None:
+                account = UserConfig.selectedAccount
+            account = int(account)
+
+            user_id = 0
+            try:
+                args = fragment.getArguments()
+                if args is not None:
+                    uid = args.getLong("user_id", 0)
+                    if uid and int(uid) > 0:
+                        user_id = int(uid)
+            except Exception:
+                pass
+
+            if not user_id:
+                uid = get_private_field(fragment, "userId")
+                if uid and int(uid) > 0:
+                    user_id = int(uid)
+
+            if not user_id:
+                did = get_private_field(fragment, "dialogId")
+                if did and int(did) > 0:
+                    user_id = int(did)
+
+            if not user_id:
+                chat_id = get_private_field(fragment, "chatId")
+                if not chat_id or int(chat_id) == 0:
+                    user_id = int(UserConfig.getInstance(account).getClientUserId())
+
+            if user_id <= 0:
+                return None
+
+            mc = MessagesController.getInstance(account)
+            user = mc.getUser(JLong.valueOf(user_id))
+            if user is None:
+                return None
+            phone = getattr(user, "phone", None)
+            if phone:
+                digits = _digits_only(phone)
+                if 7 <= len(digits) <= 15:
+                    return digits
+        except Exception:
+            pass
+        return None
+
+    def _build_footer_view(self, context, info_text: str, resources_provider=None):
+        tv = TextView(context)
+        tv.setTag(FOOTER_TAG)
+        tv.setText(info_text)
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14)
+        try:
+            tv.setTypeface(AndroidUtilities.bold())
+        except Exception:
+            tv.setTypeface(Typeface.DEFAULT_BOLD)
+        tv.setTextColor(_get_theme_color(Theme.key_actionBarDefaultSubmenuItem, resources_provider))
+        tv.setPadding(
+            AndroidUtilities.dp(16),
+            AndroidUtilities.dp(11),
+            AndroidUtilities.dp(16),
+            AndroidUtilities.dp(11),
+        )
+        tv.setMaxWidth(AndroidUtilities.dp(260))
+        tv.setLineSpacing(AndroidUtilities.dp(2), 1.0)
+        tv.setClickable(True)
+        tv.setOnClickListener(OnClickListener(lambda v: copy_to_clipboard(info_text)))
+        return tv
+
+    def _build_gap_view(self, context, resources_provider=None):
+        try:
+            if self._gap_view_cls is not None:
+                return self._gap_view_cls(context, resources_provider)
+        except Exception:
+            pass
+        gap = View(context)
+        gap.setBackgroundColor(_get_theme_color(Theme.key_actionBarDefaultSubmenuSeparator, resources_provider))
+        return gap
+
+    def _append_to_popup_layout(self, target_layout, context, info_text, resources_provider):
+        if target_layout is None or _has_footer_tag(target_layout):
+            return False
+
+        gap = self._build_gap_view(context, resources_provider)
+        tv = self._build_footer_view(context, info_text, resources_provider)
+
+        inner = get_private_field(target_layout, "linearLayout")
+        if inner is not None:
+            inner.addView(gap, LayoutHelper.createLinear(-1, 8))
+            inner.addView(tv, LayoutHelper.createLinear(-1, -2))
+        else:
+            target_layout.addView(gap, LayoutHelper.createLinear(-1, 8))
+            target_layout.addView(tv, LayoutHelper.createLinear(-1, -2))
+
+        try:
+            target_layout.requestLayout()
+        except Exception:
+            pass
+        return True
+
+    def _detect_phone_for_popup(self, layout, scrim_view, fragment):
+        if layout is None or _has_footer_tag(layout):
+            return None
+
+        if fragment is None:
+            fragment = get_last_fragment()
+
+        frag_name = ""
+        try:
+            if fragment is not None:
+                frag_name = str(fragment.getClass().getSimpleName() or fragment.getClass().getName() or "")
+        except Exception:
+            pass
+        in_profile = "ProfileActivity" in frag_name
+
+        menu_texts = []
+        _collect_view_texts(layout, menu_texts)
+
+        scrim_phone = None
+        if scrim_view is not None:
+            scrim_phone = _extract_phone_from_cell(scrim_view)
+            if not scrim_phone:
+                scrim_texts = []
+                _collect_view_texts(scrim_view, scrim_texts)
+                scrim_phone = _extract_phone_from_texts(scrim_texts)
+
+        if not self._is_phone_menu(menu_texts, in_profile, bool(scrim_phone)):
+            return None
+
+        phone = scrim_phone
+        if not phone and in_profile:
+            phone = self._get_profile_phone(fragment)
+        if not phone:
+            phone = self._get_recent_phone(max_age=15.0)
+        if not phone:
+            phone = _extract_phone_from_texts(menu_texts)
+
+        return phone
+
+    def handle_item_options(self, opts):
+        if opts is None:
+            return
+        raw_layout = get_private_field(opts, "layout")
+        last_layout = get_private_field(opts, "lastLayout")
+        primary_layout = _get_primary_popup_layout(raw_layout, self._ab_popup_layout_cls) or last_layout
+        if primary_layout is None or _has_footer_tag(primary_layout):
+            return
+
+        scrim_view = get_private_field(opts, "scrimView")
+        fragment = get_private_field(opts, "fragment")
+        resources_provider = get_private_field(opts, "resourcesProvider")
+
+        phone = self._detect_phone_for_popup(primary_layout, scrim_view, fragment)
+        if not phone:
+            return
+
+        info_text = self.resolve_country(phone)
+        if not info_text:
+            return
+
+        context = get_private_field(opts, "context")
+        if context is None:
+            context = primary_layout.getContext()
+        if context is None:
+            return
+
+        self._append_to_popup_layout(primary_layout, context, info_text, resources_provider)
+
+    def handle_popup_layout_measure(self, layout):
+        if layout is None:
+            return
+        inner = get_private_field(layout, "linearLayout")
+        count = inner.getChildCount() if inner is not None else layout.getChildCount()
+        if count == 0:
+            return
+
+        ihc = int(JSystem.identityHashCode(layout))
+        if self._checked_layouts.get(ihc) == count:
+            return
+
+        if len(self._checked_layouts) > 200:
+            self._checked_layouts.clear()
+        self._checked_layouts[ihc] = count
+
+        if _has_footer_tag(layout):
+            return
+
+        fragment = get_last_fragment()
+        phone = self._detect_phone_for_popup(layout, None, fragment)
+        if not phone:
+            return
+
+        info_text = self.resolve_country(phone)
+        if not info_text:
+            return
+
+        context = layout.getContext()
+        if context is None:
+            return
+
+        resources_provider = get_private_field(layout, "resourcesProvider")
+        if self._append_to_popup_layout(layout, context, info_text, resources_provider):
+            new_count = inner.getChildCount() if inner is not None else layout.getChildCount()
+            self._checked_layouts[ihc] = new_count
+
+    def handle_dialog_show(self, dialog):
+        if dialog is None:
+            return
+        win = dialog.getWindow()
+        if win is None:
+            return
+        decor = win.getDecorView()
+        if decor is None:
+            return
+
+        popup_layout = _find_instance_in_tree(decor, self._ab_popup_layout_cls)
+        if popup_layout is None or _has_footer_tag(popup_layout):
+            return
+
+        fragment = get_last_fragment()
+        phone = self._detect_phone_for_popup(popup_layout, None, fragment)
+        if not phone:
+            return
+
+        info_text = self.resolve_country(phone)
+        if not info_text:
+            return
+
+        context = popup_layout.getContext()
+        if context is None:
+            return
+
+        resources_provider = get_private_field(popup_layout, "resourcesProvider")
+        self._append_to_popup_layout(popup_layout, context, info_text, resources_provider)
+
+    def _on_refresh_click(self, view):
+        BulletinHelper.show_info("Обновляю базу стран из Telegram...")
+        run_on_queue(lambda: self._fetch_from_telegram_api(notify=True))
+
+    def create_settings(self):
+        with self._lock:
+            count = len(self._prefixes)
+            source = self._db_source
+        if count == 0:
+            self._load_local_db()
+            with self._lock:
+                count = len(self._prefixes)
+                source = self._db_source
+        return [
+            Header(text="Отображение"),
+            Switch(
+                key="use_ru_name",
+                text="Названия стран на русском",
+                default=False,
+                subtext="Выкл: +380, UA, Ukraine, 🇺🇦 | Вкл: +380, UA, Украина, 🇺🇦",
+                icon="msg_translate",
+            ),
+            Divider(),
+            Header(text="База стран Telegram"),
+            Text(
+                text="Обновить базу из Telegram",
+                subtext=f"Префиксов: {count} ({source})",
+                icon="msg_retry",
+                on_click=self._on_refresh_click,
+            ),
+        ]
