@@ -79,6 +79,7 @@ public class SettingsRegistry {
             "customSavePath",
             "defaultProfileTab",
             "disableNotificationDelay",
+            "showPhoneCountry",
 
             // Chats
             "Camera-ExtendedSettings-StartWithWideAngle",

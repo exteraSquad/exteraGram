@@ -278,6 +278,7 @@
 
     <!-- Profile -->
     <string name="HidePhoneNumber">Hide Phone Number</string>
+    <string name="ShowPhoneCountry">Show phone country</string>
     <string name="DefaultProfileTab">Default Tab</string>
     <string name="ShowIdAndDc">Show ID and DC</string>
     <string name="ShowIdAndDcInfo">Telegram API shows IDs as they are, while the Bot API adds a minus sign for groups and -100 for supergroups and channels.</string>

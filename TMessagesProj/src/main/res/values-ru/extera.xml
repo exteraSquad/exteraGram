@@ -417,6 +417,7 @@
 
     <!-- Профиль -->
     <string name="HidePhoneNumber">Скрыть номер телефона</string>
+    <string name="ShowPhoneCountry">Показывать страну по номеру</string>
     <string name="DefaultProfileTab">Вкладка по умолчанию</string>
     <string name="ShowIdAndDc">Показывать ID и DC</string>
     <string name="ShowIdAndDcInfo">Telegram API показывает ID как есть, а Bot API добавляет минус для групп и -100 для супергрупп и каналов.</string>

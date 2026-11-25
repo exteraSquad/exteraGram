@@ -67,7 +67,8 @@ class GeneralPreferencesActivity : BasePreferencesActivity() {
         HIDE_ARCHIVE_FOLDER,
         ARCHIVE_ON_PULL,
         DISABLE_UNARCHIVE_SWIPE,
-        DISABLE_NOTIFICATION_DELAY;
+        DISABLE_NOTIFICATION_DELAY,
+        SHOW_PHONE_COUNTRY;
 
         val id: Int = ordinal + 1
     }
@@ -134,6 +135,7 @@ class GeneralPreferencesActivity : BasePreferencesActivity() {
         items.add(UItem.asHeader(getString(R.string.MainTabsProfile)))
         items.add(uCheck(GeneralItem.RELATIVE_LAST_SEEN, getString(R.string.RelativeLastSeen), relativeLastSeen, LocaleController.formatDateOnline(fiveMinutesAgo.toLong(), null, BooleanArray(1)), linkAlias = "relativeLastSeen", multiline = false))
         items.add(uCheck(GeneralItem.HIDE_PHONE_NUMBER, getString(R.string.HidePhoneNumber), hidePhoneNumber, linkAlias = "hidePhoneNumber"))
+        items.add(uCheck(GeneralItem.SHOW_PHONE_COUNTRY, getString(R.string.ShowPhoneCountry), showPhoneCountry, linkAlias = "showPhoneCountry"))
         items.add(uButton(GeneralItem.DEFAULT_PROFILE_TAB, getString(R.string.DefaultProfileTab), value = profileTabs[defaultProfileTab.ordinal], linkAlias = "defaultProfileTab"))
         items.add(uButton(GeneralItem.SHOW_ID_AND_DC, getString(R.string.ShowIdAndDc), value = idOptions[showIdAndDc], linkAlias = "showIdAndDc"))
         items.add(UItem.asShadow(getString(R.string.ShowIdAndDcInfo)))
@@ -178,6 +180,10 @@ class GeneralPreferencesActivity : BasePreferencesActivity() {
             GeneralItem.CUSTOM_SAVE_PATH -> showCustomSavePathDialog()
             GeneralItem.HIDE_PHONE_NUMBER -> {
                 toggleBooleanSettingAndRefresh(item) { hidePhoneNumber = it }
+                handleHidePhoneNumberClick()
+            }
+            GeneralItem.SHOW_PHONE_COUNTRY -> {
+                toggleBooleanSettingAndRefresh(item) { showPhoneCountry = it }
                 handleHidePhoneNumberClick()
             }
             GeneralItem.SHOW_ID_AND_DC ->

@@ -163,6 +163,7 @@ import com.exteragram.messenger.regdate.RegDateController;
 import com.exteragram.messenger.preferences.MainPreferencesActivity;
 import com.exteragram.messenger.preferences.utils.SettingsRegistry;
 import com.exteragram.messenger.utils.AppUtils;
+import com.exteragram.messenger.utils.PhoneCountryInfo;
 import com.exteragram.messenger.utils.system.SystemUtils;
 import com.exteragram.messenger.utils.ui.ChatHeaderUiHelper;
 import com.exteragram.messenger.utils.ui.GlassUiHelper;
@@ -8107,6 +8108,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         o.add(R.drawable.msg_openin, getString(R.string.OpenInExternalApp), () -> o.openSwipeback(swipeback));
                     }
+                }
+            }
+            if (ExteraConfig.getShowPhoneCountry() && position == phoneRow) {
+                CharSequence country = PhoneCountryInfo.get(user.phone);
+                if (country != null) {
+                    o.add(R.drawable.msg_location, getString(R.string.Country), country, () -> {
+                        if (AndroidUtilities.addToClipboard(country.toString())) {
+                            BulletinFactory.of(this).createCopyBulletin(LocaleController.getString(R.string.TextCopied)).show();
+                        }
+                    });
                 }
             }
             o.add(R.drawable.msg_copy, getString(R.string.Copy), () -> {
@@ -17399,6 +17410,17 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     BulletinFactory.of(ProfileActivity.this).createCopyBulletin(copied).show();
                 }
             });
+        }
+
+        if (ExteraConfig.getShowPhoneCountry() && position == phoneRow && textToCopy != null) {
+            CharSequence country = PhoneCountryInfo.get(textToCopy);
+            if (country != null) {
+                itemOptions.add(R.drawable.msg_location, getString(R.string.Country), country, () -> {
+                    if (AndroidUtilities.addToClipboard(country.toString())) {
+                        BulletinFactory.of(ProfileActivity.this).createCopyBulletin(LocaleController.getString(R.string.TextCopied)).show();
+                    }
+                });
+            }
         }
 
         if (position == bizHoursRow) {
