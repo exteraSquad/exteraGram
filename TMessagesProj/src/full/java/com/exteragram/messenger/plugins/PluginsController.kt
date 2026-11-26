@@ -351,6 +351,25 @@ class PluginsController private constructor() : PluginsHooks {
         return !stopping && pluginsEngine && plugin != null && plugins[plugin.getId()] === plugin && plugin.isEnabled()
     }
 
+    private fun showSafeModeBulletin(
+        fragment: BaseFragment?,
+        callback: Utilities.Callback<String>?
+    ) {
+        val message = "Plugins cannot be enabled while safe mode is active"
+        callback?.run(message)
+        if (fragment == null) {
+            return
+        }
+        BulletinFactory.of(fragment)
+            .createSimpleBulletin(
+                R.raw.error,
+                message,
+                LocaleController.getString(R.string.Enable),
+                Bulletin.DURATION_LONG,
+            ) { SafeModeBottomSheet(fragment).show() }
+            .show()
+    }
+
     private fun registerFileIconInternal(extension: String?, drawable: Drawable?): Int {
         val normalizedExtension = normalizeFileExtension(extension)
         if (normalizedExtension == null || drawable == null) {
@@ -415,6 +434,12 @@ class PluginsController private constructor() : PluginsHooks {
         callback: Utilities.Callback<String>?
     ) {
         runOnPluginsQueue {
+            if (enabled && pluginsSafeMode) {
+                AndroidUtilities.runOnUIThread {
+                    showSafeModeBulletin(LaunchActivity.getLastFragment(), callback)
+                }
+                return@runOnPluginsQueue
+            }
             if (enabled && (stopping || !initialized || !pluginsEngine)) {
                 AndroidUtilities.runOnUIThread { callback?.run(LocaleController.getString(R.string.PluginsPySdkEngineDisabled)) }
                 return@runOnPluginsQueue
