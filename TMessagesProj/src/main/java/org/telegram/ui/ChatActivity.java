@@ -134,6 +134,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.exteragram.messenger.ExteraConfig;
+import com.exteragram.messenger.utils.PhoneCountryInfo;
 import com.exteragram.messenger.export.ui.ExportActivity;
 import com.exteragram.messenger.player.PlayerLauncher;
 import com.exteragram.messenger.player.mini.MiniPlayerUiHelper;
@@ -48637,6 +48638,15 @@ public class ChatActivity extends BaseFragment implements
             final ItemOptions options = ItemOptions.makeOptions(ChatActivity.this, cell, true);
             final ScrimOptions dialog = new ScrimOptions(getContext(), themeDelegate);
             options.setOnDismiss(dialog::dismiss);
+
+            String iso = userInfo != null && userInfo.settings != null ? userInfo.settings.phone_country : null;
+            CharSequence country = PhoneCountryInfo.get(phone, iso);
+            if (country != null) {
+                options.add(R.drawable.msg_location, getString(R.string.Country), country, () -> {
+                    AndroidUtilities.addToClipboard(country.toString());
+                    BulletinFactory.of(ChatActivity.this).createCopyBulletin(getString(R.string.TextCopied)).show();
+                });
+            }
 
             Utilities.Callback<Boolean> addToContacts = asNew -> {
                 if (getParentActivity() == null) return;
