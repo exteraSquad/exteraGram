@@ -17,6 +17,10 @@ package com.exteragram.messenger.utils.chats;
 import static org.telegram.messenger.AndroidUtilities.dp;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -25,6 +29,13 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Pair;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.exteragram.messenger.ExteraConfig;
 import com.exteragram.messenger.utils.network.RemoteUtils;
@@ -53,10 +64,18 @@ import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.RequestDelegate;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
+import org.telegram.ui.ActionBar.AlertDialog;
+import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChannelAdminLogActivity;
+import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
+import org.telegram.ui.Components.AvatarDrawable;
+import org.telegram.ui.Components.BackupImageView;
+import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.ColoredImageSpan;
+import org.telegram.ui.Components.Forum.ForumUtilities;
+import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
 import org.telegram.ui.Components.TranscribeButton;
 import org.telegram.ui.ProfileActivity;
@@ -68,8 +87,10 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class ChatUtils {
 
@@ -1011,5 +1032,254 @@ public class ChatUtils {
         ssb.setSpan(new ColoredImageSpan(drawable), ssb.length() - 1, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return ssb;
+    }
+
+    public void createDeleteHistoryAlert(BaseFragment fragment, TLRPC.Chat chat, TLRPC.TL_forumTopic forumTopic, long mergeDialogId, Theme.ResourcesProvider resourcesProvider) {
+        createDeleteHistoryAlert(fragment, chat, forumTopic, mergeDialogId, -1, resourcesProvider);
+    }
+
+    private void createDeleteHistoryAlert(BaseFragment fragment, TLRPC.Chat chat, TLRPC.TL_forumTopic forumTopic, long mergeDialogId, int before, Theme.ResourcesProvider resourcesProvider) {
+        if (fragment == null || fragment.getParentActivity() == null || chat == null) {
+            return;
+        }
+
+        Context context = fragment.getParentActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, resourcesProvider);
+
+        boolean useAdminRights = before == -1
+                && forumTopic == null
+                && ChatObject.isChannel(chat)
+                && ChatObject.canUserDoAction(chat, ChatObject.ACTION_DELETE_MESSAGES)
+                && !ChatObject.shouldSendAnonymously(chat)
+                && ChatObject.getSendAsPeerId(chat, getMessagesController().getChatFull(chat.id), true) == getUserConfig().getClientUserId();
+
+        TextView messageTextView = new TextView(context);
+        messageTextView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider));
+        messageTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
+        messageTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP);
+
+        FrameLayout frameLayout = new FrameLayout(context);
+        builder.setView(frameLayout);
+
+        AvatarDrawable avatarDrawable = new AvatarDrawable();
+        avatarDrawable.setTextSize(AndroidUtilities.dp(12));
+        avatarDrawable.setInfo(chat);
+
+        BackupImageView imageView = new BackupImageView(context);
+        imageView.setRoundRadius(AndroidUtilities.dp(20));
+        if (forumTopic != null) {
+            if (forumTopic.id == 1) {
+                imageView.setImageDrawable(ForumUtilities.createGeneralTopicDrawable(context, 0.75f, Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider), false));
+            } else {
+                ForumUtilities.setTopicIcon(imageView, forumTopic, false, true, resourcesProvider);
+            }
+        } else {
+            imageView.setForUserOrChat(chat, avatarDrawable);
+        }
+        frameLayout.addView(imageView, LayoutHelper.createFrame(40, 40, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 22, 5, 22, 0));
+
+        TextView textView = new TextView(context);
+        textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        textView.setTypeface(AndroidUtilities.bold());
+        textView.setLines(1);
+        textView.setMaxLines(1);
+        textView.setSingleLine(true);
+        textView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
+        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setText(LocaleController.getString(R.string.DeleteAllFromSelf));
+
+        frameLayout.addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, (LocaleController.isRTL ? 21 : 76), 11, (LocaleController.isRTL ? 76 : 21), 0));
+        frameLayout.addView(messageTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 24, 57, 24, 9));
+
+        if (before > 0) {
+            messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.formatString(R.string.DeleteAllFromSelfAlertBefore, LocaleController.formatDateForBan(before))));
+        } else {
+            messageTextView.setText(AndroidUtilities.replaceTags(LocaleController.getString(R.string.DeleteAllFromSelfAlert)));
+        }
+
+        builder.setNeutralButton(LocaleController.getString(R.string.DeleteAllFromSelfBefore), (dialog, which) -> showBeforeDatePickerAlert(fragment, before1 -> createDeleteHistoryAlert(fragment, chat, forumTopic, mergeDialogId, before1, resourcesProvider), resourcesProvider));
+        builder.setPositiveButton(LocaleController.getString(R.string.DeleteAll), (dialogInterface, i) -> {
+            if (useAdminRights) {
+                showDeleteHistoryBulletin(fragment, 0, false, () -> getMessagesController().deleteUserChannelHistory(chat, getUserConfig().getCurrentUser(), null, 0), resourcesProvider);
+            } else {
+                deleteUserHistoryWithSearch(fragment, -chat.id, forumTopic != null ? forumTopic.id : 0, mergeDialogId, before == -1 ? getConnectionsManager().getCurrentTime() : before, (count, deleteAction) -> showDeleteHistoryBulletin(fragment, count, true, deleteAction, resourcesProvider));
+            }
+        });
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
+        AlertDialog alertDialog = builder.create();
+        fragment.showDialog(alertDialog);
+        TextView button = (TextView) alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if (button != null) {
+            button.setTextColor(Theme.getColor(Theme.key_text_RedBold, resourcesProvider));
+        }
+    }
+
+    private void showBeforeDatePickerAlert(BaseFragment fragment, Utilities.Callback<Integer> callback, Theme.ResourcesProvider resourcesProvider) {
+        Context context = fragment.getParentActivity();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, resourcesProvider);
+        builder.setTitle(LocaleController.getString(R.string.DeleteAllFromSelfBefore));
+        builder.setItems(new CharSequence[]{
+                LocaleController.formatPluralString("Days", 1),
+                LocaleController.formatPluralString("Weeks", 1),
+                LocaleController.formatPluralString("Months", 1),
+                LocaleController.getString(R.string.UserRestrictionsCustom)
+        }, (dialog1, which) -> {
+            switch (which) {
+                case 0:
+                    callback.run(getConnectionsManager().getCurrentTime() - 60 * 60 * 24);
+                    break;
+                case 1:
+                    callback.run(getConnectionsManager().getCurrentTime() - 60 * 60 * 24 * 7);
+                    break;
+                case 2:
+                    callback.run(getConnectionsManager().getCurrentTime() - 60 * 60 * 24 * 30);
+                    break;
+                case 3: {
+                    Calendar calendar = Calendar.getInstance();
+                    DatePickerDialog dateDialog = new DatePickerDialog(context, (view1, year1, month, dayOfMonth1) -> {
+                        TimePickerDialog timeDialog = new TimePickerDialog(context, (view11, hourOfDay, minute) -> {
+                            calendar.set(year1, month, dayOfMonth1, hourOfDay, minute);
+                            callback.run((int) (calendar.getTimeInMillis() / 1000));
+                        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                        timeDialog.setButton(DialogInterface.BUTTON_POSITIVE, LocaleController.getString(R.string.Set), timeDialog);
+                        timeDialog.setButton(DialogInterface.BUTTON_NEGATIVE, LocaleController.getString(R.string.Cancel), (dialog3, which3) -> {
+                        });
+                        fragment.showDialog(timeDialog);
+                    }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+                    final DatePicker datePicker = dateDialog.getDatePicker();
+
+                    datePicker.setMinDate(1375315200000L);
+                    datePicker.setMaxDate(System.currentTimeMillis());
+
+                    dateDialog.setButton(DialogInterface.BUTTON_POSITIVE, LocaleController.getString(R.string.Set), dateDialog);
+                    dateDialog.setButton(DialogInterface.BUTTON_NEGATIVE, LocaleController.getString(R.string.Cancel), (dialog2, which2) -> {
+                    });
+                    dateDialog.setOnShowListener(dialog12 -> {
+                        int count = datePicker.getChildCount();
+                        for (int b = 0; b < count; b++) {
+                            View child = datePicker.getChildAt(b);
+                            ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
+                            layoutParams.width = LayoutHelper.MATCH_PARENT;
+                            child.setLayoutParams(layoutParams);
+                        }
+                    });
+                    fragment.showDialog(dateDialog);
+                    break;
+                }
+            }
+            builder.getDismissRunnable().run();
+        });
+        fragment.showDialog(builder.create());
+    }
+
+    public static void showDeleteHistoryBulletin(BaseFragment fragment, int count, boolean search, Runnable delayedAction, Theme.ResourcesProvider resourcesProvider) {
+        if (fragment.getParentActivity() == null) {
+            if (delayedAction != null) {
+                delayedAction.run();
+            }
+            return;
+        }
+        Bulletin.ButtonLayout buttonLayout;
+        if (search) {
+            final Bulletin.TwoLineLottieLayout layout = new Bulletin.TwoLineLottieLayout(fragment.getParentActivity(), resourcesProvider);
+            layout.titleTextView.setText(LocaleController.getString(R.string.DeleteAllFromSelfDone));
+            layout.subtitleTextView.setText(LocaleController.formatPluralString("MessagesDeletedHint", count));
+            layout.setTimer();
+            buttonLayout = layout;
+        } else {
+            final Bulletin.LottieLayout layout = new Bulletin.LottieLayout(fragment.getParentActivity(), resourcesProvider);
+            layout.textView.setText(LocaleController.getString(R.string.DeleteAllFromSelfDone));
+            layout.setTimer();
+            buttonLayout = layout;
+        }
+        buttonLayout.setButton(new Bulletin.UndoButton(fragment.getParentActivity(), true, resourcesProvider).setDelayedAction(delayedAction));
+        Bulletin.make(fragment, buttonLayout, Bulletin.DURATION_PROLONG).show();
+    }
+
+    private void deleteUserHistoryWithSearch(BaseFragment fragment, final long dialogId, int replyMessageId, final long mergeDialogId, int before, SearchMessagesResultCallback callback) {
+        Utilities.globalQueue.postRunnable(() -> {
+            ArrayList<Integer> messageIds = new ArrayList<>();
+            var latch = new CountDownLatch(1);
+            var peer = getMessagesController().getInputPeer(dialogId);
+            var fromId = MessagesController.getInputPeer(getUserConfig().getCurrentUser());
+            doSearchMessages(fragment, latch, messageIds, peer, replyMessageId, fromId, before, Integer.MAX_VALUE, 0);
+            try {
+                latch.await();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+            if (!messageIds.isEmpty()) {
+                ArrayList<ArrayList<Integer>> lists = new ArrayList<>();
+                final int N = messageIds.size();
+                for (int i = 0; i < N; i += 100) {
+                    lists.add(new ArrayList<>(messageIds.subList(i, Math.min(N, i + 100))));
+                }
+                Runnable deleteAction = () -> {
+                    for (ArrayList<Integer> list : lists) {
+                        getMessagesController().deleteMessages(list, null, null, dialogId, 0, true, 0);
+                    }
+                };
+                AndroidUtilities.runOnUIThread(callback != null ? () -> callback.run(messageIds.size(), deleteAction) : deleteAction);
+            }
+            if (mergeDialogId != 0) {
+                deleteUserHistoryWithSearch(fragment, mergeDialogId, 0, 0, before, null);
+            }
+        });
+    }
+
+    private interface SearchMessagesResultCallback {
+        void run(int count, Runnable deleteAction);
+    }
+
+    private void doSearchMessages(BaseFragment fragment, CountDownLatch latch, ArrayList<Integer> messageIds, TLRPC.InputPeer peer, int replyMessageId, TLRPC.InputPeer fromId, int before, int offsetId, long hash) {
+        var req = new TLRPC.TL_messages_search();
+        req.peer = peer;
+        req.limit = 100;
+        req.q = "";
+        req.offset_id = offsetId;
+        req.from_id = fromId;
+        req.flags |= 1;
+        req.filter = new TLRPC.TL_inputMessagesFilterEmpty();
+        if (replyMessageId != 0) {
+            req.top_msg_id = replyMessageId;
+            req.flags |= 2;
+        }
+        req.hash = hash;
+        getConnectionsManager().sendRequest(req, (response, error) -> {
+            if (response instanceof TLRPC.messages_Messages) {
+                var res = (TLRPC.messages_Messages) response;
+                if (response instanceof TLRPC.TL_messages_messagesNotModified || res.messages.isEmpty()) {
+                    latch.countDown();
+                    return;
+                }
+                var newOffsetId = offsetId;
+                for (TLRPC.Message message : res.messages) {
+                    newOffsetId = Math.min(newOffsetId, message.id);
+                    if (!message.out || message.post || message.date >= before) {
+                        continue;
+                    }
+                    messageIds.add(message.id);
+                }
+                doSearchMessages(fragment, latch, messageIds, peer, replyMessageId, fromId, before, newOffsetId, calcMessagesHash(res.messages));
+            } else {
+                if (error != null) {
+                    AndroidUtilities.runOnUIThread(() -> AlertsCreator.showSimpleAlert(fragment, LocaleController.getString(R.string.ErrorOccurred) + "\n" + error.text));
+                }
+                latch.countDown();
+            }
+        }, ConnectionsManager.RequestFlagFailOnServerErrors);
+    }
+
+    private long calcMessagesHash(ArrayList<TLRPC.Message> messages) {
+        if (messages == null || messages.isEmpty()) {
+            return 0;
+        }
+        long acc = 0;
+        for (TLRPC.Message message : messages) {
+            acc = MediaDataController.calcHash(acc, message.id);
+        }
+        return acc;
     }
 }

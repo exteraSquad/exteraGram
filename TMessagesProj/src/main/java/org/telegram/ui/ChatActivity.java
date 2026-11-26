@@ -1960,6 +1960,7 @@ public class ChatActivity extends BaseFragment implements
     private final static int recent_actions = 93;
     private final static int show_pinned = 94;
     private final static int export_history = 98;
+    private final static int delete_all_from_self = 99;
 
     private final static int id_chat_compose_panel = 1000;
 
@@ -4289,6 +4290,8 @@ public class ChatActivity extends BaseFragment implements
                         return;
                     }
                     showDialog(AlertsCreator.createTTLAlert(getParentActivity(), currentEncryptedChat, themeDelegate).create());
+                } else if (id == delete_all_from_self) {
+                    ChatUtils.getInstance(currentAccount).createDeleteHistoryAlert(ChatActivity.this, currentChat, forumTopic, mergeDialogId, themeDelegate);
                 } else if (id == clear_history || id == delete_chat || id == auto_delete_timer) {
                     if (getParentActivity() == null) {
                         return;
@@ -4887,6 +4890,9 @@ public class ChatActivity extends BaseFragment implements
             }
             boolean addedSettings = false;
             if (!isTopic) {
+                if (ChatObject.isMegagroup(currentChat) || currentChat != null && !ChatObject.isChannel(currentChat)) {
+                    headerItem.lazilyAddSubItem(delete_all_from_self, R.drawable.msg_delete, LocaleController.getString(R.string.DeleteAllFromSelf));
+                }
                 if (ChatObject.isChannel(currentChat) && !currentChat.creator) {
                     if (!ChatObject.isNotInChat(currentChat)) {
                         if (currentChat.monoforum) {
