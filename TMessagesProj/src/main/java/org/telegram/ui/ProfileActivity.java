@@ -8110,13 +8110,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                 }
             }
-            if (ExteraConfig.getShowPhoneCountry() && position == phoneRow) {
-                CharSequence country = PhoneCountryInfo.get(user.phone);
+            if (position == phoneRow) {
+                String iso = userInfo != null && userInfo.settings != null ? userInfo.settings.phone_country : null;
+                CharSequence country = PhoneCountryInfo.get(user.phone, iso);
                 if (country != null) {
                     o.add(R.drawable.msg_location, getString(R.string.Country), country, () -> {
-                        if (AndroidUtilities.addToClipboard(country.toString())) {
-                            BulletinFactory.of(this).createCopyBulletin(LocaleController.getString(R.string.TextCopied)).show();
-                        }
+                        AndroidUtilities.addToClipboard(country.toString());
+                        BulletinFactory.of(this).createCopyBulletin(LocaleController.getString(R.string.TextCopied)).show();
                     });
                 }
             }
@@ -17412,13 +17412,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             });
         }
 
-        if (ExteraConfig.getShowPhoneCountry() && position == phoneRow && textToCopy != null) {
-            CharSequence country = PhoneCountryInfo.get(textToCopy);
+        if (position == phoneRow && textToCopy != null) {
+            String iso = userFull != null && userFull.settings != null ? userFull.settings.phone_country : null;
+            CharSequence country = PhoneCountryInfo.get(textToCopy, iso);
             if (country != null) {
                 itemOptions.add(R.drawable.msg_location, getString(R.string.Country), country, () -> {
-                    if (AndroidUtilities.addToClipboard(country.toString())) {
-                        BulletinFactory.of(ProfileActivity.this).createCopyBulletin(LocaleController.getString(R.string.TextCopied)).show();
-                    }
+                    AndroidUtilities.addToClipboard(country.toString());
+                    BulletinFactory.of(ProfileActivity.this).createCopyBulletin(LocaleController.getString(R.string.TextCopied)).show();
                 });
             }
         }

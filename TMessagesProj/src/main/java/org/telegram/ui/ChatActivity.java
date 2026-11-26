@@ -48639,15 +48639,13 @@ public class ChatActivity extends BaseFragment implements
             final ScrimOptions dialog = new ScrimOptions(getContext(), themeDelegate);
             options.setOnDismiss(dialog::dismiss);
 
-            if (ExteraConfig.getShowPhoneCountry()) {
-                CharSequence country = PhoneCountryInfo.get(phone);
-                if (country != null) {
-                    options.add(R.drawable.msg_location, getString(R.string.Country), country, () -> {
-                        if (AndroidUtilities.addToClipboard(country.toString())) {
-                            BulletinFactory.of(ChatActivity.this).createCopyBulletin(getString(R.string.TextCopied)).show();
-                        }
-                    });
-                }
+            String iso = userInfo != null && userInfo.settings != null ? userInfo.settings.phone_country : null;
+            CharSequence country = PhoneCountryInfo.get(phone, iso);
+            if (country != null) {
+                options.add(R.drawable.msg_location, getString(R.string.Country), country, () -> {
+                    AndroidUtilities.addToClipboard(country.toString());
+                    BulletinFactory.of(ChatActivity.this).createCopyBulletin(getString(R.string.TextCopied)).show();
+                });
             }
 
             Utilities.Callback<Boolean> addToContacts = asNew -> {
